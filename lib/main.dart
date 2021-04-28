@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/screens/home-page.dart';
+import 'package:oluko_app/screens/sign-up-with-mail.dart';
 import 'package:oluko_app/screens/sign-up.dart';
 
 void main() {
@@ -15,10 +16,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.grey,
       ),
-      initialRoute: '/sign-up',
+      initialRoute: '/',
       routes: {
         '/': (context) => MyHomePage(title: ''),
-        '/sign-up': (context) => SignUpPage()
+        '/sign-up': (context) => SignUpPage(),
+        '/sign-up-with-email': (context) => SignUpWithMailPage()
       },
     );
   }
