@@ -42,7 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Colors.white,
         actions: [
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () => Navigator.pushNamed(context, '/sign-up'),
             child: Text('SIGN UP'),
             style: ElevatedButton.styleFrom(
                 shadowColor: Colors.transparent, primary: Colors.transparent),
@@ -92,7 +92,8 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: Text('LEARN FROM THE BEST',
                                 style: TextStyle(color: Colors.white))),
                         ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () =>
+                              Navigator.pushNamed(context, '/sign-up'),
                           style: ElevatedButton.styleFrom(
                               minimumSize: Size(200, 50),
                               primary: Colors.brown.shade300),
@@ -336,11 +337,6 @@ class _MyHomePageState extends State<MyHomePage> {
               ]))
         ])
       ]),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ),
     );
   }
 }

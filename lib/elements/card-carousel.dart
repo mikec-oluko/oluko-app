@@ -2,8 +2,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
-import 'package:oluko_app/constants/Theme.dart';
-
 class CardCarousel extends StatefulWidget {
   final List<String> textArray;
 
@@ -23,22 +21,23 @@ class _CardCarouselState extends State<CardCarousel> {
   Widget build(BuildContext context) {
     return CarouselSlider(
       items: widget.textArray
-          .map((item) => Container(
-              width: MediaQuery.of(context).size.width - 50,
-              height: 100,
-              child: Card(
-                  elevation: 20,
-                  child: Center(
-                    child: Text(
-                      'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-                      textAlign: TextAlign.center,
-                      style:
-                          TextStyle(fontSize: 17, fontWeight: FontWeight.w300),
-                    ),
-                  ))))
+          .map((item) => Padding(
+              padding: EdgeInsets.symmetric(vertical: 20),
+              child: Container(
+                  width: MediaQuery.of(context).size.width - 50,
+                  child: Card(
+                      elevation: 10,
+                      child: Center(
+                        child: Text(
+                          'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.w300),
+                        ),
+                      )))))
           .toList(),
       options: CarouselOptions(
-          height: 100,
+          height: 150,
           autoPlay: false,
           enlargeCenterPage: false,
           disableCenter: true,

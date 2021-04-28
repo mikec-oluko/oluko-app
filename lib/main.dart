@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:oluko_app/screens/home_page.dart';
+import 'package:oluko_app/screens/home-page.dart';
+import 'package:oluko_app/screens/sign-up.dart';
 
 void main() {
   runApp(MyApp());
@@ -14,9 +15,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.grey,
       ),
-      initialRoute: '/',
+      initialRoute: '/sign-up',
       routes: {
         '/': (context) => MyHomePage(title: ''),
+        '/sign-up': (context) => SignUpPage()
       },
     );
   }
