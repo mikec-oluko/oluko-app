@@ -1,7 +1,11 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:oluko_app/models/api-response.dart';
 import 'package:oluko_app/models/sign-up-request.dart';
 import 'package:oluko_app/models/sign-up-response.dart';
 import 'package:oluko_app/providers/sign-up-provider.dart';
+import 'package:oluko_app/services/loader-service.dart';
+import 'package:oluko_app/services/login-service.dart';
 
 import 'bloc.dart';
 
@@ -13,9 +17,23 @@ class SignUpWithEmailBloc implements Bloc {
   final _controller = StreamController<SignUpResponse>.broadcast();
   Stream<SignUpResponse> get authStream => _controller.stream;
 
-  Future<void> signUp(SignUpRequest request) async {
-    SignUpResponse response = await _provider.signUp(request);
-    _controller.sink.add(response);
+  Future<void> signUp(context, SignUpRequest request) async {
+    ApiResponse apiResponse = await _provider.signUp(request);
+    if (apiResponse.statusCode == 200) {
+      SignUpResponse response = SignUpResponse.fromJson(apiResponse.data);
+      await LoginService.storeLoginData(response);
+      _controller.sink.add(response);
+      LoaderService.stopLoading();
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Welcome, ${response.firstName}.'),
+      ));
+    } else {
+      LoaderService.stopLoading();
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(apiResponse.message),
+      ));
+      _controller.sink.addError(apiResponse.message);
+    }
   }
 
   @override
