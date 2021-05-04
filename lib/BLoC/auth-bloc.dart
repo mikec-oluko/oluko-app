@@ -10,7 +10,7 @@ class SignUpWithEmailBloc implements Bloc {
   SignUpResponse get auth => _signUpResponse;
 
   final _provider = SignUpProvider();
-  final _controller = StreamController<SignUpResponse>();
+  final _controller = StreamController<SignUpResponse>.broadcast();
   Stream<SignUpResponse> get authStream => _controller.stream;
 
   Future<void> signUp(SignUpRequest request) async {
