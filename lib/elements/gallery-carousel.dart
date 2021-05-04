@@ -64,7 +64,7 @@ class _GalleryCarouselState extends State<GalleryCarousel> {
                               child: Row(children: [
                                 Text(item['title'],
                                     style: TextStyle(
-                                        color: ArgonColors.white,
+                                        color: OlukoColors.white,
                                         fontWeight: FontWeight.bold,
                                         fontSize: 25.0)),
                               ])),

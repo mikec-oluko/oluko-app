@@ -53,7 +53,7 @@ class CardInfo extends StatelessWidget {
                             child: Column(children: [
                               Text(title,
                                   style: TextStyle(
-                                      color: ArgonColors.white,
+                                      color: OlukoColors.white,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 25.0)),
                               Padding(
@@ -61,7 +61,7 @@ class CardInfo extends StatelessWidget {
                                   child: Row(children: [
                                     Text(mainText,
                                         style: TextStyle(
-                                            color: ArgonColors.white,
+                                            color: OlukoColors.white,
                                             fontWeight: FontWeight.bold,
                                             fontSize: 25.0)),
                                   ])),
@@ -70,7 +70,7 @@ class CardInfo extends StatelessWidget {
                                   child: Row(children: [
                                     Text(subtitle,
                                         style: TextStyle(
-                                            color: ArgonColors.white,
+                                            color: OlukoColors.white,
                                             fontWeight: FontWeight.w100,
                                             fontSize: 22.0)),
                                   ]))

@@ -18,25 +18,25 @@ class Input extends StatelessWidget {
       this.onTap,
       this.onChanged,
       this.autofocus = false,
-      this.borderColor = ArgonColors.border,
+      this.borderColor = OlukoColors.border,
       this.controller});
 
   @override
   Widget build(BuildContext context) {
     return TextField(
-        cursorColor: ArgonColors.muted,
+        cursorColor: OlukoColors.muted,
         onTap: onTap,
         onChanged: onChanged,
         controller: controller,
         autofocus: autofocus,
         style:
-            TextStyle(height: 0.85, fontSize: 14.0, color: ArgonColors.initial),
+            TextStyle(height: 0.85, fontSize: 14.0, color: OlukoColors.initial),
         textAlignVertical: TextAlignVertical(y: 0.6),
         decoration: InputDecoration(
             filled: true,
-            fillColor: ArgonColors.white,
+            fillColor: OlukoColors.white,
             hintStyle: TextStyle(
-              color: ArgonColors.muted,
+              color: OlukoColors.muted,
             ),
             suffixIcon: suffixIcon,
             prefixIcon: prefixIcon,
