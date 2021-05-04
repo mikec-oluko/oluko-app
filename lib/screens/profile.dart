@@ -20,7 +20,11 @@ class _ProfilePageState extends State<ProfilePage> {
     return FutureBuilder(
         future: getProfileInfo(),
         builder: (context, snapshot) {
-          return signUpForm();
+          if (snapshot.hasData) {
+            return signUpForm();
+          } else {
+            return SizedBox();
+          }
         });
   }
 
@@ -225,8 +229,8 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> getProfileInfo() async {
-    this.profileInfo = await LoginService.retrieveLoginData();
-    return this.profileInfo;
+    profileInfo = await LoginService.retrieveLoginData();
+    return profileInfo;
   }
 
   Future<void> returnToHome() async {
