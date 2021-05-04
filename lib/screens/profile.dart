@@ -1,57 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:oluko_app/BLoC/auth-bloc.dart';
-import 'package:oluko_app/BLoC/bloc-provider.dart';
 import 'package:oluko_app/models/sign-up-request.dart';
 import 'package:oluko_app/models/sign-up-response.dart';
-import 'package:oluko_app/services/loader-service.dart';
+import 'package:oluko_app/services/login-service.dart';
 
-class SignUpWithMailPage extends StatefulWidget {
-  SignUpWithMailPage({Key key}) : super(key: key);
-
-  @override
-  _SignUpWithMailPageState createState() => _SignUpWithMailPageState();
-}
-
-class _SignUpWithMailPageState extends State<SignUpWithMailPage> {
-  var bloc = SignUpWithEmailBloc();
+class ProfilePage extends StatefulWidget {
+  ProfilePage({Key key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider<SignUpWithEmailBloc>(
-        bloc: bloc, child: SignUpWithMailContentPage());
-  }
+  _ProfilePageState createState() => _ProfilePageState();
 }
 
-class SignUpWithMailContentPage extends StatefulWidget {
-  SignUpWithMailContentPage({Key key}) : super(key: key);
-
-  @override
-  _SignUpWithMailContentPageState createState() =>
-      _SignUpWithMailContentPageState();
-}
-
-class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
-  int _counter = 0;
+class _ProfilePageState extends State<ProfilePage> {
   final _formKey = GlobalKey<FormState>();
   SignUpRequest _requestData = SignUpRequest();
-  var bloc = SignUpWithEmailBloc();
-
+  SignUpResponse profileInfo;
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<SignUpResponse>(
-        stream: bloc.authStream,
+    return FutureBuilder(
+        future: getProfileInfo(),
         builder: (context, snapshot) {
-          final authResponse = snapshot.data;
-          if (authResponse != null) {
-            handleResult(snapshot);
-            return SizedBox();
-          } else if (snapshot.hasError) {
-            handleError(snapshot);
-            return signUpForm();
-          } else {
-            return signUpForm();
-          }
+          return signUpForm();
         });
   }
 
@@ -95,41 +64,10 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
     return Container(
         width: MediaQuery.of(context).size.width,
         height: 400,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Column(children: formFields()),
-            SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: StreamBuilder(
-                    stream: BlocProvider.of<SignUpWithEmailBloc>(context)
-                        .authStream,
-                    builder: (context, snapshot) {
-                      return ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              primary: Colors.brown.shade300),
-                          onPressed: () async {
-                            if (_formKey.currentState.validate()) {
-                              _formKey.currentState.save();
-                              bloc.signUp(context, _requestData);
-                              LoaderService.startLoading(context);
-                            }
-                          },
-                          child: Stack(children: [
-                            Align(
-                                alignment: Alignment.centerRight,
-                                child: Icon(Icons.navigate_next)),
-                            Align(
-                              child: Text('SIGN UP'),
-                            )
-                          ]));
-                    })),
-            SizedBox(height: 10),
-            Text('Already a Subscribed user?'),
-            Text('Log In')
-          ],
-        ));
+        child:
+            Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+          Column(children: formFields()),
+        ]));
   }
 
   Widget titleSection() {
@@ -137,7 +75,7 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
         width: MediaQuery.of(context).size.width,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(
-            'Sign Up to get started',
+            'Your profile',
             textAlign: TextAlign.start,
             style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
           ),
@@ -145,7 +83,7 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
             height: 10,
           ),
           Text(
-            'Create an account, You are just one step away!',
+            'Your personal information',
             style: TextStyle(fontSize: 17, fontWeight: FontWeight.w300),
           )
         ]));
@@ -180,6 +118,8 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
           }
           return null;
         },
+        initialValue: this.profileInfo.firstName,
+        enabled: false,
         onSaved: (value) {
           this._requestData.firstName = value;
         },
@@ -205,6 +145,8 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
           }
           return null;
         },
+        initialValue: this.profileInfo.lastName,
+        enabled: false,
         onSaved: (value) {
           this._requestData.lastName = value;
         },
@@ -230,6 +172,8 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
           }
           return null;
         },
+        initialValue: this.profileInfo.email,
+        enabled: false,
         onSaved: (value) {
           this._requestData.email = value;
         },
@@ -266,6 +210,8 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
           }
           return null;
         },
+        initialValue: 'samplePassword',
+        enabled: false,
       )
     ];
   }
@@ -276,6 +222,11 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
     SchedulerBinding.instance.addPostFrameCallback((_) {
       returnToHome();
     });
+  }
+
+  Future<void> getProfileInfo() async {
+    this.profileInfo = await LoginService.retrieveLoginData();
+    return this.profileInfo;
   }
 
   Future<void> returnToHome() async {

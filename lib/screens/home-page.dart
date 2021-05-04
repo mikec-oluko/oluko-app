@@ -46,6 +46,12 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Text('SIGN UP'),
             style: ElevatedButton.styleFrom(
                 shadowColor: Colors.transparent, primary: Colors.transparent),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pushNamed(context, '/profile'),
+            child: Text('PROFILE'),
+            style: ElevatedButton.styleFrom(
+                shadowColor: Colors.transparent, primary: Colors.transparent),
           )
         ],
       ),
