@@ -62,6 +62,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   width: MediaQuery.of(context).size.width,
                   color: Colors.black,
                   colorBlendMode: BlendMode.softLight,
+                  errorBuilder: (BuildContext context, Object exception,
+                      StackTrace stackTrace) {
+                    return Text('Your error widget...');
+                  },
                 ),
                 Positioned(
                     child: Padding(

@@ -103,6 +103,11 @@ class MainSignUpPage extends StatelessWidget {
                                       child: Image.network(
                                         'https://img.icons8.com/color/452/google-logo.png',
                                         width: 30,
+                                        errorBuilder: (BuildContext context,
+                                            Object exception,
+                                            StackTrace stackTrace) {
+                                          return Text('Your error widget...');
+                                        },
                                       ),
                                     ),
                                     Align(
@@ -124,6 +129,11 @@ class MainSignUpPage extends StatelessWidget {
                                       child: Image.network(
                                         'https://cdn.icon-icons.com/icons2/1826/PNG/512/4202110facebooklogosocialsocialmedia-115707_115594.png',
                                         width: 30,
+                                        errorBuilder: (BuildContext context,
+                                            Object exception,
+                                            StackTrace stackTrace) {
+                                          return Text('Your error widget...');
+                                        },
                                       ),
                                     ),
                                     Align(

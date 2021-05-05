@@ -40,6 +40,9 @@ class CardInfo extends StatelessWidget {
                             image: DecorationImage(
                               image: NetworkImage(img),
                               fit: BoxFit.cover,
+                              onError: (exception, stackTrace) {
+                                return Text('Your error widget...');
+                              },
                             ))),
                     Container(
                         decoration: BoxDecoration(

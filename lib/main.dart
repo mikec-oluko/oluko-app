@@ -7,12 +7,14 @@ void main() {
   runApp(MyApp());
 }
 
+const OLUKO = 'Oluko';
+
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: '${OLUKO}',
       theme: ThemeData(
         primarySwatch: Colors.grey,
       ),

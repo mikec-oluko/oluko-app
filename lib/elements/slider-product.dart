@@ -44,6 +44,10 @@ class _ProductCarouselState extends State<ProductCarousel> {
                               item["img"],
                               fit: BoxFit.cover,
                               alignment: Alignment.topCenter,
+                              errorBuilder: (BuildContext context,
+                                  Object exception, StackTrace stackTrace) {
+                                return Text('Your error widget...');
+                              },
                             ),
                           ),
                         ),
