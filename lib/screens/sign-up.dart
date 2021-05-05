@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:oluko_app/BLoC/auth-bloc.dart';
+import 'package:oluko_app/BLoC/sign-up-with-email-bloc.dart';
 import 'package:oluko_app/BLoC/bloc-provider.dart';
 
 class SignUpPage extends StatefulWidget {

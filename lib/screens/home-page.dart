@@ -361,6 +361,13 @@ class _MyHomePageState extends State<MyHomePage> {
         style: ElevatedButton.styleFrom(
             shadowColor: Colors.transparent, primary: Colors.transparent),
       ));
+      options.add(ElevatedButton(
+        onPressed: () =>
+            Navigator.pushNamed(context, '/log-in').then((value) => onGoBack()),
+        child: Text('LOG IN'),
+        style: ElevatedButton.styleFrom(
+            shadowColor: Colors.transparent, primary: Colors.transparent),
+      ));
     } else {
       options.add(ElevatedButton(
         onPressed: () {
