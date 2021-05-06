@@ -1,10 +1,9 @@
 import 'dart:convert';
-
-import 'package:oluko_app/models/sign-up-response.dart';
+import 'package:oluko_app/models/user-response.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginService {
-  static Future<bool> storeLoginData(SignUpResponse signUpResponse) async {
+  static Future<bool> storeLoginData(UserResponse signUpResponse) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String encodedJson = jsonEncode(signUpResponse);
     bool loginSaved = await prefs.setString('login-data', encodedJson);
@@ -12,14 +11,14 @@ class LoginService {
     return loginSaved;
   }
 
-  static Future<SignUpResponse> retrieveLoginData() async {
+  static Future<UserResponse> retrieveLoginData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String savedData = prefs.getString('login-data');
     if (savedData == null) {
       return null;
     }
     dynamic decodedJson = jsonDecode(savedData);
-    SignUpResponse signUpResponse = SignUpResponse.fromJson(decodedJson);
+    UserResponse signUpResponse = UserResponse.fromJson(decodedJson);
     print('Retrieved login info.');
     return signUpResponse;
   }
@@ -32,7 +31,7 @@ class LoginService {
   }
 
   static isLoggedIn() async {
-    SignUpResponse loginData = await retrieveLoginData();
+    UserResponse loginData = await retrieveLoginData();
     return loginData != null;
   }
 }

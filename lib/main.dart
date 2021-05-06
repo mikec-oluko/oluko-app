@@ -6,6 +6,7 @@ import 'package:oluko_app/screens/sign-up-with-mail.dart';
 import 'package:oluko_app/screens/sign-up.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
 }
 

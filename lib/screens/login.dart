@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:oluko_app/models/sign-up-request.dart';
+import 'package:oluko_app/BLoC/bloc-provider.dart';
+import 'package:oluko_app/BLoC/login-bloc.dart';
+import 'package:oluko_app/models/login-request.dart';
 import 'package:oluko_app/models/sign-up-response.dart';
+import 'package:oluko_app/services/loader-service.dart';
 import 'package:oluko_app/services/login-service.dart';
 
 class LoginPage extends StatefulWidget {
@@ -13,47 +16,60 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  SignUpRequest _requestData = SignUpRequest();
+  LoginRequest _requestData = LoginRequest();
   SignUpResponse profileInfo;
+  final bloc = LoginBloc();
+
   @override
   Widget build(BuildContext context) {
-    return loginForm();
+    return BlocProvider(
+        bloc: bloc,
+        child: Builder(builder: (context) {
+          return loginForm();
+        }));
   }
 
   Widget loginForm() {
-    return Form(
-        key: _formKey,
-        child: Scaffold(
-            appBar: AppBar(
-              // Here we take the value from the MyHomePage object that was created by
-              // the App.build method, and use it to set our appbar title.
-              title: Text('Sign Up'),
-              backgroundColor: Colors.white,
-              actions: [],
-            ),
-            body: Container(
-                color: Colors.brown.shade100,
-                child: ListView(children: [
-                  Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 15),
-                      child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          child: Column(children: [
-                            SizedBox(height: 20),
-                            Align(
-                                alignment: Alignment.centerRight,
-                                child: IconButton(
-                                  icon: Icon(Icons.cancel),
-                                  color: Colors.grey,
-                                  iconSize: 30,
-                                  onPressed: () => Navigator.pop(context),
-                                )),
-                            SizedBox(height: 20),
-                            titleSection(),
-                            SizedBox(height: 50),
-                            formSection()
-                          ])))
-                ]))));
+    return StreamBuilder(
+        stream: bloc.stream,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            handleResult(snapshot);
+          }
+          return Form(
+              key: _formKey,
+              child: Scaffold(
+                  appBar: AppBar(
+                    // Here we take the value from the MyHomePage object that was created by
+                    // the App.build method, and use it to set our appbar title.
+                    title: Text('Sign Up'),
+                    backgroundColor: Colors.white,
+                    actions: [],
+                  ),
+                  body: Container(
+                      color: Colors.brown.shade100,
+                      child: ListView(children: [
+                        Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 15),
+                            child: Container(
+                                width: MediaQuery.of(context).size.width,
+                                child: Column(children: [
+                                  SizedBox(height: 20),
+                                  Align(
+                                      alignment: Alignment.centerRight,
+                                      child: IconButton(
+                                        icon: Icon(Icons.cancel),
+                                        color: Colors.grey,
+                                        iconSize: 30,
+                                        onPressed: () => Navigator.pop(context),
+                                      )),
+                                  SizedBox(height: 20),
+                                  titleSection(),
+                                  SizedBox(height: 50),
+                                  formSection()
+                                ])))
+                      ]))));
+        });
   }
 
   Widget formSection() {
@@ -116,7 +132,7 @@ class _LoginPageState extends State<LoginPage> {
           return null;
         },
         onSaved: (value) {
-          this._requestData.firstName = value;
+          this._requestData.email = value;
         },
       ),
       TextFormField(
@@ -170,8 +186,15 @@ class _LoginPageState extends State<LoginPage> {
               child: ElevatedButton(
                   style:
                       ElevatedButton.styleFrom(primary: Colors.brown.shade300),
-                  onPressed: () =>
-                      Navigator.pushNamed(context, '/sign-up-with-email'),
+                  onPressed: () {
+                    _formKey.currentState.save();
+                    LoaderService.startLoading(context);
+                    bloc.login(
+                        context,
+                        LoginRequest(
+                            email: _requestData.email,
+                            password: _requestData.password));
+                  },
                   child: Stack(children: [
                     Align(
                         alignment: Alignment.centerRight,
@@ -240,7 +263,8 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> getProfileInfo() async {
-    profileInfo = await LoginService.retrieveLoginData();
+    profileInfo = SignUpResponse.fromJson(
+        (await LoginService.retrieveLoginData()).toJson());
     return profileInfo;
   }
 

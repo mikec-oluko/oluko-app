@@ -229,7 +229,8 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> getProfileInfo() async {
-    profileInfo = await LoginService.retrieveLoginData();
+    profileInfo = SignUpResponse.fromJson(
+        (await LoginService.retrieveLoginData()).toJson());
     return profileInfo;
   }
 
