@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.oluko_app">
+    package="com.app.oluko_app">
    <application
         android:label="oluko_app"
         android:icon="@mipmap/ic_launcher">

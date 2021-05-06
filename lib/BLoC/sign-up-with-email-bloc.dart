@@ -5,7 +5,6 @@ import 'package:oluko_app/models/sign-up-request.dart';
 import 'package:oluko_app/models/sign-up-response.dart';
 import 'package:oluko_app/providers/sign-up-provider.dart';
 import 'package:oluko_app/services/loader-service.dart';
-import 'package:oluko_app/services/login-service.dart';
 
 import 'bloc.dart';
 
@@ -21,9 +20,8 @@ class SignUpWithEmailBloc implements Bloc {
     ApiResponse apiResponse = await _provider.signUp(request);
     if (apiResponse.statusCode == 200) {
       SignUpResponse response = SignUpResponse.fromJson(apiResponse.data);
-      await LoginService.storeLoginData(response);
-      _controller.sink.add(response);
       LoaderService.stopLoading();
+      _controller.sink.add(response);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Welcome, ${response.firstName}.'),
       ));

@@ -347,7 +347,10 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> getProfile() async {
-    profile = await LoginService.retrieveLoginData();
+    final profileData = await LoginService.retrieveLoginData();
+    profile = profileData != null
+        ? SignUpResponse.fromJson(profileData.toJson())
+        : null;
   }
 
   List<Widget> menuOptions() {
