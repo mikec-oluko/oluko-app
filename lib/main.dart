@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:oluko_app/screens/home_page.dart';
+import 'package:oluko_app/screens/home-page.dart';
+import 'package:oluko_app/screens/login.dart';
+import 'package:oluko_app/screens/profile.dart';
+import 'package:oluko_app/screens/sign-up-with-mail.dart';
+import 'package:oluko_app/screens/sign-up.dart';
 
 void main() {
   runApp(MyApp());
@@ -17,6 +21,10 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => MyHomePage(title: ''),
+        '/sign-up': (context) => SignUpPage(),
+        '/sign-up-with-email': (context) => SignUpWithMailPage(),
+        '/profile': (context) => ProfilePage(),
+        '/log-in': (context) => LoginPage()
       },
     );
   }

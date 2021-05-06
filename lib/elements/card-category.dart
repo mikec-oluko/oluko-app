@@ -41,7 +41,7 @@ class CardCategory extends StatelessWidget {
                 Center(
                   child: Text(title,
                       style: TextStyle(
-                          color: ArgonColors.white,
+                          color: OlukoColors.white,
                           fontWeight: FontWeight.w600,
                           fontSize: 18.0)),
                 )
