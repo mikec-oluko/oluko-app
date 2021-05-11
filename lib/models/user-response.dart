@@ -1,4 +1,4 @@
-class SignUpResponse {
+class UserResponse {
   final String id;
   final String firstName;
   final String lastName;
@@ -7,7 +7,7 @@ class SignUpResponse {
   final num hubspotCompanyId;
   final num hubspotContactId;
 
-  SignUpResponse.fromJson(Map json)
+  UserResponse.fromJson(Map json)
       : id = json['id'],
         firstName = json['first_name'],
         lastName = json['last_name'],

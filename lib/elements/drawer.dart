@@ -4,16 +4,16 @@ import 'package:oluko_app/constants/Theme.dart';
 
 import 'package:oluko_app/elements/drawer-tile.dart';
 
-class ArgonDrawer extends StatelessWidget {
+class OlukoDrawer extends StatelessWidget {
   final String currentPage;
 
-  ArgonDrawer({this.currentPage});
+  OlukoDrawer({this.currentPage});
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
         child: Container(
-      color: ArgonColors.white,
+      color: OlukoColors.white,
       child: Column(children: [
         Container(
             height: MediaQuery.of(context).size.height * 0.1,
@@ -24,7 +24,7 @@ class ArgonDrawer extends StatelessWidget {
                 alignment: Alignment.bottomLeft,
                 child: Padding(
                   padding: const EdgeInsets.only(left: 32),
-                  child: Image.asset("assets/img/argon-logo.png"),
+                  child: Image.asset("assets/img/Oluko-logo.png"),
                 ),
               ),
             )),
@@ -39,7 +39,7 @@ class ArgonDrawer extends StatelessWidget {
                     if (currentPage != "Home")
                       Navigator.pushReplacementNamed(context, '/home');
                   },
-                  iconColor: ArgonColors.primary,
+                  iconColor: OlukoColors.primary,
                   title: "Home",
                   isSelected: currentPage == "Home" ? true : false),
               DrawerTile(
@@ -48,7 +48,7 @@ class ArgonDrawer extends StatelessWidget {
                     if (currentPage != "Profile")
                       Navigator.pushReplacementNamed(context, '/profile');
                   },
-                  iconColor: ArgonColors.warning,
+                  iconColor: OlukoColors.warning,
                   title: "Profile",
                   isSelected: currentPage == "Profile" ? true : false),
               DrawerTile(
@@ -57,7 +57,7 @@ class ArgonDrawer extends StatelessWidget {
                     if (currentPage != "Account")
                       Navigator.pushReplacementNamed(context, '/account');
                   },
-                  iconColor: ArgonColors.info,
+                  iconColor: OlukoColors.info,
                   title: "Account",
                   isSelected: currentPage == "Account" ? true : false),
               DrawerTile(
@@ -66,7 +66,7 @@ class ArgonDrawer extends StatelessWidget {
                     if (currentPage != "Elements")
                       Navigator.pushReplacementNamed(context, '/elements');
                   },
-                  iconColor: ArgonColors.error,
+                  iconColor: OlukoColors.error,
                   title: "Elements",
                   isSelected: currentPage == "Elements" ? true : false),
               DrawerTile(
@@ -75,7 +75,7 @@ class ArgonDrawer extends StatelessWidget {
                     if (currentPage != "Articles")
                       Navigator.pushReplacementNamed(context, '/articles');
                   },
-                  iconColor: ArgonColors.primary,
+                  iconColor: OlukoColors.primary,
                   title: "Articles",
                   isSelected: currentPage == "Articles" ? true : false),
             ],
@@ -89,7 +89,7 @@ class ArgonDrawer extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Divider(height: 4, thickness: 0, color: ArgonColors.muted),
+                  Divider(height: 4, thickness: 0, color: OlukoColors.muted),
                   Padding(
                     padding:
                         const EdgeInsets.only(top: 16.0, left: 16, bottom: 8),
@@ -101,7 +101,7 @@ class ArgonDrawer extends StatelessWidget {
                   ),
                   DrawerTile(
                       icon: Icons.airplanemode_active,
-                      iconColor: ArgonColors.muted,
+                      iconColor: OlukoColors.muted,
                       title: "Getting Started",
                       isSelected:
                           currentPage == "Getting started" ? true : false),
