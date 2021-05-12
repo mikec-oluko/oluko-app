@@ -2,7 +2,7 @@ class ApiResponse {
   ApiResponse({this.message, this.error, this.statusCode, this.data});
 
   num statusCode;
-  String message;
+  List<dynamic> message;
   String error;
   dynamic data;
 

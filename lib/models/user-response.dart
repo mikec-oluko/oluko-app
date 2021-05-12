@@ -1,11 +1,13 @@
 class UserResponse {
-  final String id;
-  final String firstName;
-  final String lastName;
-  final String email;
-  final String firebaseId;
-  final num hubspotCompanyId;
-  final num hubspotContactId;
+  UserResponse();
+
+  String id;
+  String firstName;
+  String lastName;
+  String email;
+  String firebaseId;
+  num hubspotCompanyId;
+  num hubspotContactId;
 
   UserResponse.fromJson(Map json)
       : id = json['id'],

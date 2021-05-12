@@ -28,9 +28,9 @@ class SignUpWithEmailBloc implements Bloc {
     } else {
       LoaderService.stopLoading();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(apiResponse.message),
+        content: Text(apiResponse.message[0]),
       ));
-      _controller.sink.addError(apiResponse.message);
+      _controller.sink.addError(apiResponse.message[0]);
     }
   }
 

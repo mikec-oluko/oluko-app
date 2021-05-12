@@ -213,7 +213,9 @@ class _LoginPageState extends State<LoginPage> {
               width: double.infinity,
               height: 50,
               child: OutlinedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    bloc.loginWithGoogle(context);
+                  },
                   style:
                       OutlinedButton.styleFrom(backgroundColor: Colors.white),
                   child: Stack(children: [
@@ -235,7 +237,9 @@ class _LoginPageState extends State<LoginPage> {
               width: double.infinity,
               height: 50,
               child: OutlinedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    bloc.loginWithFacebook(context);
+                  },
                   style:
                       OutlinedButton.styleFrom(backgroundColor: Colors.white),
                   child: Stack(children: [
