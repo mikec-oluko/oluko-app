@@ -1,4 +1,4 @@
-git_url("https://bitbucket.org/mikec-oluko/ios-singing/src/master/")
+git_url("git@bitbucket.org:mikec-oluko/ios-singing.git")
 
 storage_mode("git") 
  
