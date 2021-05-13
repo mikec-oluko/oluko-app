@@ -44,7 +44,6 @@ jobs:
         run: |
           cd ./ios && bundle exec fastlane beta
         env:
-          GIT_URL: ${{ secrets.GIT_URL }}
           TEAM_ID: ${{ secrets.TEAM_ID }}
           ITC_TEAM_ID: ${{ secrets.ITC_TEAM_ID }}
           FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
