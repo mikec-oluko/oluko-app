@@ -16,6 +16,12 @@
 default_platform(:ios)
 
 platform :ios do
+
+  desc "Run tests"
+  lane :tests do
+      run_tests(scheme: "iOS")
+  end
+
   desc "Push a new beta build to TestFlight"
   lane :beta do
     if is_ci
@@ -27,13 +33,13 @@ platform :ios do
         timeout: 3600,
         lock_when_sleeps: false
       )
+      match(
+        type: "appstore",
+        readonly: is_ci,
+        keychain_name: ENV['MATCH_KEYCHAIN_NAME'],
+        keychain_password: ENV["MATCH_KEYCHAIN_PASSWORD"],
+      )
     end
-    match(
-      type: "appstore",
-      readonly: is_ci,
-      keychain_name: ENV['MATCH_KEYCHAIN_NAME'],
-      keychain_password: ENV["MATCH_KEYCHAIN_PASSWORD"],
-    )
     increment_build_number(xcodeproj: "Runner.xcodeproj")
     build_app(workspace: "Runner.xcworkspace", scheme: "Runner",
     export_method: "app-store",xcargs: "-allowProvisioningUpdates")
