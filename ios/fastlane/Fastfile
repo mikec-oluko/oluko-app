@@ -25,6 +25,7 @@ platform :ios do
   desc "Push a new beta build to TestFlight"
   lane :beta do
     if is_ci
+      xcversion(version: "~> 12.4.0")
       create_keychain(
         name: ENV['MATCH_KEYCHAIN_NAME'],
         password: ENV["MATCH_KEYCHAIN_PASSWORD"],
@@ -43,6 +44,9 @@ platform :ios do
     increment_build_number(xcodeproj: "Runner.xcodeproj")
     build_app(workspace: "Runner.xcworkspace", scheme: "Runner",
     export_method: "app-store",xcargs: "-allowProvisioningUpdates")
+    firebase_app_distribution(
+            app: "1:14784345427:ios:e3aa4c755c3d4138131da6",
+        )
     upload_to_testflight
   end
 end
