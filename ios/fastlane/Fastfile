@@ -25,7 +25,7 @@ platform :ios do
   desc "Push a new beta build to TestFlight"
   lane :beta do
     if is_ci
-      xcversion(version: "~> 12.4.0")
+      # xcversion(version: "~> 12.4.0")
       create_keychain(
         name: ENV['MATCH_KEYCHAIN_NAME'],
         password: ENV["MATCH_KEYCHAIN_PASSWORD"],
