@@ -47,6 +47,10 @@ class _GalleryCarouselState extends State<GalleryCarousel> {
                                 alignment: Alignment.topCenter,
                                 color: Colors.black,
                                 colorBlendMode: BlendMode.softLight,
+                                errorBuilder: (BuildContext context,
+                                    Object exception, StackTrace stackTrace) {
+                                  return Text('Your error widget...');
+                                },
                               ),
                             ),
                           ),
