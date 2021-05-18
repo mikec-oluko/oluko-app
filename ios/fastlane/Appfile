@@ -1,0 +1,8 @@
+app_identifier("com.app.olukoApp") # The bundle identifier of your app
+apple_id("mikec@oluko.com") # Your Apple email address
+
+itc_team_id("122944779") # App Store Connect Team ID
+team_id("65ZQ79YCT9") # Developer Portal Team ID
+
+# For more information about the Appfile, see:
+#     https://docs.fastlane.tools/advanced/#appfile
