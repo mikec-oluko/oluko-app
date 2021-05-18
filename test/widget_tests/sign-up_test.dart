@@ -51,15 +51,40 @@ void main() {
       final signUpButtonTextFinder = find.text('SIGN UP WITH EMAIL');
       expect(signUpButtonTextFinder, findsOneWidget);
 
-      var elevatedButtons = find
-          .byWidgetPredicate(
-            (Widget widget) => widget is ElevatedButton,
-            description: 'widget elevated button',
-          )
-          .allCandidates;
-      elevatedButtons.any((element) =>
-          element.widget.toStringDeep().contains("/sign-up-with-email") &&
-          element.widget.toStringDeep().contains("SIGN UP WITH EMAIL"));
+      var elevatedButtons = find.byWidgetPredicate(
+        (Widget widget) => widget is ElevatedButton,
+        description: 'widget elevated button',
+      );
+
+      expect(elevatedButtons, findsOneWidget);
+      // elevatedButtons.any((element) =>
+      //     element.widget.toStringDeep().contains("/sign-up-with-email") &&
+      //     element.widget.toStringDeep().contains("SIGN UP WITH EMAIL"));
+    });
+  });
+
+  testWidgets('SignUp has a Sign up with Google button',
+      (WidgetTester tester) async {
+    provideMockedNetworkImages(() async {
+      Widget testWidget = new MediaQuery(
+          data: new MediaQueryData(),
+          child: new MaterialApp(home: new SignUpPage()));
+      await tester.pumpWidget(testWidget);
+      await tester.pumpAndSettle(const Duration(seconds: 2));
+
+      final signUpButtonTextFinder = find.text('Sign In with Google');
+      expect(signUpButtonTextFinder, findsOneWidget);
+
+      var signUpButtonFinder = find.byWidgetPredicate(
+        (Widget widget) => widget is OutlinedButton,
+        description: 'widget outlined button',
+      );
+
+      expect(signUpButtonTextFinder, findsOneWidget);
+      expect(signUpButtonFinder, findsWidgets);
+      // elevatedButtons.any((element) =>
+      //     element.widget.toStringDeep().contains("/sign-up-with-email") &&
+      //     element.widget.toStringDeep().contains("SIGN UP WITH EMAIL"));
     });
   });
 }
