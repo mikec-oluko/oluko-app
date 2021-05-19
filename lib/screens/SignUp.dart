@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:oluko_app/BLoC/login-bloc.dart';
-import 'package:oluko_app/BLoC/sign-up-with-email-bloc.dart';
-import 'package:oluko_app/BLoC/bloc-provider.dart';
+import 'package:oluko_app/BLoC/AuthBloc.dart';
+import 'package:oluko_app/BLoC/UserBloc.dart';
+import 'package:oluko_app/BLoC/BlocProvider.dart';
 
 class SignUpPage extends StatefulWidget {
   SignUpPage({Key key}) : super(key: key);

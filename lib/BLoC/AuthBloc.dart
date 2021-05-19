@@ -4,11 +4,11 @@ import 'package:oluko_app/models/api-response.dart';
 import 'package:oluko_app/models/login-request.dart';
 import 'package:oluko_app/models/states/login-state.dart';
 import 'package:oluko_app/models/user-response.dart';
-import 'package:oluko_app/providers/AuthRepository.dart';
-import 'package:oluko_app/providers/UserRepository.dart';
+import 'package:oluko_app/repositories/AuthRepository.dart';
+import 'package:oluko_app/repositories/UserRepository.dart';
 import 'package:oluko_app/utils/AppLoader.dart';
 import 'package:oluko_app/utils/AppMessages.dart';
-import 'bloc.dart';
+import 'Bloc.dart';
 
 class LoginBloc implements Bloc {
   var _loginResponse;

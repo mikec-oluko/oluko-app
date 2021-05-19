@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:oluko_app/BLoC/sign-up-with-email-bloc.dart';
-import 'package:oluko_app/BLoC/bloc-provider.dart';
+import 'package:oluko_app/BLoC/UserBloc.dart';
+import 'package:oluko_app/BLoC/BlocProvider.dart';
 import 'package:oluko_app/models/sign-up-request.dart';
 import 'package:oluko_app/models/sign-up-response.dart';
 import 'package:oluko_app/utils/AppLoader.dart';

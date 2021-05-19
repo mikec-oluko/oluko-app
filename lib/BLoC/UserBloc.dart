@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:oluko_app/models/api-response.dart';
 import 'package:oluko_app/models/sign-up-request.dart';
 import 'package:oluko_app/models/sign-up-response.dart';
-import 'package:oluko_app/providers/AuthRepository.dart';
+import 'package:oluko_app/repositories/AuthRepository.dart';
 import 'package:oluko_app/utils/AppLoader.dart';
 
-import 'bloc.dart';
+import 'Bloc.dart';
 
 class SignUpWithEmailBloc implements Bloc {
   var _signUpResponse;

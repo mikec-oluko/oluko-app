@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:oluko_app/BLoC/bloc.dart';
+import 'package:oluko_app/BLoC/Bloc.dart';
 
 class BlocProvider<T extends Bloc> extends StatefulWidget {
   final Widget child;
