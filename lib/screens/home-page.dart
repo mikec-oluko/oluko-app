@@ -3,8 +3,8 @@ import 'package:oluko_app/elements/card-carousel.dart';
 import 'package:oluko_app/elements/card-info.dart';
 import 'package:oluko_app/elements/gallery-carousel.dart';
 import 'package:oluko_app/models/sign-up-response.dart';
-import 'package:oluko_app/services/login-service.dart';
-import 'package:oluko_app/services/snackbar-service.dart';
+import 'package:oluko_app/providers/AuthRepository.dart';
+import 'package:oluko_app/utils/AppMessages.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
@@ -347,7 +347,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> getProfile() async {
-    final profileData = await LoginService.retrieveLoginData();
+    final profileData = await AuthRepository.retrieveLoginData();
     profile = profileData != null
         ? SignUpResponse.fromJson(profileData.toJson())
         : null;
@@ -374,8 +374,8 @@ class _MyHomePageState extends State<MyHomePage> {
     } else {
       options.add(ElevatedButton(
         onPressed: () {
-          LoginService.removeLoginData();
-          SnackbarService.showSnackbar(context, 'Logged out.');
+          AuthRepository.removeLoginData();
+          AppMessages.showSnackbar(context, 'Logged out.');
           setState(() {});
         },
         child: Text('LOG OUT'),

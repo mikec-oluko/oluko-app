@@ -4,7 +4,7 @@ import 'package:oluko_app/BLoC/sign-up-with-email-bloc.dart';
 import 'package:oluko_app/BLoC/bloc-provider.dart';
 import 'package:oluko_app/models/sign-up-request.dart';
 import 'package:oluko_app/models/sign-up-response.dart';
-import 'package:oluko_app/services/loader-service.dart';
+import 'package:oluko_app/utils/AppLoader.dart';
 
 class SignUpWithMailPage extends StatefulWidget {
   SignUpWithMailPage({Key key}) : super(key: key);
@@ -113,7 +113,7 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
                             if (_formKey.currentState.validate()) {
                               _formKey.currentState.save();
                               bloc.signUp(context, _requestData);
-                              LoaderService.startLoading(context);
+                              AppLoader.startLoading(context);
                             }
                           },
                           child: Stack(children: [

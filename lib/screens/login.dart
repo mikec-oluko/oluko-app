@@ -4,8 +4,8 @@ import 'package:oluko_app/BLoC/bloc-provider.dart';
 import 'package:oluko_app/BLoC/login-bloc.dart';
 import 'package:oluko_app/models/login-request.dart';
 import 'package:oluko_app/models/sign-up-response.dart';
-import 'package:oluko_app/services/loader-service.dart';
-import 'package:oluko_app/services/login-service.dart';
+import 'package:oluko_app/providers/AuthRepository.dart';
+import 'package:oluko_app/utils/AppLoader.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
@@ -188,7 +188,7 @@ class _LoginPageState extends State<LoginPage> {
                       ElevatedButton.styleFrom(primary: Colors.brown.shade300),
                   onPressed: () {
                     _formKey.currentState.save();
-                    LoaderService.startLoading(context);
+                    AppLoader.startLoading(context);
                     bloc.login(
                         context,
                         LoginRequest(
@@ -268,7 +268,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> getProfileInfo() async {
     profileInfo = SignUpResponse.fromJson(
-        (await LoginService.retrieveLoginData()).toJson());
+        (await AuthRepository.retrieveLoginData()).toJson());
     return profileInfo;
   }
 

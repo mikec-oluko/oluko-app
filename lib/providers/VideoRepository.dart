@@ -1,14 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class FirebaseProvider {
-  static getUserByEmail(email) async {
-    QuerySnapshot docRef = await Firestore.instance
-        .collection('users')
-        .where('email', isEqualTo: email)
-        .getDocuments();
-    return docRef.documents[0].data;
-  }
-
+class VideoRepository {
   static listenToVideos(callback) async {
     Firestore.instance.collection('users').snapshots().listen((qs) {
       callback();

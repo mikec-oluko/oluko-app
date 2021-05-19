@@ -7,9 +7,12 @@ import 'package:http/http.dart' as http;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:oluko_app/models/sign-up-request.dart';
+import 'package:oluko_app/models/user-response.dart';
 import 'package:oluko_app/models/verify-token-request.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class LoginProvider {
+class AuthRepository {
   Future<ApiResponse> login(LoginRequest loginRequest) async {
     var body2 = loginRequest.toJson();
     Response response = await http.post(
@@ -74,5 +77,43 @@ class LoginProvider {
     } else {
       return null;
     }
+  }
+
+  Future<ApiResponse> signUp(SignUpRequest signUpRequest) async {
+    var body2 = signUpRequest.toJson();
+    Response response = await http.post(
+        Uri.parse(
+            "https://us-central1-oluko-2671e.cloudfunctions.net/auth/signup"),
+        body: body2);
+    var signUpResponseBody = jsonDecode(response.body);
+    ApiResponse apiResponse = ApiResponse.fromJson(signUpResponseBody);
+    return apiResponse;
+  }
+
+  static Future<bool> storeLoginData(UserResponse signUpResponse) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String encodedJson = jsonEncode(signUpResponse);
+    bool loginSaved = await prefs.setString('login-data', encodedJson);
+    print('Saved login info.');
+    return loginSaved;
+  }
+
+  static Future<UserResponse> retrieveLoginData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String savedData = prefs.getString('login-data');
+    if (savedData == null) {
+      return null;
+    }
+    dynamic decodedJson = jsonDecode(savedData);
+    UserResponse signUpResponse = UserResponse.fromJson(decodedJson);
+    print('Retrieved login info.');
+    return signUpResponse;
+  }
+
+  static Future<bool> removeLoginData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    Future<bool> removed = prefs.remove('login-data');
+    print('Removed login info.');
+    return removed;
   }
 }
