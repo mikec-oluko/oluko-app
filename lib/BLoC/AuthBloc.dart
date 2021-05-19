@@ -1,41 +1,54 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/api-response.dart';
 import 'package:oluko_app/models/login-request.dart';
-import 'package:oluko_app/models/states/login-state.dart';
 import 'package:oluko_app/models/user-response.dart';
 import 'package:oluko_app/repositories/AuthRepository.dart';
 import 'package:oluko_app/repositories/UserRepository.dart';
 import 'package:oluko_app/utils/AppLoader.dart';
 import 'package:oluko_app/utils/AppMessages.dart';
-import 'Bloc.dart';
+import 'package:oluko_app/utils/AppNavigator.dart';
 
-class LoginBloc implements Bloc {
-  var _loginResponse;
-  UserResponse get response => _loginResponse;
+abstract class AuthState {}
 
-  final _repository = AuthRepository();
-  final _userProvider = UserRepository();
-  final _controller = StreamController<LoginState>.broadcast();
-  Stream<LoginState> get stream => _controller.stream;
+class AuthSuccess extends AuthState {
+  final UserResponse user;
+  AuthSuccess({this.user});
+}
+
+class AuthFailure extends AuthState {
+  final Exception exception;
+  AuthFailure({this.exception});
+}
+
+class AuthLoading extends AuthState {}
+
+class AuthGuest extends AuthState {}
+
+class AuthBloc extends Cubit<AuthState> {
+  AuthBloc() : super(AuthLoading());
+
+  final _authRepository = AuthRepository();
+  final _userRepository = UserRepository();
 
   Future<void> login(context, LoginRequest request) async {
-    ApiResponse apiResponse = await _repository.login(request);
+    ApiResponse apiResponse = await _authRepository.login(request);
     if (apiResponse.statusCode != 200) {
       AppLoader.stopLoading();
       AppMessages.showSnackbar(context, apiResponse.message[0]);
-      _controller.sink.addError(LoginState(
-          error: apiResponse.error, errorMessages: apiResponse.message));
+      emit(AuthFailure(exception: Exception(apiResponse.message)));
       return;
     }
-    UserResponse user = await _userProvider.get(request.email);
+    UserResponse user = await _userRepository.get(request.email);
     AuthRepository.storeLoginData(user);
     AppLoader.stopLoading();
-    _controller.sink.add(LoginState(user: user));
+    AppNavigator().returnToHome(context);
+    emit(AuthSuccess(user: user));
   }
 
   Future<void> loginWithGoogle(context) async {
-    AuthResult result = await _repository.signInWithGoogle();
+    AuthResult result = await _authRepository.signInWithGoogle();
     FirebaseUser firebaseUser = result.user;
     UserResponse user = UserResponse();
     List<String> splitDisplayName = firebaseUser.displayName.split(' ');
@@ -46,11 +59,12 @@ class LoginBloc implements Bloc {
       user.lastName = splitDisplayName[1];
     }
     AuthRepository.storeLoginData(user);
-    _controller.sink.add(LoginState(user: user));
+    emit(AuthSuccess(user: user));
+    AppNavigator().returnToHome(context);
   }
 
   Future<void> loginWithFacebook(context) async {
-    AuthResult result = await _repository.signInWithFacebook();
+    AuthResult result = await _authRepository.signInWithFacebook();
     FirebaseUser firebaseUser = result.user;
     UserResponse user = UserResponse();
     List<String> splitDisplayName = firebaseUser.displayName.split(' ');
@@ -61,11 +75,7 @@ class LoginBloc implements Bloc {
       user.lastName = splitDisplayName[1];
     }
     AuthRepository.storeLoginData(user);
-    _controller.sink.add(LoginState(user: user));
-  }
-
-  @override
-  void dispose() {
-    _controller.close();
+    AppNavigator().returnToHome(context);
+    emit(AuthSuccess(user: user));
   }
 }

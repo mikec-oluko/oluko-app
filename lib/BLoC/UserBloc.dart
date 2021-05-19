@@ -1,27 +1,39 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/api-response.dart';
 import 'package:oluko_app/models/sign-up-request.dart';
 import 'package:oluko_app/models/sign-up-response.dart';
 import 'package:oluko_app/repositories/AuthRepository.dart';
 import 'package:oluko_app/utils/AppLoader.dart';
+import 'package:oluko_app/utils/AppNavigator.dart';
 
-import 'Bloc.dart';
+abstract class UserState {}
 
-class SignUpWithEmailBloc implements Bloc {
-  var _signUpResponse;
-  SignUpResponse get auth => _signUpResponse;
+class UserSuccess extends UserState {
+  final SignUpResponse user;
+  UserSuccess({this.user});
+}
+
+class UserLoading extends UserState {}
+
+class UserFailure extends UserState {
+  final Exception exception;
+  UserFailure({this.exception});
+}
+
+class UserBloc extends Cubit<UserState> {
+  UserBloc() : super(UserLoading());
 
   final _repository = AuthRepository();
-  final _controller = StreamController<SignUpResponse>.broadcast();
-  Stream<SignUpResponse> get authStream => _controller.stream;
 
   Future<void> signUp(context, SignUpRequest request) async {
     ApiResponse apiResponse = await _repository.signUp(request);
     if (apiResponse.statusCode == 200) {
       SignUpResponse response = SignUpResponse.fromJson(apiResponse.data);
       AppLoader.stopLoading();
-      _controller.sink.add(response);
+      AppNavigator().returnToHome(context);
+      emit(UserSuccess(user: response));
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Welcome, ${response.firstName}.'),
       ));
@@ -30,12 +42,7 @@ class SignUpWithEmailBloc implements Bloc {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(apiResponse.message[0]),
       ));
-      _controller.sink.addError(apiResponse.message[0]);
+      emit(UserFailure(exception: Exception(apiResponse.message[0])));
     }
-  }
-
-  @override
-  void dispose() {
-    _controller.close();
   }
 }

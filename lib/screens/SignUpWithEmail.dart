@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/BLoC/UserBloc.dart';
-import 'package:oluko_app/BLoC/BlocProvider.dart';
 import 'package:oluko_app/models/sign-up-request.dart';
 import 'package:oluko_app/models/sign-up-response.dart';
 import 'package:oluko_app/utils/AppLoader.dart';
@@ -14,12 +14,10 @@ class SignUpWithMailPage extends StatefulWidget {
 }
 
 class _SignUpWithMailPageState extends State<SignUpWithMailPage> {
-  var bloc = SignUpWithEmailBloc();
-
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<SignUpWithEmailBloc>(
-        bloc: bloc, child: SignUpWithMailContentPage());
+    return BlocProvider(
+        create: (context) => UserBloc(), child: SignUpWithMailContentPage());
   }
 }
 
@@ -32,27 +30,15 @@ class SignUpWithMailContentPage extends StatefulWidget {
 }
 
 class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
-  int _counter = 0;
   final _formKey = GlobalKey<FormState>();
   SignUpRequest _requestData = SignUpRequest();
-  var bloc = SignUpWithEmailBloc();
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<SignUpResponse>(
-        stream: bloc.authStream,
-        builder: (context, snapshot) {
-          final authResponse = snapshot.data;
-          if (authResponse != null) {
-            handleResult(snapshot);
-            return SizedBox();
-          } else if (snapshot.hasError) {
-            handleError(snapshot);
-            return signUpForm();
-          } else {
-            return signUpForm();
-          }
-        });
+    return BlocBuilder<UserBloc, UserState>(
+        builder: (context, UserState state) {
+      return signUpForm();
+    });
   }
 
   Widget signUpForm() {
@@ -102,29 +88,27 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
             SizedBox(
                 width: double.infinity,
                 height: 50,
-                child: StreamBuilder(
-                    stream: BlocProvider.of<SignUpWithEmailBloc>(context)
-                        .authStream,
-                    builder: (context, snapshot) {
-                      return ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              primary: Colors.brown.shade300),
-                          onPressed: () async {
-                            if (_formKey.currentState.validate()) {
-                              _formKey.currentState.save();
-                              bloc.signUp(context, _requestData);
-                              AppLoader.startLoading(context);
-                            }
-                          },
-                          child: Stack(children: [
-                            Align(
-                                alignment: Alignment.centerRight,
-                                child: Icon(Icons.navigate_next)),
-                            Align(
-                              child: Text('SIGN UP'),
-                            )
-                          ]));
-                    })),
+                child:
+                    BlocBuilder<UserBloc, UserState>(builder: (context, state) {
+                  return ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          primary: Colors.brown.shade300),
+                      onPressed: () async {
+                        if (_formKey.currentState.validate()) {
+                          _formKey.currentState.save();
+                          UserBloc()..signUp(context, _requestData);
+                          AppLoader.startLoading(context);
+                        }
+                      },
+                      child: Stack(children: [
+                        Align(
+                            alignment: Alignment.centerRight,
+                            child: Icon(Icons.navigate_next)),
+                        Align(
+                          child: Text('SIGN UP'),
+                        )
+                      ]));
+                })),
             SizedBox(height: 10),
             Text('Already a Subscribed user?'),
             Text('Log In')
@@ -268,17 +252,5 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
         },
       )
     ];
-  }
-
-  handleError(AsyncSnapshot snapshot) {}
-
-  handleResult(AsyncSnapshot snapshot) {
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      returnToHome();
-    });
-  }
-
-  Future<void> returnToHome() async {
-    Navigator.popUntil(context, ModalRoute.withName('/'));
   }
 }

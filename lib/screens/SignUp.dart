@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/BLoC/AuthBloc.dart';
-import 'package:oluko_app/BLoC/UserBloc.dart';
-import 'package:oluko_app/BLoC/BlocProvider.dart';
 
 class SignUpPage extends StatefulWidget {
   SignUpPage({Key key}) : super(key: key);
@@ -12,19 +11,6 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -46,153 +32,126 @@ class _SignUpPageState extends State<SignUpPage> {
 }
 
 class MainSignUpPage extends StatelessWidget {
-  final bloc = LoginBloc();
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-        bloc: bloc,
-        child: StreamBuilder(
-            stream: bloc.stream,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                handleResult(snapshot, context);
-              }
-              return Container(
-                  color: Colors.brown.shade100,
-                  child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 15),
-                      child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          child: Column(children: [
-                            SizedBox(height: 20),
-                            Align(
-                                alignment: Alignment.centerRight,
-                                child: IconButton(
-                                  icon: Icon(Icons.cancel),
-                                  color: Colors.grey,
-                                  iconSize: 30,
-                                  onPressed: () => Navigator.pop(context),
-                                )),
-                            SizedBox(height: 20),
-                            Container(
-                                width: MediaQuery.of(context).size.width,
-                                child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Sign Up to get started',
-                                        textAlign: TextAlign.start,
-                                        style: TextStyle(
-                                            fontSize: 30,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text(
-                                        'Create an account, You are just one step away!',
-                                        style: TextStyle(
-                                            fontSize: 17,
-                                            fontWeight: FontWeight.w300),
-                                      )
-                                    ])),
-                            SizedBox(height: 75),
-                            Container(
-                                width: MediaQuery.of(context).size.width,
-                                height: 300,
-                                child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    SizedBox(
-                                        width: double.infinity,
-                                        height: 50,
-                                        child: OutlinedButton(
-                                            onPressed: () =>
-                                                bloc.loginWithGoogle(context),
-                                            style: OutlinedButton.styleFrom(
-                                                backgroundColor: Colors.white),
-                                            child: Stack(children: [
-                                              Align(
-                                                alignment: Alignment.centerLeft,
-                                                child: Image.network(
-                                                  'https://img.icons8.com/color/452/google-logo.png',
-                                                  width: 30,
-                                                ),
-                                              ),
-                                              Align(
-                                                child: Text(
-                                                    'Sign In with Google',
-                                                    style: TextStyle(
-                                                        color: Colors.black)),
-                                              )
-                                            ]))),
-                                    SizedBox(
-                                        width: double.infinity,
-                                        height: 50,
-                                        child: OutlinedButton(
-                                            onPressed: () =>
-                                                bloc.loginWithFacebook(context),
-                                            style: OutlinedButton.styleFrom(
-                                                backgroundColor: Colors.white),
-                                            child: Stack(children: [
-                                              Align(
-                                                alignment: Alignment.centerLeft,
-                                                child: Image.network(
-                                                  'https://cdn.icon-icons.com/icons2/1826/PNG/512/4202110facebooklogosocialsocialmedia-115707_115594.png',
-                                                  width: 30,
-                                                ),
-                                              ),
-                                              Align(
-                                                child: Text(
-                                                    'Sign In with Facebook',
-                                                    style: TextStyle(
-                                                        color: Colors.black)),
-                                              )
-                                            ]))),
-                                    Padding(
-                                        padding:
-                                            EdgeInsets.symmetric(vertical: 15),
-                                        child: Text('- Or you can also -')),
-                                    SizedBox(
-                                        width: double.infinity,
-                                        height: 50,
-                                        child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                                primary: Colors.brown.shade300),
-                                            onPressed: () =>
-                                                Navigator.pushNamed(context,
-                                                    '/sign-up-with-email'),
-                                            child: Stack(children: [
-                                              Align(
-                                                  alignment:
-                                                      Alignment.centerRight,
-                                                  child: Icon(
-                                                      Icons.navigate_next)),
-                                              Align(
-                                                child:
-                                                    Text('SIGN UP WITH EMAIL'),
-                                              )
-                                            ]))),
-                                    SizedBox(height: 10),
-                                    Text(
-                                        'By Sharing your email you agree to our'),
-                                    Text('Terms of Service and Privacy Policy')
-                                  ],
-                                ))
-                          ]))));
-            }));
-  }
-
-  handleResult(AsyncSnapshot snapshot, context) {
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      returnToHome(context);
-    });
-  }
-
-  Future<void> returnToHome(context) async {
-    Navigator.popUntil(context, ModalRoute.withName('/'));
+        create: (context) => AuthBloc(),
+        child: BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
+          return Container(
+              color: Colors.brown.shade100,
+              child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 15),
+                  child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      child: Column(children: [
+                        SizedBox(height: 20),
+                        Align(
+                            alignment: Alignment.centerRight,
+                            child: IconButton(
+                              icon: Icon(Icons.cancel),
+                              color: Colors.grey,
+                              iconSize: 30,
+                              onPressed: () => Navigator.pop(context),
+                            )),
+                        SizedBox(height: 20),
+                        Container(
+                            width: MediaQuery.of(context).size.width,
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Sign Up to get started',
+                                    textAlign: TextAlign.start,
+                                    style: TextStyle(
+                                        fontSize: 30,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    'Create an account, You are just one step away!',
+                                    style: TextStyle(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w300),
+                                  )
+                                ])),
+                        SizedBox(height: 75),
+                        Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: 300,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                SizedBox(
+                                    width: double.infinity,
+                                    height: 50,
+                                    child: OutlinedButton(
+                                        onPressed: () => AuthBloc()
+                                          ..loginWithGoogle(context),
+                                        style: OutlinedButton.styleFrom(
+                                            backgroundColor: Colors.white),
+                                        child: Stack(children: [
+                                          Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Image.network(
+                                              'https://img.icons8.com/color/452/google-logo.png',
+                                              width: 30,
+                                            ),
+                                          ),
+                                          Align(
+                                            child: Text('Sign In with Google',
+                                                style: TextStyle(
+                                                    color: Colors.black)),
+                                          )
+                                        ]))),
+                                SizedBox(
+                                    width: double.infinity,
+                                    height: 50,
+                                    child: OutlinedButton(
+                                        onPressed: () => AuthBloc()
+                                          ..loginWithFacebook(context),
+                                        style: OutlinedButton.styleFrom(
+                                            backgroundColor: Colors.white),
+                                        child: Stack(children: [
+                                          Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Image.network(
+                                              'https://cdn.icon-icons.com/icons2/1826/PNG/512/4202110facebooklogosocialsocialmedia-115707_115594.png',
+                                              width: 30,
+                                            ),
+                                          ),
+                                          Align(
+                                            child: Text('Sign In with Facebook',
+                                                style: TextStyle(
+                                                    color: Colors.black)),
+                                          )
+                                        ]))),
+                                Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 15),
+                                    child: Text('- Or you can also -')),
+                                SizedBox(
+                                    width: double.infinity,
+                                    height: 50,
+                                    child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                            primary: Colors.brown.shade300),
+                                        onPressed: () => Navigator.pushNamed(
+                                            context, '/sign-up-with-email'),
+                                        child: Stack(children: [
+                                          Align(
+                                              alignment: Alignment.centerRight,
+                                              child: Icon(Icons.navigate_next)),
+                                          Align(
+                                            child: Text('SIGN UP WITH EMAIL'),
+                                          )
+                                        ]))),
+                                SizedBox(height: 10),
+                                Text('By Sharing your email you agree to our'),
+                                Text('Terms of Service and Privacy Policy')
+                              ],
+                            ))
+                      ]))));
+        }));
   }
 }
