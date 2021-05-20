@@ -3,10 +3,8 @@ import 'package:flutter/scheduler.dart';
 
 class AppMessages {
   static void showSnackbar(context, message) {
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(message),
-      ));
-    });
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+    ));
   }
 }

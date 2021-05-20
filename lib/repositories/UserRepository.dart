@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:oluko_app/models/user-response.dart';
+import 'package:oluko_app/models/UserResponse.dart';
 
 class UserRepository {
   Future<UserResponse> get(String email) async {

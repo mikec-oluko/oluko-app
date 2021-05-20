@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/BLoC/AuthBloc.dart';
-import 'package:oluko_app/models/login-request.dart';
-import 'package:oluko_app/models/sign-up-response.dart';
+import 'package:oluko_app/models/LoginRequest.dart';
+import 'package:oluko_app/models/SignUpResponse.dart';
 import 'package:oluko_app/utils/AppLoader.dart';
+import 'package:oluko_app/utils/AppNavigator.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
@@ -23,41 +24,43 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget loginForm() {
-    return BlocBuilder<AuthBloc, AuthState>(builder: (context, snapshot) {
-      return Form(
-          key: _formKey,
-          child: Scaffold(
-              appBar: AppBar(
-                // Here we take the value from the MyHomePage object that was created by
-                // the App.build method, and use it to set our appbar title.
-                title: Text('Sign Up'),
-                backgroundColor: Colors.white,
-                actions: [],
-              ),
-              body: Container(
-                  color: Colors.brown.shade100,
-                  child: ListView(children: [
-                    Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 15),
-                        child: Container(
-                            width: MediaQuery.of(context).size.width,
-                            child: Column(children: [
-                              SizedBox(height: 20),
-                              Align(
-                                  alignment: Alignment.centerRight,
-                                  child: IconButton(
-                                    icon: Icon(Icons.cancel),
-                                    color: Colors.grey,
-                                    iconSize: 30,
-                                    onPressed: () => Navigator.pop(context),
-                                  )),
-                              SizedBox(height: 20),
-                              titleSection(),
-                              SizedBox(height: 50),
-                              formSection()
-                            ])))
-                  ]))));
-    });
+    return BlocListener<AuthBloc, AuthState>(
+        listener: (context, snapshot) {
+          AppNavigator().returnToHome(context);
+        },
+        child: Form(
+            key: _formKey,
+            child: Scaffold(
+                appBar: AppBar(
+                  // Here we take the value from the MyHomePage object that was created by
+                  // the App.build method, and use it to set our appbar title.
+                  title: Text('Sign Up'),
+                  backgroundColor: Colors.white,
+                  actions: [],
+                ),
+                body: Container(
+                    color: Colors.brown.shade100,
+                    child: ListView(children: [
+                      Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 15),
+                          child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              child: Column(children: [
+                                SizedBox(height: 20),
+                                Align(
+                                    alignment: Alignment.centerRight,
+                                    child: IconButton(
+                                      icon: Icon(Icons.cancel),
+                                      color: Colors.grey,
+                                      iconSize: 30,
+                                      onPressed: () => Navigator.pop(context),
+                                    )),
+                                SizedBox(height: 20),
+                                titleSection(),
+                                SizedBox(height: 50),
+                                formSection()
+                              ])))
+                    ])))));
   }
 
   Widget formSection() {

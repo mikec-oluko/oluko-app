@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/models/api-response.dart';
-import 'package:oluko_app/models/sign-up-request.dart';
-import 'package:oluko_app/models/sign-up-response.dart';
+import 'package:oluko_app/models/ApiResponse.dart';
+import 'package:oluko_app/models/SignUpRequest.dart';
+import 'package:oluko_app/models/SignUpResponse.dart';
 import 'package:oluko_app/repositories/AuthRepository.dart';
 import 'package:oluko_app/utils/AppLoader.dart';
 import 'package:oluko_app/utils/AppNavigator.dart';

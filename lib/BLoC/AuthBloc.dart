@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/models/api-response.dart';
-import 'package:oluko_app/models/login-request.dart';
-import 'package:oluko_app/models/user-response.dart';
+import 'package:oluko_app/models/ApiResponse.dart';
+import 'package:oluko_app/models/LoginRequest.dart';
+import 'package:oluko_app/models/UserResponse.dart';
 import 'package:oluko_app/repositories/AuthRepository.dart';
 import 'package:oluko_app/repositories/UserRepository.dart';
 import 'package:oluko_app/utils/AppLoader.dart';
@@ -43,7 +43,7 @@ class AuthBloc extends Cubit<AuthState> {
     UserResponse user = await _userRepository.get(request.email);
     AuthRepository.storeLoginData(user);
     AppLoader.stopLoading();
-    AppNavigator().returnToHome(context);
+    await AppNavigator().returnToHome(context);
     emit(AuthSuccess(user: user));
   }
 
@@ -59,8 +59,8 @@ class AuthBloc extends Cubit<AuthState> {
       user.lastName = splitDisplayName[1];
     }
     AuthRepository.storeLoginData(user);
+    await AppNavigator().returnToHome(context);
     emit(AuthSuccess(user: user));
-    AppNavigator().returnToHome(context);
   }
 
   Future<void> loginWithFacebook(context) async {
@@ -75,7 +75,7 @@ class AuthBloc extends Cubit<AuthState> {
       user.lastName = splitDisplayName[1];
     }
     AuthRepository.storeLoginData(user);
-    AppNavigator().returnToHome(context);
+    await AppNavigator().returnToHome(context);
     emit(AuthSuccess(user: user));
   }
 }

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/BLoC/UserBloc.dart';
-import 'package:oluko_app/models/sign-up-request.dart';
-import 'package:oluko_app/models/sign-up-response.dart';
+import 'package:oluko_app/models/SignUpRequest.dart';
+import 'package:oluko_app/models/SignUpResponse.dart';
 import 'package:oluko_app/utils/AppLoader.dart';
 
 class SignUpWithMailPage extends StatefulWidget {
