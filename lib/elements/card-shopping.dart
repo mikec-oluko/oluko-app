@@ -32,7 +32,13 @@ class CardShopping extends StatelessWidget {
                       height: 65,
                       child: ClipRRect(
                           borderRadius: BorderRadius.circular(4.0),
-                          child: Image.network(img)),
+                          child: Image.network(
+                            img,
+                            errorBuilder: (BuildContext context,
+                                Object exception, StackTrace stackTrace) {
+                              return Text('Your error widget...');
+                            },
+                          )),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.all(Radius.circular(3.0)),
                       )),
