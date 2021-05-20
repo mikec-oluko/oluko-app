@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:oluko_app/BLoC/AuthBloc.dart';
 import 'package:oluko_app/models/SignUpRequest.dart';
 import 'package:oluko_app/models/SignUpResponse.dart';
-import 'package:oluko_app/repositories/AuthRepository.dart';
 
 class ProfilePage extends StatefulWidget {
   ProfilePage({Key key}) : super(key: key);
@@ -230,7 +230,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> getProfileInfo() async {
     profileInfo = SignUpResponse.fromJson(
-        (await AuthRepository.retrieveLoginData()).toJson());
+        (await AuthBloc().retrieveLoginData()).toJson());
     return profileInfo;
   }
 

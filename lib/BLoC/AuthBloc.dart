@@ -78,4 +78,8 @@ class AuthBloc extends Cubit<AuthState> {
     await AppNavigator().returnToHome(context);
     emit(AuthSuccess(user: user));
   }
+
+  Future<UserResponse> retrieveLoginData() {
+    return AuthRepository.retrieveLoginData();
+  }
 }
