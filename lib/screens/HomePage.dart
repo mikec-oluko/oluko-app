@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:oluko_app/elements/card-carousel.dart';
-import 'package:oluko_app/elements/card-info.dart';
-import 'package:oluko_app/elements/gallery-carousel.dart';
+import 'package:oluko_app/elements/CardCarousel.dart';
+import 'package:oluko_app/elements/CardInfo.dart';
+import 'package:oluko_app/elements/GalleryCarousel.dart';
 import 'package:oluko_app/models/SignUpResponse.dart';
 import 'package:oluko_app/repositories/AuthRepository.dart';
 import 'package:oluko_app/utils/AppMessages.dart';
