@@ -2,33 +2,33 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FirebaseProvider {
   static getUserByEmail(email) async {
-    QuerySnapshot docRef = await Firestore.instance
+    QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('users')
         .where('email', isEqualTo: email)
-        .getDocuments();
-    return docRef.documents[0].data;
+        .get();
+    return docRef.docs[0].data();
   }
 
   static listenToVideos(callback) async {
-    Firestore.instance.collection('users').snapshots().listen((qs) {
+    FirebaseFirestore.instance.collection('users').snapshots().listen((qs) {
       callback();
     });
   }
 
   static addVideoResponse(parentVideoKey, videoResponse) {
     final DocumentReference docRef =
-        Firestore.instance.collection('videos-app').document(parentVideoKey);
+        FirebaseFirestore.instance.collection('videos-app').doc(parentVideoKey);
     final DocumentReference responseDocRef =
-        docRef.collection('video-responses').document();
-    responseDocRef.setData({
+        docRef.collection('video-responses').doc();
+    responseDocRef.set({
       'videoUrl': videoResponse.videoUrl,
       'thumbUrl': videoResponse.thumbUrl,
       'coverUrl': videoResponse.coverUrl,
       'aspectRatio': videoResponse.aspectRatio,
       'uploadedAt': videoResponse.uploadedAt,
       'videoName': videoResponse.videoName,
-      'key': responseDocRef.documentID
+      'key': responseDocRef.id
     });
-    return responseDocRef.documentID;
+    return responseDocRef.id;
   }
 }

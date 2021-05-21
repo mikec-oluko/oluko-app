@@ -47,3 +47,5 @@ app.*.map.json
 
 # iOS builds
 ios/build/*
+android/key.properties
+ios/Runner.app.dSYM.zip
