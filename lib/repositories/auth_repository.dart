@@ -12,8 +12,15 @@ import 'package:oluko_app/models/verify_token_request.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthRepository {
-  Client http = Client();
-  AuthRepository({this.http});
+  Client http;
+
+  AuthRepository.test({Client http}) {
+    this.http = http;
+  }
+
+  AuthRepository() {
+    this.http = Client();
+  }
 
   Future<ApiResponse> login(LoginRequest loginRequest) async {
     var body2 = loginRequest.toJson();

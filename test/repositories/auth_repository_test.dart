@@ -27,7 +27,8 @@ void main() {
           Future.value(http.Response(
               '{"statusCode": 200, "data": {"id":"testtest22"}}', 200)));
 
-      final response = await AuthRepository(http: mockClient).signUp(request);
+      final response =
+          await AuthRepository.test(http: mockClient).signUp(request);
 
       expect(response, isNotNull);
       expect(response.statusCode, 200);
@@ -46,7 +47,8 @@ void main() {
           Future.value(http.Response(
               '{"statusCode": 200, "data": {"accessToken":"testtest22"}}',
               200)));
-      final response = await AuthRepository(http: mockClient).login(request);
+      final response =
+          await AuthRepository.test(http: mockClient).login(request);
       expect(response, isNotNull);
       expect(response.statusCode, 200);
       expect(response.error, isNull);
@@ -84,7 +86,7 @@ void main() {
           Future.value(http.Response(jsonEncode(httpMockResponse), 200)));
 
       final response =
-          await AuthRepository(http: mockClient).verifyToken(request);
+          await AuthRepository.test(http: mockClient).verifyToken(request);
       expect(response, isNotNull);
       expect(response.data, isNotNull);
       expect(response.data['accessToken'], isA<String>());
