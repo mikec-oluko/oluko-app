@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:oluko_app/ui/screens/HomePage.dart';
+import 'package:oluko_app/ui/screens/home_page.dart';
 import 'package:oluko_app/ui/screens/Login.dart';
 import 'package:oluko_app/ui/screens/Profile.dart';
-import 'package:oluko_app/ui/screens/SignUpWithEmail.dart';
-import 'package:oluko_app/ui/screens/SignUp.dart';
+import 'package:oluko_app/ui/screens/sign_up_with_email.dart';
+import 'package:oluko_app/ui/screens/sign_up.dart';
 import 'package:oluko_app/ui/screens/home.dart';
 
 void main() {

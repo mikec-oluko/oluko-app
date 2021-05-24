@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_ffmpeg/statistics.dart';
-import 'package:oluko_app/repositories/AuthRepository.dart';
+import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/repositories/video_repository.dart';
 import 'package:oluko_app/ui/screens/video_responses.dart';
 import 'package:oluko_app/ui/screens/player_single.dart';

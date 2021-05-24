@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/constants/theme.dart';
 
 class DrawerTile extends StatelessWidget {
   final String title;

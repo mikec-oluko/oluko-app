@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/blocs/AuthBloc.dart';
-import 'package:oluko_app/models/LoginRequest.dart';
-import 'package:oluko_app/models/SignUpResponse.dart';
-import 'package:oluko_app/utils/AppLoader.dart';
-import 'package:oluko_app/utils/AppNavigator.dart';
+import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/models/login_request.dart';
+import 'package:oluko_app/models/sign_up_response.dart';
+import 'package:oluko_app/utils/app_loader.dart';
+import 'package:oluko_app/utils/app_navigator.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);

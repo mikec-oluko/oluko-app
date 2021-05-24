@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:oluko_app/blocs/AuthBloc.dart';
-import 'package:oluko_app/models/SignUpRequest.dart';
-import 'package:oluko_app/models/SignUpResponse.dart';
+import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/models/sign_up_request.dart';
+import 'package:oluko_app/models/sign_up_response.dart';
 
 class ProfilePage extends StatefulWidget {
   ProfilePage({Key key}) : super(key: key);

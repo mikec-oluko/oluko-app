@@ -1,14 +1,14 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/models/ApiResponse.dart';
-import 'package:oluko_app/models/LoginRequest.dart';
-import 'package:oluko_app/models/UserResponse.dart';
-import 'package:oluko_app/repositories/AuthRepository.dart';
-import 'package:oluko_app/repositories/UserRepository.dart';
-import 'package:oluko_app/utils/AppLoader.dart';
-import 'package:oluko_app/utils/AppMessages.dart';
-import 'package:oluko_app/utils/AppNavigator.dart';
+import 'package:oluko_app/models/api_response.dart';
+import 'package:oluko_app/models/login_request.dart';
+import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/repositories/auth_repository.dart';
+import 'package:oluko_app/repositories/user_repository.dart';
+import 'package:oluko_app/utils/app_loader.dart';
+import 'package:oluko_app/utils/app_messages.dart';
+import 'package:oluko_app/utils/app_navigator.dart';
 
 abstract class AuthState {}
 

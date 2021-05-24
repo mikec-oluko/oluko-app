@@ -5,7 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ffmpeg/statistics.dart';
-import 'package:oluko_app/repositories/AuthRepository.dart';
+import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/repositories/video_repository.dart';
 import 'package:oluko_app/ui/screens/player_response.dart';
 import 'package:image_picker/image_picker.dart';

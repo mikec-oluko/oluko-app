@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/models/ApiResponse.dart';
-import 'package:oluko_app/models/SignUpRequest.dart';
-import 'package:oluko_app/models/SignUpResponse.dart';
-import 'package:oluko_app/repositories/AuthRepository.dart';
-import 'package:oluko_app/utils/AppLoader.dart';
-import 'package:oluko_app/utils/AppNavigator.dart';
+import 'package:oluko_app/models/api_response.dart';
+import 'package:oluko_app/models/sign_up_request.dart';
+import 'package:oluko_app/models/sign_up_response.dart';
+import 'package:oluko_app/repositories/auth_repository.dart';
+import 'package:oluko_app/utils/app_loader.dart';
+import 'package:oluko_app/utils/app_navigator.dart';
 
 abstract class UserState {}
 

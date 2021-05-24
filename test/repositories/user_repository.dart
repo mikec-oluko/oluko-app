@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:oluko_app/models/UserResponse.dart';
-import 'package:oluko_app/repositories/UserRepository.dart';
+import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/repositories/user_repository.dart';
 
 void main() {
   group('Sign Up', () {

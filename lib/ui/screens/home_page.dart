@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:oluko_app/elements/CardCarousel.dart';
-import 'package:oluko_app/elements/CardInfo.dart';
-import 'package:oluko_app/elements/GalleryCarousel.dart';
-import 'package:oluko_app/models/SignUpResponse.dart';
-import 'package:oluko_app/repositories/AuthRepository.dart';
-import 'package:oluko_app/utils/AppMessages.dart';
+import 'package:oluko_app/elements/card_carousel.dart';
+import 'package:oluko_app/elements/card_info.dart';
+import 'package:oluko_app/elements/gallery_carousel.dart';
+import 'package:oluko_app/models/sign_up_response.dart';
+import 'package:oluko_app/repositories/auth_repository.dart';
+import 'package:oluko_app/utils/app_messages.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
