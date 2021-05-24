@@ -41,7 +41,7 @@ class AuthBloc extends Cubit<AuthState> {
       return;
     }
     UserResponse user = await _userRepository.get(request.email);
-    AuthRepository.storeLoginData(user);
+    AuthRepository().storeLoginData(user);
     AppLoader.stopLoading();
     await AppNavigator().returnToHome(context);
     emit(AuthSuccess(user: user));
@@ -58,7 +58,7 @@ class AuthBloc extends Cubit<AuthState> {
     if (splitDisplayName.length > 1) {
       user.lastName = splitDisplayName[1];
     }
-    AuthRepository.storeLoginData(user);
+    AuthRepository().storeLoginData(user);
     await AppNavigator().returnToHome(context);
     emit(AuthSuccess(user: user));
   }
@@ -74,12 +74,12 @@ class AuthBloc extends Cubit<AuthState> {
     if (splitDisplayName.length > 1) {
       user.lastName = splitDisplayName[1];
     }
-    AuthRepository.storeLoginData(user);
+    AuthRepository().storeLoginData(user);
     await AppNavigator().returnToHome(context);
     emit(AuthSuccess(user: user));
   }
 
   Future<UserResponse> retrieveLoginData() {
-    return AuthRepository.retrieveLoginData();
+    return AuthRepository().retrieveLoginData();
   }
 }

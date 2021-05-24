@@ -1,31 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:oluko_app/BLoC/AuthBloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/UserBloc.dart';
 import 'package:oluko_app/models/SignUpRequest.dart';
 import 'package:oluko_app/models/SignUpResponse.dart';
+import 'package:oluko_app/utils/AppLoader.dart';
 
-class ProfilePage extends StatefulWidget {
-  ProfilePage({Key key}) : super(key: key);
+class SignUpWithMailPage extends StatefulWidget {
+  SignUpWithMailPage({Key key}) : super(key: key);
 
   @override
-  _ProfilePageState createState() => _ProfilePageState();
+  _SignUpWithMailPageState createState() => _SignUpWithMailPageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
-  final _formKey = GlobalKey<FormState>();
-  SignUpRequest _requestData = SignUpRequest();
-  SignUpResponse profileInfo;
+class _SignUpWithMailPageState extends State<SignUpWithMailPage> {
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: getProfileInfo(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return signUpForm();
-          } else {
-            return SizedBox();
-          }
-        });
+    return BlocProvider(
+        create: (context) => UserBloc(), child: SignUpWithMailContentPage());
+  }
+}
+
+class SignUpWithMailContentPage extends StatefulWidget {
+  SignUpWithMailContentPage({Key key}) : super(key: key);
+
+  @override
+  _SignUpWithMailContentPageState createState() =>
+      _SignUpWithMailContentPageState();
+}
+
+class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
+  final _formKey = GlobalKey<FormState>();
+  SignUpRequest _requestData = SignUpRequest();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<UserBloc, UserState>(
+        builder: (context, UserState state) {
+      return signUpForm();
+    });
   }
 
   Widget signUpForm() {
@@ -68,10 +81,39 @@ class _ProfilePageState extends State<ProfilePage> {
     return Container(
         width: MediaQuery.of(context).size.width,
         height: 400,
-        child:
-            Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-          Column(children: formFields()),
-        ]));
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Column(children: formFields()),
+            SizedBox(
+                width: double.infinity,
+                height: 50,
+                child:
+                    BlocBuilder<UserBloc, UserState>(builder: (context, state) {
+                  return ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          primary: Colors.brown.shade300),
+                      onPressed: () async {
+                        if (_formKey.currentState.validate()) {
+                          _formKey.currentState.save();
+                          UserBloc()..signUp(context, _requestData);
+                          AppLoader.startLoading(context);
+                        }
+                      },
+                      child: Stack(children: [
+                        Align(
+                            alignment: Alignment.centerRight,
+                            child: Icon(Icons.navigate_next)),
+                        Align(
+                          child: Text('SIGN UP'),
+                        )
+                      ]));
+                })),
+            SizedBox(height: 10),
+            Text('Already a Subscribed user?'),
+            Text('Log In')
+          ],
+        ));
   }
 
   Widget titleSection() {
@@ -79,7 +121,7 @@ class _ProfilePageState extends State<ProfilePage> {
         width: MediaQuery.of(context).size.width,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(
-            'Your profile',
+            'Sign Up to get started',
             textAlign: TextAlign.start,
             style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
           ),
@@ -87,7 +129,7 @@ class _ProfilePageState extends State<ProfilePage> {
             height: 10,
           ),
           Text(
-            'Your personal information',
+            'Create an account, You are just one step away!',
             style: TextStyle(fontSize: 17, fontWeight: FontWeight.w300),
           )
         ]));
@@ -122,8 +164,6 @@ class _ProfilePageState extends State<ProfilePage> {
           }
           return null;
         },
-        initialValue: this.profileInfo.firstName,
-        enabled: false,
         onSaved: (value) {
           this._requestData.firstName = value;
         },
@@ -149,8 +189,6 @@ class _ProfilePageState extends State<ProfilePage> {
           }
           return null;
         },
-        initialValue: this.profileInfo.lastName,
-        enabled: false,
         onSaved: (value) {
           this._requestData.lastName = value;
         },
@@ -176,8 +214,6 @@ class _ProfilePageState extends State<ProfilePage> {
           }
           return null;
         },
-        initialValue: this.profileInfo.email,
-        enabled: false,
         onSaved: (value) {
           this._requestData.email = value;
         },
@@ -214,27 +250,7 @@ class _ProfilePageState extends State<ProfilePage> {
           }
           return null;
         },
-        initialValue: 'samplePassword',
-        enabled: false,
       )
     ];
-  }
-
-  handleError(AsyncSnapshot snapshot) {}
-
-  handleResult(AsyncSnapshot snapshot) {
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      returnToHome();
-    });
-  }
-
-  Future<void> getProfileInfo() async {
-    profileInfo = SignUpResponse.fromJson(
-        (await AuthBloc().retrieveLoginData()).toJson());
-    return profileInfo;
-  }
-
-  Future<void> returnToHome() async {
-    Navigator.popUntil(context, ModalRoute.withName('/'));
   }
 }

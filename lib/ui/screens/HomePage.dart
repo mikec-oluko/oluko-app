@@ -335,7 +335,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> getProfile() async {
-    final profileData = await AuthRepository.retrieveLoginData();
+    final profileData = await AuthRepository().retrieveLoginData();
     profile = profileData != null
         ? SignUpResponse.fromJson(profileData.toJson())
         : null;
@@ -362,7 +362,7 @@ class _MyHomePageState extends State<MyHomePage> {
     } else {
       options.add(ElevatedButton(
         onPressed: () {
-          AuthRepository.removeLoginData();
+          AuthRepository().removeLoginData();
           AppMessages.showSnackbar(context, 'Logged out.');
           setState(() {});
         },

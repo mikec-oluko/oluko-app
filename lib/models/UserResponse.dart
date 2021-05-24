@@ -1,5 +1,12 @@
 class UserResponse {
-  UserResponse();
+  UserResponse(
+      {this.id,
+      this.firstName,
+      this.lastName,
+      this.email,
+      this.firebaseId,
+      this.hubspotCompanyId,
+      this.hubspotContactId});
 
   String id;
   String firstName;

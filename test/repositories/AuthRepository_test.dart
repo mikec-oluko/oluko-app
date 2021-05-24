@@ -1,7 +1,17 @@
+import 'dart:convert';
+
+import 'package:flutter/cupertino.dart';
+import 'package:http/http.dart' as http;
+import 'package:mockito/mockito.dart';
+import 'package:oluko_app/models/ApiResponse.dart';
 import 'package:oluko_app/models/LoginRequest.dart';
 import 'package:oluko_app/models/SignUpRequest.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:oluko_app/models/UserResponse.dart';
+import 'package:oluko_app/models/VerifyTokenRequest.dart';
 import 'package:oluko_app/repositories/AuthRepository.dart';
+
+class MockClient extends Mock implements http.Client {}
 
 void main() {
   group('Sign Up', () {
@@ -12,7 +22,12 @@ void main() {
           firstName: 'testFirstName',
           lastName: 'testLastName');
 
-      final response = await AuthRepository().signUp(request);
+      MockClient mockClient = MockClient();
+      when(mockClient.post(any, body: request.toJson())).thenAnswer((_) =>
+          Future.value(http.Response(
+              '{"statusCode": 200, "data": {"id":"testtest22"}}', 200)));
+
+      final response = await AuthRepository(http: mockClient).signUp(request);
 
       expect(response, isNotNull);
       expect(response.statusCode, 200);
@@ -26,12 +41,53 @@ void main() {
         password: 'testacc',
       );
 
-      final response = await AuthRepository().login(request);
-
+      MockClient mockClient = MockClient();
+      when(mockClient.post(any, body: request.toJson())).thenAnswer((_) =>
+          Future.value(http.Response(
+              '{"statusCode": 200, "data": {"accessToken":"testtest22"}}',
+              200)));
+      final response = await AuthRepository(http: mockClient).login(request);
       expect(response, isNotNull);
       expect(response.statusCode, 200);
       expect(response.error, isNull);
       expect(response.data, isNotNull);
+    });
+
+    test('user should be stored', () async {
+      final UserResponse request = UserResponse();
+
+      final response = await AuthRepository().storeLoginData(request);
+      expect(response, isNotNull);
+      expect(response, true);
+    });
+
+    test('user should be retrieved', () async {
+      final UserResponse request =
+          UserResponse(id: 'awo2j5t1o', email: 'testEmail@gmail.com');
+
+      await AuthRepository().storeLoginData(request);
+      final retrieveResponse = await AuthRepository().retrieveLoginData();
+      expect(retrieveResponse, isNotNull);
+      expect(retrieveResponse.id, request.id);
+      expect(retrieveResponse.email, request.email);
+    });
+
+    test('token should be verified', () async {
+      final request = VerifyTokenRequest(tokenId: 'myToken');
+      MockClient mockClient = MockClient();
+      ApiResponse httpMockResponse = ApiResponse(
+          statusCode: 200,
+          data: {'accessToken': 'testtest22'},
+          error: null,
+          message: ['Retrieved Successfully']);
+      when(mockClient.post(any, body: request.toJson())).thenAnswer((_) =>
+          Future.value(http.Response(jsonEncode(httpMockResponse), 200)));
+
+      final response =
+          await AuthRepository(http: mockClient).verifyToken(request);
+      expect(response, isNotNull);
+      expect(response.data, isNotNull);
+      expect(response.data['accessToken'], isA<String>());
     });
   });
 }

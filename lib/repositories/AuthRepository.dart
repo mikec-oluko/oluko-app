@@ -1,9 +1,8 @@
 import 'dart:convert';
-
 import 'package:http/http.dart';
 import 'package:oluko_app/models/ApiResponse.dart';
 import 'package:oluko_app/models/LoginRequest.dart';
-import 'package:http/http.dart' as http;
+import 'package:http/http.dart' show Client, Response;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
@@ -13,6 +12,9 @@ import 'package:oluko_app/models/VerifyTokenRequest.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthRepository {
+  Client http = Client();
+  AuthRepository({this.http});
+
   Future<ApiResponse> login(LoginRequest loginRequest) async {
     var body2 = loginRequest.toJson();
     Response response = await http.post(
@@ -35,7 +37,8 @@ class AuthRepository {
             "https://us-central1-oluko-2671e.cloudfunctions.net/auth/token/verify"),
         body: body);
     var responseBody = jsonDecode(response.body);
-    if (responseBody['message'].length == null) {
+    if (responseBody['message'] != null &&
+        responseBody['message'].length == null) {
       List<String> messageList = [responseBody['message']];
       responseBody['message'] = messageList;
     }
@@ -90,7 +93,7 @@ class AuthRepository {
     return apiResponse;
   }
 
-  static Future<bool> storeLoginData(UserResponse signUpResponse) async {
+  Future<bool> storeLoginData(UserResponse signUpResponse) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String encodedJson = jsonEncode(signUpResponse);
     bool loginSaved = await prefs.setString('login-data', encodedJson);
@@ -98,7 +101,7 @@ class AuthRepository {
     return loginSaved;
   }
 
-  static Future<UserResponse> retrieveLoginData() async {
+  Future<UserResponse> retrieveLoginData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String savedData = prefs.getString('login-data');
     if (savedData == null) {
@@ -110,10 +113,14 @@ class AuthRepository {
     return signUpResponse;
   }
 
-  static Future<bool> removeLoginData() async {
+  Future<bool> removeLoginData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     Future<bool> removed = prefs.remove('login-data');
     print('Removed login info.');
     return removed;
+  }
+
+  static Future<FirebaseUser> getLoggedUser() {
+    return FirebaseAuth.instance.currentUser();
   }
 }

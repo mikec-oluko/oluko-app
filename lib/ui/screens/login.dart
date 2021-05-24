@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/BLoC/AuthBloc.dart';
+import 'package:oluko_app/blocs/AuthBloc.dart';
 import 'package:oluko_app/models/LoginRequest.dart';
 import 'package:oluko_app/models/SignUpResponse.dart';
 import 'package:oluko_app/utils/AppLoader.dart';

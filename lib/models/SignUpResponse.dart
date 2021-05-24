@@ -7,6 +7,15 @@ class SignUpResponse {
   final num hubspotCompanyId;
   final num hubspotContactId;
 
+  SignUpResponse(
+      {this.id,
+      this.firstName,
+      this.lastName,
+      this.email,
+      this.firebaseId,
+      this.hubspotCompanyId,
+      this.hubspotContactId});
+
   SignUpResponse.fromJson(Map json)
       : id = json['id'],
         firstName = json['first_name'],

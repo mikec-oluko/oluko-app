@@ -1,44 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/BLoC/UserBloc.dart';
+import 'package:oluko_app/blocs/AuthBloc.dart';
 import 'package:oluko_app/models/SignUpRequest.dart';
 import 'package:oluko_app/models/SignUpResponse.dart';
-import 'package:oluko_app/utils/AppLoader.dart';
 
-class SignUpWithMailPage extends StatefulWidget {
-  SignUpWithMailPage({Key key}) : super(key: key);
-
-  @override
-  _SignUpWithMailPageState createState() => _SignUpWithMailPageState();
-}
-
-class _SignUpWithMailPageState extends State<SignUpWithMailPage> {
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-        create: (context) => UserBloc(), child: SignUpWithMailContentPage());
-  }
-}
-
-class SignUpWithMailContentPage extends StatefulWidget {
-  SignUpWithMailContentPage({Key key}) : super(key: key);
+class ProfilePage extends StatefulWidget {
+  ProfilePage({Key key}) : super(key: key);
 
   @override
-  _SignUpWithMailContentPageState createState() =>
-      _SignUpWithMailContentPageState();
+  _ProfilePageState createState() => _ProfilePageState();
 }
 
-class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
+class _ProfilePageState extends State<ProfilePage> {
   final _formKey = GlobalKey<FormState>();
   SignUpRequest _requestData = SignUpRequest();
-
+  SignUpResponse profileInfo;
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UserBloc, UserState>(
-        builder: (context, UserState state) {
-      return signUpForm();
-    });
+    return FutureBuilder(
+        future: getProfileInfo(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return signUpForm();
+          } else {
+            return SizedBox();
+          }
+        });
   }
 
   Widget signUpForm() {
@@ -81,39 +68,10 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
     return Container(
         width: MediaQuery.of(context).size.width,
         height: 400,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Column(children: formFields()),
-            SizedBox(
-                width: double.infinity,
-                height: 50,
-                child:
-                    BlocBuilder<UserBloc, UserState>(builder: (context, state) {
-                  return ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          primary: Colors.brown.shade300),
-                      onPressed: () async {
-                        if (_formKey.currentState.validate()) {
-                          _formKey.currentState.save();
-                          UserBloc()..signUp(context, _requestData);
-                          AppLoader.startLoading(context);
-                        }
-                      },
-                      child: Stack(children: [
-                        Align(
-                            alignment: Alignment.centerRight,
-                            child: Icon(Icons.navigate_next)),
-                        Align(
-                          child: Text('SIGN UP'),
-                        )
-                      ]));
-                })),
-            SizedBox(height: 10),
-            Text('Already a Subscribed user?'),
-            Text('Log In')
-          ],
-        ));
+        child:
+            Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+          Column(children: formFields()),
+        ]));
   }
 
   Widget titleSection() {
@@ -121,7 +79,7 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
         width: MediaQuery.of(context).size.width,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(
-            'Sign Up to get started',
+            'Your profile',
             textAlign: TextAlign.start,
             style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
           ),
@@ -129,7 +87,7 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
             height: 10,
           ),
           Text(
-            'Create an account, You are just one step away!',
+            'Your personal information',
             style: TextStyle(fontSize: 17, fontWeight: FontWeight.w300),
           )
         ]));
@@ -164,6 +122,8 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
           }
           return null;
         },
+        initialValue: this.profileInfo.firstName,
+        enabled: false,
         onSaved: (value) {
           this._requestData.firstName = value;
         },
@@ -189,6 +149,8 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
           }
           return null;
         },
+        initialValue: this.profileInfo.lastName,
+        enabled: false,
         onSaved: (value) {
           this._requestData.lastName = value;
         },
@@ -214,6 +176,8 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
           }
           return null;
         },
+        initialValue: this.profileInfo.email,
+        enabled: false,
         onSaved: (value) {
           this._requestData.email = value;
         },
@@ -250,7 +214,27 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
           }
           return null;
         },
+        initialValue: 'samplePassword',
+        enabled: false,
       )
     ];
+  }
+
+  handleError(AsyncSnapshot snapshot) {}
+
+  handleResult(AsyncSnapshot snapshot) {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      returnToHome();
+    });
+  }
+
+  Future<void> getProfileInfo() async {
+    profileInfo = SignUpResponse.fromJson(
+        (await AuthBloc().retrieveLoginData()).toJson());
+    return profileInfo;
+  }
+
+  Future<void> returnToHome() async {
+    Navigator.popUntil(context, ModalRoute.withName('/'));
   }
 }
