@@ -344,6 +344,14 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Widget> menuOptions() {
     List<Widget> options = [];
 
+    options.add(ElevatedButton(
+      onPressed: () =>
+          Navigator.pushNamed(context, '/videos').then((value) => onGoBack()),
+      child: Text('VIDEOS'),
+      style: ElevatedButton.styleFrom(
+          shadowColor: Colors.transparent, primary: Colors.transparent),
+    ));
+
     if (profile == null) {
       options.add(ElevatedButton(
         onPressed: () => Navigator.pushNamed(context, '/sign-up')

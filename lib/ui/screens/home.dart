@@ -20,9 +20,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
-  Home({Key key, this.title}) : super(key: key);
+  Home({Key key}) : super(key: key);
 
-  final String title;
+  String title = 'Videos App';
 
   @override
   _HomeState createState() => _HomeState();
