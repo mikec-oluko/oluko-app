@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:oluko_app/constants/Theme.dart';
 
-import 'package:oluko_app/elements/drawer-tile.dart';
+import 'package:oluko_app/elements/DrawerTile.dart';
 
 class OlukoDrawer extends StatelessWidget {
   final String currentPage;

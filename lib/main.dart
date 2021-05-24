@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:oluko_app/screens/home-page.dart';
-import 'package:oluko_app/screens/login.dart';
-import 'package:oluko_app/screens/profile.dart';
-import 'package:oluko_app/screens/sign-up-with-mail.dart';
-import 'package:oluko_app/screens/sign-up.dart';
+import 'package:oluko_app/screens/HomePage.dart';
+import 'package:oluko_app/screens/Login.dart';
+import 'package:oluko_app/screens/Profile.dart';
+import 'package:oluko_app/screens/SignUpWithEmail.dart';
+import 'package:oluko_app/screens/SignUp.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
 }
 
+const OLUKO = 'Oluko';
+
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: '${OLUKO}',
       theme: ThemeData(
         primarySwatch: Colors.grey,
       ),
