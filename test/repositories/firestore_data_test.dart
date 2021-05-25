@@ -42,5 +42,31 @@ void main() {
 
       expect(response, isA<QuerySnapshot>());
     });
+
+    test('should get firebase document', () async {
+      final request = SignUpRequest(
+          email: 'testemail-${DateTime.now().millisecondsSinceEpoch}@gmail.com',
+          password: 'testpassword',
+          firstName: 'testFirstName',
+          lastName: 'testLastName');
+
+      Firestore firestoreInstance = MockFirestore();
+      CollectionReference collectionReference = MockCollectionReference();
+      DocumentReference documentReference = MockDocumentReference();
+      DocumentSnapshot documentSnapshot = MockDocumentSnapshot();
+
+      String key = 'testKey';
+      when(documentReference.get())
+          .thenAnswer((realInvocation) => Future.value(documentSnapshot));
+      when(collectionReference.document(any)).thenReturn(documentReference);
+      when(firestoreInstance.collection(any)).thenReturn(collectionReference);
+
+      FirestoreProvider firestoreProvider = FirestoreProvider.test(
+          collection: 'videos', firestoreInstance: firestoreInstance);
+
+      final response = await firestoreProvider.get(key);
+
+      expect(response, isA<DocumentSnapshot>());
+    });
   });
 }
