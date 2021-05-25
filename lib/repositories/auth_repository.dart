@@ -34,6 +34,10 @@ class AuthRepository {
       signUpResponseBody['message'] = messageList;
     }
     ApiResponse apiResponse = ApiResponse.fromJson(signUpResponseBody);
+    if (apiResponse.statusCode == 200) {
+      FirebaseAuth.instance
+          .signInWithCustomToken(token: apiResponse.data['accessToken']);
+    }
     return apiResponse;
   }
 
