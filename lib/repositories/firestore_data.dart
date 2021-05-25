@@ -23,53 +23,53 @@ class FirestoreProvider {
     return Firestore.instance.collection(collection).getDocuments();
   }
 
-  Future<DocumentSnapshot> get(String key) {
-    return Firestore.instance.collection(collection).document(key).get();
+  Future<DocumentSnapshot> get(String id) {
+    return Firestore.instance.collection(collection).document(id).get();
   }
 
-  Future<QuerySnapshot> getChild(String key, String childCollection) {
+  Future<QuerySnapshot> getChild(String id, String childCollection) {
     return Firestore.instance
         .collection(collection)
-        .document(key)
+        .document(id)
         .collection(childCollection)
         .getDocuments();
   }
 
   ///Get documents list from nested collections.
   ///
-  ///[key] final document key after path.
+  ///[id] final document id after path.
   ///[childCollection] child collection present on every document in the path.
-  ///[keyPath] document key path to the [key] document. Ex. `{document_key}/{document_key}/{document_key}`.
+  ///[idPath] document id path to the [id] document. Ex. `{document_id}/{document_id}/{document_id}`.
   Future<QuerySnapshot> getChildWithPath(
-      String key, String childCollection, String keyPath) {
-    List<String> keyPathList = keyPath.split('/');
-    if (keyPathList[0] == '') {
-      keyPathList = [];
+      String id, String childCollection, String idPath) {
+    List<String> idPathList = idPath.split('/');
+    if (idPathList[0] == '') {
+      idPathList = [];
     }
     CollectionReference finalCollection =
         Firestore.instance.collection(collection);
-    keyPathList.forEach((keyPathElement) {
+    idPathList.forEach((idPathElement) {
       finalCollection =
-          finalCollection.document(keyPathElement).collection(childCollection);
+          finalCollection.document(idPathElement).collection(childCollection);
     });
-    finalCollection = finalCollection.document(key).collection(childCollection);
+    finalCollection = finalCollection.document(id).collection(childCollection);
     return finalCollection.getDocuments();
   }
 
-  addVideoResponse(parentVideoKey, videoResponse, String keyPath) {
-    List<String> keyPathList = keyPath.split('/');
-    keyPathList =
-        keyPathList.length > 0 && keyPathList[0] == '' ? [] : keyPathList;
+  addVideoResponse(parentVideoId, videoResponse, String idPath) {
+    List<String> idPathList = idPath.split('/');
+    idPathList =
+        idPathList.length > 0 && idPathList[0] == '' ? [] : idPathList;
     CollectionReference finalCollection =
         Firestore.instance.collection(collection);
 
-    keyPathList.forEach((keyPathElement) {
+    idPathList.forEach((idPathElement) {
       finalCollection = finalCollection
-          .document(keyPathElement)
+          .document(idPathElement)
           .collection('videoResponses');
     });
     finalCollection =
-        finalCollection.document(parentVideoKey).collection('videoResponses');
+        finalCollection.document(parentVideoId).collection('videoResponses');
 
     final DocumentReference docRef = finalCollection.document();
 
@@ -81,7 +81,7 @@ class FirestoreProvider {
       'uploadedAt': videoResponse.uploadedAt,
       'videoName': videoResponse.videoName,
       'createdBy': videoResponse.createdBy,
-      'key': docRef.documentID
+      'id': docRef.documentID
     });
     return docRef.documentID;
   }
@@ -90,10 +90,10 @@ class FirestoreProvider {
     return Firestore.instance.collection(collection).add(entity);
   }
 
-  Future<void> set({String key, dynamic entity}) {
+  Future<void> set({String id, dynamic entity}) {
     return Firestore.instance
         .collection(collection)
-        .document(key)
+        .document(id)
         .setData(entity);
   }
 

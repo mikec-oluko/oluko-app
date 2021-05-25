@@ -338,8 +338,8 @@ class _PlayerSingleState extends State<PlayerSingle> {
   }
 
   saveVideoTrackData() {
-    videoTrackingProvider.set(key: widget.video.id, entity: {
-      "videoKey": widget.video.id,
+    videoTrackingProvider.set(id: widget.video.id, entity: {
+      "videoId": widget.video.id,
       "drawPoints": jsonEncode(this.canvasPointsRecording.map((e) {
         if (e.point == null) {
           return {"x": null, "y": null, "timeStamp": e.timeStamp};

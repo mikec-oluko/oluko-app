@@ -14,13 +14,14 @@ class MarkerRepository {
     return marker;
   }
 
-  createMarker(String parentVideoId, Marker marker) {
+  Future<Marker> createMarker(String parentVideoId, Marker marker) async{
     final DocumentReference docRef =
         Firestore.instance.collection('videos').document(parentVideoId);
     final DocumentReference responseDocRef =
         docRef.collection('markers').document();
     responseDocRef.setData(marker.toJson());
-    return responseDocRef.documentID;
+        marker.id = responseDocRef.documentID;
+    return marker;
   }
 
   Future<List<Marker>> getVideoMarkers1(String videoId) async {
