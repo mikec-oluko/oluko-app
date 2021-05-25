@@ -31,13 +31,35 @@ class VideoRepository {
     return mapQueryToVideoInfo(querySnapshot);
   }
 
-  static addVideoResponse(parentVideoId, videoResponse) {
+  static addVideoResponse1(parentVideoId, videoResponse) {
     final DocumentReference docRef =
         Firestore.instance.collection('videos').document(parentVideoId);
     final DocumentReference responseDocRef =
         docRef.collection('videoResponses').document();
+    videoResponse.id = responseDocRef.documentID;
     responseDocRef.setData(videoResponse.toJson());
     return responseDocRef.documentID;
+  }
+
+  static addVideoResponse(parentVideoId, videoResponse, String idPath) {
+    List<String> idPathList = idPath.split('/');
+    idPathList = idPathList.length > 0 && idPathList[0] == '' ? [] : idPathList;
+    CollectionReference finalCollection =
+        Firestore.instance.collection("videos");
+
+    idPathList.forEach((idPathElement) {
+      finalCollection =
+          finalCollection.document(idPathElement).collection('videoResponses');
+    });
+    finalCollection =
+        finalCollection.document(parentVideoId).collection('videoResponses');
+
+    final DocumentReference docRef = finalCollection.document();
+
+    videoResponse.id = docRef.documentID;
+    docRef.setData(videoResponse.toJson());
+
+    return docRef.documentID;
   }
 
   static Future<List<Video>> getVideoResponses(parentVideoId) async {
@@ -62,6 +84,7 @@ class VideoRepository {
         uploadedAt: ds.data['uploadedAt'],
         createdBy: ds.data['createdBy'],
       );
+      //return Video.fromJson(ds.data);
     }).toList();
   }
 }

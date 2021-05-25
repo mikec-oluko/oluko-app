@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_ffmpeg/statistics.dart';
-import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/repositories/video_repository.dart';
 import 'package:oluko_app/ui/screens/video_responses.dart';
 import 'package:oluko_app/ui/screens/player_single.dart';
@@ -22,7 +21,7 @@ import 'package:flutter/material.dart';
 class Home extends StatefulWidget {
   Home({Key key}) : super(key: key);
 
-  String title = 'Videos App';
+  final String title = 'Videos';
 
   @override
   _HomeState createState() => _HomeState();
@@ -39,8 +38,31 @@ class _HomeState extends State<Home> {
   int _videoDuration = 0;
   String _processPhase = '';
   final bool _debugMode = false;
-  //SignUpResponse profile;
   FirebaseUser user;
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(builder: (context, snapshot) {
+      return Scaffold(
+          appBar: AppBar(
+            title: Text(widget.title),
+          ),
+          body: Center(child: _processing ? _getProgressBar() : _getListView()),
+          floatingActionButton:
+              Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+            user != null
+                ? FloatingActionButton(
+                    child: _processing
+                        ? CircularProgressIndicator(
+                            valueColor:
+                                new AlwaysStoppedAnimation<Color>(Colors.white),
+                          )
+                        : Icon(Icons.camera),
+                    onPressed: () => _takeVideo(ImageSource.camera))
+                : SizedBox(),
+          ]));
+    });
+  }
 
   @override
   void initState() {
@@ -48,23 +70,27 @@ class _HomeState extends State<Home> {
       if (firebaseUser != null) {
         this.user = firebaseUser;
       }
-      List<Video> videosToShow = [];
-      if (user == null) {
-        List<Video> result = await VideoRepository.getVideos();
-        videosToShow = result;
-      } else {
-        List<Video> result = await VideoRepository.getVideosByUser(user);
-        videosToShow = result;
-      }
-      setState(() {
-        _videos = videosToShow;
-      });
+      await getVideos();
     });
 
     if (!kIsWeb) {
       listenToEncodingProviderProgress();
     }
     super.initState();
+  }
+
+  getVideos() async {
+    List<Video> videosToShow = [];
+    if (user == null) {
+      List<Video> result = await VideoRepository.getVideos();
+      videosToShow = result;
+    } else {
+      List<Video> result = await VideoRepository.getVideosByUser(user);
+      videosToShow = result;
+    }
+    setState(() {
+      _videos = videosToShow;
+    });
   }
 
   void listenToEncodingProviderProgress() {
@@ -222,7 +248,7 @@ class _HomeState extends State<Home> {
     if (parentVideo == null) {
       await VideoRepository.saveVideo(videoInfo);
     } else {
-      await VideoRepository.addVideoResponse(parentVideo.id, videoInfo);
+      await VideoRepository.addVideoResponse(parentVideo.id, videoInfo, "/");
     }
     setState(() {
       _processPhase = '';
@@ -329,7 +355,7 @@ class _HomeState extends State<Home> {
                                                       videoParent: video,
                                                       videoParentPath: '/',
                                                     )))),
-                                        child: Text("View Responses"))
+                                        child: Text("View responses"))
                                   ],
                                 ),
                               ),
@@ -371,93 +397,6 @@ class _HomeState extends State<Home> {
     var videoResponse = response[0];
     return videoResponse;
   }
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-        //future: getProfile(),
-        builder: (context, snapshot) {
-      return Scaffold(
-          appBar: AppBar(
-            title: Text(widget.title),
-            //actions: menuOptions(),
-          ),
-          body: Center(child: _processing ? _getProgressBar() : _getListView()),
-          floatingActionButton:
-              Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-            user != null
-                ? FloatingActionButton(
-                    child: _processing
-                        ? CircularProgressIndicator(
-                            valueColor:
-                                new AlwaysStoppedAnimation<Color>(Colors.white),
-                          )
-                        : Icon(Icons.camera),
-                    onPressed: () => _takeVideo(ImageSource.camera))
-                : SizedBox(),
-            // Padding(
-            //   padding: EdgeInsets.only(top: 10),
-            // child: FloatingActionButton(
-            //     child: _processing
-            //         ? CircularProgressIndicator(
-            //             valueColor:
-            //                 new AlwaysStoppedAnimation<Color>(Colors.white),
-            //           )
-            //         : Icon(Icons.photo),
-            //     onPressed: () => _takeVideo(ImageSource.gallery)),
-            // )
-          ]));
-    });
-  }
-
-  /*Future<void> getProfile() async {
-    final profileData = await LoginService.retrieveLoginData();
-    profile = profileData != null
-        ? SignUpResponse.fromJson(profileData.toJson())
-        : null;
-  }*/
-
-  /*List<Widget> menuOptions() {
-    List<Widget> options = [];
-
-    if (profile == null) {
-      options.add(ElevatedButton(
-        onPressed: () => Navigator.pushNamed(context, '/sign-up')
-            .then((value) => onGoBack()),
-        child: Text('SIGN UP'),
-        style: ElevatedButton.styleFrom(
-            shadowColor: Colors.transparent, primary: Colors.transparent),
-      ));
-      options.add(ElevatedButton(
-        onPressed: () =>
-            Navigator.pushNamed(context, '/log-in').then((value) => onGoBack()),
-        child: Text('LOG IN'),
-        style: ElevatedButton.styleFrom(
-            shadowColor: Colors.transparent, primary: Colors.transparent),
-      ));
-    } else {
-      options.add(ElevatedButton(
-        onPressed: () {
-          FirebaseAuth.instance.signOut();
-          LoginService.removeLoginData();
-          SnackbarService.showSnackbar(context, 'Logged out.');
-          setState(() {});
-        },
-        child: Text('LOG OUT'),
-        style: ElevatedButton.styleFrom(
-            shadowColor: Colors.transparent, primary: Colors.transparent),
-      ));
-      options.add(ElevatedButton(
-        onPressed: () => Navigator.pushNamed(context, '/profile')
-            .then((value) => onGoBack()),
-        child: Text('PROFILE'),
-        style: ElevatedButton.styleFrom(
-            shadowColor: Colors.transparent, primary: Colors.transparent),
-      ));
-    }
-
-    return options;
-  }*/
 
   onGoBack() {
     setState(() {});

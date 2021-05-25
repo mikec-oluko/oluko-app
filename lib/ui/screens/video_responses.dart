@@ -229,10 +229,9 @@ class _ResponsesPageState extends State<ResponsesPage> {
     if (parentVideo == null) {
       await VideoRepository.saveVideo(videoInfo);
     } else if (parentVideo.id == widget.videoParent.id) {
-      await FirestoreProvider(collection: 'videos')
-          .addVideoResponse(parentVideo.id, videoInfo, widget.videoParentPath);
+      await VideoRepository.addVideoResponse(parentVideo.id, videoInfo, widget.videoParentPath);
     } else {
-      await FirestoreProvider(collection: 'videos').addVideoResponse(
+      await VideoRepository.addVideoResponse(
           parentVideo.id,
           videoInfo,
           widget.videoParentPath == '/'
@@ -351,7 +350,7 @@ class _ResponsesPageState extends State<ResponsesPage> {
                                                             ? widget
                                                                 .videoParent.id
                                                             : '${widget.videoParentPath}/${widget.videoParent.id}')))),
-                                        child: Text("View Responses"))
+                                        child: Text("View responses"))
                                   ],
                                 ),
                               ),
