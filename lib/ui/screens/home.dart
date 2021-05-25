@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_ffmpeg/statistics.dart';
-import 'package:oluko_app/repositories/video_repository.dart';
+import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/ui/screens/video_responses.dart';
 import 'package:oluko_app/ui/screens/player_single.dart';
 import 'package:image_picker/image_picker.dart';
@@ -43,15 +44,33 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(builder: (context, snapshot) {
-      return Scaffold(
-          appBar: AppBar(
-            title: Text(widget.title),
-          ),
-          body: Center(child: _processing ? _getProgressBar() : _getListView()),
-          floatingActionButton:
-              Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-            user != null
-                ? FloatingActionButton(
+      return BlocProvider(
+          create: (context) => VideoBloc()..getVideos(user),
+          child: Scaffold(
+              appBar: AppBar(
+                title: Text(widget.title),
+              ),
+              body: Center(
+                  child: _processing
+                      ? _getProgressBar()
+                      : BlocBuilder<VideoBloc, VideoState>(
+                          builder: (context, state) {
+                          if (state is VideosSuccess) {
+                            return _getListView(state.videos);
+                          } else {
+                            return Text(
+                              'LOADING...',
+                              textAlign: TextAlign.center,
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                            );
+                          }
+                        })),
+              floatingActionButton:
+                  Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+                /*user != null
+                    ?*/
+                FloatingActionButton(
                     child: _processing
                         ? CircularProgressIndicator(
                             valueColor:
@@ -59,8 +78,8 @@ class _HomeState extends State<Home> {
                           )
                         : Icon(Icons.camera),
                     onPressed: () => _takeVideo(ImageSource.camera))
-                : SizedBox(),
-          ]));
+                /*: SizedBox()*/,
+              ])));
     });
   }
 
@@ -70,27 +89,12 @@ class _HomeState extends State<Home> {
       if (firebaseUser != null) {
         this.user = firebaseUser;
       }
-      await getVideos();
     });
 
     if (!kIsWeb) {
       listenToEncodingProviderProgress();
     }
     super.initState();
-  }
-
-  getVideos() async {
-    List<Video> videosToShow = [];
-    if (user == null) {
-      List<Video> result = await VideoRepository.getVideos();
-      videosToShow = result;
-    } else {
-      List<Video> result = await VideoRepository.getVideosByUser(user);
-      videosToShow = result;
-    }
-    setState(() {
-      _videos = videosToShow;
-    });
   }
 
   void listenToEncodingProviderProgress() {
@@ -147,7 +151,7 @@ class _HomeState extends State<Home> {
 
   void _updatePlaylistUrls(File file, String videoName, {bool s3Storage}) {
     final lines = file.readAsLinesSync();
-    var updatedLines = List<String>();
+    var updatedLines = [];
 
     for (final String line in lines) {
       var updatedLine = line;
@@ -230,7 +234,7 @@ class _HomeState extends State<Home> {
     final thumbUrl = await _uploadFile(thumbFilePath, 'thumbnail');
     final videoUrl = await _uploadHLSFiles(encodedFilesDir, videoName);
 
-    final videoInfo = Video(
+    final video = Video(
       videoUrl: videoUrl,
       thumbUrl: thumbUrl,
       coverUrl: thumbUrl,
@@ -246,9 +250,10 @@ class _HomeState extends State<Home> {
     });
 
     if (parentVideo == null) {
-      await VideoRepository.saveVideo(videoInfo);
+      VideoBloc()..saveVideo(video);
+      _videos.add(video);
     } else {
-      await VideoRepository.addVideoResponse(parentVideo.id, videoInfo, "/");
+      VideoBloc()..addVideoResponse(parentVideo.id, video, "/");//REVISAR ESTE CASO
     }
     setState(() {
       _processPhase = '';
@@ -286,7 +291,8 @@ class _HomeState extends State<Home> {
     }
   }
 
-  _getListView() {
+  _getListView(List<Video> videos) {
+    _videos = videos;
     return ListView.builder(
         padding: const EdgeInsets.all(8),
         itemCount: _videos.length,
@@ -387,15 +393,6 @@ class _HomeState extends State<Home> {
         ],
       ),
     );
-  }
-
-  Future<Video> getVideoResponse(video) async {
-    var response = await VideoRepository.getVideoResponses(video.id);
-    if (response.length == 0) {
-      return null;
-    }
-    var videoResponse = response[0];
-    return videoResponse;
   }
 
   onGoBack() {
