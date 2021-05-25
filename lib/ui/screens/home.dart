@@ -15,7 +15,6 @@ import 'package:timeago/timeago.dart' as timeago;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:io';
 import 'dart:math';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -106,68 +105,6 @@ class _HomeState extends State<Home> {
     });
   }
 
-  void _onUploadProgress(event) {
-    if (event.type == StorageTaskEventType.progress) {
-      final double progress =
-          event.snapshot.bytesTransferred / event.snapshot.totalByteCount;
-      setState(() {
-        _progress = progress;
-      });
-    }
-  }
-
-  Future<String> _uploadFile(filePath, folderName) async {
-    return _uploadFileS3(filePath, folderName);
-  }
-
-  Future<String> _uploadFileFireStore(filePath, folderName) async {
-    final file = new File(filePath);
-    final basename = p.basename(filePath);
-
-    final StorageReference ref =
-        FirebaseStorage.instance.ref().child(folderName).child(basename);
-    StorageUploadTask uploadTask = ref.putFile(file);
-    uploadTask.events.listen(_onUploadProgress);
-    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
-    String videoUrl = await taskSnapshot.ref.getDownloadURL();
-    return videoUrl;
-  }
-
-  Future<String> _uploadFileS3(filePath, folderName) async {
-    final file = new File(filePath);
-    final basename = p.basename(filePath);
-
-    final S3Provider s3Provider = S3Provider();
-    String downloadUrl =
-        await s3Provider.putFile(file.readAsBytesSync(), folderName, basename);
-
-    return downloadUrl;
-  }
-
-  String getFileExtension(String fileName) {
-    final exploded = fileName.split('.');
-    return exploded[exploded.length - 1];
-  }
-
-  void _updatePlaylistUrls(File file, String videoName, {bool s3Storage}) {
-    final lines = file.readAsLinesSync();
-    var updatedLines = [];
-
-    for (final String line in lines) {
-      var updatedLine = line;
-      if (line.contains('.ts') || line.contains('.m3u8')) {
-        updatedLine = s3Storage == null
-            ? '$videoName%2F$line?alt=media'
-            : '$line?alt=media';
-      }
-      updatedLines.add(updatedLine);
-    }
-    final updatedContents =
-        updatedLines.reduce((value, element) => value + '\n' + element);
-
-    file.writeAsStringSync(updatedContents);
-  }
-
   Future<String> _uploadHLSFiles(dirPath, videoName) async {
     final videosDir = Directory(dirPath);
 
@@ -195,6 +132,41 @@ class _HomeState extends State<Home> {
     }
 
     return playlistUrl;
+  }
+
+  Future<String> _uploadFile(filePath, folderName) async {
+    final file = new File(filePath);
+    final basename = p.basename(filePath);
+
+    final S3Provider s3Provider = S3Provider();
+    String downloadUrl =
+        await s3Provider.putFile(file.readAsBytesSync(), folderName, basename);
+
+    return downloadUrl;
+  }
+
+  void _updatePlaylistUrls(File file, String videoName, {bool s3Storage}) {
+    final lines = file.readAsLinesSync();
+    var updatedLines = [];
+
+    for (final String line in lines) {
+      var updatedLine = line;
+      if (line.contains('.ts') || line.contains('.m3u8')) {
+        updatedLine = s3Storage == null
+            ? '$videoName%2F$line?alt=media'
+            : '$line?alt=media';
+      }
+      updatedLines.add(updatedLine);
+    }
+    final updatedContents =
+        updatedLines.reduce((value, element) => value + '\n' + element);
+
+    file.writeAsStringSync(updatedContents);
+  }
+
+  String getFileExtension(String fileName) {
+    final exploded = fileName.split('.');
+    return exploded[exploded.length - 1];
   }
 
   Future<void> _processVideo(File rawVideoFile, {Video parentVideo}) async {
@@ -253,7 +225,8 @@ class _HomeState extends State<Home> {
       VideoBloc()..saveVideo(video);
       _videos.add(video);
     } else {
-      VideoBloc()..addVideoResponse(parentVideo.id, video, "/");//REVISAR ESTE CASO
+      VideoBloc()
+        ..addVideoResponse(parentVideo.id, video, "/"); //REVISAR ESTE CASO
     }
     setState(() {
       _processPhase = '';
@@ -262,7 +235,7 @@ class _HomeState extends State<Home> {
     });
   }
 
-  void _takeVideo(ImageSource imageSource, {Video parentVideo}) async {
+  void _takeVideo(ImageSource imageSource, {Video parentVideo}) async { //ESTO HABRIA QUE SEPARARLO
     var videoFile;
     if (_debugMode) {
       videoFile = File(

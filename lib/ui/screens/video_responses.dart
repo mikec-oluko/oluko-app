@@ -229,9 +229,9 @@ class _ResponsesPageState extends State<ResponsesPage> {
     if (parentVideo == null) {
       await VideoRepository.saveVideo(videoInfo);
     } else if (parentVideo.id == widget.videoParent.id) {
-      await VideoRepository.addVideoResponse(parentVideo.id, videoInfo, widget.videoParentPath);
+      await VideoRepository.saveVideoResponse(parentVideo.id, videoInfo, widget.videoParentPath);
     } else {
-      await VideoRepository.addVideoResponse(
+      await VideoRepository.saveVideoResponse(
           parentVideo.id,
           videoInfo,
           widget.videoParentPath == '/'

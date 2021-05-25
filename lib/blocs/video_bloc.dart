@@ -60,7 +60,7 @@ class VideoBloc extends Cubit<VideoState> {
       emit(Loading());
     }
     try {
-      await VideoRepository.addVideoResponse(parentVideoId, video, path);
+      await VideoRepository.saveVideoResponse(parentVideoId, video, path);
       emit(VideoSuccess());
     } catch (e) {
       emit(Failure(exception: e));

@@ -31,17 +31,7 @@ class VideoRepository {
     return mapQueryToVideoInfo(querySnapshot);
   }
 
-  static addVideoResponse1(parentVideoId, videoResponse) {
-    final DocumentReference docRef =
-        Firestore.instance.collection('videos').document(parentVideoId);
-    final DocumentReference responseDocRef =
-        docRef.collection('videoResponses').document();
-    videoResponse.id = responseDocRef.documentID;
-    responseDocRef.setData(videoResponse.toJson());
-    return responseDocRef.documentID;
-  }
-
-  static addVideoResponse(parentVideoId, videoResponse, String idPath) {
+  static saveVideoResponse(parentVideoId, videoResponse, String idPath) {
     List<String> idPathList = idPath.split('/');
     idPathList = idPathList.length > 0 && idPathList[0] == '' ? [] : idPathList;
     CollectionReference finalCollection =
