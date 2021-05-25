@@ -16,19 +16,27 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FirestoreProvider {
   String collection;
+  Firestore firestoreInstance;
 
-  FirestoreProvider({this.collection});
+  FirestoreProvider({collection}) {
+    this.collection = collection;
+    this.firestoreInstance = Firestore.instance;
+  }
+  FirestoreProvider.test({String collection, Firestore firestoreInstance}) {
+    this.collection = collection;
+    this.firestoreInstance = firestoreInstance;
+  }
 
   Future<QuerySnapshot> getAll() {
-    return Firestore.instance.collection(collection).getDocuments();
+    return firestoreInstance.collection(collection).getDocuments();
   }
 
   Future<DocumentSnapshot> get(String key) {
-    return Firestore.instance.collection(collection).document(key).get();
+    return firestoreInstance.collection(collection).document(key).get();
   }
 
   Future<QuerySnapshot> getChild(String key, String childCollection) {
-    return Firestore.instance
+    return firestoreInstance
         .collection(collection)
         .document(key)
         .collection(childCollection)
@@ -47,7 +55,7 @@ class FirestoreProvider {
       keyPathList = [];
     }
     CollectionReference finalCollection =
-        Firestore.instance.collection(collection);
+        firestoreInstance.collection(collection);
     keyPathList.forEach((keyPathElement) {
       finalCollection =
           finalCollection.document(keyPathElement).collection(childCollection);
@@ -61,12 +69,11 @@ class FirestoreProvider {
     keyPathList =
         keyPathList.length > 0 && keyPathList[0] == '' ? [] : keyPathList;
     CollectionReference finalCollection =
-        Firestore.instance.collection(collection);
+        firestoreInstance.collection(collection);
 
     keyPathList.forEach((keyPathElement) {
-      finalCollection = finalCollection
-          .document(keyPathElement)
-          .collection('videoResponses');
+      finalCollection =
+          finalCollection.document(keyPathElement).collection('videoResponses');
     });
     finalCollection =
         finalCollection.document(parentVideoKey).collection('videoResponses');
@@ -87,18 +94,18 @@ class FirestoreProvider {
   }
 
   Future<DocumentReference> add(dynamic entity) {
-    return Firestore.instance.collection(collection).add(entity);
+    return firestoreInstance.collection(collection).add(entity);
   }
 
   Future<void> set({String key, dynamic entity}) {
-    return Firestore.instance
+    return firestoreInstance
         .collection(collection)
         .document(key)
         .setData(entity);
   }
 
   Stream<QuerySnapshot> listenAll() {
-    return Firestore.instance.collection(collection).snapshots();
+    return firestoreInstance.collection(collection).snapshots();
   }
 
   void addBatch(List<dynamic> entities) {

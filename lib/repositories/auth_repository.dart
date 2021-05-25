@@ -13,13 +13,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthRepository {
   Client http;
+  FirebaseAuth firebaseAuthInstance;
 
-  AuthRepository.test({Client http}) {
+  AuthRepository.test({Client http, FirebaseAuth firebaseAuthInstance}) {
     this.http = http;
+    this.firebaseAuthInstance = firebaseAuthInstance;
   }
 
   AuthRepository() {
     this.http = Client();
+    this.firebaseAuthInstance = FirebaseAuth.instance;
   }
 
   Future<ApiResponse> login(LoginRequest loginRequest) async {
@@ -35,8 +38,8 @@ class AuthRepository {
     }
     ApiResponse apiResponse = ApiResponse.fromJson(signUpResponseBody);
     if (apiResponse.statusCode == 200) {
-      FirebaseAuth.instance
-          .signInWithCustomToken(token: apiResponse.data['accessToken']);
+      firebaseAuthInstance.signInWithCustomToken(
+          token: apiResponse.data['accessToken']);
     }
     return apiResponse;
   }
