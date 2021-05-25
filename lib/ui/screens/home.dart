@@ -45,7 +45,9 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     FirebaseAuth.instance.onAuthStateChanged.listen((firebaseUser) async {
-      user = firebaseUser;
+      if (firebaseUser != null) {
+        this.user = firebaseUser;
+      }
       List<Video> videosToShow = [];
       if (user == null) {
         List<Video> result = await VideoRepository.getVideos();

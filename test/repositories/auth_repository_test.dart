@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:mockito/mockito.dart';
@@ -13,7 +14,12 @@ import 'package:oluko_app/repositories/auth_repository.dart';
 
 class MockClient extends Mock implements http.Client {}
 
+class MockFirebaseAuth extends Mock implements FirebaseAuth {}
+
+class MockAuthResult extends Mock implements AuthResult {}
+
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   group('Sign Up', () {
     test('user should be created correctly', () async {
       final request = SignUpRequest(
@@ -23,9 +29,11 @@ void main() {
           lastName: 'testLastName');
 
       MockClient mockClient = MockClient();
+
       when(mockClient.post(any, body: request.toJson())).thenAnswer((_) =>
           Future.value(http.Response(
-              '{"statusCode": 200, "data": {"id":"testtest22"}}', 200)));
+              '{"statusCode": 200, "data": {"accessToken":"testtest22"}}',
+              200)));
 
       final response =
           await AuthRepository.test(http: mockClient).signUp(request);
@@ -41,14 +49,17 @@ void main() {
         email: 'testacc@gmail.com',
         password: 'testacc',
       );
-
+      FirebaseAuth mockFirebaseAuth = MockFirebaseAuth();
+      when(mockFirebaseAuth.signInWithCustomToken(token: 'testtest22'))
+          .thenAnswer((realInvocation) => Future.value(MockAuthResult()));
       MockClient mockClient = MockClient();
       when(mockClient.post(any, body: request.toJson())).thenAnswer((_) =>
           Future.value(http.Response(
               '{"statusCode": 200, "data": {"accessToken":"testtest22"}}',
               200)));
-      final response =
-          await AuthRepository.test(http: mockClient).login(request);
+      final response = await AuthRepository.test(
+              http: mockClient, firebaseAuthInstance: mockFirebaseAuth)
+          .login(request);
       expect(response, isNotNull);
       expect(response.statusCode, 200);
       expect(response.error, isNull);

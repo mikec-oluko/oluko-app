@@ -16,19 +16,27 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FirestoreProvider {
   String collection;
+  Firestore firestoreInstance;
 
-  FirestoreProvider({this.collection});
+  FirestoreProvider({collection}) {
+    this.collection = collection;
+    this.firestoreInstance = Firestore.instance;
+  }
+  FirestoreProvider.test({String collection, Firestore firestoreInstance}) {
+    this.collection = collection;
+    this.firestoreInstance = firestoreInstance;
+  }
 
   Future<QuerySnapshot> getAll() {
-    return Firestore.instance.collection(collection).getDocuments();
+    return firestoreInstance.collection(collection).getDocuments();
   }
 
   Future<DocumentSnapshot> get(String id) {
-    return Firestore.instance.collection(collection).document(id).get();
+    return firestoreInstance.collection(collection).document(id).get();
   }
 
   Future<QuerySnapshot> getChild(String id, String childCollection) {
-    return Firestore.instance
+    return firestoreInstance
         .collection(collection)
         .document(id)
         .collection(childCollection)
@@ -47,7 +55,7 @@ class FirestoreProvider {
       idPathList = [];
     }
     CollectionReference finalCollection =
-        Firestore.instance.collection(collection);
+        firestoreInstance.collection(collection);
     idPathList.forEach((idPathElement) {
       finalCollection =
           finalCollection.document(idPathElement).collection(childCollection);
@@ -58,15 +66,13 @@ class FirestoreProvider {
 
   addVideoResponse(parentVideoId, videoResponse, String idPath) {
     List<String> idPathList = idPath.split('/');
-    idPathList =
-        idPathList.length > 0 && idPathList[0] == '' ? [] : idPathList;
+    idPathList = idPathList.length > 0 && idPathList[0] == '' ? [] : idPathList;
     CollectionReference finalCollection =
-        Firestore.instance.collection(collection);
+        firestoreInstance.collection(collection);
 
     idPathList.forEach((idPathElement) {
-      finalCollection = finalCollection
-          .document(idPathElement)
-          .collection('videoResponses');
+      finalCollection =
+          finalCollection.document(idPathElement).collection('videoResponses');
     });
     finalCollection =
         finalCollection.document(parentVideoId).collection('videoResponses');
@@ -87,18 +93,18 @@ class FirestoreProvider {
   }
 
   Future<DocumentReference> add(dynamic entity) {
-    return Firestore.instance.collection(collection).add(entity);
+    return firestoreInstance.collection(collection).add(entity);
   }
 
   Future<void> set({String id, dynamic entity}) {
-    return Firestore.instance
+    return firestoreInstance
         .collection(collection)
         .document(id)
         .setData(entity);
   }
 
   Stream<QuerySnapshot> listenAll() {
-    return Firestore.instance.collection(collection).snapshots();
+    return firestoreInstance.collection(collection).snapshots();
   }
 
   void addBatch(List<dynamic> entities) {

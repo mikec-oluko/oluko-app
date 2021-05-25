@@ -1,8 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/elements/card_carousel.dart';
 import 'package:oluko_app/elements/card_info.dart';
 import 'package:oluko_app/elements/gallery_carousel.dart';
-import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 
@@ -16,7 +16,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  SignUpResponse profile;
+  FirebaseUser profile;
 
   @override
   Widget build(BuildContext context) {
@@ -335,10 +335,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> getProfile() async {
-    final profileData = await AuthRepository().retrieveLoginData();
-    profile = profileData != null
-        ? SignUpResponse.fromJson(profileData.toJson())
-        : null;
+    final profileData = await AuthRepository.getLoggedUser();
+    profile = profileData != null ? profileData : null;
   }
 
   List<Widget> menuOptions() {
