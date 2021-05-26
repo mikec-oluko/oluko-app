@@ -43,24 +43,24 @@ class VideoBloc extends Cubit<VideoState> {
     }
   }
 
-  void saveVideo(Video video) async {
+  void createVideo(Video video) async {
     if (!(state is VideosSuccess)) {
       emit(Loading());
     }
     try {
-      await VideoRepository.saveVideo(video);
+      await VideoRepository.createVideo(video);
       emit(VideoSuccess());
     } catch (e) {
       emit(Failure(exception: e));
     }
   }
 
-  void addVideoResponse(String parentVideoId, Video video, String path) async {
+  void createVideoResponse(String parentVideoId, Video video, String path) async {
     if (!(state is VideosSuccess)) {
       emit(Loading());
     }
     try {
-      await VideoRepository.saveVideoResponse(parentVideoId, video, path);
+      await VideoRepository.createVideoResponse(parentVideoId, video, path);
       emit(VideoSuccess());
     } catch (e) {
       emit(Failure(exception: e));

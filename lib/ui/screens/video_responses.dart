@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ffmpeg/statistics.dart';
@@ -42,19 +41,48 @@ class _ResponsesPageState extends State<ResponsesPage> {
   int _videoDuration = 0;
   String _processPhase = '';
   final bool _debugMode = false;
-  FirestoreProvider videosProvider = FirestoreProvider(collection: 'videos');
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: Text(widget.title),
+          actions: <Widget>[
+            Builder(builder: (context) {
+              return IconButton(
+                icon: Icon(Icons.menu),
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => MaterialApp(
+                              home: Scaffold(
+                                  body: Padding(
+                                      padding: EdgeInsets.only(top: 50))))));
+                },
+              );
+            }),
+          ],
+        ),
+        body: Center(child: _processing ? _getProgressBar() : _getListView()),
+        floatingActionButton:
+            Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+          FloatingActionButton(
+              child: _processing
+                  ? CircularProgressIndicator(
+                      valueColor:
+                          new AlwaysStoppedAnimation<Color>(Colors.white),
+                    )
+                  : Icon(Icons.camera),
+              onPressed: () => _takeVideo(ImageSource.camera,
+                  parentVideo: widget.videoParent)),
+        ]));
+  }
 
   @override
   void initState() {
     getResponseVideos();
 
-// (int time,
-//           int size,
-//           double bitrate,
-//           double speed,
-//           int videoFrameNumber,
-//           double videoQuality,
-//           double videoFps)
     if (!kIsWeb) {
       EncodingProvider.enableStatisticsCallback((Statistics stats) {
         if (_canceled) return;
@@ -67,110 +95,41 @@ class _ResponsesPageState extends State<ResponsesPage> {
     super.initState();
   }
 
-  void _onUploadProgress(event) {
-    if (event.type == StorageTaskEventType.progress) {
-      final double progress =
-          event.snapshot.bytesTransferred / event.snapshot.totalByteCount;
-      setState(() {
-        _progress = progress;
-      });
-    }
-  }
-
-  Future<String> _uploadFile(filePath, folderName) async {
-    return _uploadFileS3(filePath, folderName);
-  }
-
-  Future<String> _uploadFileFireStore(filePath, folderName) async {
-    final file = new File(filePath);
-    final basename = p.basename(filePath);
-
-    final StorageReference ref =
-        FirebaseStorage.instance.ref().child(folderName).child(basename);
-    StorageUploadTask uploadTask = ref.putFile(file);
-    uploadTask.events.listen(_onUploadProgress);
-    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
-    String videoUrl = await taskSnapshot.ref.getDownloadURL();
-    return videoUrl;
-  }
-
-  Future<String> _uploadFileS3(filePath, folderName) async {
-    final file = new File(filePath);
-    final basename = p.basename(filePath);
-
-    final S3Provider s3Provider = S3Provider();
-    String downloadUrl =
-        await s3Provider.putFile(file.readAsBytesSync(), folderName, basename);
-
-    return downloadUrl;
-  }
-
-  String getFileExtension(String fileName) {
-    final exploded = fileName.split('.');
-    return exploded[exploded.length - 1];
-  }
-
-  void _updatePlaylistUrls(File file, String videoName, {bool s3Storage}) {
-    final lines = file.readAsLinesSync();
-    var updatedLines = List<String>();
-
-    for (final String line in lines) {
-      var updatedLine = line;
-      if (line.contains('.ts') || line.contains('.m3u8')) {
-        updatedLine = s3Storage == null
-            ? '$videoName%2F$line?alt=media'
-            : '$line?alt=media';
-      }
-      updatedLines.add(updatedLine);
-    }
-    final updatedContents =
-        updatedLines.reduce((value, element) => value + '\n' + element);
-
-    file.writeAsStringSync(updatedContents);
-  }
-
-  Future<String> _uploadHLSFiles(dirPath, videoName) async {
-    final videosDir = Directory(dirPath);
-
-    var playlistUrl = '';
-
-    final files = videosDir.listSync();
-    int i = 1;
-    for (FileSystemEntity file in files) {
-      final fileName = p.basename(file.path);
-      final fileExtension = getFileExtension(fileName);
-      if (fileExtension == 'm3u8')
-        _updatePlaylistUrls(file, videoName, s3Storage: true);
-
-      setState(() {
-        _processPhase = 'Uploading video part file $i out of ${files.length}';
-        _progress = 0.0;
-      });
-
-      final downloadUrl = await _uploadFile(file.path, videoName);
-
-      if (fileName == 'master.m3u8') {
-        playlistUrl = downloadUrl;
-      }
-      i++;
-    }
-
-    return playlistUrl;
-  }
-
-  getResponseVideos() {
-    videosProvider
-        .getChildWithPath(
-            widget.videoParent.id, 'videoResponses', widget.videoParentPath)
-        .then((response) {
-      List<Video> updatedVideos = [];
-      response.documents
-          .forEach((doc) => updatedVideos.add(Video.fromJson(doc.data)));
-
-      setState(() {
-        _videos = updatedVideos;
-      });
+  getResponseVideos() async {
+    List<Video> updatedVideos = await VideoRepository.getVideoResponsesWithPath(
+        widget.videoParent.id, widget.videoParentPath);
+    setState(() {
+      _videos = updatedVideos;
     });
+  }
+
+  void _takeVideo(ImageSource imageSource, {Video parentVideo}) async {
+    var videoFile;
+    if (_debugMode) {
+      videoFile = File(
+          '/storage/emulated/0/Android/data/com.app.oluko/files/Pictures/cef0e6eb-8371-4ea9-800b-98e9cc515ec72789476473552585505.mp4');
+    } else {
+      if (_imagePickerActive) return;
+
+      _imagePickerActive = true;
+      videoFile = await ImagePicker.pickVideo(source: imageSource);
+      _imagePickerActive = false;
+
+      if (videoFile == null) return;
+    }
+    setState(() {
+      _processing = true;
+    });
+
+    try {
+      await _processVideo(videoFile, parentVideo: parentVideo);
+    } catch (e) {
+      print('${e.toString()}');
+    } finally {
+      setState(() {
+        _processing = false;
+      });
+    }
   }
 
   Future<void> _processVideo(File rawVideoFile, {Video parentVideo}) async {
@@ -227,11 +186,12 @@ class _ResponsesPageState extends State<ResponsesPage> {
     });
 
     if (parentVideo == null) {
-      await VideoRepository.saveVideo(videoInfo);
+      await VideoRepository.createVideo(videoInfo);
     } else if (parentVideo.id == widget.videoParent.id) {
-      await VideoRepository.saveVideoResponse(parentVideo.id, videoInfo, widget.videoParentPath);
+      await VideoRepository.createVideoResponse(
+          parentVideo.id, videoInfo, widget.videoParentPath);
     } else {
-      await VideoRepository.saveVideoResponse(
+      await VideoRepository.createVideoResponse(
           parentVideo.id,
           videoInfo,
           widget.videoParentPath == '/'
@@ -243,36 +203,71 @@ class _ResponsesPageState extends State<ResponsesPage> {
       _progress = 0.0;
       _processing = false;
     });
-    getResponseVideos();
+    await getResponseVideos();
   }
 
-  void _takeVideo(ImageSource imageSource, {Video parentVideo}) async {
-    var videoFile;
-    if (_debugMode) {
-      videoFile = File(
-          '/storage/emulated/0/Android/data/com.app.oluko/files/Pictures/cef0e6eb-8371-4ea9-800b-98e9cc515ec72789476473552585505.mp4');
-    } else {
-      if (_imagePickerActive) return;
+  Future<String> _uploadHLSFiles(dirPath, videoName) async {
+    final videosDir = Directory(dirPath);
 
-      _imagePickerActive = true;
-      videoFile = await ImagePicker.pickVideo(source: imageSource);
-      _imagePickerActive = false;
+    var playlistUrl = '';
 
-      if (videoFile == null) return;
-    }
-    setState(() {
-      _processing = true;
-    });
+    final files = videosDir.listSync();
+    int i = 1;
+    for (FileSystemEntity file in files) {
+      final fileName = p.basename(file.path);
+      final fileExtension = getFileExtension(fileName);
+      if (fileExtension == 'm3u8')
+        _updatePlaylistUrls(file, videoName, s3Storage: true);
 
-    try {
-      await _processVideo(videoFile, parentVideo: parentVideo);
-    } catch (e) {
-      print('${e.toString()}');
-    } finally {
       setState(() {
-        _processing = false;
+        _processPhase = 'Uploading video part file $i out of ${files.length}';
+        _progress = 0.0;
       });
+
+      final downloadUrl = await _uploadFile(file.path, videoName);
+
+      if (fileName == 'master.m3u8') {
+        playlistUrl = downloadUrl;
+      }
+      i++;
     }
+
+    return playlistUrl;
+  }
+
+  String getFileExtension(String fileName) {
+    final exploded = fileName.split('.');
+    return exploded[exploded.length - 1];
+  }
+
+  Future<String> _uploadFile(filePath, folderName) async {
+    final file = new File(filePath);
+    final basename = p.basename(filePath);
+
+    final S3Provider s3Provider = S3Provider();
+    String downloadUrl =
+        await s3Provider.putFile(file.readAsBytesSync(), folderName, basename);
+
+    return downloadUrl;
+  }
+
+  void _updatePlaylistUrls(File file, String videoName, {bool s3Storage}) {
+    final lines = file.readAsLinesSync();
+    var updatedLines = [];
+
+    for (final String line in lines) {
+      var updatedLine = line;
+      if (line.contains('.ts') || line.contains('.m3u8')) {
+        updatedLine = s3Storage == null
+            ? '$videoName%2F$line?alt=media'
+            : '$line?alt=media';
+      }
+      updatedLines.add(updatedLine);
+    }
+    final updatedContents =
+        updatedLines.reduce((value, element) => value + '\n' + element);
+
+    file.writeAsStringSync(updatedContents);
   }
 
   _getListView() {
@@ -382,62 +377,5 @@ class _ResponsesPageState extends State<ResponsesPage> {
         ],
       ),
     );
-  }
-
-  Future<List<Video>> getVideoResponses(video) async {
-    var response = await VideoRepository.getVideoResponses(video.id);
-    if (response.length == 0) {
-      return null;
-    }
-    var videoResponses = response;
-    return videoResponses;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-          actions: <Widget>[
-            Builder(builder: (context) {
-              return IconButton(
-                icon: Icon(Icons.menu),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => MaterialApp(
-                              home: Scaffold(
-                                  body: Padding(
-                                      padding: EdgeInsets.only(top: 50))))));
-                },
-              );
-            }),
-          ],
-        ),
-        body: Center(child: _processing ? _getProgressBar() : _getListView()),
-        floatingActionButton:
-            Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-          FloatingActionButton(
-              child: _processing
-                  ? CircularProgressIndicator(
-                      valueColor:
-                          new AlwaysStoppedAnimation<Color>(Colors.white),
-                    )
-                  : Icon(Icons.camera),
-              onPressed: () => _takeVideo(ImageSource.camera,
-                  parentVideo: widget.videoParent)),
-          // Padding(
-          //   padding: EdgeInsets.only(top: 10),
-          // child: FloatingActionButton(
-          //     child: _processing
-          //         ? CircularProgressIndicator(
-          //             valueColor:
-          //                 new AlwaysStoppedAnimation<Color>(Colors.white),
-          //           )
-          //         : Icon(Icons.photo),
-          //     onPressed: () => _takeVideo(ImageSource.gallery)),
-          // )
-        ]));
   }
 }

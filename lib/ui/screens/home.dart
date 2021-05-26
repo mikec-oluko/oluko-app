@@ -30,14 +30,15 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final thumbWidth = 100;
   final thumbHeight = 150;
-  List<Video> _videos = <Video>[];
   bool _imagePickerActive = false;
   bool _processing = false;
-  bool _canceled = false;
+  bool _canceled = false; //esto sirve para algo?
   double _progress = 0.0;
   int _videoDuration = 0;
   String _processPhase = '';
-  final bool _debugMode = false;
+  final bool _debugMode = false; //esto sirve para algo?
+
+  List<Video> _videos = <Video>[];
   FirebaseUser user;
 
   @override
@@ -105,68 +106,34 @@ class _HomeState extends State<Home> {
     });
   }
 
-  Future<String> _uploadHLSFiles(dirPath, videoName) async {
-    final videosDir = Directory(dirPath);
+  void _takeVideo(ImageSource imageSource, {Video parentVideo}) async {
+    //ESTO HABRIA QUE SEPARARLO
+    var videoFile;
+    if (_debugMode) {
+      videoFile = File(
+          '/storage/emulated/0/Android/data/com.app.oluko/files/Pictures/cef0e6eb-8371-4ea9-800b-98e9cc515ec72789476473552585505.mp4');
+    } else {
+      if (_imagePickerActive) return;
 
-    var playlistUrl = '';
+      _imagePickerActive = true;
+      videoFile = await ImagePicker.pickVideo(source: imageSource);
+      _imagePickerActive = false;
 
-    final files = videosDir.listSync();
-    int i = 1;
-    for (FileSystemEntity file in files) {
-      final fileName = p.basename(file.path);
-      final fileExtension = getFileExtension(fileName);
-      if (fileExtension == 'm3u8')
-        _updatePlaylistUrls(file, videoName, s3Storage: true);
+      if (videoFile == null) return;
+    }
+    setState(() {
+      _processing = true;
+    });
 
+    try {
+      await _processVideo(videoFile, parentVideo: parentVideo);
+    } catch (e) {
+      print('${e.toString()}');
+    } finally {
       setState(() {
-        _processPhase = 'Uploading video part file $i out of ${files.length}';
-        _progress = 0.0;
+        _processing = false;
       });
-
-      final downloadUrl = await _uploadFile(file.path, videoName);
-
-      if (fileName == 'master.m3u8') {
-        playlistUrl = downloadUrl;
-      }
-      i++;
     }
-
-    return playlistUrl;
-  }
-
-  Future<String> _uploadFile(filePath, folderName) async {
-    final file = new File(filePath);
-    final basename = p.basename(filePath);
-
-    final S3Provider s3Provider = S3Provider();
-    String downloadUrl =
-        await s3Provider.putFile(file.readAsBytesSync(), folderName, basename);
-
-    return downloadUrl;
-  }
-
-  void _updatePlaylistUrls(File file, String videoName, {bool s3Storage}) {
-    final lines = file.readAsLinesSync();
-    var updatedLines = [];
-
-    for (final String line in lines) {
-      var updatedLine = line;
-      if (line.contains('.ts') || line.contains('.m3u8')) {
-        updatedLine = s3Storage == null
-            ? '$videoName%2F$line?alt=media'
-            : '$line?alt=media';
-      }
-      updatedLines.add(updatedLine);
-    }
-    final updatedContents =
-        updatedLines.reduce((value, element) => value + '\n' + element);
-
-    file.writeAsStringSync(updatedContents);
-  }
-
-  String getFileExtension(String fileName) {
-    final exploded = fileName.split('.');
-    return exploded[exploded.length - 1];
   }
 
   Future<void> _processVideo(File rawVideoFile, {Video parentVideo}) async {
@@ -222,11 +189,11 @@ class _HomeState extends State<Home> {
     });
 
     if (parentVideo == null) {
-      VideoBloc()..saveVideo(video);
+      VideoBloc()..createVideo(video);
       _videos.add(video);
     } else {
       VideoBloc()
-        ..addVideoResponse(parentVideo.id, video, "/"); //REVISAR ESTE CASO
+        ..createVideoResponse(parentVideo.id, video, "/"); //REVISAR ESTE CASO
     }
     setState(() {
       _processPhase = '';
@@ -235,33 +202,68 @@ class _HomeState extends State<Home> {
     });
   }
 
-  void _takeVideo(ImageSource imageSource, {Video parentVideo}) async { //ESTO HABRIA QUE SEPARARLO
-    var videoFile;
-    if (_debugMode) {
-      videoFile = File(
-          '/storage/emulated/0/Android/data/com.app.oluko/files/Pictures/cef0e6eb-8371-4ea9-800b-98e9cc515ec72789476473552585505.mp4');
-    } else {
-      if (_imagePickerActive) return;
+  Future<String> _uploadHLSFiles(dirPath, videoName) async {
+    final videosDir = Directory(dirPath);
 
-      _imagePickerActive = true;
-      videoFile = await ImagePicker.pickVideo(source: imageSource);
-      _imagePickerActive = false;
+    var playlistUrl = '';
 
-      if (videoFile == null) return;
-    }
-    setState(() {
-      _processing = true;
-    });
+    final files = videosDir.listSync();
+    int i = 1;
+    for (FileSystemEntity file in files) {
+      final fileName = p.basename(file.path);
+      final fileExtension = getFileExtension(fileName);
+      if (fileExtension == 'm3u8')
+        _updatePlaylistUrls(file, videoName, s3Storage: true);
 
-    try {
-      await _processVideo(videoFile, parentVideo: parentVideo);
-    } catch (e) {
-      print('${e.toString()}');
-    } finally {
       setState(() {
-        _processing = false;
+        _processPhase = 'Uploading video part file $i out of ${files.length}';
+        _progress = 0.0;
       });
+
+      final downloadUrl = await _uploadFile(file.path, videoName);
+
+      if (fileName == 'master.m3u8') {
+        playlistUrl = downloadUrl;
+      }
+      i++;
     }
+
+    return playlistUrl;
+  }
+
+  String getFileExtension(String fileName) {
+    final exploded = fileName.split('.');
+    return exploded[exploded.length - 1];
+  }
+
+  Future<String> _uploadFile(filePath, folderName) async {
+    final file = new File(filePath);
+    final basename = p.basename(filePath);
+
+    final S3Provider s3Provider = S3Provider();
+    String downloadUrl =
+        await s3Provider.putFile(file.readAsBytesSync(), folderName, basename);
+
+    return downloadUrl;
+  }
+
+  void _updatePlaylistUrls(File file, String videoName, {bool s3Storage}) {
+    final lines = file.readAsLinesSync();
+    var updatedLines = [];
+
+    for (final String line in lines) {
+      var updatedLine = line;
+      if (line.contains('.ts') || line.contains('.m3u8')) {
+        updatedLine = s3Storage == null
+            ? '$videoName%2F$line?alt=media'
+            : '$line?alt=media';
+      }
+      updatedLines.add(updatedLine);
+    }
+    final updatedContents =
+        updatedLines.reduce((value, element) => value + '\n' + element);
+
+    file.writeAsStringSync(updatedContents);
   }
 
   _getListView(List<Video> videos) {
