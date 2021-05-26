@@ -110,7 +110,7 @@ class MainSignUpPage extends StatelessWidget {
                                     height: 50,
                                     child: OutlinedButton(
                                         onPressed: () => AuthBloc()
-                                          ..loginWithFacebook(context),
+                                            .loginWithFacebook(context),
                                         style: OutlinedButton.styleFrom(
                                             backgroundColor: Colors.white),
                                         child: Stack(children: [
