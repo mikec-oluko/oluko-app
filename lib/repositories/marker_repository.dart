@@ -1,0 +1,68 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:oluko_app/models/marker.dart';
+
+class MarkerRepository {
+  Firestore firestoreInstance;
+
+  MarkerRepository() {
+    this.firestoreInstance = Firestore.instance;
+  }
+
+  MarkerRepository.test({Firestore firestoreInstance}) {
+    this.firestoreInstance = firestoreInstance;
+  }
+
+  Future<Marker> createMarker1(Marker marker) async {
+    final DocumentReference docRef =
+        firestoreInstance.collection('markers').document();
+    docRef.setData({
+      'id': docRef.documentID,
+      'position': marker.position,
+      'videoId': marker.videoId,
+    });
+    marker.id = docRef.documentID;
+    return marker;
+  }
+
+  createMarker(String parentVideoId, Marker marker) {
+    final DocumentReference docRef =
+        firestoreInstance.collection('videos').document(parentVideoId);
+    final DocumentReference responseDocRef =
+        docRef.collection('markers').document();
+    responseDocRef.setData(marker.toJson());
+    return responseDocRef.documentID;
+  }
+
+  Future<List<Marker>> getVideoMarkers1(String videoId) async {
+    List<Marker> markers = [];
+    QuerySnapshot docRef = await Firestore.instance
+        .collection('markers')
+        .where('videoId', isEqualTo: videoId)
+        .getDocuments();
+    docRef.documents.forEach((marker) {
+      Marker newMarker = Marker.fromJson(marker.data);
+      markers.add(newMarker);
+    });
+    return markers;
+  }
+
+  Future<List<Marker>> getVideoMarkers(String parentVideoId) async {
+    QuerySnapshot querySnapshot = await Firestore.instance
+        .collection('videos')
+        .document(parentVideoId)
+        .collection('markers')
+        .getDocuments();
+
+    return mapQueryToMarker(querySnapshot);
+  }
+
+  static mapQueryToMarker(QuerySnapshot qs) {
+    return qs.documents.map((DocumentSnapshot ds) {
+      return Marker(
+        id: ds.documentID,
+        position: ds.data['position'],
+        videoId: ds.data['videoId'],
+      );
+    }).toList();
+  }
+}
