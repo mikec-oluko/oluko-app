@@ -1,7 +1,7 @@
 include ':app'
 
 def flutterProjectRoot = rootProject.projectDir.parentFile.toPath()
- 
+def localPropertiesFile = new File(rootProject.projectDir, "local.properties")
 def plugins = new Properties()
 def pluginsFile = new File(flutterProjectRoot.toFile(), '.flutter-plugins')
 if (pluginsFile.exists()) {
