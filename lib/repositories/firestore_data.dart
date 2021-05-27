@@ -1,17 +1,3 @@
-// Copyright 2020 Google LLC
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FirestoreProvider {
@@ -22,6 +8,7 @@ class FirestoreProvider {
     this.collection = collection;
     this.firestoreInstance = Firestore.instance;
   }
+
   FirestoreProvider.test({String collection, Firestore firestoreInstance}) {
     this.collection = collection;
     this.firestoreInstance = firestoreInstance;
@@ -31,76 +18,47 @@ class FirestoreProvider {
     return firestoreInstance.collection(collection).getDocuments();
   }
 
-  Future<DocumentSnapshot> get(String key) {
-    return firestoreInstance.collection(collection).document(key).get();
+  Future<DocumentSnapshot> get(String id) {
+    return firestoreInstance.collection(collection).document(id).get();
   }
 
-  Future<QuerySnapshot> getChild(String key, String childCollection) {
+  Future<QuerySnapshot> getChild(String id, String childCollection) {
     return firestoreInstance
         .collection(collection)
-        .document(key)
+        .document(id)
         .collection(childCollection)
         .getDocuments();
   }
 
   ///Get documents list from nested collections.
   ///
-  ///[key] final document key after path.
+  ///[id] final document id after path.
   ///[childCollection] child collection present on every document in the path.
-  ///[keyPath] document key path to the [key] document. Ex. `{document_key}/{document_key}/{document_key}`.
+  ///[idPath] document id path to the [id] document. Ex. `{document_id}/{document_id}/{document_id}`.
   Future<QuerySnapshot> getChildWithPath(
-      String key, String childCollection, String keyPath) {
-    List<String> keyPathList = keyPath.split('/');
-    if (keyPathList[0] == '') {
-      keyPathList = [];
+      String id, String childCollection, String idPath) {
+    List<String> idPathList = idPath.split('/');
+    if (idPathList[0] == '') {
+      idPathList = [];
     }
     CollectionReference finalCollection =
         firestoreInstance.collection(collection);
-    keyPathList.forEach((keyPathElement) {
+    idPathList.forEach((idPathElement) {
       finalCollection =
-          finalCollection.document(keyPathElement).collection(childCollection);
+          finalCollection.document(idPathElement).collection(childCollection);
     });
-    finalCollection = finalCollection.document(key).collection(childCollection);
+    finalCollection = finalCollection.document(id).collection(childCollection);
     return finalCollection.getDocuments();
-  }
-
-  addVideoResponse(parentVideoKey, videoResponse, String keyPath) {
-    List<String> keyPathList = keyPath.split('/');
-    keyPathList =
-        keyPathList.length > 0 && keyPathList[0] == '' ? [] : keyPathList;
-    CollectionReference finalCollection =
-        firestoreInstance.collection(collection);
-
-    keyPathList.forEach((keyPathElement) {
-      finalCollection =
-          finalCollection.document(keyPathElement).collection('videoResponses');
-    });
-    finalCollection =
-        finalCollection.document(parentVideoKey).collection('videoResponses');
-
-    final DocumentReference docRef = finalCollection.document();
-
-    docRef.setData({
-      'videoUrl': videoResponse.videoUrl,
-      'thumbUrl': videoResponse.thumbUrl,
-      'coverUrl': videoResponse.coverUrl,
-      'aspectRatio': videoResponse.aspectRatio,
-      'uploadedAt': videoResponse.uploadedAt,
-      'videoName': videoResponse.videoName,
-      'createdBy': videoResponse.createdBy,
-      'key': docRef.documentID
-    });
-    return docRef.documentID;
   }
 
   Future<DocumentReference> add(dynamic entity) {
     return firestoreInstance.collection(collection).add(entity);
   }
 
-  Future<void> set({String key, dynamic entity}) {
+  Future<void> set({String id, dynamic entity}) {
     return firestoreInstance
         .collection(collection)
-        .document(key)
+        .document(id)
         .setData(entity);
   }
 

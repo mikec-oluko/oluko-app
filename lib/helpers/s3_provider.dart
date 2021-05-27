@@ -62,8 +62,7 @@ class S3Provider {
     }
   }
 
-  Future<String> putFile(
-      Uint8List bodyBytes, String path, String fileName) async {
+  putFile(Uint8List bodyBytes, String path, String fileName) async {
     final uri = Uri.parse('$endpoint/$path/$fileName');
     http.Response res;
 

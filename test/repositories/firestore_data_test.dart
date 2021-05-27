@@ -95,7 +95,7 @@ void main() {
       expect(response, isA<QuerySnapshot>());
     });
 
-    test('should add video response', () async {
+    /*test('should add video response', () async {
       Firestore firestoreInstance = MockFirestore();
       CollectionReference collectionReference = MockCollectionReference();
       DocumentReference documentReference = MockDocumentReference();
@@ -117,7 +117,7 @@ void main() {
           parentVideoKey, videoResponse, keyPath);
       expect(response, isA<String>());
       expect(response, documentId);
-    });
+    });*/
 
     test('should add entity', () async {
       Firestore firestoreInstance = MockFirestore();
@@ -150,7 +150,7 @@ void main() {
       when(firestoreInstance.collection(any)).thenReturn(collectionReference);
       when(collectionReference.document(any)).thenReturn(documentReference);
 
-      await firestoreProvider.set(key: key, entity: entity);
+      await firestoreProvider.set(id: key, entity: entity);
     });
 
     test('should listen snapshots', () async {

@@ -6,7 +6,7 @@ import 'package:oluko_app/ui/screens/Login.dart';
 import 'package:oluko_app/ui/screens/Profile.dart';
 import 'package:oluko_app/ui/screens/sign_up_with_email.dart';
 import 'package:oluko_app/ui/screens/sign_up.dart';
-import 'package:oluko_app/ui/screens/home.dart';
+import 'package:oluko_app/ui/screens/videos_home.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,8 +44,13 @@ class _MyAppState extends State<MyApp> {
             BlocProvider.value(value: _authBloc, child: ProfilePage()),
         '/log-in': (context) =>
             BlocProvider.value(value: _authBloc, child: LoginPage()),
-        '/videos': (context) =>
-            BlocProvider.value(value: _authBloc, child: Home())
+        '/videos': (context) => BlocProvider.value(
+            value: _authBloc,
+            child: Home(
+              title: "Videos",
+              videoParent: null,
+              videoParentPath: "",
+            ))
       },
     );
   }

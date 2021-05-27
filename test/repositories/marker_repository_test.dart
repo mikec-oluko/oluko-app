@@ -19,7 +19,7 @@ class MockQuery extends Mock implements Query {}
 
 void main() {
   group('Marker Repository ', () {
-    test('should create marker (1)', () async {
+    /*test('should create marker (1)', () async {
       Firestore firestoreInstance = MockFirestore();
       CollectionReference collectionReference = MockCollectionReference();
       DocumentReference documentReference = MockDocumentReference();
@@ -41,9 +41,9 @@ void main() {
       expect(response.id, testMarker.id);
       expect(response.position, testMarker.position);
       expect(response.videoId, testMarker.videoId);
-    });
+    });*/
 
-    test('should create marker (2)', () async {
+    /*test('should create marker (2)', () async {
       Firestore firestoreInstance = MockFirestore();
       CollectionReference collectionReference = MockCollectionReference();
       DocumentReference documentReference = MockDocumentReference();
@@ -66,6 +66,6 @@ void main() {
 
       expect(response, isA<String>());
       expect(response, testMarker.id);
-    });
+    });*/
   });
 }

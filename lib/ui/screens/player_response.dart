@@ -376,9 +376,9 @@ class _PlayerResponseState extends State<PlayerResponse> {
   //Storage Functions
 
   ///Saves CanvasPoints from current video to a VideoTrackerProvider
-  saveVideoTrackData(String videoKey, List<CanvasPoint> canvasPoints) {
+  saveVideoTrackData(String videoId, List<CanvasPoint> canvasPoints) {
     dynamic jsonCanvasPoints = {
-      "videoKey": widget.video2.id,
+      "videoId": widget.video2.id,
       "drawPoints": jsonEncode(this.canvasPointsRecording.map((e) {
         if (e.point == null) {
           return {"x": null, "y": null, "timeStamp": e.timeStamp};
@@ -390,13 +390,13 @@ class _PlayerResponseState extends State<PlayerResponse> {
         };
       }).toList()),
     };
-    videoTrackingProvider.set(key: videoKey, entity: jsonCanvasPoints);
+    videoTrackingProvider.set(id: videoId, entity: jsonCanvasPoints);
     SnackBarService.showSnackBar(context, 'Record saved!');
   }
 
   ///Retrieves CanvasPoints from a VideoTrackerProvider to current video
-  Future<List<CanvasPoint>> retrieveVideoTrackData(String videoKey) async {
-    DocumentSnapshot document = await videoTrackingProvider.get(videoKey);
+  Future<List<CanvasPoint>> retrieveVideoTrackData(String videoId) async {
+    DocumentSnapshot document = await videoTrackingProvider.get(videoId);
     if (!document.exists) {
       return null;
     }

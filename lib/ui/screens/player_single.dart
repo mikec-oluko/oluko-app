@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io' as io;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -136,7 +135,6 @@ class _PlayerSingleState extends State<PlayerSingle> {
                                           max: getSliderMac().toDouble(),
                                           min: 0,
                                           onChanged: (val) async {
-                                            // await pauseContents();
                                             await Future.wait([
                                               controller1.seekTo(Duration(
                                                   milliseconds: val.toInt())),
@@ -144,48 +142,16 @@ class _PlayerSingleState extends State<PlayerSingle> {
                                             setState(() {});
                                           },
                                           onChangeEnd: (val) async {
-                                            // await Future.wait([
-                                            //   controller1.seekTo(Duration(
-                                            //       milliseconds: val.toInt())),
-                                            // ]);
-                                            // await pauseContents();
                                             this.ended = contentsEnded();
 
                                             this._autoPlay = true;
 
                                             setState(() {});
                                           },
-                                          // divisions: 100,
-                                          // label: getCurrentVideoPosition()
-                                          //         .round()
-                                          //         .toString() +
-                                          //     ' s',
-                                          // label: getLabelValue()
                                         )),
                                     Container(
-                                        height: 55,
-                                        /*child: Stack(children: [
-                                          buildMarkerTag(0,
-                                              icon: Icons.location_on,
-                                              color: Colors.red.shade700),
-                                          buildMarkerTag(getSliderMac() / 8,
-                                              icon: Icons.local_hospital,
-                                              color: Colors.orange),
-                                          buildMarkerTag(getSliderMac() / 4,
-                                              icon: Icons.add_location_rounded,
-                                              color: Colors.blue),
-                                          buildMarkerTag(getSliderMac() / 2,
-                                              icon:
-                                                  Icons.arrow_circle_down_sharp,
-                                              color: Colors.black),
-                                          buildMarkerTag(getSliderMac() / 1.5,
-                                              icon: Icons
-                                                  .arrow_drop_down_circle_rounded,
-                                              color: Colors.brown),
-                                          buildMarkerTag(getSliderMac() / 1.2,
-                                              icon: Icons.arrow_drop_down_sharp,
-                                              color: Colors.purple),
-                                        ])*/)
+                                      height: 55,
+                                    )
                                   ],
                                 ),
                               ),
@@ -229,11 +195,6 @@ class _PlayerSingleState extends State<PlayerSingle> {
                                         onPressed: () {
                                           setState(() => saveVideoTrackData());
                                         }),
-                                    // IconButton(
-                                    //     icon: Icon(Icons.color_lens),
-                                    //     onPressed: () {
-                                    //       setState(() => openCanvas = true);
-                                    //     }),
                                   ],
                                 ),
                               )
@@ -259,70 +220,6 @@ class _PlayerSingleState extends State<PlayerSingle> {
     return position;
   }
 
-  getLabelValue() {
-    var markers = [
-      Duration(seconds: 1),
-      Duration(seconds: 7),
-      Duration(seconds: 15),
-      Duration(seconds: 17),
-    ];
-    if (this.controller1 != null) {
-      for (var marker in markers) {
-        if (this.controller1.value.position <=
-                marker + Duration(milliseconds: 1000) &&
-            this.controller1.value.position >=
-                marker - Duration(milliseconds: 1000)) {
-          if (io.Platform.isAndroid && this.showAlertOnce) {
-            // Android-specific code
-            this.showAlertOnce = false;
-            //TODO:
-            // showDialog(
-            //     context: context,
-            //     builder: (_) => new AlertDialog(
-            //           title: new Text("Material Dialog"),
-            //           content: new Text("Hey! I'm Coflutter!"),
-            //           actions: <Widget>[
-            //             TextButton(
-            //               child: Text('Close me!'),
-            //               onPressed: () {
-            //                 Navigator.of(context).pop();
-            //               },
-            //             )
-            //           ],
-            //         ));
-          } else {
-            if (io.Platform.isIOS && this.showAlertOnce) {
-              // iOS-specific code
-              this.showAlertOnce = false;
-              //TODO:
-              // showDialog(
-              //     context: context,
-              //     builder: (_) => new CupertinoAlertDialog(
-              //           title: new Text("Cupertino Dialog"),
-              //           content: new Text("Hey! I'm Coflutter!"),
-              //           actions: <Widget>[
-              //             TextButton(
-              //               child: Text('Close me!'),
-              //               onPressed: () {
-              //                 Navigator.of(context).pop();
-              //               },
-              //             )
-              //           ],
-              //         ));
-            }
-          }
-          return this.controller1.value.position.inSeconds.round().toString();
-        }
-      }
-    }
-    return "Yeloww";
-  }
-
-  Future<dynamic> retrieveVideoDetails() async {
-    Map<String, dynamic> videoTrackData = await this.retrieveVideoTrackData();
-    return videoTrackData;
-  }
-
   playContents() async {
     var position = this.controller1.value.position;
     var duration = this.controller1.value.duration;
@@ -338,8 +235,8 @@ class _PlayerSingleState extends State<PlayerSingle> {
   }
 
   saveVideoTrackData() {
-    videoTrackingProvider.set(key: widget.video.id, entity: {
-      "videoKey": widget.video.id,
+    videoTrackingProvider.set(id: widget.video.id, entity: {
+      "videoId": widget.video.id,
       "drawPoints": jsonEncode(this.canvasPointsRecording.map((e) {
         if (e.point == null) {
           return {"x": null, "y": null, "timeStamp": e.timeStamp};
