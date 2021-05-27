@@ -34,7 +34,7 @@ class _LoginPageState extends State<LoginPage> {
               actions: [],
             ),
             body: Container(
-                color: Colors.brown.shade100,
+                color: Colors.black,
                 child: ListView(children: [
                   Padding(
                       padding: EdgeInsets.symmetric(horizontal: 15),
@@ -42,14 +42,6 @@ class _LoginPageState extends State<LoginPage> {
                           width: MediaQuery.of(context).size.width,
                           child: Column(children: [
                             SizedBox(height: 20),
-                            Align(
-                                alignment: Alignment.centerRight,
-                                child: IconButton(
-                                  icon: Icon(Icons.cancel),
-                                  color: Colors.grey,
-                                  iconSize: 30,
-                                  onPressed: () => Navigator.pop(context),
-                                )),
                             SizedBox(height: 20),
                             titleSection(),
                             SizedBox(height: 50),
@@ -73,17 +65,14 @@ class _LoginPageState extends State<LoginPage> {
         width: MediaQuery.of(context).size.width,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(
-            'Login',
+            'Welcome Back',
             textAlign: TextAlign.start,
-            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
           ),
           SizedBox(
             height: 10,
           ),
-          Text(
-            'Login with your Email',
-            style: TextStyle(fontSize: 17, fontWeight: FontWeight.w300),
-          )
         ]));
   }
 
@@ -92,25 +81,21 @@ class _LoginPageState extends State<LoginPage> {
       //Text Fields
       TextFormField(
         decoration: new InputDecoration(
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.white),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(10.0),
-                topRight: Radius.circular(10.0),
-              ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey),
+              borderRadius: BorderRadius.circular(10),
             ),
-            border: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.white),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(10.0),
-                topRight: Radius.circular(10.0),
-              ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey),
+              borderRadius: BorderRadius.circular(10),
             ),
-            filled: true,
+            focusColor: Colors.white,
+            filled: false,
             hintStyle: new TextStyle(color: Colors.grey[800]),
             hintText: "example@yourcompany.com",
+            fillColor: Colors.white70,
             labelText: "Email",
-            fillColor: Colors.white70),
+            labelStyle: new TextStyle(color: Colors.grey[800])),
         validator: (value) {
           if (value == null || value.isEmpty) {
             return 'Please enter some text';
@@ -121,25 +106,23 @@ class _LoginPageState extends State<LoginPage> {
           this._requestData.email = value;
         },
       ),
+      SizedBox(
+        height: 10,
+      ),
       TextFormField(
         decoration: new InputDecoration(
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.white),
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(10.0),
-                bottomRight: Radius.circular(10.0),
-              ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey),
+              borderRadius: BorderRadius.circular(10),
             ),
-            border: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.white),
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(10.0),
-                bottomRight: Radius.circular(10.0),
-              ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey),
+              borderRadius: BorderRadius.circular(10),
             ),
-            filled: true,
+            filled: false,
             errorStyle: TextStyle(height: 0.5),
             hintStyle: new TextStyle(color: Colors.grey[800]),
+            labelStyle: new TextStyle(color: Colors.grey[800]),
             hintText: "8 or more characters",
             labelText: "Password",
             fillColor: Colors.white70),
@@ -161,7 +144,10 @@ class _LoginPageState extends State<LoginPage> {
               alignment: Alignment.centerRight,
               child: Text(
                 'Forgot Password?',
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.normal),
+                style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.normal,
+                    color: Colors.grey),
               ))),
       //Login button
       Padding(
@@ -184,66 +170,62 @@ class _LoginPageState extends State<LoginPage> {
                   },
                   child: Stack(children: [
                     Align(
-                        alignment: Alignment.centerRight,
-                        child: Icon(Icons.navigate_next)),
-                    Align(
-                      child: Text('LOG IN'),
+                      child: Text('Login'),
                     )
                   ])))),
       Padding(
           padding: EdgeInsets.symmetric(vertical: 15),
-          child: Text('- Or you can also -')),
+          child: Text(
+            '- OR -',
+            style: TextStyle(color: Colors.grey),
+          )),
       //Login with SSO
-      Padding(
-          padding: EdgeInsets.symmetric(vertical: 5),
-          child: SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: OutlinedButton(
-                  onPressed: () {
-                    BlocProvider.of<AuthBloc>(context)
-                      ..loginWithGoogle(context);
-                  },
-                  style:
-                      OutlinedButton.styleFrom(backgroundColor: Colors.white),
-                  child: Stack(children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Image.network(
-                        'https://img.icons8.com/color/452/google-logo.png',
-                        width: 30,
+      Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+        Padding(
+            padding: EdgeInsets.symmetric(vertical: 5),
+            child: SizedBox(
+                height: 50,
+                width: MediaQuery.of(context).size.width / 2.5,
+                child: OutlinedButton(
+                    onPressed: () {
+                      BlocProvider.of<AuthBloc>(context)
+                        ..loginWithGoogle(context);
+                    },
+                    style: OutlinedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        side: BorderSide(color: Colors.grey)),
+                    child: Stack(children: [
+                      Align(
+                        alignment: Alignment.center,
+                        child: Image.network(
+                          'https://img.icons8.com/color/452/google-logo.png',
+                          width: 30,
+                        ),
                       ),
-                    ),
-                    Align(
-                      child: Text('Log In with Google',
-                          style: TextStyle(color: Colors.black)),
-                    )
-                  ])))),
-      Padding(
-          padding: EdgeInsets.symmetric(vertical: 5),
-          child: SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: OutlinedButton(
-                  onPressed: () {
-                    BlocProvider.of<AuthBloc>(context)
-                      ..loginWithFacebook(context);
-                  },
-                  style:
-                      OutlinedButton.styleFrom(backgroundColor: Colors.white),
-                  child: Stack(children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Image.network(
-                        'https://cdn.icon-icons.com/icons2/1826/PNG/512/4202110facebooklogosocialsocialmedia-115707_115594.png',
-                        width: 30,
+                    ])))),
+        Padding(
+            padding: EdgeInsets.symmetric(vertical: 5),
+            child: SizedBox(
+                height: 50,
+                width: MediaQuery.of(context).size.width / 2.5,
+                child: OutlinedButton(
+                    onPressed: () {
+                      BlocProvider.of<AuthBloc>(context)
+                        ..loginWithFacebook(context);
+                    },
+                    style: OutlinedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        side: BorderSide(color: Colors.grey)),
+                    child: Stack(children: [
+                      Align(
+                        alignment: Alignment.center,
+                        child: Image.network(
+                          'https://cdn.icon-icons.com/icons2/1826/PNG/512/4202110facebooklogosocialsocialmedia-115707_115594.png',
+                          width: 30,
+                        ),
                       ),
-                    ),
-                    Align(
-                      child: Text('Log In with Facebook',
-                          style: TextStyle(color: Colors.black)),
-                    )
-                  ])))),
+                    ])))),
+      ])
     ];
   }
 }
