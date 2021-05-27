@@ -4,7 +4,7 @@ import 'package:oluko_app/ui/screens/Login.dart';
 import 'package:oluko_app/ui/screens/Profile.dart';
 import 'package:oluko_app/ui/screens/sign_up_with_email.dart';
 import 'package:oluko_app/ui/screens/sign_up.dart';
-import 'package:oluko_app/ui/screens/home.dart';
+import 'package:oluko_app/ui/screens/videos_home.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,7 +29,11 @@ class MyApp extends StatelessWidget {
         '/sign-up-with-email': (context) => SignUpWithMailPage(),
         '/profile': (context) => ProfilePage(),
         '/log-in': (context) => LoginPage(),
-        '/videos': (context) => Home()
+        '/videos': (context) => Home(
+              title: "Videos",
+              videoParent: null,
+              videoParentPath: "",
+            )
       },
     );
   }

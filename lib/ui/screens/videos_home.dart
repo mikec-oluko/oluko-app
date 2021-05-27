@@ -1,25 +1,25 @@
-import 'dart:io';
-import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_ffmpeg/statistics.dart';
-import 'package:oluko_app/repositories/auth_repository.dart';
-import 'package:oluko_app/repositories/video_repository.dart';
+import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/ui/screens/player_response.dart';
+import 'package:oluko_app/ui/screens/player_single.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:transparent_image/transparent_image.dart';
-import '../../helpers/encoding_provider.dart';
-import '../../repositories/firestore_data.dart';
-import '../../helpers/s3_provider.dart';
+import 'package:oluko_app/helpers/encoding_provider.dart';
+import 'package:oluko_app/helpers/s3_provider.dart';
 import 'package:path/path.dart' as p;
-import '../../models/video.dart';
+import 'package:oluko_app/models/video.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:io';
+import 'dart:math';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
-class ResponsesPage extends StatefulWidget {
-  ResponsesPage({Key key, this.title, this.videoParent, this.videoParentPath})
+class Home extends StatefulWidget {
+  Home({Key key, this.title, this.videoParent, this.videoParentPath})
       : super(key: key);
 
   final String title;
@@ -27,79 +27,84 @@ class ResponsesPage extends StatefulWidget {
   final String videoParentPath;
 
   @override
-  _ResponsesPageState createState() => _ResponsesPageState();
+  _HomeState createState() => _HomeState();
 }
 
-class _ResponsesPageState extends State<ResponsesPage> {
+class _HomeState extends State<Home> {
   final thumbWidth = 100;
   final thumbHeight = 150;
-  List<Video> _videos = <Video>[];
   bool _imagePickerActive = false;
   bool _processing = false;
-  bool _canceled = false;
+  bool _canceled = false; //esto sirve para algo?
   double _progress = 0.0;
   int _videoDuration = 0;
   String _processPhase = '';
-  final bool _debugMode = false;
+  final bool _debugMode = false; //esto sirve para algo?
+
+  List<Video> _videos = <Video>[];
+  FirebaseUser user;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-          actions: <Widget>[
-            Builder(builder: (context) {
-              return IconButton(
-                icon: Icon(Icons.menu),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => MaterialApp(
-                              home: Scaffold(
-                                  body: Padding(
-                                      padding: EdgeInsets.only(top: 50))))));
-                },
-              );
-            }),
-          ],
-        ),
-        body: Center(child: _processing ? _getProgressBar() : _getListView()),
-        floatingActionButton:
-            Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-          FloatingActionButton(
-              child: _processing
-                  ? CircularProgressIndicator(
-                      valueColor:
-                          new AlwaysStoppedAnimation<Color>(Colors.white),
-                    )
-                  : Icon(Icons.camera),
-              onPressed: () => _takeVideo(ImageSource.camera,
-                  parentVideo: widget.videoParent)),
-        ]));
+    return BlocProvider(
+        create: (context) => VideoBloc()
+          ..getVideos(user, widget.videoParent, widget.videoParentPath),
+        child: Scaffold(
+            appBar: AppBar(
+              title: Text(widget.title),
+            ),
+            body: Center(
+                child: _processing
+                    ? _getProgressBar()
+                    : BlocBuilder<VideoBloc, VideoState>(
+                        builder: (context, state) {
+                        if (state is VideosSuccess) {
+                          return _getListView(state.videos);
+                        } else {
+                          return Text(
+                            'LOADING...',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          );
+                        }
+                      })),
+            floatingActionButton:
+                Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+              /*user != null
+                    ?*/
+              FloatingActionButton(
+                  child: _processing
+                      ? CircularProgressIndicator(
+                          valueColor:
+                              new AlwaysStoppedAnimation<Color>(Colors.white),
+                        )
+                      : Icon(Icons.camera),
+                  onPressed: () => _takeVideo(ImageSource.camera,
+                      parentVideo: widget.videoParent))
+              /*: SizedBox()*/,
+            ])));
   }
 
   @override
   void initState() {
-    getResponseVideos();
+    FirebaseAuth.instance.onAuthStateChanged.listen((firebaseUser) async {
+      if (firebaseUser != null) {
+        this.user = firebaseUser;
+      }
+    });
 
     if (!kIsWeb) {
-      EncodingProvider.enableStatisticsCallback((Statistics stats) {
-        if (_canceled) return;
-
-        setState(() {
-          _progress = stats.time / _videoDuration;
-        });
-      });
+      listenToEncodingProviderProgress();
     }
     super.initState();
   }
 
-  getResponseVideos() async {
-    List<Video> updatedVideos = await VideoRepository.getVideoResponsesWithPath(
-        widget.videoParent.id, widget.videoParentPath);
-    setState(() {
-      _videos = updatedVideos;
+  void listenToEncodingProviderProgress() {
+    EncodingProvider.enableStatisticsCallback((Statistics stats) {
+      if (_canceled) return;
+      setState(() {
+        _progress = stats.time / _videoDuration;
+      });
     });
   }
 
@@ -169,16 +174,15 @@ class _ResponsesPageState extends State<ResponsesPage> {
     final thumbUrl = await _uploadFile(thumbFilePath, 'thumbnail');
     final videoUrl = await _uploadHLSFiles(encodedFilesDir, videoName);
 
-    final FirebaseUser user = await AuthRepository.getLoggedUser();
-
-    final videoInfo = Video(
-        videoUrl: videoUrl,
-        thumbUrl: thumbUrl,
-        coverUrl: thumbUrl,
-        aspectRatio: aspectRatio,
-        uploadedAt: DateTime.now().millisecondsSinceEpoch,
-        videoName: videoName,
-        createdBy: user != null ? user.uid : null);
+    final video = Video(
+      videoUrl: videoUrl,
+      thumbUrl: thumbUrl,
+      coverUrl: thumbUrl,
+      createdBy: user != null ? user.uid : null,
+      aspectRatio: aspectRatio,
+      uploadedAt: DateTime.now().millisecondsSinceEpoch,
+      videoName: videoName,
+    );
 
     setState(() {
       _processPhase = 'Saving video metadata to cloud storage';
@@ -186,24 +190,35 @@ class _ResponsesPageState extends State<ResponsesPage> {
     });
 
     if (parentVideo == null) {
-      await VideoRepository.createVideo(videoInfo);
+      VideoBloc()..createVideo(video);
+    } else if (widget.videoParent == null) {
+      VideoBloc()..createVideoResponse(parentVideo.id, video, "/");
     } else if (parentVideo.id == widget.videoParent.id) {
-      await VideoRepository.createVideoResponse(
-          parentVideo.id, videoInfo, widget.videoParentPath);
+      VideoBloc()
+        ..createVideoResponse(parentVideo.id, video, widget.videoParentPath);
     } else {
-      await VideoRepository.createVideoResponse(
-          parentVideo.id,
-          videoInfo,
-          widget.videoParentPath == '/'
-              ? widget.videoParent.id
-              : '${widget.videoParentPath}/${widget.videoParent.id}');
+      VideoBloc()
+        ..createVideoResponse(
+            parentVideo.id,
+            video,
+            widget.videoParentPath == '/'
+                ? widget.videoParent.id
+                : '${widget.videoParentPath}/${widget.videoParent.id}');
     }
+
+    /*BlocListener<VideoBloc, VideoState>(
+      listener: (context, state) {
+        if (state is VideoSuccess) {
+          _videos.add(state.video);
+        }
+      },
+    );*/
+
     setState(() {
       _processPhase = '';
       _progress = 0.0;
       _processing = false;
     });
-    await getResponseVideos();
   }
 
   Future<String> _uploadHLSFiles(dirPath, videoName) async {
@@ -270,7 +285,8 @@ class _ResponsesPageState extends State<ResponsesPage> {
     file.writeAsStringSync(updatedContents);
   }
 
-  _getListView() {
+  _getListView(List<Video> videos) {
+    _videos = videos;
     return ListView.builder(
         padding: const EdgeInsets.all(8),
         itemCount: _videos.length,
@@ -282,12 +298,7 @@ class _ResponsesPageState extends State<ResponsesPage> {
                 context,
                 MaterialPageRoute(
                   builder: (context) {
-                    return PlayerResponse(
-                      video: widget.videoParent,
-                      video2: video,
-                      onCamera: () => this
-                          ._takeVideo(ImageSource.camera, parentVideo: video),
-                    );
+                    return _player(video);
                   },
                 ),
               );
@@ -336,15 +347,12 @@ class _ResponsesPageState extends State<ResponsesPage> {
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) => Scaffold(
-                                                    body: ResponsesPage(
-                                                        title: 'Responses',
-                                                        videoParent: video,
-                                                        videoParentPath: widget
-                                                                    .videoParentPath ==
-                                                                '/'
-                                                            ? widget
-                                                                .videoParent.id
-                                                            : '${widget.videoParentPath}/${widget.videoParent.id}')))),
+                                                        body: Home(
+                                                      title: 'Responses',
+                                                      videoParent: video,
+                                                      videoParentPath:
+                                                          _getVideoParentPath(),
+                                                    )))),
                                         child: Text("View responses"))
                                   ],
                                 ),
@@ -358,6 +366,31 @@ class _ResponsesPageState extends State<ResponsesPage> {
             ),
           );
         });
+  }
+
+  _player(Video video) {
+    if (widget.videoParentPath == "") {
+      return PlayerSingle(
+          video: video,
+          onCamera: () =>
+              this._takeVideo(ImageSource.camera, parentVideo: video));
+    } else {
+      return PlayerResponse(
+        video: widget.videoParent,
+        video2: video,
+        onCamera: () => this._takeVideo(ImageSource.camera, parentVideo: video),
+      );
+    }
+  }
+
+  _getVideoParentPath() {
+    if (widget.videoParentPath == "") {
+      return "/";
+    } else if (widget.videoParentPath == "/") {
+      return widget.videoParent.id;
+    } else {
+      return '${widget.videoParentPath}/${widget.videoParent.id}';
+    }
   }
 
   _getProgressBar() {
@@ -378,4 +411,8 @@ class _ResponsesPageState extends State<ResponsesPage> {
       ),
     );
   }
+
+  /*onGoBack() {
+    setState(() {});
+  }*/
 }

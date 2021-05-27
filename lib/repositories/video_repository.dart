@@ -3,11 +3,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:oluko_app/models/video.dart';
 
 class VideoRepository {
-  static createVideo(Video video) async {
+  static Future<Video> createVideo(Video video) async {
     final DocumentReference docRef =
         Firestore.instance.collection('videos').document();
+    video.id = docRef.documentID;
     docRef.setData(video.toJson());
-    return docRef.documentID;
+    return video;
   }
 
   static listenToVideos(callback) async {
@@ -31,7 +32,8 @@ class VideoRepository {
     return mapQueryToVideo(querySnapshot);
   }
 
-  static createVideoResponse(parentVideoId, videoResponse, String idPath) {
+  static Video createVideoResponse(
+      String parentVideoId, Video videoResponse, String idPath) {
     List<String> idPathList = idPath.split('/');
     idPathList = idPathList.length > 0 && idPathList[0] == '' ? [] : idPathList;
     CollectionReference finalCollection =
@@ -49,10 +51,10 @@ class VideoRepository {
     videoResponse.id = docRef.documentID;
     docRef.setData(videoResponse.toJson());
 
-    return docRef.documentID;
+    return videoResponse;
   }
 
-  static Future<List<Video>> getVideoResponses(parentVideoId) async {
+  /*static Future<List<Video>> getVideoResponses(parentVideoId) async {
     QuerySnapshot querySnapshot = await Firestore.instance
         .collection('videos')
         .document(parentVideoId)
@@ -60,7 +62,7 @@ class VideoRepository {
         .getDocuments();
 
     return mapQueryToVideo(querySnapshot);
-  }
+  }*/
 
   static mapQueryToVideo(QuerySnapshot qs) {
     return qs.documents.map((DocumentSnapshot ds) {
@@ -81,14 +83,15 @@ class VideoRepository {
   ///Get documents list from nested collections.
   ///
   ///[id] final document id after path.
-  ///[childCollection] child collection present on every document in the path.
   ///[idPath] document id path to the [id] document. Ex. `{document_id}/{document_id}/{document_id}`.
-  static Future<List<Video>> getVideoResponsesWithPath(String id, String idPath) async{
+  static Future<List<Video>> getVideoResponsesWithPath(
+      String id, String idPath) async {
     List<String> idPathList = idPath.split('/');
     if (idPathList[0] == '') {
       idPathList = [];
     }
-    CollectionReference finalCollection = Firestore.instance.collection("videos");
+    CollectionReference finalCollection =
+        Firestore.instance.collection("videos");
     idPathList.forEach((idPathElement) {
       finalCollection =
           finalCollection.document(idPathElement).collection("videoResponses");

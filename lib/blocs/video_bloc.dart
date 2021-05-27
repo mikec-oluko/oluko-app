@@ -14,7 +14,8 @@ class VideosSuccess extends VideoState {
 }
 
 class VideoSuccess extends VideoState {
-  VideoSuccess();
+  Video video;
+  VideoSuccess({this.video});
 }
 
 class Failure extends VideoState {
@@ -26,17 +27,22 @@ class Failure extends VideoState {
 class VideoBloc extends Cubit<VideoState> {
   VideoBloc() : super(Loading());
 
-  void getVideos(FirebaseUser user) async {
+  void getVideos(FirebaseUser user, Video videoParent, String path) async {
     if (!(state is VideosSuccess)) {
       emit(Loading());
     }
     try {
       List<Video> videos = [];
-      if (user == null) {
-        videos = await VideoRepository.getVideos();
-      } else {
-        videos = await VideoRepository.getVideosByUser(user);
-      }
+      //if (user == null) {
+        if (videoParent != null && path != "") {
+          videos = await VideoRepository.getVideoResponsesWithPath(
+              videoParent.id, path);
+        } else {
+          videos = await VideoRepository.getVideos();
+        }
+      //} else {
+       // videos = await VideoRepository.getVideosByUser(user);
+      //}
       emit(VideosSuccess(videos: videos));
     } catch (e) {
       emit(Failure(exception: e));
@@ -48,20 +54,22 @@ class VideoBloc extends Cubit<VideoState> {
       emit(Loading());
     }
     try {
-      await VideoRepository.createVideo(video);
-      emit(VideoSuccess());
+      Video newVideo = await VideoRepository.createVideo(video);
+      emit(VideoSuccess(video: newVideo));
     } catch (e) {
       emit(Failure(exception: e));
     }
   }
 
-  void createVideoResponse(String parentVideoId, Video video, String path) async {
+  void createVideoResponse(
+      String parentVideoId, Video video, String path) async {
     if (!(state is VideosSuccess)) {
       emit(Loading());
     }
     try {
-      await VideoRepository.createVideoResponse(parentVideoId, video, path);
-      emit(VideoSuccess());
+      Video newVideo =
+          VideoRepository.createVideoResponse(parentVideoId, video, path);
+      emit(VideoSuccess(video: newVideo));
     } catch (e) {
       emit(Failure(exception: e));
     }
