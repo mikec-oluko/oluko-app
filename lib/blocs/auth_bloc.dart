@@ -59,8 +59,8 @@ class AuthBloc extends Cubit<AuthState> {
       user.lastName = splitDisplayName[1];
     }
     AuthRepository().storeLoginData(user);
-    await AppNavigator().returnToHome(context);
     emit(AuthSuccess(user: user));
+    await AppNavigator().returnToHome(context);
   }
 
   Future<void> loginWithFacebook(context) async {
@@ -81,5 +81,12 @@ class AuthBloc extends Cubit<AuthState> {
 
   Future<UserResponse> retrieveLoginData() {
     return AuthRepository().retrieveLoginData();
+  }
+
+  Future<void> logout(context) async {
+    final success = await AuthRepository().removeLoginData();
+    if (success == true) {
+      emit(AuthGuest());
+    }
   }
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/ui/screens/home_page.dart';
 import 'package:oluko_app/ui/screens/Login.dart';
 import 'package:oluko_app/ui/screens/Profile.dart';
@@ -13,8 +15,16 @@ void main() {
 
 const OLUKO = 'Oluko';
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   // This widget is the root of your application.
+
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final AuthBloc _authBloc = AuthBloc();
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -24,17 +34,30 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => MyHomePage(title: ''),
-        '/sign-up': (context) => SignUpPage(),
-        '/sign-up-with-email': (context) => SignUpWithMailPage(),
-        '/profile': (context) => ProfilePage(),
-        '/log-in': (context) => LoginPage(),
-        '/videos': (context) => Home(
+        '/': (context) =>
+            BlocProvider.value(value: _authBloc, child: MyHomePage(title: '')),
+        '/sign-up': (context) =>
+            BlocProvider.value(value: _authBloc, child: SignUpPage()),
+        '/sign-up-with-email': (context) =>
+            BlocProvider.value(value: _authBloc, child: SignUpWithMailPage()),
+        '/profile': (context) =>
+            BlocProvider.value(value: _authBloc, child: ProfilePage()),
+        '/log-in': (context) =>
+            BlocProvider.value(value: _authBloc, child: LoginPage()),
+        '/videos': (context) => BlocProvider.value(
+            value: _authBloc,
+            child: Home(
               title: "Videos",
               videoParent: null,
               videoParentPath: "",
-            )
+            ))
       },
     );
+  }
+
+  @override
+  void dispose() {
+    _authBloc.close();
+    super.dispose();
   }
 }

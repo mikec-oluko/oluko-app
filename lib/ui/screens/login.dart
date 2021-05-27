@@ -4,7 +4,6 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/models/login_request.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/utils/app_loader.dart';
-import 'package:oluko_app/utils/app_navigator.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
@@ -20,47 +19,43 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(create: (context) => AuthBloc(), child: loginForm());
+    return loginForm();
   }
 
   Widget loginForm() {
-    return BlocListener<AuthBloc, AuthState>(
-        listener: (context, snapshot) {
-          AppNavigator().returnToHome(context);
-        },
-        child: Form(
-            key: _formKey,
-            child: Scaffold(
-                appBar: AppBar(
-                  // Here we take the value from the MyHomePage object that was created by
-                  // the App.build method, and use it to set our appbar title.
-                  title: Text('Sign Up'),
-                  backgroundColor: Colors.white,
-                  actions: [],
-                ),
-                body: Container(
-                    color: Colors.brown.shade100,
-                    child: ListView(children: [
-                      Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 15),
-                          child: Container(
-                              width: MediaQuery.of(context).size.width,
-                              child: Column(children: [
-                                SizedBox(height: 20),
-                                Align(
-                                    alignment: Alignment.centerRight,
-                                    child: IconButton(
-                                      icon: Icon(Icons.cancel),
-                                      color: Colors.grey,
-                                      iconSize: 30,
-                                      onPressed: () => Navigator.pop(context),
-                                    )),
-                                SizedBox(height: 20),
-                                titleSection(),
-                                SizedBox(height: 50),
-                                formSection()
-                              ])))
-                    ])))));
+    return Form(
+        key: _formKey,
+        child: Scaffold(
+            appBar: AppBar(
+              // Here we take the value from the MyHomePage object that was created by
+              // the App.build method, and use it to set our appbar title.
+              title: Text('Sign Up'),
+              backgroundColor: Colors.white,
+              actions: [],
+            ),
+            body: Container(
+                color: Colors.brown.shade100,
+                child: ListView(children: [
+                  Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 15),
+                      child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          child: Column(children: [
+                            SizedBox(height: 20),
+                            Align(
+                                alignment: Alignment.centerRight,
+                                child: IconButton(
+                                  icon: Icon(Icons.cancel),
+                                  color: Colors.grey,
+                                  iconSize: 30,
+                                  onPressed: () => Navigator.pop(context),
+                                )),
+                            SizedBox(height: 20),
+                            titleSection(),
+                            SizedBox(height: 50),
+                            formSection()
+                          ])))
+                ]))));
   }
 
   Widget formSection() {
@@ -180,7 +175,7 @@ class _LoginPageState extends State<LoginPage> {
                   onPressed: () {
                     _formKey.currentState.save();
                     AppLoader.startLoading(context);
-                    AuthBloc()
+                    BlocProvider.of<AuthBloc>(context)
                       ..login(
                           context,
                           LoginRequest(
@@ -206,7 +201,8 @@ class _LoginPageState extends State<LoginPage> {
               height: 50,
               child: OutlinedButton(
                   onPressed: () {
-                    AuthBloc()..loginWithGoogle(context);
+                    BlocProvider.of<AuthBloc>(context)
+                      ..loginWithGoogle(context);
                   },
                   style:
                       OutlinedButton.styleFrom(backgroundColor: Colors.white),
@@ -230,7 +226,8 @@ class _LoginPageState extends State<LoginPage> {
               height: 50,
               child: OutlinedButton(
                   onPressed: () {
-                    AuthBloc()..loginWithFacebook(context);
+                    BlocProvider.of<AuthBloc>(context)
+                      ..loginWithFacebook(context);
                   },
                   style:
                       OutlinedButton.styleFrom(backgroundColor: Colors.white),
