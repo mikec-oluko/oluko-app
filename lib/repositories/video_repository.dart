@@ -54,16 +54,6 @@ class VideoRepository {
     return videoResponse;
   }
 
-  /*static Future<List<Video>> getVideoResponses(parentVideoId) async {
-    QuerySnapshot querySnapshot = await Firestore.instance
-        .collection('videos')
-        .document(parentVideoId)
-        .collection('videoResponses')
-        .getDocuments();
-
-    return mapQueryToVideo(querySnapshot);
-  }*/
-
   static mapQueryToVideo(QuerySnapshot qs) {
     return qs.documents.map((DocumentSnapshot ds) {
       return Video(

@@ -35,11 +35,11 @@ class _HomeState extends State<Home> {
   final thumbHeight = 150;
   bool _imagePickerActive = false;
   bool _processing = false;
-  bool _canceled = false; //esto sirve para algo?
+  bool _canceled = false;
   double _progress = 0.0;
   int _videoDuration = 0;
   String _processPhase = '';
-  final bool _debugMode = false; //esto sirve para algo?
+  final bool _debugMode = false;
 
   List<Video> _videos = <Video>[];
   FirebaseUser user;
@@ -56,8 +56,13 @@ class _HomeState extends State<Home> {
             body: Center(
                 child: _processing
                     ? _getProgressBar()
-                    : BlocBuilder<VideoBloc, VideoState>(
-                        builder: (context, state) {
+                    : BlocConsumer<VideoBloc, VideoState>(
+                        listener: (context, state) {
+                        if (state is VideoSuccess) {
+                          print("CAMBIO");
+                          _videos.add(state.video);
+                        }
+                      }, builder: (context, state) {
                         if (state is VideosSuccess) {
                           return _getListView(state.videos);
                         } else {
@@ -411,8 +416,4 @@ class _HomeState extends State<Home> {
       ),
     );
   }
-
-  /*onGoBack() {
-    setState(() {});
-  }*/
 }
