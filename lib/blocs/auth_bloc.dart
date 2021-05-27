@@ -27,7 +27,9 @@ class AuthLoading extends AuthState {}
 class AuthGuest extends AuthState {}
 
 class AuthBloc extends Cubit<AuthState> {
-  AuthBloc() : super(AuthLoading());
+  AuthBloc() : super(AuthLoading()) {
+    checkCurrentUser();
+  }
 
   final _authRepository = AuthRepository();
   final _userRepository = UserRepository();
@@ -81,6 +83,16 @@ class AuthBloc extends Cubit<AuthState> {
 
   Future<UserResponse> retrieveLoginData() {
     return AuthRepository().retrieveLoginData();
+  }
+
+  Future<void> checkCurrentUser() async {
+    final loggedUser = await AuthRepository.getLoggedUser();
+    final userData = await AuthRepository().retrieveLoginData();
+    if (loggedUser != null && userData != null) {
+      emit(AuthSuccess(user: userData));
+    } else {
+      emit(AuthGuest());
+    }
   }
 
   Future<void> logout(context) async {
