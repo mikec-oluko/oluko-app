@@ -3,11 +3,11 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/ui/draw.dart';
 
-class CanvasPoint {
+class DrawPoint {
   DrawingPoints point;
   num timeStamp;
 
-  CanvasPoint({this.point, this.timeStamp});
+  DrawPoint({this.point, this.timeStamp});
 
   Map<String, dynamic> toJson() {
     return {
@@ -17,9 +17,9 @@ class CanvasPoint {
     };
   }
 
-  //Convert stored json into CanvasPoint
-  factory CanvasPoint.fromJson(Map<String, dynamic> json) {
-    return CanvasPoint(
+  //Convert stored json into DrawPoint
+  factory DrawPoint.fromJson(Map<String, dynamic> json) {
+    return DrawPoint(
       point: json['x'] == null
           ? null
           : DrawingPoints(

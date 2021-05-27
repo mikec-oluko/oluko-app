@@ -5,10 +5,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/marker_bloc.dart';
+import 'package:oluko_app/models/video_tracking.dart';
+import 'package:oluko_app/repositories/video_repository.dart';
 import 'package:oluko_app/ui/services/snackbar_service.dart';
 import 'package:oluko_app/models/marker.dart';
 import 'package:oluko_app/repositories/firestore_data.dart';
-import 'package:oluko_app/models/canvas_point.dart';
+import 'package:oluko_app/models/draw_point.dart';
 import 'package:oluko_app/repositories/marker_repository.dart';
 import 'package:video_player/video_player.dart';
 import 'package:oluko_app/models/video.dart';
@@ -19,12 +21,13 @@ typedef OnCameraCallBack = void Function();
 enum PlayerState { RUNNING, STOPPED, WAITING }
 
 class PlayerResponse extends StatefulWidget {
+  final String videoParentPath;
   final Video video;
   final Video video2;
   final OnCameraCallBack onCamera;
 
   const PlayerResponse(
-      {Key key, @required this.video, this.video2, this.onCamera})
+      {Key key, @required this.video, this.video2, this.videoParentPath, this.onCamera})
       : super(key: key);
 
   @override
@@ -53,7 +56,7 @@ class _PlayerResponseState extends State<PlayerResponse> {
   bool openCanvas = false;
   Draw canvasInstance;
   List<DrawingPoints> canvasPoints = [];
-  List<CanvasPoint> canvasPointsRecording = [];
+  List<DrawPoint> canvasPointsRecording = [];
   var lastCanvasTimeStamp = 0;
   var closestFrame = 0;
   Timer playbackTimer;
@@ -81,7 +84,7 @@ class _PlayerResponseState extends State<PlayerResponse> {
   void initState() {
     this
         .retrieveVideoTrackData(widget.video2.id)
-        .then((List<CanvasPoint> canvasPoints) {
+        .then((List<DrawPoint> canvasPoints) {
       if (canvasPoints != null) {
         this.canvasPointsRecording = canvasPoints;
         this.isFirstRecording = false;
@@ -242,7 +245,7 @@ class _PlayerResponseState extends State<PlayerResponse> {
                                                 // await pauseContents();
                                                 this.ended = contentsEnded();
                                                 this.lastPosition = val.toInt();
-                                                List<CanvasPoint>
+                                                List<DrawPoint>
                                                     pointsUntilTimeStamp =
                                                     getPointsUntilTimestamp(
                                                         this
@@ -330,9 +333,8 @@ class _PlayerResponseState extends State<PlayerResponse> {
                                               color: Colors.white,
                                               icon: Icon(Icons.save),
                                               onPressed: () {
-                                                setState(() => saveVideoTrackData(
-                                                    widget.video2.id,
-                                                    this.canvasPointsRecording));
+                                                setState(
+                                                    () => saveVideoTrackData());
                                               }),
                                           // IconButton(
                                           //     icon: Icon(Icons.color_lens),
@@ -376,8 +378,21 @@ class _PlayerResponseState extends State<PlayerResponse> {
   //Storage Functions
 
   ///Saves CanvasPoints from current video to a VideoTrackerProvider
-  saveVideoTrackData(String videoId, List<CanvasPoint> canvasPoints) {
-    dynamic jsonCanvasPoints = {
+  saveVideoTrackData() {
+     VideoTracking newVideoTracking = VideoTracking(
+        drawPoints: jsonEncode(this.canvasPointsRecording.map((e) {
+      if (e.point == null) {
+        return {"x": null, "y": null, "timeStamp": e.timeStamp};
+      }
+      return {
+        "x": e.point.points.dx,
+        "y": e.point.points.dy,
+        "timeStamp": e.timeStamp
+      };
+    }).toList()));
+    VideoRepository.createVideoTracking(widget.video2.id, newVideoTracking, widget.videoParentPath);
+    
+    /*dynamic jsonCanvasPoints = {
       "videoId": widget.video2.id,
       "drawPoints": jsonEncode(this.canvasPointsRecording.map((e) {
         if (e.point == null) {
@@ -390,32 +405,32 @@ class _PlayerResponseState extends State<PlayerResponse> {
         };
       }).toList()),
     };
-    videoTrackingProvider.set(id: videoId, entity: jsonCanvasPoints);
+    videoTrackingProvider.set(id: widget.video2.id, entity: jsonCanvasPoints);*/
     SnackBarService.showSnackBar(context, 'Record saved!');
   }
 
   ///Retrieves CanvasPoints from a VideoTrackerProvider to current video
-  Future<List<CanvasPoint>> retrieveVideoTrackData(String videoId) async {
+  Future<List<DrawPoint>> retrieveVideoTrackData(String videoId) async {
     DocumentSnapshot document = await videoTrackingProvider.get(videoId);
     if (!document.exists) {
       return null;
     }
     var documentData = document.data;
-    List<CanvasPoint> canvasPoints =
+    List<DrawPoint> canvasPoints =
         this.convertTrackDataToCanvasPoints(documentData);
     return canvasPoints;
   }
 
   ///Converts Point data in Json format to a CanvasPoint list
-  List<CanvasPoint> convertTrackDataToCanvasPoints(
+  List<DrawPoint> convertTrackDataToCanvasPoints(
       Map<String, dynamic> trackData) {
     if (trackData == null) {
       return [];
     }
     List<dynamic> drawPoints = jsonDecode(trackData["drawPoints"]);
-    List<CanvasPoint> cnvPoints = [];
+    List<DrawPoint> cnvPoints = [];
     drawPoints.forEach((element) {
-      CanvasPoint canvasPoint = CanvasPoint.fromJson(element);
+      DrawPoint canvasPoint = DrawPoint.fromJson(element);
       cnvPoints.add(canvasPoint);
     });
     return cnvPoints;
@@ -559,7 +574,7 @@ class _PlayerResponseState extends State<PlayerResponse> {
   controllerCanvasListener() {
     if (this.controller1.value.position == null ||
         canvasListenerRunning == false) return;
-    CanvasPoint canvasObj = CanvasPoint(
+    DrawPoint canvasObj = DrawPoint(
         point: this.canvasPoints[this.canvasPoints.length - 1],
         timeStamp: this.controller1.value.position.inMilliseconds);
     canvasPointsRecording.add(canvasObj);
@@ -568,10 +583,10 @@ class _PlayerResponseState extends State<PlayerResponse> {
   playBackCanvas() async {
     this.canvasListenerRunning = false;
 
-    List<CanvasPoint> drawingsUntilTimeStamp = getDrawingsUntilTimestamp(
+    List<DrawPoint> drawingsUntilTimeStamp = getDrawingsUntilTimestamp(
         this.controller1.value.position.inMilliseconds,
         List.from(this.canvasPointsRecording));
-    List<CanvasPoint> drawingsAfterTimeStamp = getDrawingsAfterTimestamp(
+    List<DrawPoint> drawingsAfterTimeStamp = getDrawingsAfterTimestamp(
         this.controller1.value.position.inMilliseconds,
         List.from(this.canvasPointsRecording));
 
@@ -583,7 +598,7 @@ class _PlayerResponseState extends State<PlayerResponse> {
     }
 
     this.canvasKey.currentState.setPoints(pointsToSet);
-    List<CanvasPoint> recPoints = drawingsAfterTimeStamp;
+    List<DrawPoint> recPoints = drawingsAfterTimeStamp;
 
     this.playbackTimer =
         Timer.periodic(new Duration(milliseconds: 10), (timer) {
@@ -596,14 +611,14 @@ class _PlayerResponseState extends State<PlayerResponse> {
       if (isAheadOfTime) {
         return;
       }
-      CanvasPoint recPointToSend = recPoints.removeAt(0);
+      DrawPoint recPointToSend = recPoints.removeAt(0);
 
       this.canvasKey.currentState.addPoints(recPointToSend.point);
     });
   }
 
-  List<CanvasPoint> getPointsUntilTimestamp(
-      num timeStamp, List<CanvasPoint> canvasPoints) {
+  List<DrawPoint> getPointsUntilTimestamp(
+      num timeStamp, List<DrawPoint> canvasPoints) {
     for (var i = 0; i < canvasPoints.length; i++) {
       if (canvasPoints[i].timeStamp > timeStamp) {
         return canvasPoints.getRange(0, i).toList();
@@ -612,8 +627,8 @@ class _PlayerResponseState extends State<PlayerResponse> {
     return [];
   }
 
-  List<CanvasPoint> getDrawingsUntilTimestamp(
-      num timeStamp, List<CanvasPoint> canvasPoints) {
+  List<DrawPoint> getDrawingsUntilTimestamp(
+      num timeStamp, List<DrawPoint> canvasPoints) {
     List<DrawingPoints> pointsUntilTimeStamp = [];
     if (this.canvasKey.currentState.points.length == 0) {
       return [];
@@ -626,8 +641,8 @@ class _PlayerResponseState extends State<PlayerResponse> {
     return canvasPoints;
   }
 
-  List<CanvasPoint> getDrawingsAfterTimestamp(
-      num timeStamp, List<CanvasPoint> canvasPoints) {
+  List<DrawPoint> getDrawingsAfterTimestamp(
+      num timeStamp, List<DrawPoint> canvasPoints) {
     List<DrawingPoints> pointsUntilTimeStamp = [];
     if (this.canvasKey.currentState.points.length == 0) {
       return canvasPoints;

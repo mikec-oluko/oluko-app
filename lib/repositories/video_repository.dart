@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:oluko_app/models/video.dart';
+import 'package:oluko_app/models/video_tracking.dart';
 
 class VideoRepository {
   static Future<Video> createVideo(Video video) async {
@@ -52,6 +52,28 @@ class VideoRepository {
     docRef.setData(videoResponse.toJson());
 
     return videoResponse;
+  }
+
+   static VideoTracking createVideoTracking(
+      String parentVideoId, VideoTracking videoTracking, String idPath) {
+    List<String> idPathList = idPath.split('/');
+    idPathList = idPathList.length > 0 && idPathList[0] == '' ? [] : idPathList;
+    CollectionReference finalCollection =
+        Firestore.instance.collection("videos");
+
+    idPathList.forEach((idPathElement) {
+      finalCollection =
+          finalCollection.document(idPathElement).collection('videoResponses');
+    });
+    finalCollection =
+        finalCollection.document(parentVideoId).collection('videoTracking');
+
+    final DocumentReference docRef = finalCollection.document();
+
+    videoTracking.id = docRef.documentID;
+    docRef.setData(videoTracking.toJson());
+
+    return videoTracking;
   }
 
   static mapQueryToVideo(QuerySnapshot qs) {

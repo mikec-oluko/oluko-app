@@ -365,7 +365,7 @@ class _HomeState extends State<Home> {
                                                       title: 'Responses',
                                                       videoParent: video,
                                                       videoParentPath:
-                                                          _getVideoParentPath(),
+                                                          _getVideoPath(),
                                                     )))),
                                         child: Text("View responses"))
                                   ],
@@ -390,6 +390,7 @@ class _HomeState extends State<Home> {
               this._takeVideo(ImageSource.camera, parentVideo: video));
     } else {
       return PlayerResponse(
+        videoParentPath: _getVideoPath(),
         video: widget.videoParent,
         video2: video,
         onCamera: () => this._takeVideo(ImageSource.camera, parentVideo: video),
@@ -397,7 +398,7 @@ class _HomeState extends State<Home> {
     }
   }
 
-  _getVideoParentPath() {
+  _getVideoPath() {
     if (widget.videoParentPath == "") {
       return "/";
     } else if (widget.videoParentPath == "/") {
