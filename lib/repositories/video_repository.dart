@@ -24,10 +24,10 @@ class VideoRepository {
     return mapQueryToVideo(querySnapshot);
   }
 
-  static Future<List<Video>> getVideosByUser(FirebaseUser user) async {
+  static Future<List<Video>> getVideosByUser(String userId) async {
     final querySnapshot = await Firestore.instance
         .collection('videos')
-        .where("createdBy", isEqualTo: user.uid)
+        .where("createdBy", isEqualTo: userId)
         .getDocuments();
     return mapQueryToVideo(querySnapshot);
   }

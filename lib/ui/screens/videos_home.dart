@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_ffmpeg/statistics.dart';
+import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/ui/screens/player_response.dart';
 import 'package:oluko_app/ui/screens/player_single.dart';
@@ -43,61 +44,69 @@ class _HomeState extends State<Home> {
 
   List<Video> _videos = <Video>[];
   FirebaseUser user;
+  String userId; //PROVISORIO
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-        create: (context) => VideoBloc()
-          ..getVideos(user, widget.videoParent, widget.videoParentPath),
-        child: Scaffold(
-            appBar: AppBar(
-              title: Text(widget.title),
-            ),
-            body: Center(
-                child: _processing
-                    ? _getProgressBar()
-                    : BlocConsumer<VideoBloc, VideoState>(
-                        listener: (context, state) {
-                        if (state is VideoSuccess) {
-                          print("CAMBIO");
-                          _videos.add(state.video);
-                        }
-                      }, builder: (context, state) {
-                        if (state is VideosSuccess) {
-                          return _getListView(state.videos);
-                        } else {
-                          return Text(
-                            'LOADING...',
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          );
-                        }
-                      })),
-            floatingActionButton:
-                Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-              /*user != null
+    /*return BlocConsumer<AuthBloc, AuthState>(listener: (context, state) {
+      if (state is AuthSuccess) {
+        this.user = state.firebaseUser;
+      }
+    }, builder: (context, state) {
+      if (state is AuthSuccess) {*/
+        return BlocProvider(
+            create: (context) => VideoBloc()
+              ..getVideos(userId, widget.videoParent,
+                  widget.videoParentPath),
+            child: Scaffold(
+                appBar: AppBar(
+                  title: Text(widget.title),
+                ),
+                body: Center(
+                    child: _processing
+                        ? _getProgressBar()
+                        : BlocConsumer<VideoBloc, VideoState>(
+                            listener: (context, state) {
+                            if (state is VideoSuccess) {
+                              print("CAMBIO");
+                              _videos.add(state.video);
+                            }
+                          }, builder: (context, state) {
+                            if (state is VideosSuccess) {
+                              return _getListView(state.videos);
+                            } else {
+                              return Text(
+                                'LOADING...',
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                              );
+                            }
+                          })),
+                floatingActionButton:
+                    Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+                  /*user != null
                     ?*/
-              FloatingActionButton(
-                  child: _processing
-                      ? CircularProgressIndicator(
-                          valueColor:
-                              new AlwaysStoppedAnimation<Color>(Colors.white),
-                        )
-                      : Icon(Icons.camera),
-                  onPressed: () => _takeVideo(ImageSource.camera,
-                      parentVideo: widget.videoParent))
-              /*: SizedBox()*/,
-            ])));
+                  FloatingActionButton(
+                      child: _processing
+                          ? CircularProgressIndicator(
+                              valueColor: new AlwaysStoppedAnimation<Color>(
+                                  Colors.white),
+                            )
+                          : Icon(Icons.camera),
+                      onPressed: () => _takeVideo(ImageSource.camera,
+                          parentVideo: widget.videoParent))
+                  /*: SizedBox()*/,
+                ])));
+      /*} else {
+        return Text('User must be logged in');
+      }
+    });*/
   }
 
   @override
   void initState() {
-    FirebaseAuth.instance.onAuthStateChanged.listen((firebaseUser) async {
-      if (firebaseUser != null) {
-        this.user = firebaseUser;
-      }
-    });
-
+    userId = "oRRxB4V0g2NVhje6SqysrfJfgH92"; //PROVISORIO
     if (!kIsWeb) {
       listenToEncodingProviderProgress();
     }
@@ -183,7 +192,7 @@ class _HomeState extends State<Home> {
       videoUrl: videoUrl,
       thumbUrl: thumbUrl,
       coverUrl: thumbUrl,
-      createdBy: user != null ? user.uid : null,
+      createdBy: userId/*user != null ? user.uid : null*/, //PROVISORIO
       aspectRatio: aspectRatio,
       uploadedAt: DateTime.now().millisecondsSinceEpoch,
       videoName: videoName,
