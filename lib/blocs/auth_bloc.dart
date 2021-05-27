@@ -14,7 +14,8 @@ abstract class AuthState {}
 
 class AuthSuccess extends AuthState {
   final UserResponse user;
-  AuthSuccess({this.user});
+  final FirebaseUser firebaseUser;
+  AuthSuccess({this.user, this.firebaseUser});
 }
 
 class AuthFailure extends AuthState {
@@ -46,7 +47,8 @@ class AuthBloc extends Cubit<AuthState> {
     AuthRepository().storeLoginData(user);
     AppLoader.stopLoading();
     await AppNavigator().returnToHome(context);
-    emit(AuthSuccess(user: user));
+    final firebaseUser = await FirebaseAuth.instance.currentUser();
+    emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
   }
 
   Future<void> loginWithGoogle(context) async {
@@ -61,7 +63,7 @@ class AuthBloc extends Cubit<AuthState> {
       user.lastName = splitDisplayName[1];
     }
     AuthRepository().storeLoginData(user);
-    emit(AuthSuccess(user: user));
+    emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
     await AppNavigator().returnToHome(context);
   }
 
@@ -78,7 +80,7 @@ class AuthBloc extends Cubit<AuthState> {
     }
     AuthRepository().storeLoginData(user);
     await AppNavigator().returnToHome(context);
-    emit(AuthSuccess(user: user));
+    emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
   }
 
   Future<UserResponse> retrieveLoginData() {

@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_ffmpeg/statistics.dart';
+import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/ui/screens/player_response.dart';
 import 'package:oluko_app/ui/screens/player_single.dart';
@@ -46,53 +47,59 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-        create: (context) => VideoBloc()
-          ..getVideos(user, widget.videoParent, widget.videoParentPath),
-        child: Scaffold(
-            appBar: AppBar(
-              title: Text(widget.title),
-            ),
-            body: Center(
-                child: _processing
-                    ? _getProgressBar()
-                    : BlocBuilder<VideoBloc, VideoState>(
-                        builder: (context, state) {
-                        if (state is VideosSuccess) {
-                          return _getListView(state.videos);
-                        } else {
-                          return Text(
-                            'LOADING...',
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          );
-                        }
-                      })),
-            floatingActionButton:
-                Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-              /*user != null
+    return BlocConsumer<AuthBloc, AuthState>(listener: (context, state) {
+      if (state is AuthSuccess) {
+        this.user = state.firebaseUser;
+      }
+    }, builder: (context, state) {
+      if (state is AuthSuccess) {
+        return BlocProvider(
+            create: (context) => VideoBloc()
+              ..getVideos(state.firebaseUser, widget.videoParent,
+                  widget.videoParentPath),
+            child: Scaffold(
+                appBar: AppBar(
+                  title: Text(widget.title),
+                ),
+                body: Center(
+                    child: _processing
+                        ? _getProgressBar()
+                        : BlocBuilder<VideoBloc, VideoState>(
+                            builder: (context, state) {
+                            if (state is VideosSuccess) {
+                              return _getListView(state.videos);
+                            } else {
+                              return Text(
+                                'LOADING...',
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                              );
+                            }
+                          })),
+                floatingActionButton:
+                    Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+                  /*user != null
                     ?*/
-              FloatingActionButton(
-                  child: _processing
-                      ? CircularProgressIndicator(
-                          valueColor:
-                              new AlwaysStoppedAnimation<Color>(Colors.white),
-                        )
-                      : Icon(Icons.camera),
-                  onPressed: () => _takeVideo(ImageSource.camera,
-                      parentVideo: widget.videoParent))
-              /*: SizedBox()*/,
-            ])));
+                  FloatingActionButton(
+                      child: _processing
+                          ? CircularProgressIndicator(
+                              valueColor: new AlwaysStoppedAnimation<Color>(
+                                  Colors.white),
+                            )
+                          : Icon(Icons.camera),
+                      onPressed: () => _takeVideo(ImageSource.camera,
+                          parentVideo: widget.videoParent))
+                  /*: SizedBox()*/,
+                ])));
+      } else {
+        return Text('User must be logged in');
+      }
+    });
   }
 
   @override
   void initState() {
-    FirebaseAuth.instance.onAuthStateChanged.listen((firebaseUser) async {
-      if (firebaseUser != null) {
-        this.user = firebaseUser;
-      }
-    });
-
     if (!kIsWeb) {
       listenToEncodingProviderProgress();
     }
