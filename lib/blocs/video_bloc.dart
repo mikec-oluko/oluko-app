@@ -27,20 +27,20 @@ class Failure extends VideoState {
 class VideoBloc extends Cubit<VideoState> {
   VideoBloc() : super(Loading());
 
-  void getVideos(String userId, Video videoParent, String path) async {
+  void getVideos(FirebaseUser user, Video videoParent, String path) async {
     if (!(state is VideosSuccess)) {
       emit(Loading());
     }
     try {
       List<Video> videos = [];
-
-      if (videoParent != null && path != "") {
-        videos = await VideoRepository.getVideoResponsesWithPath(
-            videoParent.id, path);
-      } else {
-        videos = await VideoRepository.getVideosByUser(userId);
+      if (user != null) {
+        if (videoParent != null && path != "") {
+          videos = await VideoRepository.getVideoResponsesWithPath(
+              videoParent.id, path);
+        } else {
+          videos = await VideoRepository.getVideosByUser(user.uid);
+        }
       }
-
       emit(VideosSuccess(videos: videos));
     } catch (e) {
       emit(Failure(exception: e));

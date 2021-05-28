@@ -339,15 +339,14 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Widget> menuOptions(AuthState state) {
     List<Widget> options = [];
 
-    options.add(ElevatedButton(
-      onPressed: () =>
-          Navigator.pushNamed(context, '/videos').then((value) => onGoBack()),
-      child: Text('VIDEOS'),
-      style: ElevatedButton.styleFrom(
-          shadowColor: Colors.transparent, primary: Colors.transparent),
-    ));
-
     if (state is AuthSuccess) {
+      options.add(ElevatedButton(
+        onPressed: () =>
+            Navigator.pushNamed(context, '/videos').then((value) => onGoBack()),
+        child: Text('VIDEOS'),
+        style: ElevatedButton.styleFrom(
+            shadowColor: Colors.transparent, primary: Colors.transparent),
+      ));
       options.add(ElevatedButton(
         onPressed: () {
           BlocProvider.of<AuthBloc>(context).logout(context);

@@ -23,9 +23,9 @@ class Home extends StatefulWidget {
   Home({Key key, this.title, this.videoParent, this.videoParentPath})
       : super(key: key);
 
-  final String title;
-  final Video videoParent;
-  final String videoParentPath;
+  String title;
+  Video videoParent;
+  String videoParentPath;
 
   @override
   _HomeState createState() => _HomeState();
@@ -44,20 +44,21 @@ class _HomeState extends State<Home> {
 
   List<Video> _videos = <Video>[];
   FirebaseUser user;
-  String userId; //PROVISORIO
 
   @override
   Widget build(BuildContext context) {
-    /*return BlocConsumer<AuthBloc, AuthState>(listener: (context, state) {
+    _setUpParameters();
+    return BlocConsumer<AuthBloc, AuthState>(listener: (context, state) {
       if (state is AuthSuccess) {
         this.user = state.firebaseUser;
       }
     }, builder: (context, state) {
-      if (state is AuthSuccess) {*/
+      if (state is AuthSuccess) {
+        this.user = state.firebaseUser;
         return BlocProvider(
             create: (context) => VideoBloc()
-              ..getVideos(userId, widget.videoParent,
-                  widget.videoParentPath),
+              ..getVideos(this.user, widget.videoParent,
+                  widget.videoParentPath), //VER ACA QUE LLEGA CON NULO
             child: Scaffold(
                 appBar: AppBar(
                   title: Text(widget.title),
@@ -98,15 +99,14 @@ class _HomeState extends State<Home> {
                           parentVideo: widget.videoParent))
                   /*: SizedBox()*/,
                 ])));
-      /*} else {
+      } else {
         return Text('User must be logged in');
       }
-    });*/
+    });
   }
 
   @override
   void initState() {
-    userId = "oRRxB4V0g2NVhje6SqysrfJfgH92"; //PROVISORIO
     if (!kIsWeb) {
       listenToEncodingProviderProgress();
     }
@@ -192,7 +192,7 @@ class _HomeState extends State<Home> {
       videoUrl: videoUrl,
       thumbUrl: thumbUrl,
       coverUrl: thumbUrl,
-      createdBy: userId/*user != null ? user.uid : null*/, //PROVISORIO
+      createdBy: user != null ? user.uid : null,
       aspectRatio: aspectRatio,
       uploadedAt: DateTime.now().millisecondsSinceEpoch,
       videoName: videoName,
@@ -357,16 +357,12 @@ class _HomeState extends State<Home> {
                                           'Uploaded ${timeago.format(new DateTime.fromMillisecondsSinceEpoch(video.uploadedAt))}'),
                                     ),
                                     ElevatedButton(
-                                        onPressed: () => Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) => Scaffold(
-                                                        body: Home(
-                                                      title: 'Responses',
-                                                      videoParent: video,
-                                                      videoParentPath:
-                                                          _getVideoPath(),
-                                                    )))),
+                                        onPressed: () => Navigator.pushNamed(
+                                                context, '/videos', arguments: {
+                                              'title': 'Responses',
+                                              'videoParent': video,
+                                              'videoParentPath': _getVideoPath()
+                                            }),
                                         child: Text("View responses"))
                                   ],
                                 ),
@@ -425,5 +421,21 @@ class _HomeState extends State<Home> {
         ],
       ),
     );
+  }
+
+  _setUpParameters() {
+    final Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;
+    if (args == null) {
+      return;
+    }
+    if (args['title'] != null) {
+      widget.title = args['title'];
+    }
+    if (args['videoParent'] != null) {
+      widget.videoParent = args['videoParent'];
+    }
+    if (args['videoParentPath'] != null) {
+      widget.videoParentPath = args['videoParentPath'];
+    }
   }
 }
