@@ -80,6 +80,7 @@ class _LoginPageState extends State<LoginPage> {
     return [
       //Text Fields
       TextFormField(
+        style: TextStyle(color: Colors.white),
         decoration: new InputDecoration(
             focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Colors.grey),
@@ -110,6 +111,7 @@ class _LoginPageState extends State<LoginPage> {
         height: 10,
       ),
       TextFormField(
+        style: TextStyle(color: Colors.white),
         decoration: new InputDecoration(
             focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Colors.grey),
@@ -185,7 +187,7 @@ class _LoginPageState extends State<LoginPage> {
             padding: EdgeInsets.symmetric(vertical: 5),
             child: SizedBox(
                 height: 50,
-                width: MediaQuery.of(context).size.width / 2.5,
+                width: MediaQuery.of(context).size.width / 2.2,
                 child: OutlinedButton(
                     onPressed: () {
                       BlocProvider.of<AuthBloc>(context)
@@ -207,7 +209,7 @@ class _LoginPageState extends State<LoginPage> {
             padding: EdgeInsets.symmetric(vertical: 5),
             child: SizedBox(
                 height: 50,
-                width: MediaQuery.of(context).size.width / 2.5,
+                width: MediaQuery.of(context).size.width / 2.2,
                 child: OutlinedButton(
                     onPressed: () {
                       BlocProvider.of<AuthBloc>(context)

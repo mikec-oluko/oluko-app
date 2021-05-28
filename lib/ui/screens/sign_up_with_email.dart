@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/user_bloc.dart';
 import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
@@ -53,7 +54,7 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
               actions: [],
             ),
             body: Container(
-                color: Colors.brown.shade100,
+                color: Colors.black,
                 child: ListView(children: [
                   Padding(
                       padding: EdgeInsets.symmetric(horizontal: 15),
@@ -61,17 +62,72 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
                           width: MediaQuery.of(context).size.width,
                           child: Column(children: [
                             SizedBox(height: 20),
-                            Align(
-                                alignment: Alignment.centerRight,
-                                child: IconButton(
-                                  icon: Icon(Icons.cancel),
-                                  color: Colors.grey,
-                                  iconSize: 30,
-                                  onPressed: () => Navigator.pop(context),
-                                )),
-                            SizedBox(height: 20),
                             titleSection(),
-                            SizedBox(height: 75),
+                            SizedBox(height: 30),
+                            //Login with SSO
+                            Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 5),
+                                      child: SizedBox(
+                                          height: 50,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              2.2,
+                                          child: OutlinedButton(
+                                              onPressed: () {
+                                                BlocProvider.of<AuthBloc>(
+                                                    context)
+                                                  ..loginWithGoogle(context);
+                                              },
+                                              style: OutlinedButton.styleFrom(
+                                                  backgroundColor:
+                                                      Colors.transparent,
+                                                  side: BorderSide(
+                                                      color: Colors.grey)),
+                                              child: Stack(children: [
+                                                Align(
+                                                  alignment: Alignment.center,
+                                                  child: Image.network(
+                                                    'https://img.icons8.com/color/452/google-logo.png',
+                                                    width: 30,
+                                                  ),
+                                                ),
+                                              ])))),
+                                  Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 5),
+                                      child: SizedBox(
+                                          height: 50,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              2.2,
+                                          child: OutlinedButton(
+                                              onPressed: () {
+                                                BlocProvider.of<AuthBloc>(
+                                                    context)
+                                                  ..loginWithFacebook(context);
+                                              },
+                                              style: OutlinedButton.styleFrom(
+                                                  backgroundColor:
+                                                      Colors.transparent,
+                                                  side: BorderSide(
+                                                      color: Colors.grey)),
+                                              child: Stack(children: [
+                                                Align(
+                                                  alignment: Alignment.center,
+                                                  child: Image.network(
+                                                    'https://cdn.icon-icons.com/icons2/1826/PNG/512/4202110facebooklogosocialsocialmedia-115707_115594.png',
+                                                    width: 30,
+                                                  ),
+                                                ),
+                                              ])))),
+                                ]),
                             formSection()
                           ])))
                 ]))));
@@ -84,7 +140,11 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Column(children: formFields()),
+            Container(
+                height: 300,
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: formFields())),
             SizedBox(
                 width: double.infinity,
                 height: 50,
@@ -102,16 +162,18 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
                       },
                       child: Stack(children: [
                         Align(
-                            alignment: Alignment.centerRight,
-                            child: Icon(Icons.navigate_next)),
-                        Align(
                           child: Text('SIGN UP'),
                         )
                       ]));
                 })),
             SizedBox(height: 10),
-            Text('Already a Subscribed user?'),
-            Text('Log In')
+            Text(
+              'Already a Subscribed user?',
+              style: TextStyle(color: Colors.white),
+            ),
+            Text('Log In',
+                style:
+                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold))
           ],
         ));
   }
@@ -121,40 +183,31 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
         width: MediaQuery.of(context).size.width,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(
-            'Sign Up to get started',
+            'Welcome',
             textAlign: TextAlign.start,
-            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
           ),
-          SizedBox(
-            height: 10,
-          ),
-          Text(
-            'Create an account, You are just one step away!',
-            style: TextStyle(fontSize: 17, fontWeight: FontWeight.w300),
-          )
         ]));
   }
 
   List<Widget> formFields() {
     return [
       TextFormField(
+        style: TextStyle(color: Colors.white),
         decoration: new InputDecoration(
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.white),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(10.0),
-                topRight: Radius.circular(10.0),
-              ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey),
+              borderRadius: BorderRadius.circular(10),
             ),
-            border: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.white),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(10.0),
-                topRight: Radius.circular(10.0),
-              ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey),
+              borderRadius: BorderRadius.circular(10),
             ),
-            filled: true,
+            focusColor: Colors.white,
+            filled: false,
             hintStyle: new TextStyle(color: Colors.grey[800]),
+            labelStyle: new TextStyle(color: Colors.grey[800]),
             hintText: "First Name",
             labelText: "First Name",
             fillColor: Colors.white70),
@@ -169,17 +222,20 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
         },
       ),
       TextFormField(
+        style: TextStyle(color: Colors.white),
         decoration: new InputDecoration(
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.white),
-              borderRadius: const BorderRadius.only(),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey),
+              borderRadius: BorderRadius.circular(10),
             ),
-            border: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.white),
-              borderRadius: const BorderRadius.only(),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey),
+              borderRadius: BorderRadius.circular(10),
             ),
-            filled: true,
+            focusColor: Colors.white,
+            filled: false,
             hintStyle: new TextStyle(color: Colors.grey[800]),
+            labelStyle: new TextStyle(color: Colors.grey[800]),
             hintText: "Last Name",
             labelText: "Last Name",
             fillColor: Colors.white70),
@@ -194,17 +250,20 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
         },
       ),
       TextFormField(
+        style: TextStyle(color: Colors.white),
         decoration: new InputDecoration(
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.white),
-              borderRadius: const BorderRadius.only(),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey),
+              borderRadius: BorderRadius.circular(10),
             ),
-            border: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.white),
-              borderRadius: const BorderRadius.only(),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey),
+              borderRadius: BorderRadius.circular(10),
             ),
-            filled: true,
+            focusColor: Colors.white,
+            filled: false,
             hintStyle: new TextStyle(color: Colors.grey[800]),
+            labelStyle: new TextStyle(color: Colors.grey[800]),
             hintText: "Your Email",
             labelText: "Email Address",
             fillColor: Colors.white70),
@@ -219,24 +278,20 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
         },
       ),
       TextFormField(
+        style: TextStyle(color: Colors.white),
         decoration: new InputDecoration(
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.white),
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(10.0),
-                bottomRight: Radius.circular(10.0),
-              ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey),
+              borderRadius: BorderRadius.circular(10),
             ),
-            border: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.white),
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(10.0),
-                bottomRight: Radius.circular(10.0),
-              ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey),
+              borderRadius: BorderRadius.circular(10),
             ),
-            filled: true,
-            errorStyle: TextStyle(height: 0.5),
+            focusColor: Colors.white,
+            filled: false,
             hintStyle: new TextStyle(color: Colors.grey[800]),
+            labelStyle: new TextStyle(color: Colors.grey[800]),
             hintText: "8 or more characters",
             labelText: "Password",
             fillColor: Colors.white70),

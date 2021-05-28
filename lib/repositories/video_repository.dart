@@ -3,6 +3,16 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:oluko_app/models/video.dart';
 
 class VideoRepository {
+  Firestore firestoreInstance;
+
+  VideoRepository() {
+    firestoreInstance = Firestore.instance;
+  }
+
+  VideoRepository.test({Firestore firestoreInstance}) {
+    this.firestoreInstance = firestoreInstance;
+  }
+
   static Future<Video> createVideo(Video video) async {
     final DocumentReference docRef =
         Firestore.instance.collection('videos').document();
