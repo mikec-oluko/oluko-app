@@ -4,12 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/marker_bloc.dart';
 import 'package:oluko_app/models/video_tracking.dart';
-import 'package:oluko_app/repositories/video_repository.dart';
+import 'package:oluko_app/repositories/video_tracking_repository.dart';
 import 'package:oluko_app/ui/services/snackbar_service.dart';
 import 'package:oluko_app/models/marker.dart';
-import 'package:oluko_app/repositories/firestore_repository.dart';
 import 'package:oluko_app/models/draw_point.dart';
-import 'package:oluko_app/repositories/marker_repository.dart';
 import 'package:video_player/video_player.dart';
 import 'package:oluko_app/models/video.dart';
 import 'package:oluko_app/ui/draw.dart';
@@ -73,23 +71,13 @@ class _PlayerResponseState extends State<PlayerResponse> {
   num listeners = 0;
   bool canvasListenerRunning = true;
 
-  //Provider variables
-  FirestoreRepository videoTrackingProvider =
-      FirestoreRepository(collection: 'videoTracking');
-
   //Markers variables
   double markerPosition = 0.0;
   List<Marker> _markers = [];
-  MarkerRepository markerRepository = MarkerRepository();
 
   @override
   void initState() {
-    this.retrieveVideoTrackData().then((List<DrawPoint> canvasPoints) {
-      if (canvasPoints != null) {
-        this.canvasPointsRecording = canvasPoints;
-        this.isFirstRecording = false;
-      }
-    });
+    retrieveVideoTrackData();
     super.initState();
   }
 
@@ -104,21 +92,22 @@ class _PlayerResponseState extends State<PlayerResponse> {
     if (controller2 != null) {
       //controller2.dispose();
     }
-    _markers = [];
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-        create: (context) =>
-            MarkerBloc()..getVideoMarkers(this.widget.video2.id),
+        create: (context) => MarkerBloc()
+          ..getVideoMarkers(this.widget.video2.id, this.widget.videoParentPath),
         child: Scaffold(
           backgroundColor: Colors.black,
           floatingActionButton: FloatingActionButton(
             onPressed: () async {
               markerPosition = getCurrentVideoPosition();
-              MarkerBloc()..createMarker(markerPosition, this.widget.video2.id);
+              MarkerBloc()
+                ..createMarker(markerPosition, this.widget.video2.id,
+                    this.widget.videoParentPath);
               _markers.add(Marker(position: markerPosition));
             },
             child: const Icon(Icons.add_location_rounded),
@@ -375,54 +364,23 @@ class _PlayerResponseState extends State<PlayerResponse> {
     return position;
   }
 
-  //Storage Functions
+  ///Retrieves CanvasPoints from a VideoTrackerProvider to current video
+  retrieveVideoTrackData() async {
+    VideoTracking videoTracking =
+        await VideoTrackingRepository.getVideoTrackingWithPath(
+            widget.video2.id, widget.videoParentPath);
+    if (videoTracking != null && videoTracking.drawPoints != null) {
+      this.canvasPointsRecording = videoTracking.drawPoints;
+      this.isFirstRecording = false;
+    }
+  }
 
+  //Storage Functions
   ///Saves CanvasPoints from current video to a VideoTrackerProvider
   saveVideoTrackData() {
-    VideoRepository.createVideoTracking(
+    VideoTrackingRepository.createVideoTracking(
         widget.video2.id, this.canvasPointsRecording, widget.videoParentPath);
     SnackBarService.showSnackBar(context, 'Record saved!'); //SE MUESTRA MAL
-  }
-
-  ///Retrieves CanvasPoints from a VideoTrackerProvider to current video
-  /*Future<List<DrawPoint>> retrieveVideoTrackData(String videoId) async {
-    DocumentSnapshot document = await videoTrackingProvider.get(videoId);
-    if (!document.exists) {
-      return null;
-    }
-    var documentData = document.data;
-    List<DrawPoint> canvasPoints =
-        this.convertTrackDataToCanvasPoints(documentData);
-    return canvasPoints;
-  }
-
-  ///Converts Point data in Json format to a CanvasPoint list
-  List<DrawPoint> convertTrackDataToCanvasPoints(
-      Map<String, dynamic> trackData) {
-    if (trackData == null) {
-      return [];
-    }
-    List<dynamic> drawPoints = jsonDecode(trackData["drawPoints"]);
-    List<DrawPoint> cnvPoints = [];
-    drawPoints.forEach((element) {
-      DrawPoint canvasPoint = DrawPoint.fromJson(element);
-      cnvPoints.add(canvasPoint);
-    });
-    return cnvPoints;
-  }*/
-
-  ///Retrieves CanvasPoints from a VideoTrackerProvider to current video
-  Future<List<DrawPoint>> retrieveVideoTrackData() async {
-    VideoTracking videoTracking =
-        await VideoRepository.getVideoTrackingWithPath(
-            widget.video2.id, widget.videoParentPath);
-
-    if (videoTracking == null) {
-      return null;
-    }
-    List<DrawPoint> canvasPoints = videoTracking.drawPoints;
-
-    return canvasPoints;
   }
 
   //Player state functions
@@ -559,7 +517,6 @@ class _PlayerResponseState extends State<PlayerResponse> {
   }
 
   //Drawing Functions
-
   controllerCanvasListener() {
     if (this.controller1.value.position == null ||
         canvasListenerRunning == false) return;
@@ -591,7 +548,6 @@ class _PlayerResponseState extends State<PlayerResponse> {
 
     this.playbackTimer =
         Timer.periodic(new Duration(milliseconds: 10), (timer) {
-      List<DrawingPoints> pointsToSend = [];
       if (recPoints.length == 0) {
         return;
       }
@@ -618,7 +574,6 @@ class _PlayerResponseState extends State<PlayerResponse> {
 
   List<DrawPoint> getDrawingsUntilTimestamp(
       num timeStamp, List<DrawPoint> canvasPoints) {
-    List<DrawingPoints> pointsUntilTimeStamp = [];
     if (this.canvasKey.currentState.points.length == 0) {
       return [];
     }
@@ -632,7 +587,6 @@ class _PlayerResponseState extends State<PlayerResponse> {
 
   List<DrawPoint> getDrawingsAfterTimestamp(
       num timeStamp, List<DrawPoint> canvasPoints) {
-    List<DrawingPoints> pointsUntilTimeStamp = [];
     if (this.canvasKey.currentState.points.length == 0) {
       return canvasPoints;
     }
