@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/models/video.dart';
 import 'package:oluko_app/ui/services/snackbar_service.dart';
-import 'package:oluko_app/repositories/firestore_data.dart';
+import 'package:oluko_app/repositories/firestore_repository.dart';
 import 'package:oluko_app/models/draw_point.dart';
 import 'package:video_player/video_player.dart';
 import 'package:oluko_app/ui/draw.dart';
@@ -45,8 +45,8 @@ class _PlayerSingleState extends State<PlayerSingle> {
   //User's first video loop
   bool isFirstRecording = true;
   num listeners = 0;
-  FirestoreProvider videoTrackingProvider =
-      FirestoreProvider(collection: 'videoTracking');
+  FirestoreRepository videoTrackingProvider =
+      FirestoreRepository(collection: 'videoTracking');
 
   bool showAlertOnce = true;
 

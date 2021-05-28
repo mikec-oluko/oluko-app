@@ -1,15 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class FirestoreProvider {
+class FirestoreRepository {
   String collection;
   Firestore firestoreInstance;
 
-  FirestoreProvider({collection}) {
+  FirestoreRepository({collection}) {
     this.collection = collection;
     this.firestoreInstance = Firestore.instance;
   }
 
-  FirestoreProvider.test({String collection, Firestore firestoreInstance}) {
+  FirestoreRepository.test({String collection, Firestore firestoreInstance}) {
     this.collection = collection;
     this.firestoreInstance = firestoreInstance;
   }
@@ -70,5 +70,32 @@ class FirestoreProvider {
     entities.forEach((dynamic entity) {
       add(entity);
     });
+  }
+
+  static createVideoChild(String parentVideoId, dynamic entity, String idPath,
+      String childCollection) {
+    CollectionReference finalCollection = goInsideVideoResponses(idPath);
+    finalCollection =
+        finalCollection.document(parentVideoId).collection(childCollection);
+
+    final DocumentReference docRef = finalCollection.document();
+
+    entity.id = docRef.documentID;
+    docRef.setData(entity.toJson());
+
+    return entity;
+  }
+
+  static CollectionReference goInsideVideoResponses(String idPath) {
+    List<String> idPathList = idPath.split('/');
+    idPathList = idPathList.length > 0 && idPathList[0] == '' ? [] : idPathList;
+    CollectionReference finalCollection =
+        Firestore.instance.collection("videos");
+
+    idPathList.forEach((idPathElement) {
+      finalCollection =
+          finalCollection.document(idPathElement).collection('videoResponses');
+    });
+    return finalCollection;
   }
 }

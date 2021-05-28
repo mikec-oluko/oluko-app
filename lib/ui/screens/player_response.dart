@@ -9,7 +9,7 @@ import 'package:oluko_app/models/video_tracking.dart';
 import 'package:oluko_app/repositories/video_repository.dart';
 import 'package:oluko_app/ui/services/snackbar_service.dart';
 import 'package:oluko_app/models/marker.dart';
-import 'package:oluko_app/repositories/firestore_data.dart';
+import 'package:oluko_app/repositories/firestore_repository.dart';
 import 'package:oluko_app/models/draw_point.dart';
 import 'package:oluko_app/repositories/marker_repository.dart';
 import 'package:video_player/video_player.dart';
@@ -27,7 +27,11 @@ class PlayerResponse extends StatefulWidget {
   final OnCameraCallBack onCamera;
 
   const PlayerResponse(
-      {Key key, @required this.video, this.video2, this.videoParentPath, this.onCamera})
+      {Key key,
+      @required this.video,
+      this.video2,
+      this.videoParentPath,
+      this.onCamera})
       : super(key: key);
 
   @override
@@ -72,8 +76,8 @@ class _PlayerResponseState extends State<PlayerResponse> {
   bool canvasListenerRunning = true;
 
   //Provider variables
-  FirestoreProvider videoTrackingProvider =
-      FirestoreProvider(collection: 'videoTracking');
+  FirestoreRepository videoTrackingProvider =
+      FirestoreRepository(collection: 'videoTracking');
 
   //Markers variables
   double markerPosition = 0.0;
@@ -82,9 +86,7 @@ class _PlayerResponseState extends State<PlayerResponse> {
 
   @override
   void initState() {
-    this
-        .retrieveVideoTrackData(widget.video2.id)
-        .then((List<DrawPoint> canvasPoints) {
+    this.retrieveVideoTrackData().then((List<DrawPoint> canvasPoints) {
       if (canvasPoints != null) {
         this.canvasPointsRecording = canvasPoints;
         this.isFirstRecording = false;
@@ -379,38 +381,13 @@ class _PlayerResponseState extends State<PlayerResponse> {
 
   ///Saves CanvasPoints from current video to a VideoTrackerProvider
   saveVideoTrackData() {
-     VideoTracking newVideoTracking = VideoTracking(
-        drawPoints: jsonEncode(this.canvasPointsRecording.map((e) {
-      if (e.point == null) {
-        return {"x": null, "y": null, "timeStamp": e.timeStamp};
-      }
-      return {
-        "x": e.point.points.dx,
-        "y": e.point.points.dy,
-        "timeStamp": e.timeStamp
-      };
-    }).toList()));
-    VideoRepository.createVideoTracking(widget.video2.id, newVideoTracking, widget.videoParentPath);
-    
-    /*dynamic jsonCanvasPoints = {
-      "videoId": widget.video2.id,
-      "drawPoints": jsonEncode(this.canvasPointsRecording.map((e) {
-        if (e.point == null) {
-          return {"x": null, "y": null, "timeStamp": e.timeStamp};
-        }
-        return {
-          "x": e.point.points.dx,
-          "y": e.point.points.dy,
-          "timeStamp": e.timeStamp
-        };
-      }).toList()),
-    };
-    videoTrackingProvider.set(id: widget.video2.id, entity: jsonCanvasPoints);*/
+    VideoRepository.createVideoTracking(
+        widget.video2.id, this.canvasPointsRecording, widget.videoParentPath);
     SnackBarService.showSnackBar(context, 'Record saved!');
   }
 
   ///Retrieves CanvasPoints from a VideoTrackerProvider to current video
-  Future<List<DrawPoint>> retrieveVideoTrackData(String videoId) async {
+  /*Future<List<DrawPoint>> retrieveVideoTrackData(String videoId) async {
     DocumentSnapshot document = await videoTrackingProvider.get(videoId);
     if (!document.exists) {
       return null;
@@ -434,6 +411,31 @@ class _PlayerResponseState extends State<PlayerResponse> {
       cnvPoints.add(canvasPoint);
     });
     return cnvPoints;
+  }*/
+
+  ///Retrieves CanvasPoints from a VideoTrackerProvider to current video
+  Future<List<DrawPoint>> retrieveVideoTrackData() async {
+    VideoTracking videoTracking =
+        await VideoRepository.getVideoTrackingWithPath(
+            widget.video2.id, widget.videoParentPath);
+
+    if (videoTracking == null) {
+      return [];
+    }
+    List<DrawPoint> canvasPoints =
+        this.convertTrackDataToCanvasPoints(videoTracking);
+    return canvasPoints;
+  }
+
+  ///Converts Point data in Json format to a CanvasPoint list
+  List<DrawPoint> convertTrackDataToCanvasPoints(VideoTracking trackData) {
+    List<dynamic> drawPoints = jsonDecode(trackData.drawPoints);
+    List<DrawPoint> canvasPoints = [];
+    drawPoints.forEach((element) {
+      DrawPoint canvasPoint = DrawPoint.fromJson(element);
+      canvasPoints.add(canvasPoint);
+    });
+    return canvasPoints;
   }
 
   //Player state functions
