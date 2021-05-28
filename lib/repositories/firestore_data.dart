@@ -16,31 +16,32 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FirestoreProvider {
   String collection;
-  Firestore firestoreInstance;
+  FirebaseFirestore firestoreInstance;
 
   FirestoreProvider({collection}) {
     this.collection = collection;
-    this.firestoreInstance = Firestore.instance;
+    this.firestoreInstance = FirebaseFirestore.instance;
   }
-  FirestoreProvider.test({String collection, Firestore firestoreInstance}) {
+  FirestoreProvider.test(
+      {String collection, FirebaseFirestore firestoreInstance}) {
     this.collection = collection;
     this.firestoreInstance = firestoreInstance;
   }
 
   Future<QuerySnapshot> getAll() {
-    return firestoreInstance.collection(collection).getDocuments();
+    return firestoreInstance.collection(collection).get();
   }
 
   Future<DocumentSnapshot> get(String key) {
-    return firestoreInstance.collection(collection).document(key).get();
+    return firestoreInstance.collection(collection).doc(key).get();
   }
 
   Future<QuerySnapshot> getChild(String key, String childCollection) {
     return firestoreInstance
         .collection(collection)
-        .document(key)
+        .doc(key)
         .collection(childCollection)
-        .getDocuments();
+        .get();
   }
 
   ///Get documents list from nested collections.
@@ -58,10 +59,10 @@ class FirestoreProvider {
         firestoreInstance.collection(collection);
     keyPathList.forEach((keyPathElement) {
       finalCollection =
-          finalCollection.document(keyPathElement).collection(childCollection);
+          finalCollection.doc(keyPathElement).collection(childCollection);
     });
-    finalCollection = finalCollection.document(key).collection(childCollection);
-    return finalCollection.getDocuments();
+    finalCollection = finalCollection.doc(key).collection(childCollection);
+    return finalCollection.get();
   }
 
   addVideoResponse(parentVideoKey, videoResponse, String keyPath) {
@@ -73,14 +74,14 @@ class FirestoreProvider {
 
     keyPathList.forEach((keyPathElement) {
       finalCollection =
-          finalCollection.document(keyPathElement).collection('videoResponses');
+          finalCollection.doc(keyPathElement).collection('videoResponses');
     });
     finalCollection =
-        finalCollection.document(parentVideoKey).collection('videoResponses');
+        finalCollection.doc(parentVideoKey).collection('videoResponses');
 
-    final DocumentReference docRef = finalCollection.document();
+    final DocumentReference docRef = finalCollection.doc();
 
-    docRef.setData({
+    docRef.set({
       'videoUrl': videoResponse.videoUrl,
       'thumbUrl': videoResponse.thumbUrl,
       'coverUrl': videoResponse.coverUrl,
@@ -88,9 +89,9 @@ class FirestoreProvider {
       'uploadedAt': videoResponse.uploadedAt,
       'videoName': videoResponse.videoName,
       'createdBy': videoResponse.createdBy,
-      'key': docRef.documentID
+      'key': docRef.id
     });
-    return docRef.documentID;
+    return docRef.id;
   }
 
   Future<DocumentReference> add(dynamic entity) {
@@ -98,10 +99,7 @@ class FirestoreProvider {
   }
 
   Future<void> set({String key, dynamic entity}) {
-    return firestoreInstance
-        .collection(collection)
-        .document(key)
-        .setData(entity);
+    return firestoreInstance.collection(collection).doc(key).set(entity);
   }
 
   Stream<QuerySnapshot> listenAll() {

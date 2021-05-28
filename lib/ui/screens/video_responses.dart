@@ -67,14 +67,13 @@ class _ResponsesPageState extends State<ResponsesPage> {
     super.initState();
   }
 
-  void _onUploadProgress(event) {
-    if (event.type == StorageTaskEventType.progress) {
-      final double progress =
-          event.snapshot.bytesTransferred / event.snapshot.totalByteCount;
-      setState(() {
-        _progress = progress;
-      });
-    }
+  void _onUploadProgress(TaskSnapshot event) {
+    // if (event.type == TaskSnapshot) {
+    final double progress = event.bytesTransferred / event.totalBytes;
+    setState(() {
+      _progress = progress;
+    });
+    // }
   }
 
   Future<String> _uploadFile(filePath, folderName) async {
@@ -85,11 +84,11 @@ class _ResponsesPageState extends State<ResponsesPage> {
     final file = new File(filePath);
     final basename = p.basename(filePath);
 
-    final StorageReference ref =
+    final Reference ref =
         FirebaseStorage.instance.ref().child(folderName).child(basename);
-    StorageUploadTask uploadTask = ref.putFile(file);
-    uploadTask.events.listen(_onUploadProgress);
-    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+    UploadTask uploadTask = ref.putFile(file);
+    uploadTask.snapshotEvents.listen(_onUploadProgress);
+    TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => null);
     String videoUrl = await taskSnapshot.ref.getDownloadURL();
     return videoUrl;
   }
@@ -164,8 +163,8 @@ class _ResponsesPageState extends State<ResponsesPage> {
             widget.videoParent.id, 'videoResponses', widget.videoParentPath)
         .then((response) {
       List<Video> updatedVideos = [];
-      response.documents
-          .forEach((doc) => updatedVideos.add(Video.fromJson(doc.data)));
+      response.docs
+          .forEach((doc) => updatedVideos.add(Video.fromJson(doc.data())));
 
       setState(() {
         _videos = updatedVideos;
@@ -210,7 +209,7 @@ class _ResponsesPageState extends State<ResponsesPage> {
     final thumbUrl = await _uploadFile(thumbFilePath, 'thumbnail');
     final videoUrl = await _uploadHLSFiles(encodedFilesDir, videoName);
 
-    final FirebaseUser user = await AuthRepository.getLoggedUser();
+    final User user = await AuthRepository.getLoggedUser();
 
     final videoInfo = Video(
         videoUrl: videoUrl,
@@ -256,7 +255,8 @@ class _ResponsesPageState extends State<ResponsesPage> {
       if (_imagePickerActive) return;
 
       _imagePickerActive = true;
-      videoFile = await ImagePicker.pickVideo(source: imageSource);
+      final _picker = new ImagePicker();
+      videoFile = await _picker.getVideo(source: imageSource);
       _imagePickerActive = false;
 
       if (videoFile == null) return;

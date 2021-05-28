@@ -53,8 +53,8 @@ class AuthBloc extends Cubit<AuthState> {
   }
 
   Future<void> loginWithGoogle(context) async {
-    AuthResult result = await _authRepository.signInWithGoogle();
-    FirebaseUser firebaseUser = result.user;
+    UserCredential result = await _authRepository.signInWithGoogle();
+    User firebaseUser = result.user;
     UserResponse user = UserResponse();
     List<String> splitDisplayName = firebaseUser.displayName.split(' ');
     user.firstName = splitDisplayName[0];
@@ -69,8 +69,8 @@ class AuthBloc extends Cubit<AuthState> {
   }
 
   Future<void> loginWithFacebook(context) async {
-    AuthResult result = await _authRepository.signInWithFacebook();
-    FirebaseUser firebaseUser = result.user;
+    UserCredential result = await _authRepository.signInWithFacebook();
+    User firebaseUser = result.user;
     UserResponse user = UserResponse();
     List<String> splitDisplayName = firebaseUser.displayName.split(' ');
     user.firstName = splitDisplayName[0];

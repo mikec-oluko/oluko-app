@@ -24,34 +24,34 @@ dependencies:
   flutter:
     sdk: flutter
   carousel_slider: ^2.2.1
-  http: ^0.12.2
+  http: ^0.13.3
   flutter_overlay_loader: ^0.1.1
-  shared_preferences: ^2.0.5
+  shared_preferences: ^2.0.6
   firebase_core: ^1.2.0
   cloud_firestore: ^2.2.0
-  in_app_purchase: ^1.0.0
-  google_sign_in: ^3.0.0
-  firebase_auth: ^0.16.1
-  flutter_facebook_auth: ^2.0.0
+  in_app_purchase: ^1.0.1
+  google_sign_in: ^5.0.4
+  firebase_auth: ^1.2.0
+  flutter_facebook_auth: ^3.4.0
   flutter_bloc: ^7.0.0
-  timeago: ^2.0.21
-  image_picker: ^0.6.1+11
-  flutter_dotenv: ^2.0.3
-  transparent_image: ^1.0.0
-  video_player: 0.10.8+1
-  firebase_storage: ^3.0.0
+  timeago: ^3.0.2
+  image_picker: ^0.7.5+3
+  flutter_dotenv: ^3.1.0
+  transparent_image: ^2.0.0
+  video_player: ^0.10.8+1
+  firebase_storage: ^8.1.0
   flutter_ffmpeg: ^0.4.0
-  filesize: ^1.0.4
+  filesize: ^2.0.1
   path_provider: ^1.1.0
-  flutter_colorpicker:
-  webview_flutter: 0.3.24
-  amazon_cognito_identity_dart_2: ^0.1.25+4
+  flutter_colorpicker: ^0.4.0
+  webview_flutter: ^0.3.24
+  amazon_cognito_identity_dart_2: ^1.0.3
   #o your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
+  cupertino_icons: ^1.0.3
 
 dev_dependencies:
-  flutter_launcher_icons: "^0.8.0"
+  flutter_launcher_icons: "^0.9.0"
   image_test_utils: ^1.0.0
   flutter_test:
     sdk: flutter

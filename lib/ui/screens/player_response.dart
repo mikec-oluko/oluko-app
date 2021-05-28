@@ -400,7 +400,7 @@ class _PlayerResponseState extends State<PlayerResponse> {
     if (!document.exists) {
       return null;
     }
-    var documentData = document.data;
+    var documentData = document.data();
     List<CanvasPoint> canvasPoints =
         this.convertTrackDataToCanvasPoints(documentData);
     return canvasPoints;

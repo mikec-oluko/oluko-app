@@ -39,8 +39,8 @@ class AuthRepository {
     }
     ApiResponse apiResponse = ApiResponse.fromJson(signUpResponseBody);
     if (apiResponse.statusCode == 200) {
-      firebaseAuthInstance.signInWithCustomToken(
-          token: apiResponse.data['accessToken']);
+      firebaseAuthInstance
+          .signInWithCustomToken(apiResponse.data['accessToken']);
     }
     return apiResponse;
   }
@@ -61,7 +61,7 @@ class AuthRepository {
     ApiResponse apiResponse = ApiResponse.fromJson(signInProjectResponseBody);
     if (apiResponse.statusCode == 200) {
       var user = await getLoggedUser();
-      await user.getIdToken(refresh: true);
+      await user.getIdToken(true);
       //TODO: check if loaded with new claims
       return true;
     }
@@ -84,7 +84,7 @@ class AuthRepository {
     return apiResponse;
   }
 
-  Future<AuthResult> signInWithGoogle() async {
+  Future<UserCredential> signInWithGoogle() async {
     // Trigger the authentication flow
     final GoogleSignInAccount googleUser = await GoogleSignIn().signIn();
 
@@ -93,7 +93,7 @@ class AuthRepository {
         await googleUser.authentication;
 
     // Create a new credential
-    final credential = GoogleAuthProvider.getCredential(
+    final credential = GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
@@ -102,15 +102,15 @@ class AuthRepository {
     return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
-  Future<AuthResult> signInWithFacebook() async {
+  Future<UserCredential> signInWithFacebook() async {
     // Trigger the sign-in flow
     final result = await FacebookAuth.instance
         .login(permissions: ["public_profile", "email"]);
 
-    if (result.token != null) {
+    if (result.accessToken != null) {
       // Create a credential from the access token
       final facebookAuthCredential =
-          FacebookAuthProvider.getCredential(accessToken: result.token);
+          FacebookAuthProvider.credential(result.accessToken.token);
 
       // Once signed in, return the UserCredential
       return await FirebaseAuth.instance
@@ -158,7 +158,7 @@ class AuthRepository {
     return removed;
   }
 
-  static Future<FirebaseUser> getLoggedUser() {
-    return FirebaseAuth.instance.currentUser();
+  static User getLoggedUser() {
+    return FirebaseAuth.instance.currentUser;
   }
 }

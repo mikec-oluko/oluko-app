@@ -7,7 +7,7 @@ import 'package:oluko_app/repositories/marker_repository.dart';
 
 class MockDocumentReference extends Mock implements DocumentReference {}
 
-class MockFirestore extends Mock implements Firestore {}
+class MockFirestore extends Mock implements FirebaseFirestore {}
 
 class MockCollectionReference extends Mock implements CollectionReference {}
 
@@ -20,15 +20,15 @@ class MockQuery extends Mock implements Query {}
 void main() {
   group('Marker Repository ', () {
     test('should create marker (1)', () async {
-      Firestore firestoreInstance = MockFirestore();
+      FirebaseFirestore firestoreInstance = MockFirestore();
       CollectionReference collectionReference = MockCollectionReference();
       DocumentReference documentReference = MockDocumentReference();
 
       when(firestoreInstance.collection(any)).thenReturn(collectionReference);
-      when(collectionReference.document(any)).thenReturn(documentReference);
-      when(documentReference.setData(any))
+      when(collectionReference.doc(any)).thenReturn(documentReference);
+      when(documentReference.set(any))
           .thenAnswer((realInvocation) => Future.value(null));
-      when(documentReference.documentID).thenReturn('testId');
+      when(documentReference.id).thenReturn('testId');
 
       MarkerRepository markerRepository =
           MarkerRepository.test(firestoreInstance: firestoreInstance);
@@ -44,16 +44,16 @@ void main() {
     });
 
     test('should create marker (2)', () async {
-      Firestore firestoreInstance = MockFirestore();
+      FirebaseFirestore firestoreInstance = MockFirestore();
       CollectionReference collectionReference = MockCollectionReference();
       DocumentReference documentReference = MockDocumentReference();
 
       when(firestoreInstance.collection(any)).thenReturn(collectionReference);
-      when(collectionReference.document(any)).thenReturn(documentReference);
+      when(collectionReference.doc(any)).thenReturn(documentReference);
       when(documentReference.collection(any)).thenReturn(collectionReference);
-      when(documentReference.setData(any))
+      when(documentReference.set(any))
           .thenAnswer((realInvocation) => Future.value(null));
-      when(documentReference.documentID).thenReturn('testId');
+      when(documentReference.id).thenReturn('testId');
 
       MarkerRepository markerRepository =
           MarkerRepository.test(firestoreInstance: firestoreInstance);

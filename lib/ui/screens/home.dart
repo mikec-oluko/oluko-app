@@ -40,11 +40,11 @@ class _HomeState extends State<Home> {
   String _processPhase = '';
   final bool _debugMode = false;
   //SignUpResponse profile;
-  FirebaseUser user;
+  User user;
 
   @override
   void initState() {
-    FirebaseAuth.instance.onAuthStateChanged.listen((firebaseUser) async {
+    FirebaseAuth.instance.authStateChanges().listen((firebaseUser) async {
       if (firebaseUser != null) {
         this.user = firebaseUser;
       }
@@ -77,9 +77,9 @@ class _HomeState extends State<Home> {
   }
 
   void _onUploadProgress(event) {
-    if (event.type == StorageTaskEventType.progress) {
+    if (event.type == TaskSnapshot) {
       final double progress =
-          event.snapshot.bytesTransferred / event.snapshot.totalByteCount;
+          event.bytesTransferred / event.snapshot.totalByteCount;
       setState(() {
         _progress = progress;
       });
@@ -94,11 +94,11 @@ class _HomeState extends State<Home> {
     final file = new File(filePath);
     final basename = p.basename(filePath);
 
-    final StorageReference ref =
+    final Reference ref =
         FirebaseStorage.instance.ref().child(folderName).child(basename);
-    StorageUploadTask uploadTask = ref.putFile(file);
-    uploadTask.events.listen(_onUploadProgress);
-    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+    UploadTask uploadTask = ref.putFile(file);
+    uploadTask.snapshotEvents.listen(_onUploadProgress);
+    TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => null);
     String videoUrl = await taskSnapshot.ref.getDownloadURL();
     return videoUrl;
   }
@@ -240,7 +240,8 @@ class _HomeState extends State<Home> {
       if (_imagePickerActive) return;
 
       _imagePickerActive = true;
-      videoFile = await ImagePicker.pickVideo(source: imageSource);
+      final _picker = ImagePicker();
+      videoFile = await _picker.getVideo(source: imageSource);
       _imagePickerActive = false;
 
       if (videoFile == null) return;

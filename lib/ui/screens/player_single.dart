@@ -163,8 +163,8 @@ class _PlayerSingleState extends State<PlayerSingle> {
                                           // label: getLabelValue()
                                         )),
                                     Container(
-                                        height: 55,
-                                        /*child: Stack(children: [
+                                      height: 55,
+                                      /*child: Stack(children: [
                                           buildMarkerTag(0,
                                               icon: Icons.location_on,
                                               color: Colors.red.shade700),
@@ -185,7 +185,8 @@ class _PlayerSingleState extends State<PlayerSingle> {
                                           buildMarkerTag(getSliderMac() / 1.2,
                                               icon: Icons.arrow_drop_down_sharp,
                                               color: Colors.purple),
-                                        ])*/)
+                                        ])*/
+                                    )
                                   ],
                                 ),
                               ),
@@ -361,7 +362,7 @@ class _PlayerSingleState extends State<PlayerSingle> {
     if (!document.exists) {
       return null;
     }
-    var documentData = document.data;
+    var documentData = document.data();
     return documentData;
   }
 
