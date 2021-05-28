@@ -10,7 +10,7 @@
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="1: is_ci" time="8.3e-05">
+      <testcase classname="fastlane.lanes" name="1: is_ci" time="0.00011">
         
       </testcase>
     
