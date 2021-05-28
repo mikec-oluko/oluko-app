@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:convert';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/marker_bloc.dart';
@@ -383,7 +381,7 @@ class _PlayerResponseState extends State<PlayerResponse> {
   saveVideoTrackData() {
     VideoRepository.createVideoTracking(
         widget.video2.id, this.canvasPointsRecording, widget.videoParentPath);
-    SnackBarService.showSnackBar(context, 'Record saved!');
+    SnackBarService.showSnackBar(context, 'Record saved!'); //SE MUESTRA MAL
   }
 
   ///Retrieves CanvasPoints from a VideoTrackerProvider to current video
@@ -420,21 +418,10 @@ class _PlayerResponseState extends State<PlayerResponse> {
             widget.video2.id, widget.videoParentPath);
 
     if (videoTracking == null) {
-      return [];
+      return null;
     }
-    List<DrawPoint> canvasPoints =
-        this.convertTrackDataToCanvasPoints(videoTracking);
-    return canvasPoints;
-  }
+    List<DrawPoint> canvasPoints = videoTracking.drawPoints;
 
-  ///Converts Point data in Json format to a CanvasPoint list
-  List<DrawPoint> convertTrackDataToCanvasPoints(VideoTracking trackData) {
-    List<dynamic> drawPoints = jsonDecode(trackData.drawPoints);
-    List<DrawPoint> canvasPoints = [];
-    drawPoints.forEach((element) {
-      DrawPoint canvasPoint = DrawPoint.fromJson(element);
-      canvasPoints.add(canvasPoint);
-    });
     return canvasPoints;
   }
 

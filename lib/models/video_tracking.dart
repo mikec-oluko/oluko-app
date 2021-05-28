@@ -1,6 +1,8 @@
+import 'package:oluko_app/models/draw_point.dart';
+
 class VideoTracking {
   String id;
-  String drawPoints;
+  List<DrawPoint> drawPoints;
 
   VideoTracking({
     this.id,
@@ -10,12 +12,14 @@ class VideoTracking {
   factory VideoTracking.fromJson(Map<String, dynamic> json) {
     return VideoTracking(
       id: json['id'],
-      drawPoints: json['drawPoints'],
+      drawPoints: List<DrawPoint>.from(
+          json['drawPoints'].map((point) => DrawPoint.fromJson(point))),
     );
   }
 
   Map<String, dynamic> toJson() => {
         'id': id,
-        'drawPoints': drawPoints,
+        'drawPoints':
+            List<dynamic>.from(drawPoints.map((point) => point.toJson())),
       };
 }

@@ -44,26 +44,19 @@ class VideoRepository {
 
   static createVideoTracking(String parentVideoId,
       List<DrawPoint> canvasPointsRecording, String idPath) async {
-    VideoTracking videoTracking = VideoTracking(
-        drawPoints: jsonEncode(canvasPointsRecording.map((e) {
-      if (e.point == null) {
-        return {"x": null, "y": null, "timeStamp": e.timeStamp};
-      }
-      return {
-        "x": e.point.points.dx,
-        "y": e.point.points.dy,
-        "timeStamp": e.timeStamp
-      };
-    }).toList()));
+    
+    if (canvasPointsRecording.length==0){
+      return;
+    }
+
+    VideoTracking videoTracking =
+        VideoTracking(drawPoints: canvasPointsRecording);
 
     CollectionReference finalCollection =
         FirestoreRepository.goInsideVideoResponses(idPath);
-
     finalCollection =
         finalCollection.document(parentVideoId).collection("videoTracking");
-
     var documents = await finalCollection.getDocuments();
-
     if (documents.documents.length == 1) {
       VideoTracking videoTrackingToDelete =
           VideoTracking.fromJson(documents.documents[0].data);

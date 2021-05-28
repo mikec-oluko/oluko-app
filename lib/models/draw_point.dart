@@ -11,8 +11,8 @@ class DrawPoint {
 
   Map<String, dynamic> toJson() {
     return {
-      "x": this.point.points.dx,
-      "y": this.point.points.dy,
+      "x": this.point == null ? null : this.point.points.dx,
+      "y": this.point == null ? null : this.point.points.dy,
       "timeStamp": this.timeStamp,
     };
   }

@@ -48,7 +48,7 @@ class MarkerBloc extends Cubit<MarkerState> {
     }
     try {
       //final markers = await _markerRepository.getVideoMarkers(videoId);
-      final markers = [];
+      List<Marker> markers = [];
       emit(MarkersSuccess(markers: markers));
     } catch (e) {
       emit(Failure(exception: e));
