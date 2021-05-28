@@ -23,9 +23,9 @@ class Home extends StatefulWidget {
   Home({Key key, this.title, this.videoParent, this.videoParentPath})
       : super(key: key);
 
-  final String title;
-  final Video videoParent;
-  final String videoParentPath;
+  String title;
+  Video videoParent;
+  String videoParentPath;
 
   @override
   _HomeState createState() => _HomeState();
@@ -47,6 +47,8 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    _setUpParameters();
+
     return BlocConsumer<AuthBloc, AuthState>(listener: (context, state) {
       if (state is AuthSuccess) {
         this.user = state.firebaseUser;
@@ -350,16 +352,14 @@ class _HomeState extends State<Home> {
                                           'Uploaded ${timeago.format(new DateTime.fromMillisecondsSinceEpoch(video.uploadedAt))}'),
                                     ),
                                     ElevatedButton(
-                                        onPressed: () => Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) => Scaffold(
-                                                        body: Home(
-                                                      title: 'Responses',
-                                                      videoParent: video,
-                                                      videoParentPath:
-                                                          _getVideoParentPath(),
-                                                    )))),
+                                        onPressed: () => Navigator.pushNamed(
+                                                context, '/videos',
+                                                arguments: {
+                                                  'title': 'Responses',
+                                                  'videoParent': video,
+                                                  'videoParentPath':
+                                                      _getVideoParentPath()
+                                                }),
                                         child: Text("View responses"))
                                   ],
                                 ),
@@ -419,7 +419,19 @@ class _HomeState extends State<Home> {
     );
   }
 
-  /*onGoBack() {
-    setState(() {});
-  }*/
+  _setUpParameters() {
+    final Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;
+    if (args == null) {
+      return;
+    }
+    if (args['title'] != null) {
+      widget.title = args['title'];
+    }
+    if (args['videoParent'] != null) {
+      widget.videoParent = args['videoParent'];
+    }
+    if (args['videoParentPath'] != null) {
+      widget.videoParentPath = args['videoParentPath'];
+    }
+  }
 }
