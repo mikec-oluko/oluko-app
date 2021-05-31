@@ -134,6 +134,10 @@ class AuthRepository {
     return removed;
   }
 
+  Future<void> sendPasswordResetEmail(String email) {
+    return FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+  }
+
   static Future<FirebaseUser> getLoggedUser() {
     return FirebaseAuth.instance.currentUser();
   }
