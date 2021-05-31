@@ -17,7 +17,7 @@ class MockDocumentSnapshot extends Mock implements DocumentSnapshot {}
 class MockQuery extends Mock implements Query {}
 
 void main() {
-  group('Firestore Repository ', () {
+  group('Video Repository ', () {
     test('should get firebase collection', () async {
       Firestore firestoreInstance = MockFirestore();
       CollectionReference collectionReference = MockCollectionReference();
