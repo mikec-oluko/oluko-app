@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mockito/mockito.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:oluko_app/models/video.dart';
-import 'package:oluko_app/repositories/firestore_data.dart';
+import 'package:oluko_app/repositories/firestore_repository.dart';
 
 class MockDocumentReference extends Mock implements DocumentReference {}
 
@@ -27,7 +27,7 @@ void main() {
           .thenAnswer((_) => Future.value(querySnapshot));
       when(firestoreInstance.collection(any)).thenReturn(collectionReference);
 
-      FirestoreProvider firestoreProvider = FirestoreProvider.test(
+      FirestoreRepository firestoreProvider = FirestoreRepository.test(
           collection: 'videos', firestoreInstance: firestoreInstance);
 
       final response = await firestoreProvider.getAll();
@@ -46,7 +46,7 @@ void main() {
       when(collectionReference.document(any)).thenReturn(documentReference);
       when(firestoreInstance.collection(any)).thenReturn(collectionReference);
 
-      FirestoreProvider firestoreProvider = FirestoreProvider.test(
+      FirestoreRepository firestoreProvider = FirestoreRepository.test(
           collection: 'videos', firestoreInstance: firestoreInstance);
       final response = await firestoreProvider.get(key);
       expect(response, isA<DocumentSnapshot>());
@@ -60,7 +60,7 @@ void main() {
 
       String key = 'testKey';
 
-      FirestoreProvider firestoreProvider = FirestoreProvider.test(
+      FirestoreRepository firestoreProvider = FirestoreRepository.test(
           collection: 'videos', firestoreInstance: firestoreInstance);
       when(firestoreInstance.collection(any)).thenReturn(collectionReference);
       when(collectionReference.document(any)).thenReturn(documentReference);
@@ -82,7 +82,7 @@ void main() {
       String childCollection = 'childCollection';
       String pathCollection = 'pathCollection';
 
-      FirestoreProvider firestoreProvider = FirestoreProvider.test(
+      FirestoreRepository firestoreProvider = FirestoreRepository.test(
           collection: 'videos', firestoreInstance: firestoreInstance);
       when(firestoreInstance.collection(any)).thenReturn(collectionReference);
       when(collectionReference.document(any)).thenReturn(documentReference);
@@ -124,9 +124,9 @@ void main() {
       CollectionReference collectionReference = MockCollectionReference();
       DocumentReference documentReference = MockDocumentReference();
 
-      Video videoResponse = Video(videoUrl: 'testVideourl');
+      Video videoResponse = Video(url: 'testVideourl');
 
-      FirestoreProvider firestoreProvider = FirestoreProvider.test(
+      FirestoreRepository firestoreProvider = FirestoreRepository.test(
           collection: 'videos', firestoreInstance: firestoreInstance);
       when(firestoreInstance.collection(any)).thenReturn(collectionReference);
       when(collectionReference.add(any))
@@ -141,11 +141,11 @@ void main() {
       CollectionReference collectionReference = MockCollectionReference();
       DocumentReference documentReference = MockDocumentReference();
 
-      Video videoResponse = Video(videoUrl: 'testVideourl');
+      Video videoResponse = Video(url: 'testVideourl');
       String key = 'testKey';
       Map<String, dynamic> entity = videoResponse.toJson();
 
-      FirestoreProvider firestoreProvider = FirestoreProvider.test(
+      FirestoreRepository firestoreProvider = FirestoreRepository.test(
           collection: 'videos', firestoreInstance: firestoreInstance);
       when(firestoreInstance.collection(any)).thenReturn(collectionReference);
       when(collectionReference.document(any)).thenReturn(documentReference);
@@ -158,10 +158,10 @@ void main() {
       CollectionReference collectionReference = MockCollectionReference();
       QuerySnapshot querySnapshot = MockQuerySnapshot();
 
-      Video videoResponse = Video(videoUrl: 'testVideourl');
+      Video videoResponse = Video(url: 'testVideourl');
       Map<String, dynamic> entity = videoResponse.toJson();
 
-      FirestoreProvider firestoreProvider = FirestoreProvider.test(
+      FirestoreRepository firestoreProvider = FirestoreRepository.test(
           collection: 'videos', firestoreInstance: firestoreInstance);
       when(firestoreInstance.collection(any)).thenReturn(collectionReference);
       when(collectionReference.snapshots())

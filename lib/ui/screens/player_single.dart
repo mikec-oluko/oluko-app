@@ -6,8 +6,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/models/video.dart';
 import 'package:oluko_app/ui/services/snackbar_service.dart';
-import 'package:oluko_app/repositories/firestore_data.dart';
-import 'package:oluko_app/models/canvas_point.dart';
+import 'package:oluko_app/repositories/firestore_repository.dart';
+import 'package:oluko_app/models/draw_point.dart';
 import 'package:video_player/video_player.dart';
 import 'package:oluko_app/ui/draw.dart';
 
@@ -17,7 +17,8 @@ class PlayerSingle extends StatefulWidget {
   final Video video;
   final OnCameraCallBack onCamera;
 
-  const PlayerSingle({Key key, @required this.video, this.onCamera})
+  const PlayerSingle(
+      {Key key, @required this.video, this.onCamera})
       : super(key: key);
 
   @override
@@ -36,7 +37,7 @@ class _PlayerSingleState extends State<PlayerSingle> {
   bool ended = false;
   Draw canvasInstance;
   List<DrawingPoints> canvasPoints = [];
-  List<CanvasPoint> canvasPointsRecording = [];
+  List<DrawPoint> canvasPointsRecording = [];
   var lastCanvasTimeStamp = 0;
   var closestFrame = 0;
   bool canvasListenerRunning = true;
@@ -44,8 +45,8 @@ class _PlayerSingleState extends State<PlayerSingle> {
   //User's first video loop
   bool isFirstRecording = true;
   num listeners = 0;
-  FirestoreProvider videoTrackingProvider =
-      FirestoreProvider(collection: 'videoTracking');
+  FirestoreRepository videoTrackingProvider =
+      FirestoreRepository(collection: 'videoTracking');
 
   bool showAlertOnce = true;
 
@@ -78,7 +79,7 @@ class _PlayerSingleState extends State<PlayerSingle> {
                         child: Container(
                             height: MediaQuery.of(context).size.height,
                             child: NetworkPlayerLifeCycle(
-                              widget.video.videoUrl,
+                              widget.video.url,
                               (BuildContext context,
                                   VideoPlayerController controller) {
                                 this.controller1 = controller;
@@ -264,7 +265,7 @@ class _PlayerSingleState extends State<PlayerSingle> {
 
   convertTrackDataToCanvasPoints(Map<String, dynamic> trackData) {
     List<dynamic> drawPoints = trackData["drawPoints"];
-    List<CanvasPoint> cnvPoints = [];
+    List<DrawPoint> cnvPoints = [];
     drawPoints.forEach((element) {
       DrawingPoints drawingPoint = element["x"] == null
           ? null
@@ -272,8 +273,8 @@ class _PlayerSingleState extends State<PlayerSingle> {
               .canvasKey
               .currentState
               .createDrawingPoint(Offset(element["x"], element["y"]));
-      CanvasPoint canvasPoint =
-          CanvasPoint(point: drawingPoint, timeStamp: element["timeStamp"]);
+      DrawPoint canvasPoint =
+          DrawPoint(point: drawingPoint, timeStamp: element["timeStamp"]);
       cnvPoints.add(canvasPoint);
     });
     return cnvPoints;
@@ -292,7 +293,7 @@ class _PlayerSingleState extends State<PlayerSingle> {
   controllerCanvasListener() {
     if (this.controller1.value.position == null ||
         canvasListenerRunning == false) return;
-    CanvasPoint canvasObj = CanvasPoint(
+    DrawPoint canvasObj = DrawPoint(
         point: this.canvasPoints[this.canvasPoints.length - 1],
         timeStamp: this.controller1.value.position.inMilliseconds);
     canvasPointsRecording.add(canvasObj);
@@ -301,10 +302,10 @@ class _PlayerSingleState extends State<PlayerSingle> {
   playBackCanvas() async {
     this.canvasListenerRunning = false;
 
-    List<CanvasPoint> drawingsUntilTimeStamp = getDrawingsUntilTimestamp(
+    List<DrawPoint> drawingsUntilTimeStamp = getDrawingsUntilTimestamp(
         this.controller1.value.position.inMilliseconds,
         List.from(this.canvasPointsRecording));
-    List<CanvasPoint> drawingsAfterTimeStamp = getDrawingsAfterTimestamp(
+    List<DrawPoint> drawingsAfterTimeStamp = getDrawingsAfterTimestamp(
         this.controller1.value.position.inMilliseconds,
         List.from(this.canvasPointsRecording));
 
@@ -316,7 +317,7 @@ class _PlayerSingleState extends State<PlayerSingle> {
     }
 
     this.canvasKey.currentState.setPoints(pointsToSet);
-    List<CanvasPoint> recPoints = drawingsAfterTimeStamp;
+    List<DrawPoint> recPoints = drawingsAfterTimeStamp;
 
     this.playbackTimer =
         Timer.periodic(new Duration(milliseconds: 10), (timer) {
@@ -329,14 +330,14 @@ class _PlayerSingleState extends State<PlayerSingle> {
       if (isAheadOfTime) {
         return;
       }
-      CanvasPoint recPointToSend = recPoints.removeAt(0);
+      DrawPoint recPointToSend = recPoints.removeAt(0);
 
       this.canvasKey.currentState.addPoints(recPointToSend.point);
     });
   }
 
-  List<CanvasPoint> getDrawingsUntilTimestamp(
-      num timeStamp, List<CanvasPoint> canvasPoints) {
+  List<DrawPoint> getDrawingsUntilTimestamp(
+      num timeStamp, List<DrawPoint> canvasPoints) {
     List<DrawingPoints> pointsUntilTimeStamp = [];
     if (this.canvasKey.currentState.points.length == 0) {
       return [];
@@ -349,8 +350,8 @@ class _PlayerSingleState extends State<PlayerSingle> {
     return canvasPoints;
   }
 
-  List<CanvasPoint> getDrawingsAfterTimestamp(
-      num timeStamp, List<CanvasPoint> canvasPoints) {
+  List<DrawPoint> getDrawingsAfterTimestamp(
+      num timeStamp, List<DrawPoint> canvasPoints) {
     List<DrawingPoints> pointsUntilTimeStamp = [];
     if (this.canvasKey.currentState.points.length == 0) {
       return canvasPoints;

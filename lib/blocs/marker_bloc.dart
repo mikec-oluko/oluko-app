@@ -25,30 +25,28 @@ class Failure extends MarkerState {
 }
 
 class MarkerBloc extends Cubit<MarkerState> {
-  final _markerRepository = MarkerRepository();
 
   MarkerBloc() : super(Loading());
 
-  void createMarker(double position, String videoId) async {
+  void createMarker(double position, String videoId, String path) async {
     if (!(state is MarkerSuccess)) {
       emit(Loading());
     }
     try {
       Marker marker = Marker(position: position);
-      Marker newMarker = await _markerRepository.createMarker(videoId, marker);
+      Marker newMarker = await MarkerRepository.createMarker(videoId, marker, path);
       emit(MarkerSuccess(marker: newMarker));
     } catch (e) {
       emit(Failure(exception: e));
     }
   }
 
-  void getVideoMarkers(String videoId) async {
+  void getVideoMarkers(String videoId, String path) async {
     if (!(state is MarkersSuccess)) {
       emit(Loading());
     }
     try {
-      //final markers = await _markerRepository.getVideoMarkers(videoId);
-      final markers = [];
+      final markers = await MarkerRepository.getMarkersWithPath(videoId, path);
       emit(MarkersSuccess(markers: markers));
     } catch (e) {
       emit(Failure(exception: e));

@@ -36,11 +36,11 @@ class _HomeState extends State<Home> {
   final thumbHeight = 150;
   bool _imagePickerActive = false;
   bool _processing = false;
-  bool _canceled = false; //esto sirve para algo?
+  bool _canceled = false;
   double _progress = 0.0;
   int _videoDuration = 0;
   String _processPhase = '';
-  final bool _debugMode = false; //esto sirve para algo?
+  final bool _debugMode = false;
 
   List<Video> _videos = <Video>[];
   FirebaseUser user;
@@ -48,17 +48,17 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     _setUpParameters();
-
     return BlocConsumer<AuthBloc, AuthState>(listener: (context, state) {
       if (state is AuthSuccess) {
         this.user = state.firebaseUser;
       }
     }, builder: (context, state) {
       if (state is AuthSuccess) {
+        this.user = state.firebaseUser;
         return BlocProvider(
             create: (context) => VideoBloc()
-              ..getVideos(state.firebaseUser, widget.videoParent,
-                  widget.videoParentPath),
+              ..getVideos(this.user, widget.videoParent,
+                  widget.videoParentPath), //VER ACA QUE LLEGA CON NULO
             child: Scaffold(
                 appBar: AppBar(
                   title: Text(widget.title),
@@ -66,8 +66,13 @@ class _HomeState extends State<Home> {
                 body: Center(
                     child: _processing
                         ? _getProgressBar()
-                        : BlocBuilder<VideoBloc, VideoState>(
-                            builder: (context, state) {
+                        : BlocConsumer<VideoBloc, VideoState>(
+                            listener: (context, state) {
+                            if (state is VideoSuccess) {
+                              print("CAMBIO");
+                              _videos.add(state.video);
+                            }
+                          }, builder: (context, state) {
                             if (state is VideosSuccess) {
                               return _getListView(state.videos);
                             } else {
@@ -81,18 +86,17 @@ class _HomeState extends State<Home> {
                           })),
                 floatingActionButton:
                     Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  /*user != null
-                    ?*/
-                  FloatingActionButton(
-                      child: _processing
-                          ? CircularProgressIndicator(
-                              valueColor: new AlwaysStoppedAnimation<Color>(
-                                  Colors.white),
-                            )
-                          : Icon(Icons.camera),
-                      onPressed: () => _takeVideo(ImageSource.camera,
-                          parentVideo: widget.videoParent))
-                  /*: SizedBox()*/,
+                  user != null
+                      ? FloatingActionButton(
+                          child: _processing
+                              ? CircularProgressIndicator(
+                                  valueColor: new AlwaysStoppedAnimation<Color>(
+                                      Colors.white),
+                                )
+                              : Icon(Icons.camera),
+                          onPressed: () => _takeVideo(ImageSource.camera,
+                              parentVideo: widget.videoParent))
+                      : SizedBox(),
                 ])));
       } else {
         return Text('User must be logged in');
@@ -184,13 +188,13 @@ class _HomeState extends State<Home> {
     final videoUrl = await _uploadHLSFiles(encodedFilesDir, videoName);
 
     final video = Video(
-      videoUrl: videoUrl,
+      url: videoUrl,
       thumbUrl: thumbUrl,
       coverUrl: thumbUrl,
       createdBy: user != null ? user.uid : null,
       aspectRatio: aspectRatio,
       uploadedAt: DateTime.now().millisecondsSinceEpoch,
-      videoName: videoName,
+      name: videoName,
     );
 
     setState(() {
@@ -345,7 +349,7 @@ class _HomeState extends State<Home> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisSize: MainAxisSize.max,
                                   children: <Widget>[
-                                    Text("${video.videoName}"),
+                                    Text("${video.name}"),
                                     Container(
                                       margin: new EdgeInsets.only(top: 12.0),
                                       child: Text(
@@ -353,13 +357,11 @@ class _HomeState extends State<Home> {
                                     ),
                                     ElevatedButton(
                                         onPressed: () => Navigator.pushNamed(
-                                                context, '/videos',
-                                                arguments: {
-                                                  'title': 'Responses',
-                                                  'videoParent': video,
-                                                  'videoParentPath':
-                                                      _getVideoParentPath()
-                                                }),
+                                                context, '/videos', arguments: {
+                                              'title': 'Responses',
+                                              'videoParent': video,
+                                              'videoParentPath': _getVideoPath()
+                                            }),
                                         child: Text("View responses"))
                                   ],
                                 ),
@@ -383,14 +385,15 @@ class _HomeState extends State<Home> {
               this._takeVideo(ImageSource.camera, parentVideo: video));
     } else {
       return PlayerResponse(
-        video: widget.videoParent,
-        video2: video,
+        videoParentPath: _getVideoPath(),
+        videoParent: widget.videoParent,
+        video: video,
         onCamera: () => this._takeVideo(ImageSource.camera, parentVideo: video),
       );
     }
   }
 
-  _getVideoParentPath() {
+  _getVideoPath() {
     if (widget.videoParentPath == "") {
       return "/";
     } else if (widget.videoParentPath == "/") {

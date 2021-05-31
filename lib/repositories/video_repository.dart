@@ -1,18 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:oluko_app/models/video.dart';
+import 'package:oluko_app/repositories/firestore_repository.dart';
 
 class VideoRepository {
-  Firestore firestoreInstance;
-
-  VideoRepository() {
-    firestoreInstance = Firestore.instance;
+  static mapQueryToVideo(QuerySnapshot qs) {
+    return qs.documents.map((DocumentSnapshot ds) {
+      return Video.fromJson(ds.data);
+    }).toList();
   }
 
-  VideoRepository.test({Firestore firestoreInstance}) {
-    this.firestoreInstance = firestoreInstance;
-  }
-
+  //VIDEOS
   static Future<Video> createVideo(Video video) async {
     final DocumentReference docRef =
         Firestore.instance.collection('videos').document();
@@ -28,85 +25,31 @@ class VideoRepository {
     });
   }
 
-  static Future<List<Video>> getVideos() async {
-    final querySnapshot =
-        await Firestore.instance.collection('videos').getDocuments();
-    return mapQueryToVideo(querySnapshot);
-  }
-
-  static Future<List<Video>> getVideosByUser(FirebaseUser user) async {
+  static Future<List<Video>> getVideosByUser(String userId) async {
     final querySnapshot = await Firestore.instance
         .collection('videos')
-        .where("createdBy", isEqualTo: user.uid)
+        /*.orderBy("uploaded_at")*/
+        .where("created_by", isEqualTo: userId)
         .getDocuments();
+
     return mapQueryToVideo(querySnapshot);
   }
 
+  //VIDEO RESPONSES
   static Video createVideoResponse(
       String parentVideoId, Video videoResponse, String idPath) {
-    List<String> idPathList = idPath.split('/');
-    idPathList = idPathList.length > 0 && idPathList[0] == '' ? [] : idPathList;
-    CollectionReference finalCollection =
-        Firestore.instance.collection("videos");
-
-    idPathList.forEach((idPathElement) {
-      finalCollection =
-          finalCollection.document(idPathElement).collection('videoResponses');
-    });
-    finalCollection =
-        finalCollection.document(parentVideoId).collection('videoResponses');
-
-    final DocumentReference docRef = finalCollection.document();
-
-    videoResponse.id = docRef.documentID;
-    docRef.setData(videoResponse.toJson());
-
-    return videoResponse;
+    return FirestoreRepository.createVideoChild(
+        parentVideoId, videoResponse, idPath, 'videoResponses');
   }
 
-  /*static Future<List<Video>> getVideoResponses(parentVideoId) async {
-    QuerySnapshot querySnapshot = await Firestore.instance
-        .collection('videos')
-        .document(parentVideoId)
-        .collection('videoResponses')
-        .getDocuments();
-
-    return mapQueryToVideo(querySnapshot);
-  }*/
-
-  static mapQueryToVideo(QuerySnapshot qs) {
-    return qs.documents.map((DocumentSnapshot ds) {
-      return Video(
-        id: ds.documentID,
-        videoUrl: ds.data['videoUrl'],
-        thumbUrl: ds.data['thumbUrl'],
-        coverUrl: ds.data['coverUrl'],
-        aspectRatio: ds.data['aspectRatio'],
-        videoName: ds.data['videoName'],
-        uploadedAt: ds.data['uploadedAt'],
-        createdBy: ds.data['createdBy'],
-      );
-      //return Video.fromJson(ds.data);
-    }).toList();
-  }
-
-  ///Get documents list from nested collections.
-  ///
-  ///[id] final document id after path.
-  ///[idPath] document id path to the [id] document. Ex. `{document_id}/{document_id}/{document_id}`.
-  static Future<List<Video>> getVideoResponsesWithPath(
-      String id, String idPath) async {
-    List<String> idPathList = idPath.split('/');
-    if (idPathList[0] == '') {
-      idPathList = [];
-    }
+  static Future<List<Video>> getVideoResponses(
+      String videoId, String idPath) async {
     CollectionReference finalCollection =
-        Firestore.instance.collection("videos");
-    idPathList.forEach((idPathElement) {
-      finalCollection =
-          finalCollection.document(idPathElement).collection("videoResponses");
-    });
-    finalCollection = finalCollection.document(id).collection("videoResponses");
+        FirestoreRepository.goInsideVideoResponses(idPath);
+    finalCollection = finalCollection
+        .document(videoId)
+        .collection("videoResponses")
+        /*.orderBy("uploaded_at")*/;
 
     return mapQueryToVideo(await finalCollection.getDocuments());
   }

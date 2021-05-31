@@ -33,16 +33,14 @@ class VideoBloc extends Cubit<VideoState> {
     }
     try {
       List<Video> videos = [];
-      //if (user == null) {
+      if (user != null) {
         if (videoParent != null && path != "") {
-          videos = await VideoRepository.getVideoResponsesWithPath(
+          videos = await VideoRepository.getVideoResponses(
               videoParent.id, path);
         } else {
-          videos = await VideoRepository.getVideos();
+          videos = await VideoRepository.getVideosByUser(user.uid);
         }
-      //} else {
-       // videos = await VideoRepository.getVideosByUser(user);
-      //}
+      }
       emit(VideosSuccess(videos: videos));
     } catch (e) {
       emit(Failure(exception: e));
