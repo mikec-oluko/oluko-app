@@ -13,13 +13,13 @@ class VideoTracking {
     return VideoTracking(
       id: json['id'],
       drawPoints: List<DrawPoint>.from(
-          json['drawPoints'].map((point) => DrawPoint.fromJson(point))),
+          json['draw_points'].map((point) => DrawPoint.fromJson(point))),
     );
   }
 
   Map<String, dynamic> toJson() => {
         'id': id,
-        'drawPoints':
+        'draw_points':
             List<dynamic>.from(drawPoints.map((point) => point.toJson())),
       };
 }

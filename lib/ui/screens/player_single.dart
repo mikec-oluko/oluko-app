@@ -79,7 +79,7 @@ class _PlayerSingleState extends State<PlayerSingle> {
                         child: Container(
                             height: MediaQuery.of(context).size.height,
                             child: NetworkPlayerLifeCycle(
-                              widget.video.videoUrl,
+                              widget.video.url,
                               (BuildContext context,
                                   VideoPlayerController controller) {
                                 this.controller1 = controller;

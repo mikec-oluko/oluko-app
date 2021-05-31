@@ -86,18 +86,17 @@ class _HomeState extends State<Home> {
                           })),
                 floatingActionButton:
                     Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  /*user != null
-                    ?*/
-                  FloatingActionButton(
-                      child: _processing
-                          ? CircularProgressIndicator(
-                              valueColor: new AlwaysStoppedAnimation<Color>(
-                                  Colors.white),
-                            )
-                          : Icon(Icons.camera),
-                      onPressed: () => _takeVideo(ImageSource.camera,
-                          parentVideo: widget.videoParent))
-                  /*: SizedBox()*/,
+                  user != null
+                      ? FloatingActionButton(
+                          child: _processing
+                              ? CircularProgressIndicator(
+                                  valueColor: new AlwaysStoppedAnimation<Color>(
+                                      Colors.white),
+                                )
+                              : Icon(Icons.camera),
+                          onPressed: () => _takeVideo(ImageSource.camera,
+                              parentVideo: widget.videoParent))
+                      : SizedBox(),
                 ])));
       } else {
         return Text('User must be logged in');
@@ -189,13 +188,13 @@ class _HomeState extends State<Home> {
     final videoUrl = await _uploadHLSFiles(encodedFilesDir, videoName);
 
     final video = Video(
-      videoUrl: videoUrl,
+      url: videoUrl,
       thumbUrl: thumbUrl,
       coverUrl: thumbUrl,
       createdBy: user != null ? user.uid : null,
       aspectRatio: aspectRatio,
       uploadedAt: DateTime.now().millisecondsSinceEpoch,
-      videoName: videoName,
+      name: videoName,
     );
 
     setState(() {
@@ -350,7 +349,7 @@ class _HomeState extends State<Home> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisSize: MainAxisSize.max,
                                   children: <Widget>[
-                                    Text("${video.videoName}"),
+                                    Text("${video.name}"),
                                     Container(
                                       margin: new EdgeInsets.only(top: 12.0),
                                       child: Text(

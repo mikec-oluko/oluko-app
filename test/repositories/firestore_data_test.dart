@@ -124,7 +124,7 @@ void main() {
       CollectionReference collectionReference = MockCollectionReference();
       DocumentReference documentReference = MockDocumentReference();
 
-      Video videoResponse = Video(videoUrl: 'testVideourl');
+      Video videoResponse = Video(url: 'testVideourl');
 
       FirestoreRepository firestoreProvider = FirestoreRepository.test(
           collection: 'videos', firestoreInstance: firestoreInstance);
@@ -141,7 +141,7 @@ void main() {
       CollectionReference collectionReference = MockCollectionReference();
       DocumentReference documentReference = MockDocumentReference();
 
-      Video videoResponse = Video(videoUrl: 'testVideourl');
+      Video videoResponse = Video(url: 'testVideourl');
       String key = 'testKey';
       Map<String, dynamic> entity = videoResponse.toJson();
 
@@ -158,7 +158,7 @@ void main() {
       CollectionReference collectionReference = MockCollectionReference();
       QuerySnapshot querySnapshot = MockQuerySnapshot();
 
-      Video videoResponse = Video(videoUrl: 'testVideourl');
+      Video videoResponse = Video(url: 'testVideourl');
       Map<String, dynamic> entity = videoResponse.toJson();
 
       FirestoreRepository firestoreProvider = FirestoreRepository.test(

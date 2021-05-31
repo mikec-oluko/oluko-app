@@ -3,8 +3,7 @@ import 'package:oluko_app/models/video.dart';
 import 'package:oluko_app/repositories/firestore_repository.dart';
 
 class VideoRepository {
-
-    static mapQueryToVideo(QuerySnapshot qs) {
+  static mapQueryToVideo(QuerySnapshot qs) {
     return qs.documents.map((DocumentSnapshot ds) {
       return Video.fromJson(ds.data);
     }).toList();
@@ -29,8 +28,10 @@ class VideoRepository {
   static Future<List<Video>> getVideosByUser(String userId) async {
     final querySnapshot = await Firestore.instance
         .collection('videos')
-        .where("createdBy", isEqualTo: userId)
+        /*.orderBy("uploaded_at")*/
+        .where("created_by", isEqualTo: userId)
         .getDocuments();
+
     return mapQueryToVideo(querySnapshot);
   }
 
@@ -45,8 +46,10 @@ class VideoRepository {
       String videoId, String idPath) async {
     CollectionReference finalCollection =
         FirestoreRepository.goInsideVideoResponses(idPath);
-    finalCollection =
-        finalCollection.document(videoId).collection("videoResponses");
+    finalCollection = finalCollection
+        .document(videoId)
+        .collection("videoResponses")
+        /*.orderBy("uploaded_at")*/;
 
     return mapQueryToVideo(await finalCollection.getDocuments());
   }

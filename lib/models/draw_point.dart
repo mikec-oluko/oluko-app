@@ -29,7 +29,7 @@ class DrawPoint {
                 ..isAntiAlias = true
                 ..strokeCap = StrokeCap.butt
                 ..color = Colors.red),
-      timeStamp: json['timeStamp'],
+      timeStamp: json['time_stamp'],
     );
   }
 }
