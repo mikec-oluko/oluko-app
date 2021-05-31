@@ -66,12 +66,6 @@ class FirestoreRepository {
     return firestoreInstance.collection(collection).snapshots();
   }
 
-  void addBatch(List<dynamic> entities) {
-    entities.forEach((dynamic entity) {
-      add(entity);
-    });
-  }
-
   static createVideoChild(String parentVideoId, dynamic entity, String idPath,
       String childCollection) {
     CollectionReference finalCollection = goInsideVideoResponses(idPath);

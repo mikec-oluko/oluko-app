@@ -58,7 +58,7 @@ class _HomeState extends State<Home> {
         return BlocProvider(
             create: (context) => VideoBloc()
               ..getVideos(this.user, widget.videoParent,
-                  widget.videoParentPath), //VER ACA QUE LLEGA CON NULO
+                  widget.videoParentPath),
             child: Scaffold(
                 appBar: AppBar(
                   title: Text(widget.title),
