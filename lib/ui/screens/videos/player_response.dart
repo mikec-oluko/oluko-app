@@ -58,22 +58,18 @@ class _PlayerResponseState extends State<PlayerResponse> {
   Draw canvasInstance;
   List<DrawingPoints> canvasPoints = [];
   List<DrawPoint> canvasPointsRecording = [];
-  var lastCanvasTimeStamp = 0;
-  var closestFrame = 0;
   Timer playbackTimer;
 
   PlayerState playerState = PlayerState.STOPPED;
 
   //User's first video loop
   bool isFirstRecording = true;
-  bool isFirstPlay = true;
 
   //Listener variables
   num listeners = 0;
   bool canvasListenerRunning = true;
 
   //Markers variables
-  double markerPosition = 0.0;
   List<Marker> _markers = [];
 
   @override
@@ -118,7 +114,7 @@ class _PlayerResponseState extends State<PlayerResponse> {
               backgroundColor: Colors.black,
               floatingActionButton: FloatingActionButton(
                 onPressed: () async {
-                  markerPosition = getCurrentVideoPosition();
+                  double markerPosition = getCurrentVideoPosition();
                   MarkerBloc()
                     ..createMarker(markerPosition, this.widget.video.id,
                         this.widget.videoParentPath);
@@ -505,7 +501,6 @@ class _PlayerResponseState extends State<PlayerResponse> {
       }
 
       if (this._autoPlay == true && allContentsReady()) {
-        this.isFirstPlay = false;
         this._autoPlay = false;
         await this.playContents();
         playerState = PlayerState.RUNNING;

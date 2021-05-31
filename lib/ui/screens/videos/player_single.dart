@@ -3,12 +3,10 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/models/video.dart';
-import 'package:oluko_app/models/draw_point.dart';
 import 'package:oluko_app/ui/screens/videos/player_life_cycle.dart';
 import 'package:oluko_app/ui/screens/videos/aspect_ratio.dart';
 import 'package:oluko_app/ui/screens/videos/loading.dart';
 import 'package:video_player/video_player.dart';
-import 'package:oluko_app/ui/screens/videos/draw.dart';
 
 typedef OnCameraCallBack = void Function();
 
@@ -16,8 +14,7 @@ class PlayerSingle extends StatefulWidget {
   final Video video;
   final OnCameraCallBack onCamera;
 
-  const PlayerSingle(
-      {Key key, @required this.video, this.onCamera})
+  const PlayerSingle({Key key, @required this.video, this.onCamera})
       : super(key: key);
 
   @override
@@ -26,26 +23,13 @@ class PlayerSingle extends StatefulWidget {
 
 class _PlayerSingleState extends State<PlayerSingle> {
   String _error;
-  final canvasKey = GlobalKey<DrawState>();
-  VideoPlayerController controller1;
+  VideoPlayerController controller;
   List<dynamic> contents;
   bool contentInitialized = false;
-  bool openCanvas = false;
   bool _autoPlay = true;
   bool playing = false;
   bool ended = false;
-  Draw canvasInstance;
-  List<DrawingPoints> canvasPoints = [];
-  List<DrawPoint> canvasPointsRecording = [];
-  var lastCanvasTimeStamp = 0;
-  var closestFrame = 0;
-  bool canvasListenerRunning = true;
   Timer playbackTimer;
-  //User's first video loop
-  bool isFirstRecording = true;
-  num listeners = 0;
-
-  bool showAlertOnce = true;
 
   @override
   void initState() {
@@ -54,6 +38,9 @@ class _PlayerSingleState extends State<PlayerSingle> {
 
   @override
   void dispose() {
+    /*if (playbackTimer != null) {
+      playbackTimer.cancel();
+    }*/
     super.dispose();
   }
 
@@ -79,12 +66,11 @@ class _PlayerSingleState extends State<PlayerSingle> {
                               widget.video.url,
                               (BuildContext context,
                                   VideoPlayerController controller) {
-                                this.controller1 = controller;
+                                this.controller = controller;
                                 addVideoControllerListener(controller);
                                 return AspectRatioVideo(controller);
                               },
                             ))),
-                    Opacity(opacity: 1, child: setCanvas())
                   ]))
               : Center(
                   child: Text(_error),
@@ -101,99 +87,92 @@ class _PlayerSingleState extends State<PlayerSingle> {
               left: 0,
               right: 0,
               child: Visibility(
-                  visible: !openCanvas,
                   child: Padding(
-                    padding: openCanvas
-                        ? EdgeInsets.only(
-                            top: 8, left: 8, right: 8, bottom: 200.0)
-                        : EdgeInsets.all(8.0),
-                    child: Container(
-                        padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20.0),
-                            color: Colors.green),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 8.0, horizontal: 8.0),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Visibility(
-                                visible: true,
-                                child: Stack(
-                                  alignment: AlignmentDirectional.bottomCenter,
-                                  children: <Widget>[
-                                    Container(
-                                        height: 25,
-                                        child: Slider.adaptive(
-                                          activeColor:
-                                              Colors.lightGreen.shade300,
-                                          inactiveColor: Colors.teal.shade700,
-                                          value: getCurrentVideoPosition(),
-                                          max: getSliderMac().toDouble(),
-                                          min: 0,
-                                          onChanged: (val) async {
-                                            await Future.wait([
-                                              controller1.seekTo(Duration(
-                                                  milliseconds: val.toInt())),
-                                            ]);
-                                            setState(() {});
-                                          },
-                                          onChangeEnd: (val) async {
-                                            this.ended = contentsEnded();
+                padding: EdgeInsets.all(8.0),
+                child: Container(
+                    padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20.0),
+                        color: Colors.green),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8.0, horizontal: 8.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Visibility(
+                            visible: true,
+                            child: Stack(
+                              alignment: AlignmentDirectional.bottomCenter,
+                              children: <Widget>[
+                                Container(
+                                    height: 25,
+                                    child: Slider.adaptive(
+                                      activeColor: Colors.lightGreen.shade300,
+                                      inactiveColor: Colors.teal.shade700,
+                                      value: getCurrentVideoPosition(),
+                                      max: getSliderMac().toDouble(),
+                                      min: 0,
+                                      onChanged: (val) async {
+                                        await Future.wait([
+                                          controller.seekTo(Duration(
+                                              milliseconds: val.toInt())),
+                                        ]);
+                                        setState(() {});
+                                      },
+                                      onChangeEnd: (val) async {
+                                        this.ended = contentsEnded();
 
-                                            this._autoPlay = true;
+                                        this._autoPlay = true;
 
-                                            setState(() {});
-                                          },
-                                        )),
-                                    Container(
-                                      height: 55,
-                                    )
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                height: 40,
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    IconButton(
-                                        color: Colors.white,
-                                        icon: Icon(Icons.arrow_back),
-                                        onPressed: () {
-                                          setState(
-                                              () => Navigator.pop(context));
-                                        }),
-                                    IconButton(
-                                        color: Colors.white,
-                                        icon: Icon(this.playing
-                                            ? Icons.stop
-                                            : contentsEnded()
-                                                ? Icons.replay
-                                                : Icons.play_arrow),
-                                        onPressed: () {
-                                          setState(() {
-                                            playing
-                                                ? pauseContents()
-                                                : playContents();
-                                          });
-                                        }),
-                                    IconButton(
-                                        color: Colors.white,
-                                        icon: Icon(Icons.camera),
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                          widget.onCamera();
-                                        }),
-                                  ],
-                                ),
-                              )
-                            ],
+                                        setState(() {});
+                                      },
+                                    )),
+                                Container(
+                                  height: 55,
+                                )
+                              ],
+                            ),
                           ),
-                        )),
-                  )))
+                          Container(
+                            height: 40,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                IconButton(
+                                    color: Colors.white,
+                                    icon: Icon(Icons.arrow_back),
+                                    onPressed: () {
+                                      setState(() => Navigator.pop(context));
+                                    }),
+                                IconButton(
+                                    color: Colors.white,
+                                    icon: Icon(this.playing
+                                        ? Icons.stop
+                                        : contentsEnded()
+                                            ? Icons.replay
+                                            : Icons.play_arrow),
+                                    onPressed: () {
+                                      setState(() {
+                                        playing
+                                            ? pauseContents()
+                                            : playContents();
+                                      });
+                                    }),
+                                IconButton(
+                                    color: Colors.white,
+                                    icon: Icon(Icons.camera),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                      widget.onCamera();
+                                    }),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    )),
+              )))
         ],
       ),
     );
@@ -201,46 +180,26 @@ class _PlayerSingleState extends State<PlayerSingle> {
 
   double getCurrentVideoPosition() {
     double position = 0;
-    if (controller1 != null && controller1.value.position != null) {
-      if (controller1.value.duration != null &&
-          controller1.value.duration < controller1.value.position) {
-        position = controller1.value.duration.inMilliseconds.toDouble();
+    if (controller != null && controller.value.position != null) {
+      if (controller.value.duration != null &&
+          controller.value.duration < controller.value.position) {
+        position = controller.value.duration.inMilliseconds.toDouble();
       } else {
-        position = controller1.value.position.inMilliseconds.toDouble();
+        position = controller.value.position.inMilliseconds.toDouble();
       }
     }
     return position;
   }
 
   playContents() async {
-    var position = this.controller1.value.position;
-    var duration = this.controller1.value.duration;
+    var position = this.controller.value.position;
+    var duration = this.controller.value.duration;
 
     if (position.inSeconds == duration.inSeconds) {
       resetContents();
     } else if (position.inSeconds < duration.inSeconds) {
-      if (!isFirstRecording) {
-        playBackCanvas();
-      }
-      await Future.wait([this.controller1.play()]);
+      await Future.wait([this.controller.play()]);
     }
-  }
-
-  convertTrackDataToCanvasPoints(Map<String, dynamic> trackData) {
-    List<dynamic> drawPoints = trackData["drawPoints"];
-    List<DrawPoint> cnvPoints = [];
-    drawPoints.forEach((element) {
-      DrawingPoints drawingPoint = element["x"] == null
-          ? null
-          : this
-              .canvasKey
-              .currentState
-              .createDrawingPoint(Offset(element["x"], element["y"]));
-      DrawPoint canvasPoint =
-          DrawPoint(point: drawingPoint, timeStamp: element["timeStamp"]);
-      cnvPoints.add(canvasPoint);
-    });
-    return cnvPoints;
   }
 
   resetContents() async {
@@ -248,105 +207,24 @@ class _PlayerSingleState extends State<PlayerSingle> {
     this.contentInitialized = false;
     this._autoPlay = true;
     await Future.wait([
-      this.controller1.seekTo(Duration(milliseconds: 0)),
+      this.controller.seekTo(Duration(milliseconds: 0)),
     ]);
-    this.playBackCanvas();
-  }
-
-  controllerCanvasListener() {
-    if (this.controller1.value.position == null ||
-        canvasListenerRunning == false) return;
-    DrawPoint canvasObj = DrawPoint(
-        point: this.canvasPoints[this.canvasPoints.length - 1],
-        timeStamp: this.controller1.value.position.inMilliseconds);
-    canvasPointsRecording.add(canvasObj);
-  }
-
-  playBackCanvas() async {
-    this.canvasListenerRunning = false;
-
-    List<DrawPoint> drawingsUntilTimeStamp = getDrawingsUntilTimestamp(
-        this.controller1.value.position.inMilliseconds,
-        List.from(this.canvasPointsRecording));
-    List<DrawPoint> drawingsAfterTimeStamp = getDrawingsAfterTimestamp(
-        this.controller1.value.position.inMilliseconds,
-        List.from(this.canvasPointsRecording));
-
-    List<DrawingPoints> pointsToSet = [];
-    if (controller1 != null && controller1.value.position.inMilliseconds == 0) {
-      pointsToSet = [];
-    } else {
-      pointsToSet = drawingsUntilTimeStamp.map((e) => e.point).toList();
-    }
-
-    this.canvasKey.currentState.setPoints(pointsToSet);
-    List<DrawPoint> recPoints = drawingsAfterTimeStamp;
-
-    this.playbackTimer =
-        Timer.periodic(new Duration(milliseconds: 10), (timer) {
-      List<DrawingPoints> pointsToSend = [];
-      if (recPoints.length == 0) {
-        return;
-      }
-      bool isAheadOfTime = recPoints[0].timeStamp >
-          this.controller1.value.position.inMilliseconds;
-      if (isAheadOfTime) {
-        return;
-      }
-      DrawPoint recPointToSend = recPoints.removeAt(0);
-
-      this.canvasKey.currentState.addPoints(recPointToSend.point);
-    });
-  }
-
-  List<DrawPoint> getDrawingsUntilTimestamp(
-      num timeStamp, List<DrawPoint> canvasPoints) {
-    List<DrawingPoints> pointsUntilTimeStamp = [];
-    if (this.canvasKey.currentState.points.length == 0) {
-      return [];
-    }
-    for (var i = 0; i < canvasPoints.length; i++) {
-      if (this.canvasKey.currentState.points.last == canvasPoints[i].point) {
-        return canvasPoints.getRange(0, i).toList();
-      }
-    }
-    return canvasPoints;
-  }
-
-  List<DrawPoint> getDrawingsAfterTimestamp(
-      num timeStamp, List<DrawPoint> canvasPoints) {
-    List<DrawingPoints> pointsUntilTimeStamp = [];
-    if (this.canvasKey.currentState.points.length == 0) {
-      return canvasPoints;
-    }
-    for (var i = 0; i < canvasPoints.length; i++) {
-      if (this.canvasKey.currentState.points.last == canvasPoints[i].point) {
-        return canvasPoints.getRange(i, canvasPoints.length - 1).toList();
-      }
-    }
-    return canvasPoints;
   }
 
   pauseContents() async {
-    await this.controller1.pause();
+    await this.controller.pause();
 
     if (this.playbackTimer != null) {
       this.playbackTimer.cancel();
       this.playbackTimer = null;
     }
-    //this.canvasKey.currentState.addPoints(null);
     setState(() {
       this.playing = false;
     });
   }
 
   bool contentsEnded() {
-    bool endedController1 = videoControllerEnded(this.controller1);
-    if (endedController1) {
-      this.isFirstRecording = false;
-    }
-    bool ended = endedController1;
-    return ended;
+    return videoControllerEnded(this.controller);
   }
 
   videoControllerEnded(videoController) {
@@ -370,7 +248,6 @@ class _PlayerSingleState extends State<PlayerSingle> {
   }
 
   addVideoControllerListener(VideoPlayerController controller) {
-    this.listeners++;
     controller.addListener(() {
       if (contentsEnded() && allContentIsPlaying()) {
         pauseContents();
@@ -397,72 +274,30 @@ class _PlayerSingleState extends State<PlayerSingle> {
     bool created = allContentsCreated();
     bool initialized = allVideosInitialized();
     bool buffered = allVideosBuffered();
-    bool stopped = !controller1.value.isPlaying;
+    bool stopped = !controller.value.isPlaying;
 
     return created && initialized && buffered && stopped && !contentInitialized;
   }
 
   allContentIsPlaying() {
-    return this.controller1.value.isPlaying;
+    return this.controller.value.isPlaying;
   }
 
   allContentsCreated() {
-    return controller1 != null;
+    return controller != null;
   }
 
   allVideosInitialized() {
-    return controller1.value.initialized;
+    return controller.value.initialized;
   }
 
   allVideosBuffered() {
-    return !controller1.value.isBuffering;
-  }
-
-  setCanvas() {
-    canvasInstance = Draw(
-      key: canvasKey,
-      onChanges: (DrawingPoints point) {
-        if (canvasListenerRunning == true) {
-          this.canvasPoints.add(point);
-          controllerCanvasListener();
-        }
-      },
-      onClose: () => setState(() => openCanvas = false),
-    );
-    return canvasInstance;
+    return !controller.value.isBuffering;
   }
 
   num getSliderMac() {
-    return controller1 != null && controller1.value.duration != null
-        ? controller1.value.duration.inMilliseconds.toDouble()
+    return controller != null && controller.value.duration != null
+        ? controller.value.duration.inMilliseconds.toDouble()
         : 100;
-  }
-
-  Container buildMarkerTag(num markerValue,
-      {IconData icon = Icons.location_on, Color color = Colors.white}) {
-    return Container(
-      child: Align(
-          alignment: FractionalOffset(markerValue / getSliderMac(), 0),
-          child: Padding(
-            padding: EdgeInsets.only(bottom: 10),
-            child: IconButton(
-              icon: Icon(
-                icon,
-                size: 30.0,
-                color: color,
-              ),
-              iconSize: 20,
-              onPressed: () async {
-                await Future.wait([
-                  controller1
-                      .seekTo(Duration(milliseconds: markerValue.round()))
-                ]);
-                this.playBackCanvas();
-              },
-              padding: EdgeInsets.only(bottom: 0),
-              alignment: Alignment.topCenter,
-            ),
-          )),
-    );
   }
 }
