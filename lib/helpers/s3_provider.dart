@@ -55,14 +55,13 @@ class S3Provider {
     final uri = Uri.parse('$endpoint/$path/$fileName');
     try {
       http.Response res = await http.get(uri);
-      File file = File.fromRawPath(res.bodyBytes);
-      putFile(res.bodyBytes, 'Thumbnails', 'panda-test.jpg');
+      await putFile(res.bodyBytes, 'Thumbnails', 'panda-test.jpg');
     } catch (e) {
       print(e.toString());
     }
   }
 
-  putFile(Uint8List bodyBytes, String path, String fileName) async {
+  Future<String> putFile(Uint8List bodyBytes, String path, String fileName) async {
     final uri = Uri.parse('$endpoint/$path/$fileName');
     http.Response res;
 

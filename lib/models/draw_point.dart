@@ -13,7 +13,7 @@ class DrawPoint {
     return {
       "x": this.point == null ? null : this.point.points.dx,
       "y": this.point == null ? null : this.point.points.dy,
-      "timeStamp": this.timeStamp,
+      "time_stamp": this.timeStamp,
     };
   }
 

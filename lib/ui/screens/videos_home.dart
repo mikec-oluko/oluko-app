@@ -386,8 +386,8 @@ class _HomeState extends State<Home> {
     } else {
       return PlayerResponse(
         videoParentPath: _getVideoPath(),
-        video: widget.videoParent,
-        video2: video,
+        videoParent: widget.videoParent,
+        video: video,
         onCamera: () => this._takeVideo(ImageSource.camera, parentVideo: video),
       );
     }

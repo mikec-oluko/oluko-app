@@ -28,7 +28,7 @@ class VideoTrackingRepository {
     docRef.setData(videoTracking.toJson());
   }
 
-  static Future<VideoTracking> getVideoTrackingWithPath(
+  static Future<VideoTracking> getVideoTracking(
       String videoId, String idPath) async {
     CollectionReference finalCollection =
         FirestoreRepository.goInsideVideoResponses(idPath);

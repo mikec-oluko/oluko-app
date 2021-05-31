@@ -42,7 +42,7 @@ class VideoRepository {
         parentVideoId, videoResponse, idPath, 'videoResponses');
   }
 
-  static Future<List<Video>> getVideoResponsesWithPath(
+  static Future<List<Video>> getVideoResponses(
       String videoId, String idPath) async {
     CollectionReference finalCollection =
         FirestoreRepository.goInsideVideoResponses(idPath);

@@ -35,7 +35,7 @@ class VideoBloc extends Cubit<VideoState> {
       List<Video> videos = [];
       if (user != null) {
         if (videoParent != null && path != "") {
-          videos = await VideoRepository.getVideoResponsesWithPath(
+          videos = await VideoRepository.getVideoResponses(
               videoParent.id, path);
         } else {
           videos = await VideoRepository.getVideosByUser(user.uid);

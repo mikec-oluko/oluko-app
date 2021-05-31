@@ -18,14 +18,14 @@ enum PlayerState { RUNNING, STOPPED, WAITING }
 
 class PlayerResponse extends StatefulWidget {
   final String videoParentPath;
+  final Video videoParent;
   final Video video;
-  final Video video2;
   final OnCameraCallBack onCamera;
 
   const PlayerResponse(
       {Key key,
-      @required this.video,
-      this.video2,
+      @required this.videoParent,
+      this.video,
       this.videoParentPath,
       this.onCamera})
       : super(key: key);
@@ -99,14 +99,14 @@ class _PlayerResponseState extends State<PlayerResponse> {
   Widget build(BuildContext context) {
     return BlocProvider(
         create: (context) => MarkerBloc()
-          ..getVideoMarkers(this.widget.video2.id, this.widget.videoParentPath),
+          ..getVideoMarkers(this.widget.video.id, this.widget.videoParentPath),
         child: Scaffold(
           backgroundColor: Colors.black,
           floatingActionButton: FloatingActionButton(
             onPressed: () async {
               markerPosition = getCurrentVideoPosition();
               MarkerBloc()
-                ..createMarker(markerPosition, this.widget.video2.id,
+                ..createMarker(markerPosition, this.widget.video.id,
                     this.widget.videoParentPath);
               _markers.add(Marker(position: markerPosition));
             },
@@ -151,7 +151,7 @@ class _PlayerResponseState extends State<PlayerResponse> {
                                 height: MediaQuery.of(context).size.height / 3,
                                 width: MediaQuery.of(context).size.width,
                                 child: NetworkPlayerLifeCycle(
-                                    widget.video2.url,
+                                    widget.video.url,
                                     (BuildContext context,
                                         VideoPlayerController controller) {
                                   this.controller2 = controller;
@@ -367,8 +367,8 @@ class _PlayerResponseState extends State<PlayerResponse> {
   ///Retrieves CanvasPoints from a VideoTrackerProvider to current video
   retrieveVideoTrackData() async {
     VideoTracking videoTracking =
-        await VideoTrackingRepository.getVideoTrackingWithPath(
-            widget.video2.id, widget.videoParentPath);
+        await VideoTrackingRepository.getVideoTracking(
+            widget.video.id, widget.videoParentPath);
     if (videoTracking != null && videoTracking.drawPoints != null) {
       this.canvasPointsRecording = videoTracking.drawPoints;
       this.isFirstRecording = false;
@@ -379,7 +379,7 @@ class _PlayerResponseState extends State<PlayerResponse> {
   ///Saves CanvasPoints from current video to a VideoTrackerProvider
   saveVideoTrackData() {
     VideoTrackingRepository.createVideoTracking(
-        widget.video2.id, this.canvasPointsRecording, widget.videoParentPath);
+        widget.video.id, this.canvasPointsRecording, widget.videoParentPath);
     SnackBarService.showSnackBar(context, 'Record saved!'); //SE MUESTRA MAL
   }
 
