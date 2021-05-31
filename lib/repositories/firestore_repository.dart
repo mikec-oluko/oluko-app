@@ -22,7 +22,7 @@ class FirestoreRepository {
     return firestoreInstance.collection(collection).document(id).get();
   }
 
-  Future<QuerySnapshot> getChild(String id, String childCollection) {
+  Future<QuerySnapshot> getChild(String id, String childCollection) { //NO SE USA
     return firestoreInstance
         .collection(collection)
         .document(id)

@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/marker_bloc.dart';
 import 'package:oluko_app/blocs/video_tracking_bloc.dart';
-import 'package:oluko_app/ui/services/snackbar_service.dart';
 import 'package:oluko_app/models/marker.dart';
 import 'package:oluko_app/models/draw_point.dart';
+import 'package:oluko_app/ui/screens/videos/aspect_ratio.dart';
+import 'package:oluko_app/ui/screens/videos/loading.dart';
+import 'package:oluko_app/ui/screens/videos/player_life_cycle.dart';
 import 'package:video_player/video_player.dart';
 import 'package:oluko_app/models/video.dart';
-import 'package:oluko_app/ui/draw.dart';
+import 'package:oluko_app/ui/screens/videos/draw.dart';
 
 typedef OnCameraCallBack = void Function();
 
@@ -83,12 +85,6 @@ class _PlayerResponseState extends State<PlayerResponse> {
   void dispose() {
     if (playbackTimer != null) {
       playbackTimer.cancel();
-    }
-    if (controller1 != null) {
-      //controller1.dispose();
-    }
-    if (controller2 != null) {
-      //controller2.dispose();
     }
     super.dispose();
   }
@@ -298,15 +294,7 @@ class _PlayerResponseState extends State<PlayerResponse> {
                                                       return _markersStack(
                                                           state.markers);
                                                     } else {
-                                                      return Text(
-                                                        'LOADING...',
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        style: const TextStyle(
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      );
+                                                      return LoadingScreen();
                                                     }
                                                   })),
                                             ]),
@@ -358,9 +346,6 @@ class _PlayerResponseState extends State<PlayerResponse> {
                                                               .canvasPointsRecording,
                                                           widget
                                                               .videoParentPath);
-                                                    SnackBarService
-                                                        .showSnackBar(context,
-                                                            'Record saved!');
                                                   }),
                                               // IconButton(
                                               //     icon: Icon(Icons.color_lens),
@@ -701,288 +686,3 @@ class _PlayerResponseState extends State<PlayerResponse> {
   }
 }
 
-class LoadingScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Positioned(
-        bottom: 0,
-        top: 0,
-        left: 0,
-        right: 0,
-        child: Container(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            child: Align(
-                alignment: Alignment.center,
-                child: CircularProgressIndicator(
-                  valueColor: new AlwaysStoppedAnimation<Color>(Colors.white),
-                ))));
-  }
-}
-
-class VideoPlayPause extends StatefulWidget {
-  VideoPlayPause(this.controller);
-
-  final VideoPlayerController controller;
-
-  @override
-  State createState() {
-    return _VideoPlayPauseState();
-  }
-}
-
-class _VideoPlayPauseState extends State<VideoPlayPause> {
-  _VideoPlayPauseState() {
-    listener = () {
-      if (mounted) {
-        setState(() {});
-      }
-    };
-  }
-
-  FadeAnimation imageFadeAnim =
-      FadeAnimation(child: const Icon(Icons.play_arrow, size: 100.0));
-  VoidCallback listener;
-
-  VideoPlayerController get controller => widget.controller;
-
-  @override
-  void initState() {
-    super.initState();
-    //controller.addListener(listener);
-    controller.setVolume(1.0);
-    //controller.play();
-  }
-
-  @override
-  void deactivate() {
-    controller.setVolume(0.0);
-    controller.removeListener(listener);
-    super.deactivate();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final List<Widget> children = <Widget>[
-      GestureDetector(
-        child: VideoPlayer(controller),
-        onTap: () {
-          // if (!controller.value.initialized) {
-          //   return;
-          // }
-          // if (controller.value.isPlaying) {
-          //   imageFadeAnim =
-          //       FadeAnimation(child: const Icon(Icons.pause, size: 100.0));
-          //   controller.pause();
-          // } else {
-          //   imageFadeAnim =
-          //       FadeAnimation(child: const Icon(Icons.play_arrow, size: 100.0));
-          //   controller.play();
-          // }
-        },
-      ),
-      /*Align(
-        alignment: Alignment.bottomCenter,
-        child: VideoProgressIndicator(
-          controller,
-          allowScrubbing: true,
-        ),
-      ),*/
-      Center(child: imageFadeAnim),
-      Center(
-          child: controller.value.isBuffering
-              ? const CircularProgressIndicator()
-              : null),
-    ];
-
-    return Stack(
-      fit: StackFit.passthrough,
-      children: children,
-    );
-  }
-}
-
-class FadeAnimation extends StatefulWidget {
-  FadeAnimation(
-      {this.child, this.duration = const Duration(milliseconds: 500)});
-
-  final Widget child;
-  final Duration duration;
-
-  @override
-  _FadeAnimationState createState() => _FadeAnimationState();
-}
-
-class _FadeAnimationState extends State<FadeAnimation>
-    with SingleTickerProviderStateMixin {
-  AnimationController animationController;
-
-  @override
-  void initState() {
-    super.initState();
-    animationController =
-        AnimationController(duration: widget.duration, vsync: this);
-    animationController.addListener(() {
-      if (mounted) {
-        setState(() {});
-      }
-    });
-    animationController.forward(from: 0.0);
-  }
-
-  @override
-  void deactivate() {
-    animationController.stop();
-    super.deactivate();
-  }
-
-  @override
-  void didUpdateWidget(FadeAnimation oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.child != widget.child) {
-      animationController.forward(from: 0.0);
-    }
-  }
-
-  @override
-  void dispose() {
-    if (animationController != null) animationController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return animationController.isAnimating
-        ? Opacity(
-            opacity: 1.0 - animationController.value,
-            child: widget.child,
-          )
-        : Container();
-  }
-}
-
-typedef Widget VideoWidgetBuilder(
-    BuildContext context, VideoPlayerController controller);
-
-abstract class PlayerLifeCycle extends StatefulWidget {
-  PlayerLifeCycle(this.dataSource, this.childBuilder);
-
-  final VideoWidgetBuilder childBuilder;
-  final String dataSource;
-}
-
-/// A widget connecting its life cycle to a [VideoPlayerController] using
-/// a data source from the network.
-class NetworkPlayerLifeCycle extends PlayerLifeCycle {
-  NetworkPlayerLifeCycle(String dataSource, VideoWidgetBuilder childBuilder)
-      : super(dataSource, childBuilder);
-
-  @override
-  _NetworkPlayerLifeCycleState createState() => _NetworkPlayerLifeCycleState();
-}
-
-abstract class _PlayerLifeCycleState extends State<PlayerLifeCycle> {
-  VideoPlayerController controller;
-
-  @override
-
-  /// Subclasses should implement [createVideoPlayerController], which is used
-  /// by this method.
-  void initState() {
-    super.initState();
-    controller = createVideoPlayerController();
-    controller.addListener(() {
-      if (controller.value.hasError) {
-        setState(() {});
-      }
-    });
-    controller.initialize();
-    controller.setLooping(false);
-    //controller.play();
-  }
-
-  @override
-  void deactivate() {
-    super.deactivate();
-  }
-
-  @override
-  void dispose() {
-    if (controller != null) controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return widget.childBuilder(context, controller);
-  }
-
-  VideoPlayerController createVideoPlayerController();
-}
-
-class _NetworkPlayerLifeCycleState extends _PlayerLifeCycleState {
-  @override
-  VideoPlayerController createVideoPlayerController() {
-    return VideoPlayerController.network(widget.dataSource);
-  }
-}
-
-class AspectRatioVideo extends StatefulWidget {
-  AspectRatioVideo(this.controller);
-
-  final VideoPlayerController controller;
-
-  @override
-  AspectRatioVideoState createState() => AspectRatioVideoState();
-}
-
-class AspectRatioVideoState extends State<AspectRatioVideo> {
-  VideoPlayerController get controller => widget.controller;
-  bool initialized = false;
-
-  VoidCallback listener;
-
-  @override
-  void initState() {
-    super.initState();
-    listener = () {
-      if (!mounted) {
-        return;
-      }
-      if (initialized != controller.value.initialized) {
-        initialized = controller.value.initialized;
-        if (mounted) {
-          setState(() {});
-        }
-      }
-    };
-    controller.addListener(listener);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (controller.value.hasError) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Text(controller.value.errorDescription,
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold)),
-        ),
-      );
-    }
-
-    if (initialized) {
-      return Center(
-        child: AspectRatio(
-          aspectRatio: controller.value.aspectRatio,
-          child: VideoPlayPause(controller),
-        ),
-      );
-    } else {
-      return Center(child: CircularProgressIndicator());
-    }
-  }
-}
