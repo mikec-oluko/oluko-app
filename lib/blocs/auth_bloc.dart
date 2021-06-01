@@ -15,7 +15,8 @@ abstract class AuthState {}
 
 class AuthSuccess extends AuthState {
   final UserResponse user;
-  AuthSuccess({this.user});
+  final FirebaseUser firebaseUser;
+  AuthSuccess({this.user, this.firebaseUser});
 }
 
 class AuthFailure extends AuthState {
@@ -28,7 +29,9 @@ class AuthLoading extends AuthState {}
 class AuthGuest extends AuthState {}
 
 class AuthBloc extends Cubit<AuthState> {
-  AuthBloc() : super(AuthLoading());
+  AuthBloc() : super(AuthLoading()) {
+    checkCurrentUser();
+  }
 
   final _authRepository = AuthRepository();
   final _userRepository = UserRepository();
@@ -49,7 +52,8 @@ class AuthBloc extends Cubit<AuthState> {
     AuthRepository().storeLoginData(user);
     AppLoader.stopLoading();
     await AppNavigator().returnToHome(context);
-    emit(AuthSuccess(user: user));
+    final firebaseUser = await FirebaseAuth.instance.currentUser();
+    emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
   }
 
   Future<void> loginWithGoogle(context) async {
@@ -64,8 +68,8 @@ class AuthBloc extends Cubit<AuthState> {
       user.lastName = splitDisplayName[1];
     }
     AuthRepository().storeLoginData(user);
+    emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
     await AppNavigator().returnToHome(context);
-    emit(AuthSuccess(user: user));
   }
 
   Future<void> loginWithFacebook(context) async {
@@ -81,10 +85,27 @@ class AuthBloc extends Cubit<AuthState> {
     }
     AuthRepository().storeLoginData(user);
     await AppNavigator().returnToHome(context);
-    emit(AuthSuccess(user: user));
+    emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
   }
 
   Future<UserResponse> retrieveLoginData() {
     return AuthRepository().retrieveLoginData();
+  }
+
+  Future<void> checkCurrentUser() async {
+    final loggedUser = await AuthRepository.getLoggedUser();
+    final userData = await AuthRepository().retrieveLoginData();
+    if (loggedUser != null && userData != null) {
+      emit(AuthSuccess(user: userData));
+    } else {
+      emit(AuthGuest());
+    }
+  }
+
+  Future<void> logout(context) async {
+    final success = await AuthRepository().removeLoginData();
+    if (success == true) {
+      emit(AuthGuest());
+    }
   }
 }

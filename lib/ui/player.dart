@@ -22,7 +22,7 @@ class _PlayerState extends State<Player> {
         children: <Widget>[
           _error == null
               ? NetworkPlayerLifeCycle(
-                  widget.video.videoUrl,
+                  widget.video.url,
                   (BuildContext context, VideoPlayerController controller) =>
                       AspectRatioVideo(controller),
                 )

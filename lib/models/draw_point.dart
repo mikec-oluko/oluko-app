@@ -3,23 +3,23 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/ui/draw.dart';
 
-class CanvasPoint {
+class DrawPoint {
   DrawingPoints point;
   num timeStamp;
 
-  CanvasPoint({this.point, this.timeStamp});
+  DrawPoint({this.point, this.timeStamp});
 
   Map<String, dynamic> toJson() {
     return {
-      "x": this.point.points.dx,
-      "y": this.point.points.dy,
-      "timeStamp": this.timeStamp,
+      "x": this.point == null ? null : this.point.points.dx,
+      "y": this.point == null ? null : this.point.points.dy,
+      "time_stamp": this.timeStamp,
     };
   }
 
-  //Convert stored json into CanvasPoint
-  factory CanvasPoint.fromJson(Map<String, dynamic> json) {
-    return CanvasPoint(
+  //Convert stored json into DrawPoint
+  factory DrawPoint.fromJson(Map<String, dynamic> json) {
+    return DrawPoint(
       point: json['x'] == null
           ? null
           : DrawingPoints(
@@ -29,7 +29,7 @@ class CanvasPoint {
                 ..isAntiAlias = true
                 ..strokeCap = StrokeCap.butt
                 ..color = Colors.red),
-      timeStamp: json['timeStamp'],
+      timeStamp: json['time_stamp'],
     );
   }
 }

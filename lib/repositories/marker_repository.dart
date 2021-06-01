@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oluko_app/models/marker.dart';
+import 'firestore_repository.dart';
 
 class MarkerRepository {
   FirebaseFirestore firestoreInstance;
@@ -12,56 +13,24 @@ class MarkerRepository {
     this.firestoreInstance = firestoreInstance;
   }
 
-  Future<Marker> createMarker1(Marker marker) async {
-    final DocumentReference docRef =
-        firestoreInstance.collection('markers').doc();
-    docRef.set({
-      'id': docRef.id,
-      'position': marker.position,
-      'videoId': marker.videoId,
-    });
-    marker.id = docRef.id;
-    return marker;
+  static Future<Marker> createMarker(
+      String parentVideoId, Marker marker, String idPath) async {
+    Marker newMarker = await FirestoreRepository.createVideoChild(
+        parentVideoId, marker, idPath, 'markers');
+    return newMarker;
   }
 
-  createMarker(String parentVideoId, Marker marker) {
-    final DocumentReference docRef =
-        firestoreInstance.collection('videos').doc(parentVideoId);
-    final DocumentReference responseDocRef = docRef.collection('markers').doc();
-    responseDocRef.set(marker.toJson());
-    return responseDocRef.id;
-  }
-
-  Future<List<Marker>> getVideoMarkers1(String videoId) async {
-    List<Marker> markers = [];
-    QuerySnapshot docRef = await FirebaseFirestore.instance
-        .collection('markers')
-        .where('videoId', isEqualTo: videoId)
-        .get();
-    docRef.docs.forEach((marker) {
-      Marker newMarker = Marker.fromJson(marker.data());
-      markers.add(newMarker);
-    });
-    return markers;
-  }
-
-  Future<List<Marker>> getVideoMarkers(String parentVideoId) async {
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('videos')
-        .doc(parentVideoId)
-        .collection('markers')
-        .get();
-
-    return mapQueryToMarker(querySnapshot);
+  static Future<List<Marker>> getMarkersWithPath(
+      String videoId, String idPath) async {
+    CollectionReference finalCollection =
+        FirestoreRepository.goInsideVideoResponses(idPath);
+    finalCollection = finalCollection.document(videoId).collection("markers");
+    return mapQueryToMarker(await finalCollection.getDocuments());
   }
 
   static mapQueryToMarker(QuerySnapshot qs) {
-    return qs.docs.map((DocumentSnapshot ds) {
-      return Marker(
-        id: ds.id,
-        position: ds.get('position'),
-        videoId: ds.get('videoId'),
-      );
+    return qs.documents.map((DocumentSnapshot ds) {
+      return Marker.fromJson(ds.data);
     }).toList();
   }
 }

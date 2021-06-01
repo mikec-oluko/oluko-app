@@ -6,7 +6,7 @@ import 'package:oluko_app/repositories/firestore_repository.dart';
 
 class MockDocumentReference extends Mock implements DocumentReference {}
 
-class MockFirestore extends Mock implements FirebaseFirestore {}
+class MockFirestore extends Mock implements Firestore {}
 
 class MockCollectionReference extends Mock implements CollectionReference {}
 
@@ -17,13 +17,13 @@ class MockDocumentSnapshot extends Mock implements DocumentSnapshot {}
 class MockQuery extends Mock implements Query {}
 
 void main() {
-  group('Firestore Repository ', () {
+  group('Video Repository ', () {
     test('should get firebase collection', () async {
-      FirebaseFirestore firestoreInstance = MockFirestore();
+      Firestore firestoreInstance = MockFirestore();
       CollectionReference collectionReference = MockCollectionReference();
       QuerySnapshot querySnapshot = MockQuerySnapshot();
 
-      when(collectionReference.get())
+      when(collectionReference.getDocuments())
           .thenAnswer((_) => Future.value(querySnapshot));
       when(firestoreInstance.collection(any)).thenReturn(collectionReference);
 
@@ -36,14 +36,14 @@ void main() {
     });
 
     test('should get firebase document', () async {
-      FirebaseFirestore firestoreInstance = MockFirestore();
+      Firestore firestoreInstance = MockFirestore();
       CollectionReference collectionReference = MockCollectionReference();
       DocumentReference documentReference = MockDocumentReference();
       DocumentSnapshot documentSnapshot = MockDocumentSnapshot();
       String key = 'testKey';
       when(documentReference.get())
           .thenAnswer((realInvocation) => Future.value(documentSnapshot));
-      when(collectionReference.doc(any)).thenReturn(documentReference);
+      when(collectionReference.document(any)).thenReturn(documentReference);
       when(firestoreInstance.collection(any)).thenReturn(collectionReference);
 
       FirestoreRepository firestoreProvider = FirestoreRepository.test(
@@ -53,7 +53,7 @@ void main() {
     });
 
     test('should get firebase child document', () async {
-      FirebaseFirestore firestoreInstance = MockFirestore();
+      Firestore firestoreInstance = MockFirestore();
       CollectionReference collectionReference = MockCollectionReference();
       DocumentReference documentReference = MockDocumentReference();
       QuerySnapshot querySnapshot = MockQuerySnapshot();
@@ -63,9 +63,9 @@ void main() {
       FirestoreRepository firestoreProvider = FirestoreRepository.test(
           collection: 'videos', firestoreInstance: firestoreInstance);
       when(firestoreInstance.collection(any)).thenReturn(collectionReference);
-      when(collectionReference.doc(any)).thenReturn(documentReference);
+      when(collectionReference.document(any)).thenReturn(documentReference);
       when(documentReference.collection(any)).thenReturn(collectionReference);
-      when(collectionReference.get())
+      when(collectionReference.getDocuments())
           .thenAnswer((realInvocation) => Future.value(querySnapshot));
 
       final response = await firestoreProvider.getChild(key, 'childCollection');
@@ -73,7 +73,7 @@ void main() {
     });
 
     test('should get firebase child with path', () async {
-      FirebaseFirestore firestoreInstance = MockFirestore();
+      Firestore firestoreInstance = MockFirestore();
       CollectionReference collectionReference = MockCollectionReference();
       DocumentReference documentReference = MockDocumentReference();
       QuerySnapshot querySnapshot = MockQuerySnapshot();
@@ -85,9 +85,9 @@ void main() {
       FirestoreRepository firestoreProvider = FirestoreRepository.test(
           collection: 'videos', firestoreInstance: firestoreInstance);
       when(firestoreInstance.collection(any)).thenReturn(collectionReference);
-      when(collectionReference.doc(any)).thenReturn(documentReference);
+      when(collectionReference.document(any)).thenReturn(documentReference);
       when(documentReference.collection(any)).thenReturn(collectionReference);
-      when(collectionReference.get())
+      when(collectionReference.getDocuments())
           .thenAnswer((realInvocation) => Future.value(querySnapshot));
 
       final response = await firestoreProvider.getChildWithPath(
@@ -108,10 +108,10 @@ void main() {
       FirestoreProvider firestoreProvider = FirestoreProvider.test(
           collection: 'videos', firestoreInstance: firestoreInstance);
       when(firestoreInstance.collection(any)).thenReturn(collectionReference);
-      when(collectionReference.doc(any)).thenReturn(documentReference);
+      when(collectionReference.document(any)).thenReturn(documentReference);
       when(documentReference.collection(any)).thenReturn(collectionReference);
-      when(collectionReference.doc()).thenReturn(documentReference);
-      when(documentReference.id).thenReturn(documentId);
+      when(collectionReference.document()).thenReturn(documentReference);
+      when(documentReference.documentID).thenReturn(documentId);
 
       final response = await firestoreProvider.addVideoResponse(
           parentVideoKey, videoResponse, keyPath);
@@ -120,7 +120,7 @@ void main() {
     });*/
 
     test('should add entity', () async {
-      FirebaseFirestore firestoreInstance = MockFirestore();
+      Firestore firestoreInstance = MockFirestore();
       CollectionReference collectionReference = MockCollectionReference();
       DocumentReference documentReference = MockDocumentReference();
 
@@ -137,7 +137,7 @@ void main() {
     });
 
     test('should set entity', () async {
-      FirebaseFirestore firestoreInstance = MockFirestore();
+      Firestore firestoreInstance = MockFirestore();
       CollectionReference collectionReference = MockCollectionReference();
       DocumentReference documentReference = MockDocumentReference();
 
@@ -148,13 +148,13 @@ void main() {
       FirestoreRepository firestoreProvider = FirestoreRepository.test(
           collection: 'videos', firestoreInstance: firestoreInstance);
       when(firestoreInstance.collection(any)).thenReturn(collectionReference);
-      when(collectionReference.doc(any)).thenReturn(documentReference);
+      when(collectionReference.document(any)).thenReturn(documentReference);
 
       await firestoreProvider.set(id: key, entity: entity);
     });
 
     test('should listen snapshots', () async {
-      FirebaseFirestore firestoreInstance = MockFirestore();
+      Firestore firestoreInstance = MockFirestore();
       CollectionReference collectionReference = MockCollectionReference();
       QuerySnapshot querySnapshot = MockQuerySnapshot();
 
