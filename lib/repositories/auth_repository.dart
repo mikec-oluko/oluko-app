@@ -14,7 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthRepository {
   Client http;
   FirebaseAuth firebaseAuthInstance;
-
+  String url = 'https://us-central1-oluko-2671e.cloudfunctions.net/api';
   AuthRepository.test({Client http, FirebaseAuth firebaseAuthInstance}) {
     this.http = http;
     this.firebaseAuthInstance = firebaseAuthInstance;
@@ -27,10 +27,8 @@ class AuthRepository {
 
   Future<ApiResponse> login(LoginRequest loginRequest) async {
     var body2 = loginRequest.toJson();
-    Response response = await http.post(
-        Uri.parse(
-            "https://us-central1-oluko-2671e.cloudfunctions.net/auth/login"),
-        body: body2);
+    Response response =
+        await http.post(Uri.parse("$url/auth/login"), body: body2);
     var signUpResponseBody = jsonDecode(response.body);
     if (signUpResponseBody['message'] is String) {
       List<String> messageList = [signUpResponseBody['message'].toString()];
@@ -38,18 +36,24 @@ class AuthRepository {
     }
     ApiResponse apiResponse = ApiResponse.fromJson(signUpResponseBody);
     if (apiResponse.statusCode == 200) {
-      firebaseAuthInstance.signInWithCustomToken(
+      await firebaseAuthInstance.signInWithCustomToken(
           token: apiResponse.data['accessToken']);
     }
     return apiResponse;
   }
 
+  Future<void> sendEmailVerification(SignUpRequest signUpRequest) async {
+    await firebaseAuthInstance.signInWithEmailAndPassword(
+        email: signUpRequest.email, password: signUpRequest.password);
+    final currentUser = await firebaseAuthInstance.currentUser();
+    await currentUser.sendEmailVerification();
+    await firebaseAuthInstance.signOut();
+  }
+
   Future<ApiResponse> verifyToken(VerifyTokenRequest verifyTokenRequest) async {
     Map<String, dynamic> body = verifyTokenRequest.toJson();
-    Response response = await http.post(
-        Uri.parse(
-            "https://us-central1-oluko-2671e.cloudfunctions.net/auth/token/verify"),
-        body: body);
+    Response response =
+        await http.post(Uri.parse("$url/auth/token/verify"), body: body);
     var responseBody = jsonDecode(response.body);
     if (responseBody['message'] != null &&
         responseBody['message'].length == null) {
@@ -98,10 +102,8 @@ class AuthRepository {
 
   Future<ApiResponse> signUp(SignUpRequest signUpRequest) async {
     var body2 = signUpRequest.toJson();
-    Response response = await http.post(
-        Uri.parse(
-            "https://us-central1-oluko-2671e.cloudfunctions.net/auth/signup"),
-        body: body2);
+    Response response =
+        await http.post(Uri.parse("$url/auth/signup"), body: body2);
     var signUpResponseBody = jsonDecode(response.body);
     ApiResponse apiResponse = ApiResponse.fromJson(signUpResponseBody);
     return apiResponse;
