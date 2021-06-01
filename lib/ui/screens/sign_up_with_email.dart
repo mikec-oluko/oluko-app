@@ -49,13 +49,6 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
     return Form(
         key: _formKey,
         child: Scaffold(
-            appBar: AppBar(
-              // Here we take the value from the MyHomePage object that was created by
-              // the App.build method, and use it to set our appbar title.
-              title: Text('Sign Up'),
-              backgroundColor: Colors.white,
-              actions: [],
-            ),
             body: Container(
                 color: Colors.black,
                 child: ListView(children: [
@@ -139,12 +132,12 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
   Widget formSection() {
     return Container(
         width: MediaQuery.of(context).size.width,
-        height: 400,
+        height: 600,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Container(
-                height: 300,
+                height: 350,
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: formFields())),
@@ -267,6 +260,34 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
             filled: false,
             hintStyle: new TextStyle(color: Colors.grey[800]),
             labelStyle: new TextStyle(color: Colors.grey[800]),
+            hintText: "Username",
+            labelText: "Username",
+            fillColor: Colors.white70),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter some text';
+          }
+          return null;
+        },
+        onSaved: (value) {
+          this._requestData.lastName = value;
+        },
+      ),
+      TextFormField(
+        style: TextStyle(color: Colors.white),
+        decoration: new InputDecoration(
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            focusColor: Colors.white,
+            filled: false,
+            hintStyle: new TextStyle(color: Colors.grey[800]),
+            labelStyle: new TextStyle(color: Colors.grey[800]),
             hintText: "Your Email",
             labelText: "Email Address",
             fillColor: Colors.white70),
@@ -277,7 +298,7 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
           return null;
         },
         onSaved: (value) {
-          this._requestData.email = value;
+          this._requestData.username = value;
         },
       ),
       TextFormField(
