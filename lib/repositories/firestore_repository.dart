@@ -2,32 +2,33 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FirestoreRepository {
   String collection;
-  Firestore firestoreInstance;
+  FirebaseFirestore firestoreInstance;
 
   FirestoreRepository({collection}) {
     this.collection = collection;
-    this.firestoreInstance = Firestore.instance;
+    this.firestoreInstance = FirebaseFirestore.instance;
   }
 
-  FirestoreRepository.test({String collection, Firestore firestoreInstance}) {
+  FirestoreRepository.test(
+      {String collection, FirebaseFirestore firestoreInstance}) {
     this.collection = collection;
     this.firestoreInstance = firestoreInstance;
   }
 
   Future<QuerySnapshot> getAll() {
-    return firestoreInstance.collection(collection).getDocuments();
+    return this.firestoreInstance.collection(collection).get();
   }
 
   Future<DocumentSnapshot> get(String id) {
-    return firestoreInstance.collection(collection).document(id).get();
+    return firestoreInstance.collection(collection).doc(id).get();
   }
 
   Future<QuerySnapshot> getChild(String id, String childCollection) {
     return firestoreInstance
         .collection(collection)
-        .document(id)
+        .doc(id)
         .collection(childCollection)
-        .getDocuments();
+        .get();
   }
 
   ///Get documents list from nested collections.
@@ -45,10 +46,10 @@ class FirestoreRepository {
         firestoreInstance.collection(collection);
     idPathList.forEach((idPathElement) {
       finalCollection =
-          finalCollection.document(idPathElement).collection(childCollection);
+          finalCollection.doc(idPathElement).collection(childCollection);
     });
-    finalCollection = finalCollection.document(id).collection(childCollection);
-    return finalCollection.getDocuments();
+    finalCollection = finalCollection.doc(id).collection(childCollection);
+    return finalCollection.get();
   }
 
   Future<DocumentReference> add(dynamic entity) {
@@ -56,10 +57,7 @@ class FirestoreRepository {
   }
 
   Future<void> set({String id, dynamic entity}) {
-    return firestoreInstance
-        .collection(collection)
-        .document(id)
-        .setData(entity);
+    return firestoreInstance.collection(collection).doc(id).set(entity);
   }
 
   Stream<QuerySnapshot> listenAll() {
@@ -76,12 +74,12 @@ class FirestoreRepository {
       String childCollection) {
     CollectionReference finalCollection = goInsideVideoResponses(idPath);
     finalCollection =
-        finalCollection.document(parentVideoId).collection(childCollection);
+        finalCollection.doc(parentVideoId).collection(childCollection);
 
-    final DocumentReference docRef = finalCollection.document();
+    final DocumentReference docRef = finalCollection.doc();
 
-    entity.id = docRef.documentID;
-    docRef.setData(entity.toJson());
+    entity.id = docRef.id;
+    docRef.set(entity.toJson());
 
     return entity;
   }
@@ -90,11 +88,11 @@ class FirestoreRepository {
     List<String> idPathList = idPath.split('/');
     idPathList = idPathList.length > 0 && idPathList[0] == '' ? [] : idPathList;
     CollectionReference finalCollection =
-        Firestore.instance.collection("videos");
+        FirebaseFirestore.instance.collection("videos");
 
     idPathList.forEach((idPathElement) {
       finalCollection =
-          finalCollection.document(idPathElement).collection('videoResponses');
+          finalCollection.doc(idPathElement).collection('videoResponses');
     });
     return finalCollection;
   }

@@ -15,7 +15,7 @@ abstract class AuthState {}
 
 class AuthSuccess extends AuthState {
   final UserResponse user;
-  final FirebaseUser firebaseUser;
+  final User firebaseUser;
   AuthSuccess({this.user, this.firebaseUser});
 }
 
@@ -52,7 +52,7 @@ class AuthBloc extends Cubit<AuthState> {
     AuthRepository().storeLoginData(user);
     AppLoader.stopLoading();
     await AppNavigator().returnToHome(context);
-    final firebaseUser = await FirebaseAuth.instance.currentUser();
+    final firebaseUser = FirebaseAuth.instance.currentUser;
     emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
   }
 

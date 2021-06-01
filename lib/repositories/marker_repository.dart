@@ -24,13 +24,13 @@ class MarkerRepository {
       String videoId, String idPath) async {
     CollectionReference finalCollection =
         FirestoreRepository.goInsideVideoResponses(idPath);
-    finalCollection = finalCollection.document(videoId).collection("markers");
-    return mapQueryToMarker(await finalCollection.getDocuments());
+    finalCollection = finalCollection.doc(videoId).collection("markers");
+    return mapQueryToMarker(await finalCollection.get());
   }
 
   static mapQueryToMarker(QuerySnapshot qs) {
-    return qs.documents.map((DocumentSnapshot ds) {
-      return Marker.fromJson(ds.data);
+    return qs.docs.map((DocumentSnapshot ds) {
+      return Marker.fromJson(ds.data());
     }).toList();
   }
 }

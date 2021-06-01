@@ -2,13 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oluko_app/models/user_response.dart';
 
 class UserRepository {
-  Firestore firestoreInstance;
+  FirebaseFirestore firestoreInstance;
 
   UserRepository() {
-    firestoreInstance = Firestore.instance;
+    firestoreInstance = FirebaseFirestore.instance;
   }
 
-  UserRepository.test({Firestore firestoreInstance}) {
+  UserRepository.test({FirebaseFirestore firestoreInstance}) {
     this.firestoreInstance = firestoreInstance;
   }
 
