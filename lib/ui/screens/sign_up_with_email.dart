@@ -7,6 +7,8 @@ import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/utils/app_loader.dart';
 
+import '../peek_password.dart';
+
 class SignUpWithMailPage extends StatefulWidget {
   SignUpWithMailPage({Key key}) : super(key: key);
 
@@ -33,6 +35,7 @@ class SignUpWithMailContentPage extends StatefulWidget {
 class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
   final _formKey = GlobalKey<FormState>();
   SignUpRequest _requestData = SignUpRequest();
+  bool _peekPassword = false;
 
   @override
   Widget build(BuildContext context) {
@@ -280,6 +283,12 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
       TextFormField(
         style: TextStyle(color: Colors.white),
         decoration: new InputDecoration(
+            suffixIcon: PeekPassword(
+                onPressed: (bool peekPassword) => {
+                      this.setState(() {
+                        this._peekPassword = peekPassword;
+                      })
+                    }),
             focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Colors.grey),
               borderRadius: BorderRadius.circular(10),
@@ -295,7 +304,7 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
             hintText: "8 or more characters",
             labelText: "Password",
             fillColor: Colors.white70),
-        obscureText: true,
+        obscureText: !_peekPassword,
         onSaved: (value) {
           this._requestData.password = value;
         },

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/models/login_request.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
+import 'package:oluko_app/ui/peek_password.dart';
 import 'package:oluko_app/utils/app_loader.dart';
 
 class LoginPage extends StatefulWidget {
@@ -16,6 +17,7 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   LoginRequest _requestData = LoginRequest();
   SignUpResponse profileInfo;
+  bool _peekPassword = false;
 
   @override
   Widget build(BuildContext context) {
@@ -121,6 +123,12 @@ class _LoginPageState extends State<LoginPage> {
               borderSide: BorderSide(color: Colors.grey),
               borderRadius: BorderRadius.circular(10),
             ),
+            suffixIcon: PeekPassword(
+                onPressed: (bool peekPassword) => {
+                      this.setState(() {
+                        this._peekPassword = peekPassword;
+                      })
+                    }),
             filled: false,
             errorStyle: TextStyle(height: 0.5),
             hintStyle: new TextStyle(color: Colors.grey[800]),
@@ -128,7 +136,7 @@ class _LoginPageState extends State<LoginPage> {
             hintText: "8 or more characters",
             labelText: "Password",
             fillColor: Colors.white70),
-        obscureText: true,
+        obscureText: !_peekPassword,
         onSaved: (value) {
           this._requestData.password = value;
         },
