@@ -1,0 +1,14 @@
+{
+    "checkYourEmail": "Please check your email to verify your account.",
+    "maxChars": "or more characters",
+    "signUp": "Sign Up",
+    "alreadySubscribedUser": "Already a subscribed user?",
+    "emailExample": "example@yourcompany.com",
+    "email": "Email",
+    "required": "Campo requerido",
+    "password": "Password",
+    "forgotPassword": "Forgot password?",
+    "login": "Login",
+    "or": "Or",
+    "welcomeBack": "Welcome back"
+}
