@@ -144,12 +144,25 @@ class _LoginPageState extends State<LoginPage> {
           padding: EdgeInsets.symmetric(horizontal: 5, vertical: 10),
           child: Align(
               alignment: Alignment.centerRight,
-              child: Text(
-                'Forgot Password?',
-                style: TextStyle(
+              child: InkWell(
+                child: Text(
+                  'Forgot Password?',
+                  style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.normal,
-                    color: Colors.grey),
+                    decoration: TextDecoration.underline,
+                    color: Colors.grey,
+                  ),
+                ),
+                onTap: () {
+                  _formKey.currentState.save();
+                  BlocProvider.of<AuthBloc>(context)
+                    ..sendPasswordResetEmail(
+                        context,
+                        LoginRequest(
+                          email: _requestData.email,
+                        ));
+                },
               ))),
       //Login button
       Padding(

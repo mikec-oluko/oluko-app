@@ -31,11 +31,12 @@ class UserBloc extends Cubit<UserState> {
     ApiResponse apiResponse = await _repository.signUp(request);
     if (apiResponse.statusCode == 200) {
       SignUpResponse response = SignUpResponse.fromJson(apiResponse.data);
+      _repository.sendEmailVerification(request);
       AppLoader.stopLoading();
       AppNavigator().returnToHome(context);
       emit(UserSuccess(user: response));
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Welcome, ${response.firstName}.'),
+        content: Text('Please check your email to verify your account.'),
       ));
     } else {
       AppLoader.stopLoading();

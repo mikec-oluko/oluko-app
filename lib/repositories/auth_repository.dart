@@ -38,10 +38,18 @@ class AuthRepository {
     }
     ApiResponse apiResponse = ApiResponse.fromJson(signUpResponseBody);
     if (apiResponse.statusCode == 200) {
-      firebaseAuthInstance.signInWithCustomToken(
+      await firebaseAuthInstance.signInWithCustomToken(
           token: apiResponse.data['accessToken']);
     }
     return apiResponse;
+  }
+
+  Future<void> sendEmailVerification(SignUpRequest signUpRequest) async {
+    await firebaseAuthInstance.signInWithEmailAndPassword(
+        email: signUpRequest.email, password: signUpRequest.password);
+    final currentUser = await firebaseAuthInstance.currentUser();
+    await currentUser.sendEmailVerification();
+    await firebaseAuthInstance.signOut();
   }
 
   Future<ApiResponse> verifyToken(VerifyTokenRequest verifyTokenRequest) async {
