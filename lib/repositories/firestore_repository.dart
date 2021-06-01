@@ -14,27 +14,6 @@ class FirestoreRepository {
     this.firestoreInstance = firestoreInstance;
   }
 
-  Future<QuerySnapshot> getAll() {
-    return firestoreInstance.collection(collection).getDocuments();
-  }
-
-  Future<DocumentSnapshot> get(String id) {
-    return firestoreInstance.collection(collection).document(id).get();
-  }
-
-  Future<QuerySnapshot> getChild(String id, String childCollection) {
-    return firestoreInstance
-        .collection(collection)
-        .document(id)
-        .collection(childCollection)
-        .getDocuments();
-  }
-
-  ///Get documents list from nested collections.
-  ///
-  ///[id] final document id after path.
-  ///[childCollection] child collection present on every document in the path.
-  ///[idPath] document id path to the [id] document. Ex. `{document_id}/{document_id}/{document_id}`.
   Future<QuerySnapshot> getChildWithPath(
       String id, String childCollection, String idPath) {
     List<String> idPathList = idPath.split('/');
@@ -49,27 +28,6 @@ class FirestoreRepository {
     });
     finalCollection = finalCollection.document(id).collection(childCollection);
     return finalCollection.getDocuments();
-  }
-
-  Future<DocumentReference> add(dynamic entity) {
-    return firestoreInstance.collection(collection).add(entity);
-  }
-
-  Future<void> set({String id, dynamic entity}) {
-    return firestoreInstance
-        .collection(collection)
-        .document(id)
-        .setData(entity);
-  }
-
-  Stream<QuerySnapshot> listenAll() {
-    return firestoreInstance.collection(collection).snapshots();
-  }
-
-  void addBatch(List<dynamic> entities) {
-    entities.forEach((dynamic entity) {
-      add(entity);
-    });
   }
 
   static createVideoChild(String parentVideoId, dynamic entity, String idPath,

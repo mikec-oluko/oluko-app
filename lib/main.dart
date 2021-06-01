@@ -6,7 +6,7 @@ import 'package:oluko_app/ui/screens/Login.dart';
 import 'package:oluko_app/ui/screens/Profile.dart';
 import 'package:oluko_app/ui/screens/sign_up_with_email.dart';
 import 'package:oluko_app/ui/screens/sign_up.dart';
-import 'package:oluko_app/ui/screens/videos_home.dart';
+import 'package:oluko_app/ui/screens/videos/home.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

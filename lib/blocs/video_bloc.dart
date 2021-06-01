@@ -43,6 +43,7 @@ class VideoBloc extends Cubit<VideoState> {
       }
       emit(VideosSuccess(videos: videos));
     } catch (e) {
+      print(e.toString());
       emit(Failure(exception: e));
     }
   }
