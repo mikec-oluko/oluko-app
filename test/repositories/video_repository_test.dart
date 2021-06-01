@@ -18,7 +18,7 @@ class MockQuery extends Mock implements Query {}
 
 void main() {
   group('Video Repository ', () {
-    test('should get firebase collection', () async {
+    /*test('should get firebase collection', () async {
       Firestore firestoreInstance = MockFirestore();
       CollectionReference collectionReference = MockCollectionReference();
       QuerySnapshot querySnapshot = MockQuerySnapshot();
@@ -33,9 +33,9 @@ void main() {
       final response = await firestoreProvider.getAll();
 
       expect(response, isA<QuerySnapshot>());
-    });
+    });*/
 
-    test('should get firebase document', () async {
+    /*test('should get firebase document', () async {
       Firestore firestoreInstance = MockFirestore();
       CollectionReference collectionReference = MockCollectionReference();
       DocumentReference documentReference = MockDocumentReference();
@@ -70,7 +70,7 @@ void main() {
 
       final response = await firestoreProvider.getChild(key, 'childCollection');
       expect(response, isA<QuerySnapshot>());
-    });
+    });*/
 
     test('should get firebase child with path', () async {
       Firestore firestoreInstance = MockFirestore();
@@ -119,7 +119,7 @@ void main() {
       expect(response, documentId);
     });*/
 
-    test('should add entity', () async {
+    /*test('should add entity', () async {
       Firestore firestoreInstance = MockFirestore();
       CollectionReference collectionReference = MockCollectionReference();
       DocumentReference documentReference = MockDocumentReference();
@@ -169,6 +169,6 @@ void main() {
 
       Stream<QuerySnapshot> response = firestoreProvider.listenAll();
       expect(response, isA<Stream<QuerySnapshot>>());
-    });
+    });*/
   });
 }

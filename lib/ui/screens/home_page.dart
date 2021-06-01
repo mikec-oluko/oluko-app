@@ -88,12 +88,12 @@ class _MyHomePageState extends State<MyHomePage> {
                           ]))
                     ])
                   ])),
-              CardInfo(
+              /*CardInfo(
                   img:
                       'https://cdn.lifehack.org/wp-content/uploads/2014/07/deadlift-benefits.jpeg',
                   title: 'WORKOUT WITH THE BEAST.',
                   mainText: 'DWAYNE JHONSON',
-                  subtitle: 'Best Results Guaranteed'),
+                  subtitle: 'Best Results Guaranteed'),*/
               Padding(
                   padding: EdgeInsets.only(top: 30),
                   child: Column(children: [
@@ -193,7 +193,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ))),
-              CardInfo(
+              /*CardInfo(
                   img:
                       'https://d50b62f6164e0c4a0279-11570554cb5edae3285603e6ab25c978.ssl.cf5.rackcdn.com/html_body_blocks/images/000/015/052/original/LegExercises_en8c825a9da07728466075a593cb53aacc.jpg?1573170579',
                   title: 'UNLIMITED ACCESS TO VIDEOS',
@@ -210,7 +210,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       'https://metro.co.uk/wp-content/uploads/2021/04/GettyImages-1282109761-d2bc.jpg?quality=90&strip=all&zoom=1&resize=644%2C346',
                   title: 'UNLIMITED ACCESS TO VIDEOS',
                   mainText: '\$300',
-                  subtitle: ''),
+                  subtitle: ''),*/
               Align(
                   alignment: Alignment.topLeft,
                   child: Padding(

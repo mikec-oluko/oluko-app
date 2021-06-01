@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:oluko_app/ui/draw.dart';
+import 'package:oluko_app/ui/screens/videos/draw.dart';
 
 class DrawPoint {
   DrawingPoints point;
