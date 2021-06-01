@@ -29,13 +29,6 @@ class _LoginPageState extends State<LoginPage> {
     return Form(
         key: _formKey,
         child: Scaffold(
-            appBar: AppBar(
-              // Here we take the value from the MyHomePage object that was created by
-              // the App.build method, and use it to set our appbar title.
-              title: Text(AppLocalizations.of(context).signUp),
-              backgroundColor: Colors.white,
-              actions: [],
-            ),
             body: Container(
                 color: Colors.black,
                 child: ListView(children: [
