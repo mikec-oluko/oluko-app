@@ -139,7 +139,7 @@ class _PlayerResponseState extends State<PlayerResponse> {
                                 child: Container(
                                     height: MediaQuery.of(context).size.height,
                                     child: NetworkPlayerLifeCycle(
-                                      widget.video.url,
+                                      widget.videoParent.url,
                                       (BuildContext context,
                                           VideoPlayerController controller) {
                                         this.controller1 = controller;
