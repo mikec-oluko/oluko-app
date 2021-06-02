@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/user_bloc.dart';
 import 'package:oluko_app/models/sign_up_request.dart';
-import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/utils/app_loader.dart';
+import 'package:oluko_app/utils/app_validators.dart';
 
 import '../peek_password.dart';
 
@@ -35,6 +34,7 @@ class SignUpWithMailContentPage extends StatefulWidget {
 class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
   final _formKey = GlobalKey<FormState>();
   SignUpRequest _requestData = SignUpRequest();
+  PasswordStrength passwordStrength;
   bool _peekPassword = false;
 
   @override
@@ -270,7 +270,7 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
           return null;
         },
         onSaved: (value) {
-          this._requestData.lastName = value;
+          this._requestData.username = value;
         },
       ),
       TextFormField(
@@ -298,7 +298,7 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
           return null;
         },
         onSaved: (value) {
-          this._requestData.username = value;
+          this._requestData.email = value;
         },
       ),
       TextFormField(
@@ -326,6 +326,9 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
             labelText: "Password",
             fillColor: Colors.white70),
         obscureText: !_peekPassword,
+        onChanged: (value) => this.setState(() {
+          this.passwordStrength = AppValidators().validatePassword(value);
+        }),
         onSaved: (value) {
           this._requestData.password = value;
         },
@@ -335,7 +338,68 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
           }
           return null;
         },
+      ),
+      LinearProgressIndicator(
+        value: getPasswordStrengthLength(passwordStrength),
+        valueColor: new AlwaysStoppedAnimation<Color>(
+            getPasswordStrengthColor(passwordStrength)),
+      ),
+      Text(
+        getPasswordStrengthLabel(passwordStrength),
+        style: TextStyle(color: Colors.white),
       )
     ];
+  }
+
+  Color getPasswordStrengthColor(PasswordStrength passwordStrength) {
+    switch (passwordStrength) {
+      case PasswordStrength.weak:
+        return Colors.red;
+        break;
+      case PasswordStrength.medium:
+        return Colors.amber;
+        break;
+      case PasswordStrength.strong:
+        return Colors.green;
+        break;
+      default:
+        return Colors.transparent;
+        break;
+    }
+  }
+
+  String getPasswordStrengthLabel(PasswordStrength passwordStrength) {
+    switch (passwordStrength) {
+      case PasswordStrength.weak:
+        return 'Weak';
+        break;
+      case PasswordStrength.medium:
+        return 'Medium';
+        break;
+
+      case PasswordStrength.strong:
+        return 'Strong';
+        break;
+      default:
+        return '';
+        break;
+    }
+  }
+
+  double getPasswordStrengthLength(PasswordStrength passwordStrength) {
+    switch (passwordStrength) {
+      case PasswordStrength.weak:
+        return 0.25;
+        break;
+      case PasswordStrength.medium:
+        return 0.50;
+        break;
+      case PasswordStrength.strong:
+        return 1;
+        break;
+      default:
+        return 0;
+        break;
+    }
   }
 }
