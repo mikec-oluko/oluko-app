@@ -6,6 +6,7 @@ import 'package:oluko_app/blocs/user_bloc.dart';
 import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/utils/app_loader.dart';
+import 'package:global_configuration/global_configuration.dart';
 
 import '../peek_password.dart';
 
@@ -34,7 +35,8 @@ class SignUpWithMailContentPage extends StatefulWidget {
 
 class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
   final _formKey = GlobalKey<FormState>();
-  SignUpRequest _requestData = SignUpRequest();
+  SignUpRequest _requestData =
+      SignUpRequest(projectId: GlobalConfiguration().getValue("projectId"));
   bool _peekPassword = false;
 
   @override

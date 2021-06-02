@@ -47,7 +47,7 @@ class AuthRepository {
     var body = projectLoginRequest.toJson();
     Response response = await http.post(
         Uri.parse(
-            "https://us-central1-oluko-2671e.cloudfunctions.net/auth/loginproject"),
+            "https://us-central1-oluko-2671e.cloudfunctions.net/api/auth/loginproject"),
         body: body);
     var signInProjectResponseBody = jsonDecode(response.body);
     if (signInProjectResponseBody['message'] is String) {

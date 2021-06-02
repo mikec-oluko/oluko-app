@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/api_response.dart';
 import 'package:oluko_app/models/login_request.dart';
-import 'package:oluko_app/models/project_login_request.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/repositories/user_repository.dart';
@@ -38,10 +37,6 @@ class AuthBloc extends Cubit<AuthState> {
 
   Future<void> login(context, LoginRequest request) async {
     ApiResponse apiResponse = await _authRepository.login(request);
-    //TODO: add project claim
-    bool isLoggedIntoProject = await _authRepository.loginProject(
-        new ProjectLoginRequest(projectId: "WnZEZDQDT9ZRU2nlpa86"));
-    //
     if (apiResponse.statusCode != 200) {
       AppLoader.stopLoading();
       AppMessages.showSnackbar(context, apiResponse.message[0]);
@@ -53,6 +48,7 @@ class AuthBloc extends Cubit<AuthState> {
     AppLoader.stopLoading();
     final firebaseUser = FirebaseAuth.instance.currentUser;
     if (!firebaseUser.emailVerified) {
+      //TODO: trigger to send another email
       FirebaseAuth.instance.signOut();
       AppMessages.showSnackbar(
           context, 'Please check your Email for account confirmation.');
@@ -101,7 +97,7 @@ class AuthBloc extends Cubit<AuthState> {
   }
 
   Future<void> checkCurrentUser() async {
-    final loggedUser = await AuthRepository.getLoggedUser();
+    final loggedUser = AuthRepository.getLoggedUser();
     final userData = await AuthRepository().retrieveLoginData();
     if (loggedUser != null && userData != null) {
       emit(AuthSuccess(user: userData, firebaseUser: loggedUser));
@@ -119,8 +115,8 @@ class AuthBloc extends Cubit<AuthState> {
 
   Future<void> sendPasswordResetEmail(
       context, LoginRequest loginRequest) async {
-    final success =
-        await AuthRepository().sendPasswordResetEmail(loginRequest.email);
+    //TODO: unused variable final success =
+    await AuthRepository().sendPasswordResetEmail(loginRequest.email);
     AppMessages.showSnackbar(
         context, 'Please check your email for instructions.');
   }
