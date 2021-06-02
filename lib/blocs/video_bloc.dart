@@ -8,8 +8,7 @@ abstract class VideoState {
   const VideoState({this.videoList});
 }
 
-class Loading extends VideoState {
-}
+class Loading extends VideoState {}
 
 class VideosSuccess extends VideoState {
   final List<Video> videos;
@@ -59,7 +58,7 @@ class VideoBloc extends Cubit<VideoState> {
     }
     try {
       Video newVideo = await VideoRepository.createVideo(video);
-      _videoList.add(newVideo);
+      _videoList.insert(0, newVideo);
       emit(VideosSuccess(videos: _videoList));
     } catch (e) {
       emit(Failure(exception: e));
@@ -74,7 +73,7 @@ class VideoBloc extends Cubit<VideoState> {
     try {
       Video newVideo =
           VideoRepository.createVideoResponse(parentVideoId, video, path);
-      _videoList.add(newVideo);
+      _videoList.insert(0, newVideo);
       emit(VideosSuccess(videos: _videoList));
     } catch (e) {
       emit(Failure(exception: e));
