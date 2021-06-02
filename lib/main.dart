@@ -8,9 +8,12 @@ import 'package:oluko_app/ui/screens/Profile.dart';
 import 'package:oluko_app/ui/screens/sign_up_with_email.dart';
 import 'package:oluko_app/ui/screens/sign_up.dart';
 import 'package:oluko_app/ui/screens/videos/home.dart';
+import 'package:global_configuration/global_configuration.dart';
+import 'config/project_settings.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  GlobalConfiguration().loadFromMap(projectSettings);
   runApp(MyApp());
 }
 
