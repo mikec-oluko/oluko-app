@@ -51,9 +51,17 @@ class AuthBloc extends Cubit<AuthState> {
     UserResponse user = await _userRepository.get(request.email);
     AuthRepository().storeLoginData(user);
     AppLoader.stopLoading();
-    await AppNavigator().returnToHome(context);
     final firebaseUser = FirebaseAuth.instance.currentUser;
-    emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
+    if (!firebaseUser.emailVerified) {
+      FirebaseAuth.instance.signOut();
+      AppMessages.showSnackbar(
+          context, 'Please check your Email for account confirmation.');
+      emit(AuthGuest());
+    } else {
+      AppMessages.showSnackbar(context, 'Welcome, ${user.firstName}');
+      emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
+    }
+    await AppNavigator().returnToHome(context);
   }
 
   Future<void> loginWithGoogle(context) async {
@@ -96,7 +104,7 @@ class AuthBloc extends Cubit<AuthState> {
     final loggedUser = await AuthRepository.getLoggedUser();
     final userData = await AuthRepository().retrieveLoginData();
     if (loggedUser != null && userData != null) {
-      emit(AuthSuccess(user: userData));
+      emit(AuthSuccess(user: userData, firebaseUser: loggedUser));
     } else {
       emit(AuthGuest());
     }
@@ -107,5 +115,13 @@ class AuthBloc extends Cubit<AuthState> {
     if (success == true) {
       emit(AuthGuest());
     }
+  }
+
+  Future<void> sendPasswordResetEmail(
+      context, LoginRequest loginRequest) async {
+    final success =
+        await AuthRepository().sendPasswordResetEmail(loginRequest.email);
+    AppMessages.showSnackbar(
+        context, 'Please check your email for instructions.');
   }
 }

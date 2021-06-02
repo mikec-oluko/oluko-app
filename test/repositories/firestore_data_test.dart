@@ -18,8 +18,8 @@ class MockQuery extends Mock implements Query {}
 
 void main() {
   group('Firestore Repository ', () {
-    test('should get firebase collection', () async {
-      FirebaseFirestore firestoreInstance = MockFirestore();
+    /*test('should get firebase collection', () async {
+      Firestore firestoreInstance = MockFirestore();
       CollectionReference collectionReference = MockCollectionReference();
       QuerySnapshot querySnapshot = MockQuerySnapshot();
 
@@ -70,7 +70,7 @@ void main() {
 
       final response = await firestoreProvider.getChild(key, 'childCollection');
       expect(response, isA<QuerySnapshot>());
-    });
+    });*/
 
     test('should get firebase child with path', () async {
       FirebaseFirestore firestoreInstance = MockFirestore();
@@ -117,7 +117,7 @@ void main() {
           parentVideoKey, videoResponse, keyPath);
       expect(response, isA<String>());
       expect(response, documentId);
-    });*/
+    });
 
     test('should add entity', () async {
       FirebaseFirestore firestoreInstance = MockFirestore();
@@ -169,6 +169,6 @@ void main() {
 
       Stream<QuerySnapshot> response = firestoreProvider.listenAll();
       expect(response, isA<Stream<QuerySnapshot>>());
-    });
+    });*/
   });
 }

@@ -28,7 +28,7 @@ class VideoRepository {
   static Future<List<Video>> getVideosByUser(String userId) async {
     final querySnapshot = await FirebaseFirestore.instance
         .collection('videos')
-        /*.orderBy("uploaded_at")*/
+        .orderBy("uploaded_at", descending: true)
         .where("created_by", isEqualTo: userId)
         .get();
 
@@ -46,9 +46,9 @@ class VideoRepository {
       String videoId, String idPath) async {
     CollectionReference finalCollection =
         FirestoreRepository.goInsideVideoResponses(idPath);
-    finalCollection = finalCollection.doc(videoId).collection("videoResponses")
-        /*.orderBy("uploaded_at")*/;
-
-    return mapQueryToVideo(await finalCollection.get());
+    finalCollection = finalCollection.doc(videoId).collection("videoResponses");
+    QuerySnapshot videoResponses =
+        await finalCollection.orderBy("uploaded_at", descending: true).get();
+    return mapQueryToVideo(videoResponses);
   }
 }
