@@ -3,20 +3,24 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/video.dart';
 import 'package:oluko_app/repositories/video_repository.dart';
 
-abstract class VideoState {}
+abstract class VideoState {
+  final List<Video> videoList;
+  const VideoState({this.videoList});
+}
 
-class Loading extends VideoState {}
+class Loading extends VideoState {
+}
 
 class VideosSuccess extends VideoState {
   final List<Video> videos;
 
-  VideosSuccess({this.videos});
+  const VideosSuccess({this.videos}) : super(videoList: videos);
 }
 
-class VideoSuccess extends VideoState {
-  Video video;
-  VideoSuccess({this.video});
-}
+/*class VideoSuccess extends VideoState {
+  final List<Video> videos;
+  const VideoSuccess({this.videos}) : super(videoList: videos);
+}*/
 
 class Failure extends VideoState {
   final Exception exception;
@@ -27,21 +31,22 @@ class Failure extends VideoState {
 class VideoBloc extends Cubit<VideoState> {
   VideoBloc() : super(Loading());
 
+  List<Video> _videoList = [];
+
   void getVideos(FirebaseUser user, Video videoParent, String path) async {
     if (!(state is VideosSuccess)) {
       emit(Loading());
     }
     try {
-      List<Video> videos = [];
       if (user != null) {
         if (videoParent != null && path != "") {
-          videos = await VideoRepository.getVideoResponses(
-              videoParent.id, path);
+          _videoList =
+              await VideoRepository.getVideoResponses(videoParent.id, path);
         } else {
-          videos = await VideoRepository.getVideosByUser(user.uid);
+          _videoList = await VideoRepository.getVideosByUser(user.uid);
         }
       }
-      emit(VideosSuccess(videos: videos));
+      emit(VideosSuccess(videos: _videoList));
     } catch (e) {
       print(e.toString());
       emit(Failure(exception: e));
@@ -54,7 +59,8 @@ class VideoBloc extends Cubit<VideoState> {
     }
     try {
       Video newVideo = await VideoRepository.createVideo(video);
-      emit(VideoSuccess(video: newVideo));
+      _videoList.add(newVideo);
+      emit(VideosSuccess(videos: _videoList));
     } catch (e) {
       emit(Failure(exception: e));
     }
@@ -68,7 +74,8 @@ class VideoBloc extends Cubit<VideoState> {
     try {
       Video newVideo =
           VideoRepository.createVideoResponse(parentVideoId, video, path);
-      emit(VideoSuccess(video: newVideo));
+      _videoList.add(newVideo);
+      emit(VideosSuccess(videos: _videoList));
     } catch (e) {
       emit(Failure(exception: e));
     }
