@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/login_request.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/ui/peek_password.dart';
@@ -174,8 +175,7 @@ class _LoginPageState extends State<LoginPage> {
               width: double.infinity,
               height: 50,
               child: ElevatedButton(
-                  style:
-                      ElevatedButton.styleFrom(primary: Colors.brown.shade300),
+                  style: ElevatedButton.styleFrom(primary: OlukoColors.primary),
                   onPressed: () {
                     _formKey.currentState.save();
                     AppLoader.startLoading(context);

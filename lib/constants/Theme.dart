@@ -7,9 +7,9 @@ class OlukoColors {
 
   static const Color initial = Color.fromRGBO(23, 43, 77, 1.0);
 
-  static const Color primary = Color.fromRGBO(94, 114, 228, 1.0);
+  static const Color primary = Color.fromARGB(255, 170, 176, 144);
 
-  static const Color secondary = Color.fromRGBO(247, 250, 252, 1.0);
+  static const Color secondary = Color.fromARGB(255, 228, 155, 149);
 
   static const Color label = Color.fromRGBO(254, 36, 114, 1.0);
 

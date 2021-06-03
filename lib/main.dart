@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/ui/screens/app_plans.dart';
 import 'package:oluko_app/ui/screens/home_page.dart';
 import 'package:oluko_app/ui/screens/Login.dart';
 import 'package:oluko_app/ui/screens/Profile.dart';
@@ -39,7 +40,7 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         primarySwatch: Colors.grey,
       ),
-      initialRoute: '/',
+      initialRoute: '/app-plans',
       routes: {
         '/': (context) =>
             BlocProvider.value(value: _authBloc, child: MyHomePage(title: '')),
@@ -51,6 +52,8 @@ class _MyAppState extends State<MyApp> {
             BlocProvider.value(value: _authBloc, child: ProfilePage()),
         '/log-in': (context) =>
             BlocProvider.value(value: _authBloc, child: LoginPage()),
+        '/app-plans': (context) =>
+            BlocProvider.value(value: _authBloc, child: AppPlans()),
         '/videos': (context) => BlocProvider.value(
             value: _authBloc,
             child: Home(
