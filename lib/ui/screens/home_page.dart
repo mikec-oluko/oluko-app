@@ -31,9 +31,11 @@ class _MyHomePageState extends State<MyHomePage> {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
       return Scaffold(
           appBar: AppBar(
-            title: Text(widget.title),
-            backgroundColor: Colors.white,
+            title: Text(widget.title, style: TextStyle(color: Colors.white)),
             actions: menuOptions(state),
+            backgroundColor: Colors.black,
+            actionsIconTheme: IconThemeData(color: Colors.white),
+            iconTheme: IconThemeData(color: Colors.white),
           ),
           body: ListView(children: [
             Column(children: [
@@ -343,7 +345,10 @@ class _MyHomePageState extends State<MyHomePage> {
       options.add(ElevatedButton(
         onPressed: () =>
             Navigator.pushNamed(context, '/videos').then((value) => onGoBack()),
-        child: Text('VIDEOS'),
+        child: Text(
+          'VIDEOS',
+          style: TextStyle(color: Colors.white),
+        ),
         style: ElevatedButton.styleFrom(
             shadowColor: Colors.transparent, primary: Colors.transparent),
       ));
@@ -353,14 +358,20 @@ class _MyHomePageState extends State<MyHomePage> {
           AppMessages.showSnackbar(context, 'Logged out.');
           setState(() {});
         },
-        child: Text('LOG OUT'),
+        child: Text(
+          'LOG OUT',
+          style: TextStyle(color: Colors.white),
+        ),
         style: ElevatedButton.styleFrom(
             shadowColor: Colors.transparent, primary: Colors.transparent),
       ));
       options.add(ElevatedButton(
         onPressed: () => Navigator.pushNamed(context, '/profile')
             .then((value) => onGoBack()),
-        child: Text('PROFILE'),
+        child: Text(
+          'PROFILE',
+          style: TextStyle(color: Colors.white),
+        ),
         style: ElevatedButton.styleFrom(
             shadowColor: Colors.transparent, primary: Colors.transparent),
       ));
@@ -368,14 +379,20 @@ class _MyHomePageState extends State<MyHomePage> {
       options.add(ElevatedButton(
         onPressed: () => Navigator.pushNamed(context, '/sign-up')
             .then((value) => onGoBack()),
-        child: Text('SIGN UP'),
+        child: Text(
+          'SIGN UP',
+          style: TextStyle(color: Colors.white),
+        ),
         style: ElevatedButton.styleFrom(
             shadowColor: Colors.transparent, primary: Colors.transparent),
       ));
       options.add(ElevatedButton(
         onPressed: () =>
             Navigator.pushNamed(context, '/log-in').then((value) => onGoBack()),
-        child: Text('LOG IN'),
+        child: Text(
+          'LOG IN',
+          style: TextStyle(color: Colors.white),
+        ),
         style: ElevatedButton.styleFrom(
             shadowColor: Colors.transparent, primary: Colors.transparent),
       ));
