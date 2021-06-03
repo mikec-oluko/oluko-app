@@ -14,7 +14,7 @@ abstract class AuthState {}
 
 class AuthSuccess extends AuthState {
   final UserResponse user;
-  final FirebaseUser firebaseUser;
+  final User firebaseUser;
   AuthSuccess({this.user, this.firebaseUser});
 }
 
@@ -46,8 +46,9 @@ class AuthBloc extends Cubit<AuthState> {
     UserResponse user = await _userRepository.get(request.email);
     AuthRepository().storeLoginData(user);
     AppLoader.stopLoading();
-    final firebaseUser = await FirebaseAuth.instance.currentUser();
-    if (!firebaseUser.isEmailVerified) {
+    final firebaseUser = FirebaseAuth.instance.currentUser;
+    if (!firebaseUser.emailVerified) {
+      //TODO: trigger to send another email
       FirebaseAuth.instance.signOut();
       AppMessages.showSnackbar(
           context, 'Please check your Email for account confirmation.');
@@ -60,8 +61,8 @@ class AuthBloc extends Cubit<AuthState> {
   }
 
   Future<void> loginWithGoogle(context) async {
-    AuthResult result = await _authRepository.signInWithGoogle();
-    FirebaseUser firebaseUser = result.user;
+    UserCredential result = await _authRepository.signInWithGoogle();
+    User firebaseUser = result.user;
     UserResponse user = UserResponse();
     List<String> splitDisplayName = firebaseUser.displayName.split(' ');
     user.firstName = splitDisplayName[0];
@@ -76,8 +77,8 @@ class AuthBloc extends Cubit<AuthState> {
   }
 
   Future<void> loginWithFacebook(context) async {
-    AuthResult result = await _authRepository.signInWithFacebook();
-    FirebaseUser firebaseUser = result.user;
+    UserCredential result = await _authRepository.signInWithFacebook();
+    User firebaseUser = result.user;
     UserResponse user = UserResponse();
     List<String> splitDisplayName = firebaseUser.displayName.split(' ');
     user.firstName = splitDisplayName[0];
@@ -96,7 +97,7 @@ class AuthBloc extends Cubit<AuthState> {
   }
 
   Future<void> checkCurrentUser() async {
-    final loggedUser = await AuthRepository.getLoggedUser();
+    final loggedUser = AuthRepository.getLoggedUser();
     final userData = await AuthRepository().retrieveLoginData();
     if (loggedUser != null && userData != null) {
       emit(AuthSuccess(user: userData, firebaseUser: loggedUser));
@@ -114,8 +115,8 @@ class AuthBloc extends Cubit<AuthState> {
 
   Future<void> sendPasswordResetEmail(
       context, LoginRequest loginRequest) async {
-    final success =
-        await AuthRepository().sendPasswordResetEmail(loginRequest.email);
+    //TODO: unused variable final success =
+    await AuthRepository().sendPasswordResetEmail(loginRequest.email);
     AppMessages.showSnackbar(
         context, 'Please check your email for instructions.');
   }

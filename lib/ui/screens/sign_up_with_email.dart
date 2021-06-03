@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/user_bloc.dart';
 import 'package:oluko_app/models/sign_up_request.dart';
-import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/utils/app_loader.dart';
+import 'package:global_configuration/global_configuration.dart';
+import 'package:oluko_app/utils/app_validators.dart';
 
 import '../peek_password.dart';
 
@@ -34,7 +34,9 @@ class SignUpWithMailContentPage extends StatefulWidget {
 
 class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
   final _formKey = GlobalKey<FormState>();
-  SignUpRequest _requestData = SignUpRequest();
+  SignUpRequest _requestData =
+      SignUpRequest(projectId: GlobalConfiguration().getValue("projectId"));
+  PasswordStrength passwordStrength;
   bool _peekPassword = false;
 
   @override
@@ -49,13 +51,6 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
     return Form(
         key: _formKey,
         child: Scaffold(
-            appBar: AppBar(
-              // Here we take the value from the MyHomePage object that was created by
-              // the App.build method, and use it to set our appbar title.
-              title: Text('Sign Up'),
-              backgroundColor: Colors.white,
-              actions: [],
-            ),
             body: Container(
                 color: Colors.black,
                 child: ListView(children: [
@@ -139,12 +134,12 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
   Widget formSection() {
     return Container(
         width: MediaQuery.of(context).size.width,
-        height: 400,
+        height: 600,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Container(
-                height: 300,
+                height: 350,
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: formFields())),
@@ -169,14 +164,23 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
                         )
                       ]));
                 })),
-            SizedBox(height: 10),
-            Text(
-              'Already a Subscribed user?',
-              style: TextStyle(color: Colors.white),
-            ),
-            Text('Log In',
-                style:
-                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold))
+            InkWell(
+              onTap: () => Navigator.pushNamed(context, '/log-in'),
+              child: Padding(
+                padding: EdgeInsets.only(top: 10),
+                child: Column(
+                  children: [
+                    Text(
+                      'Already a subscribed user?',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    Text('Log In',
+                        style: TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold))
+                  ],
+                ),
+              ),
+            )
           ],
         ));
   }
@@ -267,6 +271,34 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
             filled: false,
             hintStyle: new TextStyle(color: Colors.grey[800]),
             labelStyle: new TextStyle(color: Colors.grey[800]),
+            hintText: "Username",
+            labelText: "Username",
+            fillColor: Colors.white70),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter some text';
+          }
+          return null;
+        },
+        onSaved: (value) {
+          this._requestData.username = value;
+        },
+      ),
+      TextFormField(
+        style: TextStyle(color: Colors.white),
+        decoration: new InputDecoration(
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            focusColor: Colors.white,
+            filled: false,
+            hintStyle: new TextStyle(color: Colors.grey[800]),
+            labelStyle: new TextStyle(color: Colors.grey[800]),
             hintText: "Your Email",
             labelText: "Email Address",
             fillColor: Colors.white70),
@@ -305,6 +337,9 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
             labelText: "Password",
             fillColor: Colors.white70),
         obscureText: !_peekPassword,
+        onChanged: (value) => this.setState(() {
+          this.passwordStrength = AppValidators().validatePassword(value);
+        }),
         onSaved: (value) {
           this._requestData.password = value;
         },
@@ -314,7 +349,68 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
           }
           return null;
         },
+      ),
+      LinearProgressIndicator(
+        value: getPasswordStrengthLength(passwordStrength),
+        valueColor: new AlwaysStoppedAnimation<Color>(
+            getPasswordStrengthColor(passwordStrength)),
+      ),
+      Text(
+        getPasswordStrengthLabel(passwordStrength),
+        style: TextStyle(color: Colors.white),
       )
     ];
+  }
+
+  Color getPasswordStrengthColor(PasswordStrength passwordStrength) {
+    switch (passwordStrength) {
+      case PasswordStrength.weak:
+        return Colors.red;
+        break;
+      case PasswordStrength.medium:
+        return Colors.amber;
+        break;
+      case PasswordStrength.strong:
+        return Colors.green;
+        break;
+      default:
+        return Colors.transparent;
+        break;
+    }
+  }
+
+  String getPasswordStrengthLabel(PasswordStrength passwordStrength) {
+    switch (passwordStrength) {
+      case PasswordStrength.weak:
+        return 'Weak';
+        break;
+      case PasswordStrength.medium:
+        return 'Medium';
+        break;
+
+      case PasswordStrength.strong:
+        return 'Strong';
+        break;
+      default:
+        return '';
+        break;
+    }
+  }
+
+  double getPasswordStrengthLength(PasswordStrength passwordStrength) {
+    switch (passwordStrength) {
+      case PasswordStrength.weak:
+        return 0.25;
+        break;
+      case PasswordStrength.medium:
+        return 0.50;
+        break;
+      case PasswordStrength.strong:
+        return 1;
+        break;
+      default:
+        return 0;
+        break;
+    }
   }
 }

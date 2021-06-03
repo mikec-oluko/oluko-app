@@ -44,7 +44,7 @@ class _HomeState extends State<Home> {
   final bool _debugMode = false;
 
   List<Video> _videos = <Video>[];
-  FirebaseUser user;
+  User user;
 
   @override
   Widget build(BuildContext context) {
@@ -151,7 +151,8 @@ class _HomeState extends State<Home> {
       if (_imagePickerActive) return;
 
       _imagePickerActive = true;
-      videoFile = await ImagePicker.pickVideo(source: imageSource);
+      ImagePicker _imagePicker = new ImagePicker();
+      videoFile = await _imagePicker.getImage(source: imageSource);
       _imagePickerActive = false;
 
       if (videoFile == null) return;

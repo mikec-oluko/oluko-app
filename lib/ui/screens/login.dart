@@ -5,6 +5,8 @@ import 'package:oluko_app/models/login_request.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/ui/peek_password.dart';
 import 'package:oluko_app/utils/app_loader.dart';
+import 'package:global_configuration/global_configuration.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
@@ -28,13 +30,6 @@ class _LoginPageState extends State<LoginPage> {
     return Form(
         key: _formKey,
         child: Scaffold(
-            appBar: AppBar(
-              // Here we take the value from the MyHomePage object that was created by
-              // the App.build method, and use it to set our appbar title.
-              title: Text('Sign Up'),
-              backgroundColor: Colors.white,
-              actions: [],
-            ),
             body: Container(
                 color: Colors.black,
                 child: ListView(children: [
@@ -67,7 +62,7 @@ class _LoginPageState extends State<LoginPage> {
         width: MediaQuery.of(context).size.width,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(
-            'Welcome Back',
+            AppLocalizations.of(context).welcomeBack,
             textAlign: TextAlign.start,
             style: TextStyle(
                 fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
@@ -95,13 +90,13 @@ class _LoginPageState extends State<LoginPage> {
             focusColor: Colors.white,
             filled: false,
             hintStyle: new TextStyle(color: Colors.grey[800]),
-            hintText: "example@yourcompany.com",
+            hintText: AppLocalizations.of(context).emailExample,
             fillColor: Colors.white70,
-            labelText: "Email",
+            labelText: AppLocalizations.of(context).email,
             labelStyle: new TextStyle(color: Colors.grey[800])),
         validator: (value) {
           if (value == null || value.isEmpty) {
-            return 'Please enter some text';
+            return AppLocalizations.of(context).required;
           }
           return null;
         },
@@ -133,8 +128,8 @@ class _LoginPageState extends State<LoginPage> {
             errorStyle: TextStyle(height: 0.5),
             hintStyle: new TextStyle(color: Colors.grey[800]),
             labelStyle: new TextStyle(color: Colors.grey[800]),
-            hintText: "8 or more characters",
-            labelText: "Password",
+            hintText: "8 ${AppLocalizations.of(context).maxChars}",
+            labelText: AppLocalizations.of(context).password,
             fillColor: Colors.white70),
         obscureText: !_peekPassword,
         onSaved: (value) {
@@ -142,7 +137,7 @@ class _LoginPageState extends State<LoginPage> {
         },
         validator: (value) {
           if (value == null || value.isEmpty) {
-            return 'Please enter some text';
+            return AppLocalizations.of(context).required;
           }
           return null;
         },
@@ -154,7 +149,7 @@ class _LoginPageState extends State<LoginPage> {
               alignment: Alignment.centerRight,
               child: InkWell(
                 child: Text(
-                  'Forgot Password?',
+                  AppLocalizations.of(context).forgotPassword,
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.normal,
@@ -189,17 +184,19 @@ class _LoginPageState extends State<LoginPage> {
                           context,
                           LoginRequest(
                               email: _requestData.email,
-                              password: _requestData.password));
+                              password: _requestData.password,
+                              projectId:
+                                  GlobalConfiguration().getValue("projectId")));
                   },
                   child: Stack(children: [
                     Align(
-                      child: Text('Login'),
+                      child: Text(AppLocalizations.of(context).login),
                     )
                   ])))),
       Padding(
           padding: EdgeInsets.symmetric(vertical: 15),
           child: Text(
-            '- OR -',
+            '- ${AppLocalizations.of(context).or} -',
             style: TextStyle(color: Colors.grey),
           )),
       //Login with SSO
@@ -248,7 +245,24 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                     ])))),
-      ])
+      ]),
+      InkWell(
+        onTap: () => Navigator.pushNamed(context, '/sign-up-with-email'),
+        child: Padding(
+          padding: EdgeInsets.only(top: 10),
+          child: Column(
+            children: [
+              Text(
+                'Tap here to create an account',
+                style: TextStyle(color: Colors.white),
+              ),
+              Text('Sign Up',
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold))
+            ],
+          ),
+        ),
+      )
     ];
   }
 }

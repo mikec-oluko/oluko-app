@@ -7,6 +7,7 @@ import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/utils/app_loader.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 abstract class UserState {}
 
@@ -36,7 +37,7 @@ class UserBloc extends Cubit<UserState> {
       AppNavigator().returnToHome(context);
       emit(UserSuccess(user: response));
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Please check your email to verify your account.'),
+        content: Text(AppLocalizations.of(context).checkYourEmail),
       ));
     } else {
       AppLoader.stopLoading();
