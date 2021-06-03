@@ -164,14 +164,23 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
                         )
                       ]));
                 })),
-            SizedBox(height: 10),
-            Text(
-              'Already a Subscribed user?',
-              style: TextStyle(color: Colors.white),
-            ),
-            Text('Log In',
-                style:
-                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold))
+            InkWell(
+              onTap: () => Navigator.pushNamed(context, '/log-in'),
+              child: Padding(
+                padding: EdgeInsets.only(top: 10),
+                child: Column(
+                  children: [
+                    Text(
+                      'Already a subscribed user?',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    Text('Log In',
+                        style: TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold))
+                  ],
+                ),
+              ),
+            )
           ],
         ));
   }
