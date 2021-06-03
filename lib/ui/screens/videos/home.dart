@@ -57,47 +57,46 @@ class _HomeState extends State<Home> {
         this.user = state.firebaseUser;
         return BlocProvider(
             create: (context) => VideoBloc()
-              ..getVideos(this.user, widget.videoParent,
-                  widget.videoParentPath),
-            child: Scaffold(
-                appBar: AppBar(
-                  title: Text(widget.title),
-                ),
-                body: Center(
-                    child: _processing
-                        ? _getProgressBar()
-                        : BlocConsumer<VideoBloc, VideoState>(
-                            listener: (context, state) {
-                            if (state is VideoSuccess) {
-                              print("CAMBIO");
-                              _videos.add(state.video);
-                            }
-                          }, builder: (context, state) {
-                            if (state is VideosSuccess) {
-                              return _getListView(state.videos);
-                            } else {
-                              return Text(
-                                'LOADING...',
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold),
-                              );
-                            }
-                          })),
-                floatingActionButton:
-                    Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  user != null
-                      ? FloatingActionButton(
-                          child: _processing
-                              ? CircularProgressIndicator(
-                                  valueColor: new AlwaysStoppedAnimation<Color>(
-                                      Colors.white),
-                                )
-                              : Icon(Icons.camera),
-                          onPressed: () => _takeVideo(ImageSource.camera,
-                              parentVideo: widget.videoParent))
-                      : SizedBox(),
-                ])));
+              ..getVideos(
+                  this.user, widget.videoParent, widget.videoParentPath),
+            child: Builder(builder: (BuildContext context) {
+              return Scaffold(
+                  appBar: AppBar(
+                    title: Text(widget.title),
+                  ),
+                  body: Center(
+                      child: _processing
+                          ? _getProgressBar()
+                          : BlocBuilder<VideoBloc, VideoState>(
+                              builder: (context, state) {
+                              if (state is VideosSuccess) {
+                                return _getListView(state.videos);
+                              } else {
+                                return Text(
+                                  'LOADING...',
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                );
+                              }
+                            })),
+                  floatingActionButton: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        user != null
+                            ? FloatingActionButton(
+                                child: _processing
+                                    ? CircularProgressIndicator(
+                                        valueColor:
+                                            new AlwaysStoppedAnimation<Color>(
+                                                Colors.white),
+                                      )
+                                    : Icon(Icons.camera),
+                                onPressed: () => _takeVideo(context, ImageSource.camera,
+                                    parentVideo: widget.videoParent))
+                            : SizedBox(),
+                      ]));
+            }));
       } else {
         return Text('User must be logged in');
       }
@@ -121,7 +120,7 @@ class _HomeState extends State<Home> {
     });
   }
 
-  void _takeVideo(ImageSource imageSource, {Video parentVideo}) async {
+  void _takeVideo(BuildContext context, ImageSource imageSource, {Video parentVideo}) async {
     var videoFile;
     if (_debugMode) {
       videoFile = File(
@@ -141,7 +140,7 @@ class _HomeState extends State<Home> {
     });
 
     try {
-      await _processVideo(videoFile, parentVideo: parentVideo);
+      await _processVideo(context, videoFile, parentVideo: parentVideo);
     } catch (e) {
       print('${e.toString()}');
     } finally {
@@ -151,7 +150,7 @@ class _HomeState extends State<Home> {
     }
   }
 
-  Future<void> _processVideo(File rawVideoFile, {Video parentVideo}) async {
+  Future<void> _processVideo(BuildContext context, File rawVideoFile, {Video parentVideo}) async {
     final String rand = '${new Random().nextInt(10000)}';
     final videoName = 'video$rand';
     final Directory extDir = await getApplicationDocumentsDirectory();
@@ -204,14 +203,15 @@ class _HomeState extends State<Home> {
     });
 
     if (parentVideo == null) {
-      VideoBloc()..createVideo(video);
+      BlocProvider.of<VideoBloc>(context)..createVideo(video);
     } else if (widget.videoParent == null) {
-      VideoBloc()..createVideoResponse(parentVideo.id, video, "/");
+      BlocProvider.of<VideoBloc>(context)
+        ..createVideoResponse(parentVideo.id, video, "/");
     } else if (parentVideo.id == widget.videoParent.id) {
-      VideoBloc()
+      BlocProvider.of<VideoBloc>(context)
         ..createVideoResponse(parentVideo.id, video, widget.videoParentPath);
     } else {
-      VideoBloc()
+      BlocProvider.of<VideoBloc>(context)
         ..createVideoResponse(
             parentVideo.id,
             video,
@@ -219,14 +219,6 @@ class _HomeState extends State<Home> {
                 ? widget.videoParent.id
                 : '${widget.videoParentPath}/${widget.videoParent.id}');
     }
-
-    /*BlocListener<VideoBloc, VideoState>(
-      listener: (context, state) {
-        if (state is VideoSuccess) {
-          _videos.add(state.video);
-        }
-      },
-    );*/
 
     setState(() {
       _processPhase = '';
@@ -312,7 +304,7 @@ class _HomeState extends State<Home> {
                 context,
                 MaterialPageRoute(
                   builder: (context) {
-                    return _player(video);
+                    return _player(context, video);
                   },
                 ),
               );
@@ -378,18 +370,18 @@ class _HomeState extends State<Home> {
         });
   }
 
-  _player(Video video) {
+  _player(BuildContext context, Video video) {
     if (widget.videoParentPath == "") {
       return PlayerSingle(
           video: video,
           onCamera: () =>
-              this._takeVideo(ImageSource.camera, parentVideo: video));
+              this._takeVideo(context, ImageSource.camera, parentVideo: video));
     } else {
       return PlayerResponse(
         videoParentPath: _getVideoPath(),
         videoParent: widget.videoParent,
         video: video,
-        onCamera: () => this._takeVideo(ImageSource.camera, parentVideo: video),
+        onCamera: () => this._takeVideo(context, ImageSource.camera, parentVideo: video),
       );
     }
   }

@@ -245,7 +245,24 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                     ])))),
-      ])
+      ]),
+      InkWell(
+        onTap: () => Navigator.pushNamed(context, '/sign-up-with-email'),
+        child: Padding(
+          padding: EdgeInsets.only(top: 10),
+          child: Column(
+            children: [
+              Text(
+                'Tap here to create an account',
+                style: TextStyle(color: Colors.white),
+              ),
+              Text('Sign Up',
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold))
+            ],
+          ),
+        ),
+      )
     ];
   }
 }
