@@ -5,6 +5,7 @@ import 'package:oluko_app/models/login_request.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/ui/peek_password.dart';
 import 'package:oluko_app/utils/app_loader.dart';
+import 'package:global_configuration/global_configuration.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LoginPage extends StatefulWidget {
@@ -183,7 +184,9 @@ class _LoginPageState extends State<LoginPage> {
                           context,
                           LoginRequest(
                               email: _requestData.email,
-                              password: _requestData.password));
+                              password: _requestData.password,
+                              projectId:
+                                  GlobalConfiguration().getValue("projectId")));
                   },
                   child: Stack(children: [
                     Align(

@@ -18,7 +18,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  FirebaseUser profile;
+  User profile;
 
   @override
   Widget build(BuildContext context) {
