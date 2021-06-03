@@ -155,7 +155,6 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
                         if (_formKey.currentState.validate()) {
                           _formKey.currentState.save();
                           UserBloc()..signUp(context, _requestData);
-                          AppLoader.startLoading(context);
                         }
                       },
                       child: Stack(children: [

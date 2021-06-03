@@ -10,5 +10,7 @@
     "forgotPassword": "Olvidó su contraseña?",
     "login": "Ingresar",
     "or": "O",
-    "welcomeBack": "Bienvenido"
+    "welcomeBack": "Bienvenido",
+    "passwordShouldNotContainUsername": "La contraseña no puede contener tu nombre de usuario",
+    "passwordShouldNotContainEmail": "La contraseña no puede contener tu email"
 }
