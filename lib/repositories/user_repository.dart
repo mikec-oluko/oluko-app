@@ -2,22 +2,22 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oluko_app/models/user_response.dart';
 
 class UserRepository {
-  Firestore firestoreInstance;
+  FirebaseFirestore firestoreInstance;
 
   UserRepository() {
-    firestoreInstance = Firestore.instance;
+    firestoreInstance = FirebaseFirestore.instance;
   }
 
-  UserRepository.test({Firestore firestoreInstance}) {
+  UserRepository.test({FirebaseFirestore firestoreInstance}) {
     this.firestoreInstance = firestoreInstance;
   }
 
   Future<UserResponse> get(String email) async {
-    QuerySnapshot docRef = await firestoreInstance
+    QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('users')
         .where('email', isEqualTo: email)
-        .getDocuments();
-    var response = docRef.documents[0].data;
+        .get();
+    var response = docRef.docs[0].data();
     var signUpResponseBody = UserResponse.fromJson(response);
     return signUpResponseBody;
   }

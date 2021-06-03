@@ -7,7 +7,7 @@ import 'package:oluko_app/repositories/marker_repository.dart';
 
 class MockDocumentReference extends Mock implements DocumentReference {}
 
-class MockFirestore extends Mock implements Firestore {}
+class MockFirestore extends Mock implements FirebaseFirestore {}
 
 class MockCollectionReference extends Mock implements CollectionReference {}
 
@@ -29,7 +29,7 @@ void main() {
       when(documentReference.collection(any)).thenReturn(collectionReference);
       when(documentReference.setData(any))
           .thenAnswer((realInvocation) => Future.value(null));
-      when(documentReference.documentID).thenReturn('testId');
+      when(documentReference.id).thenReturn('testId');
 
       MarkerRepository markerRepository =
           MarkerRepository.test(firestoreInstance: firestoreInstance);
@@ -53,7 +53,7 @@ void main() {
       final testMarker = Marker(id: 'testId', position: 2.32);
 
       when(firestoreInstance.collection(any)).thenReturn(collectionReference);
-      when(collectionReference.document(any)).thenReturn(documentReference);
+      when(collectionReference.doc(any)).thenReturn(documentReference);
       when(documentReference.collection(any)).thenReturn(collectionReference);
       when(documentSnapshot.documentID).thenReturn(testMarker.id);
       when(documentSnapshot.data).thenReturn(testMarker.toJson());

@@ -32,7 +32,7 @@ class VideoBloc extends Cubit<VideoState> {
 
   List<Video> _videoList = [];
 
-  void getVideos(FirebaseUser user, Video videoParent, String path) async {
+  void getVideos(User user, Video videoParent, String path) async {
     if (!(state is VideosSuccess)) {
       emit(Loading());
     }

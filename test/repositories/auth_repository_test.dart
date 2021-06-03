@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:html';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -16,7 +17,7 @@ class MockClient extends Mock implements http.Client {}
 
 class MockFirebaseAuth extends Mock implements FirebaseAuth {}
 
-class MockAuthResult extends Mock implements AuthResult {}
+class MockUserCredentials extends Mock implements UserCredential {}
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -50,8 +51,8 @@ void main() {
         password: 'testacc',
       );
       FirebaseAuth mockFirebaseAuth = MockFirebaseAuth();
-      when(mockFirebaseAuth.signInWithCustomToken(token: 'testtest22'))
-          .thenAnswer((realInvocation) => Future.value(MockAuthResult()));
+      when(mockFirebaseAuth.signInWithCustomToken('testtest22'))
+          .thenAnswer((realInvocation) => Future.value(MockUserCredentials()));
       MockClient mockClient = MockClient();
       when(mockClient.post(any, body: request.toJson())).thenAnswer((_) =>
           Future.value(http.Response(

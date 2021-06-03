@@ -2,14 +2,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FirestoreRepository {
   String collection;
-  Firestore firestoreInstance;
+  FirebaseFirestore firestoreInstance;
 
   FirestoreRepository({collection}) {
     this.collection = collection;
-    this.firestoreInstance = Firestore.instance;
+    this.firestoreInstance = FirebaseFirestore.instance;
   }
 
-  FirestoreRepository.test({String collection, Firestore firestoreInstance}) {
+  FirestoreRepository.test(
+      {String collection, FirebaseFirestore firestoreInstance}) {
     this.collection = collection;
     this.firestoreInstance = firestoreInstance;
   }
@@ -24,22 +25,22 @@ class FirestoreRepository {
         firestoreInstance.collection(collection);
     idPathList.forEach((idPathElement) {
       finalCollection =
-          finalCollection.document(idPathElement).collection(childCollection);
+          finalCollection.doc(idPathElement).collection(childCollection);
     });
-    finalCollection = finalCollection.document(id).collection(childCollection);
-    return finalCollection.getDocuments();
+    finalCollection = finalCollection.doc(id).collection(childCollection);
+    return finalCollection.get();
   }
 
   static createVideoChild(String parentVideoId, dynamic entity, String idPath,
       String childCollection) {
     CollectionReference finalCollection = goInsideVideoResponses(idPath);
     finalCollection =
-        finalCollection.document(parentVideoId).collection(childCollection);
+        finalCollection.doc(parentVideoId).collection(childCollection);
 
-    final DocumentReference docRef = finalCollection.document();
+    final DocumentReference docRef = finalCollection.doc();
 
-    entity.id = docRef.documentID;
-    docRef.setData(entity.toJson());
+    entity.id = docRef.id;
+    docRef.set(entity.toJson());
 
     return entity;
   }
@@ -48,11 +49,11 @@ class FirestoreRepository {
     List<String> idPathList = idPath.split('/');
     idPathList = idPathList.length > 0 && idPathList[0] == '' ? [] : idPathList;
     CollectionReference finalCollection =
-        Firestore.instance.collection("videos");
+        FirebaseFirestore.instance.collection("videos");
 
     idPathList.forEach((idPathElement) {
       finalCollection =
-          finalCollection.document(idPathElement).collection('videoResponses');
+          finalCollection.doc(idPathElement).collection('videoResponses');
     });
     return finalCollection;
   }

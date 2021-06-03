@@ -4,7 +4,7 @@ import 'package:mockito/mockito.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/user_repository.dart';
 
-class MockFirestore extends Mock implements Firestore {}
+class MockFirestore extends Mock implements FirebaseFirestore {}
 
 class MockCollectionReference extends Mock implements CollectionReference {}
 
@@ -19,7 +19,7 @@ class MockDocumentSnapshot extends Mock implements DocumentSnapshot {}
 void main() {
   group('User Repository', () {
     test('user should be retrieved correctly', () async {
-      Firestore firestoreInstance = MockFirestore();
+      FirebaseFirestore firestoreInstance = MockFirestore();
       CollectionReference collectionReference = MockCollectionReference();
       DocumentReference documentReference = MockDocumentReference();
       Query query = MockQuery();
@@ -29,10 +29,10 @@ void main() {
       when(firestoreInstance.collection(any)).thenReturn(collectionReference);
       when(collectionReference.where(any, isEqualTo: 'testEmail'))
           .thenReturn(query);
-      when(query.getDocuments())
+      when(query.get())
           .thenAnswer((realInvocation) => Future.value(querySnapshot));
-      when(querySnapshot.documents).thenReturn([documentSnapshot]);
-      when(documentSnapshot.data).thenReturn(UserResponse(
+      when(querySnapshot.docs).thenReturn([documentSnapshot]);
+      when(documentSnapshot.data()).thenReturn(UserResponse(
               email: 'testEmail', id: 'testId', firebaseId: 'testFirebaseId')
           .toJson());
 

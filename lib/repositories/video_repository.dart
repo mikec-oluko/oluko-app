@@ -4,33 +4,33 @@ import 'package:oluko_app/repositories/firestore_repository.dart';
 
 class VideoRepository {
   static mapQueryToVideo(QuerySnapshot qs) {
-    return qs.documents.map((DocumentSnapshot ds) {
-      return Video.fromJson(ds.data);
+    return qs.docs.map((DocumentSnapshot ds) {
+      return Video.fromJson(ds.data());
     }).toList();
   }
 
   //VIDEOS
   static Future<Video> createVideo(Video video) async {
     final DocumentReference docRef =
-        Firestore.instance.collection('videos').document();
-    video.id = docRef.documentID;
-    docRef.setData(video.toJson());
+        FirebaseFirestore.instance.collection('videos').doc();
+    video.id = docRef.id;
+    docRef.set(video.toJson());
     return video;
   }
 
   static listenToVideos(callback) async {
-    Firestore.instance.collection('videos').snapshots().listen((qs) {
+    FirebaseFirestore.instance.collection('videos').snapshots().listen((qs) {
       final videos = mapQueryToVideo(qs);
       callback(videos);
     });
   }
 
   static Future<List<Video>> getVideosByUser(String userId) async {
-    final querySnapshot = await Firestore.instance
+    final querySnapshot = await FirebaseFirestore.instance
         .collection('videos')
         .orderBy("uploaded_at", descending: true)
         .where("created_by", isEqualTo: userId)
-        .getDocuments();
+        .get();
 
     return mapQueryToVideo(querySnapshot);
   }
@@ -46,11 +46,9 @@ class VideoRepository {
       String videoId, String idPath) async {
     CollectionReference finalCollection =
         FirestoreRepository.goInsideVideoResponses(idPath);
-    finalCollection =
-        finalCollection.document(videoId).collection("videoResponses");
-    QuerySnapshot videoResponses = await finalCollection
-        .orderBy("uploaded_at", descending: true)
-        .getDocuments();
+    finalCollection = finalCollection.doc(videoId).collection("videoResponses");
+    QuerySnapshot videoResponses =
+        await finalCollection.orderBy("uploaded_at", descending: true).get();
     return mapQueryToVideo(videoResponses);
   }
 }
