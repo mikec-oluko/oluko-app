@@ -13,16 +13,16 @@ import 'package:oluko_app/ui/screens/videos/home.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'config/project_settings.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   GlobalConfiguration().loadFromMap(projectSettings);
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
 const OLUKO = 'Oluko';
 
 class MyApp extends StatefulWidget {
-  final Future<FirebaseApp> _initialization = Firebase.initializeApp();
   // This widget is the root of your application.
 
   @override

@@ -2,7 +2,6 @@
     package="com.app.oluko_app">
     <uses-permission android:name="android.permission.INTERNET"/>
    <application
-        android:name="Oluko"
         android:label="Oluko"
         android:icon="@mipmap/launcher_icon">
     <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
