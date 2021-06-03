@@ -6,6 +6,7 @@ import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/ui/screens/videos/player_response.dart';
 import 'package:oluko_app/ui/screens/videos/player_single.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:oluko_app/ui/screens/videos/recording_response.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:oluko_app/helpers/encoding_provider.dart';
@@ -92,8 +93,28 @@ class _HomeState extends State<Home> {
                                                 Colors.white),
                                       )
                                     : Icon(Icons.camera),
-                                onPressed: () => _takeVideo(context, ImageSource.camera,
-                                    parentVideo: widget.videoParent))
+                                onPressed: () async {
+                                  if (widget.videoParentPath == "") {
+                                    _takeVideo(context, ImageSource.camera,
+                                        parentVideo: widget.videoParent);
+                                  } else {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) {
+                                          return RecordingResponse(
+                                            video: widget.videoParent,
+                                            onCamera: () => this._takeVideo(
+                                                context, ImageSource.camera,
+                                                parentVideo:
+                                                    widget.videoParent),
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  }
+                                },
+                              )
                             : SizedBox(),
                       ]));
             }));
@@ -120,7 +141,8 @@ class _HomeState extends State<Home> {
     });
   }
 
-  void _takeVideo(BuildContext context, ImageSource imageSource, {Video parentVideo}) async {
+  void _takeVideo(BuildContext context, ImageSource imageSource,
+      {Video parentVideo}) async {
     var videoFile;
     if (_debugMode) {
       videoFile = File(
@@ -149,7 +171,8 @@ class _HomeState extends State<Home> {
     }
   }
 
-  Future<void> _processVideo(BuildContext context, File rawVideoFile, {Video parentVideo}) async {
+  Future<void> _processVideo(BuildContext context, File rawVideoFile,
+      {Video parentVideo}) async {
     final String rand = '${new Random().nextInt(10000)}';
     final videoName = 'video$rand';
     final Directory extDir = await getApplicationDocumentsDirectory();
@@ -380,7 +403,8 @@ class _HomeState extends State<Home> {
         videoParentPath: _getVideoPath(),
         videoParent: widget.videoParent,
         video: video,
-        onCamera: () => this._takeVideo(context, ImageSource.camera, parentVideo: video),
+        onCamera: () =>
+            this._takeVideo(context, ImageSource.camera, parentVideo: video),
       );
     }
   }
