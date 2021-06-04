@@ -40,7 +40,7 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         primarySwatch: Colors.grey,
       ),
-      initialRoute: '/app-plans',
+      initialRoute: '/',
       routes: {
         '/': (context) =>
             BlocProvider.value(value: _authBloc, child: MyHomePage(title: '')),
