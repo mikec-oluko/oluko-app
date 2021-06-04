@@ -152,9 +152,8 @@ class _HomeState extends State<Home> {
 
       _imagePickerActive = true;
       ImagePicker _imagePicker = new ImagePicker();
-      videoFile = await _imagePicker.getImage(source: imageSource);
+      videoFile = await _imagePicker.getVideo(source: imageSource);
       _imagePickerActive = false;
-
       if (videoFile == null) return;
     }
     setState(() {
@@ -162,7 +161,8 @@ class _HomeState extends State<Home> {
     });
 
     try {
-      await _processVideo(context, videoFile, parentVideo: parentVideo);
+      File file = File(videoFile.path);
+      await _processVideo(context, file, parentVideo: parentVideo);
     } catch (e) {
       print('${e.toString()}');
     } finally {
@@ -174,6 +174,7 @@ class _HomeState extends State<Home> {
 
   Future<void> _processVideo(BuildContext context, File rawVideoFile,
       {Video parentVideo}) async {
+    print("EL PATH ES: " + rawVideoFile.toString());
     final String rand = '${new Random().nextInt(10000)}';
     final videoName = 'video$rand';
     final Directory extDir = await getApplicationDocumentsDirectory();
