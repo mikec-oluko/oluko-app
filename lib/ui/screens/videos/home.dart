@@ -49,11 +49,8 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     _setUpParameters();
-    return BlocConsumer<AuthBloc, AuthState>(listener: (context, state) {
-      if (state is AuthSuccess) {
-        this.user = state.firebaseUser;
-      }
-    }, builder: (context, state) {
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
       if (state is AuthSuccess) {
         this.user = state.firebaseUser;
         return BlocProvider(
@@ -84,39 +81,35 @@ class _HomeState extends State<Home> {
                   floatingActionButton: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        user != null
-                            ? FloatingActionButton(
-                                child: _processing
-                                    ? CircularProgressIndicator(
-                                        valueColor:
-                                            new AlwaysStoppedAnimation<Color>(
-                                                Colors.white),
-                                      )
-                                    : Icon(Icons.camera),
-                                onPressed: () async {
-                                  if (widget.videoParentPath == "") {
-                                    _takeVideo(context, ImageSource.camera,
-                                        parentVideo: widget.videoParent);
-                                  } else {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) {
-                                          return RecordingResponse(
-                                            videoParentPath: _getVideoPath(),
-                                            videoParent: widget.videoParent,
-                                            onCamera: () => this._takeVideo(
-                                                context, ImageSource.camera,
-                                                parentVideo:
-                                                    widget.videoParent),
-                                          );
-                                        },
-                                      ),
+                        FloatingActionButton(
+                          child: _processing
+                              ? CircularProgressIndicator(
+                                  valueColor: new AlwaysStoppedAnimation<Color>(
+                                      Colors.white),
+                                )
+                              : Icon(Icons.camera),
+                          onPressed: () async {
+                            if (widget.videoParentPath == "") {
+                              _takeVideo(context, ImageSource.camera,
+                                  parentVideo: widget.videoParent);
+                            } else {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) {
+                                    return RecordingResponse(
+                                      videoParentPath: _getVideoPath(),
+                                      videoParent: widget.videoParent,
+                                      onCamera: () => this._takeVideo(
+                                          context, ImageSource.camera,
+                                          parentVideo: widget.videoParent),
                                     );
-                                  }
-                                },
-                              )
-                            : SizedBox(),
+                                  },
+                                ),
+                              );
+                            }
+                          },
+                        ),
                       ]));
             }));
       } else {

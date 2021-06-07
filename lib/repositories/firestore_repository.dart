@@ -34,8 +34,8 @@ class FirestoreRepository {
   static createVideoChild(String parentVideoId, dynamic entity, String idPath,
       String childCollection) {
     CollectionReference finalCollection = goInsideVideoResponses(idPath);
-    finalCollection =
-        finalCollection.doc(parentVideoId).collection(childCollection);
+    //finalCollection =
+        //finalCollection.doc(parentVideoId).collection(childCollection);
 
     final DocumentReference docRef = finalCollection.doc();
 
