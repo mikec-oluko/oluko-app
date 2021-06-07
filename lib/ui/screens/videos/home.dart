@@ -39,7 +39,8 @@ class _HomeState extends State<Home> {
   bool _processing = false;
   bool _canceled = false;
   double _progress = 0.0;
-  int _videoDuration = 0;
+  double _unitOfProgress = 0.18;
+  //int _videoDuration = 0;
   String _processPhase = '';
   final bool _debugMode = false;
 
@@ -49,8 +50,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     _setUpParameters();
-    return BlocBuilder<AuthBloc, AuthState>(
-      builder: (context, state) {
+    return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
       if (state is AuthSuccess) {
         this.user = state.firebaseUser;
         return BlocProvider(
@@ -129,9 +129,9 @@ class _HomeState extends State<Home> {
   void listenToEncodingProviderProgress() {
     EncodingProvider.enableStatisticsCallback((Statistics stats) {
       if (_canceled) return;
-      setState(() {
+      /*setState(() {
         _progress = stats.time / _videoDuration;
-      });
+      });*/
     });
   }
 
@@ -183,8 +183,8 @@ class _HomeState extends State<Home> {
 
     setState(() {
       _processPhase = 'Generating thumbnail';
-      _videoDuration = EncodingProvider.getDuration(info.getAllProperties());
-      _progress = 0.0;
+      //_videoDuration = EncodingProvider.getDuration(info.getAllProperties());
+      _progress += _unitOfProgress;
     });
 
     final thumbFilePath =
@@ -192,7 +192,7 @@ class _HomeState extends State<Home> {
 
     setState(() {
       _processPhase = 'Encoding video';
-      _progress = 0.0;
+      _progress += _unitOfProgress;
     });
 
     final encodedFilesDir =
@@ -200,7 +200,7 @@ class _HomeState extends State<Home> {
 
     setState(() {
       _processPhase = 'Uploading thumbnail to cloud storage';
-      _progress = 0.0;
+      _progress += _unitOfProgress;
     });
     final thumbUrl = await _uploadFile(thumbFilePath, 'thumbnail');
     final videoUrl = await _uploadHLSFiles(encodedFilesDir, videoName);
@@ -217,7 +217,7 @@ class _HomeState extends State<Home> {
 
     setState(() {
       _processPhase = 'Saving video metadata to cloud storage';
-      _progress = 0.0;
+      _progress += _unitOfProgress;
     });
 
     if (parentVideo == null) {
@@ -240,7 +240,7 @@ class _HomeState extends State<Home> {
 
     setState(() {
       _processPhase = '';
-      _progress = 0.0;
+      _progress += _unitOfProgress;
       _processing = false;
     });
   }
@@ -258,9 +258,14 @@ class _HomeState extends State<Home> {
       if (fileExtension == 'm3u8')
         _updatePlaylistUrls(file, videoName, s3Storage: true);
 
+      double fileProgress = (1.0 - _progress) / files.length.toDouble();
+
       setState(() {
         _processPhase = 'Uploading video part file $i out of ${files.length}';
-        _progress = 0.0;
+        _progress += fileProgress;
+        if (i == files.length) {
+          _progress = 1.0;
+        }
       });
 
       final downloadUrl = await _uploadFile(file.path, videoName);
