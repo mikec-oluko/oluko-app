@@ -1,14 +1,13 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/plan_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/models/login_request.dart';
+import 'package:oluko_app/helpers/enum_helper.dart';
+import 'package:oluko_app/models/info_dialog.dart';
+import 'package:oluko_app/models/plan.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/ui/components/subscription_card.dart';
-import 'package:oluko_app/ui/peek_password.dart';
-import 'package:oluko_app/utils/app_loader.dart';
-import 'package:global_configuration/global_configuration.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AppPlans extends StatefulWidget {
   AppPlans({Key key}) : super(key: key);
@@ -19,13 +18,14 @@ class AppPlans extends StatefulWidget {
 
 class _AppPlansState extends State<AppPlans> {
   final _formKey = GlobalKey<FormState>();
-  LoginRequest _requestData = LoginRequest();
   SignUpResponse profileInfo;
-  bool _peekPassword = false;
 
   @override
   Widget build(BuildContext context) {
-    return loginForm();
+    return BlocProvider(
+      create: (context) => PlanBloc()..getPlans(),
+      child: loginForm(),
+    );
   }
 
   Widget loginForm() {
@@ -54,7 +54,9 @@ class _AppPlansState extends State<AppPlans> {
         width: MediaQuery.of(context).size.width,
         child:
             Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-          Column(children: formFields()),
+          BlocBuilder<PlanBloc, PlanState>(builder: (context, state) {
+            return Column(children: formFields(state));
+          }),
         ]));
   }
 
@@ -88,54 +90,115 @@ class _AppPlansState extends State<AppPlans> {
         ]));
   }
 
-  List<Widget> formFields() {
-    return [
-      Column(
-        children: [
-          SubscriptionCard(
-            priceLabel: '\$99/year.',
-            priceSubtitle: 'Renews every year',
-            subtitles: [
-              ' Access to all content',
-            ],
-            title: '1st Level Access',
-            selected: true,
-          ),
-          SubscriptionCard(
-            priceLabel: '\$199/year.',
-            priceSubtitle: 'Renews every year',
-            subtitles: [
-              'Access to all content',
-              'Connect with coach twice a month'
-            ],
-            title: '2nd Level Access',
-            selected: false,
-          ),
-          SubscriptionCard(
-            priceLabel: '\$299/year.',
-            priceSubtitle: 'Renews every year',
-            subtitles: [
-              'Access to all content',
-              'Connect with coach twice a week'
-            ],
-            title: '3rd Level Access',
-            selected: false,
-          )
-        ],
-      ),
-      Padding(
-          padding: EdgeInsets.only(top: 30, bottom: 100),
-          child: SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(primary: OlukoColors.primary),
-                  onPressed: () {},
-                  child: Stack(children: [
-                    Align(
-                      child: Text('Get Started'),
-                    )
-                  ])))),
-    ];
+  List<Widget> formFields(PlanState state) {
+    if (state is PlansSuccess) {
+      return [
+        Column(
+          children: showSubscriptionCards(state.plans),
+        ),
+        Padding(
+            padding: EdgeInsets.only(top: 30, bottom: 100),
+            child: SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                    style:
+                        ElevatedButton.styleFrom(primary: OlukoColors.primary),
+                    onPressed: () {},
+                    child: Stack(children: [
+                      Align(
+                        child: Text('Get Started'),
+                      )
+                    ])))),
+      ];
+    } else {
+      return [];
+    }
+  }
+
+  showWaitlist(context, InfoDialog infoDialog) {
+    showDialog(
+        context: context,
+        builder: (context2) {
+          return AlertDialog(
+            insetPadding: EdgeInsets.zero,
+            contentPadding: EdgeInsets.zero,
+            backgroundColor: Colors.transparent,
+            content: Container(
+                height: 200,
+                child: Stack(children: [
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(Radius.circular(10))),
+                      child: Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                                padding: EdgeInsets.only(bottom: 15),
+                                child: Text(
+                                  infoDialog.title,
+                                  style: TextStyle(fontSize: 25),
+                                  textAlign: TextAlign.left,
+                                )),
+                            Text(infoDialog.content)
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    right: 0.0,
+                    top: 0.0,
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Align(
+                        alignment: Alignment.topRight,
+                        child: Container(
+                          decoration: BoxDecoration(
+                              boxShadow: [BoxShadow(blurRadius: 5)],
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(15))),
+                          child: CircleAvatar(
+                            radius: 14.0,
+                            backgroundColor: Colors.white,
+                            child: Icon(Icons.close, color: Colors.red),
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                ])),
+          );
+        });
+  }
+
+  List<SubscriptionCard> showSubscriptionCards(List<Plan> plans) {
+    return plans.map((Plan plan) {
+      SubscriptionCard subscriptionCard = SubscriptionCard();
+      subscriptionCard.priceLabel =
+          '\$${plan.price}/${durationLabel[plan.duration].toLowerCase()}';
+      subscriptionCard.priceSubtitle = plan.recurrent
+          ? 'Renews every ${durationLabel[plan.duration].toLowerCase()}'
+          : '';
+      subscriptionCard.title = plan.title;
+      subscriptionCard.subtitles = plan.features
+          .map((PlanFeature feature) => EnumHelper.enumToString(feature))
+          .toList();
+      subscriptionCard.selected = false;
+      subscriptionCard.showHint = plan.infoDialog != null;
+      subscriptionCard.backgroundImage = plan.backgroundImage;
+      subscriptionCard.onHintPressed = plan.infoDialog != null
+          ? () => showWaitlist(context, plan.infoDialog)
+          : null;
+      return subscriptionCard;
+    }).toList();
   }
 }
