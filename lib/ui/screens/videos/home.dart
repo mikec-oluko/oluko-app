@@ -103,6 +103,7 @@ class _HomeState extends State<Home> {
                                       MaterialPageRoute(
                                         builder: (context) {
                                           return RecordingResponse(
+                                            videoParentPath: _getVideoPath(),
                                             videoParent: widget.videoParent,
                                             onCamera: () => this._takeVideo(
                                                 context, ImageSource.camera,

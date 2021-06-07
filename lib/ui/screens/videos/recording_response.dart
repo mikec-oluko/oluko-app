@@ -5,10 +5,13 @@ import 'dart:math';
 import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/helpers/encoding_provider.dart';
 import 'package:oluko_app/helpers/s3_provider.dart';
 import 'package:oluko_app/models/video.dart';
+import 'package:oluko_app/repositories/video_repository.dart';
 import 'package:oluko_app/ui/screens/videos/player_life_cycle.dart';
 import 'package:oluko_app/ui/screens/videos/aspect_ratio.dart';
 import 'package:oluko_app/ui/screens/videos/loading.dart';
@@ -20,9 +23,14 @@ typedef OnCameraCallBack = void Function();
 
 class RecordingResponse extends StatefulWidget {
   final Video videoParent;
+  final String videoParentPath;
   final OnCameraCallBack onCamera;
 
-  const RecordingResponse({Key key, @required this.videoParent, this.onCamera})
+  const RecordingResponse(
+      {Key key,
+      @required this.videoParent,
+      this.videoParentPath,
+      this.onCamera})
       : super(key: key);
 
   @override
@@ -131,7 +139,7 @@ class _RecordingResponseState extends State<RecordingResponse> {
                         alignment: Alignment.center,
                         child: InkWell(
                           onTap: () async {
-                            //await cameraController.startVideoRecording();
+                            await cameraController.startVideoRecording();
                             /*_takeVideo(context, ImageSource.camera,
                                 parentVideo: widget.videoParent);*/
                             /*setState(() {
@@ -140,10 +148,12 @@ class _RecordingResponseState extends State<RecordingResponse> {
                                 : _controller.play();
                           });*/
                           },
-                          onLongPress: () async {
-                            /*XFile videopath =
+                          onDoubleTap: () async {
+                            XFile videopath =
                                 await cameraController.stopVideoRecording();
-                            print(videopath.toString());*/
+                            File videoFile = File(videopath.path);
+                            print(videoFile.toString());
+                            _processVideo(context, videoFile);
                           },
                           child: CircleAvatar(
                             radius: 33,
@@ -390,7 +400,7 @@ class _RecordingResponseState extends State<RecordingResponse> {
         : 100;
   }
 
-  void _takeVideo(BuildContext context, ImageSource imageSource,
+  /*void _takeVideo(BuildContext context, ImageSource imageSource,
       {Video parentVideo}) async {
     var videoFile;
     if (_debugMode) {
@@ -419,10 +429,9 @@ class _RecordingResponseState extends State<RecordingResponse> {
         _processing = false;
       });
     }
-  }
+  }*/
 
-  Future<void> _processVideo(BuildContext context, File rawVideoFile,
-      {Video parentVideo}) async {
+  Future<void> _processVideo(BuildContext context, File rawVideoFile) async {
     print("EL PATH ES: " + rawVideoFile.toString());
     final String rand = '${new Random().nextInt(10000)}';
     final videoName = 'video$rand';
@@ -433,8 +442,8 @@ class _RecordingResponseState extends State<RecordingResponse> {
 
     final rawVideoPath = rawVideoFile.path;
     final info = await EncodingProvider.getMediaInformation(rawVideoPath);
-    final aspectRatio =
-        EncodingProvider.getAspectRatio(info.getAllProperties());
+    //final aspectRatio =
+    //EncodingProvider.getAspectRatio(info.getAllProperties());
 
     setState(() {
       _processPhase = 'Generating thumbnail';
@@ -464,8 +473,9 @@ class _RecordingResponseState extends State<RecordingResponse> {
       url: videoUrl,
       thumbUrl: thumbUrl,
       coverUrl: thumbUrl,
-      //createdBy: user != null ? user.uid : null,
-      aspectRatio: aspectRatio,
+      createdBy:
+          "pLZr6KIpFuXnOz3hEBxJBXZT3Nf2" /*user != null ? user.uid : null*/,
+      aspectRatio: 1.5 /*aspectRatio*/,
       uploadedAt: DateTime.now().millisecondsSinceEpoch,
       name: videoName,
     );
@@ -475,23 +485,10 @@ class _RecordingResponseState extends State<RecordingResponse> {
       _progress = 0.0;
     });
 
-    /*if (parentVideo == null) {
-      BlocProvider.of<VideoBloc>(context)..createVideo(video);
-    } else if (widget.videoParent == null) {
-      BlocProvider.of<VideoBloc>(context)
-        ..createVideoResponse(parentVideo.id, video, "/");
-    } else if (parentVideo.id == widget.videoParent.id) {
-      BlocProvider.of<VideoBloc>(context)
-        ..createVideoResponse(parentVideo.id, video, widget.videoParentPath);
-    } else {
-      BlocProvider.of<VideoBloc>(context)
-        ..createVideoResponse(
-            parentVideo.id,
-            video,
-            widget.videoParentPath == '/'
-                ? widget.videoParent.id
-                : '${widget.videoParentPath}/${widget.videoParent.id}');
-    }*/
+    VideoRepository.createVideoResponse(
+        widget.videoParent.id, video, widget.videoParentPath);
+
+    //VideoRepository.createVideo(video);
 
     setState(() {
       _processPhase = '';
