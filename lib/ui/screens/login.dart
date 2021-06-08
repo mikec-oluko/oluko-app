@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/form_helper.dart';
 import 'package:oluko_app/models/login_request.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/ui/peek_password.dart';
@@ -93,7 +94,7 @@ class _LoginPageState extends State<LoginPage> {
             hintStyle: new TextStyle(color: Colors.grey[800]),
             hintText: AppLocalizations.of(context).emailExample,
             fillColor: Colors.white70,
-            labelText: AppLocalizations.of(context).email,
+            labelText: 'Email or username',
             labelStyle: new TextStyle(color: Colors.grey[800])),
         validator: (value) {
           if (value == null || value.isEmpty) {
@@ -102,7 +103,11 @@ class _LoginPageState extends State<LoginPage> {
           return null;
         },
         onSaved: (value) {
-          this._requestData.email = value;
+          if (FormHelper.isEmail(value)) {
+            this._requestData.email = value;
+          } else {
+            this._requestData.userName = value;
+          }
         },
       ),
       SizedBox(
@@ -185,6 +190,7 @@ class _LoginPageState extends State<LoginPage> {
                           LoginRequest(
                               email: _requestData.email,
                               password: _requestData.password,
+                              userName: _requestData.userName,
                               projectId:
                                   GlobalConfiguration().getValue("projectId")));
                   },
