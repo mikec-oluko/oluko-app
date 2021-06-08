@@ -36,6 +36,7 @@ class FirestoreRepository {
     CollectionReference finalCollection = goInsideVideoResponses(idPath);
     //finalCollection =
         //finalCollection.doc(parentVideoId).collection(childCollection);
+        //DE ESTA FORMA SERVIA PARA LOS MARKERS CREO
 
     final DocumentReference docRef = finalCollection.doc();
 
@@ -46,15 +47,22 @@ class FirestoreRepository {
   }
 
   static CollectionReference goInsideVideoResponses(String idPath) {
-    List<String> idPathList = idPath.split('/');
-    idPathList = idPathList.length > 0 && idPathList[0] == '' ? [] : idPathList;
+    //Go inside "videos" collection
     CollectionReference finalCollection =
         FirebaseFirestore.instance.collection("videos");
 
+    //Split path by '/'
+    List<String> idPathList = idPath.split('/');
+    idPathList = idPathList.length > 0 && idPathList[0] == '' ? [] : idPathList;
+
+    //If path has at least one video, it goes inside its video responses
     idPathList.forEach((idPathElement) {
       finalCollection =
           finalCollection.doc(idPathElement).collection('videoResponses');
     });
+
+    //Returns the reference to the collection in wich the video or 
+    //video response is going to be created
     return finalCollection;
   }
 }

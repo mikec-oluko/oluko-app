@@ -7,6 +7,7 @@ class Video {
   int uploadedAt;
   String name;
   String createdBy;
+  String path;
 
   Video(
       {this.id,
@@ -16,7 +17,8 @@ class Video {
       this.aspectRatio,
       this.uploadedAt,
       this.name,
-      this.createdBy});
+      this.createdBy,
+      this.path});
 
   factory Video.fromJson(Map<String, dynamic> json) {
     return Video(
@@ -27,7 +29,8 @@ class Video {
         aspectRatio: json['aspect_ratio'],
         uploadedAt: json['uploaded_at'],
         name: json['name'],
-        createdBy: json['created_by']);
+        createdBy: json['created_by'],
+        path: json['path']);
   }
 
   Map<String, dynamic> toJson() => {
@@ -39,5 +42,6 @@ class Video {
         'uploaded_at': uploadedAt,
         'name': name,
         'created_by': createdBy,
+        'path': path,
       };
 }

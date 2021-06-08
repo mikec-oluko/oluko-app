@@ -52,4 +52,21 @@ class VideoRepository {
         await finalCollection.orderBy("uploaded_at", descending: true).get();
     return mapQueryToVideo(videoResponses);
   }
+
+  static createVideoWithPath(Video video, String idPath) {
+    CollectionReference finalCollection =
+        FirestoreRepository.goInsideVideoResponses(idPath);
+
+    final DocumentReference docRef = finalCollection.doc();
+
+    video.id = docRef.id;
+    video.path = idPath;
+    if (video.path != "") {
+      video.path += "/";
+    }
+    video.path += video.id;
+    docRef.set(video.toJson());
+
+    return video;
+  }
 }

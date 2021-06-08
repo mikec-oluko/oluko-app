@@ -95,6 +95,19 @@ class VideoBloc extends Cubit<VideoState> {
     }
   }
 
+  void createVideoWithPath(Video video, String path) async {
+    if (!(state is VideosSuccess)) {
+      emit(Loading());
+    }
+    try {
+      Video newVideo = await VideoRepository.createVideoWithPath(video, path);
+      _videoList.insert(0, newVideo);
+      emit(VideosSuccess(videos: _videoList));
+    } catch (e) {
+      emit(Failure(exception: e));
+    }
+  }
+
   /*void takeVideo(User user, ImageSource imageSource,
       {Video parentVideo}) async {
     if (_imagePickerActive) return;

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_ffmpeg/statistics.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
+import 'package:oluko_app/repositories/video_repository.dart';
 import 'package:oluko_app/ui/screens/videos/player_response.dart';
 import 'package:oluko_app/ui/screens/videos/player_single.dart';
 import 'package:image_picker/image_picker.dart';
@@ -90,7 +91,7 @@ class _HomeState extends State<Home> {
                           onPressed: () async {
                             if (widget.videoParentPath == "") {
                               _takeVideo(context, ImageSource.camera,
-                                  parentVideo: widget.videoParent);
+                                  widget.videoParentPath);
                             } else {
                               Navigator.push(
                                 context,
@@ -100,8 +101,11 @@ class _HomeState extends State<Home> {
                                       videoParentPath: _getVideoPath(),
                                       videoParent: widget.videoParent,
                                       onCamera: () => this._takeVideo(
-                                          context, ImageSource.camera,
-                                          parentVideo: widget.videoParent),
+                                          context,
+                                          ImageSource.camera,
+                                          widget.videoParentPath +
+                                              "/" +
+                                              widget.videoParent.id),
                                     );
                                   },
                                 ),
@@ -134,8 +138,8 @@ class _HomeState extends State<Home> {
     });
   }
 
-  void _takeVideo(BuildContext context, ImageSource imageSource,
-      {Video parentVideo}) async {
+  void _takeVideo(
+      BuildContext context, ImageSource imageSource, String path) async {
     if (_imagePickerActive) return;
     _imagePickerActive = true;
     ImagePicker _imagePicker = new ImagePicker();
@@ -149,7 +153,7 @@ class _HomeState extends State<Home> {
 
     try {
       File file = File(videoFile.path);
-      await _processVideo(context, file, parentVideo: parentVideo);
+      await _processVideo(context, file, path);
     } catch (e) {
       print('${e.toString()}');
     } finally {
@@ -159,8 +163,8 @@ class _HomeState extends State<Home> {
     }
   }
 
-  Future<void> _processVideo(BuildContext context, File rawVideoFile,
-      {Video parentVideo}) async {
+  Future<void> _processVideo(
+      BuildContext context, File rawVideoFile, String path) async {
     setState(() {
       _progress = 0.0;
     });
@@ -215,7 +219,7 @@ class _HomeState extends State<Home> {
       _progress += _unitOfProgress;
     });
 
-    if (parentVideo == null) {
+    /*if (parentVideo == null) {
       BlocProvider.of<VideoBloc>(context)..createVideo(video);
     } else if (widget.videoParent == null) {
       BlocProvider.of<VideoBloc>(context)
@@ -231,7 +235,11 @@ class _HomeState extends State<Home> {
             widget.videoParentPath == '/'
                 ? widget.videoParent.id
                 : '${widget.videoParentPath}/${widget.videoParent.id}');
-    }
+    }*/
+
+    BlocProvider.of<VideoBloc>(context)..createVideoWithPath(video, path);
+
+    await VideoRepository.createVideoWithPath(video, path);
 
     setState(() {
       _processPhase = '';
@@ -390,14 +398,14 @@ class _HomeState extends State<Home> {
       return PlayerSingle(
           video: video,
           onCamera: () =>
-              this._takeVideo(context, ImageSource.camera, parentVideo: video));
+              this._takeVideo(context, ImageSource.camera, video.id));
     } else {
       return PlayerResponse(
         videoParentPath: _getVideoPath(),
         videoParent: widget.videoParent,
         video: video,
-        onCamera: () =>
-            this._takeVideo(context, ImageSource.camera, parentVideo: video),
+        onCamera: () => this._takeVideo(context, ImageSource.camera,
+            widget.videoParentPath + "/" + video.id),
       );
     }
   }
