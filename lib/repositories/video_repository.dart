@@ -10,13 +10,6 @@ class VideoRepository {
   }
 
   //VIDEOS
-  static Future<Video> createVideo(Video video) async {
-    final DocumentReference docRef =
-        FirebaseFirestore.instance.collection('videos').doc();
-    video.id = docRef.id;
-    docRef.set(video.toJson());
-    return video;
-  }
 
   static listenToVideos(callback) async {
     FirebaseFirestore.instance.collection('videos').snapshots().listen((qs) {
@@ -33,6 +26,14 @@ class VideoRepository {
         .get();
 
     return mapQueryToVideo(querySnapshot);
+  }
+
+  static Future<Video> createVideo(Video video) async {
+    final DocumentReference docRef =
+        FirebaseFirestore.instance.collection('videos').doc();
+    video.id = docRef.id;
+    docRef.set(video.toJson());
+    return video;
   }
 
   //VIDEO RESPONSES
