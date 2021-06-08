@@ -39,10 +39,9 @@ class _HomeState extends State<Home> {
   bool _processing = false;
   bool _canceled = false;
   double _progress = 0.0;
-  double _unitOfProgress = 0.18;
+  double _unitOfProgress = 0.13;
   //int _videoDuration = 0;
   String _processPhase = '';
-  final bool _debugMode = false;
 
   List<Video> _videos = <Video>[];
   User user;
@@ -137,19 +136,13 @@ class _HomeState extends State<Home> {
 
   void _takeVideo(BuildContext context, ImageSource imageSource,
       {Video parentVideo}) async {
-    var videoFile;
-    if (_debugMode) {
-      videoFile = File(
-          '/storage/emulated/0/Android/data/com.app.oluko/files/Pictures/cef0e6eb-8371-4ea9-800b-98e9cc515ec72789476473552585505.mp4');
-    } else {
-      if (_imagePickerActive) return;
+    if (_imagePickerActive) return;
+    _imagePickerActive = true;
+    ImagePicker _imagePicker = new ImagePicker();
+    PickedFile videoFile = await _imagePicker.getVideo(source: imageSource);
+    _imagePickerActive = false;
+    if (videoFile == null) return;
 
-      _imagePickerActive = true;
-      ImagePicker _imagePicker = new ImagePicker();
-      videoFile = await _imagePicker.getVideo(source: imageSource);
-      _imagePickerActive = false;
-      if (videoFile == null) return;
-    }
     setState(() {
       _processing = true;
     });
@@ -168,7 +161,9 @@ class _HomeState extends State<Home> {
 
   Future<void> _processVideo(BuildContext context, File rawVideoFile,
       {Video parentVideo}) async {
-    print("EL PATH ES: " + rawVideoFile.toString());
+    setState(() {
+      _progress = 0.0;
+    });
     final String rand = '${new Random().nextInt(10000)}';
     final videoName = 'video$rand';
     final Directory extDir = await getApplicationDocumentsDirectory();
@@ -258,14 +253,11 @@ class _HomeState extends State<Home> {
       if (fileExtension == 'm3u8')
         _updatePlaylistUrls(file, videoName, s3Storage: true);
 
-      double fileProgress = (1.0 - _progress) / files.length.toDouble();
+      double fileProgress = 0.3 / files.length.toDouble();
 
       setState(() {
         _processPhase = 'Uploading video part file $i out of ${files.length}';
         _progress += fileProgress;
-        if (i == files.length) {
-          _progress = 1.0;
-        }
       });
 
       final downloadUrl = await _uploadFile(file.path, videoName);
