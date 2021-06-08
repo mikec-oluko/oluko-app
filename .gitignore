@@ -49,3 +49,4 @@ app.*.map.json
 ios/build/*
 android/key.properties
 ios/Runner.app.dSYM.zip
+ios/Runner.ipa
