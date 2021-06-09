@@ -62,13 +62,12 @@ class VideoBloc extends Cubit<VideoState> {
     }
   }
 
-  void createVideo(Video video, CollectionReference reference) async {
+  void createVideo(Video video, CollectionReference reference) {
     if (!(state is VideosSuccess)) {
       emit(Loading());
     }
     try {
-      Video newVideo =
-          await VideoRepository.createVideo(video, reference);
+      Video newVideo = VideoRepository.createVideo(video, reference);
       _videoList.insert(0, newVideo);
       emit(VideosSuccess(videos: _videoList));
     } catch (e) {

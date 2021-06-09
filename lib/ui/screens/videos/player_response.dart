@@ -114,8 +114,7 @@ class _PlayerResponseState extends State<PlayerResponse> {
               floatingActionButton: FloatingActionButton(
                 onPressed: () async {
                   double markerPosition = getCurrentVideoPosition();
-                  MarkerBloc()
-                    ..createMarker(markerPosition, this.widget.videoReference);
+                  MarkerBloc()..createMarker(markerPosition, this.widget.videoReference);
                   _markers.add(
                       Marker(position: markerPosition)); //CAMBIAR ESTO A BLOC
                 },

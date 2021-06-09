@@ -405,7 +405,6 @@ class _HomeState extends State<Home> {
     }
   }
 
-
   _getProgressBar() {
     return Container(
       padding: EdgeInsets.all(30.0),
