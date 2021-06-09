@@ -37,6 +37,9 @@ class PlayerResponse extends StatefulWidget {
 }
 
 class _PlayerResponseState extends State<PlayerResponse> {
+  MarkerBloc _markerBloc;
+  VideoTrackingBloc _videoTrackingBloc;
+
   String _error;
 
   //Video controller variables
@@ -76,6 +79,8 @@ class _PlayerResponseState extends State<PlayerResponse> {
   @override
   void initState() {
     super.initState();
+    _markerBloc = MarkerBloc();
+    _videoTrackingBloc = VideoTrackingBloc();
   }
 
   @override
@@ -92,10 +97,10 @@ class _PlayerResponseState extends State<PlayerResponse> {
         providers: [
           BlocProvider<MarkerBloc>(
             create: (context) =>
-                MarkerBloc()..getMarkers(this.widget.videoReference),
+                _markerBloc..getMarkers(this.widget.videoReference),
           ),
           BlocProvider<VideoTrackingBloc>(
-            create: (context) => VideoTrackingBloc()
+            create: (context) => _videoTrackingBloc
               ..getVideoTracking(this.widget.videoReference),
           ),
         ],
@@ -114,9 +119,8 @@ class _PlayerResponseState extends State<PlayerResponse> {
               floatingActionButton: FloatingActionButton(
                 onPressed: () async {
                   double markerPosition = getCurrentVideoPosition();
-                  MarkerBloc()..createMarker(markerPosition, this.widget.videoReference);
-                  _markers.add(
-                      Marker(position: markerPosition)); //CAMBIAR ESTO A BLOC
+                  _markerBloc
+                    ..createMarker(markerPosition, this.widget.videoReference);
                 },
                 child: const Icon(Icons.add_location_rounded),
                 backgroundColor: Colors.green,
@@ -339,7 +343,7 @@ class _PlayerResponseState extends State<PlayerResponse> {
                                                   color: Colors.white,
                                                   icon: Icon(Icons.save),
                                                   onPressed: () {
-                                                    VideoTrackingBloc()
+                                                    _videoTrackingBloc
                                                       ..createVideoTracking(
                                                           this
                                                               .canvasPointsRecording,

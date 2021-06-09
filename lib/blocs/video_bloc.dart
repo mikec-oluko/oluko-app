@@ -28,8 +28,7 @@ class VideosSuccess extends VideoState {
 class TakeVideoSuccess extends VideoState {
   final String processPhase;
   final double progress;
-  const TakeVideoSuccess(
-      {this.processPhase, this.progress});
+  const TakeVideoSuccess({this.processPhase, this.progress});
 }
 
 class Failure extends VideoState {
@@ -61,21 +60,24 @@ class VideoBloc extends Cubit<VideoState> {
     }
   }
 
-  void createVideo(Video video, CollectionReference reference) {
+  void createVideo(Video video, CollectionReference reference, bool addToList) {
     if (!(state is VideosSuccess)) {
       emit(Loading());
     }
     try {
       Video newVideo = VideoRepository.createVideo(video, reference);
-      _videoList.insert(0, newVideo);
+      if (addToList) {
+        _videoList.insert(0, newVideo);
+      }
+
       emit(VideosSuccess(videos: _videoList));
     } catch (e) {
       emit(Failure(exception: e));
     }
   }
 
-  void takeVideo(
-      User user, ImageSource imageSource, CollectionReference reference) async {
+  void takeVideo(User user, ImageSource imageSource,
+      CollectionReference reference, bool addToList) async {
     if (_imagePickerActive) return;
 
     _imagePickerActive = true;
@@ -88,7 +90,7 @@ class VideoBloc extends Cubit<VideoState> {
 
     try {
       File file = File(videoFile.path);
-      await processVideo(user, file, reference);
+      await processVideo(user, file, reference, addToList);
     } catch (e) {
       print('${e.toString()}');
     } finally {
@@ -96,8 +98,8 @@ class VideoBloc extends Cubit<VideoState> {
     }
   }
 
-  Future<void> processVideo(
-      User user, File rawVideoFile, CollectionReference reference) async {
+  Future<void> processVideo(User user, File rawVideoFile,
+      CollectionReference reference, bool addToList) async {
     _progress = 0.0;
     emit(TakeVideoSuccess(processPhase: _processPhase, progress: _progress));
 
@@ -144,8 +146,7 @@ class VideoBloc extends Cubit<VideoState> {
       name: videoName,
     );
 
-    createVideo(video, reference);
-    emit(VideosSuccess(videos: _videoList));
+    createVideo(video, reference, addToList);
   }
 
   Future<String> _uploadHLSFiles(dirPath, videoName) async {
