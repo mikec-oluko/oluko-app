@@ -28,8 +28,9 @@ class VideosSuccess extends VideoState {
 class TakeVideoSuccess extends VideoState {
   final String processPhase;
   final double progress;
-  final bool processing;
-  const TakeVideoSuccess({this.processPhase, this.progress, this.processing});
+  //final bool processing;
+  const TakeVideoSuccess(
+      {this.processPhase, this.progress /*, this.processing*/});
 }
 
 class Failure extends VideoState {
@@ -43,7 +44,7 @@ class VideoBloc extends Cubit<VideoState> {
 
   List<Video> _videoList = [];
   bool _imagePickerActive = false;
-  double _unitOfProgress = 0.13;
+  double _unitOfProgress = 0.19;
   String _processPhase = '';
   double _progress = 0.0;
   bool _processing = false;
@@ -75,8 +76,8 @@ class VideoBloc extends Cubit<VideoState> {
     }
   }
 
-  /*void takeVideo(User user, ImageSource imageSource,
-      {Video parentVideo}) async {
+  void takeVideo(
+      User user, ImageSource imageSource, CollectionReference reference) async {
     if (_imagePickerActive) return;
 
     _imagePickerActive = true;
@@ -86,23 +87,23 @@ class VideoBloc extends Cubit<VideoState> {
     if (videoFile == null) return;
 
     _processing = true;
-    emit(TakeVideoSuccess(processing: _processing));
+    //emit(TakeVideoSuccess(processing: _processing));
 
     try {
       File file = File(videoFile.path);
-      await _processVideo(user, file, parentVideo: parentVideo);
+      await processVideo(user, file, reference);
     } catch (e) {
       print('${e.toString()}');
     } finally {
       _processing = false;
-      emit(TakeVideoSuccess(processing: _processing));
+      //emit(TakeVideoSuccess(processing: _processing));
     }
   }
 
-  Future<void> _processVideo(User user, File rawVideoFile,
-      {Video parentVideo}) async {
+  Future<void> processVideo(
+      User user, File rawVideoFile, CollectionReference reference) async {
     _progress = 0.0;
-    emit(TakeVideoSuccess(progress: _progress));
+    emit(TakeVideoSuccess(processPhase: _processPhase, progress: _progress));
 
     final String rand = '${new Random().nextInt(10000)}';
     final videoName = 'video$rand';
@@ -147,32 +148,8 @@ class VideoBloc extends Cubit<VideoState> {
       name: videoName,
     );
 
-    _processPhase = 'Saving video metadata to cloud storage';
-    _progress += _unitOfProgress;
-    emit(TakeVideoSuccess(processPhase: _processPhase, progress: _progress));
-
-    if (parentVideo == null) {
-      createVideo(video);
-    } else if (widget.videoParent == null) {
-      createVideoResponse(parentVideo.id, video, "/");
-    } else if (parentVideo.id == widget.videoParent.id) {
-      createVideoResponse(parentVideo.id, video, widget.videoParentPath);
-    } else {
-      createVideoResponse(
-          parentVideo.id,
-          video,
-          widget.videoParentPath == '/'
-              ? widget.videoParent.id
-              : '${widget.videoParentPath}/${widget.videoParent.id}');
-    }
-
-    _processPhase = '';
-    _progress += _unitOfProgress;
-    _processing = false;
-    emit(TakeVideoSuccess(
-        processPhase: _processPhase,
-        progress: _progress,
-        processing: _processing));
+    createVideo(video, reference);
+    emit(VideosSuccess(videos: _videoList));
   }
 
   Future<String> _uploadHLSFiles(dirPath, videoName) async {
@@ -188,7 +165,7 @@ class VideoBloc extends Cubit<VideoState> {
       if (fileExtension == 'm3u8')
         _updatePlaylistUrls(file, videoName, s3Storage: true);
 
-      double fileProgress = 0.3 / files.length.toDouble();
+      double fileProgress = 0.4 / files.length.toDouble();
       _processPhase = 'Uploading video part file $i out of ${files.length}';
       _progress += fileProgress;
       emit(TakeVideoSuccess(processPhase: _processPhase, progress: _progress));
@@ -237,5 +214,5 @@ class VideoBloc extends Cubit<VideoState> {
         updatedLines.reduce((value, element) => value + '\n' + element);
 
     file.writeAsStringSync(updatedContents);
-  }*/
+  }
 }
