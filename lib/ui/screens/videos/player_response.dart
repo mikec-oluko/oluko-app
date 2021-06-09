@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/marker_bloc.dart';
@@ -18,7 +19,7 @@ typedef OnCameraCallBack = void Function();
 enum PlayerState { RUNNING, STOPPED, WAITING }
 
 class PlayerResponse extends StatefulWidget {
-  final String videoParentPath;
+  final DocumentReference videoReference;
   final Video videoParent;
   final Video video;
   final OnCameraCallBack onCamera;
@@ -27,7 +28,7 @@ class PlayerResponse extends StatefulWidget {
       {Key key,
       @required this.videoParent,
       this.video,
-      this.videoParentPath,
+      this.videoReference,
       this.onCamera})
       : super(key: key);
 
@@ -90,14 +91,12 @@ class _PlayerResponseState extends State<PlayerResponse> {
     return MultiBlocProvider(
         providers: [
           BlocProvider<MarkerBloc>(
-            create: (context) => MarkerBloc()
-              ..getVideoMarkers(
-                  this.widget.video.id, this.widget.videoParentPath),
+            create: (context) =>
+                MarkerBloc()..getMarkers(this.widget.videoReference),
           ),
           BlocProvider<VideoTrackingBloc>(
             create: (context) => VideoTrackingBloc()
-              ..getVideoTracking(
-                  this.widget.video.id, this.widget.videoParentPath),
+              ..getVideoTracking(this.widget.videoReference),
           ),
         ],
         child: BlocListener<VideoTrackingBloc, VideoTrackingState>(
@@ -116,9 +115,9 @@ class _PlayerResponseState extends State<PlayerResponse> {
                 onPressed: () async {
                   double markerPosition = getCurrentVideoPosition();
                   MarkerBloc()
-                    ..createMarker(markerPosition, this.widget.video.id,
-                        this.widget.videoParentPath);
-                  _markers.add(Marker(position: markerPosition));
+                    ..createMarker(markerPosition, this.widget.videoReference);
+                  _markers.add(
+                      Marker(position: markerPosition)); //CAMBIAR ESTO A BLOC
                 },
                 child: const Icon(Icons.add_location_rounded),
                 backgroundColor: Colors.green,
@@ -343,11 +342,10 @@ class _PlayerResponseState extends State<PlayerResponse> {
                                                   onPressed: () {
                                                     VideoTrackingBloc()
                                                       ..createVideoTracking(
-                                                          widget.video.id,
                                                           this
                                                               .canvasPointsRecording,
                                                           widget
-                                                              .videoParentPath);
+                                                              .videoReference);
                                                   }),
                                               // IconButton(
                                               //     icon: Icon(Icons.color_lens),

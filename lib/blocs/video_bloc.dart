@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -47,19 +48,13 @@ class VideoBloc extends Cubit<VideoState> {
   double _progress = 0.0;
   bool _processing = false;
 
-  void getVideos(User user, Video videoParent, String path) async {
+  void getVideos(User user, CollectionReference parentVideoReference) async {
     if (!(state is VideosSuccess)) {
       emit(Loading());
     }
     try {
-      if (user != null) {
-        if (videoParent != null && path != "") {
-          _videoList =
-              await VideoRepository.getVideoResponses(videoParent.id, path);
-        } else {
-          _videoList = await VideoRepository.getVideosByUser(user.uid);
-        }
-      }
+      _videoList =
+          await VideoRepository.getVideosByUser(user.uid, parentVideoReference);
       emit(VideosSuccess(videos: _videoList));
     } catch (e) {
       print(e.toString());
@@ -67,40 +62,13 @@ class VideoBloc extends Cubit<VideoState> {
     }
   }
 
-  void createVideo(Video video) async {
-    if (!(state is VideosSuccess)) {
-      emit(Loading());
-    }
-    try {
-      Video newVideo = await VideoRepository.createVideo(video);
-      _videoList.insert(0, newVideo);
-      emit(VideosSuccess(videos: _videoList));
-    } catch (e) {
-      emit(Failure(exception: e));
-    }
-  }
-
-  void createVideoResponse(
-      String parentVideoId, Video video, String path) async {
+  void createVideo(Video video, CollectionReference reference) async {
     if (!(state is VideosSuccess)) {
       emit(Loading());
     }
     try {
       Video newVideo =
-          VideoRepository.createVideoResponse(parentVideoId, video, path);
-      _videoList.insert(0, newVideo);
-      emit(VideosSuccess(videos: _videoList));
-    } catch (e) {
-      emit(Failure(exception: e));
-    }
-  }
-
-  void createVideoWithPath(Video video, String path) async {
-    if (!(state is VideosSuccess)) {
-      emit(Loading());
-    }
-    try {
-      Video newVideo = await VideoRepository.createVideoWithPath(video, path);
+          await VideoRepository.createVideo(video, reference);
       _videoList.insert(0, newVideo);
       emit(VideosSuccess(videos: _videoList));
     } catch (e) {

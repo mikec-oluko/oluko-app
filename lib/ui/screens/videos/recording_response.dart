@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:camera/camera.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,13 +24,13 @@ typedef OnCameraCallBack = void Function();
 
 class RecordingResponse extends StatefulWidget {
   final Video videoParent;
-  final String videoParentPath;
+  final CollectionReference parentVideoReference;
   final OnCameraCallBack onCamera;
 
   const RecordingResponse(
       {Key key,
       @required this.videoParent,
-      this.videoParentPath,
+      this.parentVideoReference,
       this.onCamera})
       : super(key: key);
 
@@ -485,8 +486,7 @@ class _RecordingResponseState extends State<RecordingResponse> {
       _progress = 0.0;
     });
 
-    VideoRepository.createVideoResponse(
-        widget.videoParent.id, video, widget.videoParentPath);
+    VideoRepository.createVideo(video, widget.parentVideoReference);
 
     //VideoRepository.createVideo(video);
 

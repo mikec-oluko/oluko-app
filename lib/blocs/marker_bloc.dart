@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/marker.dart';
 import 'package:oluko_app/repositories/marker_repository.dart';
@@ -28,25 +29,25 @@ class MarkerBloc extends Cubit<MarkerState> {
 
   MarkerBloc() : super(Loading());
 
-  void createMarker(double position, String videoId, String path) async {
+  void createMarker(double position, DocumentReference reference) async {
     if (!(state is MarkerSuccess)) {
       emit(Loading());
     }
     try {
       Marker marker = Marker(position: position);
-      Marker newMarker = await MarkerRepository.createMarker(videoId, marker, path);
+      Marker newMarker = await MarkerRepository.createMarker(marker, reference);
       emit(MarkerSuccess(marker: newMarker));
     } catch (e) {
       emit(Failure(exception: e));
     }
   }
 
-  void getVideoMarkers(String videoId, String path) async {
+  void getMarkers(DocumentReference reference) async {
     if (!(state is MarkersSuccess)) {
       emit(Loading());
     }
     try {
-      final markers = await MarkerRepository.getMarkersWithPath(videoId, path);
+      final markers = await MarkerRepository.getMarkers(reference);
       emit(MarkersSuccess(markers: markers));
     } catch (e) {
       emit(Failure(exception: e));

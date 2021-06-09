@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_ffmpeg/statistics.dart';
@@ -22,12 +23,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
-  Home({Key key, this.title, this.videoParent, this.videoParentPath})
+  Home({Key key, this.title, this.videoParent, this.parentVideoReference})
       : super(key: key);
 
   String title;
   Video videoParent;
-  String videoParentPath;
+  CollectionReference parentVideoReference;
 
   @override
   _HomeState createState() => _HomeState();
@@ -54,9 +55,8 @@ class _HomeState extends State<Home> {
       if (state is AuthSuccess) {
         this.user = state.firebaseUser;
         return BlocProvider(
-            create: (context) => VideoBloc()
-              ..getVideos(
-                  this.user, widget.videoParent, widget.videoParentPath),
+            create: (context) =>
+                VideoBloc()..getVideos(this.user, widget.parentVideoReference),
             child: Builder(builder: (BuildContext context) {
               return Scaffold(
                   appBar: AppBar(
@@ -89,23 +89,23 @@ class _HomeState extends State<Home> {
                                 )
                               : Icon(Icons.camera),
                           onPressed: () async {
-                            if (widget.videoParentPath == "") {
+                            if (widget.videoParent == null) {
                               _takeVideo(context, ImageSource.camera,
-                                  widget.videoParentPath);
+                                  widget.parentVideoReference);
                             } else {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) {
                                     return RecordingResponse(
-                                      videoParentPath: _getVideoPath(),
+                                      parentVideoReference: widget.parentVideoReference,
                                       videoParent: widget.videoParent,
                                       onCamera: () => this._takeVideo(
                                           context,
                                           ImageSource.camera,
-                                          widget.videoParentPath +
-                                              "/" +
-                                              widget.videoParent.id),
+                                          widget.parentVideoReference
+                                              .doc(widget.videoParent.id)
+                                              .collection('videoResponses')),
                                     );
                                   },
                                 ),
@@ -138,8 +138,8 @@ class _HomeState extends State<Home> {
     });
   }
 
-  void _takeVideo(
-      BuildContext context, ImageSource imageSource, String path) async {
+  void _takeVideo(BuildContext context, ImageSource imageSource,
+      CollectionReference reference) async {
     if (_imagePickerActive) return;
     _imagePickerActive = true;
     ImagePicker _imagePicker = new ImagePicker();
@@ -153,7 +153,7 @@ class _HomeState extends State<Home> {
 
     try {
       File file = File(videoFile.path);
-      await _processVideo(context, file, path);
+      await _processVideo(context, file, reference);
     } catch (e) {
       print('${e.toString()}');
     } finally {
@@ -163,8 +163,8 @@ class _HomeState extends State<Home> {
     }
   }
 
-  Future<void> _processVideo(
-      BuildContext context, File rawVideoFile, String path) async {
+  Future<void> _processVideo(BuildContext context, File rawVideoFile,
+      CollectionReference reference) async {
     setState(() {
       _progress = 0.0;
     });
@@ -219,27 +219,9 @@ class _HomeState extends State<Home> {
       _progress += _unitOfProgress;
     });
 
-    /*if (parentVideo == null) {
-      BlocProvider.of<VideoBloc>(context)..createVideo(video);
-    } else if (widget.videoParent == null) {
-      BlocProvider.of<VideoBloc>(context)
-        ..createVideoResponse(parentVideo.id, video, "/");
-    } else if (parentVideo.id == widget.videoParent.id) {
-      BlocProvider.of<VideoBloc>(context)
-        ..createVideoResponse(parentVideo.id, video, widget.videoParentPath);
-    } else {
-      BlocProvider.of<VideoBloc>(context)
-        ..createVideoResponse(
-            parentVideo.id,
-            video,
-            widget.videoParentPath == '/'
-                ? widget.videoParent.id
-                : '${widget.videoParentPath}/${widget.videoParent.id}');
-    }*/
+    //BlocProvider.of<VideoBloc>(context)..createVideoWithPath(video, reference);
 
-    BlocProvider.of<VideoBloc>(context)..createVideoWithPath(video, path);
-
-    await VideoRepository.createVideoWithPath(video, path);
+    VideoRepository.createVideo(video, reference);
 
     setState(() {
       _processPhase = '';
@@ -373,11 +355,16 @@ class _HomeState extends State<Home> {
                                     ),
                                     ElevatedButton(
                                         onPressed: () => Navigator.pushNamed(
-                                                context, '/videos', arguments: {
-                                              'title': 'Responses',
-                                              'videoParent': video,
-                                              'videoParentPath': _getVideoPath()
-                                            }),
+                                                context, '/videos',
+                                                arguments: {
+                                                  'title': 'Responses',
+                                                  'videoParent': video,
+                                                  'parentVideoReference': widget
+                                                      .parentVideoReference
+                                                      .doc(video.id)
+                                                      .collection(
+                                                          'videoResponses'),
+                                                }),
                                         child: Text("View responses"))
                                   ],
                                 ),
@@ -394,31 +381,30 @@ class _HomeState extends State<Home> {
   }
 
   _player(BuildContext context, Video video) {
-    if (widget.videoParentPath == "") {
+    if (widget.videoParent == null) {
       return PlayerSingle(
           video: video,
-          onCamera: () =>
-              this._takeVideo(context, ImageSource.camera, video.id));
+          onCamera: () => this._takeVideo(
+              context,
+              ImageSource.camera,
+              widget.parentVideoReference
+                  .doc(video.id)
+                  .collection('videoResponses')));
     } else {
       return PlayerResponse(
-        videoParentPath: _getVideoPath(),
+        videoReference: widget.parentVideoReference.doc(video.id),
         videoParent: widget.videoParent,
         video: video,
-        onCamera: () => this._takeVideo(context, ImageSource.camera,
-            widget.videoParentPath + "/" + video.id),
+        onCamera: () => this._takeVideo(
+            context,
+            ImageSource.camera,
+            widget.parentVideoReference
+                .doc(widget.videoParent.id)
+                .collection('videoResponses')),
       );
     }
   }
 
-  _getVideoPath() {
-    if (widget.videoParentPath == "") {
-      return "/";
-    } else if (widget.videoParentPath == "/") {
-      return widget.videoParent.id;
-    } else {
-      return '${widget.videoParentPath}/${widget.videoParent.id}';
-    }
-  }
 
   _getProgressBar() {
     return Container(
@@ -440,6 +426,7 @@ class _HomeState extends State<Home> {
   }
 
   _setUpParameters() {
+    //NO SE PARA QUE SIRVE ESTO
     final Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;
     if (args == null) {
       return;
@@ -450,8 +437,8 @@ class _HomeState extends State<Home> {
     if (args['videoParent'] != null) {
       widget.videoParent = args['videoParent'];
     }
-    if (args['videoParentPath'] != null) {
-      widget.videoParentPath = args['videoParentPath'];
+    if (args['parentVideoReference'] != null) {
+      widget.parentVideoReference = args['parentVideoReference'];
     }
   }
 }

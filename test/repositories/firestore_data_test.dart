@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mockito/mockito.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:oluko_app/models/video.dart';
-import 'package:oluko_app/repositories/firestore_repository.dart';
 
 class MockDocumentReference extends Mock implements DocumentReference {}
 
@@ -72,7 +71,7 @@ void main() {
       expect(response, isA<QuerySnapshot>());
     });*/
 
-    test('should get firebase child with path', () async {
+    /*test('should get firebase child with path', () async {
       FirebaseFirestore firestoreInstance = MockFirestore();
       CollectionReference collectionReference = MockCollectionReference();
       DocumentReference documentReference = MockDocumentReference();
@@ -93,7 +92,7 @@ void main() {
       final response = await firestoreProvider.getChildWithPath(
           key, childCollection, pathCollection);
       expect(response, isA<QuerySnapshot>());
-    });
+    });*/
 
     /*test('should add video response', () async {
       Firestore firestoreInstance = MockFirestore();
