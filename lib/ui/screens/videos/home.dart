@@ -31,8 +31,6 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   VideoBloc _videoBloc;
 
-  //int _videoDuration = 0;
-
   List<Video> _videos = <Video>[];
   User user;
 
@@ -83,21 +81,22 @@ class _HomeState extends State<Home> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) {
-                              return RecordingResponse(
-                                parentVideoReference:
-                                    widget.parentVideoReference,
-                                videoParent: widget.videoParent,
-                                onCamera: () => _videoBloc
-                                  ..takeVideo(
-                                      user,
-                                      ImageSource.camera,
-                                      widget.parentVideoReference
-                                          .doc(widget.videoParent.id)
-                                          .collection('videoResponses'),
-                                      true),
-                              );
-                            },
+                            builder: (context) => BlocProvider.value(
+                                value: _videoBloc,
+                                child: RecordingResponse(
+                                  user: user,
+                                  parentVideoReference:
+                                      widget.parentVideoReference,
+                                  videoParent: widget.videoParent,
+                                  onCamera: () => _videoBloc
+                                    ..takeVideo(
+                                        user,
+                                        ImageSource.camera,
+                                        widget.parentVideoReference
+                                            .doc(widget.videoParent.id)
+                                            .collection('videoResponses'),
+                                        true),
+                                )),
                           ),
                         );
                       }
@@ -121,9 +120,6 @@ class _HomeState extends State<Home> {
 
   void listenToEncodingProviderProgress() {
     EncodingProvider.enableStatisticsCallback((Statistics stats) {
-      /*setState(() {
-        _progress = stats.time / _videoDuration;
-      });*/
     });
   }
 

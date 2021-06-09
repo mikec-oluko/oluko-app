@@ -99,7 +99,8 @@ class VideoBloc extends Cubit<VideoState> {
   }
 
   Future<void> processVideo(User user, File rawVideoFile,
-      CollectionReference reference, bool addToList) async {
+      CollectionReference reference, bool addToList,
+      {double givenAspectRatio}) async {
     _progress = 0.0;
     emit(TakeVideoSuccess(processPhase: _processPhase, progress: _progress));
 
@@ -112,8 +113,14 @@ class VideoBloc extends Cubit<VideoState> {
 
     final rawVideoPath = rawVideoFile.path;
     final info = await EncodingProvider.getMediaInformation(rawVideoPath);
-    final aspectRatio =
-        EncodingProvider.getAspectRatio(info.getAllProperties());
+
+    double aspectRatio;
+
+    if (givenAspectRatio != null) {
+      aspectRatio = givenAspectRatio;
+    } else {
+      aspectRatio = EncodingProvider.getAspectRatio(info.getAllProperties());
+    }
 
     _processPhase = 'Generating thumbnail';
     _progress += _unitOfProgress;

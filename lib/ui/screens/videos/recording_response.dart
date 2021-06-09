@@ -1,34 +1,30 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
-import 'package:oluko_app/helpers/encoding_provider.dart';
-import 'package:oluko_app/helpers/s3_provider.dart';
 import 'package:oluko_app/models/video.dart';
-import 'package:oluko_app/repositories/video_repository.dart';
 import 'package:oluko_app/ui/screens/videos/player_life_cycle.dart';
 import 'package:oluko_app/ui/screens/videos/aspect_ratio.dart';
 import 'package:oluko_app/ui/screens/videos/loading.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
-import 'package:path/path.dart' as p;
 
 typedef OnCameraCallBack = void Function();
 
 class RecordingResponse extends StatefulWidget {
+  final User user; //CAMBIARLO A BLOC
   final Video videoParent;
   final CollectionReference parentVideoReference;
   final OnCameraCallBack onCamera;
 
   const RecordingResponse(
       {Key key,
+      this.user,
       @required this.videoParent,
       this.parentVideoReference,
       this.onCamera})
@@ -48,21 +44,11 @@ class _RecordingResponseState extends State<RecordingResponse> {
   bool ended = false;
   Timer playbackTimer;
 
-  //video processing and recording
-  final thumbWidth = 100;
-  final thumbHeight = 150;
-  bool _imagePickerActive = false;
-  bool _processing = false;
-  bool _canceled = false;
-  double _progress = 0.0;
-  int _videoDuration = 0;
-  String _processPhase = '';
-  final bool _debugMode = false;
-
   //camera
   List<CameraDescription> cameras;
   CameraController cameraController;
   bool _isReady = false;
+  bool _recording = false;
 
   @override
   void initState() {
@@ -140,30 +126,31 @@ class _RecordingResponseState extends State<RecordingResponse> {
                         alignment: Alignment.center,
                         child: InkWell(
                           onTap: () async {
-                            await cameraController.startVideoRecording();
-                            /*_takeVideo(context, ImageSource.camera,
-                                parentVideo: widget.videoParent);*/
-                            /*setState(() {
-                            _controller.value.isPlaying
-                                ? _controller.pause()
-                                : _controller.play();
-                          });*/
-                          },
-                          onDoubleTap: () async {
-                            XFile videopath =
-                                await cameraController.stopVideoRecording();
-                            File videoFile = File(videopath.path);
-                            print(videoFile.toString());
-                            _processVideo(context, videoFile);
+                            if (this._recording) {
+                              XFile videopath =
+                                  await cameraController.stopVideoRecording();
+                              setState(() {
+                                _recording = false;
+                              });
+                              File videoFile = File(videopath.path);
+                              BlocProvider.of<VideoBloc>(context)
+                                ..processVideo(widget.user, videoFile,
+                                    widget.parentVideoReference, true,
+                                    givenAspectRatio:
+                                        cameraController.value.aspectRatio);
+                              Navigator.pop(context);
+                            } else {
+                              await cameraController.startVideoRecording();
+                              setState(() {
+                                _recording = true;
+                              });
+                            }
                           },
                           child: CircleAvatar(
                             radius: 33,
                             backgroundColor: Colors.black38,
                             child: Icon(
-                              Icons.play_arrow,
-                              /*_controller.value.isPlaying
-                                ? Icons.pause
-                                : Icons.play_arrow,*/
+                              this._recording ? Icons.stop : Icons.circle,
                               color: Colors.white,
                               size: 50,
                             ),
@@ -399,165 +386,5 @@ class _RecordingResponseState extends State<RecordingResponse> {
     return controller != null && controller.value.duration != null
         ? controller.value.duration.inMilliseconds.toDouble()
         : 100;
-  }
-
-  /*void _takeVideo(BuildContext context, ImageSource imageSource,
-      {Video parentVideo}) async {
-    var videoFile;
-    if (_debugMode) {
-      videoFile = File(
-          '/storage/emulated/0/Android/data/com.app.oluko/files/Pictures/cef0e6eb-8371-4ea9-800b-98e9cc515ec72789476473552585505.mp4');
-    } else {
-      if (_imagePickerActive) return;
-
-      _imagePickerActive = true;
-      ImagePicker _imagePicker = new ImagePicker();
-      videoFile = await _imagePicker.getImage(source: imageSource);
-      _imagePickerActive = false;
-
-      if (videoFile == null) return;
-    }
-    setState(() {
-      _processing = true;
-    });
-
-    try {
-      await _processVideo(context, videoFile, parentVideo: parentVideo);
-    } catch (e) {
-      print('${e.toString()}');
-    } finally {
-      setState(() {
-        _processing = false;
-      });
-    }
-  }*/
-
-  Future<void> _processVideo(BuildContext context, File rawVideoFile) async {
-    print("EL PATH ES: " + rawVideoFile.toString());
-    final String rand = '${new Random().nextInt(10000)}';
-    final videoName = 'video$rand';
-    final Directory extDir = await getApplicationDocumentsDirectory();
-    final outDirPath = '${extDir.path}/Videos/$videoName';
-    final videosDir = new Directory(outDirPath);
-    videosDir.createSync(recursive: true);
-
-    final rawVideoPath = rawVideoFile.path;
-    final info = await EncodingProvider.getMediaInformation(rawVideoPath);
-    //final aspectRatio =
-    //EncodingProvider.getAspectRatio(info.getAllProperties());
-
-    setState(() {
-      _processPhase = 'Generating thumbnail';
-      _videoDuration = EncodingProvider.getDuration(info.getAllProperties());
-      _progress = 0.0;
-    });
-
-    final thumbFilePath =
-        await EncodingProvider.getThumb(rawVideoPath, thumbWidth, thumbHeight);
-
-    setState(() {
-      _processPhase = 'Encoding video';
-      _progress = 0.0;
-    });
-
-    final encodedFilesDir =
-        await EncodingProvider.encodeHLS(rawVideoPath, outDirPath);
-
-    setState(() {
-      _processPhase = 'Uploading thumbnail to cloud storage';
-      _progress = 0.0;
-    });
-    final thumbUrl = await _uploadFile(thumbFilePath, 'thumbnail');
-    final videoUrl = await _uploadHLSFiles(encodedFilesDir, videoName);
-
-    final video = Video(
-      url: videoUrl,
-      thumbUrl: thumbUrl,
-      coverUrl: thumbUrl,
-      createdBy:
-          "pLZr6KIpFuXnOz3hEBxJBXZT3Nf2" /*user != null ? user.uid : null*/,
-      aspectRatio: 1.5 /*aspectRatio*/,
-      uploadedAt: DateTime.now().millisecondsSinceEpoch,
-      name: videoName,
-    );
-
-    setState(() {
-      _processPhase = 'Saving video metadata to cloud storage';
-      _progress = 0.0;
-    });
-
-    VideoRepository.createVideo(video, widget.parentVideoReference);
-
-    //VideoRepository.createVideo(video);
-
-    setState(() {
-      _processPhase = '';
-      _progress = 0.0;
-      _processing = false;
-    });
-  }
-
-  Future<String> _uploadHLSFiles(dirPath, videoName) async {
-    final videosDir = Directory(dirPath);
-
-    var playlistUrl = '';
-
-    final files = videosDir.listSync();
-    int i = 1;
-    for (FileSystemEntity file in files) {
-      final fileName = p.basename(file.path);
-      final fileExtension = getFileExtension(fileName);
-      if (fileExtension == 'm3u8')
-        _updatePlaylistUrls(file, videoName, s3Storage: true);
-
-      setState(() {
-        _processPhase = 'Uploading video part file $i out of ${files.length}';
-        _progress = 0.0;
-      });
-
-      final downloadUrl = await _uploadFile(file.path, videoName);
-
-      if (fileName == 'master.m3u8') {
-        playlistUrl = downloadUrl;
-      }
-      i++;
-    }
-
-    return playlistUrl;
-  }
-
-  String getFileExtension(String fileName) {
-    final exploded = fileName.split('.');
-    return exploded[exploded.length - 1];
-  }
-
-  Future<String> _uploadFile(filePath, folderName) async {
-    final file = new File(filePath);
-    final basename = p.basename(filePath);
-
-    final S3Provider s3Provider = S3Provider();
-    String downloadUrl =
-        await s3Provider.putFile(file.readAsBytesSync(), folderName, basename);
-
-    return downloadUrl;
-  }
-
-  void _updatePlaylistUrls(File file, String videoName, {bool s3Storage}) {
-    final lines = file.readAsLinesSync();
-    var updatedLines = [];
-
-    for (final String line in lines) {
-      var updatedLine = line;
-      if (line.contains('.ts') || line.contains('.m3u8')) {
-        updatedLine = s3Storage == null
-            ? '$videoName%2F$line?alt=media'
-            : '$line?alt=media';
-      }
-      updatedLines.add(updatedLine);
-    }
-    final updatedContents =
-        updatedLines.reduce((value, element) => value + '\n' + element);
-
-    file.writeAsStringSync(updatedContents);
   }
 }
