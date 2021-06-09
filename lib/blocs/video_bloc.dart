@@ -28,9 +28,8 @@ class VideosSuccess extends VideoState {
 class TakeVideoSuccess extends VideoState {
   final String processPhase;
   final double progress;
-  //final bool processing;
   const TakeVideoSuccess(
-      {this.processPhase, this.progress /*, this.processing*/});
+      {this.processPhase, this.progress});
 }
 
 class Failure extends VideoState {
@@ -47,7 +46,6 @@ class VideoBloc extends Cubit<VideoState> {
   double _unitOfProgress = 0.19;
   String _processPhase = '';
   double _progress = 0.0;
-  bool _processing = false;
 
   void getVideos(User user, CollectionReference parentVideoReference) async {
     if (!(state is VideosSuccess)) {
@@ -86,8 +84,7 @@ class VideoBloc extends Cubit<VideoState> {
     _imagePickerActive = false;
     if (videoFile == null) return;
 
-    _processing = true;
-    //emit(TakeVideoSuccess(processing: _processing));
+    //_processing = true;
 
     try {
       File file = File(videoFile.path);
@@ -95,8 +92,7 @@ class VideoBloc extends Cubit<VideoState> {
     } catch (e) {
       print('${e.toString()}');
     } finally {
-      _processing = false;
-      //emit(TakeVideoSuccess(processing: _processing));
+      //_processing = false;
     }
   }
 

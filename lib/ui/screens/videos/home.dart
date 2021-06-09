@@ -30,7 +30,6 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   //int _videoDuration = 0;
-  bool _processing = false;
 
   List<Video> _videos = <Video>[];
   User user;
@@ -52,11 +51,9 @@ class _HomeState extends State<Home> {
                   body: Center(child: BlocBuilder<VideoBloc, VideoState>(
                       builder: (context, state) {
                     if (state is TakeVideoSuccess) {
-                      _processing = true;
                       return _getProgressBar(
                           state.processPhase, state.progress);
                     } else if (state is VideosSuccess) {
-                      _processing = false;
                       return _getListView(state.videos);
                     } else {
                       return Text(
@@ -70,12 +67,14 @@ class _HomeState extends State<Home> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         FloatingActionButton(
-                          child: _processing
+                          child:
+                              /*_processing
                               ? CircularProgressIndicator(
                                   valueColor: new AlwaysStoppedAnimation<Color>(
                                       Colors.white),
                                 )
-                              : Icon(Icons.camera),
+                              :*/
+                              Icon(Icons.camera),
                           onPressed: () async {
                             if (widget.videoParent == null) {
                               BlocProvider.of<VideoBloc>(context)
