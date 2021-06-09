@@ -17,7 +17,7 @@ import 'package:video_player/video_player.dart';
 typedef OnCameraCallBack = void Function();
 
 class RecordingResponse extends StatefulWidget {
-  final User user; //CAMBIARLO A BLOC
+  final User user;
   final Video videoParent;
   final CollectionReference parentVideoReference;
   final OnCameraCallBack onCamera;
