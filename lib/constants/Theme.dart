@@ -34,4 +34,6 @@ class OlukoColors {
   static const Color muted = Color.fromRGBO(136, 152, 170, 1.0);
 
   static const Color text = Color.fromRGBO(50, 50, 93, 1.0);
+
+  static const Color taskCardBackground = Color.fromRGBO(40, 40, 40, 1.0);
 }

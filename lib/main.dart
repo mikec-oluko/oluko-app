@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/ui/screens/app_plans.dart';
+import 'package:oluko_app/ui/screens/assesment_videos.dart';
 import 'package:oluko_app/ui/screens/home_page.dart';
 import 'package:oluko_app/ui/screens/Login.dart';
 import 'package:oluko_app/ui/screens/Profile.dart';
@@ -40,7 +41,7 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         primarySwatch: Colors.grey,
       ),
-      initialRoute: '/',
+      initialRoute: '/asessment-videos',
       routes: {
         '/': (context) =>
             BlocProvider.value(value: _authBloc, child: MyHomePage(title: '')),
@@ -54,6 +55,8 @@ class _MyAppState extends State<MyApp> {
             BlocProvider.value(value: _authBloc, child: LoginPage()),
         '/app-plans': (context) =>
             BlocProvider.value(value: _authBloc, child: AppPlans()),
+        '/assessment-videos': (context) =>
+            BlocProvider.value(value: _authBloc, child: AsessmentVideos()),
         '/videos': (context) => BlocProvider.value(
             value: _authBloc,
             child: Home(

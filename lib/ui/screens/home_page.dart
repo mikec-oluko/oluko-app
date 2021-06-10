@@ -352,6 +352,17 @@ class _MyHomePageState extends State<MyHomePage> {
           shadowColor: Colors.transparent, primary: Colors.transparent),
     ));
 
+    options.add(ElevatedButton(
+      onPressed: () => Navigator.pushNamed(context, '/assessment-videos')
+          .then((value) => onGoBack()),
+      child: Text(
+        'ASSESSMENTS',
+        style: TextStyle(color: Colors.white),
+      ),
+      style: ElevatedButton.styleFrom(
+          shadowColor: Colors.transparent, primary: Colors.transparent),
+    ));
+
     if (state is AuthSuccess) {
       options.add(ElevatedButton(
         onPressed: () =>
