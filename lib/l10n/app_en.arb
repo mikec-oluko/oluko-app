@@ -12,5 +12,6 @@
     "or": "Or",
     "welcomeBack": "Welcome back",
     "passwordShouldNotContainUsername": "Password should not contain your username",
-    "passwordShouldNotContainEmail": "Password should not contain your email"
+    "passwordShouldNotContainEmail": "Password should not contain your email",
+    "emailOrUsername": "Email or username"
 }

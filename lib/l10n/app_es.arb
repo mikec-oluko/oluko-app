@@ -12,5 +12,6 @@
     "or": "O",
     "welcomeBack": "Bienvenido",
     "passwordShouldNotContainUsername": "La contraseña no puede contener tu nombre de usuario",
-    "passwordShouldNotContainEmail": "La contraseña no puede contener tu email"
+    "passwordShouldNotContainEmail": "La contraseña no puede contener tu email",
+    "emailOrUsername": "Email o nombre de usuario"
 }

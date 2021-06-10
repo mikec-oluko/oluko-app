@@ -94,7 +94,7 @@ class _LoginPageState extends State<LoginPage> {
             hintStyle: new TextStyle(color: Colors.grey[800]),
             hintText: AppLocalizations.of(context).emailExample,
             fillColor: Colors.white70,
-            labelText: 'Email or username',
+            labelText: AppLocalizations.of(context).emailOrUsername,
             labelStyle: new TextStyle(color: Colors.grey[800])),
         validator: (value) {
           if (value == null || value.isEmpty) {
