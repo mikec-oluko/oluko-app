@@ -31,8 +31,14 @@ class MainSignUpPage extends StatelessWidget {
         create: (context) => AuthBloc(),
         child: BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
           return Stack(alignment: Alignment.bottomCenter, children: [
-            Image.network(
-              'https://p0.pxfuel.com/preview/450/272/870/girl-boxing-fit-fitness.jpg',
+            Image.asset(
+              'assets/login/sign_up_splash_screen.png',
+              fit: BoxFit.fitHeight,
+              colorBlendMode: BlendMode.colorBurn,
+              height: MediaQuery.of(context).size.height,
+            ),
+            Image.asset(
+              'assets/login/sign_up_splash_gradient.png',
               fit: BoxFit.fitHeight,
               colorBlendMode: BlendMode.colorBurn,
               height: MediaQuery.of(context).size.height,
