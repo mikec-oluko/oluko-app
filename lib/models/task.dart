@@ -1,21 +1,21 @@
 class Task {
-  Task({this.name, this.video, this.description, this.image});
+  Task({this.name, this.description, this.image, this.index});
 
   String name;
-  String video;
   String image;
   String description;
+  num index;
 
   Task.fromJson(Map json)
       : name = json['name'],
-        video = json['video'],
         description = json['description'],
-        image = json['image'];
+        image = json['image'],
+        index = json['index'];
 
   Map<String, dynamic> toJson() => {
         'name': name,
-        'video': video,
         'description': description,
         'image': image,
+        'index': index
       };
 }

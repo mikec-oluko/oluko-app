@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/plan_bloc.dart';
+import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_helper.dart';
 import 'package:oluko_app/models/info_dialog.dart';
@@ -28,7 +29,7 @@ class _AsessmentVideosState extends State<AsessmentVideos> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => PlanBloc()..getPlans(),
+      create: (context) => TaskBloc()..get(),
       child: loginForm(),
     );
   }
@@ -80,7 +81,7 @@ class _AsessmentVideosState extends State<AsessmentVideos> {
                             ]),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 25),
-                              child: OlukoVideoPlayer(),
+                              child: Container(child: OlukoVideoPlayer()),
                             ),
                             TitleBody(
                               'Complete the below tasks to get a coach assigned',
@@ -88,61 +89,40 @@ class _AsessmentVideosState extends State<AsessmentVideos> {
                             ),
                             Column(
                               children: [
-                                Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 15.0),
-                                    child: TaskCard(
-                                      task: Task(
-                                          name: 'Introduction of myself',
-                                          description:
-                                              'Who I am, what are my goals with exercising, if I have any injuries and where I am from. Long: 30 seg - 1 min',
-                                          image:
-                                              'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/tasks%2FRectangle%2057.png?alt=media&token=7aa49ef8-4414-4ccc-bc00-e1443a9a9b42'),
-                                    )),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 15.0),
-                                  child: TaskCard(
-                                      task: Task(
-                                          name: 'Place to workout',
-                                          description:
-                                              'I want to show the place I have chosen to workout.',
-                                          image:
-                                              'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/tasks%2FRectangle%2057%20(1).png?alt=media&token=b0e8fe90-eda7-4656-8b3b-70caef9b5fa8')),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 15.0),
-                                  child: TaskCard(
-                                    task: Task(
-                                        name: 'Excercise 1',
-                                        description: 'Air Squat',
-                                        image:
-                                            'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/tasks%2Fairsquat.jpg?alt=media&token=2baadd24-8f42-4870-a3c6-3fb9272b9487'),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 15.0),
-                                  child: TaskCard(
-                                    task: Task(
-                                        name: 'Excercise 2',
-                                        description: 'Hinge',
-                                        image:
-                                            'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/tasks%2Fhinge.jpg?alt=media&token=5b5a1078-e024-4de6-9b3c-fd913f4e6780'),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 15.0),
-                                  child: TaskCard(
-                                    task: Task(
-                                        name: 'Excercise 3',
-                                        description: 'Push Up',
-                                        image:
-                                            'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/tasks%2Fpushups.jpg?alt=media&token=962b5a86-cdcd-4329-8706-37227f3b05be'),
-                                  ),
-                                )
+                                BlocBuilder<TaskBloc, TaskState>(
+                                    builder: (context, state) {
+                                  return state is Success
+                                      ? ListView.builder(
+                                          physics:
+                                              const NeverScrollableScrollPhysics(),
+                                          itemCount: state.values.length,
+                                          shrinkWrap: true,
+                                          itemBuilder: (context, num index) {
+                                            return Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 15.0),
+                                                child: TaskCard(
+                                                  task: Task(
+                                                      name: state
+                                                          .values[index].name,
+                                                      description: state
+                                                          .values[index]
+                                                          .description,
+                                                      image: state
+                                                          .values[index].image),
+                                                ));
+                                          })
+                                      : Padding(
+                                          padding: const EdgeInsets.all(50.0),
+                                          child: Center(
+                                            child: Text('Loading...',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                )),
+                                          ),
+                                        );
+                                }),
                               ],
                             ),
                             SizedBox(
