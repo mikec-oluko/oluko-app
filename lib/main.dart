@@ -41,7 +41,7 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         primarySwatch: Colors.grey,
       ),
-      initialRoute: '/asessment-videos',
+      initialRoute: '/',
       routes: {
         '/': (context) =>
             BlocProvider.value(value: _authBloc, child: MyHomePage(title: '')),
