@@ -8,6 +8,7 @@ import 'package:oluko_app/elements/card_info.dart';
 import 'package:oluko_app/elements/gallery_carousel.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/utils/app_messages.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
@@ -345,7 +346,7 @@ class _MyHomePageState extends State<MyHomePage> {
       onPressed: () => Navigator.pushNamed(context, '/app-plans')
           .then((value) => onGoBack()),
       child: Text(
-        'PLANS',
+        AppLocalizations.of(context).plans.toUpperCase(),
         style: TextStyle(color: Colors.white),
       ),
       style: ElevatedButton.styleFrom(
@@ -356,7 +357,7 @@ class _MyHomePageState extends State<MyHomePage> {
       onPressed: () => Navigator.pushNamed(context, '/assessment-videos')
           .then((value) => onGoBack()),
       child: Text(
-        'ASSESSMENTS',
+        AppLocalizations.of(context).assessments.toUpperCase(),
         style: TextStyle(color: Colors.white),
       ),
       style: ElevatedButton.styleFrom(
@@ -368,7 +369,7 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: () =>
             Navigator.pushNamed(context, '/videos').then((value) => onGoBack()),
         child: Text(
-          'VIDEOS',
+          AppLocalizations.of(context).videos.toUpperCase(),
           style: TextStyle(color: Colors.white),
         ),
         style: ElevatedButton.styleFrom(
@@ -381,7 +382,7 @@ class _MyHomePageState extends State<MyHomePage> {
           setState(() {});
         },
         child: Text(
-          'LOG OUT',
+          AppLocalizations.of(context).logout.toUpperCase(),
           style: TextStyle(color: Colors.white),
         ),
         style: ElevatedButton.styleFrom(
@@ -391,7 +392,7 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: () => Navigator.pushNamed(context, '/profile')
             .then((value) => onGoBack()),
         child: Text(
-          'PROFILE',
+          AppLocalizations.of(context).profile.toUpperCase(),
           style: TextStyle(color: Colors.white),
         ),
         style: ElevatedButton.styleFrom(
@@ -402,7 +403,7 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: () => Navigator.pushNamed(context, '/sign-up')
             .then((value) => onGoBack()),
         child: Text(
-          'SIGN UP',
+          AppLocalizations.of(context).signUp.toUpperCase(),
           style: TextStyle(color: Colors.white),
         ),
         style: ElevatedButton.styleFrom(
@@ -412,7 +413,7 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: () =>
             Navigator.pushNamed(context, '/log-in').then((value) => onGoBack()),
         child: Text(
-          'LOG IN',
+          AppLocalizations.of(context).login.toUpperCase(),
           style: TextStyle(color: Colors.white),
         ),
         style: ElevatedButton.styleFrom(
