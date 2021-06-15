@@ -25,11 +25,11 @@ class _ChoosePlayPaymentsState extends State<ChoosePlayPayments> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => PlanBloc()..getPlans(),
-      child: loginForm(),
+      child: form(),
     );
   }
 
-  Widget loginForm() {
+  Widget form() {
     return Form(
         key: _formKey,
         child: Scaffold(
