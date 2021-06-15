@@ -129,6 +129,10 @@ class AuthRepository {
     Response response =
         await http.post(Uri.parse("$url/auth/signup"), body: body2);
     var signUpResponseBody = jsonDecode(response.body);
+    if (signUpResponseBody['message'] != null &&
+        signUpResponseBody['message'] is String) {
+      signUpResponseBody['message'] = [signUpResponseBody['message']];
+    }
     ApiResponse apiResponse = ApiResponse.fromJson(signUpResponseBody);
     return apiResponse;
   }

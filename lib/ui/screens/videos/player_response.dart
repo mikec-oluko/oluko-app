@@ -305,6 +305,8 @@ class _PlayerResponseState extends State<PlayerResponse> {
                                               ..addDrawingToVideoInfo(
                                                   this.canvasPointsRecording,
                                                   widget.videoReference);
+                                            widget.videoInfo.drawing =
+                                                this.canvasPointsRecording;
                                           }),
                                       // IconButton(
                                       //     icon: Icon(Icons.color_lens),

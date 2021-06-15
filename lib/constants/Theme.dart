@@ -7,9 +7,9 @@ class OlukoColors {
 
   static const Color initial = Color.fromRGBO(23, 43, 77, 1.0);
 
-  static const Color primary = Color.fromRGBO(94, 114, 228, 1.0);
+  static const Color primary = Color.fromRGBO(170, 176, 144, 1.0);
 
-  static const Color secondary = Color.fromRGBO(247, 250, 252, 1.0);
+  static const Color secondary = Color.fromRGBO(228, 155, 149, 1.0);
 
   static const Color label = Color.fromRGBO(254, 36, 114, 1.0);
 
@@ -34,4 +34,6 @@ class OlukoColors {
   static const Color muted = Color.fromRGBO(136, 152, 170, 1.0);
 
   static const Color text = Color.fromRGBO(50, 50, 93, 1.0);
+
+  static const Color taskCardBackground = Color.fromRGBO(40, 40, 40, 1.0);
 }

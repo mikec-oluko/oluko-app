@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/constants/theme.dart';
 
 class SignUpPage extends StatefulWidget {
   SignUpPage({Key key}) : super(key: key);
@@ -30,8 +31,14 @@ class MainSignUpPage extends StatelessWidget {
         create: (context) => AuthBloc(),
         child: BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
           return Stack(alignment: Alignment.bottomCenter, children: [
-            Image.network(
-              'https://p0.pxfuel.com/preview/450/272/870/girl-boxing-fit-fitness.jpg',
+            Image.asset(
+              'assets/login/sign_up_splash_screen.png',
+              fit: BoxFit.fitHeight,
+              colorBlendMode: BlendMode.colorBurn,
+              height: MediaQuery.of(context).size.height,
+            ),
+            Image.asset(
+              'assets/login/sign_up_splash_gradient.png',
               fit: BoxFit.fitHeight,
               colorBlendMode: BlendMode.colorBurn,
               height: MediaQuery.of(context).size.height,
@@ -57,7 +64,7 @@ class MainSignUpPage extends StatelessWidget {
                                       height: 50,
                                       child: ElevatedButton(
                                           style: ElevatedButton.styleFrom(
-                                              primary: Colors.brown.shade300),
+                                              primary: OlukoColors.primary),
                                           onPressed: () => Navigator.pushNamed(
                                               context, '/log-in'),
                                           child: Stack(children: [
@@ -75,7 +82,7 @@ class MainSignUpPage extends StatelessWidget {
                                       height: 50,
                                       child: ElevatedButton(
                                           style: ElevatedButton.styleFrom(
-                                              primary: Colors.brown.shade300),
+                                              primary: OlukoColors.primary),
                                           onPressed: () => Navigator.pushNamed(
                                               context, '/sign-up-with-email'),
                                           child: Stack(children: [
