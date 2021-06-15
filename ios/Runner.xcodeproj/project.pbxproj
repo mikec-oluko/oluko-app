@@ -62,7 +62,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4254283D87E87014B0052B4A /* Pods_Runner.framework in Frameworks */,
-				AE8377ED26574F4900779AC8 /* StoreKit.framework in Frameworks */,
+				AE37DECC267401160095C4F7 /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -72,7 +72,7 @@
 		731893463595272DBCFE2EE2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				AE8377EC26574F4900779AC8 /* StoreKit.framework */,
+				AE37DECB267401160095C4F7 /* StoreKit.framework */,
 				4649C5F963FDFE5417A5CABC /* Pods_Runner.framework */,
 			);
 			name = Frameworks;

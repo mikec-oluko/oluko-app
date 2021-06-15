@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/form_helper.dart';
 import 'package:oluko_app/models/login_request.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/ui/peek_password.dart';
@@ -92,7 +94,7 @@ class _LoginPageState extends State<LoginPage> {
             hintStyle: new TextStyle(color: Colors.grey[800]),
             hintText: AppLocalizations.of(context).emailExample,
             fillColor: Colors.white70,
-            labelText: AppLocalizations.of(context).email,
+            labelText: AppLocalizations.of(context).emailOrUsername,
             labelStyle: new TextStyle(color: Colors.grey[800])),
         validator: (value) {
           if (value == null || value.isEmpty) {
@@ -101,7 +103,11 @@ class _LoginPageState extends State<LoginPage> {
           return null;
         },
         onSaved: (value) {
-          this._requestData.email = value;
+          if (FormHelper.isEmail(value)) {
+            this._requestData.email = value;
+          } else {
+            this._requestData.userName = value;
+          }
         },
       ),
       SizedBox(
@@ -174,8 +180,7 @@ class _LoginPageState extends State<LoginPage> {
               width: double.infinity,
               height: 50,
               child: ElevatedButton(
-                  style:
-                      ElevatedButton.styleFrom(primary: Colors.brown.shade300),
+                  style: ElevatedButton.styleFrom(primary: OlukoColors.primary),
                   onPressed: () {
                     _formKey.currentState.save();
                     AppLoader.startLoading(context);
@@ -185,6 +190,7 @@ class _LoginPageState extends State<LoginPage> {
                           LoginRequest(
                               email: _requestData.email,
                               password: _requestData.password,
+                              userName: _requestData.userName,
                               projectId:
                                   GlobalConfiguration().getValue("projectId")));
                   },
@@ -245,7 +251,24 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                     ])))),
-      ])
+      ]),
+      InkWell(
+        onTap: () => Navigator.pushNamed(context, '/sign-up-with-email'),
+        child: Padding(
+          padding: EdgeInsets.only(top: 10),
+          child: Column(
+            children: [
+              Text(
+                'Tap here to create an account',
+                style: TextStyle(color: Colors.white),
+              ),
+              Text('Sign Up',
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold))
+            ],
+          ),
+        ),
+      )
     ];
   }
 }

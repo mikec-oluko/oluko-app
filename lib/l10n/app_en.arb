@@ -10,5 +10,8 @@
     "forgotPassword": "Forgot password?",
     "login": "Login",
     "or": "Or",
-    "welcomeBack": "Welcome back"
+    "welcomeBack": "Welcome back",
+    "passwordShouldNotContainUsername": "Password should not contain your username",
+    "passwordShouldNotContainEmail": "Password should not contain your email",
+    "emailOrUsername": "Email or username"
 }

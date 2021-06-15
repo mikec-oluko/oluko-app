@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/elements/card_carousel.dart';
 import 'package:oluko_app/elements/card_info.dart';
 import 'package:oluko_app/elements/gallery_carousel.dart';
@@ -84,7 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   Navigator.pushNamed(context, '/sign-up'),
                               style: ElevatedButton.styleFrom(
                                   minimumSize: Size(200, 50),
-                                  primary: Colors.brown.shade300),
+                                  primary: OlukoColors.primary),
                               child: Text('SIGN UP'),
                             )
                           ]))
@@ -324,7 +325,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       onPressed: () {},
                       style: ElevatedButton.styleFrom(
                           minimumSize: Size(200, 50),
-                          primary: Colors.brown.shade300),
+                          primary: OlukoColors.primary),
                       child: Text('SIGN UP'),
                     )
                   ]))
@@ -340,6 +341,27 @@ class _MyHomePageState extends State<MyHomePage> {
 
   List<Widget> menuOptions(AuthState state) {
     List<Widget> options = [];
+    options.add(ElevatedButton(
+      onPressed: () => Navigator.pushNamed(context, '/app-plans')
+          .then((value) => onGoBack()),
+      child: Text(
+        'PLANS',
+        style: TextStyle(color: Colors.white),
+      ),
+      style: ElevatedButton.styleFrom(
+          shadowColor: Colors.transparent, primary: Colors.transparent),
+    ));
+
+    options.add(ElevatedButton(
+      onPressed: () => Navigator.pushNamed(context, '/assessment-videos')
+          .then((value) => onGoBack()),
+      child: Text(
+        'ASSESSMENTS',
+        style: TextStyle(color: Colors.white),
+      ),
+      style: ElevatedButton.styleFrom(
+          shadowColor: Colors.transparent, primary: Colors.transparent),
+    ));
 
     if (state is AuthSuccess) {
       options.add(ElevatedButton(
