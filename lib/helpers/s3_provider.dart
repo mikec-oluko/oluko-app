@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:global_configuration/global_configuration.dart';
 import 'package:path/path.dart' as path;
 import 'package:async/async.dart';
 import 'package:http/http.dart' as http;
@@ -8,10 +9,10 @@ import 'package:amazon_cognito_identity_dart_2/sig_v4.dart';
 import 'package:oluko_app/helpers/s3_policy.dart';
 
 class S3Provider {
-  String accessKeyId = 'AKIAITC3Y7TP4PNB6O5A';
-  String secretKeyId = '1hhaRFHtFZAY6iaLqXhyQO8qFu5MRo6ZHz8QyZHg';
-  String endpoint = 'https://oluko-test.s3.amazonaws.com';
-  String region = 'us-east-1';
+  String accessKeyId = GlobalConfiguration().getValue("accessKeyID");
+  String secretKeyId = GlobalConfiguration().getValue("secretAccessKey");
+  String endpoint = GlobalConfiguration().getValue("bucket");
+  String region = GlobalConfiguration().getValue("region");
 
   S3Provider();
   //{this.accessKeyId, this.secretKeyId, this.endpoint, this.region}
@@ -61,7 +62,8 @@ class S3Provider {
     }
   }
 
-  Future<String> putFile(Uint8List bodyBytes, String path, String fileName) async {
+  Future<String> putFile(
+      Uint8List bodyBytes, String path, String fileName) async {
     final uri = Uri.parse('$endpoint/$path/$fileName');
     http.Response res;
 
