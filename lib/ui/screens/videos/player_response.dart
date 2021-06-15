@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/marker_bloc.dart';
@@ -18,7 +19,7 @@ typedef OnCameraCallBack = void Function();
 enum PlayerState { RUNNING, STOPPED, WAITING }
 
 class PlayerResponse extends StatefulWidget {
-  final String videoParentPath;
+  final DocumentReference videoReference;
   final Video videoParent;
   final Video video;
   final OnCameraCallBack onCamera;
@@ -27,7 +28,7 @@ class PlayerResponse extends StatefulWidget {
       {Key key,
       @required this.videoParent,
       this.video,
-      this.videoParentPath,
+      this.videoReference,
       this.onCamera})
       : super(key: key);
 
@@ -36,6 +37,9 @@ class PlayerResponse extends StatefulWidget {
 }
 
 class _PlayerResponseState extends State<PlayerResponse> {
+  MarkerBloc _markerBloc;
+  VideoTrackingBloc _videoTrackingBloc;
+
   String _error;
 
   //Video controller variables
@@ -75,6 +79,8 @@ class _PlayerResponseState extends State<PlayerResponse> {
   @override
   void initState() {
     super.initState();
+    _markerBloc = MarkerBloc();
+    _videoTrackingBloc = VideoTrackingBloc();
   }
 
   @override
@@ -90,14 +96,12 @@ class _PlayerResponseState extends State<PlayerResponse> {
     return MultiBlocProvider(
         providers: [
           BlocProvider<MarkerBloc>(
-            create: (context) => MarkerBloc()
-              ..getVideoMarkers(
-                  this.widget.video.id, this.widget.videoParentPath),
+            create: (context) =>
+                _markerBloc..getMarkers(this.widget.videoReference),
           ),
           BlocProvider<VideoTrackingBloc>(
-            create: (context) => VideoTrackingBloc()
-              ..getVideoTracking(
-                  this.widget.video.id, this.widget.videoParentPath),
+            create: (context) => _videoTrackingBloc
+              ..getVideoTracking(this.widget.videoReference),
           ),
         ],
         child: BlocListener<VideoTrackingBloc, VideoTrackingState>(
@@ -115,10 +119,8 @@ class _PlayerResponseState extends State<PlayerResponse> {
               floatingActionButton: FloatingActionButton(
                 onPressed: () async {
                   double markerPosition = getCurrentVideoPosition();
-                  MarkerBloc()
-                    ..createMarker(markerPosition, this.widget.video.id,
-                        this.widget.videoParentPath);
-                  _markers.add(Marker(position: markerPosition));
+                  _markerBloc
+                    ..createMarker(markerPosition, this.widget.videoReference);
                 },
                 child: const Icon(Icons.add_location_rounded),
                 backgroundColor: Colors.green,
@@ -341,13 +343,12 @@ class _PlayerResponseState extends State<PlayerResponse> {
                                                   color: Colors.white,
                                                   icon: Icon(Icons.save),
                                                   onPressed: () {
-                                                    VideoTrackingBloc()
+                                                    _videoTrackingBloc
                                                       ..createVideoTracking(
-                                                          widget.video.id,
                                                           this
                                                               .canvasPointsRecording,
                                                           widget
-                                                              .videoParentPath);
+                                                              .videoReference);
                                                   }),
                                               // IconButton(
                                               //     icon: Icon(Icons.color_lens),

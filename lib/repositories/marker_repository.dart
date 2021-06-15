@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oluko_app/models/marker.dart';
-import 'firestore_repository.dart';
 
 class MarkerRepository {
   FirebaseFirestore firestoreInstance;
@@ -14,18 +13,17 @@ class MarkerRepository {
   }
 
   static Future<Marker> createMarker(
-      String parentVideoId, Marker marker, String idPath) async {
-    Marker newMarker = await FirestoreRepository.createVideoChild(
-        parentVideoId, marker, idPath, 'markers');
-    return newMarker;
+      Marker marker, DocumentReference reference) async {
+    CollectionReference markerCollection = reference.collection("markers");
+    final DocumentReference docRef = markerCollection.doc();
+    marker.id = docRef.id;
+    docRef.set(marker.toJson());
+    return marker;
   }
 
-  static Future<List<Marker>> getMarkersWithPath(
-      String videoId, String idPath) async {
-    CollectionReference finalCollection =
-        FirestoreRepository.goInsideVideoResponses(idPath);
-    finalCollection = finalCollection.doc(videoId).collection("markers");
-    return mapQueryToMarker(await finalCollection.get());
+  static Future<List<Marker>> getMarkers(DocumentReference reference) async {
+    CollectionReference markerCollection = reference.collection("markers");
+    return mapQueryToMarker(await markerCollection.get());
   }
 
   static mapQueryToMarker(QuerySnapshot qs) {
