@@ -99,7 +99,6 @@ class _PlayerResponseState extends State<PlayerResponse> {
           BlocProvider.of<VideoInfoBloc>(context)
             ..addMarkerToVideoInfo(markerPosition, this.widget.videoReference);
           setState(() {
-            //CAMBIAR A BLOC
             _markers.add(markerPosition);
           });
         },

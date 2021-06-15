@@ -16,7 +16,7 @@ import 'package:oluko_app/repositories/video_info_repository.dart';
 
 abstract class VideoInfoState {
   final List<VideoInfo> videoInfoList;
-   final List<double> markerList; 
+  final List<double> markerList;
   const VideoInfoState({this.videoInfoList, this.markerList});
 }
 
@@ -59,7 +59,8 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
   List<VideoInfo> _videoInfoList = [];
   List<double> _markerList = [];
 
-  void addMarkerToVideoInfo(double position, DocumentReference reference) async {
+  void addMarkerToVideoInfo(
+      double position, DocumentReference reference) async {
     /*if (!(state is MarkersSuccess)) {
       emit(Loading());
     }*/
@@ -69,11 +70,12 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
       _markerList.insert(0, newMarker);
       //emit(MarkersSuccess(markers: _markerList));
     } catch (e) {
+      print(e.toString());
       //emit(Failure(exception: e));
     }
   }
 
-    void addDrawingToVideoInfo(List<DrawPoint> canvasPointsRecording,
+  void addDrawingToVideoInfo(List<DrawPoint> canvasPointsRecording,
       DocumentReference reference) async {
     /*if (!(state is DrawingSuccess)) {
       emit(Loading());
