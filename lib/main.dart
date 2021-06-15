@@ -10,13 +10,16 @@ import 'package:oluko_app/ui/screens/choose_plan_payment.dart';
 import 'package:oluko_app/ui/screens/home_page.dart';
 import 'package:oluko_app/ui/screens/Login.dart';
 import 'package:oluko_app/ui/screens/Profile.dart';
+import 'package:oluko_app/ui/screens/self_recording_preview.dart';
 import 'package:oluko_app/ui/screens/sign_up_with_email.dart';
 import 'package:oluko_app/ui/screens/sign_up.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:oluko_app/ui/screens/task_details.dart';
 import 'package:oluko_app/ui/screens/videos/home.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'config/project_settings.dart';
+import 'models/task.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -61,6 +64,16 @@ class _MyAppState extends State<MyApp> {
             BlocProvider.value(value: _authBloc, child: AppPlans()),
         '/assessment-videos': (context) =>
             BlocProvider.value(value: _authBloc, child: AsessmentVideos()),
+        '/task-details': (context) => BlocProvider.value(
+            value: _authBloc,
+            child: TaskDetails(
+              task: Task(description: 'Task Description'),
+            )),
+        '/self-recording-preview': (context) => BlocProvider.value(
+            value: _authBloc,
+            child: SelfRecordingPreview(
+              task: Task(description: 'Task Description', name: 'Task 1'),
+            )),
         '/choose-plan-payment': (context) =>
             BlocProvider.value(value: _authBloc, child: ChoosePlayPayments()),
         '/videos': (context) => BlocProvider.value(
