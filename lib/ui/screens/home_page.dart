@@ -2,11 +2,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/elements/card_carousel.dart';
 import 'package:oluko_app/elements/card_info.dart';
 import 'package:oluko_app/elements/gallery_carousel.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/utils/app_messages.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
@@ -84,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   Navigator.pushNamed(context, '/sign-up'),
                               style: ElevatedButton.styleFrom(
                                   minimumSize: Size(200, 50),
-                                  primary: Colors.brown.shade300),
+                                  primary: OlukoColors.primary),
                               child: Text('SIGN UP'),
                             )
                           ]))
@@ -324,7 +326,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       onPressed: () {},
                       style: ElevatedButton.styleFrom(
                           minimumSize: Size(200, 50),
-                          primary: Colors.brown.shade300),
+                          primary: OlukoColors.primary),
                       child: Text('SIGN UP'),
                     )
                   ]))
@@ -340,13 +342,34 @@ class _MyHomePageState extends State<MyHomePage> {
 
   List<Widget> menuOptions(AuthState state) {
     List<Widget> options = [];
+    options.add(ElevatedButton(
+      onPressed: () => Navigator.pushNamed(context, '/app-plans')
+          .then((value) => onGoBack()),
+      child: Text(
+        AppLocalizations.of(context).plans.toUpperCase(),
+        style: TextStyle(color: Colors.white),
+      ),
+      style: ElevatedButton.styleFrom(
+          shadowColor: Colors.transparent, primary: Colors.transparent),
+    ));
+
+    options.add(ElevatedButton(
+      onPressed: () => Navigator.pushNamed(context, '/assessment-videos')
+          .then((value) => onGoBack()),
+      child: Text(
+        AppLocalizations.of(context).assessments.toUpperCase(),
+        style: TextStyle(color: Colors.white),
+      ),
+      style: ElevatedButton.styleFrom(
+          shadowColor: Colors.transparent, primary: Colors.transparent),
+    ));
 
     if (state is AuthSuccess) {
       options.add(ElevatedButton(
         onPressed: () =>
             Navigator.pushNamed(context, '/videos').then((value) => onGoBack()),
         child: Text(
-          'VIDEOS',
+          AppLocalizations.of(context).videos.toUpperCase(),
           style: TextStyle(color: Colors.white),
         ),
         style: ElevatedButton.styleFrom(
@@ -359,7 +382,7 @@ class _MyHomePageState extends State<MyHomePage> {
           setState(() {});
         },
         child: Text(
-          'LOG OUT',
+          AppLocalizations.of(context).logout.toUpperCase(),
           style: TextStyle(color: Colors.white),
         ),
         style: ElevatedButton.styleFrom(
@@ -369,7 +392,7 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: () => Navigator.pushNamed(context, '/profile')
             .then((value) => onGoBack()),
         child: Text(
-          'PROFILE',
+          AppLocalizations.of(context).profile.toUpperCase(),
           style: TextStyle(color: Colors.white),
         ),
         style: ElevatedButton.styleFrom(
@@ -380,7 +403,7 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: () => Navigator.pushNamed(context, '/sign-up')
             .then((value) => onGoBack()),
         child: Text(
-          'SIGN UP',
+          AppLocalizations.of(context).signUp.toUpperCase(),
           style: TextStyle(color: Colors.white),
         ),
         style: ElevatedButton.styleFrom(
@@ -390,7 +413,7 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: () =>
             Navigator.pushNamed(context, '/log-in').then((value) => onGoBack()),
         child: Text(
-          'LOG IN',
+          AppLocalizations.of(context).login.toUpperCase(),
           style: TextStyle(color: Colors.white),
         ),
         style: ElevatedButton.styleFrom(

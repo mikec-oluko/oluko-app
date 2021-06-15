@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/user_bloc.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/utils/app_loader.dart';
 import 'package:global_configuration/global_configuration.dart';
@@ -150,12 +151,11 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
                     BlocBuilder<UserBloc, UserState>(builder: (context, state) {
                   return ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                          primary: Colors.brown.shade300),
+                          primary: OlukoColors.primary),
                       onPressed: () async {
                         if (_formKey.currentState.validate()) {
                           _formKey.currentState.save();
                           UserBloc()..signUp(context, _requestData);
-                          AppLoader.startLoading(context);
                         }
                       },
                       child: Stack(children: [
@@ -354,6 +354,7 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
         value: getPasswordStrengthLength(passwordStrength),
         valueColor: new AlwaysStoppedAnimation<Color>(
             getPasswordStrengthColor(passwordStrength)),
+        backgroundColor: Colors.grey.shade700,
       ),
       Text(
         getPasswordStrengthLabel(passwordStrength),

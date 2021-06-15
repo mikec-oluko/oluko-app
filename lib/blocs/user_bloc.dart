@@ -6,6 +6,7 @@ import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/utils/app_loader.dart';
+import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -29,6 +30,24 @@ class UserBloc extends Cubit<UserState> {
   final _repository = AuthRepository();
 
   Future<void> signUp(context, SignUpRequest request) async {
+    if (request.password.contains(request.username)) {
+      AppMessages.showSnackbar(context,
+          AppLocalizations.of(context).passwordShouldNotContainUsername);
+      emit(UserFailure(
+          exception: Exception(
+              AppLocalizations.of(context).passwordShouldNotContainUsername)));
+      return;
+    }
+    if (request.password.contains(request.email)) {
+      AppMessages.showSnackbar(
+          context, AppLocalizations.of(context).passwordShouldNotContainEmail);
+      emit(UserFailure(
+          exception: Exception(
+              AppLocalizations.of(context).passwordShouldNotContainEmail)));
+      return;
+    }
+    AppLoader.startLoading(context);
+
     ApiResponse apiResponse = await _repository.signUp(request);
     if (apiResponse.statusCode == 200) {
       SignUpResponse response = SignUpResponse.fromJson(apiResponse.data);
