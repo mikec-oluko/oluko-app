@@ -14,6 +14,7 @@ import 'package:oluko_app/ui/components/task_card.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/components/title_header.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
+import 'package:oluko_app/ui/screens/task_details.dart';
 
 class AsessmentVideos extends StatefulWidget {
   AsessmentVideos({Key key}) : super(key: key);
@@ -30,11 +31,11 @@ class _AsessmentVideosState extends State<AsessmentVideos> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => TaskBloc()..get(),
-      child: loginForm(),
+      child: form(),
     );
   }
 
-  Widget loginForm() {
+  Widget form() {
     return Form(
         key: _formKey,
         child: Scaffold(
@@ -98,19 +99,26 @@ class _AsessmentVideosState extends State<AsessmentVideos> {
                                           itemCount: state.values.length,
                                           shrinkWrap: true,
                                           itemBuilder: (context, num index) {
+                                            Task task = Task(
+                                                name: state.values[index].name,
+                                                description: state
+                                                    .values[index].description,
+                                                image:
+                                                    state.values[index].image);
                                             return Padding(
                                                 padding:
                                                     const EdgeInsets.symmetric(
                                                         vertical: 15.0),
                                                 child: TaskCard(
-                                                  task: Task(
-                                                      name: state
-                                                          .values[index].name,
-                                                      description: state
-                                                          .values[index]
-                                                          .description,
-                                                      image: state
-                                                          .values[index].image),
+                                                  task: task,
+                                                  onPressed: () =>
+                                                      Navigator.push(context,
+                                                          MaterialPageRoute(
+                                                              builder:
+                                                                  (context) {
+                                                    return TaskDetails(
+                                                        task: task);
+                                                  })),
                                                 ));
                                           })
                                       : Padding(

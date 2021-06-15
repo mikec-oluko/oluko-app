@@ -8,8 +8,9 @@ import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 
 class TaskCard extends StatefulWidget {
   final Task task;
+  final Function() onPressed;
 
-  TaskCard({this.task});
+  TaskCard({this.task, this.onPressed});
 
   @override
   _State createState() => _State();
@@ -75,6 +76,7 @@ class _State extends State<TaskCard> {
                     width: double.infinity,
                     child: OlukoOutlinedButton(
                       title: 'Start',
+                      onPressed: () => widget.onPressed(),
                     )),
               )
             ],

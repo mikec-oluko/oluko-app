@@ -13,7 +13,7 @@ class TitleBody extends StatelessWidget {
       title,
       textAlign: TextAlign.start,
       style: TextStyle(
-          fontSize: 25,
+          fontSize: 20,
           fontWeight: bold ? FontWeight.w400 : FontWeight.w200,
           color: Colors.white),
     );
