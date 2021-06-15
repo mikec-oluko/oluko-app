@@ -3,4 +3,4 @@ final Map<String, String> s3Settings = {
   "secretAccessKey": "MuUPZ3Yvxkjg/BBfOftk6BrpxYjeYxzVWfP7mdH1",
   "region": "us-west-1",
   "bucket": "https://oluko-mvt.s3.amazonaws.com"
-}
+};
