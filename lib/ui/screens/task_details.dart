@@ -9,7 +9,7 @@ import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
-import 'package:oluko_app/ui/screens/self_recording_preview.dart';
+import 'package:oluko_app/ui/screens/self_recording.dart';
 
 class TaskDetails extends StatefulWidget {
   TaskDetails({this.task, Key key}) : super(key: key);
@@ -75,7 +75,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
-                                SelfRecordingPreview(task: widget.task))),
+                                SelfRecording(task: widget.task))),
                   ),
                 ],
               ),

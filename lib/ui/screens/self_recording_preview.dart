@@ -59,60 +59,16 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
       child: BlocBuilder<TaskBloc, TaskState>(builder: (context, state) {
         return Column(
             mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              formFields(state),
               Row(
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  OlukoPrimaryButton(title: 'Start Recording'),
+                  OlukoPrimaryButton(title: 'Done'),
                 ],
               ),
             ]);
       }),
     );
-  }
-
-  Widget formFields(TaskState state) {
-    if (state is Success) {
-      return Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [TitleBody('Tell us the following things about you')],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '1. Your Name?',
-                      style: TextStyle(fontSize: 20, color: Colors.white60),
-                    ),
-                    Text(
-                      '2. Your Age?',
-                      style: TextStyle(fontSize: 20, color: Colors.white60),
-                    ),
-                    Text(
-                      '3. Your Fitness Goal?',
-                      style: TextStyle(fontSize: 20, color: Colors.white60),
-                    )
-                  ],
-                ),
-              ],
-            ),
-          )
-        ],
-      );
-    } else {
-      return SizedBox();
-    }
   }
 }
