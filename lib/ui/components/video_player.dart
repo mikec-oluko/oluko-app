@@ -11,7 +11,8 @@ class OlukoVideoPlayer extends StatefulWidget {
 
   OlukoVideoPlayer(
       {this.videoUrl =
-          'https://cdn.videvo.net/videvo_files/video/free/2018-09/small_watermarked/180419_Boxing_07_04_preview.webm',
+          //TODO: update me harcoded
+          'https://oluko-mvt.s3.us-west-1.amazonaws.com/assessments/85b2f81c1fe74f9cb5e804c57db30137/85b2f81c1fe74f9cb5e804c57db30137.mov',
       Key key})
       : super(key: key);
 
@@ -25,13 +26,11 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.network(
-        'https://cdn.videvo.net/videvo_files/video/free/2018-09/small_watermarked/180419_Boxing_07_04_preview.webm')
+    _controller = VideoPlayerController.network(widget.videoUrl)
       ..initialize().then((value) {
         _chewieController = ChewieController(
             videoPlayerController: _controller,
             autoPlay: true,
-            looping: true,
             materialProgressColors: ChewieProgressColors(
                 handleColor: Colors.black,
                 backgroundColor: Colors.black,

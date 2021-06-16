@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/config/s3_settings.dart';
 import 'package:oluko_app/ui/screens/app_plans.dart';
 import 'package:oluko_app/ui/screens/assesment_videos.dart';
 import 'package:oluko_app/ui/screens/choose_plan_payment.dart';
@@ -23,6 +24,7 @@ import 'models/task.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   GlobalConfiguration().loadFromMap(projectSettings);
+  GlobalConfiguration().loadFromMap(s3Settings);
   await Firebase.initializeApp();
   runApp(MyApp());
 }
