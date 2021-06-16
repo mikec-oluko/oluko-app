@@ -78,9 +78,9 @@ class _MyAppState extends State<MyApp> {
             value: _authBloc,
             child: Home(
               title: "Videos",
-              videoParent: null,
+              parentVideoInfo: null,
               parentVideoReference:
-                  FirebaseFirestore.instance.collection("videos"),
+                  FirebaseFirestore.instance.collection("videosInfo"),
             ))
       },
       localizationsDelegates: [
