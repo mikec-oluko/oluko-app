@@ -1,3 +1,4 @@
+import 'package:chewie/chewie.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,7 +24,7 @@ class TaskDetails extends StatefulWidget {
 class _TaskDetailsState extends State<TaskDetails> {
   final _formKey = GlobalKey<FormState>();
   SignUpResponse profileInfo;
-
+  ChewieController _controller;
   bool _makePublic = false;
 
   @override
@@ -47,7 +48,12 @@ class _TaskDetailsState extends State<TaskDetails> {
                       width: MediaQuery.of(context).size.width,
                       child: Column(
                         children: [
-                          Container(child: OlukoVideoPlayer()),
+                          ConstrainedBox(
+                              constraints: BoxConstraints(
+                                  maxHeight:
+                                      MediaQuery.of(context).size.height / 4,
+                                  minWidth: MediaQuery.of(context).size.width),
+                              child: Stack(children: showVideoPlayer())),
                           BlocBuilder<TaskBloc, TaskState>(
                               builder: (context, state) {
                             return formSection();
@@ -55,6 +61,21 @@ class _TaskDetailsState extends State<TaskDetails> {
                         ],
                       ),
                     )))));
+  }
+
+  List<Widget> showVideoPlayer() {
+    List<Widget> widgets = [];
+    widgets.add(OlukoVideoPlayer(
+        videoUrl:
+            'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/production%20ID_4701508.mp4?alt=media&token=815819a5-72f9-4bec-bee0-59064c634c03',
+        whenInitialized: (ChewieController chewieController) =>
+            this.setState(() {
+              _controller = chewieController;
+            })));
+    if (_controller == null) {
+      widgets.add(Center(child: CircularProgressIndicator()));
+    }
+    return widgets;
   }
 
   Widget formSection() {

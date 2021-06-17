@@ -1,3 +1,4 @@
+import 'package:chewie/chewie.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,6 +7,7 @@ import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
+import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/screens/self_recording_preview.dart';
 
 class SelfRecording extends StatefulWidget {
@@ -21,6 +23,7 @@ class SelfRecording extends StatefulWidget {
 class _State extends State<SelfRecording> {
   final _formKey = GlobalKey<FormState>();
   SignUpResponse profileInfo;
+  ChewieController _controller;
 
   @override
   Widget build(BuildContext context) {
@@ -49,15 +52,17 @@ class _State extends State<SelfRecording> {
                     ),
                     GestureDetector(
                       onTap: () => this.setState(() {
-                        widget._recording = !widget._recording;
                         //TODO Remove this when implementing video recording
-                        if (widget._recording == false) {
+                        if (widget._recording == true) {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
                                       SelfRecordingPreview(task: widget.task)));
+                        } else {
+                          _controller.play();
                         }
+                        widget._recording = !widget._recording;
                       }),
                       child: widget._recording
                           ? Image.asset('assets/self_recording/recording.png')
@@ -76,8 +81,13 @@ class _State extends State<SelfRecording> {
                       width: MediaQuery.of(context).size.width,
                       child: Column(
                         children: [
-                          Image.asset(
-                              'assets/self_recording/self_recording_placeholder.png'),
+                          ConstrainedBox(
+                              constraints: BoxConstraints(
+                                  maxHeight:
+                                      MediaQuery.of(context).size.height / 1.6),
+                              child: Stack(
+                                children: showVideoPlayer(),
+                              )),
                           BlocBuilder<TaskBloc, TaskState>(
                               builder: (context, state) {
                             return formSection();
@@ -141,5 +151,22 @@ class _State extends State<SelfRecording> {
     } else {
       return SizedBox();
     }
+  }
+
+  List<Widget> showVideoPlayer() {
+    List<Widget> widgets = [];
+    widgets.add(OlukoVideoPlayer(
+        autoPlay: false,
+        showControls: false,
+        videoUrl:
+            'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/pexels-anthony-shkraba-production-8135646.mp4?alt=media&token=f3bd01db-8d38-492f-8cf9-386ba7a90d32',
+        whenInitialized: (ChewieController chewieController) =>
+            this.setState(() {
+              _controller = chewieController;
+            })));
+    if (_controller == null) {
+      widgets.add(Center(child: CircularProgressIndicator()));
+    }
+    return widgets;
   }
 }
