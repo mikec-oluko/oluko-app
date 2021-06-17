@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/helpers/encoding_provider.dart';
 import 'package:oluko_app/helpers/s3_provider.dart';
 import 'package:oluko_app/models/draw_point.dart';
+import 'package:oluko_app/models/event.dart';
 import 'package:oluko_app/models/video.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -105,7 +106,7 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
   }
 
   void createVideoInfo(CollectionReference reference, User user, bool addToList,
-      {Video video, int duration}) {
+      {Video video, int duration, List<Event> events}) {
     if (!(state is VideoInfoSuccess)) {
       emit(Loading());
     }
@@ -114,14 +115,15 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
           creationDate: DateTime.now(),
           createdBy: user.uid,
           markers: [],
-          events: [],
-          drawing: []);
+          events: (events != null) ? events : [],
+          drawing: [],
+          video: video != null ? video : Video(),
+          );
+
       if (duration != null) {
         newVideoInfo.duration = duration;
       }
-      if (video != null) {
-        newVideoInfo.video = video;
-      }
+
       newVideoInfo =
           VideoInfoRepository.createVideoInfo(newVideoInfo, reference);
       if (addToList) {
@@ -157,7 +159,7 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
 
   Future<void> processVideo(User user, File rawVideoFile,
       CollectionReference reference, bool addToList,
-      {double givenAspectRatio}) async {
+      {double givenAspectRatio, List<Event> events}) async {
     _progress = 0.0;
     emit(TakeVideoSuccess(processPhase: _processPhase, progress: _progress));
 
@@ -207,7 +209,7 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
       name: videoName,
     );
 
-    createVideoInfo(reference, user, addToList, video: video);
+    createVideoInfo(reference, user, addToList, video: video, events: events);
   }
 
   Future<String> _uploadHLSFiles(dirPath, videoName) async {

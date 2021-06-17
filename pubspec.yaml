@@ -53,6 +53,7 @@ dependencies:
   cupertino_icons: ^1.0.3
   global_configuration: ^2.0.0-nullsafety.1
   intl: ^0.17.0 
+  enum_to_string: ^2.0.1
   flutter_localizations:
     sdk: flutter
 

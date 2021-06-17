@@ -8,10 +8,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/video_info_bloc.dart';
+import 'package:oluko_app/models/event.dart';
 import 'package:oluko_app/models/video_info.dart';
-import 'package:oluko_app/ui/screens/videos/player_life_cycle.dart';
-import 'package:oluko_app/ui/screens/videos/aspect_ratio.dart';
-import 'package:oluko_app/ui/screens/videos/loading.dart';
 import 'package:video_player/video_player.dart';
 
 typedef OnCameraCallBack = void Function();
@@ -35,14 +33,10 @@ class RecordingResponse extends StatefulWidget {
 }
 
 class _RecordingResponseState extends State<RecordingResponse> {
-  String _error;
-  VideoPlayerController controller;
-  List<dynamic> contents;
-  bool contentInitialized = false;
-  bool _autoPlay = true;
-  bool playing = false;
-  bool ended = false;
-  Timer playbackTimer;
+  //video
+  VideoPlayerController _controller;
+  Future<void> _initializeVideoPlayerFuture;
+  List<Event> videoEvents = [];
 
   //camera
   List<CameraDescription> cameras;
@@ -51,8 +45,8 @@ class _RecordingResponseState extends State<RecordingResponse> {
   bool _recording = false;
 
   //Timeline
-  static const duration = const Duration(seconds: 1);
-  int secondsPassed = 0;
+  static const duration = const Duration(milliseconds: 1);
+  int millisecondsPassed = 0;
   bool isTimerActive = false;
   Timer timer;
 
@@ -60,6 +54,16 @@ class _RecordingResponseState extends State<RecordingResponse> {
   void initState() {
     super.initState();
     _setupCameras();
+
+    _controller = VideoPlayerController.network(
+      widget.parentVideoInfo.video.url,
+    );
+
+    // Initialize the controller and store the Future for later use.
+    _initializeVideoPlayerFuture = _controller.initialize();
+
+    // Use the controller to loop the video.
+    _controller.setLooping(true);
   }
 
   Future<void> _setupCameras() async {
@@ -82,6 +86,7 @@ class _RecordingResponseState extends State<RecordingResponse> {
   @override
   void dispose() {
     cameraController?.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -92,86 +97,88 @@ class _RecordingResponseState extends State<RecordingResponse> {
       backgroundColor: Colors.black,
       body: Stack(
         children: <Widget>[
-          !contentInitialized ? LoadingScreen() : Container(),
-          _error == null
-              ? Opacity(
-                  opacity: contentInitialized ? 1 : 0,
-                  child: Stack(children: [
-                    Positioned(
-                        top: 0,
-                        right: 0,
-                        left: 0,
-                        bottom: 30,
-                        child: Container(
-                            height: MediaQuery.of(context).size.height,
-                            child: NetworkPlayerLifeCycle(
-                              widget.parentVideoInfo.video.url,
-                              (BuildContext context,
-                                  VideoPlayerController controller) {
-                                this.controller = controller;
-                                addVideoControllerListener(controller);
-                                return AspectRatioVideo(controller);
-                              },
-                            ))),
-                    Positioned(
-                        bottom: 118,
-                        right: 8,
-                        child: Container(
-                          height: MediaQuery.of(context).size.height / 3,
-                          width: MediaQuery.of(context).size.width / 2,
-                          child: (!_isReady)
-                              ? Container()
-                              : AspectRatio(
-                                  aspectRatio:
-                                      cameraController.value.aspectRatio,
-                                  child: CameraPreview(cameraController)),
-                        )),
-                    Positioned(
-                      bottom: 200,
-                      right: 70,
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: InkWell(
-                          onTap: () async {
-                            if (this._recording) {
-                              XFile videopath =
-                                  await cameraController.stopVideoRecording();
-                              setState(() {
-                                _recording = false;
-                                isTimerActive = false;
-                                print("El timer midio:  " + secondsPassed.toString());
-                              });
-                              File videoFile = File(videopath.path);
-                              BlocProvider.of<VideoInfoBloc>(context)
-                                ..processVideo(widget.user, videoFile,
-                                    widget.parentVideoReference, true,
-                                    givenAspectRatio:
-                                        cameraController.value.aspectRatio);
-                              Navigator.pop(context);
-                            } else {
-                              await cameraController.startVideoRecording();
-                              setState(() {
-                                _recording = true;
-                                isTimerActive = true;
-                              });
-                            }
-                          },
-                          child: CircleAvatar(
-                            radius: 33,
-                            backgroundColor: Colors.black38,
-                            child: Icon(
-                              this._recording ? Icons.stop : Icons.circle,
-                              color: Colors.white,
-                              size: 50,
-                            ),
-                          ),
+          Opacity(
+              opacity: 1,
+              child: Stack(children: [
+                Positioned(
+                    top: 0,
+                    right: 0,
+                    left: 0,
+                    bottom: 30,
+                    child: Container(
+                      height: MediaQuery.of(context).size.height,
+                      child: FutureBuilder(
+                        future: _initializeVideoPlayerFuture,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.done) {
+                            return AspectRatio(
+                              aspectRatio: _controller.value.aspectRatio,
+                              child: VideoPlayer(_controller),
+                            );
+                          } else {
+                            return Center(child: CircularProgressIndicator());
+                          }
+                        },
+                      ),
+                    )),
+                Positioned(
+                    bottom: 118,
+                    right: 8,
+                    child: Container(
+                      height: MediaQuery.of(context).size.height / 3,
+                      width: MediaQuery.of(context).size.width / 2,
+                      child: (!_isReady)
+                          ? Container()
+                          : AspectRatio(
+                              aspectRatio: cameraController.value.aspectRatio,
+                              child: CameraPreview(cameraController)),
+                    )),
+                Positioned(
+                  bottom: 200,
+                  right: 70,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: InkWell(
+                      onTap: () async {
+                        if (this._recording) {
+                          XFile videopath =
+                              await cameraController.stopVideoRecording();
+                          setState(() {
+                            _recording = false;
+                            isTimerActive = false;
+                            print("El timer midio:  " +
+                                millisecondsPassed.toString());
+                          });
+                          File videoFile = File(videopath.path);
+                          BlocProvider.of<VideoInfoBloc>(context)
+                            ..processVideo(widget.user, videoFile,
+                                widget.parentVideoReference, true,
+                                givenAspectRatio:
+                                    cameraController.value.aspectRatio,
+                                events: this.videoEvents);
+                          Navigator.pop(context);
+                        } else {
+                          await cameraController.startVideoRecording();
+                          setState(() {
+                            _recording = true;
+                            isTimerActive = true;
+                          });
+                        }
+                      },
+                      child: CircleAvatar(
+                        radius: 33,
+                        backgroundColor: Colors.black38,
+                        child: Icon(
+                          this._recording ? Icons.stop : Icons.circle,
+                          color: Colors.white,
+                          size: 50,
                         ),
                       ),
-                    )
-                  ]))
-              : Center(
-                  child: Text(_error),
-                ),
+                    ),
+                  ),
+                )
+              ])),
           Container(
             padding: EdgeInsets.all(16.0),
             child: IconButton(
@@ -203,28 +210,9 @@ class _RecordingResponseState extends State<RecordingResponse> {
                               alignment: AlignmentDirectional.bottomCenter,
                               children: <Widget>[
                                 Container(
-                                    height: 25,
-                                    child: Slider.adaptive(
-                                      activeColor: Colors.lightGreen.shade300,
-                                      inactiveColor: Colors.teal.shade700,
-                                      value: getCurrentVideoPosition(),
-                                      max: getSliderMac().toDouble(),
-                                      min: 0,
-                                      onChanged: (val) async {
-                                        await Future.wait([
-                                          controller.seekTo(Duration(
-                                              milliseconds: val.toInt())),
-                                        ]);
-                                        setState(() {});
-                                      },
-                                      onChangeEnd: (val) async {
-                                        this.ended = contentsEnded();
-
-                                        this._autoPlay = true;
-
-                                        setState(() {});
-                                      },
-                                    )),
+                                  height: 25,
+                                  child: buildIndicator(),
+                                ),
                                 Container(
                                   height: 55,
                                 )
@@ -242,20 +230,32 @@ class _RecordingResponseState extends State<RecordingResponse> {
                                     onPressed: () {
                                       setState(() => Navigator.pop(context));
                                     }),
-                                IconButton(
-                                    color: Colors.white,
-                                    icon: Icon(this.playing
-                                        ? Icons.stop
-                                        : contentsEnded()
-                                            ? Icons.replay
-                                            : Icons.play_arrow),
-                                    onPressed: () {
-                                      setState(() {
-                                        playing
-                                            ? pauseContents()
-                                            : playContents();
-                                      });
-                                    }),
+                                this._recording
+                                    ? IconButton(
+                                        color: Colors.white,
+                                        icon: Icon(
+                                          _controller.value.isPlaying
+                                              ? Icons.pause
+                                              : Icons.play_arrow,
+                                        ),
+                                        onPressed: () {
+                                          setState(() async {
+                                            if (_controller.value.isPlaying) {
+                                              await _controller.pause();
+                                              this.videoEvents.add(Event(
+                                                  eventType: EventType.pause,
+                                                  position:
+                                                      this.millisecondsPassed));
+                                            } else {
+                                              await _controller.play();
+                                              this.videoEvents.add(Event(
+                                                  eventType: EventType.play,
+                                                  position:
+                                                      this.millisecondsPassed));
+                                            }
+                                          });
+                                        })
+                                    : Text(""),
                                 IconButton(
                                     color: Colors.white,
                                     icon: Icon(Icons.camera),
@@ -275,135 +275,19 @@ class _RecordingResponseState extends State<RecordingResponse> {
     );
   }
 
-  double getCurrentVideoPosition() {
-    double position = 0;
-    if (controller != null && controller.value.position != null) {
-      if (controller.value.duration != null &&
-          controller.value.duration < controller.value.position) {
-        position = controller.value.duration.inMilliseconds.toDouble();
-      } else {
-        position = controller.value.position.inMilliseconds.toDouble();
-      }
-    }
-    return position;
-  }
-
-  playContents() async {
-    var position = this.controller.value.position;
-    var duration = this.controller.value.duration;
-
-    if (position.inSeconds == duration.inSeconds) {
-      resetContents();
-    } else if (position.inSeconds < duration.inSeconds) {
-      await Future.wait([this.controller.play()]);
-    }
-  }
-
-  resetContents() async {
-    this.ended = false;
-    this.contentInitialized = false;
-    this._autoPlay = true;
-    await Future.wait([
-      this.controller.seekTo(Duration(milliseconds: 0)),
-    ]);
-  }
-
-  pauseContents() async {
-    await this.controller.pause();
-
-    if (this.playbackTimer != null) {
-      this.playbackTimer.cancel();
-      this.playbackTimer = null;
-    }
-    setState(() {
-      this.playing = false;
-    });
-  }
-
-  bool contentsEnded() {
-    return videoControllerEnded(this.controller);
-  }
-
-  videoControllerEnded(videoController) {
-    if (videoController == null ||
-        videoController.value.position == null ||
-        videoController.value.duration == null) {
-      return false;
-    }
-    int controllerPosition =
-        roundedTimestamp(videoController.value.position.inMilliseconds);
-    int controllerDuration =
-        roundedTimestamp(videoController.value.duration.inMilliseconds);
-
-    bool ended = controllerPosition == controllerDuration;
-    return ended;
-  }
-
-  num roundedTimestamp(num timeStamp) {
-    const num division = 20;
-    return (timeStamp / division).ceil();
-  }
-
-  addVideoControllerListener(VideoPlayerController controller) {
-    controller.addListener(() {
-      if (contentsEnded() && allContentIsPlaying()) {
-        pauseContents();
-        this.ended = true;
-      } else if (contentsEnded() && this.ended == false) {
-        this.ended = true;
-        this.playing = false;
-      }
-      if (allContentIsPlaying()) {
-        this.playing = true;
-      } else {
-        this.playing = false;
-      }
-      if (allContentsReady() && this._autoPlay == true) {
-        this.playContents();
-        this._autoPlay = false;
-        this.contentInitialized = true;
-      }
-      setState(() {});
-    });
-  }
-
-  allContentsReady() {
-    bool created = allContentsCreated();
-    bool initialized = allVideosInitialized();
-    bool buffered = allVideosBuffered();
-    bool stopped = !controller.value.isPlaying;
-
-    return created && initialized && buffered && stopped && !contentInitialized;
-  }
-
-  allContentIsPlaying() {
-    return this.controller.value.isPlaying;
-  }
-
-  allContentsCreated() {
-    return controller != null;
-  }
-
-  allVideosInitialized() {
-    return controller.value.initialized;
-  }
-
-  allVideosBuffered() {
-    return !controller.value.isBuffering;
-  }
-
-  num getSliderMac() {
-    return controller != null && controller.value.duration != null
-        ? controller.value.duration.inMilliseconds.toDouble()
-        : 100;
-  }
+  Widget buildIndicator() => VideoProgressIndicator(
+        _controller,
+        allowScrubbing: true,
+        colors:
+            VideoProgressColors(playedColor: Color.fromRGBO(255, 100, 0, 0.7)),
+      );
 
   void _startTimer() {
     if (timer == null) {
       timer = Timer.periodic(duration, (Timer t) {
         if (isTimerActive) {
           setState(() {
-            secondsPassed = secondsPassed + 1;
+            millisecondsPassed = millisecondsPassed + 1;
           });
         }
       });
