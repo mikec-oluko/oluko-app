@@ -11,6 +11,7 @@ import 'package:oluko_app/blocs/video_info_bloc.dart';
 import 'package:oluko_app/models/event.dart';
 import 'package:oluko_app/models/video_info.dart';
 import 'package:video_player/video_player.dart';
+import 'package:stop_watch_timer/stop_watch_timer.dart';
 
 typedef OnCameraCallBack = void Function();
 
@@ -44,11 +45,9 @@ class _RecordingResponseState extends State<RecordingResponse> {
   bool _isReady = false;
   bool _recording = false;
 
-  //Timeline
-  static const duration = const Duration(milliseconds: 1);
-  int millisecondsPassed = 0;
-  bool isTimerActive = false;
-  Timer timer;
+  //stopwatch
+  final StopWatchTimer _stopWatchTimer = StopWatchTimer();
+  final _isHours = true;
 
   @override
   void initState() {
@@ -87,12 +86,12 @@ class _RecordingResponseState extends State<RecordingResponse> {
   void dispose() {
     cameraController?.dispose();
     _controller.dispose();
+    _stopWatchTimer.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    _startTimer();
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
@@ -144,11 +143,11 @@ class _RecordingResponseState extends State<RecordingResponse> {
                         if (this._recording) {
                           XFile videopath =
                               await cameraController.stopVideoRecording();
+                          _stopWatchTimer.onExecute.add(StopWatchExecute.stop);
+                          //print("El timer midio:  " +
+                          //millisecondsPassed.toString());
                           setState(() {
                             _recording = false;
-                            isTimerActive = false;
-                            print("El timer midio:  " +
-                                millisecondsPassed.toString());
                           });
                           File videoFile = File(videopath.path);
                           BlocProvider.of<VideoInfoBloc>(context)
@@ -160,9 +159,9 @@ class _RecordingResponseState extends State<RecordingResponse> {
                           Navigator.pop(context);
                         } else {
                           await cameraController.startVideoRecording();
+                          _stopWatchTimer.onExecute.add(StopWatchExecute.start);
                           setState(() {
                             _recording = true;
-                            isTimerActive = true;
                           });
                         }
                       },
@@ -239,20 +238,26 @@ class _RecordingResponseState extends State<RecordingResponse> {
                                               : Icons.play_arrow,
                                         ),
                                         onPressed: () {
+                                          _stopWatchTimer.onExecute
+                                              .add(StopWatchExecute.lap);
+                                          EventType eventType;
+                                          List<StopWatchRecord> records =
+                                              _stopWatchTimer.records.value;
+                                          StopWatchRecord lastRecord =
+                                              records[records.length - 1];
+                                          int milliseconds =
+                                              lastRecord.rawValue;
                                           setState(() async {
                                             if (_controller.value.isPlaying) {
                                               await _controller.pause();
-                                              this.videoEvents.add(Event(
-                                                  eventType: EventType.pause,
-                                                  position:
-                                                      this.millisecondsPassed));
+                                              eventType = EventType.pause;
                                             } else {
                                               await _controller.play();
-                                              this.videoEvents.add(Event(
-                                                  eventType: EventType.play,
-                                                  position:
-                                                      this.millisecondsPassed));
+                                              eventType = EventType.play;
                                             }
+                                            this.videoEvents.add(Event(
+                                                eventType: eventType,
+                                                position: milliseconds));
                                           });
                                         })
                                     : Text(""),
@@ -281,16 +286,4 @@ class _RecordingResponseState extends State<RecordingResponse> {
         colors:
             VideoProgressColors(playedColor: Color.fromRGBO(255, 100, 0, 0.7)),
       );
-
-  void _startTimer() {
-    if (timer == null) {
-      timer = Timer.periodic(duration, (Timer t) {
-        if (isTimerActive) {
-          setState(() {
-            millisecondsPassed = millisecondsPassed + 1;
-          });
-        }
-      });
-    }
-  }
 }

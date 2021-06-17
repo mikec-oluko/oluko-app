@@ -6,7 +6,6 @@ import 'package:oluko_app/models/video.dart';
 
 class VideoInfo {
   String id;
-  int duration;
   DateTime creationDate;
   String createdBy;
   List<DrawPoint> drawing;
@@ -16,7 +15,6 @@ class VideoInfo {
 
   VideoInfo({
     this.id,
-    this.duration,
     this.creationDate,
     this.drawing,
     this.events,
@@ -28,7 +26,6 @@ class VideoInfo {
   factory VideoInfo.fromJson(Map<String, dynamic> json) {
     return VideoInfo(
         id: json['id'],
-        duration: json['duration'],
         creationDate: fromTimestampToDate(json['creation_date']),
         createdBy: json['created_by'],
         events: List<Event>.from(
@@ -41,7 +38,6 @@ class VideoInfo {
 
   Map<String, dynamic> toJson() => {
         'id': id,
-        'duration': duration,
         'creation_date': creationDate,
         'created_by': createdBy,
         'events': List<dynamic>.from(events.map((event) => event.toJson())),
