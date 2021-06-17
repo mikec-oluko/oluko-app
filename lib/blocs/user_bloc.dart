@@ -5,6 +5,7 @@ import 'package:oluko_app/models/api_response.dart';
 import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
+import 'package:oluko_app/utils/OlukoLocalizations.dart';
 import 'package:oluko_app/utils/app_loader.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
@@ -31,19 +32,13 @@ class UserBloc extends Cubit<UserState> {
 
   Future<void> signUp(context, SignUpRequest request) async {
     if (request.password.contains(request.username)) {
-      AppMessages.showSnackbar(context,
-          AppLocalizations.of(context).passwordShouldNotContainUsername);
-      emit(UserFailure(
-          exception: Exception(
-              AppLocalizations.of(context).passwordShouldNotContainUsername)));
+      AppMessages.showSnackbar(context, OlukoLocalizations.of(context).find('passwordShouldNotContainUsername'));
+      emit(UserFailure(exception: Exception(OlukoLocalizations.of(context).find('passwordShouldNotContainUsername'))));
       return;
     }
     if (request.password.contains(request.email)) {
-      AppMessages.showSnackbar(
-          context, AppLocalizations.of(context).passwordShouldNotContainEmail);
-      emit(UserFailure(
-          exception: Exception(
-              AppLocalizations.of(context).passwordShouldNotContainEmail)));
+      AppMessages.showSnackbar(context, OlukoLocalizations.of(context).find('passwordShouldNotContainEmail'));
+      emit(UserFailure(exception: Exception(OlukoLocalizations.of(context).find('passwordShouldNotContainEmail'))));
       return;
     }
     AppLoader.startLoading(context);
@@ -56,7 +51,7 @@ class UserBloc extends Cubit<UserState> {
       AppNavigator().returnToHome(context);
       emit(UserSuccess(user: response));
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(AppLocalizations.of(context).checkYourEmail),
+        content: Text(OlukoLocalizations.of(context).find('checkYourEmail')),
       ));
     } else {
       AppLoader.stopLoading();

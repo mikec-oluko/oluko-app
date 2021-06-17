@@ -7,6 +7,7 @@ import 'package:oluko_app/elements/card_carousel.dart';
 import 'package:oluko_app/elements/card_info.dart';
 import 'package:oluko_app/elements/gallery_carousel.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
+import 'package:oluko_app/utils/OlukoLocalizations.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -45,8 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   height: 550,
                   child: Stack(children: [
                     Image(
-                      image: NetworkImage(
-                          'https://www.bodybuilding.com/images/2016/june/5-leg-workouts-for-mass-tall-v2.jpg'),
+                      image: NetworkImage('https://www.bodybuilding.com/images/2016/june/5-leg-workouts-for-mass-tall-v2.jpg'),
                       fit: BoxFit.cover,
                       height: 500,
                       width: MediaQuery.of(context).size.width,
@@ -61,15 +61,11 @@ class _MyHomePageState extends State<MyHomePage> {
                               children: [
                                 Text(
                                   'You are here',
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 30),
+                                  style: TextStyle(color: Colors.white, fontSize: 30),
                                 ),
                                 Text(
                                   'One Goal Achieved',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 40,
-                                      fontWeight: FontWeight.bold),
+                                  style: TextStyle(color: Colors.white, fontSize: 40, fontWeight: FontWeight.bold),
                                 ),
                               ],
                             ))),
@@ -77,16 +73,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       Positioned(
                           bottom: 25,
                           child: Column(children: [
-                            Padding(
-                                padding: EdgeInsets.only(bottom: 5),
-                                child: Text('LEARN FROM THE BEST',
-                                    style: TextStyle(color: Colors.white))),
+                            Padding(padding: EdgeInsets.only(bottom: 5), child: Text('LEARN FROM THE BEST', style: TextStyle(color: Colors.white))),
                             ElevatedButton(
-                              onPressed: () =>
-                                  Navigator.pushNamed(context, '/sign-up'),
-                              style: ElevatedButton.styleFrom(
-                                  minimumSize: Size(200, 50),
-                                  primary: OlukoColors.primary),
+                              onPressed: () => Navigator.pushNamed(context, '/sign-up'),
+                              style: ElevatedButton.styleFrom(minimumSize: Size(200, 50), primary: OlukoColors.primary),
                               child: Text('SIGN UP'),
                             )
                           ]))
@@ -107,20 +97,11 @@ class _MyHomePageState extends State<MyHomePage> {
                             padding: EdgeInsets.symmetric(horizontal: 10),
                             child: Text(
                               'FAT LOSS',
-                              style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
+                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                             ))),
                     GalleryCarousel(imgArray: [
-                      {
-                        'title': '6 WEEKS FAT LOSS',
-                        'img':
-                            'https://cdn.abmachinesguide.com/wp-content/uploads/2013/09/gym-abs-workouts-women.jpg'
-                      },
-                      {
-                        'title': '6 WEEKS FAT LOSS',
-                        'img':
-                            'https://cdn.abmachinesguide.com/wp-content/uploads/2013/09/gym-abs-workouts-women.jpg'
-                      }
+                      {'title': '6 WEEKS FAT LOSS', 'img': 'https://cdn.abmachinesguide.com/wp-content/uploads/2013/09/gym-abs-workouts-women.jpg'},
+                      {'title': '6 WEEKS FAT LOSS', 'img': 'https://cdn.abmachinesguide.com/wp-content/uploads/2013/09/gym-abs-workouts-women.jpg'}
                     ])
                   ])),
               Padding(
@@ -132,19 +113,16 @@ class _MyHomePageState extends State<MyHomePage> {
                             padding: EdgeInsets.symmetric(horizontal: 10),
                             child: Text(
                               'POWER LIFTING',
-                              style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
+                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                             ))),
                     GalleryCarousel(imgArray: [
                       {
                         'title': 'TITLE PLACEHOLDER',
-                        'img':
-                            'https://medalladehierro.com/wp-content/uploads/2020/09/todo-lo-que-debes-saber-sobre-powerlifting.jpg'
+                        'img': 'https://medalladehierro.com/wp-content/uploads/2020/09/todo-lo-que-debes-saber-sobre-powerlifting.jpg'
                       },
                       {
                         'title': 'TITLE PLACEHOLDER',
-                        'img':
-                            'https://medalladehierro.com/wp-content/uploads/2020/09/todo-lo-que-debes-saber-sobre-powerlifting.jpg'
+                        'img': 'https://medalladehierro.com/wp-content/uploads/2020/09/todo-lo-que-debes-saber-sobre-powerlifting.jpg'
                       }
                     ])
                   ])),
@@ -157,20 +135,14 @@ class _MyHomePageState extends State<MyHomePage> {
                             padding: EdgeInsets.symmetric(horizontal: 10),
                             child: Text(
                               'GENERAL WELLBEING',
-                              style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
+                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                             ))),
                     GalleryCarousel(imgArray: [
                       {
                         'title': 'TITLE PLACEHOLDER',
-                        'img':
-                            'https://www.helpguide.org/wp-content/uploads/young-woman-performing-pushups-indoors.jpg'
+                        'img': 'https://www.helpguide.org/wp-content/uploads/young-woman-performing-pushups-indoors.jpg'
                       },
-                      {
-                        'title': 'TITLE PLACEHOLDER',
-                        'img':
-                            'https://www.helpguide.org/wp-content/uploads/young-woman-performing-pushups-indoors.jpg'
-                      }
+                      {'title': 'TITLE PLACEHOLDER', 'img': 'https://www.helpguide.org/wp-content/uploads/young-woman-performing-pushups-indoors.jpg'}
                     ])
                   ])),
               Padding(
@@ -194,8 +166,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       padding: EdgeInsets.symmetric(horizontal: 10),
                       child: Text(
                         'CHOOSE YOUR PLAN',
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                       ))),
               /*CardInfo(
                   img:
@@ -218,12 +189,10 @@ class _MyHomePageState extends State<MyHomePage> {
               Align(
                   alignment: Alignment.topLeft,
                   child: Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
                       child: Text(
                         'TESTIMONIALS',
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                       ))),
               CardCarousel(textArray: [
                 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
@@ -233,23 +202,19 @@ class _MyHomePageState extends State<MyHomePage> {
               Align(
                   alignment: Alignment.topLeft,
                   child: Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
                       child: Text(
                         'FAQ',
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                       ))),
               Container(
                   width: MediaQuery.of(context).size.width - 80,
                   child: Card(
                       elevation: 30,
                       child: Padding(
-                        padding: EdgeInsets.only(
-                            top: 10.0, left: 6.0, right: 6.0, bottom: 6.0),
+                        padding: EdgeInsets.only(top: 10.0, left: 6.0, right: 6.0, bottom: 6.0),
                         child: Theme(
-                          data: Theme.of(context)
-                              .copyWith(dividerColor: Colors.transparent),
+                          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
                           child: ExpansionTile(
                             title: Text(
                               'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
@@ -258,8 +223,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             children: <Widget>[
                               Padding(
                                 padding: EdgeInsets.all(20),
-                                child: Text(
-                                    'Lorem Ipsum is simply dummy text of the printing and typesetting industry.'),
+                                child: Text('Lorem Ipsum is simply dummy text of the printing and typesetting industry.'),
                               )
                             ],
                           ),
@@ -270,11 +234,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Card(
                       elevation: 30,
                       child: Padding(
-                        padding: EdgeInsets.only(
-                            top: 10.0, left: 6.0, right: 6.0, bottom: 6.0),
+                        padding: EdgeInsets.only(top: 10.0, left: 6.0, right: 6.0, bottom: 6.0),
                         child: Theme(
-                          data: Theme.of(context)
-                              .copyWith(dividerColor: Colors.transparent),
+                          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
                           child: ExpansionTile(
                             title: Text(
                               'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
@@ -283,8 +245,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             children: <Widget>[
                               Padding(
                                 padding: EdgeInsets.all(20),
-                                child: Text(
-                                    'Lorem Ipsum is simply dummy text of the printing and typesetting industry.'),
+                                child: Text('Lorem Ipsum is simply dummy text of the printing and typesetting industry.'),
                               )
                             ],
                           ),
@@ -295,11 +256,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Card(
                       elevation: 30,
                       child: Padding(
-                        padding: EdgeInsets.only(
-                            top: 10.0, left: 6.0, right: 6.0, bottom: 6.0),
+                        padding: EdgeInsets.only(top: 10.0, left: 6.0, right: 6.0, bottom: 6.0),
                         child: Theme(
-                          data: Theme.of(context)
-                              .copyWith(dividerColor: Colors.transparent),
+                          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
                           child: ExpansionTile(
                             title: Text(
                               'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
@@ -308,8 +267,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             children: <Widget>[
                               Padding(
                                 padding: EdgeInsets.all(20),
-                                child: Text(
-                                    'Lorem Ipsum is simply dummy text of the printing and typesetting industry.'),
+                                child: Text('Lorem Ipsum is simply dummy text of the printing and typesetting industry.'),
                               )
                             ],
                           ),
@@ -318,15 +276,10 @@ class _MyHomePageState extends State<MyHomePage> {
               Padding(
                   padding: EdgeInsets.symmetric(vertical: 50),
                   child: Column(children: [
-                    Padding(
-                        padding: EdgeInsets.only(bottom: 5),
-                        child: Text('READY TO GET STARTED?',
-                            style: TextStyle(color: Colors.black))),
+                    Padding(padding: EdgeInsets.only(bottom: 5), child: Text('READY TO GET STARTED?', style: TextStyle(color: Colors.black))),
                     ElevatedButton(
                       onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                          minimumSize: Size(200, 50),
-                          primary: OlukoColors.primary),
+                      style: ElevatedButton.styleFrom(minimumSize: Size(200, 50), primary: OlukoColors.primary),
                       child: Text('SIGN UP'),
                     )
                   ]))
@@ -343,37 +296,31 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Widget> menuOptions(AuthState state) {
     List<Widget> options = [];
     options.add(ElevatedButton(
-      onPressed: () => Navigator.pushNamed(context, '/app-plans')
-          .then((value) => onGoBack()),
+      onPressed: () => Navigator.pushNamed(context, '/app-plans').then((value) => onGoBack()),
       child: Text(
-        AppLocalizations.of(context).plans.toUpperCase(),
+        OlukoLocalizations.of(context).find('plans').toUpperCase(),
         style: TextStyle(color: Colors.white),
       ),
-      style: ElevatedButton.styleFrom(
-          shadowColor: Colors.transparent, primary: Colors.transparent),
+      style: ElevatedButton.styleFrom(shadowColor: Colors.transparent, primary: Colors.transparent),
     ));
 
     options.add(ElevatedButton(
-      onPressed: () => Navigator.pushNamed(context, '/assessment-videos')
-          .then((value) => onGoBack()),
+      onPressed: () => Navigator.pushNamed(context, '/assessment-videos').then((value) => onGoBack()),
       child: Text(
-        AppLocalizations.of(context).assessments.toUpperCase(),
+        OlukoLocalizations.of(context).find('assessments').toUpperCase(),
         style: TextStyle(color: Colors.white),
       ),
-      style: ElevatedButton.styleFrom(
-          shadowColor: Colors.transparent, primary: Colors.transparent),
+      style: ElevatedButton.styleFrom(shadowColor: Colors.transparent, primary: Colors.transparent),
     ));
 
     if (state is AuthSuccess) {
       options.add(ElevatedButton(
-        onPressed: () =>
-            Navigator.pushNamed(context, '/videos').then((value) => onGoBack()),
+        onPressed: () => Navigator.pushNamed(context, '/videos').then((value) => onGoBack()),
         child: Text(
-          AppLocalizations.of(context).videos.toUpperCase(),
+          OlukoLocalizations.of(context).find('videos').toUpperCase(),
           style: TextStyle(color: Colors.white),
         ),
-        style: ElevatedButton.styleFrom(
-            shadowColor: Colors.transparent, primary: Colors.transparent),
+        style: ElevatedButton.styleFrom(shadowColor: Colors.transparent, primary: Colors.transparent),
       ));
       options.add(ElevatedButton(
         onPressed: () {
@@ -382,42 +329,35 @@ class _MyHomePageState extends State<MyHomePage> {
           setState(() {});
         },
         child: Text(
-          AppLocalizations.of(context).logout.toUpperCase(),
+          OlukoLocalizations.of(context).find('logout').toUpperCase(),
           style: TextStyle(color: Colors.white),
         ),
-        style: ElevatedButton.styleFrom(
-            shadowColor: Colors.transparent, primary: Colors.transparent),
+        style: ElevatedButton.styleFrom(shadowColor: Colors.transparent, primary: Colors.transparent),
       ));
       options.add(ElevatedButton(
-        onPressed: () => Navigator.pushNamed(context, '/profile')
-            .then((value) => onGoBack()),
+        onPressed: () => Navigator.pushNamed(context, '/profile').then((value) => onGoBack()),
         child: Text(
-          AppLocalizations.of(context).profile.toUpperCase(),
+          OlukoLocalizations.of(context).find('profile').toUpperCase(),
           style: TextStyle(color: Colors.white),
         ),
-        style: ElevatedButton.styleFrom(
-            shadowColor: Colors.transparent, primary: Colors.transparent),
+        style: ElevatedButton.styleFrom(shadowColor: Colors.transparent, primary: Colors.transparent),
       ));
     } else {
       options.add(ElevatedButton(
-        onPressed: () => Navigator.pushNamed(context, '/sign-up')
-            .then((value) => onGoBack()),
+        onPressed: () => Navigator.pushNamed(context, '/sign-up').then((value) => onGoBack()),
         child: Text(
-          AppLocalizations.of(context).signUp.toUpperCase(),
+          OlukoLocalizations.of(context).find('signUp').toUpperCase(),
           style: TextStyle(color: Colors.white),
         ),
-        style: ElevatedButton.styleFrom(
-            shadowColor: Colors.transparent, primary: Colors.transparent),
+        style: ElevatedButton.styleFrom(shadowColor: Colors.transparent, primary: Colors.transparent),
       ));
       options.add(ElevatedButton(
-        onPressed: () =>
-            Navigator.pushNamed(context, '/log-in').then((value) => onGoBack()),
+        onPressed: () => Navigator.pushNamed(context, '/log-in').then((value) => onGoBack()),
         child: Text(
-          AppLocalizations.of(context).login.toUpperCase(),
+          OlukoLocalizations.of(context).find('login').toUpperCase(),
           style: TextStyle(color: Colors.white),
         ),
-        style: ElevatedButton.styleFrom(
-            shadowColor: Colors.transparent, primary: Colors.transparent),
+        style: ElevatedButton.styleFrom(shadowColor: Colors.transparent, primary: Colors.transparent),
       ));
     }
 
