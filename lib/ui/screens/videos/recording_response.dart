@@ -7,8 +7,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/blocs/video_bloc.dart';
-import 'package:oluko_app/models/video.dart';
+import 'package:oluko_app/blocs/video_info_bloc.dart';
+import 'package:oluko_app/models/video_info.dart';
 import 'package:oluko_app/ui/screens/videos/player_life_cycle.dart';
 import 'package:oluko_app/ui/screens/videos/aspect_ratio.dart';
 import 'package:oluko_app/ui/screens/videos/loading.dart';
@@ -18,14 +18,14 @@ typedef OnCameraCallBack = void Function();
 
 class RecordingResponse extends StatefulWidget {
   final User user;
-  final Video videoParent;
+  final VideoInfo parentVideoInfo;
   final CollectionReference parentVideoReference;
   final OnCameraCallBack onCamera;
 
   const RecordingResponse(
       {Key key,
       this.user,
-      @required this.videoParent,
+      @required this.parentVideoInfo,
       this.parentVideoReference,
       this.onCamera})
       : super(key: key);
@@ -49,6 +49,12 @@ class _RecordingResponseState extends State<RecordingResponse> {
   CameraController cameraController;
   bool _isReady = false;
   bool _recording = false;
+
+  //Timeline
+  static const duration = const Duration(seconds: 1);
+  int secondsPassed = 0;
+  bool isTimerActive = false;
+  Timer timer;
 
   @override
   void initState() {
@@ -81,6 +87,7 @@ class _RecordingResponseState extends State<RecordingResponse> {
 
   @override
   Widget build(BuildContext context) {
+    _startTimer();
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
@@ -98,7 +105,7 @@ class _RecordingResponseState extends State<RecordingResponse> {
                         child: Container(
                             height: MediaQuery.of(context).size.height,
                             child: NetworkPlayerLifeCycle(
-                              widget.videoParent.url,
+                              widget.parentVideoInfo.video.url,
                               (BuildContext context,
                                   VideoPlayerController controller) {
                                 this.controller = controller;
@@ -131,9 +138,11 @@ class _RecordingResponseState extends State<RecordingResponse> {
                                   await cameraController.stopVideoRecording();
                               setState(() {
                                 _recording = false;
+                                isTimerActive = false;
+                                print("El timer midio:  " + secondsPassed.toString());
                               });
                               File videoFile = File(videopath.path);
-                              BlocProvider.of<VideoBloc>(context)
+                              BlocProvider.of<VideoInfoBloc>(context)
                                 ..processVideo(widget.user, videoFile,
                                     widget.parentVideoReference, true,
                                     givenAspectRatio:
@@ -143,6 +152,7 @@ class _RecordingResponseState extends State<RecordingResponse> {
                               await cameraController.startVideoRecording();
                               setState(() {
                                 _recording = true;
+                                isTimerActive = true;
                               });
                             }
                           },
@@ -386,5 +396,17 @@ class _RecordingResponseState extends State<RecordingResponse> {
     return controller != null && controller.value.duration != null
         ? controller.value.duration.inMilliseconds.toDouble()
         : 100;
+  }
+
+  void _startTimer() {
+    if (timer == null) {
+      timer = Timer.periodic(duration, (Timer t) {
+        if (isTimerActive) {
+          setState(() {
+            secondsPassed = secondsPassed + 1;
+          });
+        }
+      });
+    }
   }
 }

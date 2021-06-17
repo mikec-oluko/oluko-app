@@ -1,3 +1,4 @@
+import 'package:chewie/chewie.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,6 +26,7 @@ class AsessmentVideos extends StatefulWidget {
 
 class _AsessmentVideosState extends State<AsessmentVideos> {
   final _formKey = GlobalKey<FormState>();
+  ChewieController _controller;
   SignUpResponse profileInfo;
 
   @override
@@ -82,7 +84,14 @@ class _AsessmentVideosState extends State<AsessmentVideos> {
                             ]),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 25),
-                              child: Container(child: OlukoVideoPlayer()),
+                              child: ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                      maxHeight:
+                                          MediaQuery.of(context).size.height /
+                                              4,
+                                      minWidth:
+                                          MediaQuery.of(context).size.width),
+                                  child: Stack(children: showVideoPlayer())),
                             ),
                             TitleBody(
                               'Complete the below tasks to get a coach assigned',
@@ -138,6 +147,19 @@ class _AsessmentVideosState extends State<AsessmentVideos> {
                             )
                           ])))
                 ]))));
+  }
+
+  List<Widget> showVideoPlayer() {
+    List<Widget> widgets = [];
+    widgets.add(OlukoVideoPlayer(
+        whenInitialized: (ChewieController chewieController) =>
+            this.setState(() {
+              _controller = chewieController;
+            })));
+    if (_controller == null) {
+      widgets.add(Center(child: CircularProgressIndicator()));
+    }
+    return widgets;
   }
 
   Widget formSection() {

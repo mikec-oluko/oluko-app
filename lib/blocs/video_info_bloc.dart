@@ -7,70 +7,127 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/helpers/encoding_provider.dart';
 import 'package:oluko_app/helpers/s3_provider.dart';
+import 'package:oluko_app/models/draw_point.dart';
 import 'package:oluko_app/models/video.dart';
-import 'package:oluko_app/repositories/video_repository.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+import 'package:oluko_app/models/video_info.dart';
+import 'package:oluko_app/repositories/video_info_repository.dart';
 
-abstract class VideoState {
-  final List<Video> videoList;
-  const VideoState({this.videoList});
+abstract class VideoInfoState {
+  final List<VideoInfo> videoInfoList;
+  final List<double> markerList;
+  const VideoInfoState({this.videoInfoList, this.markerList});
 }
 
-class Loading extends VideoState {}
+class Loading extends VideoInfoState {}
 
-class VideosSuccess extends VideoState {
-  final List<Video> videos;
+class VideoInfoSuccess extends VideoInfoState {
+  final List<VideoInfo> videosInfo;
 
-  const VideosSuccess({this.videos}) : super(videoList: videos);
+  const VideoInfoSuccess({this.videosInfo}) : super(videoInfoList: videosInfo);
 }
 
-class TakeVideoSuccess extends VideoState {
+class MarkersSuccess extends VideoInfoState {
+  final List<double> markers;
+
+  const MarkersSuccess({this.markers}) : super(markerList: markers);
+}
+
+class DrawingSuccess extends VideoInfoState {}
+
+class TakeVideoSuccess extends VideoInfoState {
   final String processPhase;
   final double progress;
-  const TakeVideoSuccess({this.processPhase, this.progress});
+  TakeVideoSuccess({this.processPhase, this.progress});
 }
 
-class Failure extends VideoState {
+class Failure extends VideoInfoState {
   final Exception exception;
 
   Failure({this.exception});
 }
 
-class VideoBloc extends Cubit<VideoState> {
-  VideoBloc() : super(Loading());
+class VideoInfoBloc extends Cubit<VideoInfoState> {
+  VideoInfoBloc() : super(Loading());
 
-  List<Video> _videoList = [];
   bool _imagePickerActive = false;
   double _unitOfProgress = 0.19;
   String _processPhase = '';
   double _progress = 0.0;
 
-  void getVideos(User user, CollectionReference parentVideoReference) async {
-    if (!(state is VideosSuccess)) {
+  List<VideoInfo> _videoInfoList = [];
+  List<double> _markerList = [];
+
+  void addMarkerToVideoInfo(
+      double position, DocumentReference reference) async {
+    /*if (!(state is MarkersSuccess)) {
+      emit(Loading());
+    }*/
+    try {
+      double newMarker =
+          await VideoInfoRepository.addMarkerToVideoInfo(position, reference);
+      _markerList.insert(0, newMarker);
+      //emit(MarkersSuccess(markers: _markerList));
+    } catch (e) {
+      print(e.toString());
+      //emit(Failure(exception: e));
+    }
+  }
+
+  void addDrawingToVideoInfo(List<DrawPoint> canvasPointsRecording,
+      DocumentReference reference) async {
+    /*if (!(state is DrawingSuccess)) {
+      emit(Loading());
+    }*/
+    try {
+      await VideoInfoRepository.addDrawingToVideoInfo(
+          canvasPointsRecording, reference);
+      //emit(DrawingSuccess());
+    } catch (e) {
+      print(e.toString());
+      //emit(Failure(exception: e));
+    }
+  }
+
+  void getVideosInfo(User user, CollectionReference parent) async {
+    if (!(state is VideoInfoSuccess)) {
       emit(Loading());
     }
     try {
-      _videoList =
-          await VideoRepository.getVideosByUser(user.uid, parentVideoReference);
-      emit(VideosSuccess(videos: _videoList));
+      _videoInfoList =
+          await VideoInfoRepository.getVideosInfoByUser(user.uid, parent);
+      emit(VideoInfoSuccess(videosInfo: _videoInfoList));
     } catch (e) {
       print(e.toString());
       emit(Failure(exception: e));
     }
   }
 
-  void createVideo(Video video, CollectionReference reference, bool addToList) {
-    if (!(state is VideosSuccess)) {
+  void createVideoInfo(CollectionReference reference, User user, bool addToList,
+      {Video video, int duration}) {
+    if (!(state is VideoInfoSuccess)) {
       emit(Loading());
     }
     try {
-      Video newVideo = VideoRepository.createVideo(video, reference);
-      if (addToList) {
-        _videoList.insert(0, newVideo);
+      VideoInfo newVideoInfo = VideoInfo(
+          creationDate: DateTime.now(),
+          createdBy: user.uid,
+          markers: [],
+          events: [],
+          drawing: []);
+      if (duration != null) {
+        newVideoInfo.duration = duration;
       }
-
-      emit(VideosSuccess(videos: _videoList));
+      if (video != null) {
+        newVideoInfo.video = video;
+      }
+      newVideoInfo =
+          VideoInfoRepository.createVideoInfo(newVideoInfo, reference);
+      if (addToList) {
+        _videoInfoList.insert(0, newVideoInfo);
+      }
+      emit(VideoInfoSuccess(videosInfo: _videoInfoList));
     } catch (e) {
       emit(Failure(exception: e));
     }
@@ -146,14 +203,11 @@ class VideoBloc extends Cubit<VideoState> {
     final video = Video(
       url: videoUrl,
       thumbUrl: thumbUrl,
-      coverUrl: thumbUrl,
-      createdBy: user.uid,
       aspectRatio: aspectRatio,
-      uploadedAt: DateTime.now().millisecondsSinceEpoch,
       name: videoName,
     );
 
-    createVideo(video, reference, addToList);
+    createVideoInfo(reference, user, addToList, video: video);
   }
 
   Future<String> _uploadHLSFiles(dirPath, videoName) async {

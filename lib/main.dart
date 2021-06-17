@@ -14,10 +14,10 @@ import 'package:oluko_app/ui/screens/self_recording_preview.dart';
 import 'package:oluko_app/ui/screens/sign_up_with_email.dart';
 import 'package:oluko_app/ui/screens/sign_up.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:oluko_app/ui/screens/task_details.dart';
 import 'package:oluko_app/ui/screens/videos/home.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:oluko_app/utils/OlukoLocalizations.dart';
 import 'config/project_settings.dart';
 import 'models/task.dart';
 
@@ -50,20 +50,13 @@ class _MyAppState extends State<MyApp> {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) =>
-            BlocProvider.value(value: _authBloc, child: MyHomePage(title: '')),
-        '/sign-up': (context) =>
-            BlocProvider.value(value: _authBloc, child: SignUpPage()),
-        '/sign-up-with-email': (context) =>
-            BlocProvider.value(value: _authBloc, child: SignUpWithMailPage()),
-        '/profile': (context) =>
-            BlocProvider.value(value: _authBloc, child: ProfilePage()),
-        '/log-in': (context) =>
-            BlocProvider.value(value: _authBloc, child: LoginPage()),
-        '/app-plans': (context) =>
-            BlocProvider.value(value: _authBloc, child: AppPlans()),
-        '/assessment-videos': (context) =>
-            BlocProvider.value(value: _authBloc, child: AsessmentVideos()),
+        '/': (context) => BlocProvider.value(value: _authBloc, child: MyHomePage(title: '')),
+        '/sign-up': (context) => BlocProvider.value(value: _authBloc, child: SignUpPage()),
+        '/sign-up-with-email': (context) => BlocProvider.value(value: _authBloc, child: SignUpWithMailPage()),
+        '/profile': (context) => BlocProvider.value(value: _authBloc, child: ProfilePage()),
+        '/log-in': (context) => BlocProvider.value(value: _authBloc, child: LoginPage()),
+        '/app-plans': (context) => BlocProvider.value(value: _authBloc, child: AppPlans()),
+        '/assessment-videos': (context) => BlocProvider.value(value: _authBloc, child: AsessmentVideos()),
         '/task-details': (context) => BlocProvider.value(
             value: _authBloc,
             child: TaskDetails(
@@ -74,19 +67,18 @@ class _MyAppState extends State<MyApp> {
             child: SelfRecordingPreview(
               task: Task(description: 'Task Description', name: 'Task 1'),
             )),
-        '/choose-plan-payment': (context) =>
-            BlocProvider.value(value: _authBloc, child: ChoosePlayPayments()),
+        '/choose-plan-payment': (context) => BlocProvider.value(value: _authBloc, child: ChoosePlayPayments()),
         '/videos': (context) => BlocProvider.value(
             value: _authBloc,
             child: Home(
               title: "Videos",
-              videoParent: null,
+              parentVideoInfo: null,
               parentVideoReference:
-                  FirebaseFirestore.instance.collection("videos"),
+                  FirebaseFirestore.instance.collection("videosInfo"),
             ))
       },
       localizationsDelegates: [
-        AppLocalizations.delegate,
+        const OlukoLocalizationsDelegate(),
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
