@@ -8,7 +8,7 @@ import 'package:oluko_app/models/info_dialog.dart';
 import 'package:oluko_app/models/plan.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/ui/components/subscription_card.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:oluko_app/utils/OlukoLocalizations.dart';
 
 class ChoosePlayPayments extends StatefulWidget {
   ChoosePlayPayments({Key key}) : super(key: key);
@@ -40,21 +40,14 @@ class _ChoosePlayPaymentsState extends State<ChoosePlayPayments> {
                       padding: EdgeInsets.symmetric(horizontal: 15),
                       child: Container(
                           width: MediaQuery.of(context).size.width,
-                          child: Column(children: [
-                            SizedBox(height: 20),
-                            SizedBox(height: 20),
-                            titleSection(),
-                            SizedBox(height: 20),
-                            formSection()
-                          ])))
+                          child: Column(children: [SizedBox(height: 20), SizedBox(height: 20), titleSection(), SizedBox(height: 20), formSection()])))
                 ]))));
   }
 
   Widget formSection() {
     return Container(
         width: MediaQuery.of(context).size.width,
-        child:
-            Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+        child: Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
           BlocBuilder<PlanBloc, PlanState>(builder: (context, state) {
             return Column(children: formFields(state));
           }),
@@ -70,10 +63,7 @@ class _ChoosePlayPaymentsState extends State<ChoosePlayPayments> {
               Text(
                 'Summary',
                 textAlign: TextAlign.start,
-                style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
+                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
               ),
             ],
           ),
@@ -87,9 +77,8 @@ class _ChoosePlayPaymentsState extends State<ChoosePlayPayments> {
           children: [
             showSubscriptionCard(state.plans[1]),
             Container(
-              decoration: BoxDecoration(
-                  border: Border.all(color: OlukoColors.primary, width: 1),
-                  borderRadius: BorderRadius.all(Radius.circular(10))),
+              decoration:
+                  BoxDecoration(border: Border.all(color: OlukoColors.primary, width: 1), borderRadius: BorderRadius.all(Radius.circular(10))),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: TextFormField(
@@ -106,13 +95,13 @@ class _ChoosePlayPaymentsState extends State<ChoosePlayPayments> {
                       focusColor: Colors.white,
                       filled: false,
                       hintStyle: new TextStyle(color: Colors.grey[800]),
-                      hintText: AppLocalizations.of(context).emailExample,
+                      hintText: OlukoLocalizations.of(context).find('emailExample'),
                       fillColor: Colors.white70,
-                      labelText: AppLocalizations.of(context).email,
+                      labelText: OlukoLocalizations.of(context).find('email'),
                       labelStyle: new TextStyle(color: OlukoColors.primary)),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return AppLocalizations.of(context).required;
+                      return OlukoLocalizations.of(context).find('required');
                     }
                     return null;
                   },
@@ -128,8 +117,7 @@ class _ChoosePlayPaymentsState extends State<ChoosePlayPayments> {
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton(
-                    style:
-                        ElevatedButton.styleFrom(primary: OlukoColors.primary),
+                    style: ElevatedButton.styleFrom(primary: OlukoColors.primary),
                     onPressed: () {},
                     child: Stack(children: [
                       Align(
@@ -156,9 +144,7 @@ class _ChoosePlayPaymentsState extends State<ChoosePlayPayments> {
                   Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: Container(
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(10))),
+                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(10))),
                       child: Padding(
                         padding: const EdgeInsets.all(15.0),
                         child: Column(
@@ -188,10 +174,7 @@ class _ChoosePlayPaymentsState extends State<ChoosePlayPayments> {
                       child: Align(
                         alignment: Alignment.topRight,
                         child: Container(
-                          decoration: BoxDecoration(
-                              boxShadow: [BoxShadow(blurRadius: 5)],
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(15))),
+                          decoration: BoxDecoration(boxShadow: [BoxShadow(blurRadius: 5)], borderRadius: BorderRadius.all(Radius.circular(15))),
                           child: CircleAvatar(
                             radius: 14.0,
                             backgroundColor: Colors.white,
@@ -208,21 +191,14 @@ class _ChoosePlayPaymentsState extends State<ChoosePlayPayments> {
 
   SubscriptionCard showSubscriptionCard(Plan plan) {
     SubscriptionCard subscriptionCard = SubscriptionCard();
-    subscriptionCard.priceLabel =
-        '\$${plan.price}/${durationLabel[plan.duration].toLowerCase()}';
-    subscriptionCard.priceSubtitle = plan.recurrent
-        ? 'Renews every ${durationLabel[plan.duration].toLowerCase()}'
-        : '';
+    subscriptionCard.priceLabel = '\$${plan.price}/${durationLabel[plan.duration].toLowerCase()}';
+    subscriptionCard.priceSubtitle = plan.recurrent ? 'Renews every ${durationLabel[plan.duration].toLowerCase()}' : '';
     subscriptionCard.title = plan.title;
-    subscriptionCard.subtitles = plan.features
-        .map((PlanFeature feature) => EnumHelper.enumToString(feature))
-        .toList();
+    subscriptionCard.subtitles = plan.features.map((PlanFeature feature) => EnumHelper.enumToString(feature)).toList();
     subscriptionCard.selected = false;
     subscriptionCard.showHint = plan.infoDialog != null;
     subscriptionCard.backgroundImage = plan.backgroundImage;
-    subscriptionCard.onHintPressed = plan.infoDialog != null
-        ? () => showWaitlist(context, plan.infoDialog)
-        : null;
+    subscriptionCard.onHintPressed = plan.infoDialog != null ? () => showWaitlist(context, plan.infoDialog) : null;
     return subscriptionCard;
   }
 }
