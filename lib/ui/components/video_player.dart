@@ -1,9 +1,6 @@
 import 'package:chewie/chewie.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:oluko_app/ui/screens/videos/aspect_ratio.dart';
-import 'package:oluko_app/ui/screens/videos/player_life_cycle.dart';
-import 'package:oluko_app/ui/screens/videos/video_play_pause.dart';
 import 'package:video_player/video_player.dart';
 
 class OlukoVideoPlayer extends StatefulWidget {
