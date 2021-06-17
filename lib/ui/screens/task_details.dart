@@ -52,7 +52,8 @@ class _TaskDetailsState extends State<TaskDetails> {
                               constraints: BoxConstraints(
                                   maxHeight:
                                       MediaQuery.of(context).size.height / 4,
-                                  minWidth: MediaQuery.of(context).size.width),
+                                  minWidth: MediaQuery.of(context).size.width,
+                                  maxWidth: MediaQuery.of(context).size.width),
                               child: Stack(children: showVideoPlayer())),
                           BlocBuilder<TaskBloc, TaskState>(
                               builder: (context, state) {
@@ -67,7 +68,7 @@ class _TaskDetailsState extends State<TaskDetails> {
     List<Widget> widgets = [];
     widgets.add(OlukoVideoPlayer(
         videoUrl:
-            'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/production%20ID_4701508.mp4?alt=media&token=815819a5-72f9-4bec-bee0-59064c634c03',
+            'https://oluko-mvt.s3.us-west-1.amazonaws.com/tasks/8e9547b516b045b9be4fca1af637668b/8e9547b516b045b9be4fca1af637668b.MOV',
         whenInitialized: (ChewieController chewieController) =>
             this.setState(() {
               _controller = chewieController;
@@ -92,11 +93,14 @@ class _TaskDetailsState extends State<TaskDetails> {
                 children: [
                   OlukoPrimaryButton(
                     title: 'Start Recording',
-                    onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                SelfRecording(task: widget.task))),
+                    onPressed: () {
+                      _controller.pause();
+                      return Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  SelfRecording(task: widget.task)));
+                    },
                   ),
                 ],
               ),

@@ -120,14 +120,16 @@ class _AsessmentVideosState extends State<AsessmentVideos> {
                                                         vertical: 15.0),
                                                 child: TaskCard(
                                                   task: task,
-                                                  onPressed: () =>
-                                                      Navigator.push(context,
-                                                          MaterialPageRoute(
-                                                              builder:
-                                                                  (context) {
-                                                    return TaskDetails(
-                                                        task: task);
-                                                  })),
+                                                  onPressed: () {
+                                                    _controller.pause();
+                                                    return Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                            builder: (context) {
+                                                      return TaskDetails(
+                                                          task: task);
+                                                    }));
+                                                  },
                                                 ));
                                           })
                                       : Padding(
