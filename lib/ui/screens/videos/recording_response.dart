@@ -47,7 +47,6 @@ class _RecordingResponseState extends State<RecordingResponse> {
 
   //stopwatch
   final StopWatchTimer _stopWatchTimer = StopWatchTimer();
-  final _isHours = true;
 
   @override
   void initState() {
@@ -57,11 +56,7 @@ class _RecordingResponseState extends State<RecordingResponse> {
     _controller = VideoPlayerController.network(
       widget.parentVideoInfo.video.url,
     );
-
-    // Initialize the controller and store the Future for later use.
     _initializeVideoPlayerFuture = _controller.initialize();
-
-    // Use the controller to loop the video.
     _controller.setLooping(true);
   }
 
@@ -144,8 +139,6 @@ class _RecordingResponseState extends State<RecordingResponse> {
                           XFile videopath =
                               await cameraController.stopVideoRecording();
                           _stopWatchTimer.onExecute.add(StopWatchExecute.stop);
-                          //print("El timer midio:  " +
-                          //millisecondsPassed.toString());
                           setState(() {
                             _recording = false;
                           });
@@ -237,7 +230,7 @@ class _RecordingResponseState extends State<RecordingResponse> {
                                               ? Icons.pause
                                               : Icons.play_arrow,
                                         ),
-                                        onPressed: () {
+                                        onPressed: () async {
                                           _stopWatchTimer.onExecute
                                               .add(StopWatchExecute.lap);
                                           EventType eventType;
@@ -247,14 +240,15 @@ class _RecordingResponseState extends State<RecordingResponse> {
                                               records[records.length - 1];
                                           int milliseconds =
                                               lastRecord.rawValue;
-                                          setState(() async {
-                                            if (_controller.value.isPlaying) {
-                                              await _controller.pause();
-                                              eventType = EventType.pause;
-                                            } else {
-                                              await _controller.play();
-                                              eventType = EventType.play;
-                                            }
+
+                                          if (_controller.value.isPlaying) {
+                                            await _controller.pause();
+                                            eventType = EventType.pause;
+                                          } else {
+                                            await _controller.play();
+                                            eventType = EventType.play;
+                                          }
+                                          setState(() {
                                             this.videoEvents.add(Event(
                                                 eventType: eventType,
                                                 position: milliseconds));
