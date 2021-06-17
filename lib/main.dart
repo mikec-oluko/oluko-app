@@ -14,7 +14,6 @@ import 'package:oluko_app/ui/screens/self_recording_preview.dart';
 import 'package:oluko_app/ui/screens/sign_up_with_email.dart';
 import 'package:oluko_app/ui/screens/sign_up.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:oluko_app/ui/screens/task_details.dart';
 import 'package:oluko_app/ui/screens/videos/home.dart';
 import 'package:global_configuration/global_configuration.dart';

@@ -8,7 +8,6 @@ import 'package:oluko_app/models/info_dialog.dart';
 import 'package:oluko_app/models/plan.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/ui/components/subscription_card.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:oluko_app/utils/OlukoLocalizations.dart';
 
 class ChoosePlayPayments extends StatefulWidget {

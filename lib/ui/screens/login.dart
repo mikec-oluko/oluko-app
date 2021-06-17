@@ -9,7 +9,6 @@ import 'package:oluko_app/ui/peek_password.dart';
 import 'package:oluko_app/utils/OlukoLocalizations.dart';
 import 'package:oluko_app/utils/app_loader.dart';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);

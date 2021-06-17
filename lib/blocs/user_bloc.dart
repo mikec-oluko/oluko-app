@@ -9,7 +9,6 @@ import 'package:oluko_app/utils/OlukoLocalizations.dart';
 import 'package:oluko_app/utils/app_loader.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 abstract class UserState {}
 
