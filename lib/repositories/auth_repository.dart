@@ -27,9 +27,10 @@ class AuthRepository {
   }
 
   Future<ApiResponse> login(LoginRequest loginRequest) async {
-    var body2 = loginRequest.toJson();
+    var body = loginRequest.toJson();
+    body.removeWhere((key, value) => value == null);
     Response response =
-        await http.post(Uri.parse("$url/auth/login"), body: body2);
+        await http.post(Uri.parse("$url/auth/login"), body: body);
     var signUpResponseBody = jsonDecode(response.body);
     if (signUpResponseBody['message'] is String) {
       List<String> messageList = [signUpResponseBody['message'].toString()];

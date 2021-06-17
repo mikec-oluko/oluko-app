@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/models/video.dart';
+import 'package:oluko_app/models/video_info.dart';
 import 'package:oluko_app/ui/screens/videos/player_life_cycle.dart';
 import 'package:oluko_app/ui/screens/videos/aspect_ratio.dart';
 import 'package:oluko_app/ui/screens/videos/loading.dart';
@@ -11,10 +12,10 @@ import 'package:video_player/video_player.dart';
 typedef OnCameraCallBack = void Function();
 
 class PlayerSingle extends StatefulWidget {
-  final Video video;
+  final VideoInfo videoInfo;
   final OnCameraCallBack onCamera;
 
-  const PlayerSingle({Key key, @required this.video, this.onCamera})
+  const PlayerSingle({Key key, @required this.videoInfo, this.onCamera})
       : super(key: key);
 
   @override
@@ -63,7 +64,7 @@ class _PlayerSingleState extends State<PlayerSingle> {
                         child: Container(
                             height: MediaQuery.of(context).size.height,
                             child: NetworkPlayerLifeCycle(
-                              widget.video.url,
+                              widget.videoInfo.video.url,
                               (BuildContext context,
                                   VideoPlayerController controller) {
                                 this.controller = controller;

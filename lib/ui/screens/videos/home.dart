@@ -3,25 +3,26 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_ffmpeg/statistics.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
-import 'package:oluko_app/blocs/video_bloc.dart';
+import 'package:oluko_app/blocs/video_info_bloc.dart';
+import 'package:oluko_app/models/video.dart';
+import 'package:oluko_app/models/video_info.dart';
 import 'package:oluko_app/ui/screens/videos/player_response.dart';
 import 'package:oluko_app/ui/screens/videos/player_single.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/ui/screens/videos/recording_response.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:oluko_app/helpers/encoding_provider.dart';
-import 'package:oluko_app/models/video.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
-  Home({Key key, this.title, this.videoParent, this.parentVideoReference})
+  Home({Key key, this.title, this.parentVideoInfo, this.parentVideoReference})
       : super(key: key);
 
   String title;
-  Video videoParent;
+  VideoInfo parentVideoInfo;
   CollectionReference parentVideoReference;
 
   @override
@@ -29,9 +30,9 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  VideoBloc _videoBloc;
+  VideoInfoBloc _videoInfoBloc;
 
-  List<Video> _videos = <Video>[];
+  List<VideoInfo> _videosInfo = <VideoInfo>[];
   User user;
 
   @override
@@ -41,18 +42,18 @@ class _HomeState extends State<Home> {
       if (state is AuthSuccess) {
         this.user = state.firebaseUser;
         return BlocProvider(
-            create: (context) =>
-                _videoBloc..getVideos(this.user, widget.parentVideoReference),
+            create: (context) => _videoInfoBloc
+              ..getVideosInfo(this.user, widget.parentVideoReference),
             child: Scaffold(
                 appBar: AppBar(
                   title: Text(widget.title),
                 ),
-                body: Center(child: BlocBuilder<VideoBloc, VideoState>(
+                body: Center(child: BlocBuilder<VideoInfoBloc, VideoInfoState>(
                     builder: (context, state) {
                   if (state is TakeVideoSuccess) {
                     return _getProgressBar(state.processPhase, state.progress);
-                  } else if (state is VideosSuccess) {
-                    return _getListView(state.videos);
+                  } else if (state is VideoInfoSuccess) {
+                    return _getListView(state.videosInfo);
                   } else {
                     return Text(
                       'LOADING...',
@@ -73,8 +74,8 @@ class _HomeState extends State<Home> {
                               :*/
                         Icon(Icons.camera),
                     onPressed: () async {
-                      if (widget.videoParent == null) {
-                        _videoBloc
+                      if (widget.parentVideoInfo == null) {
+                        _videoInfoBloc
                           ..takeVideo(user, ImageSource.camera,
                               widget.parentVideoReference, true);
                       } else {
@@ -82,19 +83,19 @@ class _HomeState extends State<Home> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => BlocProvider.value(
-                                value: _videoBloc,
+                                value: _videoInfoBloc,
                                 child: RecordingResponse(
                                   user: user,
                                   parentVideoReference:
                                       widget.parentVideoReference,
-                                  videoParent: widget.videoParent,
-                                  onCamera: () => _videoBloc
+                                  parentVideoInfo: widget.parentVideoInfo,
+                                  onCamera: () => _videoInfoBloc
                                     ..takeVideo(
                                         user,
                                         ImageSource.camera,
                                         widget.parentVideoReference
-                                            .doc(widget.videoParent.id)
-                                            .collection('videoResponses'),
+                                            .doc(widget.parentVideoInfo.id)
+                                            .collection('videosInfo'),
                                         true),
                                 )),
                           ),
@@ -115,28 +116,28 @@ class _HomeState extends State<Home> {
       listenToEncodingProviderProgress();
     }
     super.initState();
-    _videoBloc = VideoBloc();
+    _videoInfoBloc = VideoInfoBloc();
   }
 
   void listenToEncodingProviderProgress() {
-    EncodingProvider.enableStatisticsCallback((Statistics stats) {
-    });
+    EncodingProvider.enableStatisticsCallback((Statistics stats) {});
   }
 
-  _getListView(List<Video> videos) {
-    _videos = videos;
+  _getListView(List<VideoInfo> videosInfo) {
+    _videosInfo = videosInfo;
     return ListView.builder(
         padding: const EdgeInsets.all(8),
-        itemCount: _videos.length,
+        itemCount: _videosInfo.length,
         itemBuilder: (BuildContext context, int index) {
-          final video = _videos[index];
+          VideoInfo videoInfo = _videosInfo[index];
+          Video video = videoInfo.video;
           return GestureDetector(
             onTap: () async {
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) {
-                    return _player(context, video);
+                    return _player(context, videoInfo);
                   },
                 ),
               );
@@ -178,19 +179,18 @@ class _HomeState extends State<Home> {
                                     Container(
                                       margin: new EdgeInsets.only(top: 12.0),
                                       child: Text(
-                                          'Uploaded ${timeago.format(new DateTime.fromMillisecondsSinceEpoch(video.uploadedAt))}'),
+                                          'Uploaded ${timeago.format(videoInfo.creationDate)}'),
                                     ),
                                     ElevatedButton(
                                         onPressed: () => Navigator.pushNamed(
                                                 context, '/videos',
                                                 arguments: {
                                                   'title': 'Responses',
-                                                  'videoParent': video,
+                                                  'parentVideoInfo': videoInfo,
                                                   'parentVideoReference': widget
                                                       .parentVideoReference
-                                                      .doc(video.id)
-                                                      .collection(
-                                                          'videoResponses'),
+                                                      .doc(videoInfo.id)
+                                                      .collection('videosInfo'),
                                                 }),
                                         child: Text("View responses"))
                                   ],
@@ -207,32 +207,34 @@ class _HomeState extends State<Home> {
         });
   }
 
-  _player(BuildContext context, Video video) {
-    if (widget.videoParent == null) {
+  _player(BuildContext context, VideoInfo videoInfo) {
+    if (widget.parentVideoInfo == null) {
       return PlayerSingle(
-          video: video,
-          onCamera: () => _videoBloc
+          videoInfo: videoInfo,
+          onCamera: () => _videoInfoBloc
             ..takeVideo(
                 user,
                 ImageSource.camera,
                 widget.parentVideoReference
-                    .doc(video.id)
-                    .collection('videoResponses'),
+                    .doc(videoInfo.id)
+                    .collection('videosInfo'),
                 false));
     } else {
-      return PlayerResponse(
-        videoReference: widget.parentVideoReference.doc(video.id),
-        videoParent: widget.videoParent,
-        video: video,
-        onCamera: () => _videoBloc
-          ..takeVideo(
-              user,
-              ImageSource.camera,
-              widget.parentVideoReference
-                  .doc(video.id)
-                  .collection('videoResponses'),
-              false),
-      );
+      return BlocProvider.value(
+          value: _videoInfoBloc,
+          child: PlayerResponse(
+            videoReference: widget.parentVideoReference.doc(videoInfo.id),
+            parentVideoInfo: widget.parentVideoInfo,
+            videoInfo: videoInfo,
+            onCamera: () => _videoInfoBloc
+              ..takeVideo(
+                  user,
+                  ImageSource.camera,
+                  widget.parentVideoReference
+                      .doc(videoInfo.id)
+                      .collection('videosInfo'),
+                  false),
+          ));
     }
   }
 
@@ -264,8 +266,8 @@ class _HomeState extends State<Home> {
     if (args['title'] != null) {
       widget.title = args['title'];
     }
-    if (args['videoParent'] != null) {
-      widget.videoParent = args['videoParent'];
+    if (args['parentVideoInfo'] != null) {
+      widget.parentVideoInfo = args['parentVideoInfo'];
     }
     if (args['parentVideoReference'] != null) {
       widget.parentVideoReference = args['parentVideoReference'];
