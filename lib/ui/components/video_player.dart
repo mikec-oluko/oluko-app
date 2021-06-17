@@ -9,7 +9,7 @@ class OlukoVideoPlayer extends StatefulWidget {
   OlukoVideoPlayer(
       {this.videoUrl =
           //TODO: update me harcoded
-          'https://oluko-mvt.s3.us-west-1.amazonaws.com/assessments/85b2f81c1fe74f9cb5e804c57db30137/85b2f81c1fe74f9cb5e804c57db30137.mov',
+          'https://oluko-mvt.s3.us-west-1.amazonaws.com/assessments/85b2f81c1fe74f9cb5e804c57db30137/85b2f81c1fe74f9cb5e804c57db30137_2.mp4',
       Key key})
       : super(key: key);
 
