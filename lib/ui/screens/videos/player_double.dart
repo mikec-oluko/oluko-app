@@ -1,17 +1,15 @@
 import 'dart:async';
-import 'dart:io';
 
-import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/blocs/video_info_bloc.dart';
+import 'package:oluko_app/models/draw_point.dart';
 import 'package:oluko_app/models/event.dart';
-import 'package:oluko_app/models/video.dart';
 import 'package:oluko_app/models/video_info.dart';
 import 'package:video_player/video_player.dart';
+
+import 'draw.dart';
 
 typedef OnCameraCallBack = void Function();
 
@@ -36,6 +34,17 @@ class PlayerDouble extends StatefulWidget {
 }
 
 class _PlayerDoubleState extends State<PlayerDouble> {
+  //Drawing variables
+  final canvasKey = GlobalKey<DrawState>();
+  bool openCanvas = false;
+  Draw canvasInstance;
+  List<DrawingPoints> canvasPoints = [];
+  List<DrawPoint> canvasPointsRecording = [];
+  Timer playbackTimer;
+  bool isFirstRecording = true;
+  num listeners = 0;
+  bool canvasListenerRunning = true;
+
   //video
   VideoPlayerController _parentVideoController;
   Future<void> _initializeParentVideoPlayerFuture;
@@ -53,6 +62,11 @@ class _PlayerDoubleState extends State<PlayerDouble> {
     initializeVideos();
     _videoController.addListener(performEvents);
     super.initState();
+
+    if (widget.videoInfo.drawing.length > 0) {
+      this.canvasPointsRecording = widget.videoInfo.drawing;
+      this.isFirstRecording = false;
+    }
   }
 
   void performEvents() {
@@ -70,8 +84,11 @@ class _PlayerDoubleState extends State<PlayerDouble> {
         controllerPos <= 500) {
       setState(() {
         index = 0;
+        //this.canvasKey.currentState.setPoints([]);
       });
       _parentVideoController.seekTo(Duration.zero);
+      clearPlaybackTimer();
+      playBackCanvas();//ARREGLAR: A LA TERCERA VUELTA NO ANDA
     }
     /*else if (scrub) {
       Event event = findLastEvent(events, controllerPos);
@@ -140,6 +157,11 @@ class _PlayerDoubleState extends State<PlayerDouble> {
   void dispose() {
     _parentVideoController.dispose();
     _videoController.dispose();
+
+    if (playbackTimer != null) {
+      playbackTimer.cancel();
+    }
+
     super.dispose();
   }
 
@@ -196,6 +218,7 @@ class _PlayerDoubleState extends State<PlayerDouble> {
                     ),
                   ),
                 ),
+                Opacity(opacity: 1, child: setCanvas())
               ])),
           Container(
             padding: EdgeInsets.all(16.0),
@@ -262,8 +285,10 @@ class _PlayerDoubleState extends State<PlayerDouble> {
                                           videoPlaying = false;
                                         });
                                         await _parentVideoController.pause();
+                                        clearPlaybackTimer();
                                       } else {
                                         await _videoController.play();
+                                        playBackCanvas();
                                         setState(() {
                                           videoPlaying = true;
                                         });
@@ -313,4 +338,108 @@ class _PlayerDoubleState extends State<PlayerDouble> {
         colors:
             VideoProgressColors(playedColor: Color.fromRGBO(255, 100, 0, 0.7)),
       );
+
+  //DRAWING FUNCTIONS
+  controllerCanvasListener() {
+    if (this._videoController.value.position == null ||
+        canvasListenerRunning == false) return;
+    DrawPoint canvasObj = DrawPoint(
+        point: this.canvasPoints[this.canvasPoints.length - 1],
+        timeStamp: this._videoController.value.position.inMilliseconds);
+    canvasPointsRecording.add(canvasObj);
+  }
+
+  playBackCanvas() async {
+    this.canvasListenerRunning = false;
+
+    List<DrawPoint> drawingsUntilTimeStamp = getDrawingsUntilTimestamp(
+        this._videoController.value.position.inMilliseconds,
+        List.from(this.canvasPointsRecording));
+    List<DrawPoint> drawingsAfterTimeStamp = getDrawingsAfterTimestamp(
+        this._videoController.value.position.inMilliseconds,
+        List.from(this.canvasPointsRecording));
+
+    List<DrawingPoints> pointsToSet = [];
+    if (_videoController != null &&
+        _videoController.value.position.inMilliseconds == 0) {
+      pointsToSet = [];
+    } else {
+      pointsToSet = drawingsUntilTimeStamp.map((e) => e.point).toList();
+    }
+
+    this.canvasKey.currentState.setPoints(pointsToSet);
+    List<DrawPoint> recPoints = drawingsAfterTimeStamp;
+
+    this.playbackTimer =
+        Timer.periodic(new Duration(milliseconds: 10), (timer) {
+      if (recPoints.length == 0) {
+        return;
+      }
+      bool isAheadOfTime = recPoints[0].timeStamp >
+          this._videoController.value.position.inMilliseconds;
+      if (isAheadOfTime) {
+        return;
+      }
+      DrawPoint recPointToSend = recPoints.removeAt(0);
+
+      this.canvasKey.currentState.addPoints(recPointToSend.point);
+    });
+  }
+
+  List<DrawPoint> getPointsUntilTimestamp(
+      num timeStamp, List<DrawPoint> canvasPoints) {
+    for (var i = 0; i < canvasPoints.length; i++) {
+      if (canvasPoints[i].timeStamp > timeStamp) {
+        return canvasPoints.getRange(0, i).toList();
+      }
+    }
+    return [];
+  }
+
+  List<DrawPoint> getDrawingsUntilTimestamp(
+      num timeStamp, List<DrawPoint> canvasPoints) {
+    if (this.canvasKey.currentState.points.length == 0) {
+      return [];
+    }
+    for (var i = 0; i < canvasPoints.length; i++) {
+      if (this.canvasKey.currentState.points.last == canvasPoints[i].point) {
+        return canvasPoints.getRange(0, i).toList();
+      }
+    }
+    return canvasPoints;
+  }
+
+  List<DrawPoint> getDrawingsAfterTimestamp(
+      num timeStamp, List<DrawPoint> canvasPoints) {
+    if (this.canvasKey.currentState.points.length == 0) {
+      return canvasPoints;
+    }
+    for (var i = 0; i < canvasPoints.length; i++) {
+      if (this.canvasKey.currentState.points.last == canvasPoints[i].point) {
+        return canvasPoints.getRange(i, canvasPoints.length - 1).toList();
+      }
+    }
+    return canvasPoints;
+  }
+
+  clearPlaybackTimer() {
+    if (this.playbackTimer != null) {
+      this.playbackTimer.cancel();
+      this.playbackTimer = null;
+    }
+  }
+
+  setCanvas() {
+    canvasInstance = Draw(
+      key: canvasKey,
+      onChanges: (DrawingPoints point) {
+        if (canvasListenerRunning == true) {
+          this.canvasPoints.add(point);
+          controllerCanvasListener();
+        }
+      },
+      onClose: () => setState(() => openCanvas = false),
+    );
+    return canvasInstance;
+  }
 }
