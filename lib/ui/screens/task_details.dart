@@ -113,7 +113,7 @@ class _TaskDetailsState extends State<TaskDetails> {
   }
 
   Widget formFields(TaskState state) {
-    if (state is Success) {
+    if (state is TaskSuccess) {
       return Column(
         children: [
           Padding(

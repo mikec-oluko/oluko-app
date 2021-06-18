@@ -2,6 +2,7 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/plan_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -101,7 +102,7 @@ class _AsessmentVideosState extends State<AsessmentVideos> {
                               children: [
                                 BlocBuilder<TaskBloc, TaskState>(
                                     builder: (context, state) {
-                                  return state is Success
+                                  return state is TaskSuccess
                                       ? ListView.builder(
                                           physics:
                                               const NeverScrollableScrollPhysics(),

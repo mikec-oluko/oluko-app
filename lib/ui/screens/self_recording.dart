@@ -111,7 +111,7 @@ class _State extends State<SelfRecording> {
   }
 
   Widget formFields(TaskState state) {
-    if (state is Success) {
+    if (state is TaskSuccess) {
       return Column(
         children: [
           Padding(
