@@ -44,7 +44,8 @@ class _PlayerDoubleState extends State<PlayerDouble> {
   Future<void> _initializeVideoPlayerFuture;
 
   int index = 0;
-  bool playing = false;
+  bool videoParentPlaying = false;
+  bool videoPlaying = false;
   //int lastPosition = 0;
 
   @override
@@ -125,12 +126,12 @@ class _PlayerDoubleState extends State<PlayerDouble> {
     if (eventType == EventType.play) {
       _parentVideoController.play();
       setState(() {
-        playing = true;
+        videoParentPlaying = true;
       });
     } else if (eventType == EventType.pause) {
       _parentVideoController.pause();
       setState(() {
-        playing = false;
+        videoParentPlaying = false;
       });
     }
   }
@@ -250,17 +251,23 @@ class _PlayerDoubleState extends State<PlayerDouble> {
                                 IconButton(
                                     color: Colors.white,
                                     icon: Icon(
-                                      _videoController.value.isPlaying
+                                      videoPlaying
                                           ? Icons.pause
                                           : Icons.play_arrow,
                                     ),
                                     onPressed: () async {
                                       if (_videoController.value.isPlaying) {
                                         await _videoController.pause();
+                                        setState(() {
+                                          videoPlaying = false;
+                                        });
                                         await _parentVideoController.pause();
                                       } else {
                                         await _videoController.play();
-                                        if (playing) {
+                                        setState(() {
+                                          videoPlaying = true;
+                                        });
+                                        if (videoParentPlaying) {
                                           await _parentVideoController.play();
                                         }
                                       }
