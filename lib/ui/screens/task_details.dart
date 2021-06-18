@@ -67,6 +67,7 @@ class _TaskDetailsState extends State<TaskDetails> {
   List<Widget> showVideoPlayer() {
     List<Widget> widgets = [];
     widgets.add(OlukoVideoPlayer(
+        autoPlay: false,
         videoUrl:
             'https://oluko-mvt.s3.us-west-1.amazonaws.com/tasks/8e9547b516b045b9be4fca1af637668b/8e9547b516b045b9be4fca1af637668b.MOV',
         whenInitialized: (ChewieController chewieController) =>
@@ -94,7 +95,9 @@ class _TaskDetailsState extends State<TaskDetails> {
                   OlukoPrimaryButton(
                     title: 'Start Recording',
                     onPressed: () {
-                      _controller.pause();
+                      if (_controller != null) {
+                        _controller.pause();
+                      }
                       return Navigator.push(
                           context,
                           MaterialPageRoute(

@@ -1,21 +1,37 @@
 class Task {
-  Task({this.name, this.description, this.image, this.index});
+  Task(
+      {this.name,
+      this.video,
+      this.stepsDescription,
+      this.stepsTitle,
+      this.description,
+      this.shortDescription,
+      this.thumbnailImage});
 
   String name;
-  String image;
+  String video;
+  String stepsDescription;
+  String stepsTitle;
   String description;
-  num index;
+  String shortDescription;
+  String thumbnailImage;
 
   Task.fromJson(Map json)
       : name = json['name'],
+        video = json['video'],
+        stepsDescription = json['steps_description'],
+        stepsTitle = json['steps_title'],
         description = json['description'],
-        image = json['image'],
-        index = json['index'];
+        shortDescription = json['short_description'],
+        thumbnailImage = json['thumbnail_image'];
 
   Map<String, dynamic> toJson() => {
         'name': name,
+        'video': video,
+        'steps_description': stepsDescription,
+        'steps_title': stepsTitle,
         'description': description,
-        'image': image,
-        'index': index
+        'short_description': shortDescription,
+        'thumbnail_image': thumbnailImage
       };
 }

@@ -108,12 +108,7 @@ class _AsessmentVideosState extends State<AsessmentVideos> {
                                           itemCount: state.values.length,
                                           shrinkWrap: true,
                                           itemBuilder: (context, num index) {
-                                            Task task = Task(
-                                                name: state.values[index].name,
-                                                description: state
-                                                    .values[index].description,
-                                                image:
-                                                    state.values[index].image);
+                                            Task task = state.values[index];
                                             return Padding(
                                                 padding:
                                                     const EdgeInsets.symmetric(
@@ -121,14 +116,19 @@ class _AsessmentVideosState extends State<AsessmentVideos> {
                                                 child: TaskCard(
                                                   task: task,
                                                   onPressed: () {
-                                                    _controller.pause();
+                                                    if (_controller != null) {
+                                                      _controller.pause();
+                                                    }
                                                     return Navigator.push(
                                                         context,
                                                         MaterialPageRoute(
                                                             builder: (context) {
                                                       return TaskDetails(
                                                           task: task);
-                                                    }));
+                                                    })).then((value) =>
+                                                        this.setState(() {
+                                                          _controller = null;
+                                                        }));
                                                   },
                                                 ));
                                           })
@@ -154,6 +154,7 @@ class _AsessmentVideosState extends State<AsessmentVideos> {
   List<Widget> showVideoPlayer() {
     List<Widget> widgets = [];
     widgets.add(OlukoVideoPlayer(
+        autoPlay: false,
         whenInitialized: (ChewieController chewieController) =>
             this.setState(() {
               _controller = chewieController;

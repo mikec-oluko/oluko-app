@@ -115,10 +115,14 @@ class _State extends State<SelfRecording> {
       return Column(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10.0),
+            padding: const EdgeInsets.symmetric(vertical: 15.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
-              children: [TitleBody('Tell us the following things about you')],
+              children: [
+                widget.task.stepsTitle != null
+                    ? TitleBody(widget.task.stepsTitle)
+                    : SizedBox()
+              ],
             ),
           ),
           Padding(
@@ -129,18 +133,13 @@ class _State extends State<SelfRecording> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      '1. Your Name?',
-                      style: TextStyle(fontSize: 20, color: Colors.white60),
-                    ),
-                    Text(
-                      '2. Your Age?',
-                      style: TextStyle(fontSize: 20, color: Colors.white60),
-                    ),
-                    Text(
-                      '3. Your Fitness Goal?',
-                      style: TextStyle(fontSize: 20, color: Colors.white60),
-                    )
+                    widget.task.stepsDescription != null
+                        ? Text(
+                            '${widget.task.stepsDescription.replaceAll('\\n', '\n')} ',
+                            style:
+                                TextStyle(fontSize: 20, color: Colors.white60),
+                          )
+                        : SizedBox(),
                   ],
                 ),
               ],
