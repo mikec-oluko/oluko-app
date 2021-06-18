@@ -1,17 +1,21 @@
 import 'package:chewie/chewie.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:oluko_app/ui/screens/videos/aspect_ratio.dart';
-import 'package:oluko_app/ui/screens/videos/player_life_cycle.dart';
-import 'package:oluko_app/ui/screens/videos/video_play_pause.dart';
 import 'package:video_player/video_player.dart';
 
 class OlukoVideoPlayer extends StatefulWidget {
   final String videoUrl;
+  final bool showControls;
+  final bool autoPlay;
+  final Function(ChewieController chewieController) whenInitialized;
 
   OlukoVideoPlayer(
       {this.videoUrl =
-          'https://cdn.videvo.net/videvo_files/video/free/2018-09/small_watermarked/180419_Boxing_07_04_preview.webm',
+          //TODO: update me harcoded
+          'https://oluko-mvt.s3.us-west-1.amazonaws.com/assessments/85b2f81c1fe74f9cb5e804c57db30137/85b2f81c1fe74f9cb5e804c57db30137_2.mp4',
+      this.showControls = true,
+      this.autoPlay = true,
+      this.whenInitialized,
       Key key})
       : super(key: key);
 
@@ -21,36 +25,42 @@ class OlukoVideoPlayer extends StatefulWidget {
 
 class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
   VideoPlayerController _controller;
-  ChewieController _chewieController;
+  ChewieController chewieController;
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.network(
-        'https://cdn.videvo.net/videvo_files/video/free/2018-09/small_watermarked/180419_Boxing_07_04_preview.webm')
+    _controller = VideoPlayerController.network(widget.videoUrl)
       ..initialize().then((value) {
-        _chewieController = ChewieController(
+        chewieController = ChewieController(
             videoPlayerController: _controller,
-            autoPlay: true,
-            looping: true,
+            autoPlay: widget.autoPlay,
+            showControls: widget.showControls,
             materialProgressColors: ChewieProgressColors(
                 handleColor: Colors.black,
                 backgroundColor: Colors.black,
                 bufferedColor: Colors.black,
                 playedColor: Colors.black));
-
+        if (widget.whenInitialized != null) {
+          widget.whenInitialized(chewieController);
+        }
+        ;
         setState(() {});
       });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        width: MediaQuery.of(context).size.width,
-        height: 200,
-        child: _chewieController != null
-            ? Chewie(
-                controller: _chewieController,
-              )
-            : SizedBox());
+    return chewieController != null
+        ? Chewie(
+            controller: chewieController,
+          )
+        : SizedBox();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    chewieController.dispose();
+    super.dispose();
   }
 }

@@ -1,0 +1,22 @@
+{
+    "checkYourEmail": "Please check your email to verify your account.",
+    "maxChars": "or more characters",
+    "signUp": "Sign Up",
+    "profile": "Profile",
+    "logout": "Log out",
+    "videos": "Videos",
+    "assessments": "Assessments",
+    "plans": "Plans",
+    "alreadySubscribedUser": "Already a subscribed user?",
+    "emailExample": "example@yourcompany.com",
+    "email": "Email",
+    "required": "Campo requerido",
+    "password": "Password",
+    "forgotPassword": "Forgot password?",
+    "login": "Login",
+    "or": "Or",
+    "welcomeBack": "Welcome back",
+    "passwordShouldNotContainUsername": "Password should not contain your username",
+    "passwordShouldNotContainEmail": "Password should not contain your email",
+    "emailOrUsername": "Email or username"
+}
