@@ -45,6 +45,7 @@ class _PlayerDoubleState extends State<PlayerDouble> {
 
   int index = 0;
   bool playing = false;
+  //int lastPosition = 0;
 
   @override
   void initState() {
@@ -56,40 +57,81 @@ class _PlayerDoubleState extends State<PlayerDouble> {
   void performEvents() {
     List<Event> events = widget.videoInfo.events;
     int controllerPos = _videoController.value.position.inMilliseconds;
+    print('POSICION:   ' + controllerPos.toString());
+    /*bool scrub =
+        controllerPos > 0 && (controllerPos - lastPosition).abs() > 700;*/
 
+    checkEventToPerform(events, controllerPos);
+
+    if (_parentVideoController.value != null &&
+        _parentVideoController.value.duration != null &&
+        controllerPos >= 0 &&
+        controllerPos <= 500) {
+      setState(() {
+        index = 0;
+      });
+      _parentVideoController.seekTo(Duration.zero);
+    }
+    /*else if (scrub) {
+      Event event = findLastEvent(events, controllerPos);
+      if (event == null) {
+        _parentVideoController.seekTo(Duration.zero);
+        setState(() {
+          lastPosition = 0;
+        });
+      } else {
+        if (event.eventType == EventType.play) {
+          int newPos = controllerPos - event.position;
+          _parentVideoController.seekTo(Duration(milliseconds: newPos));
+        }
+        playOrPauseParentVideo(event.eventType);
+      }
+    }
+
+    setState(() {
+      lastPosition = controllerPos;
+    });*/
+  }
+
+  checkEventToPerform(List<Event> events, int position) {
     if (events.length > 0 &&
         index < events.length &&
-        controllerPos > events[index].position) {
+        position > events[index].position) {
       EventType eventType = events[index].eventType;
-      if (eventType == EventType.play) {
-        print("PLAY");
-        _parentVideoController.play();
-        setState(() {
-          playing = true;
-        });
-      } else if (eventType == EventType.pause) {
-        print("PAUSE");
-        _parentVideoController.pause();
-        setState(() {
-          playing = false;
-        });
-      }
-      print('EVENT DETECTED:   ' + events[index].position.toString());
-      print("POSITION:   " + controllerPos.toString());
-      print('EL VALOR DE i:  ' + index.toString());
-      print('--------------------------');
+      playOrPauseParentVideo(eventType);
       setState(() {
         index++;
       });
     }
+  }
 
-    if (controllerPos > 0 && controllerPos <= 500) {
+  /*Event findLastEvent(List<Event> events, int position) {
+    for (int i = 0; i < events.length; i++) {
+      if (i == events.length - 1) {
+        return events[i];
+      }
+      if (events[i].position > position) {
+        if (i - 1 >= 0) {
+          return events[i - 1];
+        } else {
+          return null;
+        }
+      }
+    }
+    return null;
+  }*/
+
+  playOrPauseParentVideo(EventType eventType) {
+    if (eventType == EventType.play) {
+      _parentVideoController.play();
       setState(() {
-        index = 0;
+        playing = true;
       });
-      _parentVideoController.seekTo(Duration(seconds: 0));
-      print('REINICIA');
-      print('--------------------------');
+    } else if (eventType == EventType.pause) {
+      _parentVideoController.pause();
+      setState(() {
+        playing = false;
+      });
     }
   }
 
