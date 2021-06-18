@@ -113,14 +113,12 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
     }
     try {
       VideoInfo newVideoInfo = VideoInfo(
-        creationDate: DateTime.now(),
         createdBy: user.uid,
         markers: [],
         events: (events != null) ? events : [],
         drawing: [],
         video: video != null ? video : Video(),
       );
-
       newVideoInfo =
           VideoInfoRepository.createVideoInfo(newVideoInfo, reference);
       if (addToList) {
@@ -200,7 +198,7 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
     _progress += _unitOfProgress;
     emit(TakeVideoSuccess(processPhase: _processPhase, progress: _progress));
 
-    final thumbUrl = await _uploadFile(thumbFilePath, 'thumbnail');
+    final thumbUrl = await _uploadFile(thumbFilePath, videoName);
     final videoUrl = await _uploadHLSFiles(encodedFilesDir, videoName);
 
     final video = Video(
