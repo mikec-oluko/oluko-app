@@ -44,29 +44,6 @@ class AuthRepository {
     return apiResponse;
   }
 
-  Future<bool> loginProject(ProjectLoginRequest projectLoginRequest) async {
-    var body = projectLoginRequest.toJson();
-    Response response = await http.post(
-        Uri.parse(
-            "https://us-central1-oluko-2671e.cloudfunctions.net/api/auth/loginproject"),
-        body: body);
-    var signInProjectResponseBody = jsonDecode(response.body);
-    if (signInProjectResponseBody['message'] is String) {
-      List<String> messageList = [
-        signInProjectResponseBody['message'].toString()
-      ];
-      signInProjectResponseBody['message'] = messageList;
-    }
-    ApiResponse apiResponse = ApiResponse.fromJson(signInProjectResponseBody);
-    if (apiResponse.statusCode == 200) {
-      var user = await getLoggedUser();
-      await user.getIdToken(true);
-      //TODO: check if loaded with new claims
-      return true;
-    }
-    return false;
-  }
-
   Future<void> sendEmailVerification(SignUpRequest signUpRequest) async {
     await firebaseAuthInstance.signInWithEmailAndPassword(
         email: signUpRequest.email, password: signUpRequest.password);
