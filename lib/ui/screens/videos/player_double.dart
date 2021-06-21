@@ -43,7 +43,6 @@ class _PlayerDoubleState extends State<PlayerDouble> {
   Timer playbackTimer;
   bool isFirstRecording = true;
   num listeners = 0;
-  bool canvasListenerRunning = true;
 
   //video
   VideoPlayerController _parentVideoController;
@@ -81,14 +80,13 @@ class _PlayerDoubleState extends State<PlayerDouble> {
     if (_parentVideoController.value != null &&
         _parentVideoController.value.duration != null &&
         controllerPos >= 0 &&
-        controllerPos <= 500) {
+        controllerPos <= 700) {
       setState(() {
         index = 0;
-        //this.canvasKey.currentState.setPoints([]);
       });
       _parentVideoController.seekTo(Duration.zero);
       clearPlaybackTimer();
-      playBackCanvas();//ARREGLAR: A LA TERCERA VUELTA NO ANDA
+      playBackCanvas();
     }
     /*else if (scrub) {
       Event event = findLastEvent(events, controllerPos);
@@ -340,17 +338,8 @@ class _PlayerDoubleState extends State<PlayerDouble> {
       );
 
   //DRAWING FUNCTIONS
-  controllerCanvasListener() {
-    if (this._videoController.value.position == null ||
-        canvasListenerRunning == false) return;
-    DrawPoint canvasObj = DrawPoint(
-        point: this.canvasPoints[this.canvasPoints.length - 1],
-        timeStamp: this._videoController.value.position.inMilliseconds);
-    canvasPointsRecording.add(canvasObj);
-  }
 
   playBackCanvas() async {
-    this.canvasListenerRunning = false;
 
     List<DrawPoint> drawingsUntilTimeStamp = getDrawingsUntilTimestamp(
         this._videoController.value.position.inMilliseconds,
@@ -386,7 +375,7 @@ class _PlayerDoubleState extends State<PlayerDouble> {
     });
   }
 
-  List<DrawPoint> getPointsUntilTimestamp(
+  List<DrawPoint> getPointsUntilTimestamp(//se tendria que usar en el onChangeEnd
       num timeStamp, List<DrawPoint> canvasPoints) {
     for (var i = 0; i < canvasPoints.length; i++) {
       if (canvasPoints[i].timeStamp > timeStamp) {
@@ -432,12 +421,6 @@ class _PlayerDoubleState extends State<PlayerDouble> {
   setCanvas() {
     canvasInstance = Draw(
       key: canvasKey,
-      onChanges: (DrawingPoints point) {
-        if (canvasListenerRunning == true) {
-          this.canvasPoints.add(point);
-          controllerCanvasListener();
-        }
-      },
       onClose: () => setState(() => openCanvas = false),
     );
     return canvasInstance;
