@@ -59,8 +59,12 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
 
   @override
   void dispose() {
-    _controller.dispose();
-    chewieController.dispose();
+    if (_controller != null) {
+      _controller.dispose();
+    }
+    if (chewieController != null) {
+      chewieController.dispose();
+    }
     super.dispose();
   }
 }

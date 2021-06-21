@@ -2,7 +2,8 @@ import 'base.dart';
 
 class Task extends Base {
   Task(
-      {this.name,
+      {this.key,
+      this.name,
       this.video,
       this.stepsDescription,
       this.stepsTitle,
@@ -11,6 +12,7 @@ class Task extends Base {
       this.thumbnailImage})
       : super();
 
+  String key;
   String name;
   String video;
   String stepsDescription;
@@ -20,7 +22,8 @@ class Task extends Base {
   String thumbnailImage;
 
   Task.fromJson(Map json)
-      : name = json['name'],
+      : key = json['key'],
+        name = json['name'],
         video = json['video'],
         stepsDescription = json['steps_description'],
         stepsTitle = json['steps_title'],
@@ -29,6 +32,7 @@ class Task extends Base {
         thumbnailImage = json['thumbnail_image'];
 
   Map<String, dynamic> toJson() => {
+        'key': key,
         'name': name,
         'video': video,
         'steps_description': stepsDescription,

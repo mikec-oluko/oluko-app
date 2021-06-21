@@ -2,17 +2,10 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/blocs/assessment_bloc.dart';
-import 'package:oluko_app/blocs/plan_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
-import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/helpers/enum_helper.dart';
 import 'package:oluko_app/models/assessment.dart';
-import 'package:oluko_app/models/info_dialog.dart';
-import 'package:oluko_app/models/plan.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/models/task.dart';
-import 'package:oluko_app/ui/components/subscription_card.dart';
 import 'package:oluko_app/ui/components/task_card.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/components/title_header.dart';
@@ -35,9 +28,8 @@ class _AsessmentVideosState extends State<AsessmentVideos> {
 
   @override
   Widget build(BuildContext context) {
-    AssessmentBloc().get();
     return BlocProvider(
-      create: (context) => TaskBloc()..get(),
+      create: (context) => TaskBloc()..getForAssessment(widget.assessment),
       child: form(),
     );
   }
@@ -106,46 +98,47 @@ class _AsessmentVideosState extends State<AsessmentVideos> {
                               children: [
                                 BlocBuilder<TaskBloc, TaskState>(
                                     builder: (context, state) {
-                                  return state is TaskSuccess
-                                      ? ListView.builder(
-                                          physics:
-                                              const NeverScrollableScrollPhysics(),
-                                          itemCount: state.values.length,
-                                          shrinkWrap: true,
-                                          itemBuilder: (context, num index) {
-                                            Task task = state.values[index];
-                                            return Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 15.0),
-                                                child: TaskCard(
-                                                  task: task,
-                                                  onPressed: () {
-                                                    if (_controller != null) {
-                                                      _controller.pause();
-                                                    }
-                                                    return Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder: (context) {
-                                                      return TaskDetails(
-                                                          task: task);
-                                                    })).then((value) =>
-                                                        this.setState(() {
-                                                          _controller = null;
-                                                        }));
-                                                  },
-                                                ));
-                                          })
-                                      : Padding(
-                                          padding: const EdgeInsets.all(50.0),
-                                          child: Center(
-                                            child: Text('Loading...',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                )),
-                                          ),
-                                        );
+                                  if (state is TaskSuccess) {
+                                    return ListView.builder(
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        itemCount: state.values.length,
+                                        shrinkWrap: true,
+                                        itemBuilder: (context, num index) {
+                                          Task task = state.values[index];
+                                          return Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 15.0),
+                                              child: TaskCard(
+                                                task: task,
+                                                onPressed: () {
+                                                  if (_controller != null) {
+                                                    _controller.pause();
+                                                  }
+                                                  return Navigator.push(context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) {
+                                                    return TaskDetails(
+                                                        task: task);
+                                                  })).then((value) =>
+                                                      this.setState(() {
+                                                        _controller = null;
+                                                      }));
+                                                },
+                                              ));
+                                        });
+                                  } else {
+                                    return Padding(
+                                      padding: const EdgeInsets.all(50.0),
+                                      child: Center(
+                                        child: Text('Loading...',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                            )),
+                                      ),
+                                    );
+                                  }
                                 }),
                               ],
                             ),
@@ -169,128 +162,5 @@ class _AsessmentVideosState extends State<AsessmentVideos> {
       widgets.add(Center(child: CircularProgressIndicator()));
     }
     return widgets;
-  }
-
-  Widget formSection() {
-    return Container(
-        width: MediaQuery.of(context).size.width,
-        child:
-            Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-          BlocBuilder<PlanBloc, PlanState>(builder: (context, state) {
-            return Column(children: formFields(state));
-          }),
-        ]));
-  }
-
-  List<Widget> formFields(PlanState state) {
-    if (state is PlansSuccess) {
-      return [
-        Column(
-          children: showSubscriptionCards(state.plans),
-        ),
-        Padding(
-            padding: EdgeInsets.only(top: 30, bottom: 100),
-            child: SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                    style:
-                        ElevatedButton.styleFrom(primary: OlukoColors.primary),
-                    onPressed: () {},
-                    child: Stack(children: [
-                      Align(
-                        child: Text('Get Started'),
-                      )
-                    ])))),
-      ];
-    } else {
-      return [];
-    }
-  }
-
-  showWaitlist(context, InfoDialog infoDialog) {
-    showDialog(
-        context: context,
-        builder: (context2) {
-          return AlertDialog(
-            insetPadding: EdgeInsets.zero,
-            contentPadding: EdgeInsets.zero,
-            backgroundColor: Colors.transparent,
-            content: Container(
-                height: 200,
-                child: Stack(children: [
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(10))),
-                      child: Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                                padding: EdgeInsets.only(bottom: 15),
-                                child: Text(
-                                  infoDialog.title,
-                                  style: TextStyle(fontSize: 25),
-                                  textAlign: TextAlign.left,
-                                )),
-                            Text(infoDialog.content)
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    right: 0.0,
-                    top: 0.0,
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Align(
-                        alignment: Alignment.topRight,
-                        child: Container(
-                          decoration: BoxDecoration(
-                              boxShadow: [BoxShadow(blurRadius: 5)],
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(15))),
-                          child: CircleAvatar(
-                            radius: 14.0,
-                            backgroundColor: Colors.white,
-                            child: Icon(Icons.close, color: Colors.red),
-                          ),
-                        ),
-                      ),
-                    ),
-                  )
-                ])),
-          );
-        });
-  }
-
-  List<SubscriptionCard> showSubscriptionCards(List<Plan> plans) {
-    return plans.map((Plan plan) {
-      SubscriptionCard subscriptionCard = SubscriptionCard();
-      subscriptionCard.priceLabel =
-          '\$${plan.price}/${durationLabel[plan.duration].toLowerCase()}';
-      subscriptionCard.priceSubtitle = plan.recurrent
-          ? 'Renews every ${durationLabel[plan.duration].toLowerCase()}'
-          : '';
-      subscriptionCard.title = plan.title;
-      subscriptionCard.subtitles = plan.features
-          .map((PlanFeature feature) => EnumHelper.enumToString(feature))
-          .toList();
-      subscriptionCard.selected = false;
-      subscriptionCard.showHint = plan.infoDialog != null;
-      subscriptionCard.backgroundImage = plan.backgroundImage;
-      subscriptionCard.onHintPressed = plan.infoDialog != null
-          ? () => showWaitlist(context, plan.infoDialog)
-          : null;
-      return subscriptionCard;
-    }).toList();
   }
 }
