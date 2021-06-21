@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:oluko_app/models/assessment.dart';
-import 'package:oluko_app/models/assessment_task.dart';
 import 'package:oluko_app/models/task.dart';
 
 class TaskRepository {

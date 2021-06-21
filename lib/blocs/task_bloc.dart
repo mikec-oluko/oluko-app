@@ -3,6 +3,7 @@ import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/assessment_task.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/repositories/task_repository.dart';
+import 'package:oluko_app/utils/task_utils.dart';
 
 abstract class TaskState {}
 
@@ -40,16 +41,8 @@ class TaskBloc extends Cubit<TaskState> {
     }
     try {
       List<Task> tasks = await TaskRepository().getAll();
-      List<Task> tasksToShow = [];
-      tasks.forEach((Task task) {
-        List<String> taskIds = assessment.tasks
-            .map((AssessmentTask assessmentTask) => assessmentTask.taskId)
-            .toList();
-
-        if (taskIds.indexOf(task.key) != -1) {
-          tasksToShow.add(task);
-        }
-      });
+      List<Task> tasksToShow = TaskUtils.filterByAssessment(tasks, assessment);
+      tasksToShow = TaskUtils.sortByAssessmentIndex(tasksToShow, assessment);
       emit(TaskSuccess(values: tasksToShow));
     } catch (e) {
       emit(TaskFailure(exception: e));

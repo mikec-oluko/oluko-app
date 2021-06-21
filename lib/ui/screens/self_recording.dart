@@ -54,6 +54,7 @@ class _State extends State<SelfRecording> {
                       onTap: () => this.setState(() {
                         //TODO Remove this when implementing video recording
                         if (widget._recording == true) {
+                          _controller.seekTo(Duration(milliseconds: 0));
                           Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -157,6 +158,7 @@ class _State extends State<SelfRecording> {
     widgets.add(OlukoVideoPlayer(
         autoPlay: false,
         showControls: false,
+        //TODO: Hardcoded
         videoUrl:
             'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/pexels-anthony-shkraba-production-8135646.mp4?alt=media&token=f3bd01db-8d38-492f-8cf9-386ba7a90d32',
         whenInitialized: (ChewieController chewieController) =>

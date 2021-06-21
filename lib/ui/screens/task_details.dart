@@ -9,13 +9,17 @@ import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
+import 'package:oluko_app/ui/components/title_header.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/screens/self_recording.dart';
+import 'package:oluko_app/ui/screens/self_recording_preview.dart';
 
 class TaskDetails extends StatefulWidget {
-  TaskDetails({this.task, Key key}) : super(key: key);
+  TaskDetails({this.task, this.showRecordedVideos = false, Key key})
+      : super(key: key);
 
   final Task task;
+  final bool showRecordedVideos;
 
   @override
   _TaskDetailsState createState() => _TaskDetailsState();
@@ -139,11 +143,61 @@ class _TaskDetailsState extends State<TaskDetails> {
           Text(
             widget.task.description,
             style: TextStyle(fontSize: 17, color: Colors.white60),
-          )
+          ),
+          widget.showRecordedVideos ? recordedVideos() : SizedBox(),
         ],
       );
     } else {
       return SizedBox();
     }
+  }
+
+  recordedVideos() {
+    return Column(children: [
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 25.0),
+        child: Align(
+            alignment: Alignment.centerLeft,
+            child: TitleHeader(
+              'Recorded Videos',
+              bold: true,
+            )),
+      ),
+      GestureDetector(
+        onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SelfRecordingPreview(task: widget.task))),
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: ClipRRect(
+            borderRadius: BorderRadius.all(Radius.circular(20)),
+            child: Container(
+                height: 200,
+                width: 112,
+                child: Stack(children: [
+                  Image.asset("assets/assessment/task_response_thumbnail.png"),
+                  Center(child: Image.asset("assets/assessment/play.png")),
+                  Positioned(
+                      bottom: 10,
+                      left: 10,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.black.withAlpha(150),
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            '00:15',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      )),
+                ])),
+          ),
+        ),
+      )
+    ]);
   }
 }

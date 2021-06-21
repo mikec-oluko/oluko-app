@@ -9,6 +9,7 @@ import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
+import 'package:oluko_app/ui/screens/task_details.dart';
 
 class SelfRecordingPreview extends StatefulWidget {
   SelfRecordingPreview({this.task, Key key}) : super(key: key);
@@ -56,6 +57,12 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                                   _controller.pause();
                                   Navigator.popUntil(
                                       context, ModalRoute.withName('/'));
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => TaskDetails(
+                                              task: widget.task,
+                                              showRecordedVideos: true)));
                                 },
                               )
                             ]),
