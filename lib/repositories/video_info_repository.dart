@@ -20,7 +20,7 @@ class VideoInfoRepository {
   static Future<List<VideoInfo>> getVideosInfoByUser(
       String userId, CollectionReference reference) async {
     final querySnapshot = await reference
-        .orderBy("creation_date", descending: true)
+        .orderBy("created_at", descending: true)
         .where("created_by", isEqualTo: userId)
         .get();
     return mapQueryToVideoInfo(querySnapshot);

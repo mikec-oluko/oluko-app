@@ -10,6 +10,7 @@ import 'package:oluko_app/ui/screens/videos/player_response.dart';
 import 'package:oluko_app/ui/screens/videos/player_single.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/ui/screens/videos/recording_response.dart';
+import 'package:oluko_app/utils/field_formatting.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:oluko_app/helpers/encoding_provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -179,7 +180,7 @@ class _HomeState extends State<Home> {
                                     Container(
                                       margin: new EdgeInsets.only(top: 12.0),
                                       child: Text(
-                                          'Uploaded ${timeago.format(videoInfo.creationDate)}'),
+                                          'Uploaded ${videoInfo.createdAt == null ? timeago.format(DateTime.now()) : timeago.format(fromTimestampToDate(videoInfo.createdAt))}'),
                                     ),
                                     ElevatedButton(
                                         onPressed: () => Navigator.pushNamed(

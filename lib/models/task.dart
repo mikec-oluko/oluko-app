@@ -1,4 +1,6 @@
-class Task {
+import 'base.dart';
+
+class Task extends Base {
   Task(
       {this.name,
       this.video,
@@ -6,7 +8,8 @@ class Task {
       this.stepsTitle,
       this.description,
       this.shortDescription,
-      this.thumbnailImage});
+      this.thumbnailImage})
+      : super();
 
   String name;
   String video;

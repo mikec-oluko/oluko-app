@@ -6,7 +6,6 @@ import 'package:http/http.dart' show Client, Response;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
-import 'package:oluko_app/models/project_login_request.dart';
 import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/verify_token_request.dart';
@@ -42,29 +41,6 @@ class AuthRepository {
           .signInWithCustomToken(apiResponse.data['accessToken']);
     }
     return apiResponse;
-  }
-
-  Future<bool> loginProject(ProjectLoginRequest projectLoginRequest) async {
-    var body = projectLoginRequest.toJson();
-    Response response = await http.post(
-        Uri.parse(
-            "https://us-central1-oluko-2671e.cloudfunctions.net/api/auth/loginproject"),
-        body: body);
-    var signInProjectResponseBody = jsonDecode(response.body);
-    if (signInProjectResponseBody['message'] is String) {
-      List<String> messageList = [
-        signInProjectResponseBody['message'].toString()
-      ];
-      signInProjectResponseBody['message'] = messageList;
-    }
-    ApiResponse apiResponse = ApiResponse.fromJson(signInProjectResponseBody);
-    if (apiResponse.statusCode == 200) {
-      var user = await getLoggedUser();
-      await user.getIdToken(true);
-      //TODO: check if loaded with new claims
-      return true;
-    }
-    return false;
   }
 
   Future<void> sendEmailVerification(SignUpRequest signUpRequest) async {
