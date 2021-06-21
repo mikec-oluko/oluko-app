@@ -44,11 +44,22 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                 child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 30, horizontal: 15),
                     child: Container(
+                      width: MediaQuery.of(context).size.width,
                       child: Stack(
                         children: [
                           Align(
-                              alignment: Alignment.bottomCenter,
-                              child: OlukoPrimaryButton(title: 'Done')),
+                            alignment: Alignment.bottomCenter,
+                            child: Row(children: [
+                              OlukoPrimaryButton(
+                                title: 'Done',
+                                onPressed: () {
+                                  _controller.pause();
+                                  Navigator.popUntil(
+                                      context, ModalRoute.withName('/'));
+                                },
+                              )
+                            ]),
+                          ),
                           ConstrainedBox(
                               constraints: BoxConstraints(
                                   maxHeight:
