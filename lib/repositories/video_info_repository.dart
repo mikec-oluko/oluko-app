@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oluko_app/models/draw_point.dart';
-import 'package:oluko_app/models/event.dart';
 import 'package:oluko_app/models/video_info.dart';
 
 class VideoInfoRepository {

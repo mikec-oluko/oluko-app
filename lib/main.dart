@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/task_submission_bloc.dart';
 import 'package:oluko_app/config/s3_settings.dart';
 import 'package:oluko_app/ui/screens/app_plans.dart';
 import 'package:oluko_app/ui/screens/assesment_videos.dart';
@@ -50,24 +51,27 @@ class _MyAppState extends State<MyApp> {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => BlocProvider.value(value: _authBloc, child: MyHomePage(title: '')),
-        '/sign-up': (context) => BlocProvider.value(value: _authBloc, child: SignUpPage()),
-        '/sign-up-with-email': (context) => BlocProvider.value(value: _authBloc, child: SignUpWithMailPage()),
-        '/profile': (context) => BlocProvider.value(value: _authBloc, child: ProfilePage()),
-        '/log-in': (context) => BlocProvider.value(value: _authBloc, child: LoginPage()),
-        '/app-plans': (context) => BlocProvider.value(value: _authBloc, child: AppPlans()),
-        '/assessment-videos': (context) => BlocProvider.value(value: _authBloc, child: AsessmentVideos()),
+        '/': (context) =>
+            BlocProvider.value(value: _authBloc, child: MyHomePage(title: '')),
+        '/sign-up': (context) =>
+            BlocProvider.value(value: _authBloc, child: SignUpPage()),
+        '/sign-up-with-email': (context) =>
+            BlocProvider.value(value: _authBloc, child: SignUpWithMailPage()),
+        '/profile': (context) =>
+            BlocProvider.value(value: _authBloc, child: ProfilePage()),
+        '/log-in': (context) =>
+            BlocProvider.value(value: _authBloc, child: LoginPage()),
+        '/app-plans': (context) =>
+            BlocProvider.value(value: _authBloc, child: AppPlans()),
+        '/assessment-videos': (context) =>
+            BlocProvider.value(value: _authBloc, child: AsessmentVideos()),
         '/task-details': (context) => BlocProvider.value(
             value: _authBloc,
             child: TaskDetails(
               task: Task(description: 'Task Description'),
             )),
-        '/self-recording-preview': (context) => BlocProvider.value(
-            value: _authBloc,
-            child: SelfRecordingPreview(
-              task: Task(description: 'Task Description', name: 'Task 1'),
-            )),
-        '/choose-plan-payment': (context) => BlocProvider.value(value: _authBloc, child: ChoosePlayPayments()),
+        '/choose-plan-payment': (context) =>
+            BlocProvider.value(value: _authBloc, child: ChoosePlayPayments()),
         '/videos': (context) => BlocProvider.value(
             value: _authBloc,
             child: Home(

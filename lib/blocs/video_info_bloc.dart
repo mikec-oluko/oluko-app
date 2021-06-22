@@ -155,6 +155,19 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
   Future<void> processVideo(User user, File rawVideoFile,
       CollectionReference reference, bool addToList,
       {double givenAspectRatio, List<Event> events}) async {
+    Video video;
+    if (givenAspectRatio == null) {
+      video = await createVideo(rawVideoFile);
+    } else {
+      video =
+          await createVideo(rawVideoFile, givenAspectRatio: givenAspectRatio);
+    }
+
+    createVideoInfo(reference, user, addToList, video: video, events: events);
+  }
+
+  Future<Video> createVideo(File rawVideoFile,
+      {double givenAspectRatio}) async {
     _progress = 0.0;
     emit(TakeVideoSuccess(processPhase: _processPhase, progress: _progress));
 
@@ -208,8 +221,7 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
       name: videoName,
       duration: durationInMilliseconds,
     );
-
-    createVideoInfo(reference, user, addToList, video: video, events: events);
+    return video;
   }
 
   Future<String> _uploadHLSFiles(dirPath, videoName) async {

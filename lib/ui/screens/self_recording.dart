@@ -1,4 +1,4 @@
-import 'package:chewie/chewie.dart';
+import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,14 +7,12 @@ import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
-import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/screens/self_recording_preview.dart';
 
 class SelfRecording extends StatefulWidget {
   SelfRecording({this.task, Key key}) : super(key: key);
 
   final Task task;
-  bool _recording = false;
 
   @override
   _State createState() => _State();
@@ -23,7 +21,24 @@ class SelfRecording extends StatefulWidget {
 class _State extends State<SelfRecording> {
   final _formKey = GlobalKey<FormState>();
   SignUpResponse profileInfo;
-  ChewieController _controller;
+
+  //camera
+  List<CameraDescription> cameras;
+  CameraController cameraController;
+  bool _isReady = false;
+  bool _recording = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _setupCameras();
+  }
+
+  @override
+  void dispose() {
+    cameraController?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,20 +66,25 @@ class _State extends State<SelfRecording> {
                       color: Colors.white,
                     ),
                     GestureDetector(
-                      onTap: () => this.setState(() {
-                        //TODO Remove this when implementing video recording
-                        if (widget._recording == true) {
+                      onTap: () async {
+                        if (_recording) {
+                          XFile videopath =
+                              await cameraController.stopVideoRecording();
+                          String path = videopath.path;
+
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      SelfRecordingPreview(task: widget.task)));
+                                  builder: (context) => SelfRecordingPreview(
+                                      task: widget.task, filePath: path)));
                         } else {
-                          _controller.play();
+                          await cameraController.startVideoRecording();
                         }
-                        widget._recording = !widget._recording;
-                      }),
-                      child: widget._recording
+                        setState(() {
+                          _recording = !_recording;
+                        });
+                      },
+                      child: _recording
                           ? Image.asset('assets/self_recording/recording.png')
                           : Image.asset('assets/self_recording/record.png'),
                     ),
@@ -85,9 +105,11 @@ class _State extends State<SelfRecording> {
                               constraints: BoxConstraints(
                                   maxHeight:
                                       MediaQuery.of(context).size.height / 1.6),
-                              child: Stack(
-                                children: showVideoPlayer(),
-                              )),
+                              child: (!_isReady)
+                                  ? Container()
+                                  : AspectRatio(
+                                      aspectRatio: 3.0 / 4.0,
+                                      child: CameraPreview(cameraController))),
                           BlocBuilder<TaskBloc, TaskState>(
                               builder: (context, state) {
                             return formSection();
@@ -153,20 +175,16 @@ class _State extends State<SelfRecording> {
     }
   }
 
-  List<Widget> showVideoPlayer() {
-    List<Widget> widgets = [];
-    widgets.add(OlukoVideoPlayer(
-        autoPlay: false,
-        showControls: false,
-        videoUrl:
-            'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/pexels-anthony-shkraba-production-8135646.mp4?alt=media&token=f3bd01db-8d38-492f-8cf9-386ba7a90d32',
-        whenInitialized: (ChewieController chewieController) =>
-            this.setState(() {
-              _controller = chewieController;
-            })));
-    if (_controller == null) {
-      widgets.add(Center(child: CircularProgressIndicator()));
-    }
-    return widgets;
+  Future<void> _setupCameras() async {
+    try {
+      cameras = await availableCameras();
+      cameraController =
+          new CameraController(cameras[0], ResolutionPreset.medium);
+      await cameraController.initialize();
+    } on CameraException catch (_) {}
+    if (!mounted) return;
+    setState(() {
+      _isReady = true;
+    });
   }
 }

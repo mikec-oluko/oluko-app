@@ -1,19 +1,24 @@
+import 'dart:io';
+
 import 'package:chewie/chewie.dart';
-import 'package:flutter/foundation.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
+import 'package:oluko_app/blocs/task_submission_bloc.dart';
+import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
-import 'package:oluko_app/ui/components/title_body.dart';
-import 'package:oluko_app/ui/components/video_player.dart';
+import 'package:oluko_app/ui/components/video_player_file.dart';
 
 class SelfRecordingPreview extends StatefulWidget {
-  SelfRecordingPreview({this.task, Key key}) : super(key: key);
+  SelfRecordingPreview({this.task, this.filePath, key}) : super(key: key);
 
-  final Task task;
+  Task task;
+  String filePath;
 
   @override
   _SelfRecordingPreviewState createState() => _SelfRecordingPreviewState();
@@ -23,11 +28,30 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
   final _formKey = GlobalKey<FormState>();
   SignUpResponse profileInfo;
   ChewieController _controller;
+  VideoBloc _videoBloc;
+  TaskSubmissionBloc _taskSubmissionBloc;
+
+  @override
+  void initState() {
+    _videoBloc = VideoBloc();
+    _taskSubmissionBloc = TaskSubmissionBloc();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => TaskBloc()..get(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<TaskBloc>(
+          create: (context) => TaskBloc()..get(),
+        ),
+        BlocProvider<VideoBloc>(
+          create: (context) => _videoBloc,
+        ),
+        BlocProvider<TaskSubmissionBloc>(
+          create: (context) => _taskSubmissionBloc,
+        ),
+      ],
       child: form(),
     );
   }
@@ -48,12 +72,44 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                         children: [
                           Align(
                               alignment: Alignment.bottomCenter,
-                              child: OlukoPrimaryButton(title: 'Done')),
-                          ConstrainedBox(
-                              constraints: BoxConstraints(
-                                  maxHeight:
-                                      MediaQuery.of(context).size.height / 1.5),
-                              child: Stack(children: showVideoPlayer())),
+                              child: OlukoPrimaryButton(
+                                title: 'Done',
+                                onPressed: () async {
+                                  _videoBloc
+                                    ..createVideo(
+                                        File(widget.filePath), 3.0 / 4.0);
+                                },
+                              )),
+                          BlocBuilder<VideoBloc, VideoState>(
+                              builder: (context, state) {
+                            if (state is VideoProcessingSuccess) {
+                              return _getProgressBar(
+                                  state.processPhase, state.progress);
+                            } else if (state is VideoSuccess) {
+                              String projectId =
+                                  GlobalConfiguration().getValue("projectId");
+                              CollectionReference reference = FirebaseFirestore
+                                  .instance
+                                  .collection("projects")
+                                  .doc(projectId)
+                                  .collection("assessmentAssignments")
+                                  .doc('8dWwPNggqruMQr0OSV9f')
+                                  .collection('taskSubmissions');
+                              _taskSubmissionBloc
+                                ..createTaskResponse(reference, state.video);
+                              return Text("The task submission was sended.",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ));
+                            } else {
+                              return ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                      maxHeight:
+                                          MediaQuery.of(context).size.height /
+                                              1.5),
+                                  child: Stack(children: showVideoPlayer()));
+                            }
+                          })
                         ],
                       ),
                     )))));
@@ -61,9 +117,8 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
 
   List<Widget> showVideoPlayer() {
     List<Widget> widgets = [];
-    widgets.add(OlukoVideoPlayer(
-        videoUrl:
-            'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/pexels-anthony-shkraba-production-8135646.mp4?alt=media&token=f3bd01db-8d38-492f-8cf9-386ba7a90d32',
+    widgets.add(OlukoVideoPlayerFile(
+        filePath: widget.filePath,
         whenInitialized: (ChewieController chewieController) =>
             this.setState(() {
               _controller = chewieController;
@@ -72,5 +127,29 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
       widgets.add(Center(child: CircularProgressIndicator()));
     }
     return widgets;
+  }
+
+  _getProgressBar(String processPhase, double progress) {
+    return Container(
+      padding: EdgeInsets.all(30.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Container(
+            margin: EdgeInsets.only(bottom: 30.0),
+            child: Text(
+              processPhase,
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+          ),
+          LinearProgressIndicator(
+            value: progress,
+          ),
+        ],
+      ),
+    );
   }
 }
