@@ -72,8 +72,7 @@ class _TaskDetailsState extends State<TaskDetails> {
     List<Widget> widgets = [];
     widgets.add(OlukoVideoPlayer(
         autoPlay: false,
-        videoUrl:
-            'https://oluko-mvt.s3.us-west-1.amazonaws.com/tasks/8e9547b516b045b9be4fca1af637668b/8e9547b516b045b9be4fca1af637668b.MOV',
+        videoUrl: widget.task.video,
         whenInitialized: (ChewieController chewieController) =>
             this.setState(() {
               _controller = chewieController;
