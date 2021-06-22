@@ -43,7 +43,6 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
         if (widget.whenInitialized != null) {
           widget.whenInitialized(chewieController);
         }
-        ;
         setState(() {});
       });
   }

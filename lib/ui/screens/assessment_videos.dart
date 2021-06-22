@@ -151,6 +151,9 @@ class _AsessmentVideosState extends State<AsessmentVideos> {
 
   List<Widget> showVideoPlayer() {
     List<Widget> widgets = [];
+    if (_controller == null) {
+      widgets.add(Center(child: CircularProgressIndicator()));
+    }
     widgets.add(OlukoVideoPlayer(
         videoUrl: widget.assessment.video,
         autoPlay: false,
@@ -158,9 +161,7 @@ class _AsessmentVideosState extends State<AsessmentVideos> {
             this.setState(() {
               _controller = chewieController;
             })));
-    if (_controller == null) {
-      widgets.add(Center(child: CircularProgressIndicator()));
-    }
+
     return widgets;
   }
 }
