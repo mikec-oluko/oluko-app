@@ -1,6 +1,11 @@
 class ProfileViewConstants {
   static const profileTitle = "Profile";
+  static const profileUserFirstName = "First Name";
+  static const profileUserLastName = "Last Name";
+  static const profileUserEmail = "Email";
+  static const profileUserMobile = "Mobile Number";
   static const profileSettingsTitle = "Settings";
+  static const profileMyAccountTitle = "My Account";
   static const profileLevel = "Level 29";
   static const profileTrophiesTitle = "Trophies";
   static const profilePersonalRecordTitle = "Personal Records";
@@ -8,6 +13,7 @@ class ProfileViewConstants {
   static const profileTrophiesContent = "13";
   static const profilePersonalRecordContent = "07";
   static const profileFriendsContent = "37";
+  static const profileUserMobileContent = "+91 - 9886034815";
   static const profileSettingsNotification = "Notification";
   static const profileSettingsPublic = "Public";
   static const profileSettingsRestricted = "Restricted";

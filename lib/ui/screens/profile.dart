@@ -188,7 +188,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   icon: Icon(Icons.arrow_forward_ios,
                       color: OlukoColors.grayColor),
                   onPressed: () =>
-                      Navigator.pushNamed(context, '/profile-settings')
+                      Navigator.pushNamed(context, '/profile-my-account')
                           .then((value) => onGoBack()))
             ],
           ),
