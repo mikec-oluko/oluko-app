@@ -53,15 +53,18 @@ class _ProfilePageState extends State<ProfilePage> {
                     preferredSize: Size.fromHeight(4.0))),
             body: Container(
                 color: Colors.black,
-                child: ListView(children: [
-                  userInformationSection(),
-                  ListView.builder(
-                    itemCount: ProfileViewConstants.profileOptions.length,
-                    itemBuilder: (BuildContext buildContext, int index) =>
-                        profileOptions(
-                            ProfileViewConstants.profileOptions[index]),
-                  )
-                ]))));
+                child: Stack(
+                  children: [
+                    userInformationSection(),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 150),
+                      child: ListView.builder(
+                          itemCount: ProfileViewConstants.profileOptions.length,
+                          itemBuilder: (_, index) => profileOptions(
+                              ProfileViewConstants.profileOptions[index])),
+                    ),
+                  ],
+                ))));
   }
 
   Widget userInformationSection() {
@@ -109,7 +112,6 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ],
                       ),
-                      //TODO: Percent
                       Text(ProfileViewConstants.profileLevel,
                           style: TextStyle(
                               fontSize: 14.0, color: OlukoColors.grayColor))
@@ -163,12 +165,6 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
       ],
     );
-  }
-
-  createList() {
-    return ProfileViewConstants.profileOptions.map((title) {
-      return profileOptions(title);
-    }).toList();
   }
 
   Widget profileOptions(String pageTitle) {
