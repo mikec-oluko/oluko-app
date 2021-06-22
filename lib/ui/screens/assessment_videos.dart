@@ -11,6 +11,7 @@ import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/components/title_header.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/screens/task_details.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 class AsessmentVideos extends StatefulWidget {
   final Assessment assessment;
@@ -81,14 +82,28 @@ class _AsessmentVideosState extends State<AsessmentVideos> {
                             ]),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 25),
-                              child: ConstrainedBox(
-                                  constraints: BoxConstraints(
-                                      maxHeight:
-                                          MediaQuery.of(context).size.height /
-                                              4,
-                                      minWidth:
-                                          MediaQuery.of(context).size.width),
-                                  child: Stack(children: showVideoPlayer())),
+                              child: OrientationBuilder(
+                                builder: (context, orientation) {
+                                  return ConstrainedBox(
+                                      constraints: BoxConstraints(
+                                          maxHeight: MediaQuery.of(context)
+                                                      .orientation ==
+                                                  Orientation.portrait
+                                              ? ScreenUtils.height(context) / 4
+                                              : ScreenUtils.height(context) /
+                                                  1.5,
+                                          minHeight: MediaQuery.of(context)
+                                                      .orientation ==
+                                                  Orientation.portrait
+                                              ? ScreenUtils.height(context) / 4
+                                              : ScreenUtils.height(context) /
+                                                  1.5),
+                                      child: Container(
+                                          height: 400,
+                                          child: Stack(
+                                              children: showVideoPlayer())));
+                                },
+                              ),
                             ),
                             TitleBody(
                               'Complete the below tasks to get a coach assigned',

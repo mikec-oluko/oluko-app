@@ -50,7 +50,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                     padding: EdgeInsets.symmetric(horizontal: 15),
                     child: Container(
                       width: MediaQuery.of(context).size.width,
-                      child: Column(
+                      child: ListView(
                         children: [
                           ConstrainedBox(
                               constraints: BoxConstraints(

@@ -38,61 +38,33 @@ class _State extends State<SelfRecording> {
         key: _formKey,
         child: Scaffold(
             appBar: OlukoAppBar(title: widget.task.name),
-            bottomNavigationBar: BottomAppBar(
-              color: Colors.black,
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Icon(
-                      Icons.photo_camera,
-                      size: 45,
-                      color: Colors.white,
-                    ),
-                    GestureDetector(
-                      onTap: () => this.setState(() {
-                        //TODO Remove this when implementing video recording
-                        if (widget._recording == true) {
-                          _controller.seekTo(Duration(milliseconds: 0));
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      SelfRecordingPreview(task: widget.task)));
-                        } else {
-                          _controller.play();
-                        }
-                        widget._recording = !widget._recording;
-                      }),
-                      child: widget._recording
-                          ? Image.asset('assets/self_recording/recording.png')
-                          : Image.asset('assets/self_recording/record.png'),
-                    ),
-                    Image.asset('assets/self_recording/gallery.png'),
-                  ],
-                ),
-              ),
-            ),
+            bottomNavigationBar: bottomNavigationBar(),
             body: Container(
                 color: Colors.black,
                 child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 15),
                     child: Container(
                       width: MediaQuery.of(context).size.width,
-                      child: Column(
+                      child: ListView(
                         children: [
-                          ConstrainedBox(
-                              constraints: BoxConstraints(
-                                  maxHeight:
-                                      MediaQuery.of(context).size.height / 1.6),
-                              child: Stack(
-                                children: showVideoPlayer(),
-                              )),
-                          BlocBuilder<TaskBloc, TaskState>(
-                              builder: (context, state) {
-                            return formSection();
-                          }),
+                          Column(
+                            children: [
+                              ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                      maxWidth:
+                                          MediaQuery.of(context).size.width,
+                                      maxHeight:
+                                          MediaQuery.of(context).size.height /
+                                              1.8),
+                                  child: Stack(
+                                    children: showVideoPlayer(),
+                                  )),
+                              BlocBuilder<TaskBloc, TaskState>(
+                                  builder: (context, state) {
+                                return formSection();
+                              }),
+                            ],
+                          )
                         ],
                       ),
                     )))));
@@ -169,5 +141,44 @@ class _State extends State<SelfRecording> {
       widgets.add(Center(child: CircularProgressIndicator()));
     }
     return widgets;
+  }
+
+  Widget bottomNavigationBar() {
+    return BottomAppBar(
+      color: Colors.black,
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Icon(
+              Icons.photo_camera,
+              size: 45,
+              color: Colors.white,
+            ),
+            GestureDetector(
+              onTap: () => this.setState(() {
+                //TODO Remove this when implementing video recording
+                if (widget._recording == true) {
+                  _controller.seekTo(Duration(milliseconds: 0));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              SelfRecordingPreview(task: widget.task)));
+                } else {
+                  _controller.play();
+                }
+                widget._recording = !widget._recording;
+              }),
+              child: widget._recording
+                  ? Image.asset('assets/self_recording/recording.png')
+                  : Image.asset('assets/self_recording/record.png'),
+            ),
+            Image.asset('assets/self_recording/gallery.png'),
+          ],
+        ),
+      ),
+    );
   }
 }
