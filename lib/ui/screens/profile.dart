@@ -3,8 +3,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
-import 'package:oluko_app/ui/screens/profile/profile-constants.dart';
-
+import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import '../../constants/Theme.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -188,12 +187,18 @@ class _ProfilePageState extends State<ProfilePage> {
               IconButton(
                   icon: Icon(Icons.arrow_forward_ios,
                       color: OlukoColors.grayColor),
-                  onPressed: () {})
+                  onPressed: () =>
+                      Navigator.pushNamed(context, '/profile-settings')
+                          .then((value) => onGoBack()))
             ],
           ),
         ],
       ),
     );
+  }
+
+  onGoBack() {
+    setState(() {});
   }
 
   handleError(AsyncSnapshot snapshot) {}

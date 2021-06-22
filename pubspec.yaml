@@ -82,6 +82,7 @@ flutter:
   assets:
     #  - assets/assessment/
      - assets/login/
+     - assets/profile/
      - assets/lang/
      - assets/self_recording/
   # An image asset can refer to one or more resolution-specific "variants", see

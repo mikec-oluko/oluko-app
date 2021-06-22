@@ -1,5 +1,6 @@
 class ProfileViewConstants {
   static const profileTitle = "Profile";
+  static const profileSettingsTitle = "Settings";
   static const profileLevel = "Level 29";
   static const profileTrophiesTitle = "Trophies";
   static const profilePersonalRecordTitle = "Personal Records";
@@ -7,6 +8,13 @@ class ProfileViewConstants {
   static const profileTrophiesContent = "13";
   static const profilePersonalRecordContent = "07";
   static const profileFriendsContent = "37";
+  static const profileSettingsNotification = "Notification";
+  static const profileSettingsPublic = "Public";
+  static const profileSettingsRestricted = "Restricted";
+  static const profileSettingsAnonymous = "Anonymous";
+  static const profileSettingsPublicSubtitle = "Public profile";
+  static const profileSettingsRestrictedSubtitle = "Restricted profile";
+  static const profileSettingsAnonymousSubtitle = "Anonymous profile";
 
   static const List<String> profileOptions = [
     "My Account",
@@ -17,3 +25,5 @@ class ProfileViewConstants {
     "Help and Support",
   ];
 }
+
+enum SettingsOptions { notification, public, restricted, anonymous }
