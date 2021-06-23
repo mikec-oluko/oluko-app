@@ -1,13 +1,10 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/helpers/encoding_provider.dart';
 import 'package:oluko_app/helpers/s3_provider.dart';
-import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/video.dart';
-import 'package:oluko_app/repositories/task_submission_repository.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
@@ -20,10 +17,10 @@ class VideoSuccess extends VideoState {
   VideoSuccess({this.video});
 }
 
-class VideoProcessingSuccess extends VideoState {
+class VideoProcessing extends VideoState {
   final String processPhase;
   final double progress;
-  VideoProcessingSuccess({this.processPhase, this.progress});
+  VideoProcessing({this.processPhase, this.progress});
 }
 
 class Failure extends VideoState {
@@ -39,21 +36,21 @@ class VideoBloc extends Cubit<VideoState> {
   String _processPhase = '';
   double _progress = 0.0;
 
-  Future<void> createVideo(File videoFile, double aspectRatio) async {
+  Future<void> createVideo(File videoFile, double aspectRatio, String id) async {
     Video video;
 
-    video = await _processVideo(videoFile, aspectRatio);
+    video = await _processVideo(videoFile, aspectRatio, id);
 
     emit(VideoSuccess(video: video));
   }
 
-  Future<Video> _processVideo(File videoFile, double aspectRatio) async {
+  Future<Video> _processVideo(File videoFile, double aspectRatio, String id) async {
     _progress = 0.0;
-    emit(VideoProcessingSuccess(
+    emit(VideoProcessing(
         processPhase: _processPhase, progress: _progress));
 
     final String rand = '${new Random().nextInt(10000)}';
-    final videoName = 'video$rand';
+    final videoName = id;
     final Directory extDir = await getApplicationDocumentsDirectory();
     final outDirPath = '${extDir.path}/Videos/$videoName';
     final videosDir = new Directory(outDirPath);
@@ -68,14 +65,14 @@ class VideoBloc extends Cubit<VideoState> {
 
     _processPhase = 'Generating thumbnail';
     _progress += _unitOfProgress;
-    emit(VideoProcessingSuccess(
+    emit(VideoProcessing(
         processPhase: _processPhase, progress: _progress));
 
     final thumbFilePath = await EncodingProvider.getThumb(videoPath, 100, 150);
 
     _processPhase = 'Encoding video';
     _progress += _unitOfProgress;
-    emit(VideoProcessingSuccess(
+    emit(VideoProcessing(
         processPhase: _processPhase, progress: _progress));
 
     final encodedFilesDir =
@@ -83,7 +80,7 @@ class VideoBloc extends Cubit<VideoState> {
 
     _processPhase = 'Uploading thumbnail to cloud storage';
     _progress += _unitOfProgress;
-    emit(VideoProcessingSuccess(
+    emit(VideoProcessing(
         processPhase: _processPhase, progress: _progress));
 
     final thumbUrl = await _uploadFile(thumbFilePath, videoName);
@@ -115,7 +112,7 @@ class VideoBloc extends Cubit<VideoState> {
       double fileProgress = 0.4 / files.length.toDouble();
       _processPhase = 'Uploading video part file $i out of ${files.length}';
       _progress += fileProgress;
-      emit(VideoProcessingSuccess(
+      emit(VideoProcessing(
           processPhase: _processPhase, progress: _progress));
 
       final downloadUrl = await _uploadFile(file.path, videoName);

@@ -8,10 +8,12 @@ abstract class TaskSubmissionState {}
 
 class Loading extends TaskSubmissionState {}
 
-class TaskSubmissionSuccess extends TaskSubmissionState {
-  TaskSubmission taskSubmission;
-  TaskSubmissionSuccess({this.taskSubmission});
+class CreateSuccess extends TaskSubmissionState {
+  String taskSubmissionId;
+  CreateSuccess({this.taskSubmissionId});
 }
+
+class UpdateSuccess extends TaskSubmissionState {}
 
 class Failure extends TaskSubmissionState {
   final Exception exception;
@@ -22,15 +24,22 @@ class Failure extends TaskSubmissionState {
 class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
   TaskSubmissionBloc() : super(Loading());
 
-  void createTaskResponse(CollectionReference reference, Video video) {
-    if (!(state is TaskSubmissionSuccess)) {
-      emit(Loading());
-    }
+  void createTaskResponse(CollectionReference reference) {
     try {
-      TaskSubmission newTaskResponse = TaskSubmission(video: video);
-      newTaskResponse =
-          TaskSubmissionRepository.createTaskSubmission(newTaskResponse, reference);
-      emit(TaskSubmissionSuccess(taskSubmission: newTaskResponse));
+      TaskSubmission newTaskResponse = TaskSubmission(video: Video());
+      newTaskResponse = TaskSubmissionRepository.createTaskSubmission(
+          newTaskResponse, reference);
+      emit(CreateSuccess(taskSubmissionId: newTaskResponse.id));
+    } catch (e) {
+      emit(Failure(exception: e));
+    }
+  }
+
+  void updateTaskResponseVideo(DocumentReference reference, Video video) async {
+    try {
+      await TaskSubmissionRepository.updateTaskSubmissionVideo(
+          video, reference);
+      emit(UpdateSuccess());
     } catch (e) {
       emit(Failure(exception: e));
     }

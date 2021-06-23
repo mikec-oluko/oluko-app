@@ -10,6 +10,7 @@ import 'package:oluko_app/blocs/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/models/task.dart';
+import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/video_player_file.dart';
@@ -31,6 +32,16 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
   VideoBloc _videoBloc;
   TaskSubmissionBloc _taskSubmissionBloc;
 
+  String taskSubmissionId;
+
+  //TODO: hardcoded reference
+  CollectionReference reference = FirebaseFirestore.instance
+      .collection("projects")
+      .doc(GlobalConfiguration().getValue("projectId"))
+      .collection("assessmentAssignments")
+      .doc('8dWwPNggqruMQr0OSV9f')
+      .collection('taskSubmissions');
+
   @override
   void initState() {
     _videoBloc = VideoBloc();
@@ -41,19 +52,29 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: [
-        BlocProvider<TaskBloc>(
-          create: (context) => TaskBloc()..get(),
-        ),
-        BlocProvider<VideoBloc>(
-          create: (context) => _videoBloc,
-        ),
-        BlocProvider<TaskSubmissionBloc>(
-          create: (context) => _taskSubmissionBloc,
-        ),
-      ],
-      child: form(),
-    );
+        providers: [
+          BlocProvider<TaskBloc>(
+            create: (context) => TaskBloc()..get(),
+          ),
+          BlocProvider<VideoBloc>(
+            create: (context) => _videoBloc,
+          ),
+          BlocProvider<TaskSubmissionBloc>(
+            create: (context) => _taskSubmissionBloc,
+          ),
+        ],
+        child: BlocListener<TaskSubmissionBloc, TaskSubmissionState>(
+            listener: (context, state) {
+              if (state is CreateSuccess) {
+                setState(() {
+                  taskSubmissionId = state.taskSubmissionId;
+                });
+                _videoBloc
+                  ..createVideo(
+                      File(widget.filePath), 3.0 / 4.0, state.taskSubmissionId);
+              }
+            },
+            child: form()));
   }
 
   Widget form() {
@@ -75,29 +96,21 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                               child: OlukoPrimaryButton(
                                 title: 'Done',
                                 onPressed: () async {
-                                  _videoBloc
-                                    ..createVideo(
-                                        File(widget.filePath), 3.0 / 4.0);
+                                  _taskSubmissionBloc
+                                    ..createTaskResponse(reference);
                                 },
                               )),
                           BlocBuilder<VideoBloc, VideoState>(
                               builder: (context, state) {
-                            if (state is VideoProcessingSuccess) {
+                            if (state is VideoProcessing) {
                               return _getProgressBar(
                                   state.processPhase, state.progress);
                             } else if (state is VideoSuccess) {
-                              String projectId =
-                                  GlobalConfiguration().getValue("projectId");
-                              CollectionReference reference = FirebaseFirestore
-                                  .instance
-                                  .collection("projects")
-                                  .doc(projectId)
-                                  .collection("assessmentAssignments")
-                                  .doc('8dWwPNggqruMQr0OSV9f')
-                                  .collection('taskSubmissions');
                               _taskSubmissionBloc
-                                ..createTaskResponse(reference, state.video);
-                              return Text("The task submission was sended.",
+                                ..updateTaskResponseVideo(
+                                    reference.doc(taskSubmissionId),
+                                    state.video);
+                              return Text("The task was submitted.",
                                   style: TextStyle(
                                     color: Colors.white,
                                   ));
