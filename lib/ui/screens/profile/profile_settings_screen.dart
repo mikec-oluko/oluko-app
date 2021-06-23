@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 
 class ProfileSettingsPage extends StatefulWidget {
@@ -16,59 +17,43 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          // Here we take the value from the MyHomePage object that was created by
-          // the App.build method, and use it to set our appbar title.
-          leading: IconButton(
-              icon: Icon(Icons.arrow_back_ios, color: OlukoColors.grayColor),
-              onPressed: () => Navigator.pop(context)),
-          automaticallyImplyLeading: false,
-          title: Text(ProfileViewConstants.profileSettingsTitle,
-              style: TextStyle(color: Colors.white)),
-          backgroundColor: Colors.black,
-          actions: [],
-          bottom: PreferredSize(
-              child: Container(
-                color: OlukoColors.grayColor,
-                height: 0.5,
-              ),
-              preferredSize: Size.fromHeight(4.0))),
+      appBar: OlukoAppBar(title: ProfileViewConstants.profileSettingsTitle),
       body: Container(
         color: Colors.black,
-        child: Column(
-          children: [
-            buildOptionSwitch(
-                context,
-                ProfileViewConstants.profileSettingsNotification,
-                null,
-                SettingsOptions.notification,
-                false),
-            buildOptionSwitch(
-                context,
-                ProfileViewConstants.profileSettingsPublic,
-                ProfileViewConstants.profileSettingsPublicSubtitle,
-                SettingsOptions.public,
-                true),
-            buildOptionSwitch(
-                context,
-                ProfileViewConstants.profileSettingsRestricted,
-                ProfileViewConstants.profileSettingsRestrictedSubtitle,
-                SettingsOptions.restricted,
-                true),
-            buildOptionSwitch(
-                context,
-                ProfileViewConstants.profileSettingsAnonymous,
-                ProfileViewConstants.profileSettingsAnonymousSubtitle,
-                SettingsOptions.anonymous,
-                true),
-          ],
-        ),
+        child: buildOptions(context),
       ),
     );
   }
 
-  Container buildOptionSwitch(BuildContext context, String title,
-      String subTitle, SettingsOptions optionToUse, bool subtitleStatus) {
+  Column buildOptions(BuildContext context) {
+    return Column(
+      children: [
+        optionSwitch(context, ProfileViewConstants.profileSettingsNotification,
+            null, SettingsOptions.notification, false),
+        optionSwitch(
+            context,
+            ProfileViewConstants.profileSettingsPublic,
+            ProfileViewConstants.profileSettingsPublicSubtitle,
+            SettingsOptions.public,
+            true),
+        optionSwitch(
+            context,
+            ProfileViewConstants.profileSettingsRestricted,
+            ProfileViewConstants.profileSettingsRestrictedSubtitle,
+            SettingsOptions.restricted,
+            true),
+        optionSwitch(
+            context,
+            ProfileViewConstants.profileSettingsAnonymous,
+            ProfileViewConstants.profileSettingsAnonymousSubtitle,
+            SettingsOptions.anonymous,
+            true),
+      ],
+    );
+  }
+
+  Container optionSwitch(BuildContext context, String title, String subTitle,
+      SettingsOptions optionToUse, bool subtitleStatus) {
     var valueToUse = returnValue(optionToUse);
     return Container(
       width: MediaQuery.of(context).size.width,
@@ -88,15 +73,21 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
                         style: TextStyle(
                             fontSize: 14.0, color: OlukoColors.grayColor))
                     : null,
-                trailing: TextButton(
-                    onPressed: () {
-                      setValue(optionToUse, valueToUse);
-                    },
-                    child: valueToUse
-                        ? Image.asset('assets/profile/switch-on.png',
-                            filterQuality: FilterQuality.high)
-                        : Image.asset('assets/profile/switch-off.png',
-                            filterQuality: FilterQuality.high))),
+                // trailing: TextButton(
+                //     onPressed: () {
+                //       setValue(optionToUse, valueToUse);
+                //     },
+                //     child: valueToUse
+                //         ? Image.asset('assets/profile/switch-on.png',
+                //             filterQuality: FilterQuality.high)
+                //         : Image.asset('assets/profile/switch-off.png',
+                //             filterQuality: FilterQuality.high))),
+                trailing: Switch(
+                  value: valueToUse,
+                  onChanged: (bool value) => setValue(optionToUse, value),
+                  trackColor: MaterialStateProperty.all(Colors.grey),
+                  activeColor: OlukoColors.primary,
+                )),
           ),
         ],
       ),
@@ -122,22 +113,22 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
     switch (option) {
       case SettingsOptions.notification:
         setState(() {
-          _notification = !value;
+          _notification = value;
         });
         break;
       case SettingsOptions.public:
         setState(() {
-          _public = !value;
+          _public = value;
         });
         break;
       case SettingsOptions.restricted:
         setState(() {
-          _restricted = !value;
+          _restricted = value;
         });
         break;
       case SettingsOptions.anonymous:
         setState(() {
-          _anonymous = !value;
+          _anonymous = value;
         });
         break;
       default:

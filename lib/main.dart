@@ -12,6 +12,7 @@ import 'package:oluko_app/ui/screens/Login.dart';
 import 'package:oluko_app/ui/screens/Profile.dart';
 import 'package:oluko_app/ui/screens/profile/profile_my_account_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_settings_screen.dart';
+import 'package:oluko_app/ui/screens/profile/profile_subscription.dart';
 import 'package:oluko_app/ui/screens/self_recording_preview.dart';
 import 'package:oluko_app/ui/screens/sign_up_with_email.dart';
 import 'package:oluko_app/ui/screens/sign_up.dart';
@@ -64,6 +65,8 @@ class _MyAppState extends State<MyApp> {
             BlocProvider.value(value: _authBloc, child: ProfileSettingsPage()),
         '/profile-my-account': (context) =>
             BlocProvider.value(value: _authBloc, child: ProfileMyAccountPage()),
+        '/profile-subscription': (context) => BlocProvider.value(
+            value: _authBloc, child: ProfileSubscriptionPage()),
         '/log-in': (context) =>
             BlocProvider.value(value: _authBloc, child: LoginPage()),
         '/app-plans': (context) =>
