@@ -2,10 +2,12 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/plan_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_helper.dart';
+import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/info_dialog.dart';
 import 'package:oluko_app/models/plan.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
@@ -18,7 +20,9 @@ import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/screens/task_details.dart';
 
 class AsessmentVideos extends StatefulWidget {
-  AsessmentVideos({Key key}) : super(key: key);
+  final Assessment assessment;
+
+  AsessmentVideos({Key key, this.assessment}) : super(key: key);
 
   @override
   _AsessmentVideosState createState() => _AsessmentVideosState();
@@ -31,6 +35,7 @@ class _AsessmentVideosState extends State<AsessmentVideos> {
 
   @override
   Widget build(BuildContext context) {
+    AssessmentBloc().get();
     return BlocProvider(
       create: (context) => TaskBloc()..get(),
       child: form(),
@@ -101,33 +106,35 @@ class _AsessmentVideosState extends State<AsessmentVideos> {
                               children: [
                                 BlocBuilder<TaskBloc, TaskState>(
                                     builder: (context, state) {
-                                  return state is Success
+                                  return state is TaskSuccess
                                       ? ListView.builder(
                                           physics:
                                               const NeverScrollableScrollPhysics(),
                                           itemCount: state.values.length,
                                           shrinkWrap: true,
                                           itemBuilder: (context, num index) {
-                                            Task task = Task(
-                                                name: state.values[index].name,
-                                                description: state
-                                                    .values[index].description,
-                                                image:
-                                                    state.values[index].image);
+                                            Task task = state.values[index];
                                             return Padding(
                                                 padding:
                                                     const EdgeInsets.symmetric(
                                                         vertical: 15.0),
                                                 child: TaskCard(
                                                   task: task,
-                                                  onPressed: () =>
-                                                      Navigator.push(context,
-                                                          MaterialPageRoute(
-                                                              builder:
-                                                                  (context) {
-                                                    return TaskDetails(
-                                                        task: task);
-                                                  })),
+                                                  onPressed: () {
+                                                    if (_controller != null) {
+                                                      _controller.pause();
+                                                    }
+                                                    return Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                            builder: (context) {
+                                                      return TaskDetails(
+                                                          task: task);
+                                                    })).then((value) =>
+                                                        this.setState(() {
+                                                          _controller = null;
+                                                        }));
+                                                  },
                                                 ));
                                           })
                                       : Padding(
@@ -152,6 +159,8 @@ class _AsessmentVideosState extends State<AsessmentVideos> {
   List<Widget> showVideoPlayer() {
     List<Widget> widgets = [];
     widgets.add(OlukoVideoPlayer(
+        videoUrl: widget.assessment.video,
+        autoPlay: false,
         whenInitialized: (ChewieController chewieController) =>
             this.setState(() {
               _controller = chewieController;

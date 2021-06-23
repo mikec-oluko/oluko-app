@@ -34,7 +34,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
 
   String taskSubmissionId;
 
-  //TODO: hardcoded reference
+  //TODO: remove hardcoded reference
   CollectionReference reference = FirebaseFirestore.instance
       .collection("projects")
       .doc(GlobalConfiguration().getValue("projectId"))
@@ -89,6 +89,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                 child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 30, horizontal: 15),
                     child: Container(
+                      width: MediaQuery.of(context).size.width,
                       child: Stack(
                         children: [
                           Align(
@@ -96,24 +97,25 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                               child: OlukoPrimaryButton(
                                 title: 'Done',
                                 onPressed: () async {
+                                  _controller.pause();
                                   _taskSubmissionBloc
                                     ..createTaskResponse(reference);
                                 },
                               )),
-                          BlocBuilder<VideoBloc, VideoState>(
-                              builder: (context, state) {
-                            if (state is VideoProcessing) {
-                              return _getProgressBar(
-                                  state.processPhase, state.progress);
-                            } else if (state is VideoSuccess) {
+                          BlocConsumer<VideoBloc, VideoState>(
+                              listener: (context, state) {
+                            if (state is VideoSuccess) {
                               _taskSubmissionBloc
                                 ..updateTaskResponseVideo(
                                     reference.doc(taskSubmissionId),
                                     state.video);
-                              return Text("The task was submitted.",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                  ));
+                              Navigator.popUntil(
+                                  context, ModalRoute.withName('/'));
+                            }
+                          }, builder: (context, state) {
+                            if (state is VideoProcessing) {
+                              return _getProgressBar(
+                                  state.processPhase, state.progress);
                             } else {
                               return ConstrainedBox(
                                   constraints: BoxConstraints(
