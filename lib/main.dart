@@ -17,7 +17,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:oluko_app/ui/screens/task_details.dart';
 import 'package:oluko_app/ui/screens/videos/home.dart';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:oluko_app/utils/OlukoLocalizations.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'config/project_settings.dart';
 import 'models/task.dart';
 
