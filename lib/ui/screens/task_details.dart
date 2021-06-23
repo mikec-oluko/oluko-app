@@ -198,7 +198,10 @@ class _TaskDetailsState extends State<TaskDetails> {
           Image.asset(thumbnail),
           Align(
               alignment: Alignment.center,
-              child: Image.asset("assets/assessment/play.png")),
+              child: Image.asset(
+                "assets/assessment/play.png",
+                height: 40,
+              )),
           Positioned(
               bottom: 10,
               left: 10,
