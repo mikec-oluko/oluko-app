@@ -68,6 +68,7 @@ class _PlayerDoubleState extends State<PlayerDouble> {
     }
   }
 
+  //TODO: remove this from the view when ready
   void performEvents() {
     List<Event> events = widget.videoInfo.events;
     int controllerPos = _videoController.value.position.inMilliseconds;

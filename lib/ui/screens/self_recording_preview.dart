@@ -70,7 +70,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                   taskSubmissionId = state.taskSubmissionId;
                 });
                 _videoBloc
-                  ..createVideo(
+                  ..createVideo(context,
                       File(widget.filePath), 3.0 / 4.0, state.taskSubmissionId);
               }
             },
