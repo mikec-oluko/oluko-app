@@ -13,6 +13,7 @@ import 'package:oluko_app/ui/components/title_header.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/screens/self_recording.dart';
 import 'package:oluko_app/ui/screens/self_recording_preview.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 class TaskDetails extends StatefulWidget {
   TaskDetails({this.task, this.showRecordedVideos = false, Key key})
@@ -55,9 +56,15 @@ class _TaskDetailsState extends State<TaskDetails> {
                           ConstrainedBox(
                               constraints: BoxConstraints(
                                   maxHeight:
-                                      MediaQuery.of(context).size.height / 4,
-                                  minWidth: MediaQuery.of(context).size.width,
-                                  maxWidth: MediaQuery.of(context).size.width),
+                                      MediaQuery.of(context).orientation ==
+                                              Orientation.portrait
+                                          ? ScreenUtils.height(context) / 4
+                                          : ScreenUtils.height(context) / 1.5,
+                                  minHeight:
+                                      MediaQuery.of(context).orientation ==
+                                              Orientation.portrait
+                                          ? ScreenUtils.height(context) / 4
+                                          : ScreenUtils.height(context) / 1.5),
                               child: Stack(children: showVideoPlayer())),
                           BlocBuilder<TaskBloc, TaskState>(
                               builder: (context, state) {
