@@ -27,6 +27,7 @@ class _State extends State<SelfRecording> {
   CameraController cameraController;
   bool _isReady = false;
   bool _recording = false;
+  bool iscamerafront = true;
 
   @override
   void initState() {
@@ -60,11 +61,24 @@ class _State extends State<SelfRecording> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Icon(
+                    IconButton(
+                        icon: Icon(
+                            Icons.flip_camera_ios,
+                            color: Colors.white,
+                            size: 45,
+                          ),
+                        
+                        onPressed: () async {
+                          setState(() {
+                            iscamerafront = !iscamerafront;
+                          });
+                          _setupCameras();
+                        }),
+                    /*Icon(
                       Icons.photo_camera,
                       size: 45,
                       color: Colors.white,
-                    ),
+                    ),*/
                     GestureDetector(
                       onTap: () async {
                         if (_recording) {
@@ -175,10 +189,11 @@ class _State extends State<SelfRecording> {
   }
 
   Future<void> _setupCameras() async {
+    int cameraPos = iscamerafront ? 0 : 1;
     try {
       cameras = await availableCameras();
       cameraController =
-          new CameraController(cameras[0], ResolutionPreset.medium);
+          new CameraController(cameras[cameraPos], ResolutionPreset.medium);
       await cameraController.initialize();
     } on CameraException catch (_) {}
     if (!mounted) return;
