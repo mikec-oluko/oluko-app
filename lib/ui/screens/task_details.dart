@@ -1,6 +1,7 @@
 import 'package:chewie/chewie.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -176,34 +177,46 @@ class _TaskDetailsState extends State<TaskDetails> {
                 builder: (context) => SelfRecordingPreview(task: widget.task))),
         child: Align(
           alignment: Alignment.centerLeft,
-          child: ClipRRect(
-            borderRadius: BorderRadius.all(Radius.circular(20)),
-            child: Container(
-                height: 200,
-                width: 112,
-                child: Stack(children: [
-                  Image.asset("assets/assessment/task_response_thumbnail.png"),
-                  Center(child: Image.asset("assets/assessment/play.png")),
-                  Positioned(
-                      bottom: 10,
-                      left: 10,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.black.withAlpha(150),
-                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            '00:15',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                      )),
-                ])),
+          child: Container(
+            height: 200,
+            child: ListView(scrollDirection: Axis.horizontal, children: [
+              taskResponse(
+                  '00:15', 'assets/assessment/task_response_thumbnail.png'),
+            ]),
           ),
         ),
       )
     ]);
+  }
+
+  Widget taskResponse(String timeLabel, String thumbnail) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 8.0),
+      child: ClipRRect(
+        borderRadius: BorderRadius.all(Radius.circular(20)),
+        child: Stack(alignment: AlignmentDirectional.center, children: [
+          Image.asset(thumbnail),
+          Align(
+              alignment: Alignment.center,
+              child: Image.asset("assets/assessment/play.png")),
+          Positioned(
+              bottom: 10,
+              left: 10,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.black.withAlpha(150),
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    timeLabel,
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              )),
+        ]),
+      ),
+    );
   }
 }
