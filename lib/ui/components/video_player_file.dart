@@ -1,18 +1,18 @@
+import 'dart:io';
+
 import 'package:chewie/chewie.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
-class OlukoVideoPlayer extends StatefulWidget {
-  final String videoUrl;
+class OlukoVideoPlayerFile extends StatefulWidget {
   final bool showControls;
   final bool autoPlay;
+  final String filePath;
   final Function(ChewieController chewieController) whenInitialized;
 
-  OlukoVideoPlayer(
-      {this.videoUrl =
-          //TODO: update me harcoded
-          'https://oluko-mvt.s3.us-west-1.amazonaws.com/assessments/85b2f81c1fe74f9cb5e804c57db30137/85b2f81c1fe74f9cb5e804c57db30137_2.mp4',
+  OlukoVideoPlayerFile(
+      {this.filePath,
       this.showControls = true,
       this.autoPlay = true,
       this.whenInitialized,
@@ -20,16 +20,16 @@ class OlukoVideoPlayer extends StatefulWidget {
       : super(key: key);
 
   @override
-  _OlukoVideoPlayerState createState() => _OlukoVideoPlayerState();
+  _OlukoVideoPlayerFileState createState() => _OlukoVideoPlayerFileState();
 }
 
-class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
+class _OlukoVideoPlayerFileState extends State<OlukoVideoPlayerFile> {
   VideoPlayerController _controller;
   ChewieController chewieController;
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.network(widget.videoUrl)
+    _controller = VideoPlayerController.file(File(widget.filePath))
       ..initialize().then((value) {
         chewieController = ChewieController(
             videoPlayerController: _controller,

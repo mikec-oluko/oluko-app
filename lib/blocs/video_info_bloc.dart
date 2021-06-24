@@ -8,11 +8,13 @@ import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/helpers/encoding_provider.dart';
 import 'package:oluko_app/helpers/s3_provider.dart';
 import 'package:oluko_app/models/draw_point.dart';
+import 'package:oluko_app/models/event.dart';
 import 'package:oluko_app/models/video.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:oluko_app/models/video_info.dart';
 import 'package:oluko_app/repositories/video_info_repository.dart';
+import 'package:video_player/video_player.dart';
 
 abstract class VideoInfoState {
   final List<VideoInfo> videoInfoList;
@@ -105,19 +107,18 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
   }
 
   void createVideoInfo(CollectionReference reference, User user, bool addToList,
-      {Video video, int duration}) {
+      {Video video, List<Event> events}) {
     if (!(state is VideoInfoSuccess)) {
       emit(Loading());
     }
     try {
-      VideoInfo newVideoInfo =
-          VideoInfo(createdBy: user.uid, markers: [], events: [], drawing: []);
-      if (duration != null) {
-        newVideoInfo.duration = duration;
-      }
-      if (video != null) {
-        newVideoInfo.video = video;
-      }
+      VideoInfo newVideoInfo = VideoInfo(
+        createdBy: user.uid,
+        markers: [],
+        events: (events != null) ? events : [],
+        drawing: [],
+        video: video != null ? video : Video(),
+      );
       newVideoInfo =
           VideoInfoRepository.createVideoInfo(newVideoInfo, reference);
       if (addToList) {
@@ -153,6 +154,19 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
 
   Future<void> processVideo(User user, File rawVideoFile,
       CollectionReference reference, bool addToList,
+      {double givenAspectRatio, List<Event> events}) async {
+    Video video;
+    if (givenAspectRatio == null) {
+      video = await createVideo(rawVideoFile);
+    } else {
+      video =
+          await createVideo(rawVideoFile, givenAspectRatio: givenAspectRatio);
+    }
+
+    createVideoInfo(reference, user, addToList, video: video, events: events);
+  }
+
+  Future<Video> createVideo(File rawVideoFile,
       {double givenAspectRatio}) async {
     _progress = 0.0;
     emit(TakeVideoSuccess(processPhase: _processPhase, progress: _progress));
@@ -174,6 +188,10 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
     } else {
       aspectRatio = EncodingProvider.getAspectRatio(info.getAllProperties());
     }
+
+    double durationInSeconds =
+        EncodingProvider.getDuration(info.getMediaProperties());
+    int durationInMilliseconds = (durationInSeconds * 1000).toInt();
 
     _processPhase = 'Generating thumbnail';
     _progress += _unitOfProgress;
@@ -201,9 +219,9 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
       thumbUrl: thumbUrl,
       aspectRatio: aspectRatio,
       name: videoName,
+      duration: durationInMilliseconds,
     );
-
-    createVideoInfo(reference, user, addToList, video: video);
+    return video;
   }
 
   Future<String> _uploadHLSFiles(dirPath, videoName) async {

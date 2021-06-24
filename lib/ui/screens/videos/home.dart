@@ -6,6 +6,7 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/video_info_bloc.dart';
 import 'package:oluko_app/models/video.dart';
 import 'package:oluko_app/models/video_info.dart';
+import 'package:oluko_app/ui/screens/videos/player_double.dart';
 import 'package:oluko_app/ui/screens/videos/player_response.dart';
 import 'package:oluko_app/ui/screens/videos/player_single.dart';
 import 'package:image_picker/image_picker.dart';
@@ -223,7 +224,7 @@ class _HomeState extends State<Home> {
     } else {
       return BlocProvider.value(
           value: _videoInfoBloc,
-          child: PlayerResponse(
+          child: PlayerDouble(
             videoReference: widget.parentVideoReference.doc(videoInfo.id),
             parentVideoInfo: widget.parentVideoInfo,
             videoInfo: videoInfo,

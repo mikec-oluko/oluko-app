@@ -1,44 +1,48 @@
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'base.dart';
 
-class AssessmentAssignment {
-  AssessmentAssignment(
-      {this.name,
-      this.createdAt,
-      this.completedAt,
-      this.seenAt,
-      this.assessmentId,
-      this.assessmentReference,
-      this.userId,
-      this.userReference,
-      this.coachId,
-      this.coachReference});
-
-  String name;
-  DateTime createdAt;
-  DateTime completedAt;
-  DateTime seenAt;
+class AssessmentAssignment extends Base {
+  String id;
+  Timestamp completedAt;
+  Timestamp seenAt;
   String assessmentId;
-  Reference assessmentReference;
+  DocumentReference assessmentReference;
   String userId;
-  Reference userReference;
+  DocumentReference userReference;
   String coachId;
-  Reference coachReference;
+  DocumentReference coachReference;
 
-  AssessmentAssignment.fromJson(Map json)
-      : name = json['name'],
-        createdAt = json['created_at'],
-        completedAt = json['completed_at'],
-        seenAt = json['seen_at'],
-        assessmentId = json['assessment_id'],
-        assessmentReference = json['assessment_reference'],
-        userId = json['user_id'],
-        userReference = json['user_reference'],
-        coachId = json['coach_id'],
-        coachReference = json['coach_reference'];
+  AssessmentAssignment({
+    this.id,
+    this.completedAt,
+    this.seenAt,
+    this.assessmentId,
+    this.assessmentReference,
+    this.userId,
+    this.userReference,
+    this.coachId,
+    this.coachReference,
+    Timestamp createdAt,
+  }) : super(createdAt: createdAt);
+
+  factory AssessmentAssignment.fromJson(Map<String, dynamic> json) {
+    return AssessmentAssignment(
+      id: json['id'],
+      createdAt: json['created_at'],
+      completedAt: json['completed_at'],
+      seenAt: json['seen_at'],
+      assessmentId: json['assessment_id'],
+      assessmentReference: json['assessment_reference'],
+      userId: json['user_id'],
+      userReference: json['user_reference'],
+      coachId: json['coach_id'],
+      coachReference: json['coach_reference'],
+    );
+  }
 
   Map<String, dynamic> toJson() => {
-        'name': name,
-        'created_at': createdAt,
+        'id': id,
+        'created_at': createdAt == null ? createdAtSentinel : createdAt,
         'completed_at': completedAt,
         'seen_at': seenAt,
         'assessment_id': assessmentId,
@@ -46,6 +50,6 @@ class AssessmentAssignment {
         'user_id': userId,
         'user_reference': userReference,
         'coach_id': coachId,
-        'coach_reference': coachId
+        'coach_reference': coachReference,
       };
 }

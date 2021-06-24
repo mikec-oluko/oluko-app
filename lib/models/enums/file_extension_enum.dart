@@ -1,0 +1,1 @@
+enum FileExtension {m3u8}

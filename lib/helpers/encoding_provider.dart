@@ -82,8 +82,8 @@ class EncodingProvider {
     return await _probe.getMediaInformation(path);
   }
 
-  static int getDuration(Map<dynamic, dynamic> info) {
-    return info['duration'];
+  static double getDuration(Map<dynamic, dynamic> info) {
+    return double.parse(info['duration']);
   }
 
   static void enableLogCallback(void Function(Log log) logCallback) {
