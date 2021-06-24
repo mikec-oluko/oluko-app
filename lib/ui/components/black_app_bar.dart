@@ -5,25 +5,26 @@ import 'package:oluko_app/ui/components/title_header.dart';
 class OlukoAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Function() onPressed;
   final String title;
+  final List<Widget> actions;
 
-  OlukoAppBar({this.title, this.onPressed});
+  OlukoAppBar({this.title, this.onPressed, this.actions});
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.black,
-      leading: IconButton(
-        icon: Icon(
-          Icons.chevron_left,
-          size: 35,
-          color: Colors.white,
+        backgroundColor: Colors.black,
+        leading: IconButton(
+          icon: Icon(
+            Icons.chevron_left,
+            size: 35,
+            color: Colors.white,
+          ),
+          onPressed: () => Navigator.pop(context),
         ),
-        onPressed: () => Navigator.pop(context),
-      ),
-      title: TitleHeader(
-        title,
-        bold: true,
-      ),
-    );
+        title: TitleHeader(
+          title,
+          bold: true,
+        ),
+        actions: actions);
   }
 
   @override

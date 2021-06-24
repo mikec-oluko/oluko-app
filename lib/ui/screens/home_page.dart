@@ -92,8 +92,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                     child: Text('LEARN FROM THE BEST',
                                         style: TextStyle(color: Colors.white))),
                                 ElevatedButton(
-                                  onPressed: () =>
-                                      Navigator.pushNamed(context, '/sign-up'),
+                                  onPressed: () => Navigator.pushNamed(
+                                      context, '/sign-up',
+                                      arguments: []),
                                   style: ElevatedButton.styleFrom(
                                       minimumSize: Size(200, 50),
                                       primary: OlukoColors.primary),

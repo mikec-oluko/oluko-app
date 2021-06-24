@@ -8,6 +8,7 @@ import 'package:oluko_app/config/s3_settings.dart';
 import 'package:oluko_app/ui/screens/app_plans.dart';
 import 'package:oluko_app/ui/screens/assessment_videos.dart';
 import 'package:oluko_app/ui/screens/choose_plan_payment.dart';
+import 'package:oluko_app/ui/screens/courses.dart';
 import 'package:oluko_app/ui/screens/home_page.dart';
 import 'package:oluko_app/ui/screens/Login.dart';
 import 'package:oluko_app/ui/screens/Profile.dart';
@@ -79,6 +80,8 @@ class _MyAppState extends State<MyApp> {
             )),
         '/choose-plan-payment': (context) =>
             BlocProvider.value(value: _authBloc, child: ChoosePlayPayments()),
+        '/courses': (context) =>
+            BlocProvider.value(value: _authBloc, child: Courses()),
         '/videos': (context) => BlocProvider.value(
             value: _authBloc,
             child: Home(
