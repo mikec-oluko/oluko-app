@@ -63,11 +63,10 @@ class _State extends State<SelfRecording> {
                   children: [
                     IconButton(
                         icon: Icon(
-                            Icons.flip_camera_ios,
-                            color: Colors.white,
-                            size: 45,
-                          ),
-                        
+                          Icons.flip_camera_ios,
+                          color: Colors.white,
+                          size: 45,
+                        ),
                         onPressed: () async {
                           setState(() {
                             iscamerafront = !iscamerafront;
@@ -113,7 +112,7 @@ class _State extends State<SelfRecording> {
                     padding: EdgeInsets.symmetric(horizontal: 15),
                     child: Container(
                       width: MediaQuery.of(context).size.width,
-                      child: Column(
+                      child: ListView(
                         children: [
                           ConstrainedBox(
                               constraints: BoxConstraints(

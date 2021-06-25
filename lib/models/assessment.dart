@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'assessment_task.dart';
 import 'base.dart';
 
 class Assessment extends Base {
@@ -31,7 +32,7 @@ class Assessment extends Base {
   String coverImage;
   String thumbnailImage;
   String description;
-  List<dynamic> tasks;
+  List<AssessmentTask> tasks;
 
   factory Assessment.fromJson(Map<String, dynamic> json) {
     Assessment assessment = Assessment(
@@ -40,7 +41,12 @@ class Assessment extends Base {
       coverImage: json['cover_image'],
       thumbnailImage: json['thumbnail_image'],
       description: json['description'],
-      tasks: json['tasks'],
+      tasks: json['tasks'] != null && json['tasks'].length > 0
+          ? json['tasks'].map<AssessmentTask>((task) {
+              AssessmentTask assessmentTask = AssessmentTask.fromJson(task);
+              return assessmentTask;
+            }).toList()
+          : [],
     );
     assessment.setBase(json);
     return assessment;

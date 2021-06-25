@@ -27,6 +27,7 @@ class Task extends Base {
             isDeleted: isDeleted,
             isHidden: isHidden);
 
+  String id;
   String name;
   String video;
   String stepsDescription;

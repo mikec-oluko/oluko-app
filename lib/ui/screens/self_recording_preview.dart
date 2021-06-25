@@ -13,6 +13,9 @@ import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
+import 'package:oluko_app/ui/components/title_body.dart';
+import 'package:oluko_app/ui/components/video_player.dart';
+import 'package:oluko_app/ui/screens/task_details.dart';
 import 'package:oluko_app/ui/components/video_player_file.dart';
 
 class SelfRecordingPreview extends StatefulWidget {
@@ -70,8 +73,8 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                   taskSubmissionId = state.taskSubmissionId;
                 });
                 _videoBloc
-                  ..createVideo(context,
-                      File(widget.filePath), 3.0 / 4.0, state.taskSubmissionId);
+                  ..createVideo(context, File(widget.filePath), 3.0 / 4.0,
+                      state.taskSubmissionId);
               }
             },
             child: form()));
@@ -98,6 +101,14 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                                 title: 'Done',
                                 onPressed: () async {
                                   _controller.pause();
+                                  Navigator.popUntil(
+                                      context, ModalRoute.withName('/'));
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => TaskDetails(
+                                              task: widget.task,
+                                              showRecordedVideos: true)));
                                   _taskSubmissionBloc
                                     ..createTaskResponse(reference);
                                 },
