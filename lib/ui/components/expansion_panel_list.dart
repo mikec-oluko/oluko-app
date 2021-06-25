@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/ui/components/parent_tile.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 

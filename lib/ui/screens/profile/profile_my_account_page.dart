@@ -37,7 +37,10 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
 
   Scaffold buildScaffoldPage(BuildContext context) {
     return Scaffold(
-      appBar: OlukoAppBar(title: ProfileViewConstants.profileMyAccountTitle),
+      appBar: OlukoAppBar(
+        title: ProfileViewConstants.profileMyAccountTitle,
+        showSearchBar: false,
+      ),
       body: SingleChildScrollView(
         child: Container(
           width: MediaQuery.of(context).size.width,
@@ -197,7 +200,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
       child: Padding(
         padding: const EdgeInsets.only(left: 5.0),
         child: TextButton(
-          child: Text("Logout",
+          child: Text(ProfileViewConstants.profileSubscriptionLogout,
               style: TextStyle(fontSize: 18.0, color: OlukoColors.primary)),
           onPressed: () {
             //TODO: Define logout action

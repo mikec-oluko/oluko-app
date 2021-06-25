@@ -102,10 +102,10 @@ class _State extends State<OlukoBottomNavigationBar> {
           assetImageUrl: 'assets/bottom_navigation_bar/course.png',
           route: '/courses'),
       OlukoBottomNavigationBarItem(
-          title: 'Profile',
-          assetImageUrl: 'assets/bottom_navigation_bar/profile.png',
-          route: '/profile',
-          disabled: true),
+        title: 'Profile',
+        assetImageUrl: 'assets/bottom_navigation_bar/profile.png',
+        route: '/profile',
+      ),
     ];
     return items;
   }

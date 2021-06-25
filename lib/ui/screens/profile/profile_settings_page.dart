@@ -17,7 +17,10 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: OlukoAppBar(title: ProfileViewConstants.profileSettingsTitle),
+      appBar: OlukoAppBar(
+        title: ProfileViewConstants.profileSettingsTitle,
+        showSearchBar: false,
+      ),
       body: Container(
         color: Colors.black,
         child: buildOptions(context),

@@ -33,6 +33,10 @@ class ProfileViewConstants {
   static const profileUpgradeText = "Upgrade";
   static const profileHelpAndSupportSubTitle = "Need more help?";
   static const profileHelpAndSupportButtonText = "Contact us";
+  static const profileUpcomingChallengesTitle = "Upcoming Challenges";
+  static const profileOwnProfileViewAll = "View All";
+  static const profileOwnProfileActiveCourses = 'Active Courses';
+  static const profileSubscriptionLogout = "Logout";
 
   static const List<String> profileOptions = [
     profileOptionsMyAccount,
@@ -89,3 +93,21 @@ final basicTiles = <BasicTile>[
     ]),
   ])
 ];
+
+class Challenge {
+  String title;
+  String subtitle;
+  String type;
+  bool isLocked;
+  String imageCover;
+  Challenge(
+      {this.title, this.subtitle, this.type, this.isLocked, this.imageCover});
+}
+
+//Challenge example
+final challengeDefault = Challenge(
+    title: "20min EMOM challenge",
+    subtitle: "Innterval traiinning",
+    type: "Class",
+    isLocked: false,
+    imageCover: 'assets/courses/course_sample_1.png');

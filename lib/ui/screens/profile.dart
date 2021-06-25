@@ -38,7 +38,8 @@ class _ProfilePageState extends State<ProfilePage> {
     return Form(
         key: _formKey,
         child: Scaffold(
-            appBar: OlukoAppBar(title: ProfileViewConstants.profileTitle),
+            appBar: OlukoAppBar(
+                title: ProfileViewConstants.profileTitle, showSearchBar: false),
             body: Container(
                 color: Colors.black,
                 child: Stack(

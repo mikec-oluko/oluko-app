@@ -24,7 +24,9 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
         child: Scaffold(
           backgroundColor: Colors.black,
           appBar: OlukoAppBar(
-              title: ProfileViewConstants.profileOptionsSubscription),
+            title: ProfileViewConstants.profileOptionsSubscription,
+            showSearchBar: false,
+          ),
           body: BlocBuilder<PlanBloc, PlanState>(
             builder: (context, state) {
               if (state is PlansSuccess) {

@@ -56,7 +56,7 @@ class _ParentTileWidgetState extends State<ParentTileWidget> {
               style: TextStyle(fontSize: 14.0, color: OlukoColors.grayColor)),
           children: tiles
               .map((tile) => Padding(
-                    padding: const EdgeInsets.fromLTRB(15, 10, 15, 5),
+                    padding: const EdgeInsets.fromLTRB(15, 10, 15, 0),
                     child: ChildTileWidget(tile: tile),
                   ))
               .toList()),
