@@ -1,27 +1,25 @@
+import 'package:enum_to_string/enum_to_string.dart';
+
 enum EventType { play, pause}
 
 class Event {
-  String id;
   int position;
   EventType eventType;
 
   Event({
-    this.id,
     this.position,
     this.eventType,
   });
 
   factory Event.fromJson(Map<String, dynamic> json) {
     return Event(
-      id: json['id'],
       position: json['position'],
-      eventType: json['eventType'],
+      eventType: EnumToString.fromString(EventType.values, json['event_type']),
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
         'position': position,
-        'eventType': eventType,
+        'event_type': EnumToString.convertToString(eventType),
       };
 }

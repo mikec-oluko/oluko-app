@@ -2,11 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/config/s3_settings.dart';
 import 'package:oluko_app/ui/screens/app_plans.dart';
-import 'package:oluko_app/ui/screens/assesment_videos.dart';
+import 'package:oluko_app/ui/screens/assessment_videos.dart';
 import 'package:oluko_app/ui/screens/choose_plan_payment.dart';
+import 'package:oluko_app/ui/screens/courses.dart';
 import 'package:oluko_app/ui/screens/home_page.dart';
 import 'package:oluko_app/ui/screens/Login.dart';
 import 'package:oluko_app/ui/screens/Profile.dart';
@@ -22,7 +24,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:oluko_app/ui/screens/task_details.dart';
 import 'package:oluko_app/ui/screens/videos/home.dart';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:oluko_app/utils/OlukoLocalizations.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'config/project_settings.dart';
 import 'models/task.dart';
 
@@ -55,8 +57,9 @@ class _MyAppState extends State<MyApp> {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) =>
-            BlocProvider.value(value: _authBloc, child: MyHomePage(title: '')),
+        '/': (context) => MultiBlocProvider(providers: [
+              BlocProvider.value(value: _authBloc),
+            ], child: MyHomePage(title: '')),
         '/sign-up': (context) =>
             BlocProvider.value(value: _authBloc, child: SignUpPage()),
         '/sign-up-with-email': (context) =>
@@ -77,20 +80,19 @@ class _MyAppState extends State<MyApp> {
             BlocProvider.value(value: _authBloc, child: LoginPage()),
         '/app-plans': (context) =>
             BlocProvider.value(value: _authBloc, child: AppPlans()),
-        '/assessment-videos': (context) =>
-            BlocProvider.value(value: _authBloc, child: AsessmentVideos()),
+        '/assessment-videos': (context) => MultiBlocProvider(providers: [
+              BlocProvider.value(value: _authBloc),
+              BlocProvider(create: (context) => AssessmentBloc()..get())
+            ], child: AsessmentVideos()),
         '/task-details': (context) => BlocProvider.value(
             value: _authBloc,
             child: TaskDetails(
               task: Task(description: 'Task Description'),
             )),
-        '/self-recording-preview': (context) => BlocProvider.value(
-            value: _authBloc,
-            child: SelfRecordingPreview(
-              task: Task(description: 'Task Description', name: 'Task 1'),
-            )),
         '/choose-plan-payment': (context) =>
             BlocProvider.value(value: _authBloc, child: ChoosePlayPayments()),
+        '/courses': (context) =>
+            BlocProvider.value(value: _authBloc, child: Courses()),
         '/videos': (context) => BlocProvider.value(
             value: _authBloc,
             child: Home(

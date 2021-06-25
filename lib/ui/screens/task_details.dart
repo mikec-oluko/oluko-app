@@ -1,6 +1,7 @@
 import 'package:chewie/chewie.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -9,13 +10,18 @@ import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
+import 'package:oluko_app/ui/components/title_header.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/screens/self_recording.dart';
+import 'package:oluko_app/ui/screens/self_recording_preview.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 class TaskDetails extends StatefulWidget {
-  TaskDetails({this.task, Key key}) : super(key: key);
+  TaskDetails({this.task, this.showRecordedVideos = false, Key key})
+      : super(key: key);
 
   final Task task;
+  final bool showRecordedVideos;
 
   @override
   _TaskDetailsState createState() => _TaskDetailsState();
@@ -46,13 +52,20 @@ class _TaskDetailsState extends State<TaskDetails> {
                     padding: EdgeInsets.symmetric(horizontal: 15),
                     child: Container(
                       width: MediaQuery.of(context).size.width,
-                      child: Column(
+                      child: ListView(
                         children: [
                           ConstrainedBox(
                               constraints: BoxConstraints(
                                   maxHeight:
-                                      MediaQuery.of(context).size.height / 4,
-                                  minWidth: MediaQuery.of(context).size.width),
+                                      MediaQuery.of(context).orientation ==
+                                              Orientation.portrait
+                                          ? ScreenUtils.height(context) / 4
+                                          : ScreenUtils.height(context) / 1.5,
+                                  minHeight:
+                                      MediaQuery.of(context).orientation ==
+                                              Orientation.portrait
+                                          ? ScreenUtils.height(context) / 4
+                                          : ScreenUtils.height(context) / 1.5),
                               child: Stack(children: showVideoPlayer())),
                           BlocBuilder<TaskBloc, TaskState>(
                               builder: (context, state) {
@@ -66,8 +79,8 @@ class _TaskDetailsState extends State<TaskDetails> {
   List<Widget> showVideoPlayer() {
     List<Widget> widgets = [];
     widgets.add(OlukoVideoPlayer(
-        videoUrl:
-            'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/production%20ID_4701508.mp4?alt=media&token=815819a5-72f9-4bec-bee0-59064c634c03',
+        autoPlay: false,
+        videoUrl: widget.task.video,
         whenInitialized: (ChewieController chewieController) =>
             this.setState(() {
               _controller = chewieController;
@@ -92,11 +105,16 @@ class _TaskDetailsState extends State<TaskDetails> {
                 children: [
                   OlukoPrimaryButton(
                     title: 'Start Recording',
-                    onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                SelfRecording(task: widget.task))),
+                    onPressed: () {
+                      if (_controller != null) {
+                        _controller.pause();
+                      }
+                      return Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  SelfRecording(task: widget.task)));
+                    },
                   ),
                 ],
               ),
@@ -106,7 +124,7 @@ class _TaskDetailsState extends State<TaskDetails> {
   }
 
   Widget formFields(TaskState state) {
-    if (state is Success) {
+    if (state is TaskSuccess) {
       return Column(
         children: [
           Padding(
@@ -132,11 +150,76 @@ class _TaskDetailsState extends State<TaskDetails> {
           Text(
             widget.task.description,
             style: TextStyle(fontSize: 17, color: Colors.white60),
-          )
+          ),
+          widget.showRecordedVideos ? recordedVideos() : SizedBox(),
         ],
       );
     } else {
       return SizedBox();
     }
+  }
+
+  recordedVideos() {
+    return Column(children: [
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 25.0),
+        child: Align(
+            alignment: Alignment.centerLeft,
+            child: TitleHeader(
+              'Recorded Videos',
+              bold: true,
+            )),
+      ),
+      GestureDetector(
+        onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SelfRecordingPreview(task: widget.task))),
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: Container(
+            height: 200,
+            child: ListView(scrollDirection: Axis.horizontal, children: [
+              taskResponse(
+                  '00:15', 'assets/assessment/task_response_thumbnail.png'),
+            ]),
+          ),
+        ),
+      )
+    ]);
+  }
+
+  Widget taskResponse(String timeLabel, String thumbnail) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 8.0),
+      child: ClipRRect(
+        borderRadius: BorderRadius.all(Radius.circular(20)),
+        child: Stack(alignment: AlignmentDirectional.center, children: [
+          Image.asset(thumbnail),
+          Align(
+              alignment: Alignment.center,
+              child: Image.asset(
+                "assets/assessment/play.png",
+                height: 40,
+              )),
+          Positioned(
+              bottom: 10,
+              left: 10,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.black.withAlpha(150),
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    timeLabel,
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              )),
+        ]),
+      ),
+    );
   }
 }

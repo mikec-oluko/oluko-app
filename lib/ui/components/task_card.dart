@@ -61,7 +61,7 @@ class _State extends State<TaskCard> {
                   ),
                   ClipRRect(
                     child: Image.network(
-                      widget.task.image,
+                      widget.task.thumbnailImage,
                       height: 75,
                       width: 75,
                       fit: BoxFit.cover,
