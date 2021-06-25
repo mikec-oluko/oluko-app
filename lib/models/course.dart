@@ -18,7 +18,7 @@ class Course {
       this.imageUrl});
 
   String name;
-  num id;
+  String id;
   Timestamp duration;
   String description;
   List<String> equipment;
