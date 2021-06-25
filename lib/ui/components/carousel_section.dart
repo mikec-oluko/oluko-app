@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 
-import 'course_card.dart';
-
 class CarouselSection extends StatefulWidget {
   final String title;
   final List<Widget> children;
@@ -38,7 +36,7 @@ class _State extends State<CarouselSection> {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 20),
           child: Container(
-              height: 200,
+              height: 190,
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: ListView(

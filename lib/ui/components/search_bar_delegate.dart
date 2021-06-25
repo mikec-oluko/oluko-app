@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-class CoursesSearch extends SearchDelegate<String> {
+class SearchbarDelegate extends SearchDelegate<String> {
+  SearchbarDelegate();
+
   final cities = [
     'Berlin',
     'Paris',
