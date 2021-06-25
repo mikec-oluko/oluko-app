@@ -14,8 +14,11 @@ class TaskRepository {
   }
 
   Future<List<Task>> getAll() async {
-    QuerySnapshot docRef =
-        await FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue("projectId")).collection('tasks').get();
+    QuerySnapshot docRef = await FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue("projectId"))
+        .collection('tasks')
+        .get();
     List<Task> response = [];
     docRef.docs.forEach((doc) {
       final Map<String, dynamic> element = doc.data();

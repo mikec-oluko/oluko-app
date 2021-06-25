@@ -1,3 +1,5 @@
+import 'package:oluko_app/models/assessment_task.dart';
+
 class Assessment {
   Assessment({
     this.name,
@@ -13,7 +15,7 @@ class Assessment {
   String coverImage;
   String thumbnailImage;
   String description;
-  List<dynamic> tasks;
+  List<AssessmentTask> tasks;
 
   Assessment.fromJson(Map json)
       : name = json['name'],
@@ -21,7 +23,12 @@ class Assessment {
         coverImage = json['cover_image'],
         thumbnailImage = json['thumbnail_image'],
         description = json['description'],
-        tasks = json['tasks'];
+        tasks = json['tasks'] != null && json['tasks'].length > 0
+            ? json['tasks'].map<AssessmentTask>((task) {
+                AssessmentTask assessmentTask = AssessmentTask.fromJson(task);
+                return assessmentTask;
+              }).toList()
+            : [];
 
   Map<String, dynamic> toJson() => {
         'name': name,
