@@ -1,9 +1,24 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Course {
-  Course({this.name, this.imageUrl});
+  Course(
+      {this.name,
+      this.id,
+      this.duration,
+      this.equipment,
+      this.intensity,
+      this.categories,
+      this.workoutDuration,
+      this.recommendedEngagement,
+      this.recommendedEngagementGap,
+      this.engagementGapTime,
+      this.engagementTime,
+      this.mandatoryGapTime,
+      this.classe,
+      this.imageUrl});
 
   String name;
+  num id;
   Timestamp duration;
   String description;
   List<String> equipment;
