@@ -32,16 +32,4 @@ class CourseBloc extends Cubit<CourseState> {
       emit(CourseFailure(exception: e));
     }
   }
-
-  void getForAssessment(Assessment assessment) async {
-    if (!(state is CourseSuccess)) {
-      emit(CourseLoading());
-    }
-    try {
-      List<Course> courses = await CourseRepository().getAll();
-      emit(CourseSuccess(values: courses));
-    } catch (e) {
-      emit(CourseFailure(exception: e));
-    }
-  }
 }

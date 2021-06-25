@@ -32,16 +32,4 @@ class CourseCategoryBloc extends Cubit<CourseCategoryState> {
       emit(CourseCategoryFailure(exception: e));
     }
   }
-
-  void getForAssessment(Assessment assessment) async {
-    if (!(state is CourseCategorySuccess)) {
-      emit(CourseCategoryLoading());
-    }
-    try {
-      List<CourseCategory> courses = await CourseCategoryRepository().getAll();
-      emit(CourseCategorySuccess(values: courses));
-    } catch (e) {
-      emit(CourseCategoryFailure(exception: e));
-    }
-  }
 }
