@@ -28,9 +28,12 @@ class _State extends State<OlukoBottomNavigationBar> {
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.black,
         onTap: (num index) => this.setState(() {
-              selectedIndex = index;
-              Navigator.popAndPushNamed(
-                  context, getBottomNavigationBarItems()[index].route);
+              final OlukoBottomNavigationBarItem selectedItem =
+                  getBottomNavigationBarItems()[index];
+              if (selectedItem.disabled == false) {
+                Navigator.popAndPushNamed(context, selectedItem.route);
+                selectedIndex = index;
+              }
             }),
         items: getNavigationBarWidgets(selectedIndex: selectedIndex));
   }
@@ -40,7 +43,7 @@ class _State extends State<OlukoBottomNavigationBar> {
     double blockSize =
         MediaQuery.of(context).orientation == Orientation.portrait
             ? ScreenUtils.width(context) / 5
-            : ScreenUtils.height(context) / 5;
+            : ScreenUtils.width(context) / 5;
     return BottomNavigationBarItem(
         icon: Container(
           decoration: BoxDecoration(
@@ -50,19 +53,26 @@ class _State extends State<OlukoBottomNavigationBar> {
                 : Colors.black,
           ),
           width: blockSize,
-          height: blockSize,
+          height: MediaQuery.of(context).orientation == Orientation.portrait
+              ? blockSize
+              : blockSize / 2,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ImageIcon(AssetImage(olukoBottomNavigationBarItem.assetImageUrl)),
+              ImageIcon(AssetImage(olukoBottomNavigationBarItem.assetImageUrl),
+                  color: olukoBottomNavigationBarItem.disabled
+                      ? Colors.grey.shade800
+                      : null),
               Padding(
                 padding: const EdgeInsets.only(top: 5.0),
                 child: Text(
                   olukoBottomNavigationBarItem.title,
                   style: TextStyle(
-                      color: olukoBottomNavigationBarItem.selected
-                          ? Colors.black
-                          : Colors.white),
+                      color: olukoBottomNavigationBarItem.disabled
+                          ? Colors.grey.shade800
+                          : olukoBottomNavigationBarItem.selected
+                              ? Colors.black
+                              : Colors.white),
                 ),
               )
             ],
@@ -80,11 +90,13 @@ class _State extends State<OlukoBottomNavigationBar> {
       OlukoBottomNavigationBarItem(
           title: 'Coach',
           assetImageUrl: 'assets/bottom_navigation_bar/coach.png',
-          route: '/coach'),
+          route: '/coach',
+          disabled: true),
       OlukoBottomNavigationBarItem(
           title: 'Friends',
           assetImageUrl: 'assets/bottom_navigation_bar/friends.png',
-          route: '/friends'),
+          route: '/friends',
+          disabled: true),
       OlukoBottomNavigationBarItem(
           title: 'Courses',
           assetImageUrl: 'assets/bottom_navigation_bar/course.png',
@@ -92,7 +104,8 @@ class _State extends State<OlukoBottomNavigationBar> {
       OlukoBottomNavigationBarItem(
           title: 'Profile',
           assetImageUrl: 'assets/bottom_navigation_bar/profile.png',
-          route: '/profile'),
+          route: '/profile',
+          disabled: true),
     ];
     return items;
   }
