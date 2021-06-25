@@ -8,7 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/video_info_bloc.dart';
-import 'package:oluko_app/models/event.dart';
+import 'package:oluko_app/models/submodels/event.dart';
 import 'package:oluko_app/models/video_info.dart';
 import 'package:video_player/video_player.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';

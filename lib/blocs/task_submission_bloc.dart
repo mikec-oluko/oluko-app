@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/task_submission.dart';
-import 'package:oluko_app/models/video.dart';
+import 'package:oluko_app/models/submodels/video.dart';
 import 'package:oluko_app/repositories/task_submission_repository.dart';
 
 abstract class TaskSubmissionState {}
