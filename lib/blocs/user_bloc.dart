@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/models/api_response.dart';
+import 'package:oluko_app/models/dto/api_response.dart';
 import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';

@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/plan_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_helper.dart';
-import 'package:oluko_app/models/info_dialog.dart';
+import 'package:oluko_app/utils/info_dialog.dart';
 import 'package:oluko_app/models/plan.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/ui/components/subscription_card.dart';

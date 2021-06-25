@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oluko_app/models/task_submission.dart';
-import 'package:oluko_app/models/video.dart';
+import 'package:oluko_app/models/submodels/video.dart';
 
 class TaskSubmissionRepository {
   FirebaseFirestore firestoreInstance;

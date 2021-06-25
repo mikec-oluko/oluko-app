@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oluko_app/helpers/enum_helper.dart';
-import 'package:oluko_app/models/info_dialog.dart';
+import 'package:oluko_app/utils/info_dialog.dart';
+
+import 'base.dart';
 
 enum PlanFeature {
   ACCESS_CONTENT,
@@ -21,7 +24,7 @@ Map<PlanDuration, String> durationLabel = {
   PlanDuration.DAILY: 'Day'
 };
 
-class Plan {
+class Plan extends Base {
   Plan(
       {this.duration,
       this.features,
@@ -29,7 +32,22 @@ class Plan {
       this.price,
       this.recurrent,
       this.title,
-      this.backgroundImage});
+      this.backgroundImage,
+      String id,
+      Timestamp createdAt,
+      String createdBy,
+      Timestamp updatedAt,
+      String updatedBy,
+      bool isHidden,
+      bool isDeleted})
+      : super(
+            id: id,
+            createdBy: createdBy,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            updatedBy: updatedBy,
+            isDeleted: isDeleted,
+            isHidden: isHidden);
 
   PlanDuration duration;
   List<PlanFeature> features;
@@ -39,30 +57,38 @@ class Plan {
   String title;
   String backgroundImage;
 
-  Plan.fromJson(Map json)
-      : duration = EnumHelper.enumFromString<PlanDuration>(
-            PlanDuration.values, json['duration']),
-        features = List.from(json['features'])
-            .map((e) =>
-                EnumHelper.enumFromString<PlanFeature>(PlanFeature.values, e))
-            .toList(),
-        infoDialog = json['info_dialog'] != null
-            ? InfoDialog.fromJson(json['info_dialog'])
-            : null,
-        price = json['price'],
-        recurrent = json['recurrent'],
-        title = json['title'],
-        backgroundImage = json['background_image'];
+  factory Plan.fromJson(Map<String, dynamic> json) {
+    Plan plan = Plan(
+      duration: EnumHelper.enumFromString<PlanDuration>(
+          PlanDuration.values, json['duration']),
+      features: List.from(json['features'])
+          .map((e) =>
+              EnumHelper.enumFromString<PlanFeature>(PlanFeature.values, e))
+          .toList(),
+      infoDialog: json['info_dialog'] != null
+          ? InfoDialog.fromJson(json['info_dialog'])
+          : null,
+      price: json['price'],
+      recurrent: json['recurrent'],
+      title: json['title'],
+      backgroundImage: json['background_image'],
+    );
+    plan.setBase(json);
+    return plan;
+  }
 
-  Map<String, dynamic> toJson() => {
-        'duration': EnumHelper.enumToString(duration),
-        'features': features
-            .map((feature) => EnumHelper.enumToString(feature))
-            .toList(),
-        'info_dialog': infoDialog.toJson(),
-        'price': price,
-        'recurrent': recurrent,
-        'title': title,
-        'background_image': backgroundImage
-      };
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> planJson = {
+      'duration': EnumHelper.enumToString(duration),
+      'features':
+          features.map((feature) => EnumHelper.enumToString(feature)).toList(),
+      'info_dialog': infoDialog.toJson(),
+      'price': price,
+      'recurrent': recurrent,
+      'title': title,
+      'background_image': backgroundImage
+    };
+    planJson.addEntries(super.toJson().entries);
+    return planJson;
+  }
 }
