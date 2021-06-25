@@ -11,7 +11,7 @@ class TaskUtils {
           .map((AssessmentTask assessmentTask) => assessmentTask.taskId)
           .toList();
 
-      if (taskIds.indexOf(task.key) != -1) {
+      if (taskIds.indexOf(task.id) != -1) {
         tasksToShow.add(task);
       }
     });
@@ -22,9 +22,9 @@ class TaskUtils {
       List<Task> tasks, Assessment assessment) {
     tasks.sort((Task taskA, Task taskB) {
       AssessmentTask assessmentTaskA = assessment.tasks
-          .firstWhere((AssessmentTask element) => element.taskId == taskA.key);
+          .firstWhere((AssessmentTask element) => element.taskId == taskA.id);
       AssessmentTask assessmentTaskB = assessment.tasks
-          .firstWhere((AssessmentTask element) => element.taskId == taskB.key);
+          .firstWhere((AssessmentTask element) => element.taskId == taskB.id);
       return assessmentTaskA.index.compareTo(assessmentTaskB.index);
     });
     return tasks;

@@ -3,7 +3,7 @@ import 'base.dart';
 
 class Task extends Base {
   Task({
-    this.key,
+    this.id,
     this.name,
     this.video,
     this.stepsDescription,
@@ -21,7 +21,7 @@ class Task extends Base {
             updatedAt: updatedAt,
             updatedBy: updatedBy);
 
-  String key;
+  String id;
   String name;
   String video;
   String stepsDescription;
@@ -32,7 +32,7 @@ class Task extends Base {
 
   factory Task.fromJson(Map json) {
     return Task(
-        key: json['key'],
+        id: json['id'],
         name: json['name'],
         video: json['video'],
         stepsDescription: json['steps_description'],
@@ -45,7 +45,7 @@ class Task extends Base {
   }
 
   Map<String, dynamic> toJson() => {
-        'key': key,
+        'id': id,
         'name': name,
         'video': video,
         'steps_description': stepsDescription,

@@ -53,7 +53,6 @@ class _MyAppState extends State<MyApp> {
       routes: {
         '/': (context) => MultiBlocProvider(providers: [
               BlocProvider.value(value: _authBloc),
-              BlocProvider(create: (context) => AssessmentBloc()..get())
             ], child: MyHomePage(title: '')),
         '/sign-up': (context) =>
             BlocProvider.value(value: _authBloc, child: SignUpPage()),
@@ -65,8 +64,10 @@ class _MyAppState extends State<MyApp> {
             BlocProvider.value(value: _authBloc, child: LoginPage()),
         '/app-plans': (context) =>
             BlocProvider.value(value: _authBloc, child: AppPlans()),
-        '/assessment-videos': (context) =>
-            BlocProvider.value(value: _authBloc, child: AsessmentVideos()),
+        '/assessment-videos': (context) => MultiBlocProvider(providers: [
+              BlocProvider.value(value: _authBloc),
+              BlocProvider(create: (context) => AssessmentBloc()..get())
+            ], child: AsessmentVideos()),
         '/task-details': (context) => BlocProvider.value(
             value: _authBloc,
             child: TaskDetails(

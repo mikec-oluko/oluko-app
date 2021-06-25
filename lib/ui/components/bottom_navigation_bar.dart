@@ -19,6 +19,7 @@ class _State extends State<OlukoBottomNavigationBar> {
 
   @override
   Widget build(BuildContext context) {
+    selectedIndex = getIndexFromRoute();
     return BottomNavigationBar(
         currentIndex: selectedIndex,
         showUnselectedLabels: true,
@@ -28,11 +29,13 @@ class _State extends State<OlukoBottomNavigationBar> {
         backgroundColor: Colors.black,
         onTap: (num index) => this.setState(() {
               selectedIndex = index;
+              Navigator.popAndPushNamed(
+                  context, getBottomNavigationBarItems()[index].route);
             }),
-        items: getNavigationItems(selectedIndex: selectedIndex));
+        items: getNavigationBarWidgets(selectedIndex: selectedIndex));
   }
 
-  BottomNavigationBarItem bottomNavigationBarItem(
+  BottomNavigationBarItem getBottomNavigationBarWidget(
       OlukoBottomNavigationBarItem olukoBottomNavigationBarItem) {
     double blockSize =
         MediaQuery.of(context).orientation == Orientation.portrait
@@ -68,26 +71,47 @@ class _State extends State<OlukoBottomNavigationBar> {
         label: '');
   }
 
-  List<BottomNavigationBarItem> getNavigationItems({num selectedIndex = 0}) {
+  List<OlukoBottomNavigationBarItem> getBottomNavigationBarItems() {
     List<OlukoBottomNavigationBarItem> items = [
       OlukoBottomNavigationBarItem(
           title: 'Home',
-          assetImageUrl: 'assets/bottom_navigation_bar/home.png'),
+          assetImageUrl: 'assets/bottom_navigation_bar/home.png',
+          route: '/'),
       OlukoBottomNavigationBarItem(
           title: 'Coach',
-          assetImageUrl: 'assets/bottom_navigation_bar/coach.png'),
+          assetImageUrl: 'assets/bottom_navigation_bar/coach.png',
+          route: '/coach'),
       OlukoBottomNavigationBarItem(
           title: 'Friends',
-          assetImageUrl: 'assets/bottom_navigation_bar/friends.png'),
+          assetImageUrl: 'assets/bottom_navigation_bar/friends.png',
+          route: '/friends'),
       OlukoBottomNavigationBarItem(
           title: 'Courses',
-          assetImageUrl: 'assets/bottom_navigation_bar/course.png'),
+          assetImageUrl: 'assets/bottom_navigation_bar/course.png',
+          route: '/courses'),
       OlukoBottomNavigationBarItem(
           title: 'Profile',
-          assetImageUrl: 'assets/bottom_navigation_bar/profile.png'),
+          assetImageUrl: 'assets/bottom_navigation_bar/profile.png',
+          route: '/profile'),
     ];
+    return items;
+  }
 
+  getIndexFromRoute() {
+    String routeName = ModalRoute.of(context).settings.name;
+    num routeIndex;
+    getBottomNavigationBarItems().asMap().forEach((key, value) {
+      if (value.route == routeName) {
+        routeIndex = key;
+      }
+    });
+    return routeIndex;
+  }
+
+  List<BottomNavigationBarItem> getNavigationBarWidgets(
+      {num selectedIndex = 0}) {
+    List<OlukoBottomNavigationBarItem> items = getBottomNavigationBarItems();
     items[selectedIndex].selected = true;
-    return items.map((item) => bottomNavigationBarItem(item)).toList();
+    return items.map((item) => getBottomNavigationBarWidget(item)).toList();
   }
 }

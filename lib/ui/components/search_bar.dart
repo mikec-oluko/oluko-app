@@ -41,7 +41,7 @@ class _State extends State<SearchBar> {
   Widget _buildSearchField() {
     return TextField(
       controller: _searchQueryController,
-      autofocus: true,
+      autofocus: false,
       decoration: InputDecoration(
         hintText: "Search",
         border: InputBorder.none,

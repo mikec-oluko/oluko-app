@@ -2,6 +2,7 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
@@ -26,13 +27,24 @@ class _AsessmentVideosState extends State<AsessmentVideos> {
   final _formKey = GlobalKey<FormState>();
   ChewieController _controller;
   SignUpResponse profileInfo;
+  Assessment _mainAssessment;
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => TaskBloc()..getForAssessment(widget.assessment),
-      child: form(),
-    );
+    //TODO Remove BlocBuilder & MainAssessment assignation when we got Assessment List view.
+    return BlocBuilder<AssessmentBloc, AssessmentState>(
+        builder: (context, state) {
+      if (state is AssessmentSuccess) {
+        _mainAssessment =
+            widget.assessment != null ? widget.assessment : state.values[0];
+        return BlocProvider(
+          create: (context) => TaskBloc()..getForAssessment(_mainAssessment),
+          child: form(),
+        );
+      } else {
+        return SizedBox();
+      }
+    });
   }
 
   Widget form() {
@@ -170,7 +182,7 @@ class _AsessmentVideosState extends State<AsessmentVideos> {
       widgets.add(Center(child: CircularProgressIndicator()));
     }
     widgets.add(OlukoVideoPlayer(
-        videoUrl: widget.assessment.video,
+        videoUrl: _mainAssessment.video,
         autoPlay: false,
         whenInitialized: (ChewieController chewieController) =>
             this.setState(() {
