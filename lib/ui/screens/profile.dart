@@ -18,7 +18,6 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final _formKey = GlobalKey<FormState>();
-  // SignUpRequest _requestData = SignUpRequest();
   SignUpResponse profileInfo;
   final String profileTitle = ProfileViewConstants.profileTitle;
 
@@ -53,7 +52,11 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget userInformationSection() {
     return Column(
       children: [
-        UserProfileInformation(userInformation: profileInfo),
+        GestureDetector(
+            onTap: () =>
+                Navigator.pushNamed(context, '/profile-view-own-profile')
+                    .then((value) => onGoBack()),
+            child: UserProfileInformation(userInformation: profileInfo)),
         UserProfileProgress(
             userChallenges: ProfileViewConstants.profileChallengesContent,
             userFriends: ProfileViewConstants.profileFriendsContent)
@@ -115,8 +118,7 @@ class _ProfilePageState extends State<ProfilePage> {
       case ProfileViewConstants.profileOptionsSettings:
         return '/profile-settings';
       case ProfileViewConstants.profileOptionsHelpAndSupport:
-      //TODO:
-      // return '/';
+        return '/profile-help-and-support';
       default:
         return '/';
     }

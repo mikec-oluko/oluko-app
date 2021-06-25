@@ -17,7 +17,6 @@ class ProfileMyAccountPage extends StatefulWidget {
 }
 
 class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
-  // SignUpRequest _requestData = SignUpRequest();
   SignUpResponse profileInfo;
 
   @override
@@ -67,12 +66,15 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
           children: [
             Center(
               child: CircleAvatar(
+                // backgroundImage: //TODO: Get image,
                 backgroundColor: Colors.red,
                 radius: 50.0,
                 child: IconButton(
                     icon:
                         Icon(Icons.linked_camera_outlined, color: Colors.white),
-                    onPressed: () {}),
+                    onPressed: () {
+                      //TODO: Change profile picture
+                    }),
               ),
             )
           ],
@@ -94,6 +96,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
     );
   }
 
+  //TODO: Can be a widget
   Widget userInformationFields(String title, String value) {
     return Column(
       mainAxisSize: MainAxisSize.max,
@@ -167,7 +170,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
   }
 
   List<SubscriptionCard> showSubscriptionCard(List<Plan> plans) {
-    //TODO: Use plan for userData.
+    //TODO: Use plan from userData.
     final Plan userPlan = plans[1];
 
     SubscriptionCard subscriptionCard = SubscriptionCard();
@@ -197,7 +200,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
           child: Text("Logout",
               style: TextStyle(fontSize: 18.0, color: OlukoColors.primary)),
           onPressed: () {
-            //TODO: Define logout
+            //TODO: Define logout action
           },
         ),
       ),

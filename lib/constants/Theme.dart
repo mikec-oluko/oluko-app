@@ -38,4 +38,6 @@ class OlukoColors {
   static const Color taskCardBackground = Color.fromRGBO(40, 40, 40, 1.0);
 
   static const Color grayColor = Color.fromRGBO(149, 149, 149, 1.0);
+
+  static const Color listGrayColor = Color.fromRGBO(57, 57, 57, 1.0);
 }

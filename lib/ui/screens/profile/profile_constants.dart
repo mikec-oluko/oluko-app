@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class ProfileViewConstants {
   static const profileTitle = "Profile";
   static const profileUserFirstName = "First Name";
@@ -29,6 +31,8 @@ class ProfileViewConstants {
   static const profileOptionsHelpAndSupport = "Help and Support";
   static const profileSubscriptionMessage = "Recommended Upgrade";
   static const profileUpgradeText = "Upgrade";
+  static const profileHelpAndSupportSubTitle = "Need more help?";
+  static const profileHelpAndSupportButtonText = "Contact us";
 
   static const List<String> profileOptions = [
     profileOptionsMyAccount,
@@ -41,3 +45,47 @@ class ProfileViewConstants {
 }
 
 enum SettingsOptions { notification, public, restricted, anonymous }
+
+class BasicTile {
+  final String title;
+  final List<BasicTile> tiles;
+  bool isExpanded;
+
+  BasicTile(
+      {@required this.title, this.tiles = const [], this.isExpanded = false});
+}
+
+//Collection of help and support Tiles, if contains tiles = new tile, if not, title == content.
+final basicTiles = <BasicTile>[
+  BasicTile(title: "Top Queries", tiles: [
+    BasicTile(title: "What is included in the memebership?", tiles: [
+      BasicTile(
+          title:
+              " is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley"),
+    ]),
+    BasicTile(title: "How many courses do i get?", tiles: [
+      BasicTile(
+          title:
+              " is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley"),
+    ]),
+    BasicTile(title: "Which classes are right for me?", tiles: [
+      BasicTile(
+          title:
+              " is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley"),
+    ]),
+  ]),
+  BasicTile(title: "Plans, Pricing and Payments", tiles: [
+    BasicTile(title: "Plans", tiles: [
+      BasicTile(title: "Plan 1", tiles: [
+        BasicTile(
+            title:
+                " is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley"),
+      ]),
+      BasicTile(title: "Plan 2", tiles: [
+        BasicTile(
+            title:
+                " is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley"),
+      ]),
+    ]),
+  ])
+];

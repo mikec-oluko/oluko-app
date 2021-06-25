@@ -73,15 +73,6 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
                         style: TextStyle(
                             fontSize: 14.0, color: OlukoColors.grayColor))
                     : null,
-                // trailing: TextButton(
-                //     onPressed: () {
-                //       setValue(optionToUse, valueToUse);
-                //     },
-                //     child: valueToUse
-                //         ? Image.asset('assets/profile/switch-on.png',
-                //             filterQuality: FilterQuality.high)
-                //         : Image.asset('assets/profile/switch-off.png',
-                //             filterQuality: FilterQuality.high))),
                 trailing: Switch(
                   value: valueToUse,
                   onChanged: (bool value) => setValue(optionToUse, value),

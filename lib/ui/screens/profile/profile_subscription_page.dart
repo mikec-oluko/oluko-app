@@ -20,16 +20,18 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => PlanBloc()..getPlans(),
-      child: Scaffold(
-        appBar:
-            OlukoAppBar(title: ProfileViewConstants.profileOptionsSubscription),
-        body: SingleChildScrollView(
-          child: Container(
-              color: Colors.black,
-              child: BlocBuilder<PlanBloc, PlanState>(
-                builder: (context, state) {
-                  if (state is PlansSuccess) {
-                    return Column(
+      child: SafeArea(
+        child: Scaffold(
+          backgroundColor: Colors.black,
+          appBar: OlukoAppBar(
+              title: ProfileViewConstants.profileOptionsSubscription),
+          body: BlocBuilder<PlanBloc, PlanState>(
+            builder: (context, state) {
+              if (state is PlansSuccess) {
+                return SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 50),
+                    child: Column(
                       children: [
                         Padding(
                           padding: const EdgeInsets.all(10.0),
@@ -43,42 +45,57 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
                                 .profileSubscriptionMessage),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                          child: showSubscriptionCard(state.plans[2]),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                          child: Container(
-                            width: MediaQuery.of(context).size.width,
-                            child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.only(
-                                            bottomLeft: Radius.circular(10.0),
-                                            bottomRight:
-                                                Radius.circular(10.0))),
-                                    primary: OlukoColors.primary,
-                                    side:
-                                        BorderSide(color: OlukoColors.primary)),
-                                onPressed: () => {},
-                                child: Padding(
-                                    padding: const EdgeInsets.all(15.0),
-                                    child: Text(
-                                      ProfileViewConstants.profileUpgradeText,
-                                      style: TextStyle(fontSize: 18),
-                                    ))),
-                          ),
-                        )
+                        subscriptionCardWithButton(state, context),
                       ],
-                    );
-                  } else {
-                    return Container();
-                  }
-                },
-              )),
+                    ),
+                  ),
+                );
+              } else {
+                return Container();
+              }
+            },
+          ),
         ),
       ),
+    );
+  }
+
+  Stack subscriptionCardWithButton(PlansSuccess state, BuildContext context) {
+    return Stack(
+      clipBehavior: Clip.none,
+      alignment: Alignment.center,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+          child: showSubscriptionCard(state.plans[2]),
+        ),
+        Positioned(
+          bottom: -30,
+          left: 0,
+          right: 0,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(10.0),
+                              bottomRight: Radius.circular(10.0))),
+                      primary: OlukoColors.primary,
+                      side: BorderSide(color: OlukoColors.primary)),
+                  onPressed: () => {},
+                  child: Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Text(
+                        ProfileViewConstants.profileUpgradeText,
+                        style: TextStyle(fontSize: 18),
+                      ))),
+            ),
+          ),
+        )
+      ],
     );
   }
 
@@ -94,7 +111,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
     subscriptionCard.subtitles = plan.features
         .map((PlanFeature feature) => EnumHelper.enumToString(feature))
         .toList();
-    subscriptionCard.selected = plan.price == 99 ? true : false;
+    subscriptionCard.selected = false;
     subscriptionCard.showHint = false;
     subscriptionCard.backgroundImage = plan.backgroundImage;
     subscriptionCard.onHintPressed = plan.infoDialog != null ? () {} : null;
