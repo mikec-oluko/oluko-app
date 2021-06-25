@@ -1,4 +1,4 @@
-import 'package:chewie/chewie.dart';
+import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,14 +7,12 @@ import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
-import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/screens/self_recording_preview.dart';
 
 class SelfRecording extends StatefulWidget {
   SelfRecording({this.task, Key key}) : super(key: key);
 
   final Task task;
-  bool _recording = false;
 
   @override
   _State createState() => _State();
@@ -23,7 +21,25 @@ class SelfRecording extends StatefulWidget {
 class _State extends State<SelfRecording> {
   final _formKey = GlobalKey<FormState>();
   SignUpResponse profileInfo;
-  ChewieController _controller;
+
+  //camera
+  List<CameraDescription> cameras;
+  CameraController cameraController;
+  bool _isReady = false;
+  bool _recording = false;
+  bool iscamerafront = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _setupCameras();
+  }
+
+  @override
+  void dispose() {
+    cameraController?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +54,58 @@ class _State extends State<SelfRecording> {
         key: _formKey,
         child: Scaffold(
             appBar: OlukoAppBar(title: widget.task.name),
-            bottomNavigationBar: bottomNavigationBar(),
+            bottomNavigationBar: BottomAppBar(
+              color: Colors.black,
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    IconButton(
+                        icon: Icon(
+                          Icons.flip_camera_ios,
+                          color: Colors.white,
+                          size: 45,
+                        ),
+                        onPressed: () async {
+                          setState(() {
+                            iscamerafront = !iscamerafront;
+                          });
+                          _setupCameras();
+                        }),
+                    /*Icon(
+                      Icons.photo_camera,
+                      size: 45,
+                      color: Colors.white,
+                    ),*/
+                    GestureDetector(
+                      onTap: () async {
+                        if (_recording) {
+                          XFile videopath =
+                              await cameraController.stopVideoRecording();
+                          String path = videopath.path;
+
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => SelfRecordingPreview(
+                                      task: widget.task, filePath: path)));
+                        } else {
+                          await cameraController.startVideoRecording();
+                        }
+                        setState(() {
+                          _recording = !_recording;
+                        });
+                      },
+                      child: _recording
+                          ? Image.asset('assets/self_recording/recording.png')
+                          : Image.asset('assets/self_recording/record.png'),
+                    ),
+                    Image.asset('assets/self_recording/gallery.png'),
+                  ],
+                ),
+              ),
+            ),
             body: Container(
                 color: Colors.black,
                 child: Padding(
@@ -47,24 +114,19 @@ class _State extends State<SelfRecording> {
                       width: MediaQuery.of(context).size.width,
                       child: ListView(
                         children: [
-                          Column(
-                            children: [
-                              ConstrainedBox(
-                                  constraints: BoxConstraints(
-                                      maxWidth:
-                                          MediaQuery.of(context).size.width,
-                                      maxHeight:
-                                          MediaQuery.of(context).size.height /
-                                              1.8),
-                                  child: Stack(
-                                    children: showVideoPlayer(),
-                                  )),
-                              BlocBuilder<TaskBloc, TaskState>(
-                                  builder: (context, state) {
-                                return formSection();
-                              }),
-                            ],
-                          )
+                          ConstrainedBox(
+                              constraints: BoxConstraints(
+                                  maxHeight:
+                                      MediaQuery.of(context).size.height / 1.6),
+                              child: (!_isReady)
+                                  ? Container()
+                                  : AspectRatio(
+                                      aspectRatio: 3.0 / 4.0,
+                                      child: CameraPreview(cameraController))),
+                          BlocBuilder<TaskBloc, TaskState>(
+                              builder: (context, state) {
+                            return formSection();
+                          }),
                         ],
                       ),
                     )))));
@@ -125,60 +187,17 @@ class _State extends State<SelfRecording> {
     }
   }
 
-  List<Widget> showVideoPlayer() {
-    List<Widget> widgets = [];
-    widgets.add(OlukoVideoPlayer(
-        autoPlay: false,
-        showControls: false,
-        //TODO: Hardcoded
-        videoUrl:
-            'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/pexels-anthony-shkraba-production-8135646.mp4?alt=media&token=f3bd01db-8d38-492f-8cf9-386ba7a90d32',
-        whenInitialized: (ChewieController chewieController) =>
-            this.setState(() {
-              _controller = chewieController;
-            })));
-    if (_controller == null) {
-      widgets.add(Center(child: CircularProgressIndicator()));
-    }
-    return widgets;
-  }
-
-  Widget bottomNavigationBar() {
-    return BottomAppBar(
-      color: Colors.black,
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Icon(
-              Icons.photo_camera,
-              size: 45,
-              color: Colors.white,
-            ),
-            GestureDetector(
-              onTap: () => this.setState(() {
-                //TODO Remove this when implementing video recording
-                if (widget._recording == true) {
-                  _controller.seekTo(Duration(milliseconds: 0));
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              SelfRecordingPreview(task: widget.task)));
-                } else {
-                  _controller.play();
-                }
-                widget._recording = !widget._recording;
-              }),
-              child: widget._recording
-                  ? Image.asset('assets/self_recording/recording.png')
-                  : Image.asset('assets/self_recording/record.png'),
-            ),
-            Image.asset('assets/self_recording/gallery.png'),
-          ],
-        ),
-      ),
-    );
+  Future<void> _setupCameras() async {
+    int cameraPos = iscamerafront ? 0 : 1;
+    try {
+      cameras = await availableCameras();
+      cameraController =
+          new CameraController(cameras[cameraPos], ResolutionPreset.medium);
+      await cameraController.initialize();
+    } on CameraException catch (_) {}
+    if (!mounted) return;
+    setState(() {
+      _isReady = true;
+    });
   }
 }

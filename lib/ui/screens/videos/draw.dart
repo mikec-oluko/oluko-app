@@ -9,8 +9,8 @@ class Draw extends StatefulWidget {
   @override
   DrawState createState() => DrawState();
 
-  OnChangesCallback onChanges;
-  OnCloseCallBack onClose;
+  final OnChangesCallback onChanges;
+  final OnCloseCallBack onClose;
 
   Draw({Key key, this.onChanges, this.onClose}) : super(key: key);
 }
@@ -19,7 +19,7 @@ class DrawState extends State<Draw> {
   Color selectedColor = Colors.red;
   Color pickerColor = Colors.red;
   double strokeWidth = 3.0;
-  List<DrawingPoints> points = List();
+  List<DrawingPoints> points = [];
   bool showBottomList = false;
   double opacity = 1.0;
   StrokeCap strokeCap =
@@ -186,7 +186,7 @@ class DrawState extends State<Draw> {
   }
 
   getColorList() {
-    List<Widget> listWidget = List();
+    List<Widget> listWidget = [];
     for (Color color in colors) {
       listWidget.add(colorCircle(color));
     }
@@ -258,7 +258,7 @@ class DrawState extends State<Draw> {
 class DrawingPainter extends CustomPainter {
   DrawingPainter({this.pointsList});
   List<DrawingPoints> pointsList;
-  List<Offset> offsetPoints = List();
+  List<Offset> offsetPoints = [];
   @override
   void paint(Canvas canvas, Size size) {
     for (int i = 0; i < pointsList.length - 1; i++) {

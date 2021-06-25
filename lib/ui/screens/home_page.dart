@@ -10,7 +10,7 @@ import 'package:oluko_app/elements/gallery_carousel.dart';
 import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/ui/screens/assessment_videos.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
-import 'package:oluko_app/utils/OlukoLocalizations.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 
 class MyHomePage extends StatefulWidget {

@@ -1,12 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oluko_app/models/draw_point.dart';
+import 'package:oluko_app/models/event.dart';
 import 'package:oluko_app/models/video.dart';
-import 'Event.dart';
 import 'base.dart';
 
 class VideoInfo extends Base {
   String id;
-  int duration;
   List<DrawPoint> drawing;
   List<Event> events;
   List<double> markers;
@@ -14,7 +13,6 @@ class VideoInfo extends Base {
 
   VideoInfo({
     this.id,
-    this.duration,
     this.drawing,
     this.events,
     this.markers,
@@ -32,7 +30,6 @@ class VideoInfo extends Base {
   factory VideoInfo.fromJson(Map<String, dynamic> json) {
     return VideoInfo(
         id: json['id'],
-        duration: json['duration'],
         events: List<Event>.from(
             json['events'].map((event) => Event.fromJson(event))),
         markers: List<double>.from(json['markers']),
@@ -45,7 +42,6 @@ class VideoInfo extends Base {
 
   Map<String, dynamic> toJson() => {
         'id': id,
-        'duration': duration,
         'created_at': createdAt == null ? createdAtSentinel : createdAt,
         'created_by': createdBy,
         'updated_at': updatedAt == null ? updatedAtSentinel : updatedAt,

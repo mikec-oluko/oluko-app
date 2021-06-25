@@ -18,5 +18,10 @@
     "welcomeBack": "Bienvenido",
     "passwordShouldNotContainUsername": "La contraseña no puede contener tu nombre de usuario",
     "passwordShouldNotContainEmail": "La contraseña no puede contener tu email",
-    "emailOrUsername": "Email o nombre de usuario"
+    "emailOrUsername": "Email o nombre de usuario",
+    "generatingThumbnail": "Generando vista previa",
+    "encodingVideo": "Codificando el video",
+    "uploadingThumbnail": "Subiendo vista previa al almacenamiento en la nube",
+    "uploadingVideoFile": "Subiendo archivo de video ",
+    "outOf": " de "
 }
