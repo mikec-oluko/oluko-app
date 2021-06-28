@@ -7,15 +7,21 @@ class CarouselSmallSection extends StatefulWidget {
   final List<Widget> children;
   final Function() onOptionTap;
   final String optionLabel;
+  final String routeToGo;
 
   CarouselSmallSection(
-      {this.title, this.children, this.onOptionTap, this.optionLabel});
+      {this.title,
+      this.children,
+      this.onOptionTap,
+      this.optionLabel,
+      this.routeToGo});
 
   @override
   State<StatefulWidget> createState() => _State();
 }
 
 class _State extends State<CarouselSmallSection> {
+  final String _viewAll = "View All";
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -24,13 +30,19 @@ class _State extends State<CarouselSmallSection> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            TitleBody(widget.title),
+            Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: TitleBody(widget.title),
+            ),
             Spacer(),
             Padding(
               padding: const EdgeInsets.only(right: 5),
-              child: Text(
-                "View All",
-                style: TextStyle(color: OlukoColors.primary),
+              child: TextButton(
+                onPressed: () => Navigator.pushNamed(context, widget.routeToGo),
+                child: Text(
+                  _viewAll,
+                  style: TextStyle(color: OlukoColors.primary),
+                ),
               ),
             ),
             GestureDetector(

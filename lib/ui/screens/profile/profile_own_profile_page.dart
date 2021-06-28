@@ -17,20 +17,23 @@ class ProfileOwnProfilePage extends StatefulWidget {
 
 class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
   SignUpResponse profileInfo;
+  final String _profileChallengeRoute = '/profile-challenges';
+  final String _profileTransformationJourneyRoute =
+      '/profile-transformation-journey';
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: getProfileInfo(),
+        future: _getProfileInfo(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return buildOwnProfileView(context, profileInfo);
+            return _buildOwnProfileView(context, profileInfo);
           } else {
             return SizedBox();
           }
         });
   }
 
-  buildOwnProfileView(BuildContext context, SignUpResponse profileInfo) {
+  _buildOwnProfileView(BuildContext context, SignUpResponse profileInfo) {
     return Scaffold(
       body: Container(
         color: Colors.black,
@@ -62,11 +65,11 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
                 child: CarouselSmallSection(
                   title: ProfileViewConstants.profileOptionsAssessmentVideos,
                   children: [
-                    getImageAndVideoCard('assets/courses/course_sample_3.png',
+                    _getImageAndVideoCard('assets/courses/course_sample_3.png',
                         isVideo: true),
-                    getImageAndVideoCard('assets/courses/course_sample_5.png',
+                    _getImageAndVideoCard('assets/courses/course_sample_5.png',
                         isVideo: true),
-                    getImageAndVideoCard('assets/courses/course_sample_4.png',
+                    _getImageAndVideoCard('assets/courses/course_sample_4.png',
                         isVideo: true),
                   ],
                 ),
@@ -74,28 +77,38 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
               Padding(
                 padding: const EdgeInsets.only(top: 25),
                 child: CarouselSmallSection(
+                  routeToGo: _goToTransformationJourney(),
                   title:
                       ProfileViewConstants.profileOptionsTransformationJourney,
                   children: [
-                    getImageAndVideoCard('assets/courses/course_sample_6.png',
+                    _getImageAndVideoCard('assets/courses/course_sample_6.png',
                         isVideo: false),
-                    getImageAndVideoCard('assets/courses/course_sample_7.png',
+                    _getImageAndVideoCard('assets/courses/course_sample_7.png',
                         isVideo: false),
-                    getImageAndVideoCard('assets/courses/course_sample_8.png',
+                    _getImageAndVideoCard('assets/courses/course_sample_8.png',
                         isVideo: false),
                   ],
                 ),
               ),
-              CarouselSection(
-                title: ProfileViewConstants.profileOwnProfileActiveCourses,
-                children: [
-                  getCourseCard('assets/courses/course_sample_1.png',
-                      progress: 0.3),
-                  getCourseCard('assets/courses/course_sample_2.png',
-                      progress: 0.7),
-                ],
+              Padding(
+                padding: const EdgeInsets.all(10.0).copyWith(bottom: 0),
+                child: CarouselSection(
+                  title: ProfileViewConstants.profileOwnProfileActiveCourses,
+                  children: [
+                    _getCourseCard('assets/courses/course_sample_1.png',
+                        progress: 0.3),
+                    _getCourseCard('assets/courses/course_sample_2.png',
+                        progress: 0.7),
+                  ],
+                ),
               ),
-              ChallengesCard(challengeDefault)
+              Padding(
+                padding: const EdgeInsets.all(10.0).copyWith(top: 0),
+                child: ChallengesCard(
+                  challenge: challengeDefault,
+                  routeToGo: _goToChallenges(),
+                ),
+              )
             ]),
           ),
         ),
@@ -103,13 +116,13 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
     );
   }
 
-  Future<void> getProfileInfo() async {
+  Future<void> _getProfileInfo() async {
     profileInfo = SignUpResponse.fromJson(
         (await AuthBloc().retrieveLoginData()).toJson());
     return profileInfo;
   }
 
-  Widget getCourseCard(String assetImage, {double progress}) {
+  Widget _getCourseCard(String assetImage, {double progress}) {
     return Padding(
       padding: const EdgeInsets.only(right: 15.0),
       child: CourseCard(
@@ -119,7 +132,7 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
     );
   }
 
-  Widget getImageAndVideoCard(String assetImage, {bool isVideo}) {
+  Widget _getImageAndVideoCard(String assetImage, {bool isVideo}) {
     return Container(
       color: Colors.black,
       child: ImageAndVideoPreviewCard(
@@ -132,4 +145,8 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
       ),
     );
   }
+
+  _goToChallenges() => _profileChallengeRoute;
+
+  _goToTransformationJourney() => _profileTransformationJourneyRoute;
 }

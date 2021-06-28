@@ -37,7 +37,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
                       children: [
                         Padding(
                           padding: const EdgeInsets.all(10.0),
-                          child: showSubscriptionCard(state.plans[0]),
+                          child: _showSubscriptionCard(state.plans[0]),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(10.0),
@@ -47,7 +47,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
                                 .profileSubscriptionMessage),
                           ),
                         ),
-                        subscriptionCardWithButton(state, context),
+                        _subscriptionCardWithButton(state, context),
                       ],
                     ),
                   ),
@@ -62,14 +62,14 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
     );
   }
 
-  Stack subscriptionCardWithButton(PlansSuccess state, BuildContext context) {
+  Stack _subscriptionCardWithButton(PlansSuccess state, BuildContext context) {
     return Stack(
       clipBehavior: Clip.none,
       alignment: Alignment.center,
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-          child: showSubscriptionCard(state.plans[2]),
+          child: _showSubscriptionCard(state.plans[2]),
         ),
         Positioned(
           bottom: -30,
@@ -101,7 +101,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
     );
   }
 
-  SubscriptionCard showSubscriptionCard(Plan plan) {
+  SubscriptionCard _showSubscriptionCard(Plan plan) {
     SubscriptionCard subscriptionCard = SubscriptionCard();
 
     subscriptionCard.priceLabel =

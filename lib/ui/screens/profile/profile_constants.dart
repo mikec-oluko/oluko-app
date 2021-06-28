@@ -37,6 +37,7 @@ class ProfileViewConstants {
   static const profileOwnProfileViewAll = "View All";
   static const profileOwnProfileActiveCourses = 'Active Courses';
   static const profileSubscriptionLogout = "Logout";
+  static const profileChallengesPageTitle = "Challenges";
 
   static const List<String> profileOptions = [
     profileOptionsMyAccount,
@@ -48,6 +49,7 @@ class ProfileViewConstants {
   ];
 }
 
+//TODO: Used as options != String on the view
 enum SettingsOptions { notification, public, restricted, anonymous }
 
 class BasicTile {
@@ -59,7 +61,10 @@ class BasicTile {
       {@required this.title, this.tiles = const [], this.isExpanded = false});
 }
 
-//Collection of help and support Tiles, if contains tiles = new tile, if not, title == content.
+//TODO:
+//Collection of help and support Tiles,
+//if contains tiles[] = new tile, if not, title == content.
+//parentTile[childTile []] = new Tile, parentTile[!childTile[]] = Tile with content
 final basicTiles = <BasicTile>[
   BasicTile(title: "Top Queries", tiles: [
     BasicTile(title: "What is included in the memebership?", tiles: [
@@ -111,3 +116,23 @@ final challengeDefault = Challenge(
     type: "Class",
     isLocked: false,
     imageCover: 'assets/courses/course_sample_1.png');
+
+final _secondChallenge = Challenge(
+    title: "Fish Arms",
+    subtitle: "Abdominal Crunches",
+    type: "Class",
+    isLocked: false,
+    imageCover: 'assets/courses/course_sample_2.png');
+
+final _lockedChallenge = Challenge(
+    title: "Screaming Squat Challenge",
+    subtitle: "Drop and give me 20!",
+    type: "Class",
+    isLocked: true,
+    imageCover: 'assets/courses/course_sample_3.png');
+
+final List<Challenge> challengeCollection = [
+  challengeDefault,
+  _secondChallenge,
+  _lockedChallenge
+];

@@ -99,7 +99,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
     );
   }
 
-  //TODO: Can be a widget
+  //TODO: Can be a widget for reuse.
   Widget userInformationFields(String title, String value) {
     return Column(
       mainAxisSize: MainAxisSize.max,

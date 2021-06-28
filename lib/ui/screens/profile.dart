@@ -4,6 +4,7 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 // import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
+import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';
 import 'package:oluko_app/ui/components/user_profile_information.dart';
 import 'package:oluko_app/ui/components/user_profile_progress.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
@@ -17,6 +18,7 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  final _userInformationRoute = '/profile-view-own-profile';
   final _formKey = GlobalKey<FormState>();
   SignUpResponse profileInfo;
   final String profileTitle = ProfileViewConstants.profileTitle;
@@ -47,16 +49,16 @@ class _ProfilePageState extends State<ProfilePage> {
                     userInformationSection(),
                     buildOptionsList(),
                   ],
-                ))));
+                )),
+            bottomNavigationBar: OlukoBottomNavigationBar()));
   }
 
   Widget userInformationSection() {
     return Column(
       children: [
         GestureDetector(
-            onTap: () =>
-                Navigator.pushNamed(context, '/profile-view-own-profile')
-                    .then((value) => onGoBack()),
+            onTap: () => Navigator.pushNamed(context, _userInformationRoute)
+                .then((value) => onGoBack()),
             child: UserProfileInformation(userInformation: profileInfo)),
         UserProfileProgress(
             userChallenges: ProfileViewConstants.profileChallengesContent,

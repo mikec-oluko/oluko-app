@@ -23,29 +23,29 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
       ),
       body: Container(
         color: Colors.black,
-        child: buildOptions(context),
+        child: _buildOptions(context),
       ),
     );
   }
 
-  Column buildOptions(BuildContext context) {
+  Column _buildOptions(BuildContext context) {
     return Column(
       children: [
-        optionSwitch(context, ProfileViewConstants.profileSettingsNotification,
+        _optionSwitch(context, ProfileViewConstants.profileSettingsNotification,
             null, SettingsOptions.notification, false),
-        optionSwitch(
+        _optionSwitch(
             context,
             ProfileViewConstants.profileSettingsPublic,
             ProfileViewConstants.profileSettingsPublicSubtitle,
             SettingsOptions.public,
             true),
-        optionSwitch(
+        _optionSwitch(
             context,
             ProfileViewConstants.profileSettingsRestricted,
             ProfileViewConstants.profileSettingsRestrictedSubtitle,
             SettingsOptions.restricted,
             true),
-        optionSwitch(
+        _optionSwitch(
             context,
             ProfileViewConstants.profileSettingsAnonymous,
             ProfileViewConstants.profileSettingsAnonymousSubtitle,
@@ -55,9 +55,9 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
     );
   }
 
-  Container optionSwitch(BuildContext context, String title, String subTitle,
+  Container _optionSwitch(BuildContext context, String title, String subTitle,
       SettingsOptions optionToUse, bool subtitleStatus) {
-    var valueToUse = returnValue(optionToUse);
+    var valueToUse = _returnValue(optionToUse);
     return Container(
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
@@ -78,7 +78,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
                     : null,
                 trailing: Switch(
                   value: valueToUse,
-                  onChanged: (bool value) => setValue(optionToUse, value),
+                  onChanged: (bool value) => _setValue(optionToUse, value),
                   trackColor: MaterialStateProperty.all(Colors.grey),
                   activeColor: OlukoColors.primary,
                 )),
@@ -88,7 +88,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
     );
   }
 
-  bool returnValue(SettingsOptions option) {
+  bool _returnValue(SettingsOptions option) {
     switch (option) {
       case SettingsOptions.notification:
         return _notification;
@@ -103,7 +103,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
     }
   }
 
-  void setValue(SettingsOptions option, value) {
+  void _setValue(SettingsOptions option, value) {
     switch (option) {
       case SettingsOptions.notification:
         setState(() {
