@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
+import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/search_results.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
@@ -20,11 +21,8 @@ class Courses extends StatefulWidget {
 }
 
 class _State extends State<Courses> {
-  List<Course> courses = [
-    Course(
-      imageUrl: 'assets/courses/course_sample_1.png',
-    )
-  ];
+  SearchResults<Course> searchResults =
+      SearchResults(query: '', suggestedItems: []);
 
   @override
   Widget build(BuildContext context) {
@@ -34,28 +32,87 @@ class _State extends State<Courses> {
           return Scaffold(
               backgroundColor: Colors.black,
               appBar: state is CourseSuccess
-                  ? OlukoAppBar(
+                  ? OlukoAppBar<Course>(
                       title: 'Courses',
                       actions: [filterWidget()],
                       onSearchResults: (SearchResults results) =>
-                          print(results.toJson().toString()),
-                      searchResultItems: [],
+                          this.setState(() {
+                        searchResults = SearchResults<Course>(
+                            query: results.query,
+                            suggestedItems:
+                                List<Course>.from(results.suggestedItems));
+                      }),
+                      filterMethod: (String query, List<Course> collection) {
+                        return collection
+                            .where((course) =>
+                                course.name
+                                    .toLowerCase()
+                                    .indexOf(query.toLowerCase()) ==
+                                0)
+                            .toList();
+                      },
+                      searchResultItems: state.values,
                       showSearchBar: true,
                     )
                   : null,
               bottomNavigationBar: OlukoBottomNavigationBar(),
               body: state is CourseSuccess
-                  ? Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-                      child: Container(
-                        height: ScreenUtils.height(context),
-                        child: ListView(
-                          shrinkWrap: true,
-                          children: _mainPage(state),
-                        ),
-                      ))
+                  ? Container(
+                      height: ScreenUtils.height(context),
+                      child: ListView(
+                        shrinkWrap: true,
+                        children: searchResults.query != ''
+                            ? [
+                                Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 10),
+                                    child: searchSuggestions(
+                                        searchResults.query,
+                                        searchResults.suggestedItems))
+                              ]
+                            : [
+                                Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 15, horizontal: 15),
+                                    child: Column(children: _mainPage(state)))
+                              ],
+                      ),
+                    )
                   : OlukoCircularProgressIndicator());
+        });
+  }
+
+  Widget searchSuggestions(String textInput, List<Course> listCollection) {
+    return ListView.builder(
+        shrinkWrap: true,
+        itemCount: listCollection.length,
+        itemBuilder: (BuildContext context, int index) {
+          return ListTile(
+              title: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: RichText(
+                      text: TextSpan(
+                    children: [
+                      TextSpan(
+                          text: listCollection[index]
+                              .name
+                              .substring(0, textInput.length),
+                          style: TextStyle(color: OlukoColors.primary)),
+                      TextSpan(
+                          text: listCollection[index]
+                              .name
+                              .substring(textInput.length),
+                          style: TextStyle(color: Colors.white))
+                    ],
+                  )),
+                ),
+                Divider(
+                  color: Colors.white,
+                  height: 1,
+                )
+              ]));
         });
   }
 

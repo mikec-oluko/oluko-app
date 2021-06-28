@@ -4,12 +4,13 @@ import 'package:oluko_app/models/search_results.dart';
 import 'package:oluko_app/ui/components/search_bar.dart';
 import 'package:oluko_app/ui/components/title_header.dart';
 
-class OlukoAppBar extends StatelessWidget implements PreferredSizeWidget {
+class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
   final Function() onPressed;
-  final Function(SearchResults) onSearchResults;
+  final Function(SearchResults<T>) onSearchResults;
+  final List<T> Function(String, List<T>) filterMethod;
   final String title;
   final List<Widget> actions;
-  final List<String> searchResultItems;
+  final List<T> searchResultItems;
   final bool showSearchBar;
 
   OlukoAppBar(
@@ -18,7 +19,8 @@ class OlukoAppBar extends StatelessWidget implements PreferredSizeWidget {
       this.actions,
       this.onSearchResults,
       this.searchResultItems,
-      this.showSearchBar = false});
+      this.showSearchBar = false,
+      this.filterMethod});
   @override
   Widget build(BuildContext context) {
     return PreferredSize(
@@ -46,10 +48,14 @@ class OlukoAppBar extends StatelessWidget implements PreferredSizeWidget {
                       Padding(
                           padding: EdgeInsets.symmetric(
                               vertical: 10, horizontal: 10),
-                          child: SearchBar(
+                          child: SearchBar<T>(
                             items: searchResultItems,
-                            onSearchResults: (SearchResults searchResults) =>
-                                onSearchResults(searchResults),
+                            onSearchResults:
+                                (SearchResults<dynamic> searchResults) =>
+                                    onSearchResults(searchResults),
+                            filterMethod:
+                                (String query, List<dynamic> collection) =>
+                                    filterMethod(query, collection),
                           )),
                       Divider(
                         height: 1,

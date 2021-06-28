@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/models/search_results.dart';
 
-class SearchBar extends StatefulWidget {
-  final Function(SearchResults) onSearchResults;
-  final List<String> items;
-  SearchBar({this.onSearchResults, this.items});
+class SearchBar<T> extends StatefulWidget {
+  final Function(SearchResults<T>) onSearchResults;
+  final List<dynamic> Function(String, List<T>) filterMethod;
+  final List<T> items;
+  SearchBar({this.onSearchResults, this.filterMethod, this.items});
 
   @override
-  State<StatefulWidget> createState() => _State();
+  State<StatefulWidget> createState() => _State<T>();
 }
 
-class _State extends State<SearchBar> {
+class _State<T> extends State<SearchBar> {
   TextEditingController _searchQueryController = TextEditingController();
   bool _isSearching = false;
   String searchQuery = "Search query";
@@ -55,10 +56,9 @@ class _State extends State<SearchBar> {
   void updateSearchQuery(String newQuery) {
     setState(() {
       searchQuery = newQuery;
-      List<String> suggestedItems =
-          widget.items.where((element) => element.contains(newQuery)).toList();
+      List<T> searchResults = widget.filterMethod(searchQuery, widget.items);
       widget.onSearchResults(
-          SearchResults(query: newQuery, suggestedItems: suggestedItems));
+          SearchResults<T>(query: newQuery, suggestedItems: searchResults));
     });
   }
 }
