@@ -83,8 +83,27 @@ class _State extends State<Courses> {
                     courseState.coursesByCategories.keys.elementAt(index).name,
                 optionLabel: 'View All',
                 children: coursesList
-                    .map((course) =>
-                        getCourseCard(Image.network(course.imageUrl)))
+                    .map((course) => getCourseCard(Image.network(
+                          course.imageUrl,
+                          frameBuilder: (context, Widget child, int frame,
+                              bool wasSynchronouslyLoaded) {
+                            return Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                frame == null
+                                    ? Container(
+                                        height: 120,
+                                        child: OlukoCircularProgressIndicator())
+                                    : SizedBox(),
+                                AnimatedOpacity(
+                                    opacity: frame == null ? 0 : 1,
+                                    duration: Duration(milliseconds: 500),
+                                    curve: Curves.easeOut,
+                                    child: child),
+                              ],
+                            );
+                          },
+                        )))
                     .toList(),
               );
             }),

@@ -12,7 +12,7 @@ class _State extends State<OlukoCircularProgressIndicator> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: CircularProgressIndicator(),
+      child: CircularProgressIndicator(strokeWidth: 1),
     );
   }
 }
