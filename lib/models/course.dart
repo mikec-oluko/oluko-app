@@ -34,20 +34,21 @@ class Course {
   String imageUrl;
 
   Course.fromJson(Map json)
-      : name = json['name'],
-        duration = json['duration'],
-        description = json['description'],
-        equipment = json['equipment'],
-        intensity = json['intensity'],
-        categories = json['categories'],
-        workoutDuration = json['workout_duration'],
-        recommendedEngagement = json['recommended_engagement'],
-        recommendedEngagementGap = json['recommended_engagementGap'],
-        engagementGapTime = json['engagement_gap_time'],
-        engagementTime = json['engagement_time'],
-        mandatoryGapTime = json['mandatory_gap_time'],
-        classe = json['classe'],
-        imageUrl = json['image_url'];
+      : name = json['name'] ?? null,
+        id = json['id'] ?? null,
+        duration = json['duration'] ?? null,
+        description = json['description'] ?? null,
+        equipment = json['equipment'] ?? null,
+        intensity = json['intensity'] ?? null,
+        categories = json['categories'] ?? null,
+        workoutDuration = json['workout_duration'] ?? null,
+        recommendedEngagement = json['recommended_engagement'] ?? null,
+        recommendedEngagementGap = json['recommended_engagementGap'] ?? null,
+        engagementGapTime = json['engagement_gap_time'] ?? null,
+        engagementTime = json['engagement_time'] ?? null,
+        mandatoryGapTime = json['mandatory_gap_time'] ?? null,
+        classe = json['classe'] ?? null,
+        imageUrl = json['image_url' ?? null];
 
   Map<String, dynamic> toJson() => {
         'name': name,

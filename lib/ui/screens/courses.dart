@@ -1,13 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/course_bloc.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/search_results.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';
 import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/course_card.dart';
-import 'package:oluko_app/ui/components/search_suggestions.dart';
+import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class Courses extends StatefulWidget {
@@ -26,68 +28,75 @@ class _State extends State<Courses> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Colors.black,
-        appBar: OlukoAppBar(
-          title: 'Courses',
-          actions: [filterWidget()],
-          onSearchResults: (SearchResults results) =>
-              print(results.toJson().toString()),
-          searchResultItems: [
-            'buns of steel',
-            'new year resolution',
-            'stretching'
-          ],
-        ),
-        bottomNavigationBar: OlukoBottomNavigationBar(),
-        body: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-            child: Container(
-              height: ScreenUtils.height(context),
-              child: ListView(
-                shrinkWrap: true,
-                children: _mainPage(),
-              ),
-            )));
+    return BlocBuilder<CourseBloc, CourseState>(
+        bloc: BlocProvider.of<CourseBloc>(context)..getByCategories(),
+        builder: (context, state) {
+          return Scaffold(
+              backgroundColor: Colors.black,
+              appBar: state is CourseSuccess
+                  ? OlukoAppBar(
+                      title: 'Courses',
+                      actions: [filterWidget()],
+                      onSearchResults: (SearchResults results) =>
+                          print(results.toJson().toString()),
+                      searchResultItems: [],
+                      showSearchBar: true,
+                    )
+                  : null,
+              bottomNavigationBar: OlukoBottomNavigationBar(),
+              body: state is CourseSuccess
+                  ? Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                      child: Container(
+                        height: ScreenUtils.height(context),
+                        child: ListView(
+                          shrinkWrap: true,
+                          children: _mainPage(state),
+                        ),
+                      ))
+                  : OlukoCircularProgressIndicator());
+        });
   }
 
-  List<Widget> _mainPage() {
+  List<Widget> _mainPage(CourseSuccess courseState) {
     return [
       Column(children: [
         CarouselSection(
           title: 'Active Courses',
           children: [
-            getCourseCard('assets/courses/course_sample_1.png', progress: 0.3),
-            getCourseCard('assets/courses/course_sample_2.png', progress: 0.7),
+            getCourseCard(Image.asset('assets/courses/course_sample_1.png'),
+                progress: 0.3),
+            getCourseCard(Image.asset('assets/courses/course_sample_2.png'),
+                progress: 0.7),
           ],
         ),
-        CarouselSection(
-          title: 'Back To Fitness',
-          optionLabel: 'View All',
-          children: [
-            getCourseCard('assets/courses/course_sample_3.png'),
-            getCourseCard('assets/courses/course_sample_4.png'),
-            getCourseCard('assets/courses/course_sample_5.png'),
-          ],
-        ),
-        CarouselSection(
-          title: 'Push Your Limits',
-          optionLabel: 'View All',
-          children: [
-            getCourseCard('assets/courses/course_sample_6.png'),
-            getCourseCard('assets/courses/course_sample_7.png'),
-            getCourseCard('assets/courses/course_sample_8.png'),
-          ],
-        )
+        ListView.builder(
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: courseState.coursesByCategories.length,
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              final List<Course> coursesList =
+                  courseState.coursesByCategories.values.elementAt(index);
+              return CarouselSection(
+                title:
+                    courseState.coursesByCategories.keys.elementAt(index).name,
+                optionLabel: 'View All',
+                children: coursesList
+                    .map((course) =>
+                        getCourseCard(Image.network(course.imageUrl)))
+                    .toList(),
+              );
+            }),
       ])
     ];
   }
 
-  Widget getCourseCard(String assetImage, {double progress}) {
+  Widget getCourseCard(Image image, {double progress}) {
     return Padding(
       padding: const EdgeInsets.only(right: 15.0),
       child: CourseCard(
-        imageCover: Image.asset(assetImage),
+        imageCover: image,
         progress: progress,
       ),
     );

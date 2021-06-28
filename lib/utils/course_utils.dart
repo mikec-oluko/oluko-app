@@ -19,14 +19,28 @@ class CourseUtils {
     return tasksToShow;
   }
 
+  /*
+  Returns Map with a list of Courses for each Category
+  */
+  static Map<CourseCategory, List<Course>> mapCoursesByCategories(
+      List<Course> courses, List<CourseCategory> courseCategories) {
+    Map<CourseCategory, List<Course>> mappedCourses = {};
+    courseCategories.forEach((courseCategory) {
+      final List<Course> courseList =
+          filterByCategories(courses, courseCategory);
+      mappedCourses[courseCategory] = courseList;
+    });
+    return mappedCourses;
+  }
+
   static List<Course> sortByCategoriesIndex(
       List<Course> courses, CourseCategory courseCategory) {
     courses.sort((Course taskA, Course taskB) {
-      CourseCategoryItem assessmentTaskA = courseCategory.courses.firstWhere(
+      CourseCategoryItem courseCategoryA = courseCategory.courses.firstWhere(
           (CourseCategoryItem element) => element.courseId == taskA.id);
-      CourseCategoryItem assessmentTaskB = courseCategory.courses.firstWhere(
+      CourseCategoryItem courseCategoryB = courseCategory.courses.firstWhere(
           (CourseCategoryItem element) => element.courseId == taskB.id);
-      return assessmentTaskA.index.compareTo(assessmentTaskB.index);
+      return courseCategoryA.index.compareTo(courseCategoryB.index);
     });
     return courses;
   }
