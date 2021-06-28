@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/models/oluko_bottom_navigation_bar_item.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class OlukoBottomNavigationBar extends StatefulWidget {
@@ -84,25 +85,25 @@ class _State extends State<OlukoBottomNavigationBar> {
   List<OlukoBottomNavigationBarItem> getBottomNavigationBarItems() {
     List<OlukoBottomNavigationBarItem> items = [
       OlukoBottomNavigationBarItem(
-          title: 'Home',
+          title: OlukoLocalizations.of(context).find('home'),
           assetImageUrl: 'assets/bottom_navigation_bar/home.png',
           route: '/'),
       OlukoBottomNavigationBarItem(
-          title: 'Coach',
+          title: OlukoLocalizations.of(context).find('coach'),
           assetImageUrl: 'assets/bottom_navigation_bar/coach.png',
           route: '/coach',
           disabled: true),
       OlukoBottomNavigationBarItem(
-          title: 'Friends',
+          title: OlukoLocalizations.of(context).find('friends'),
           assetImageUrl: 'assets/bottom_navigation_bar/friends.png',
           route: '/friends',
           disabled: true),
       OlukoBottomNavigationBarItem(
-          title: 'Courses',
+          title: OlukoLocalizations.of(context).find('courses'),
           assetImageUrl: 'assets/bottom_navigation_bar/course.png',
           route: '/courses'),
       OlukoBottomNavigationBarItem(
-          title: 'Profile',
+          title: OlukoLocalizations.of(context).find('profile'),
           assetImageUrl: 'assets/bottom_navigation_bar/profile.png',
           route: '/profile',
           disabled: true),
