@@ -136,31 +136,6 @@ class _State extends State<Courses> {
         .toList();
   }
 
-  GridView _searchResults(List<Course> listCollection) {
-    return GridView.count(
-        childAspectRatio: cardsAspectRatio,
-        shrinkWrap: true,
-        crossAxisCount:
-            MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 5,
-        children: listCollection
-            .map((e) => Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                      child: _getCourseCard(
-                    Image.network(
-                      e.imageUrl,
-                      fit: BoxFit.cover,
-                      frameBuilder: (BuildContext context, Widget child,
-                              int frame, bool wasSynchronouslyLoaded) =>
-                          ImageUtils.frameBuilder(
-                              context, child, frame, wasSynchronouslyLoaded,
-                              height: 120),
-                    ),
-                  )),
-                ))
-            .toList());
-  }
-
   ListView _mainPage(CourseSuccess courseState) {
     return ListView(
       children: [
