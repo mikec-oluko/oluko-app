@@ -40,14 +40,14 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(title,
-              style: TextStyle(fontSize: 14.0, color: OlukoColors.grayColor)),
+              style: OlukoFonts.olukoMediumFont(
+                  customColor: OlukoColors.grayColor)),
           SizedBox(height: 5.0),
           Text(
             value,
-            style: TextStyle(
-                fontSize: 18.0,
-                fontWeight: FontWeight.w500,
-                color: Colors.white),
+            style: OlukoFonts.olukoBigFont(
+              custoFontWeight: FontWeight.w500,
+            ),
           ),
         ],
       ),

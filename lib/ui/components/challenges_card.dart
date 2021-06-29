@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ChallengesCard extends StatefulWidget {
   final Challenge challenge;
@@ -138,7 +139,7 @@ class _State extends State<ChallengesCard> {
                       borderRadius: BorderRadius.only(
                           bottomLeft: Radius.circular(5),
                           bottomRight: Radius.circular(5)),
-                      color: Colors.grey[850],
+                      color: OlukoColors.challengesGreyBackground,
                     ),
                     width: MediaQuery.of(context).size.width,
                     height: 120,
@@ -178,7 +179,7 @@ class _State extends State<ChallengesCard> {
                       children: [
                         CircleAvatar(
                           radius: 35,
-                          backgroundColor: Colors.grey.withOpacity(0.6),
+                          backgroundColor: OlukoColors.grayColorSemiTransparent,
                           child: Icon(
                             Icons.lock,
                             color: Colors.white,
@@ -187,9 +188,9 @@ class _State extends State<ChallengesCard> {
                         Padding(
                           padding: const EdgeInsets.only(top: 5.0),
                           child: Text(
-                            "Yet to " + '"Unlock"',
-                            style: TextStyle(
-                                fontSize: 18, color: OlukoColors.grayColor),
+                            OlukoLocalizations.of(context).find('yetToUnlock'),
+                            style: OlukoFonts.olukoBigFont(
+                                customColor: OlukoColors.grayColor),
                           ),
                         ),
                       ],

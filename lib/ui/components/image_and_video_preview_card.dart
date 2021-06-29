@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:oluko_app/constants/Theme.dart';
 
 class ImageAndVideoPreviewCard extends StatefulWidget {
   final Image imageCover;
@@ -15,7 +16,7 @@ class _State extends State<ImageAndVideoPreviewCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.black,
+      color: OlukoColors.black,
       width: 100,
       child: Stack(children: [
         widget.imageCover,

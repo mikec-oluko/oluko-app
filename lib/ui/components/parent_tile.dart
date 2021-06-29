@@ -24,15 +24,16 @@ class _ParentTileWidgetState extends State<ParentTileWidget> {
 
     if (tiles.isEmpty) {
       return Container(
-        color: Colors.blue,
+        color: OlukoColors.primary,
         child: Text(title,
-            style: TextStyle(fontSize: 14.0, color: OlukoColors.grayColor)),
+            style:
+                OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor)),
       );
     }
 
     return Container(
       decoration: BoxDecoration(
-          color: Colors.black,
+          color: OlukoColors.black,
           border: Border(
               bottom: BorderSide(width: 1.0, color: OlukoColors.grayColor))),
       child: ExpansionTile(
@@ -53,7 +54,8 @@ class _ParentTileWidgetState extends State<ParentTileWidget> {
           },
           trailing: iconToUse,
           title: Text(title,
-              style: TextStyle(fontSize: 14.0, color: OlukoColors.grayColor)),
+              style: OlukoFonts.olukoMediumFont(
+                  customColor: OlukoColors.grayColor)),
           children: tiles
               .map((tile) => Padding(
                     padding: const EdgeInsets.fromLTRB(15, 10, 15, 0),

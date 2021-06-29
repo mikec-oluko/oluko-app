@@ -22,7 +22,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
         showSearchBar: false,
       ),
       body: Container(
-        color: Colors.black,
+        color: OlukoColors.black,
         child: _buildOptions(context),
       ),
     );
@@ -69,12 +69,11 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
         children: [
           MergeSemantics(
             child: ListTile(
-                title: Text(title,
-                    style: TextStyle(fontSize: 18.0, color: Colors.white)),
+                title: Text(title, style: OlukoFonts.olukoBigFont()),
                 subtitle: subtitleStatus
                     ? Text(subTitle,
-                        style: TextStyle(
-                            fontSize: 14.0, color: OlukoColors.grayColor))
+                        style: OlukoFonts.olukoMediumFont(
+                            customColor: OlukoColors.grayColor))
                     : null,
                 trailing: Switch(
                   value: valueToUse,

@@ -1,6 +1,6 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
+import 'package:oluko_app/constants/Theme.dart';
 
 class DialogWidget extends StatelessWidget {
   const DialogWidget() : super();
@@ -12,7 +12,7 @@ class DialogWidget extends StatelessWidget {
         child: Dialog(
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
-          backgroundColor: Colors.black,
+          backgroundColor: OlukoColors.black,
           child: _dialogContent(context),
         ));
   }

@@ -8,6 +8,7 @@ import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';
 import 'package:oluko_app/ui/components/user_profile_information.dart';
 import 'package:oluko_app/ui/components/user_profile_progress.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
+import 'package:oluko_app/ui/screens/profile/profile_routes.dart';
 import '../../constants/Theme.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -18,7 +19,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  final _userInformationRoute = '/profile-view-own-profile';
   final _formKey = GlobalKey<FormState>();
   SignUpResponse profileInfo;
   final String profileTitle = ProfileViewConstants.profileTitle;
@@ -43,7 +43,7 @@ class _ProfilePageState extends State<ProfilePage> {
             appBar: OlukoAppBar(
                 title: ProfileViewConstants.profileTitle, showSearchBar: false),
             body: Container(
-                color: Colors.black,
+                color: OlukoColors.black,
                 child: Stack(
                   children: [
                     userInformationSection(),
@@ -57,8 +57,9 @@ class _ProfilePageState extends State<ProfilePage> {
     return Column(
       children: [
         GestureDetector(
-            onTap: () => Navigator.pushNamed(context, _userInformationRoute)
-                .then((value) => onGoBack()),
+            onTap: () =>
+                Navigator.pushNamed(context, ProfileRoutes.userInformationRoute)
+                    .then((value) => onGoBack()),
             child: UserProfileInformation(userInformation: profileInfo)),
         UserProfileProgress(
             userChallenges: ProfileViewConstants.profileChallengesContent,
@@ -92,39 +93,19 @@ class _ProfilePageState extends State<ProfilePage> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(left: 25.0),
-                child: Text(pageTitle,
-                    style: TextStyle(fontSize: 14.0, color: Colors.white)),
+                child: Text(pageTitle, style: OlukoFonts.olukoMediumFont()),
               ),
               IconButton(
                   icon: Icon(Icons.arrow_forward_ios,
                       color: OlukoColors.grayColor),
-                  onPressed: () =>
-                      Navigator.pushNamed(context, returnRouteName(pageTitle))
-                          .then((value) => onGoBack()))
+                  onPressed: () => Navigator.pushNamed(
+                          context, ProfileRoutes.returnRouteName(pageTitle))
+                      .then((value) => onGoBack()))
             ],
           ),
         ],
       ),
     );
-  }
-
-  String returnRouteName(String pageTitle) {
-    switch (pageTitle) {
-      case ProfileViewConstants.profileOptionsMyAccount:
-        return '/profile-my-account';
-      case ProfileViewConstants.profileOptionsAssessmentVideos:
-        return '/';
-      case ProfileViewConstants.profileOptionsTransformationJourney:
-        return '/';
-      case ProfileViewConstants.profileOptionsSubscription:
-        return '/profile-subscription';
-      case ProfileViewConstants.profileOptionsSettings:
-        return '/profile-settings';
-      case ProfileViewConstants.profileOptionsHelpAndSupport:
-        return '/profile-help-and-support';
-      default:
-        return '/';
-    }
   }
 
   onGoBack() {
@@ -135,7 +116,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   handleResult(AsyncSnapshot snapshot) {
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      returnToHome();
+      ProfileRoutes.returnToHome(context: context);
     });
   }
 
@@ -143,9 +124,5 @@ class _ProfilePageState extends State<ProfilePage> {
     profileInfo = SignUpResponse.fromJson(
         (await AuthBloc().retrieveLoginData()).toJson());
     return profileInfo;
-  }
-
-  Future<void> returnToHome() async {
-    Navigator.popUntil(context, ModalRoute.withName('/'));
   }
 }

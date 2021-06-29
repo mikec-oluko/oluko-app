@@ -11,7 +11,7 @@ class UserProfileInformation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.black,
+      color: OlukoColors.black,
       width: MediaQuery.of(context).size.width,
       child: Padding(
         padding: const EdgeInsets.all(10.0),
@@ -20,7 +20,7 @@ class UserProfileInformation extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.fromLTRB(5, 5, 10, 5),
               child: CircleAvatar(
-                backgroundColor: Colors.white,
+                backgroundColor: OlukoColors.white,
                 // backgroundImage: ,
                 radius: 30.0,
               ),
@@ -35,27 +35,23 @@ class UserProfileInformation extends StatelessWidget {
                     children: [
                       Text(
                         this.userInformation.firstName,
-                        style: TextStyle(
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white),
+                        style: OlukoFonts.olukoBigFont(
+                            custoFontWeight: FontWeight.w500),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 5.0),
                         child: Text(
                           this.userInformation.lastName,
-                          style: TextStyle(
-                              fontSize: 18.0,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white),
+                          style: OlukoFonts.olukoBigFont(
+                              custoFontWeight: FontWeight.w500),
                         ),
                       ),
                     ],
                   ),
                   //TODO: Use username instead profilLevel
                   Text(ProfileViewConstants.profileUserNameContent,
-                      style: TextStyle(
-                          fontSize: 14.0, color: OlukoColors.grayColor))
+                      style: OlukoFonts.olukoMediumFont(
+                          customColor: OlukoColors.grayColor))
                 ],
               ),
             )

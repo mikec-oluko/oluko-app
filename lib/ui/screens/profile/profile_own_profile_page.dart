@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/carousel_small_section.dart';
@@ -9,6 +10,7 @@ import 'package:oluko_app/ui/components/image_and_video_preview_card.dart';
 import 'package:oluko_app/ui/components/user_profile_information.dart';
 import 'package:oluko_app/ui/components/user_profile_progress.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
+import 'package:oluko_app/ui/screens/profile/profile_routes.dart';
 
 class ProfileOwnProfilePage extends StatefulWidget {
   @override
@@ -17,9 +19,7 @@ class ProfileOwnProfilePage extends StatefulWidget {
 
 class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
   SignUpResponse profileInfo;
-  final String _profileChallengeRoute = '/profile-challenges';
-  final String _profileTransformationJourneyRoute =
-      '/profile-transformation-journey';
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -36,7 +36,7 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
   _buildOwnProfileView(BuildContext context, SignUpResponse profileInfo) {
     return Scaffold(
       body: Container(
-        color: Colors.black,
+        color: OlukoColors.black,
         child: SafeArea(
           child: SingleChildScrollView(
             child: Column(children: [
@@ -47,7 +47,7 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
                     icon: Icon(
                       Icons.chevron_left,
                       size: 35,
-                      color: Colors.white,
+                      color: OlukoColors.white,
                     ),
                     onPressed: () => Navigator.pop(context),
                   ),
@@ -77,7 +77,7 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
               Padding(
                 padding: const EdgeInsets.only(top: 25),
                 child: CarouselSmallSection(
-                  routeToGo: _goToTransformationJourney(),
+                  routeToGo: ProfileRoutes.goToTransformationJourney(),
                   title:
                       ProfileViewConstants.profileOptionsTransformationJourney,
                   children: [
@@ -106,7 +106,7 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
                 padding: const EdgeInsets.all(10.0).copyWith(top: 0),
                 child: ChallengesCard(
                   challenge: challengeDefault,
-                  routeToGo: _goToChallenges(),
+                  routeToGo: ProfileRoutes.goToChallenges(),
                 ),
               )
             ]),
@@ -134,7 +134,7 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
 
   Widget _getImageAndVideoCard(String assetImage, {bool isVideo}) {
     return Container(
-      color: Colors.black,
+      color: OlukoColors.black,
       child: ImageAndVideoPreviewCard(
         imageCover: Image.asset(
           assetImage,
@@ -145,8 +145,4 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
       ),
     );
   }
-
-  _goToChallenges() => _profileChallengeRoute;
-
-  _goToTransformationJourney() => _profileTransformationJourneyRoute;
 }

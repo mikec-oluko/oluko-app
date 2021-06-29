@@ -8,8 +8,10 @@ import 'package:oluko_app/models/plan.dart';
 // import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
+import 'package:oluko_app/ui/components/oluko_user_info.dart';
 import 'package:oluko_app/ui/components/subscription_card.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
+import 'package:oluko_app/utils/app_messages.dart';
 
 class ProfileMyAccountPage extends StatefulWidget {
   @override
@@ -44,7 +46,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
       body: SingleChildScrollView(
         child: Container(
           width: MediaQuery.of(context).size.width,
-          color: Colors.black,
+          color: OlukoColors.black,
           child: Column(
             children: [
               userImageSection(),
@@ -60,7 +62,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
 
   Widget userImageSection() {
     return Container(
-        color: Colors.black,
+        color: OlukoColors.black,
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height / 4,
         child: Column(
@@ -70,11 +72,11 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
             Center(
               child: CircleAvatar(
                 // backgroundImage: //TODO: Get image,
-                backgroundColor: Colors.red,
+                backgroundColor: OlukoColors.primary,
                 radius: 50.0,
                 child: IconButton(
-                    icon:
-                        Icon(Icons.linked_camera_outlined, color: Colors.white),
+                    icon: Icon(Icons.linked_camera_outlined,
+                        color: OlukoColors.white),
                     onPressed: () {
                       //TODO: Change profile picture
                     }),
@@ -99,51 +101,9 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
     );
   }
 
-  //TODO: Can be a widget for reuse.
+  //TODO: Can be a widget for reuse. CHANGE
   Widget userInformationFields(String title, String value) {
-    return Column(
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                border: Border.all(width: 1.0, color: OlukoColors.grayColor)),
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height / 8,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10.0),
-                    child: Text(
-                      title,
-                      style: TextStyle(
-                          fontSize: 14.0,
-                          fontWeight: FontWeight.w500,
-                          color: OlukoColors.primary),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10.0),
-                    child: Text(
-                      value,
-                      style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
+    return OlukoUserInfoWidget(title: title, value: value);
   }
 
   Widget subscriptionSection() {
@@ -177,7 +137,6 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
     final Plan userPlan = plans[1];
 
     SubscriptionCard subscriptionCard = SubscriptionCard();
-
     subscriptionCard.priceLabel =
         '\$${userPlan.price}/${durationLabel[userPlan.duration].toLowerCase()}';
     subscriptionCard.priceSubtitle = userPlan.recurrent
@@ -201,9 +160,11 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
         padding: const EdgeInsets.only(left: 5.0),
         child: TextButton(
           child: Text(ProfileViewConstants.profileSubscriptionLogout,
-              style: TextStyle(fontSize: 18.0, color: OlukoColors.primary)),
+              style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary)),
           onPressed: () {
-            //TODO: Define logout action
+            BlocProvider.of<AuthBloc>(context).logout(context);
+            AppMessages.showSnackbar(context, 'Logged out.');
+            setState(() {});
           },
         ),
       ),

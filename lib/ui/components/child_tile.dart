@@ -24,11 +24,10 @@ class _ChildTileWidgetState extends State<ChildTileWidget> {
         decoration: BoxDecoration(
             color: OlukoColors.primary,
             borderRadius: BorderRadius.all(Radius.circular(10))),
-        // color: OlukoColors.primary,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(title,
-              style: TextStyle(fontSize: 14.0, color: Colors.black)),
+              style: OlukoFonts.olukoSmallFont(customColor: Colors.black)),
         ),
       );
     }
@@ -55,7 +54,8 @@ class _ChildTileWidgetState extends State<ChildTileWidget> {
           },
           trailing: iconToUse,
           title: Text(title,
-              style: TextStyle(fontSize: 14.0, color: OlukoColors.grayColor)),
+              style: OlukoFonts.olukoMediumFont(
+                  customColor: OlukoColors.grayColor)),
           children: tiles.map((tile) => ChildTileWidget(tile: tile)).toList()),
     );
   }

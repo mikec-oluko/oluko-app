@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/challenges_card.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
@@ -17,7 +18,7 @@ class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
         showSearchBar: false,
       ),
       body: Container(
-        color: Colors.black,
+        color: OlukoColors.black,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
           child: ListView(
