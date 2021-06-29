@@ -11,6 +11,7 @@ import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';
 import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/course_card.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class Courses extends StatefulWidget {
@@ -23,9 +24,12 @@ class Courses extends StatefulWidget {
 class _State extends State<Courses> {
   SearchResults<Course> searchResults =
       SearchResults(query: '', suggestedItems: []);
+  bool showSearchSuggestions = false;
+  double carouselSectionHeight;
 
   @override
   Widget build(BuildContext context) {
+    carouselSectionHeight = (ScreenUtils.width(context) / 3) * 1.442 + 75;
     return BlocBuilder<CourseBloc, CourseState>(
         bloc: BlocProvider.of<CourseBloc>(context)..getByCategories(),
         builder: (context, state) {
@@ -33,24 +37,22 @@ class _State extends State<Courses> {
               backgroundColor: Colors.black,
               appBar: state is CourseSuccess
                   ? OlukoAppBar<Course>(
-                      title: 'Courses',
-                      actions: [filterWidget()],
+                      title: OlukoLocalizations.of(context).find('courses'),
+                      actions: [_filterWidget()],
+                      onSearchSubmit: (SearchResults results) =>
+                          this.setState(() {
+                        showSearchSuggestions = false;
+                      }),
                       onSearchResults: (SearchResults results) =>
                           this.setState(() {
+                        showSearchSuggestions = true;
                         searchResults = SearchResults<Course>(
                             query: results.query,
                             suggestedItems:
                                 List<Course>.from(results.suggestedItems));
                       }),
-                      filterMethod: (String query, List<Course> collection) {
-                        return collection
-                            .where((course) =>
-                                course.name
-                                    .toLowerCase()
-                                    .indexOf(query.toLowerCase()) ==
-                                0)
-                            .toList();
-                      },
+                      suggestionMethod: _suggestionMethod,
+                      searchMethod: _searchMethod,
                       searchResultItems: state.values,
                       showSearchBar: true,
                     )
@@ -59,29 +61,36 @@ class _State extends State<Courses> {
               body: state is CourseSuccess
                   ? Container(
                       height: ScreenUtils.height(context),
-                      child: ListView(
-                        shrinkWrap: true,
-                        children: searchResults.query != ''
-                            ? [
-                                Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 10),
-                                    child: searchSuggestions(
-                                        searchResults.query,
-                                        searchResults.suggestedItems))
-                              ]
-                            : [
-                                Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 15, horizontal: 15),
-                                    child: Column(children: _mainPage(state)))
-                              ],
+                      width: ScreenUtils.width(context),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 15.0),
+                        child: searchResults.query == ''
+                            ? _mainPage(state)
+                            : showSearchSuggestions
+                                ? _searchSuggestions(searchResults.query,
+                                    searchResults.suggestedItems)
+                                : _searchResults(state.values),
                       ),
                     )
                   : OlukoCircularProgressIndicator());
         });
   }
 
-  Widget searchSuggestions(String textInput, List<Course> listCollection) {
+  List<Course> _suggestionMethod(String query, List<Course> collection) {
+    return collection
+        .where((course) =>
+            course.name.toLowerCase().indexOf(query.toLowerCase()) == 0)
+        .toList();
+  }
+
+  List<Course> _searchMethod(String query, List<Course> collection) {
+    return collection
+        .where(
+            (course) => course.name.toLowerCase().contains(query.toLowerCase()))
+        .toList();
+  }
+
+  ListView _searchSuggestions(String textInput, List<Course> listCollection) {
     return ListView.builder(
         shrinkWrap: true,
         itemCount: listCollection.length,
@@ -116,18 +125,27 @@ class _State extends State<Courses> {
         });
   }
 
-  List<Widget> _mainPage(CourseSuccess courseState) {
-    return [
-      Column(children: [
-        CarouselSection(
-          title: 'Active Courses',
-          children: [
-            getCourseCard(Image.asset('assets/courses/course_sample_1.png'),
-                progress: 0.3),
-            getCourseCard(Image.asset('assets/courses/course_sample_2.png'),
-                progress: 0.7),
-          ],
-        ),
+  GridView _searchResults(List<Course> listCollection) {
+    return GridView.count(
+        childAspectRatio: 0.67,
+        shrinkWrap: true,
+        crossAxisCount: 2,
+        children: listCollection
+            .map((e) => Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                      child: _getCourseCard(Image.network(
+                    e.imageUrl,
+                    fit: BoxFit.cover,
+                    frameBuilder: _frameBuilder,
+                  ))),
+                ))
+            .toList());
+  }
+
+  ListView _mainPage(CourseSuccess courseState) {
+    return ListView(
+      children: [
         ListView.builder(
             physics: NeverScrollableScrollPhysics(),
             itemCount: courseState.coursesByCategories.length,
@@ -136,49 +154,56 @@ class _State extends State<Courses> {
               final List<Course> coursesList =
                   courseState.coursesByCategories.values.elementAt(index);
               return CarouselSection(
+                height: carouselSectionHeight,
                 title:
                     courseState.coursesByCategories.keys.elementAt(index).name,
-                optionLabel: 'View All',
+                optionLabel: OlukoLocalizations.of(context).find('viewAll'),
                 children: coursesList
-                    .map((course) => getCourseCard(Image.network(
-                          course.imageUrl,
-                          frameBuilder: (context, Widget child, int frame,
-                              bool wasSynchronouslyLoaded) {
-                            return Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                frame == null
-                                    ? Container(
-                                        height: 120,
-                                        child: OlukoCircularProgressIndicator())
-                                    : SizedBox(),
-                                AnimatedOpacity(
-                                    opacity: frame == null ? 0 : 1,
-                                    duration: Duration(milliseconds: 500),
-                                    curve: Curves.easeOut,
-                                    child: child),
-                              ],
-                            );
-                          },
-                        )))
+                    .map((course) => Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: _getCourseCard(
+                              Image.network(
+                                course.imageUrl,
+                                fit: BoxFit.cover,
+                                frameBuilder: _frameBuilder,
+                              ),
+                              width: ScreenUtils.width(context) / 3),
+                        ))
                     .toList(),
               );
-            }),
-      ])
-    ];
-  }
-
-  Widget getCourseCard(Image image, {double progress}) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 15.0),
-      child: CourseCard(
-        imageCover: image,
-        progress: progress,
-      ),
+            })
+      ],
     );
   }
 
-  Widget filterWidget() {
+  CourseCard _getCourseCard(Image image,
+      {double progress, double width, double height}) {
+    return CourseCard(
+      width: width,
+      height: height,
+      imageCover: image,
+      progress: progress,
+    );
+  }
+
+  Widget _frameBuilder(
+      context, Widget child, int frame, bool wasSynchronouslyLoaded) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        frame == null
+            ? Container(height: 120, child: OlukoCircularProgressIndicator())
+            : SizedBox(),
+        AnimatedOpacity(
+            opacity: frame == null ? 0 : 1,
+            duration: Duration(milliseconds: 500),
+            curve: Curves.easeOut,
+            child: child),
+      ],
+    );
+  }
+
+  Widget _filterWidget() {
     return Padding(
       padding: const EdgeInsets.only(right: 20.0, top: 4),
       child: Icon(

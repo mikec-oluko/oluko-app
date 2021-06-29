@@ -7,7 +7,9 @@ import 'package:oluko_app/ui/components/title_header.dart';
 class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
   final Function() onPressed;
   final Function(SearchResults<T>) onSearchResults;
-  final List<T> Function(String, List<T>) filterMethod;
+  final Function(SearchResults<T>) onSearchSubmit;
+  final List<T> Function(String, List<T>) suggestionMethod;
+  final List<T> Function(String, List<T>) searchMethod;
   final String title;
   final List<Widget> actions;
   final List<T> searchResultItems;
@@ -20,7 +22,9 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
       this.onSearchResults,
       this.searchResultItems,
       this.showSearchBar = false,
-      this.filterMethod});
+      this.suggestionMethod,
+      this.searchMethod,
+      this.onSearchSubmit});
   @override
   Widget build(BuildContext context) {
     return PreferredSize(
@@ -50,12 +54,18 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
                               vertical: 10, horizontal: 10),
                           child: SearchBar<T>(
                             items: searchResultItems,
+                            onSearchSubmit:
+                                (SearchResults<dynamic> searchResults) =>
+                                    onSearchSubmit(searchResults),
                             onSearchResults:
                                 (SearchResults<dynamic> searchResults) =>
                                     onSearchResults(searchResults),
-                            filterMethod:
+                            searchMethod:
                                 (String query, List<dynamic> collection) =>
-                                    filterMethod(query, collection),
+                                    searchMethod(query, collection),
+                            suggestionMethod:
+                                (String query, List<dynamic> collection) =>
+                                    suggestionMethod(query, collection),
                           )),
                       Divider(
                         height: 1,

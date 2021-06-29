@@ -3,9 +3,16 @@ import 'package:oluko_app/models/search_results.dart';
 
 class SearchBar<T> extends StatefulWidget {
   final Function(SearchResults<T>) onSearchResults;
-  final List<dynamic> Function(String, List<T>) filterMethod;
+  final Function(SearchResults<T>) onSearchSubmit;
+  final List<dynamic> Function(String, List<T>) suggestionMethod;
+  final List<dynamic> Function(String, List<T>) searchMethod;
   final List<T> items;
-  SearchBar({this.onSearchResults, this.filterMethod, this.items});
+  SearchBar(
+      {this.onSearchResults,
+      this.suggestionMethod,
+      this.searchMethod,
+      this.items,
+      this.onSearchSubmit});
 
   @override
   State<StatefulWidget> createState() => _State<T>();
@@ -50,15 +57,33 @@ class _State<T> extends State<SearchBar> {
       ),
       style: TextStyle(color: Colors.white, fontSize: 16.0),
       onChanged: (query) => updateSearchQuery(query),
+      onSubmitted: (query) => updateSearchResults(query),
     );
   }
 
   void updateSearchQuery(String newQuery) {
     setState(() {
       searchQuery = newQuery;
-      List<T> searchResults = widget.filterMethod(searchQuery, widget.items);
-      widget.onSearchResults(
-          SearchResults<T>(query: newQuery, suggestedItems: searchResults));
+      List<T> suggestedItems =
+          widget.suggestionMethod(searchQuery, widget.items);
+      List<T> searchResults = widget.searchMethod(searchQuery, widget.items);
+      widget.onSearchResults(SearchResults<T>(
+          query: newQuery,
+          suggestedItems: suggestedItems,
+          searchResults: searchResults));
+    });
+  }
+
+  void updateSearchResults(String newQuery) {
+    setState(() {
+      searchQuery = newQuery;
+      List<T> suggestedItems =
+          widget.suggestionMethod(searchQuery, widget.items);
+      List<T> searchResults = widget.searchMethod(searchQuery, widget.items);
+      widget.onSearchSubmit(SearchResults<T>(
+          query: newQuery,
+          suggestedItems: suggestedItems,
+          searchResults: searchResults));
     });
   }
 }
