@@ -109,6 +109,12 @@ class Challenge {
       {this.title, this.subtitle, this.type, this.isLocked, this.imageCover});
 }
 
+class Content {
+  String imgUrl;
+  bool isVideo;
+  Content({this.imgUrl, this.isVideo});
+}
+
 //Challenge example
 final challengeDefault = Challenge(
     title: "20min EMOM challenge",

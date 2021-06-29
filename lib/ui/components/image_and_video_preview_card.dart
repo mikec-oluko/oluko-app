@@ -16,8 +16,8 @@ class _State extends State<ImageAndVideoPreviewCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      alignment: Alignment.center,
       color: OlukoColors.black,
-      width: 100,
       child: Stack(children: [
         widget.imageCover,
         widget.isVideo == true

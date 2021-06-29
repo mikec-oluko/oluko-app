@@ -133,15 +133,24 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
   }
 
   Widget _getImageAndVideoCard(String assetImage, {bool isVideo}) {
-    return Container(
-      color: OlukoColors.black,
-      child: ImageAndVideoPreviewCard(
-        imageCover: Image.asset(
-          assetImage,
-          height: 120,
-          width: 100,
+    return Padding(
+      padding: const EdgeInsets.all(5),
+      child: Container(
+        height: 120,
+        width: 100,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+          color: OlukoColors.black,
         ),
-        isVideo: isVideo,
+        child: ImageAndVideoPreviewCard(
+          imageCover: Image.asset(
+            assetImage,
+            fit: BoxFit.fill,
+            height: 120,
+            width: 120,
+          ),
+          isVideo: isVideo,
+        ),
       ),
     );
   }
