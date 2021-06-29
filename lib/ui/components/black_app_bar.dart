@@ -9,12 +9,14 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
   final Function() onPressed;
   final Function(SearchResults<T>) onSearchResults;
   final Function(SearchResults<T>) onSearchSubmit;
+  final Function(TextEditingController) whenSearchBarInitialized;
   final List<T> Function(String, List<T>) suggestionMethod;
   final List<T> Function(String, List<T>) searchMethod;
   final String title;
   final List<Widget> actions;
   final List<T> searchResultItems;
   final bool showSearchBar;
+  final GlobalKey<SearchState> searchKey;
 
   OlukoAppBar(
       {this.title,
@@ -25,7 +27,9 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
       this.showSearchBar = false,
       this.suggestionMethod,
       this.searchMethod,
-      this.onSearchSubmit});
+      this.onSearchSubmit,
+      this.whenSearchBarInitialized,
+      this.searchKey});
   @override
   Widget build(BuildContext context) {
     return PreferredSize(
@@ -54,7 +58,11 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
                           padding: EdgeInsets.symmetric(
                               vertical: 10, horizontal: 10),
                           child: SearchBar<T>(
+                            key: searchKey,
                             items: searchResultItems,
+                            whenInitialized:
+                                (TextEditingController controller) =>
+                                    whenSearchBarInitialized(controller),
                             onSearchSubmit:
                                 (SearchResults<dynamic> searchResults) =>
                                     onSearchSubmit(searchResults),

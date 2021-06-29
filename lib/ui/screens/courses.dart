@@ -11,6 +11,10 @@ import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';
 import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/course_card.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
+import 'package:oluko_app/ui/components/search_bar.dart';
+import 'package:oluko_app/ui/components/search_results_grid.dart';
+import 'package:oluko_app/ui/components/search_suggestions.dart';
+import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
@@ -29,6 +33,10 @@ class _State extends State<Courses> {
   double cardsAspectRatio;
   int cardsToShowOnPortrait = 3;
   int cardsToShowOnLandscape = 5;
+  int searchResultsPortrait = 2;
+  int searchResultsLandscape = 5;
+  TextEditingController searchBarController;
+  final searchKey = GlobalKey<SearchState>();
 
   @override
   Widget build(BuildContext context) {
@@ -42,11 +50,13 @@ class _State extends State<Courses> {
               backgroundColor: Colors.black,
               appBar: state is CourseSuccess
                   ? OlukoAppBar<Course>(
+                      searchKey: searchKey,
                       title: OlukoLocalizations.of(context).find('courses'),
                       actions: [_filterWidget()],
                       onSearchSubmit: (SearchResults results) =>
                           this.setState(() {
                         showSearchSuggestions = false;
+                        searchResults = results;
                       }),
                       onSearchResults: (SearchResults results) =>
                           this.setState(() {
@@ -60,6 +70,9 @@ class _State extends State<Courses> {
                       searchMethod: _searchMethod,
                       searchResultItems: state.values,
                       showSearchBar: true,
+                      whenSearchBarInitialized:
+                          (TextEditingController controller) =>
+                              searchBarController = controller,
                     )
                   : null,
               bottomNavigationBar: OlukoBottomNavigationBar(),
@@ -76,9 +89,24 @@ class _State extends State<Courses> {
                                   child: _mainPage(state),
                                 )
                               : showSearchSuggestions
-                                  ? _searchSuggestions(searchResults.query,
-                                      searchResults.suggestedItems)
-                                  : _searchResults(state.values),
+                                  ? SearchSuggestions<Course>(
+                                      textInput: searchResults.query,
+                                      itemList: searchResults.suggestedItems,
+                                      onPressed: (dynamic item) => searchKey
+                                          .currentState
+                                          .updateSearchResults(item.name),
+                                      keyNameList: searchResults.suggestedItems
+                                          .map((e) => e.name)
+                                          .toList())
+                                  : SearchResultsGrid<Course>(
+                                      childAspectRatio: cardsAspectRatio,
+                                      crossAxisCount:
+                                          MediaQuery.of(context).orientation ==
+                                                  Orientation.portrait
+                                              ? searchResultsPortrait
+                                              : searchResultsLandscape,
+                                      textInput: searchResults.query,
+                                      itemList: searchResults.searchResults),
                         ),
                       );
                     })
@@ -108,44 +136,6 @@ class _State extends State<Courses> {
         .toList();
   }
 
-  ListView _searchSuggestions(String textInput, List<Course> listCollection) {
-    return ListView.builder(
-        shrinkWrap: true,
-        itemCount: listCollection.length,
-        itemBuilder: (BuildContext context, int index) {
-          return ListTile(
-              title: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
-                  child: RichText(
-                      text: TextSpan(
-                    children: [
-                      TextSpan(
-                          text: listCollection[index]
-                              .name
-                              .substring(0, textInput.length),
-                          style: TextStyle(
-                              color: OlukoColors
-                                  .searchSuggestionsAlreadyWrittenText)),
-                      TextSpan(
-                          text: listCollection[index]
-                              .name
-                              .substring(textInput.length),
-                          style: TextStyle(
-                              color: OlukoColors.searchSuggestionsText))
-                    ],
-                  )),
-                ),
-                Divider(
-                  color: OlukoColors.divider,
-                  height: 1,
-                )
-              ]));
-        });
-  }
-
   GridView _searchResults(List<Course> listCollection) {
     return GridView.count(
         childAspectRatio: cardsAspectRatio,
@@ -160,7 +150,11 @@ class _State extends State<Courses> {
                     Image.network(
                       e.imageUrl,
                       fit: BoxFit.cover,
-                      frameBuilder: _frameBuilder,
+                      frameBuilder: (BuildContext context, Widget child,
+                              int frame, bool wasSynchronouslyLoaded) =>
+                          ImageUtils.frameBuilder(
+                              context, child, frame, wasSynchronouslyLoaded,
+                              height: 120),
                     ),
                   )),
                 ))
@@ -189,7 +183,13 @@ class _State extends State<Courses> {
                               Image.network(
                                 course.imageUrl,
                                 fit: BoxFit.cover,
-                                frameBuilder: _frameBuilder,
+                                frameBuilder: (BuildContext context,
+                                        Widget child,
+                                        int frame,
+                                        bool wasSynchronouslyLoaded) =>
+                                    ImageUtils.frameBuilder(context, child,
+                                        frame, wasSynchronouslyLoaded,
+                                        height: 120),
                               ),
                               width: ScreenUtils.width(context) /
                                   (0.2 + _cardsToShow())),
@@ -208,23 +208,6 @@ class _State extends State<Courses> {
       height: height,
       imageCover: image,
       progress: progress,
-    );
-  }
-
-  Widget _frameBuilder(
-      context, Widget child, int frame, bool wasSynchronouslyLoaded) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        frame == null
-            ? Container(height: 120, child: OlukoCircularProgressIndicator())
-            : SizedBox(),
-        AnimatedOpacity(
-            opacity: frame == null ? 0 : 1,
-            duration: Duration(milliseconds: 500),
-            curve: Curves.easeOut,
-            child: child),
-      ],
     );
   }
 

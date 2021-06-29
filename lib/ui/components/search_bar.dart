@@ -4,24 +4,36 @@ import 'package:oluko_app/models/search_results.dart';
 class SearchBar<T> extends StatefulWidget {
   final Function(SearchResults<T>) onSearchResults;
   final Function(SearchResults<T>) onSearchSubmit;
+  final Function(TextEditingController) whenInitialized;
   final List<dynamic> Function(String, List<T>) suggestionMethod;
   final List<dynamic> Function(String, List<T>) searchMethod;
   final List<T> items;
+  final GlobalKey<SearchState> searchKey;
   SearchBar(
-      {this.onSearchResults,
+      {Key key,
+      this.onSearchResults,
       this.suggestionMethod,
       this.searchMethod,
       this.items,
-      this.onSearchSubmit});
+      this.onSearchSubmit,
+      this.whenInitialized,
+      this.searchKey})
+      : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _State<T>();
+  State<StatefulWidget> createState() => SearchState<T>();
 }
 
-class _State<T> extends State<SearchBar> {
+class SearchState<T> extends State<SearchBar> {
   TextEditingController _searchQueryController = TextEditingController();
   bool _isSearching = false;
   String searchQuery = "Search query";
+
+  @override
+  void initState() {
+    widget.whenInitialized(_searchQueryController);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
