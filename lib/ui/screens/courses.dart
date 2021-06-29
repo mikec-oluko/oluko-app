@@ -26,10 +26,15 @@ class _State extends State<Courses> {
       SearchResults(query: '', suggestedItems: []);
   bool showSearchSuggestions = false;
   double carouselSectionHeight;
+  double cardsAspectRatio;
+  int cardsToShowOnPortrait = 3;
+  int cardsToShowOnLandscape = 5;
 
   @override
   Widget build(BuildContext context) {
-    carouselSectionHeight = (ScreenUtils.width(context) / 3) * 1.442 + 75;
+    cardsAspectRatio = 0.69333;
+    carouselSectionHeight =
+        ((ScreenUtils.width(context) / _cardsToShow()) / cardsAspectRatio) + 75;
     return BlocBuilder<CourseBloc, CourseState>(
         bloc: BlocProvider.of<CourseBloc>(context)..getByCategories(),
         builder: (context, state) {
@@ -59,21 +64,31 @@ class _State extends State<Courses> {
                   : null,
               bottomNavigationBar: OlukoBottomNavigationBar(),
               body: state is CourseSuccess
-                  ? Container(
-                      height: ScreenUtils.height(context),
-                      width: ScreenUtils.width(context),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 15.0),
-                        child: searchResults.query == ''
-                            ? _mainPage(state)
-                            : showSearchSuggestions
-                                ? _searchSuggestions(searchResults.query,
-                                    searchResults.suggestedItems)
-                                : _searchResults(state.values),
-                      ),
-                    )
+                  ? OrientationBuilder(builder: (context, orientation) {
+                      return Container(
+                        height: ScreenUtils.height(context),
+                        width: ScreenUtils.width(context),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 15.0),
+                          child: searchResults.query == ''
+                              ? _mainPage(state)
+                              : showSearchSuggestions
+                                  ? _searchSuggestions(searchResults.query,
+                                      searchResults.suggestedItems)
+                                  : _searchResults(state.values),
+                        ),
+                      );
+                    })
                   : OlukoCircularProgressIndicator());
         });
+  }
+
+  int _cardsToShow() {
+    if (MediaQuery.of(context).orientation == Orientation.portrait) {
+      return cardsToShowOnPortrait;
+    } else {
+      return cardsToShowOnLandscape;
+    }
   }
 
   List<Course> _suggestionMethod(String query, List<Course> collection) {
@@ -127,18 +142,20 @@ class _State extends State<Courses> {
 
   GridView _searchResults(List<Course> listCollection) {
     return GridView.count(
-        childAspectRatio: 0.67,
+        childAspectRatio: cardsAspectRatio,
         shrinkWrap: true,
-        crossAxisCount: 2,
+        crossAxisCount: _cardsToShow(),
         children: listCollection
             .map((e) => Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Container(
-                      child: _getCourseCard(Image.network(
-                    e.imageUrl,
-                    fit: BoxFit.cover,
-                    frameBuilder: _frameBuilder,
-                  ))),
+                      child: _getCourseCard(
+                    Image.network(
+                      e.imageUrl,
+                      fit: BoxFit.cover,
+                      frameBuilder: _frameBuilder,
+                    ),
+                  )),
                 ))
             .toList());
   }
@@ -167,7 +184,8 @@ class _State extends State<Courses> {
                                 fit: BoxFit.cover,
                                 frameBuilder: _frameBuilder,
                               ),
-                              width: ScreenUtils.width(context) / 3),
+                              width: ScreenUtils.width(context) /
+                                  (0.2 + _cardsToShow())),
                         ))
                     .toList(),
               );
