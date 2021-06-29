@@ -28,6 +28,8 @@ class _State extends State<OlukoBottomNavigationBar> {
         selectedItemColor: Colors.black,
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.black,
+        selectedFontSize: 0,
+        unselectedFontSize: 0,
         onTap: (num index) => this.setState(() {
               final OlukoBottomNavigationBarItem selectedItem =
                   getBottomNavigationBarItems()[index];
@@ -56,7 +58,7 @@ class _State extends State<OlukoBottomNavigationBar> {
           width: blockSize,
           height: MediaQuery.of(context).orientation == Orientation.portrait
               ? blockSize
-              : blockSize / 2,
+              : blockSize / 3,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

@@ -71,7 +71,10 @@ class _State extends State<Courses> {
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 15.0),
                           child: searchResults.query == ''
-                              ? _mainPage(state)
+                              ? Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: _mainPage(state),
+                                )
                               : showSearchSuggestions
                                   ? _searchSuggestions(searchResults.query,
                                       searchResults.suggestedItems)
@@ -144,7 +147,8 @@ class _State extends State<Courses> {
     return GridView.count(
         childAspectRatio: cardsAspectRatio,
         shrinkWrap: true,
-        crossAxisCount: _cardsToShow(),
+        crossAxisCount:
+            MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 5,
         children: listCollection
             .map((e) => Padding(
                   padding: const EdgeInsets.all(8.0),
