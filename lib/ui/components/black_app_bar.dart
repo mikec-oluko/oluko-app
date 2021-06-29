@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/models/search_results.dart';
 import 'package:oluko_app/ui/components/search_bar.dart';
 import 'package:oluko_app/ui/components/title_header.dart';
@@ -69,7 +70,7 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
                           )),
                       Divider(
                         height: 1,
-                        color: Colors.white12,
+                        color: OlukoColors.divider,
                         thickness: 1,
                         indent: 0,
                         endIndent: 0,

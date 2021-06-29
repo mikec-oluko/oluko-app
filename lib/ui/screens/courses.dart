@@ -126,17 +126,20 @@ class _State extends State<Courses> {
                           text: listCollection[index]
                               .name
                               .substring(0, textInput.length),
-                          style: TextStyle(color: OlukoColors.primary)),
+                          style: TextStyle(
+                              color: OlukoColors
+                                  .searchSuggestionsAlreadyWrittenText)),
                       TextSpan(
                           text: listCollection[index]
                               .name
                               .substring(textInput.length),
-                          style: TextStyle(color: Colors.white))
+                          style: TextStyle(
+                              color: OlukoColors.searchSuggestionsText))
                     ],
                   )),
                 ),
                 Divider(
-                  color: Colors.white,
+                  color: OlukoColors.divider,
                   height: 1,
                 )
               ]));
@@ -230,7 +233,7 @@ class _State extends State<Courses> {
       padding: const EdgeInsets.only(right: 20.0, top: 4),
       child: Icon(
         Icons.filter_alt_outlined,
-        color: Colors.white,
+        color: OlukoColors.appBarIcon,
         size: 25,
       ),
     );
