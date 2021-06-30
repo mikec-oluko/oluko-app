@@ -85,6 +85,7 @@ flutter:
      - assets/assessment/
      - assets/courses/
      - assets/login/
+     - assets/profile/
      - assets/lang/
      - assets/self_recording/
      - assets/bottom_navigation_bar/
