@@ -7,23 +7,27 @@ class SignUpResponse {
   final num hubspotCompanyId;
   final num hubspotContactId;
 
-  SignUpResponse(
-      {this.id,
-      this.firstName,
-      this.lastName,
-      this.email,
-      this.firebaseId,
-      this.hubspotCompanyId,
-      this.hubspotContactId});
+  SignUpResponse({
+    this.id,
+    this.firstName,
+    this.lastName,
+    this.email,
+    this.firebaseId,
+    this.hubspotCompanyId,
+    this.hubspotContactId,
+  });
 
-  SignUpResponse.fromJson(Map json)
-      : id = json['id'],
-        firstName = json['first_name'],
-        lastName = json['last_name'],
-        email = json['email'],
-        firebaseId = json['firebase_id'],
-        hubspotCompanyId = json['hubspot_company_id'],
-        hubspotContactId = json['hubspot_contact_id'];
+  factory SignUpResponse.fromJson(Map json) {
+    return SignUpResponse(
+      id: json['id'],
+      firstName: json['first_name'],
+      lastName: json['last_name'],
+      email: json['email'],
+      firebaseId: json['firebase_id'],
+      hubspotCompanyId: json['hubspot_company_id'],
+      hubspotContactId: json['hubspot_contact_id'],
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         'id': id,

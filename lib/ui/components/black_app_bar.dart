@@ -49,7 +49,7 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
             bold: true,
           ),
           actions: actions,
-          bottom: showSearchBar
+          bottom: showSearchBar == true
               ? PreferredSize(
                   preferredSize: Size.fromHeight(kToolbarHeight),
                   child: Column(
@@ -90,6 +90,7 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize =>
-      new Size.fromHeight(showSearchBar ? kToolbarHeight * 2 : kToolbarHeight);
+  Size get preferredSize => showSearchBar == true
+      ? new Size.fromHeight(kToolbarHeight * 2)
+      : new Size.fromHeight(kToolbarHeight);
 }

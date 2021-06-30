@@ -1,7 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Base {
-  Base({this.createdAt, this.createdBy, this.updatedAt, this.updatedBy}) {
+  Base(
+      {this.id,
+      this.createdAt,
+      this.createdBy,
+      this.updatedAt,
+      this.updatedBy,
+      this.isDeleted,
+      this.isHidden}) {
     if (this.createdAt == null) {
       this.createdAtSentinel = FieldValue.serverTimestamp();
     }
@@ -10,34 +17,55 @@ class Base {
     }
   }
 
+  String id;
   FieldValue createdAtSentinel;
   Timestamp createdAt;
   String createdBy;
   FieldValue updatedAtSentinel;
   Timestamp updatedAt;
   String updatedBy;
+  bool isDeleted = false;
+  bool isHidden = false;
 
   Base.fromJson(Map json)
-      : createdAt = json['created_at'],
+      : id = json['id'],
+        createdAt = json['created_at'],
         createdBy = json['created_by'],
         updatedAt = json['updated_at'],
-        updatedBy = json['updated_by'];
+        updatedBy = json['updated_by'],
+        isDeleted = json['is_deleted'],
+        isHidden = json['is_hidden'];
+
+  setBase(Map<String, dynamic> json) {
+    id = json['id'];
+    createdAt = json['created_at'];
+    createdBy = json['created_by'];
+    updatedAt = json['updated_at'];
+    updatedBy = json['updated_by'];
+    isDeleted = json['is_deleted'];
+    isHidden = json['is_hidden'];
+  }
 
   Map<String, dynamic> toJson() {
+    Map<String, dynamic> baseJson;
     if (this.createdAt != null && this.updatedAt != null) {
-      return {
+      baseJson = {
         'created_at': createdAt,
-        'created_by': createdBy,
         'updated_at': updatedAt,
-        'updated_by': updatedBy
       };
     } else {
-      return {
+      baseJson = {
         'created_at': createdAtSentinel,
-        'created_by': createdBy,
         'updated_at': updatedAtSentinel,
-        'updated_by': updatedBy
       };
     }
+    baseJson.addEntries([
+      MapEntry("updated_by", updatedBy),
+      MapEntry("created_by", createdBy),
+      MapEntry("id", id),
+      MapEntry("is_deleted", isDeleted),
+      MapEntry("is_hidden", isHidden)
+    ]);
+    return baseJson;
   }
 }

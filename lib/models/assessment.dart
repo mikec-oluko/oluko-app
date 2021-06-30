@@ -1,15 +1,30 @@
-import 'package:oluko_app/models/assessment_task.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'assessment_task.dart';
+import 'base.dart';
 
-class Assessment {
-  Assessment({
-    this.id,
-    this.name,
-    this.video,
-    this.coverImage,
-    this.thumbnailImage,
-    this.description,
-    this.tasks,
-  });
+class Assessment extends Base {
+  Assessment(
+      {this.name,
+      this.video,
+      this.coverImage,
+      this.thumbnailImage,
+      this.description,
+      this.tasks,
+      String id,
+      Timestamp createdAt,
+      String createdBy,
+      Timestamp updatedAt,
+      String updatedBy,
+      bool isHidden,
+      bool isDeleted})
+      : super(
+            id: id,
+            createdBy: createdBy,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            updatedBy: updatedBy,
+            isDeleted: isDeleted,
+            isHidden: isHidden);
 
   String id;
   String name;
@@ -19,27 +34,34 @@ class Assessment {
   String description;
   List<AssessmentTask> tasks;
 
-  Assessment.fromJson(Map json)
-      : id = json['id'],
-        name = json['name'],
-        video = json['video'],
-        coverImage = json['cover_image'],
-        thumbnailImage = json['thumbnail_image'],
-        description = json['description'],
-        tasks = json['tasks'] != null && json['tasks'].length > 0
-            ? json['tasks'].map<AssessmentTask>((task) {
-                AssessmentTask assessmentTask = AssessmentTask.fromJson(task);
-                return assessmentTask;
-              }).toList()
-            : [];
+  factory Assessment.fromJson(Map<String, dynamic> json) {
+    Assessment assessment = Assessment(
+      name: json['name'],
+      video: json['video'],
+      coverImage: json['cover_image'],
+      thumbnailImage: json['thumbnail_image'],
+      description: json['description'],
+      tasks: json['tasks'] != null
+          ? json['tasks'].map<AssessmentTask>((task) {
+              AssessmentTask assessmentTask = AssessmentTask.fromJson(task);
+              return assessmentTask;
+            }).toList()
+          : [],
+    );
+    assessment.setBase(json);
+    return assessment;
+  }
 
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'video': video,
-        'cover_image': coverImage,
-        'thumbnail_image': thumbnailImage,
-        'description': description,
-        'tasks': tasks,
-      };
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> assessmentJson = {
+      'name': name,
+      'video': video,
+      'cover_image': coverImage,
+      'thumbnail_image': thumbnailImage,
+      'description': description,
+      'tasks': tasks,
+    };
+    assessmentJson.addEntries(super.toJson().entries);
+    return assessmentJson;
+  }
 }

@@ -1,17 +1,13 @@
-class Video {
+import '../base.dart';
+
+class Video extends Base {
   String url;
   String thumbUrl;
   double aspectRatio;
   String name;
   int duration;
 
-  Video(
-      {
-      this.url,
-      this.thumbUrl,
-      this.aspectRatio,
-      this.name,
-      this.duration});
+  Video({this.url, this.thumbUrl, this.aspectRatio, this.name, this.duration});
 
   factory Video.fromJson(Map<String, dynamic> json) {
     return Video(

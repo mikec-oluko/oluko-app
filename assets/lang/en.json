@@ -30,5 +30,7 @@
     "encodingVideo": "Encoding video",
     "uploadingThumbnail": "Uploading thumbnail to cloud storage",
     "uploadingVideoFile": " Uploading video file ",
-    "outOf": " out of "
+    "outOf": " out of ",
+    "yetToUnlock": "Yet to 'Unlock'",
+    "tapToUpload": "Tap to Upload"
 }

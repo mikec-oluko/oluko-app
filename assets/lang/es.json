@@ -30,5 +30,8 @@
     "encodingVideo": "Codificando el video",
     "uploadingThumbnail": "Subiendo vista previa al almacenamiento en la nube",
     "uploadingVideoFile": "Subiendo archivo de video ",
-    "outOf": " de "
+    "outOf": " de ",
+    "yetToUnlock": "Por 'Desbloquear'",
+    "tapToUpload": "Toca para Subir"
+
 }

@@ -7,14 +7,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/helpers/encoding_provider.dart';
 import 'package:oluko_app/helpers/s3_provider.dart';
-import 'package:oluko_app/models/draw_point.dart';
-import 'package:oluko_app/models/event.dart';
-import 'package:oluko_app/models/video.dart';
+import 'package:oluko_app/models/submodels/draw_point.dart';
+import 'package:oluko_app/models/submodels/event.dart';
+import 'package:oluko_app/models/submodels/video.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:oluko_app/models/video_info.dart';
 import 'package:oluko_app/repositories/video_info_repository.dart';
-import 'package:video_player/video_player.dart';
 
 abstract class VideoInfoState {
   final List<VideoInfo> videoInfoList;

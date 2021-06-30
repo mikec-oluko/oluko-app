@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_ffmpeg/statistics.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/video_info_bloc.dart';
-import 'package:oluko_app/models/video.dart';
+import 'package:oluko_app/models/submodels/video.dart';
 import 'package:oluko_app/models/video_info.dart';
 import 'package:oluko_app/ui/screens/videos/player_double.dart';
 import 'package:oluko_app/ui/screens/videos/player_response.dart';

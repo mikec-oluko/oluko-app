@@ -49,4 +49,52 @@ class OlukoColors {
       Color.fromRGBO(170, 176, 144, 1.0);
 
   static const Color appBarIcon = Colors.white;
+
+  static const Color grayColor = Color.fromRGBO(149, 149, 149, 1.0);
+
+  static const Color listGrayColor = Color.fromRGBO(57, 57, 57, 1.0);
+
+  static const Color challengesGreyBackground = Color(0xFF303030);
+
+  static const Color grayColorSemiTransparent =
+      Color.fromRGBO(148, 148, 148, 0.6);
+}
+
+class OlukoFonts {
+  static const double olukoTitleFontSize = 30.0;
+  static const double olukoBigFontSize = 18.0;
+  static const double olukoMediumFontSize = 14.0;
+  static const double olukoSmallFontSize = 11.0;
+
+  static TextStyle olukoMediumFont(
+      {FontWeight custoFontWeight, Color customColor}) {
+    return TextStyle(
+        fontSize: olukoMediumFontSize,
+        fontWeight: custoFontWeight != null ? custoFontWeight : FontWeight.w500,
+        color: customColor != null ? customColor : OlukoColors.white);
+  }
+
+  static TextStyle olukoTitleFont(
+      {FontWeight custoFontWeight, Color customColor}) {
+    return TextStyle(
+        fontSize: olukoTitleFontSize,
+        fontWeight: custoFontWeight != null ? custoFontWeight : FontWeight.w500,
+        color: customColor != null ? customColor : OlukoColors.white);
+  }
+
+  static TextStyle olukoBigFont(
+      {FontWeight custoFontWeight, Color customColor}) {
+    return TextStyle(
+        fontSize: olukoBigFontSize,
+        fontWeight: custoFontWeight != null ? custoFontWeight : FontWeight.w500,
+        color: customColor != null ? customColor : OlukoColors.white);
+  }
+
+  static TextStyle olukoSmallFont(
+      {FontWeight custoFontWeight, Color customColor}) {
+    return TextStyle(
+        fontSize: olukoSmallFontSize,
+        fontWeight: custoFontWeight != null ? custoFontWeight : FontWeight.w500,
+        color: customColor != null ? customColor : OlukoColors.white);
+  }
 }
