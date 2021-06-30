@@ -10,13 +10,15 @@ class OlukoAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final List<Widget> actions;
   final List<String> searchResultItems;
+  bool showSearchBar;
 
   OlukoAppBar(
       {this.title,
       this.onPressed,
       this.actions,
       this.onSearchResults,
-      this.searchResultItems});
+      this.searchResultItems,
+      this.showSearchBar = true});
   @override
   Widget build(BuildContext context) {
     return PreferredSize(
@@ -36,30 +38,35 @@ class OlukoAppBar extends StatelessWidget implements PreferredSizeWidget {
             bold: true,
           ),
           actions: actions,
-          bottom: PreferredSize(
-              preferredSize: Size.fromHeight(kToolbarHeight),
-              child: Column(
-                children: [
-                  Padding(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                      child: SearchBar(
-                        items: searchResultItems,
-                        onSearchResults: (SearchResults searchResults) =>
-                            onSearchResults(searchResults),
-                      )),
-                  Divider(
-                    height: 1,
-                    color: Colors.white12,
-                    thickness: 1,
-                    indent: 0,
-                    endIndent: 0,
-                  )
-                ],
-              ))),
+          bottom: showSearchBar == true
+              ? PreferredSize(
+                  preferredSize: Size.fromHeight(kToolbarHeight),
+                  child: Column(
+                    children: [
+                      Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 10),
+                          child: SearchBar(
+                            items: searchResultItems,
+                            onSearchResults: (SearchResults searchResults) =>
+                                onSearchResults(searchResults),
+                          )),
+                      Divider(
+                        height: 1,
+                        color: Colors.white12,
+                        thickness: 1,
+                        indent: 0,
+                        endIndent: 0,
+                      )
+                    ],
+                  ))
+              : PreferredSize(
+                  preferredSize: Size(0.0, 0.0), child: Container())),
     );
   }
 
   @override
-  Size get preferredSize => new Size.fromHeight(kToolbarHeight * 2);
+  Size get preferredSize => showSearchBar == true
+      ? new Size.fromHeight(kToolbarHeight * 2)
+      : new Size.fromHeight(kToolbarHeight);
 }
