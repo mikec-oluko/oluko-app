@@ -140,8 +140,8 @@ class _TaskSubmissionReviewState extends State<TaskSubmissionReview> {
                               playing = false;
                             });
                           }
-                          await cameraController.startVideoRecording();
                           _stopWatchTimer.onExecute.add(StopWatchExecute.start);
+                          await cameraController.startVideoRecording();
                         }
                         setState(() {
                           _recording = !_recording;
