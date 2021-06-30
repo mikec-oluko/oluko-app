@@ -14,10 +14,12 @@ import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/screens/self_recording.dart';
+import 'package:oluko_app/ui/screens/task_submission_recorded_video.dart';
 import 'package:oluko_app/ui/screens/task_submission_review.dart';
 import 'package:oluko_app/ui/screens/self_recording_preview.dart';
+import 'package:oluko_app/ui/screens/task_submission_review_preview.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
-
+import 'package:oluko_app/utils/time_converter.dart';
 
 class TaskDetails extends StatefulWidget {
   TaskDetails({this.task, this.showRecordedVideos = false, Key key})
@@ -36,7 +38,6 @@ class _TaskDetailsState extends State<TaskDetails> {
   ChewieController _controller;
   bool _makePublic = false;
   TaskSubmissionBloc _taskSubmissionBloc;
-  TaskSubmission taskSubmission;
 
   @override
   void initState() {
@@ -122,7 +123,6 @@ class _TaskDetailsState extends State<TaskDetails> {
               BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
                   builder: (context, state) {
                 if (state is GetSuccess && state.taskSubmission != null) {
-                  taskSubmission = state.taskSubmission;
                   return Row(
                     mainAxisSize: MainAxisSize.max,
                     children: [
@@ -196,7 +196,15 @@ class _TaskDetailsState extends State<TaskDetails> {
             widget.task.description,
             style: TextStyle(fontSize: 17, color: Colors.white60),
           ),
-          widget.showRecordedVideos ? recordedVideos() : SizedBox(),
+          BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
+              builder: (context, state) {
+            if (state is GetSuccess && state.taskSubmission != null) {
+              return recordedVideos(state.taskSubmission);
+            } else {
+              return SizedBox();
+            }
+          })
+          //widget.showRecordedVideos ? recordedVideos() : SizedBox(),
         ],
       );
     } else {
@@ -204,7 +212,7 @@ class _TaskDetailsState extends State<TaskDetails> {
     }
   }
 
-  recordedVideos() {
+  recordedVideos(TaskSubmission taskSubmission) {
     return Column(children: [
       Padding(
         padding: const EdgeInsets.symmetric(vertical: 25.0),
@@ -219,14 +227,17 @@ class _TaskDetailsState extends State<TaskDetails> {
         onTap: () => Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => SelfRecordingPreview(task: widget.task))),
+                builder: (context) => TaskSubmissionRecordedVideo(
+                    task: widget.task, videoUrl: taskSubmission.video.url))),
         child: Align(
           alignment: Alignment.centerLeft,
           child: Container(
-            height: 200,
+            height: 150,
             child: ListView(scrollDirection: Axis.horizontal, children: [
               taskResponse(
-                  '00:15', 'assets/assessment/task_response_thumbnail.png'),
+                  TimeConverter.fromMillisecondsToSecondsStringFormat(
+                      taskSubmission.video.duration),
+                  taskSubmission.video.thumbUrl),
             ]),
           ),
         ),
@@ -240,7 +251,7 @@ class _TaskDetailsState extends State<TaskDetails> {
       child: ClipRRect(
         borderRadius: BorderRadius.all(Radius.circular(20)),
         child: Stack(alignment: AlignmentDirectional.center, children: [
-          Image.asset(thumbnail),
+          Image.network(thumbnail),
           Align(
               alignment: Alignment.center,
               child: Image.asset(
