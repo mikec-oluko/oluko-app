@@ -39,6 +39,17 @@ class OlukoColors {
 
   static const Color taskCardBackground = Color.fromRGBO(40, 40, 40, 1.0);
 
+  static const Color divider = Colors.white12;
+
+  static const Color searchBarText = Colors.white;
+
+  static const Color searchSuggestionsText = Colors.white;
+
+  static const Color searchSuggestionsAlreadyWrittenText =
+      Color.fromRGBO(170, 176, 144, 1.0);
+
+  static const Color appBarIcon = Colors.white;
+
   static const Color grayColor = Color.fromRGBO(149, 149, 149, 1.0);
 
   static const Color listGrayColor = Color.fromRGBO(57, 57, 57, 1.0);
