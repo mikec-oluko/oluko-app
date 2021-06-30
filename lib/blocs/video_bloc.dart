@@ -45,16 +45,7 @@ class VideoBloc extends Cubit<VideoState> {
       double aspectRatio, String id) async {
     Video video;
 
-    //video = await _processVideo(context, videoFile, aspectRatio, id);
-
-    //TODO remove this when video enconding HLS working
-    video = Video(
-        aspectRatio: 0.5625,
-        duration: 3735,
-        name: "video4104",
-        thumbUrl:
-            "https://oluko-mvt.s3.amazonaws.com/video4104/64660747451__0D90B823-9CDF-494A-91D0-945EA30D2B2E.MOV.jpg",
-        url: "https://oluko-mvt.s3.amazonaws.com/video4104/master.m3u8");
+    video = await _processVideo(context, videoFile, aspectRatio, id);
 
     emit(VideoSuccess(video: video));
   }

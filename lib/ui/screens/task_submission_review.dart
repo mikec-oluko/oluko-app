@@ -78,9 +78,6 @@ class _TaskSubmissionReviewState extends State<TaskSubmissionReview> {
     cameraController?.dispose();
     _videoController.dispose();
     _stopWatchTimer.dispose();
-    setState(() {
-      videoEvents = [];
-    });
     super.dispose();
   }
 

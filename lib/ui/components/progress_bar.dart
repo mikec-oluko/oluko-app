@@ -13,6 +13,7 @@ class _State extends State<ProgressBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
+        color: Colors.black,
         padding: EdgeInsets.all(30.0),
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,

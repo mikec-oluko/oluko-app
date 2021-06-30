@@ -36,7 +36,7 @@ class _TaskSubmissionReviewPreviewState
   SignUpResponse profileInfo;
 
   int actualPos = 0;
-  int duration;
+  int duration = 100;
 
   //video
   VideoPlayerController _videoController;
@@ -130,40 +130,28 @@ class _TaskSubmissionReviewPreviewState
                 ),
               ),
             ),
-            body: BlocListener<VideoBloc, VideoState>(
-              listener: (context, state) {
-                if (state is VideoSuccess) {
-                  VideoInfo videoInfo = VideoInfo(
-                      video: state.video,
-                      events: widget.videoEvents,
-                      markers: [],
-                      drawing: []);
-                  _taskReviewBloc
-                    ..updateTaskReviewVideoInfo(
-                        reference.doc(_taskReviewId), videoInfo);
-                  Navigator.popUntil(context, ModalRoute.withName('/'));
-                }
-              },
-              child: videoPlayerWidget(),
-            )
-            /*BlocConsumer<VideoBloc, VideoState>(listener: (context, state) {
+            body: BlocListener<VideoBloc, VideoState>(listener:
+                (context, state) {
               if (state is VideoSuccess) {
-                VideoInfo videoInfo =
-                    VideoInfo(video: state.video, events: widget.videoEvents);
+                VideoInfo videoInfo = VideoInfo(
+                    video: state.video,
+                    events: widget.videoEvents,
+                    markers: [],
+                    drawing: []);
                 _taskReviewBloc
                   ..updateTaskReviewVideoInfo(
                       reference.doc(_taskReviewId), videoInfo);
                 Navigator.popUntil(context, ModalRoute.withName('/'));
               }
-            }, builder: (context, state) {
+            }, child:
+                BlocBuilder<VideoBloc, VideoState>(builder: (context, state) {
               if (state is VideoProcessing) {
                 return ProgressBar(
                     processPhase: state.processPhase, progress: state.progress);
               } else {
                 return videoPlayerWidget();
               }
-            })*/
-            ));
+            }))));
   }
 
   Widget videoPlayerWidget() {
@@ -217,47 +205,50 @@ class _TaskSubmissionReviewPreviewState
                     },
                   ),
                 )),
+            videoControls(),
           ])),
-      Positioned(
-          bottom: 0,
-          left: 0,
-          right: 0,
-          child: Visibility(
-              child: Padding(
-                  padding: EdgeInsets.all(2.0),
-                  child: Container(
-                      padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20.0),
-                          color: Colors.black87),
-                      child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 8.0, horizontal: 8.0),
-                          child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Container(
-                                    height: 40,
-                                    child: Row(children: <Widget>[
-                                      IconButton(
-                                          color: Colors.white,
-                                          icon: Icon(
-                                            recordedPlaying
-                                                ? Icons.pause
-                                                : Icons.play_arrow,
-                                          ),
-                                          onPressed: playPauseVideo),
-                                      Expanded(
-                                          child: SizedBox(
-                                        child: sliderAdaptive(),
-                                      ))
-                                    ]))
-                              ])))))),
     ]);
   }
 
+  Widget videoControls() {
+    return Positioned(
+        bottom: 0,
+        left: 0,
+        right: 0,
+        child: Visibility(
+            child: Padding(
+                padding: EdgeInsets.all(2.0),
+                child: Container(
+                    padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20.0),
+                        color: Colors.black87),
+                    child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 8.0),
+                        child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Container(
+                                  height: 40,
+                                  child: Row(children: <Widget>[
+                                    IconButton(
+                                        color: Colors.white,
+                                        icon: Icon(
+                                          recordedPlaying
+                                              ? Icons.pause
+                                              : Icons.play_arrow,
+                                        ),
+                                        onPressed: () => playPauseVideo()),
+                                    Expanded(
+                                        child: SizedBox(
+                                      child: sliderAdaptive(),
+                                    ))
+                                  ]))
+                            ]))))));
+  }
+
   Widget sliderAdaptive() {
-    setDuration();
     return Slider.adaptive(
       activeColor: Colors.white,
       inactiveColor: Colors.teal.shade700,
@@ -279,6 +270,10 @@ class _TaskSubmissionReviewPreviewState
   playPauseVideo() async {
     if (_videoRecordedController.value.isPlaying) {
       await _videoRecordedController.pause();
+      await _videoController.pause();
+      setState(() {
+        videoPlaying = false;
+      });
     } else {
       await _videoRecordedController.play();
     }
@@ -295,12 +290,6 @@ class _TaskSubmissionReviewPreviewState
       setState(() {
         duration = videoDuration;
       });
-      return videoDuration.toDouble();
-    } else {
-      setState(() {
-        duration = 100;
-      });
-      return 100.0;
     }
   }
 
@@ -314,7 +303,7 @@ class _TaskSubmissionReviewPreviewState
     _videoRecordedController =
         VideoPlayerController.file(File(widget.filePath));
     _initializeVideoPlayerRecordedFuture =
-        _videoRecordedController.initialize();
+        _videoRecordedController.initialize().then((value) => setDuration());
     _videoRecordedController.setLooping(true);
   }
 
@@ -376,4 +365,10 @@ class _TaskSubmissionReviewPreviewState
       videoPlaying = !videoPlaying;
     });
   }
+
+  /*setCorrectVideoPosition() async {
+    if (_videoRecordedController != null) {
+      int pos = _videoRecordedController.value.position.inMilliseconds;
+    }
+  }*/
 }
