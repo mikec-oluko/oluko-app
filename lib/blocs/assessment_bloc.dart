@@ -31,4 +31,16 @@ class AssessmentBloc extends Cubit<AssessmentState> {
       emit(AssessmentFailure(exception: e));
     }
   }
+
+  void getById(String id) async {
+    if (!(state is AssessmentSuccess)) {
+      emit(AssessmentLoading());
+    }
+    try {
+      List<Assessment> assessments = await AssessmentRepository().getById(id);
+      emit(AssessmentSuccess(values: assessments));
+    } catch (e) {
+      emit(AssessmentFailure(exception: e));
+    }
+  }
 }

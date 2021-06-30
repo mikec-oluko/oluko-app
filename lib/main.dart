@@ -68,7 +68,10 @@ class _MyAppState extends State<MyApp> {
             BlocProvider.value(value: _authBloc, child: AppPlans()),
         '/assessment-videos': (context) => MultiBlocProvider(providers: [
               BlocProvider.value(value: _authBloc),
-              BlocProvider(create: (context) => AssessmentBloc()..get())
+              //TODO Change this when using more than 1 assessment.
+              BlocProvider(
+                  create: (context) =>
+                      AssessmentBloc()..getById('ndRa0ldHCwCUaDxEQm25'))
             ], child: AsessmentVideos()),
         '/task-details': (context) => BlocProvider.value(
             value: _authBloc,
