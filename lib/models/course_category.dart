@@ -5,47 +5,46 @@ import 'package:oluko_app/models/course_category_item.dart';
 class CourseCategory extends Base {
   CourseCategory(
       {this.name,
-      this.id,
       this.courses,
+      String id,
       Timestamp createdAt,
       String createdBy,
       Timestamp updatedAt,
-      String updatedBy})
+      String updatedBy,
+      bool isHidden,
+      bool isDeleted})
       : super(
+            id: id,
             createdBy: createdBy,
             createdAt: createdAt,
             updatedAt: updatedAt,
-            updatedBy: updatedBy);
+            updatedBy: updatedBy,
+            isDeleted: isDeleted,
+            isHidden: isHidden);
 
   String name;
-  String id;
   List<CourseCategoryItem> courses;
-  Timestamp createdAt;
-  String createdBy;
-  Timestamp updatedAt;
-  String updatedBy;
 
-  CourseCategory.fromJson(Map json)
-      : name = json['name'],
-        id = json['id'],
-        courses = json['courses'] != null
-            ? json['courses']
-                .map<CourseCategoryItem>(
-                    (item) => CourseCategoryItem.fromJson(item))
-                .toList()
-            : [],
-        createdAt = json['created_at'],
-        createdBy = json['created_by'],
-        updatedAt = json['updated_at'],
-        updatedBy = json['updated_by'];
+  factory CourseCategory.fromJson(Map<String, dynamic> json) {
+    CourseCategory courseCategory = CourseCategory(
+      name: json['name'],
+      courses: json['courses'] != null
+          ? json['courses']
+              .map<CourseCategoryItem>(
+                  (item) => CourseCategoryItem.fromJson(item))
+              .toList()
+          : [],
+    );
+    courseCategory.setBase(json);
+    return courseCategory;
+  }
 
-  Map<String, dynamic> toJson() => {
-        'name': name,
-        'id': id,
-        'courses': courses,
-        'created_at': createdAt == null ? createdAtSentinel : createdAt,
-        'created_by': createdBy,
-        'updated_at': updatedAt == null ? updatedAtSentinel : updatedAt,
-        'updated_by': updatedBy,
-      };
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> assessmentJson = {
+      'name': name,
+      'courses': courses,
+    };
+    assessmentJson.addEntries(super.toJson().entries);
+    return assessmentJson;
+  }
 }
