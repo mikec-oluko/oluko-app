@@ -5,8 +5,10 @@ import 'package:oluko_app/utils/screen_utils.dart';
 class CourseCard extends StatefulWidget {
   final Image imageCover;
   final double progress;
+  final double width;
+  final double height;
 
-  CourseCard({this.imageCover, this.progress});
+  CourseCard({this.imageCover, this.progress, this.width, this.height});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -16,22 +18,25 @@ class _State extends State<CourseCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: MediaQuery.of(context).orientation == Orientation.portrait
-          ? ScreenUtils.width(context) / 3.6
-          : ScreenUtils.height(context) / 3.6,
-      child: Column(children: [
-        widget.imageCover,
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: widget.progress != null
-                ? FractionallySizedBox(
+      width: widget.width,
+      child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+        Expanded(flex: 9, child: widget.imageCover),
+        widget.progress != null
+            ? Expanded(
+                flex: 1,
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: FractionallySizedBox(
+                    heightFactor: 1,
                     widthFactor: 0.6,
-                    child: CourseProgressBar(value: widget.progress))
-                : SizedBox(),
-          ),
-        )
+                    child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 1.0, vertical: 8.0),
+                        child: CourseProgressBar(value: widget.progress)),
+                  ),
+                ),
+              )
+            : SizedBox()
       ]),
     );
   }
