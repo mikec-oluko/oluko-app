@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:oluko_app/ui/components/dialog.dart';
 
 class ProfileViewConstants {
   static const profileTitle = "Profile";
@@ -47,6 +48,30 @@ class ProfileViewConstants {
     profileOptionsSettings,
     profileOptionsHelpAndSupport,
   ];
+
+  static dialogContent(
+      {BuildContext context, List<Widget> content, bool closeButton = false}) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext _) {
+          if (closeButton == true) {
+            content.insert(
+                0,
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: Container(
+                    height: 10,
+                    child: IconButton(
+                        padding: EdgeInsets.all(0),
+                        icon: Icon(Icons.close, color: Colors.white),
+                        onPressed: () => Navigator.pop(context)),
+                  ),
+                ));
+          }
+
+          return DialogWidget(content: content);
+        });
+  }
 }
 
 //TODO: Used as options != String on the view
@@ -141,4 +166,13 @@ final List<Challenge> challengeCollection = [
   challengeDefault,
   _secondChallenge,
   _lockedChallenge
+];
+
+final List<Content> uploadListContent = [
+  Content(imgUrl: 'assets/courses/course_sample_3.png', isVideo: true),
+  Content(imgUrl: 'assets/courses/course_sample_5.png', isVideo: true),
+  Content(imgUrl: 'assets/courses/course_sample_4.png', isVideo: true),
+  Content(imgUrl: 'assets/courses/course_sample_6.png', isVideo: false),
+  Content(imgUrl: 'assets/courses/course_sample_7.png', isVideo: false),
+  Content(imgUrl: 'assets/courses/course_sample_8.png', isVideo: false),
 ];

@@ -1,23 +1,26 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/Theme.dart';
 
-class DialogWidget extends StatelessWidget {
-  const DialogWidget() : super();
+class DialogWidget extends StatefulWidget {
+  final List<Widget> content;
+  DialogWidget({this.content});
+  @override
+  _DialogWidgetState createState() => _DialogWidgetState();
+}
 
+class _DialogWidgetState extends State<DialogWidget> {
   @override
   Widget build(BuildContext context) {
-    return BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: Dialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
-          backgroundColor: OlukoColors.black,
-          child: _dialogContent(context),
-        ));
+    return _dialogContent(context, widget.content);
   }
 }
 
-Widget _dialogContent(context) {
-  showModalBottomSheet(context: context, builder: (BuildContext _) {});
+_dialogContent(BuildContext context, List<Widget> content) {
+  return Container(
+    color: OlukoColors.black,
+    child: ListView(
+      shrinkWrap: true,
+      children: content,
+    ),
+  );
 }

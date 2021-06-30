@@ -6,7 +6,7 @@ import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/carousel_small_section.dart';
 import 'package:oluko_app/ui/components/challenges_card.dart';
 import 'package:oluko_app/ui/components/course_card.dart';
-import 'package:oluko_app/ui/components/image_and_video_preview_card.dart';
+import 'package:oluko_app/ui/components/image_and_video_container.dart';
 import 'package:oluko_app/ui/components/user_profile_information.dart';
 import 'package:oluko_app/ui/components/user_profile_progress.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
@@ -133,25 +133,9 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
   }
 
   Widget _getImageAndVideoCard(String assetImage, {bool isVideo}) {
-    return Padding(
-      padding: const EdgeInsets.all(5),
-      child: Container(
-        height: 120,
-        width: 100,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-          color: OlukoColors.black,
-        ),
-        child: ImageAndVideoPreviewCard(
-          imageCover: Image.asset(
-            assetImage,
-            fit: BoxFit.fill,
-            height: 120,
-            width: 120,
-          ),
-          isVideo: isVideo,
-        ),
-      ),
+    return ImageAndVideoContainer(
+      assetImage: assetImage,
+      isVideo: isVideo,
     );
   }
 }

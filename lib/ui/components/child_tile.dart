@@ -27,7 +27,7 @@ class _ChildTileWidgetState extends State<ChildTileWidget> {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(title,
-              style: OlukoFonts.olukoSmallFont(customColor: Colors.black)),
+              style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.black)),
         ),
       );
     }
