@@ -10,13 +10,11 @@ import 'package:oluko_app/blocs/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/models/task.dart';
-import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
-import 'package:oluko_app/ui/components/title_body.dart';
+import 'package:oluko_app/ui/components/progress_bar.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/screens/task_details.dart';
-import 'package:oluko_app/ui/components/video_player_file.dart';
 
 class SelfRecordingPreview extends StatefulWidget {
   SelfRecordingPreview({this.task, this.filePath, key}) : super(key: key);
@@ -101,32 +99,30 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                                 title: 'Done',
                                 onPressed: () async {
                                   _controller.pause();
-                                  Navigator.popUntil(
-                                      context, ModalRoute.withName('/'));
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => TaskDetails(
-                                              task: widget.task,
-                                              showRecordedVideos: true)));
                                   _taskSubmissionBloc
-                                    ..createTaskResponse(reference);
+                                    ..createTaskSubmission(
+                                        reference, widget.task);
                                 },
                               )),
                           BlocConsumer<VideoBloc, VideoState>(
                               listener: (context, state) {
                             if (state is VideoSuccess) {
                               _taskSubmissionBloc
-                                ..updateTaskResponseVideo(
+                                ..updateTaskSubmissionVideo(
                                     reference.doc(taskSubmissionId),
                                     state.video);
-                              Navigator.popUntil(
-                                  context, ModalRoute.withName('/'));
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => TaskDetails(
+                                          task: widget.task,
+                                          showRecordedVideos: true)));
                             }
                           }, builder: (context, state) {
                             if (state is VideoProcessing) {
-                              return _getProgressBar(
-                                  state.processPhase, state.progress);
+                              return ProgressBar(
+                                  processPhase: state.processPhase,
+                                  progress: state.progress);
                             } else {
                               return ConstrainedBox(
                                   constraints: BoxConstraints(
@@ -143,8 +139,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
 
   List<Widget> showVideoPlayer() {
     List<Widget> widgets = [];
-    widgets.add(OlukoVideoPlayerFile(
-        filePath: widget.filePath,
+    widgets.add(OlukoVideoPlayer(
         whenInitialized: (ChewieController chewieController) =>
             this.setState(() {
               _controller = chewieController;
@@ -153,29 +148,5 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
       widgets.add(Center(child: CircularProgressIndicator()));
     }
     return widgets;
-  }
-
-  _getProgressBar(String processPhase, double progress) {
-    return Container(
-      padding: EdgeInsets.all(30.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Container(
-            margin: EdgeInsets.only(bottom: 30.0),
-            child: Text(
-              processPhase,
-              style: TextStyle(
-                color: Colors.white,
-              ),
-            ),
-          ),
-          LinearProgressIndicator(
-            value: progress,
-          ),
-        ],
-      ),
-    );
   }
 }

@@ -6,11 +6,13 @@ class TaskSubmission extends Base {
   Video video;
   DocumentReference reviewReference;
   DocumentReference taskReference;
+  String taskId;
 
   TaskSubmission(
       {this.video,
       this.reviewReference,
       this.taskReference,
+      this.taskId,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -32,6 +34,7 @@ class TaskSubmission extends Base {
       video: Video.fromJson(json['video']),
       reviewReference: json['review_reference'],
       taskReference: json['task_reference'],
+      taskId: json['task_id']
     );
     taskSubmission.setBase(json);
     return taskSubmission;
@@ -42,6 +45,7 @@ class TaskSubmission extends Base {
       'video': video.toJson(),
       'review_reference': reviewReference,
       'task_reference': taskReference,
+      'task_id': taskId
     };
     taskSubmissionJson.addEntries(super.toJson().entries);
     return taskSubmissionJson;

@@ -8,7 +8,6 @@ import 'package:oluko_app/models/enums/file_extension_enum.dart';
 import 'package:oluko_app/models/submodels/video.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/file_processing.dart';
-import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 import 'package:oluko_app/utils/video_process.dart';
 import 'package:path/path.dart' as p;
@@ -46,7 +45,16 @@ class VideoBloc extends Cubit<VideoState> {
       double aspectRatio, String id) async {
     Video video;
 
-    video = await _processVideo(context, videoFile, aspectRatio, id);
+    //video = await _processVideo(context, videoFile, aspectRatio, id);
+
+    //TODO remove this when video enconding HLS working
+    video = Video(
+        aspectRatio: 0.5625,
+        duration: 3735,
+        name: "video4104",
+        thumbUrl:
+            "https://oluko-mvt.s3.amazonaws.com/video4104/64660747451__0D90B823-9CDF-494A-91D0-945EA30D2B2E.MOV.jpg",
+        url: "https://oluko-mvt.s3.amazonaws.com/video4104/master.m3u8");
 
     emit(VideoSuccess(video: video));
   }

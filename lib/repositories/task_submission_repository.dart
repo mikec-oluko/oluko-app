@@ -1,4 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:global_configuration/global_configuration.dart';
+import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/submodels/video.dart';
 
@@ -10,15 +13,30 @@ class TaskSubmissionRepository {
   }
 
   static TaskSubmission createTaskSubmission(
-      TaskSubmission taskResponse, CollectionReference reference) {
+      TaskSubmission taskSubmission, CollectionReference reference) {
     final DocumentReference docRef = reference.doc();
-    taskResponse.id = docRef.id;
-    docRef.set(taskResponse.toJson());
-    return taskResponse;
+    taskSubmission.id = docRef.id;
+    docRef.set(taskSubmission.toJson());
+    return taskSubmission;
   }
 
   static updateTaskSubmissionVideo(
       Video video, DocumentReference reference) async {
     reference.update({'video': video.toJson()});
+  }
+
+  static Future<TaskSubmission> getTaskSubmissionOfTask(Task task) async {
+    CollectionReference reference = FirebaseFirestore.instance
+        .collection("projects")
+        .doc(GlobalConfiguration().getValue("projectId"))
+        .collection("assessmentAssignments")
+        .doc('8dWwPNggqruMQr0OSV9f')
+        .collection('taskSubmissions');
+    final querySnapshot =
+        await reference.where("task_id", isEqualTo: task.id).get();
+    if (querySnapshot.docs.length > 0) {
+      return TaskSubmission.fromJson(querySnapshot.docs[0].data());
+    }
+    return null;
   }
 }
