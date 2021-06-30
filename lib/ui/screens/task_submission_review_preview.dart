@@ -41,12 +41,10 @@ class _TaskSubmissionReviewPreviewState
   //video
   VideoPlayerController _videoController;
   Future<void> _initializeVideoPlayerFuture;
-  bool videoPlaying = false;
 
   //video recorded
   VideoPlayerController _videoRecordedController;
   Future<void> _initializeVideoPlayerRecordedFuture;
-  bool recordedPlaying = false;
 
   int index = 0;
 
@@ -235,7 +233,8 @@ class _TaskSubmissionReviewPreviewState
                                     IconButton(
                                         color: Colors.white,
                                         icon: Icon(
-                                          recordedPlaying
+                                          !_videoRecordedController
+                                                  .value.isPlaying
                                               ? Icons.pause
                                               : Icons.play_arrow,
                                         ),
@@ -261,6 +260,7 @@ class _TaskSubmissionReviewPreviewState
         setState(() {
           actualPos = val.toInt();
         });
+        setCorrectVideoPosition();
       },
       /*onChangeEnd: (val) async {
       },*/
@@ -271,15 +271,9 @@ class _TaskSubmissionReviewPreviewState
     if (_videoRecordedController.value.isPlaying) {
       await _videoRecordedController.pause();
       await _videoController.pause();
-      setState(() {
-        videoPlaying = false;
-      });
     } else {
       await _videoRecordedController.play();
     }
-    setState(() {
-      recordedPlaying = !recordedPlaying;
-    });
   }
 
   setDuration() {
@@ -314,15 +308,15 @@ class _TaskSubmissionReviewPreviewState
 
       await checkEventToPerform(pos);
 
-      /*if (_videoRecordedController.value != null &&
+      if (_videoRecordedController.value != null &&
           _videoRecordedController.value.duration != null &&
           pos >= 0 &&
-          pos <= 700) {
+          pos <= 500) {
         setState(() {
           index = 0;
         });
-        _videoRecordedController.seekTo(Duration.zero);
-      }*/
+        setCorrectVideoPosition();
+      }
     }
   }
 
@@ -344,8 +338,6 @@ class _TaskSubmissionReviewPreviewState
       int dif = position - widget.videoEvents[index].recordingPosition;
       if (dif.abs() < 500) {
         Event event = widget.videoEvents[index];
-        //await _videoController
-        //.seekTo(Duration(milliseconds: event.videoPosition.toInt()));
         print("EVENTO: " + event.recordingPosition.toString());
         playOrPauseVideo(event.eventType);
         setState(() {
@@ -361,14 +353,48 @@ class _TaskSubmissionReviewPreviewState
     } else if (eventType == EventType.pause) {
       _videoController.pause();
     }
-    setState(() {
-      videoPlaying = !videoPlaying;
-    });
   }
 
-  /*setCorrectVideoPosition() async {
-    if (_videoRecordedController != null) {
-      int pos = _videoRecordedController.value.position.inMilliseconds;
+  setCorrectVideoPosition() async {
+    List<Event> events = widget.videoEvents;
+    for (var i = 0; i < events.length; i++) {
+      if (events[i].recordingPosition >= actualPos) {
+        if (i > 0) {
+          Event previousEvent = events[i - 1];
+          calculateAndSeekToNewVideoPosition(previousEvent);
+        } else {
+          await _videoController
+              .seekTo(Duration(milliseconds: events[i].videoPosition));
+        }
+
+        setState(() {
+          index = i;
+        });
+
+        opositePlayOrPauseVideo(events[i].eventType);
+
+        return;
+      }
     }
-  }*/
+
+    if (events.length > 0) {
+      Event lastEvent = events[events.length - 1];
+      playOrPauseVideo(lastEvent.eventType);
+      calculateAndSeekToNewVideoPosition(lastEvent);
+    }
+  }
+
+  opositePlayOrPauseVideo(EventType eventType) {
+    if (eventType == EventType.play) {
+      _videoController.pause();
+    } else {
+      _videoController.play();
+    }
+  }
+
+  calculateAndSeekToNewVideoPosition(Event event) async {
+    int recordingDif = actualPos - event.recordingPosition;
+    int newPos = event.videoPosition + recordingDif;
+    await _videoController.seekTo(Duration(milliseconds: newPos));
+  }
 }

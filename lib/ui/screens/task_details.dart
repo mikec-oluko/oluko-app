@@ -8,15 +8,14 @@ import 'package:oluko_app/blocs/task_submission_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/models/task.dart';
+import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
-import 'package:oluko_app/ui/components/title_header.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/screens/self_recording.dart';
 import 'package:oluko_app/ui/screens/task_submission_review.dart';
 import 'package:oluko_app/ui/screens/self_recording_preview.dart';
-import 'package:oluko_app/ui/screens/task_submission_review_preview.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 
@@ -37,6 +36,7 @@ class _TaskDetailsState extends State<TaskDetails> {
   ChewieController _controller;
   bool _makePublic = false;
   TaskSubmissionBloc _taskSubmissionBloc;
+  TaskSubmission taskSubmission;
 
   @override
   void initState() {
@@ -122,6 +122,7 @@ class _TaskDetailsState extends State<TaskDetails> {
               BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
                   builder: (context, state) {
                 if (state is GetSuccess && state.taskSubmission != null) {
+                  taskSubmission = state.taskSubmission;
                   return Row(
                     mainAxisSize: MainAxisSize.max,
                     children: [
@@ -209,8 +210,8 @@ class _TaskDetailsState extends State<TaskDetails> {
         padding: const EdgeInsets.symmetric(vertical: 25.0),
         child: Align(
             alignment: Alignment.centerLeft,
-            child: TitleHeader(
-              'Recorded Videos',
+            child: TitleBody(
+              'Recorded Video',
               bold: true,
             )),
       ),

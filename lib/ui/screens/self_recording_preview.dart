@@ -140,6 +140,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
   List<Widget> showVideoPlayer() {
     List<Widget> widgets = [];
     widgets.add(OlukoVideoPlayer(
+        filePath: widget.filePath,
         whenInitialized: (ChewieController chewieController) =>
             this.setState(() {
               _controller = chewieController;
