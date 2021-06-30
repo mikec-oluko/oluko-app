@@ -366,13 +366,10 @@ class _TaskSubmissionReviewPreviewState
           await _videoController
               .seekTo(Duration(milliseconds: events[i].videoPosition));
         }
-
         setState(() {
           index = i;
         });
-
         opositePlayOrPauseVideo(events[i].eventType);
-
         return;
       }
     }
