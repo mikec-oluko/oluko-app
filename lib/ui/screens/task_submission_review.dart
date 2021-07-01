@@ -115,7 +115,9 @@ class _TaskSubmissionReviewState extends State<TaskSubmissionReview> {
                         if (_recording) {
                           XFile videopath =
                               await cameraController.stopVideoRecording();
-                          addTimerLapToEvents();
+                          if (videoEvents.length > 0) {
+                            addTimerLapToEvents();
+                          }
                           _stopWatchTimer.onExecute.add(StopWatchExecute.stop);
                           _videoController.pause();
                           setState(() {
