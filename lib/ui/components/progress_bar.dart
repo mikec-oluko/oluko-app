@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:oluko_app/constants/theme.dart';
 
 class ProgressBar extends StatefulWidget {
   final String processPhase;
@@ -13,7 +14,7 @@ class _State extends State<ProgressBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        color: Colors.black,
+        color: OlukoColors.black,
         padding: EdgeInsets.all(30.0),
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -24,7 +25,7 @@ class _State extends State<ProgressBar> {
                 child: Text(
                   widget.processPhase,
                   style: TextStyle(
-                    color: Colors.white,
+                    color: OlukoColors.white,
                   ),
                 ),
               ),

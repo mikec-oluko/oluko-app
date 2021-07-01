@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/blocs/task_review_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
+import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/models/submodels/event.dart';
 import 'package:oluko_app/models/submodels/video_info.dart';
@@ -109,7 +110,7 @@ class _TaskSubmissionReviewPreviewState
         child: Scaffold(
             appBar: OlukoAppBar(title: "Record review"),
             bottomNavigationBar: BottomAppBar(
-              color: Colors.black,
+              color: OlukoColors.black,
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Row(
@@ -174,7 +175,7 @@ class _TaskSubmissionReviewPreviewState
                         );
                       } else {
                         return Container(
-                            color: Colors.black,
+                            color: OlukoColors.black,
                             child: Center(child: CircularProgressIndicator()));
                       }
                     },
@@ -197,7 +198,7 @@ class _TaskSubmissionReviewPreviewState
                         );
                       } else {
                         return Container(
-                            color: Colors.black,
+                            color: OlukoColors.black,
                             child: Center(child: CircularProgressIndicator()));
                       }
                     },
@@ -220,7 +221,7 @@ class _TaskSubmissionReviewPreviewState
                     padding: const EdgeInsets.only(left: 8.0, right: 8.0),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20.0),
-                        color: Colors.black87),
+                        color: OlukoColors.black87),
                     child: Padding(
                         padding: const EdgeInsets.symmetric(
                             vertical: 8.0, horizontal: 8.0),
@@ -231,7 +232,7 @@ class _TaskSubmissionReviewPreviewState
                                   height: 40,
                                   child: Row(children: <Widget>[
                                     IconButton(
-                                        color: Colors.white,
+                                        color: OlukoColors.white,
                                         icon: Icon(
                                           !_videoRecordedController
                                                   .value.isPlaying
@@ -249,7 +250,7 @@ class _TaskSubmissionReviewPreviewState
 
   Widget sliderAdaptive() {
     return Slider.adaptive(
-      activeColor: Colors.white,
+      activeColor: OlukoColors.white,
       inactiveColor: Colors.teal.shade700,
       value: actualPos.toDouble(),
       max: duration.toDouble(),
@@ -321,7 +322,7 @@ class _TaskSubmissionReviewPreviewState
   }
 
   setActualPosition(int pos) {
-    print("POSICION:  " + pos.toString());
+    print("POSITION:  " + pos.toString());
     if (pos >= 0 && pos <= duration) {
       setState(() {
         actualPos = pos;
@@ -334,11 +335,12 @@ class _TaskSubmissionReviewPreviewState
   }
 
   checkEventToPerform(int position) async {
-    if (widget.videoEvents.length > 0 && index < widget.videoEvents.length) {
-      int dif = position - widget.videoEvents[index].recordingPosition;
+    List<Event> events = widget.videoEvents;
+    if (events.length > 0 && index < events.length) {
+      int dif = position - events[index].recordingPosition;
       if (dif.abs() < 500) {
-        Event event = widget.videoEvents[index];
-        print("EVENTO: " + event.recordingPosition.toString());
+        Event event = events[index];
+        print("EVENT: " + event.recordingPosition.toString());
         playOrPauseVideo(event.eventType);
         setState(() {
           index++;
@@ -371,7 +373,12 @@ class _TaskSubmissionReviewPreviewState
           setState(() {
             index = i;
           });
-          opositePlayOrPauseVideo(events[i].eventType);
+          if (!_videoRecordedController.value.isPlaying) {
+            _videoController.pause();
+          } else {
+            opositePlayOrPauseVideo(events[i].eventType);
+          }
+
           return;
         }
       }

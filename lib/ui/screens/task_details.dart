@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_submission_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
@@ -18,6 +19,7 @@ import 'package:oluko_app/ui/screens/task_submission_recorded_video.dart';
 import 'package:oluko_app/ui/screens/task_submission_review.dart';
 import 'package:oluko_app/ui/screens/self_recording_preview.dart';
 import 'package:oluko_app/ui/screens/task_submission_review_preview.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 
@@ -194,7 +196,7 @@ class _TaskDetailsState extends State<TaskDetails> {
           ),
           Text(
             widget.task.description,
-            style: TextStyle(fontSize: 17, color: Colors.white60),
+            style: OlukoFonts.olukoMediumFont(),
           ),
           BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
               builder: (context, state) {
@@ -218,7 +220,7 @@ class _TaskDetailsState extends State<TaskDetails> {
         child: Align(
             alignment: Alignment.centerLeft,
             child: TitleBody(
-              'Recorded Video',
+              OlukoLocalizations.of(context).find('recordedVideo') ,
               bold: true,
             )),
       ),
