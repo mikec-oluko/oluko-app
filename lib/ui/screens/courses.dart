@@ -10,6 +10,7 @@ import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';
 import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/course_card.dart';
+import 'package:oluko_app/ui/components/filter_selector.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/search_bar.dart';
 import 'package:oluko_app/ui/components/search_results_grid.dart';
@@ -82,10 +83,11 @@ class _State extends State<Courses> {
                         height: ScreenUtils.height(context),
                         width: ScreenUtils.width(context),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 15.0),
+                          padding: const EdgeInsets.symmetric(vertical: 0.0),
                           child: searchResults.query == ''
                               ? Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.only(
+                                      top: 15.0, left: 8, right: 8),
                                   child: _mainPage(state),
                                 )
                               : showSearchSuggestions
@@ -183,6 +185,13 @@ class _State extends State<Courses> {
       height: height,
       imageCover: image,
       progress: progress,
+    );
+  }
+
+  Widget _showFilterMenu(List<dynamic> items) {
+    return FilterSelector<Course>(
+      itemList: Map<Course, String>.fromIterable(items,
+          key: (course) => course, value: (course) => course.name),
     );
   }
 
