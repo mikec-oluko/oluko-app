@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/models/search_results.dart';
 
 class SearchBar<T> extends StatefulWidget {
@@ -26,7 +27,6 @@ class SearchBar<T> extends StatefulWidget {
 
 class SearchState<T> extends State<SearchBar> {
   TextEditingController _searchQueryController = TextEditingController();
-  bool _isSearching = false;
   String searchQuery = "Search query";
 
   @override
@@ -44,6 +44,7 @@ class SearchState<T> extends State<SearchBar> {
         child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 15),
             child: Row(children: [
+              _cancelIcon(),
               Expanded(
                 child: _buildSearchField(),
               ),
@@ -54,8 +55,30 @@ class SearchState<T> extends State<SearchBar> {
   Widget _searchIcon() {
     return Icon(
       Icons.search,
-      color: Colors.white,
+      color: OlukoColors.appBarIcon,
     );
+  }
+
+  Widget _cancelIcon() {
+    return _searchQueryController.text != ''
+        ? GestureDetector(
+            onTap: _cancelSearch,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: Icon(
+                Icons.close,
+                color: OlukoColors.appBarIcon,
+              ),
+            ),
+          )
+        : SizedBox();
+  }
+
+  void _cancelSearch() {
+    setState(() {
+      _searchQueryController.text = '';
+      updateSearchQuery(_searchQueryController.text);
+    });
   }
 
   Widget _buildSearchField() {

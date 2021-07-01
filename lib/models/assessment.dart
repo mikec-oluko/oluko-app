@@ -26,7 +26,6 @@ class Assessment extends Base {
             isDeleted: isDeleted,
             isHidden: isHidden);
 
-  String id;
   String name;
   String video;
   String coverImage;

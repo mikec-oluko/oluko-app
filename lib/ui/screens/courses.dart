@@ -82,10 +82,11 @@ class _State extends State<Courses> {
                         height: ScreenUtils.height(context),
                         width: ScreenUtils.width(context),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 15.0),
+                          padding: const EdgeInsets.symmetric(vertical: 0.0),
                           child: searchResults.query == ''
                               ? Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.only(
+                                      top: 15.0, left: 8, right: 8),
                                   child: _mainPage(state),
                                 )
                               : showSearchSuggestions
