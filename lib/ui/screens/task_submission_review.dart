@@ -115,6 +115,7 @@ class _TaskSubmissionReviewState extends State<TaskSubmissionReview> {
                         if (_recording) {
                           XFile videopath =
                               await cameraController.stopVideoRecording();
+                          addTimerLapToEvents();
                           _stopWatchTimer.onExecute.add(StopWatchExecute.stop);
                           _videoController.pause();
                           setState(() {
@@ -229,7 +230,7 @@ class _TaskSubmissionReviewState extends State<TaskSubmissionReview> {
                                                   onPressed: () async {
                                                     await playPauseVideo();
                                                     if (_recording) {
-                                                      getTimerValue();
+                                                      addTimerLapToEvents();
                                                     }
                                                   }),
                                               Expanded(
@@ -281,7 +282,7 @@ class _TaskSubmissionReviewState extends State<TaskSubmissionReview> {
     videoEvents.add(event);
   }
 
-  getTimerValue() {
+  addTimerLapToEvents() {
     _stopWatchTimer.onExecute.add(StopWatchExecute.lap);
     _stopWatchTimer.records.listen((values) {
       if (values.length > 0 && values.length - 1 > lastIndexAdded) {

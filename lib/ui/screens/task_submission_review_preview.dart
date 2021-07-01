@@ -42,6 +42,7 @@ class _TaskSubmissionReviewPreviewState
   //video
   VideoPlayerController _videoController;
   Future<void> _initializeVideoPlayerFuture;
+  bool playPauseState = false;
 
   //video recorded
   VideoPlayerController _videoRecordedController;
@@ -274,6 +275,9 @@ class _TaskSubmissionReviewPreviewState
       await _videoController.pause();
     } else {
       await _videoRecordedController.play();
+      if (playPauseState) {
+        await _videoController.play();
+      }
     }
   }
 
@@ -315,6 +319,10 @@ class _TaskSubmissionReviewPreviewState
           pos <= 500) {
         setState(() {
           index = 0;
+        });
+        _videoController.pause();
+        setState(() {
+          playPauseState = false;
         });
         setCorrectVideoPosition();
       }
@@ -366,6 +374,7 @@ class _TaskSubmissionReviewPreviewState
           if (i > 0) {
             Event previousEvent = events[i - 1];
             calculateAndSeekToNewVideoPosition(previousEvent);
+            setPlayPauseState(previousEvent);
           } else {
             await _videoController
                 .seekTo(Duration(milliseconds: events[i].videoPosition));
@@ -378,7 +387,6 @@ class _TaskSubmissionReviewPreviewState
           } else {
             opositePlayOrPauseVideo(events[i].eventType);
           }
-
           return;
         }
       }
@@ -403,5 +411,17 @@ class _TaskSubmissionReviewPreviewState
     int recordingDif = actualPos - event.recordingPosition;
     int newPos = event.videoPosition + recordingDif;
     await _videoController.seekTo(Duration(milliseconds: newPos));
+  }
+
+  setPlayPauseState(Event previousEvent) {
+    if (previousEvent.eventType == EventType.play) {
+      setState(() {
+        playPauseState = true;
+      });
+    } else {
+      setState(() {
+        playPauseState = false;
+      });
+    }
   }
 }
