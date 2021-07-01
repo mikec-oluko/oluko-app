@@ -199,12 +199,11 @@ class _TaskDetailsState extends State<TaskDetails> {
           BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
               builder: (context, state) {
             if (state is GetSuccess && state.taskSubmission != null) {
-              return recordedVideos(state.taskSubmission);
+              return SizedBox()/*recordedVideos(state.taskSubmission)*/;
             } else {
               return SizedBox();
             }
           })
-          //widget.showRecordedVideos ? recordedVideos() : SizedBox(),
         ],
       );
     } else {

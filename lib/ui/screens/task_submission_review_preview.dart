@@ -356,28 +356,31 @@ class _TaskSubmissionReviewPreviewState
   }
 
   setCorrectVideoPosition() async {
-    List<Event> events = widget.videoEvents;
-    for (var i = 0; i < events.length; i++) {
-      if (events[i].recordingPosition >= actualPos) {
-        if (i > 0) {
-          Event previousEvent = events[i - 1];
-          calculateAndSeekToNewVideoPosition(previousEvent);
-        } else {
-          await _videoController
-              .seekTo(Duration(milliseconds: events[i].videoPosition));
+    if (_videoController.value != null &&
+        _videoController.value.duration != null) {
+      List<Event> events = widget.videoEvents;
+      for (var i = 0; i < events.length; i++) {
+        if (events[i].recordingPosition >= actualPos) {
+          if (i > 0) {
+            Event previousEvent = events[i - 1];
+            calculateAndSeekToNewVideoPosition(previousEvent);
+          } else {
+            await _videoController
+                .seekTo(Duration(milliseconds: events[i].videoPosition));
+          }
+          setState(() {
+            index = i;
+          });
+          opositePlayOrPauseVideo(events[i].eventType);
+          return;
         }
-        setState(() {
-          index = i;
-        });
-        opositePlayOrPauseVideo(events[i].eventType);
-        return;
       }
-    }
 
-    if (events.length > 0) {
-      Event lastEvent = events[events.length - 1];
-      playOrPauseVideo(lastEvent.eventType);
-      calculateAndSeekToNewVideoPosition(lastEvent);
+      if (events.length > 0) {
+        Event lastEvent = events[events.length - 1];
+        playOrPauseVideo(lastEvent.eventType);
+        calculateAndSeekToNewVideoPosition(lastEvent);
+      }
     }
   }
 
