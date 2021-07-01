@@ -63,6 +63,7 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
               Padding(
                 padding: const EdgeInsets.only(top: 25),
                 child: CarouselSmallSection(
+                  routeToGo: ProfileRoutes.goToAssessmentVideos(),
                   title: ProfileViewConstants.profileOptionsAssessmentVideos,
                   children: [
                     _getImageAndVideoCard('assets/courses/course_sample_3.png',

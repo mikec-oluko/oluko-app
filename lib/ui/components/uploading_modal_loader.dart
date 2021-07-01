@@ -27,8 +27,11 @@ class UploadingModalLoader extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(20.0).copyWith(top: 50),
             child: GestureDetector(
-              onDoubleTap: () => ProfileViewConstants.dialogContent(
-                  context: context, content: [UploadingModalSuccess()]),
+              onDoubleTap: () {
+                Navigator.pop(context);
+                ProfileViewConstants.dialogContent(
+                    context: context, content: [UploadingModalSuccess()]);
+              },
               child: Text(
                 "Uploading...",
                 style:

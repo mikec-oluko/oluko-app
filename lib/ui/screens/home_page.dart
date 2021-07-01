@@ -356,7 +356,9 @@ class _MyHomePageState extends State<MyHomePage> {
         style: TextStyle(color: Colors.white),
       ),
       style: ElevatedButton.styleFrom(
-          shadowColor: Colors.transparent, primary: Colors.transparent),
+          padding: EdgeInsets.symmetric(horizontal: 3),
+          shadowColor: Colors.transparent,
+          primary: Colors.transparent),
     ));
 
     options.add(ElevatedButton(
@@ -367,7 +369,9 @@ class _MyHomePageState extends State<MyHomePage> {
         style: TextStyle(color: Colors.white),
       ),
       style: ElevatedButton.styleFrom(
-          shadowColor: Colors.transparent, primary: Colors.transparent),
+          padding: EdgeInsets.symmetric(horizontal: 3),
+          shadowColor: Colors.transparent,
+          primary: Colors.transparent),
     ));
 
     if (state is AuthSuccess) {
@@ -379,7 +383,9 @@ class _MyHomePageState extends State<MyHomePage> {
           style: TextStyle(color: Colors.white),
         ),
         style: ElevatedButton.styleFrom(
-            shadowColor: Colors.transparent, primary: Colors.transparent),
+            padding: EdgeInsets.symmetric(horizontal: 3),
+            shadowColor: Colors.transparent,
+            primary: Colors.transparent),
       ));
       options.add(ElevatedButton(
         onPressed: () {
@@ -392,7 +398,9 @@ class _MyHomePageState extends State<MyHomePage> {
           style: TextStyle(color: Colors.white),
         ),
         style: ElevatedButton.styleFrom(
-            shadowColor: Colors.transparent, primary: Colors.transparent),
+            padding: EdgeInsets.symmetric(horizontal: 3),
+            shadowColor: Colors.transparent,
+            primary: Colors.transparent),
       ));
       options.add(ElevatedButton(
         onPressed: () => Navigator.pushNamed(context, '/profile')
@@ -402,7 +410,9 @@ class _MyHomePageState extends State<MyHomePage> {
           style: TextStyle(color: Colors.white),
         ),
         style: ElevatedButton.styleFrom(
-            shadowColor: Colors.transparent, primary: Colors.transparent),
+            padding: EdgeInsets.symmetric(horizontal: 3),
+            shadowColor: Colors.transparent,
+            primary: Colors.transparent),
       ));
     } else {
       options.add(ElevatedButton(
@@ -413,7 +423,9 @@ class _MyHomePageState extends State<MyHomePage> {
           style: TextStyle(color: Colors.white),
         ),
         style: ElevatedButton.styleFrom(
-            shadowColor: Colors.transparent, primary: Colors.transparent),
+            padding: EdgeInsets.symmetric(horizontal: 3),
+            shadowColor: Colors.transparent,
+            primary: Colors.transparent),
       ));
       options.add(ElevatedButton(
         onPressed: () =>
@@ -423,7 +435,9 @@ class _MyHomePageState extends State<MyHomePage> {
           style: TextStyle(color: Colors.white),
         ),
         style: ElevatedButton.styleFrom(
-            shadowColor: Colors.transparent, primary: Colors.transparent),
+            padding: EdgeInsets.symmetric(horizontal: 3),
+            shadowColor: Colors.transparent,
+            primary: Colors.transparent),
       ));
     }
 

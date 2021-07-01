@@ -37,6 +37,7 @@ class UploadingModalSuccess extends StatelessWidget {
                 width: MediaQuery.of(context).size.width,
                 child: OlukoOutlinedButton(
                   title: "Done",
+                  onPressed: () => Navigator.pop(context),
                 )),
           )
         ],

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:oluko_app/ui/components/dialog.dart';
 
 class ProfileViewConstants {
+  //Constants used on Profile Feature
   static const profileTitle = "Profile";
   static const profileUserFirstName = "First Name";
   static const profileUserLastName = "Last Name";
@@ -40,6 +41,7 @@ class ProfileViewConstants {
   static const profileSubscriptionLogout = "Logout";
   static const profileChallengesPageTitle = "Challenges";
 
+  //List of options for Profile settings.
   static const List<String> profileOptions = [
     profileOptionsMyAccount,
     profileOptionsAssessmentVideos,
@@ -49,6 +51,7 @@ class ProfileViewConstants {
     profileOptionsHelpAndSupport,
   ];
 
+  //Function handler Dialog/Modal
   static dialogContent(
       {BuildContext context, List<Widget> content, bool closeButton = false}) {
     showModalBottomSheet(
@@ -74,9 +77,10 @@ class ProfileViewConstants {
   }
 }
 
-//TODO: Used as options != String on the view
+//Options to update on settings
 enum SettingsOptions { notification, public, restricted, anonymous }
 
+//Basic model for Tile (Help and Support)
 class BasicTile {
   final String title;
   final List<BasicTile> tiles;
@@ -124,6 +128,7 @@ final basicTiles = <BasicTile>[
   ])
 ];
 
+//Basic model of Challenge, used on profile/Challenges
 class Challenge {
   String title;
   String subtitle;
@@ -134,13 +139,14 @@ class Challenge {
       {this.title, this.subtitle, this.type, this.isLocked, this.imageCover});
 }
 
+//Basic model for Content uploade for user, image/video
 class Content {
   String imgUrl;
   bool isVideo;
   Content({this.imgUrl, this.isVideo});
 }
 
-//Challenge example
+//Challenges examples
 final challengeDefault = Challenge(
     title: "20min EMOM challenge",
     subtitle: "Innterval traiinning",
@@ -162,12 +168,14 @@ final _lockedChallenge = Challenge(
     isLocked: true,
     imageCover: 'assets/courses/course_sample_3.png');
 
+//List of challenges, (Challenges)
 final List<Challenge> challengeCollection = [
   challengeDefault,
   _secondChallenge,
   _lockedChallenge
 ];
 
+//List of content (Displayed on Transformation Journey)
 final List<Content> uploadListContent = [
   Content(imgUrl: 'assets/courses/course_sample_3.png', isVideo: true),
   Content(imgUrl: 'assets/courses/course_sample_5.png', isVideo: true),

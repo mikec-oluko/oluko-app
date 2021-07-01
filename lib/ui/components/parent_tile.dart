@@ -19,6 +19,7 @@ class _ParentTileWidgetState extends State<ParentTileWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final expanded = widget.tile.isExpanded;
     final title = widget.tile.title;
     final tiles = widget.tile.tiles;
 
@@ -37,14 +38,17 @@ class _ParentTileWidgetState extends State<ParentTileWidget> {
           border: Border(
               bottom: BorderSide(width: 1.0, color: OlukoColors.grayColor))),
       child: ExpansionTile(
+          initiallyExpanded: expanded,
           onExpansionChanged: (bool value) {
             setState(() {
               if (value) {
+                widget.tile.isExpanded = value;
                 iconToUse = Icon(
                   Icons.keyboard_arrow_up,
                   color: OlukoColors.grayColor,
                 );
               } else {
+                widget.tile.isExpanded = value;
                 iconToUse = Icon(
                   Icons.keyboard_arrow_right,
                   color: OlukoColors.grayColor,

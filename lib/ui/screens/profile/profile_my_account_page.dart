@@ -101,7 +101,6 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
     );
   }
 
-  //TODO: Can be a widget for reuse. CHANGE
   Widget userInformationFields(String title, String value) {
     return OlukoUserInfoWidget(title: title, value: value);
   }

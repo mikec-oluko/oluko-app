@@ -16,8 +16,11 @@ class TransformationJourneyOptions extends StatelessWidget {
         shrinkWrap: true,
         children: [
           ListTile(
-            onTap: () => ProfileViewConstants.dialogContent(
-                context: context, content: [UploadingModalLoader()]),
+            onTap: () {
+              Navigator.pop(context);
+              ProfileViewConstants.dialogContent(
+                  context: context, content: [UploadingModalLoader()]);
+            },
             leading: Icon(
               Icons.camera_alt_outlined,
               color: Colors.white,
@@ -27,8 +30,11 @@ class TransformationJourneyOptions extends StatelessWidget {
                     OlukoFonts.olukoSmallFont(customColor: OlukoColors.white)),
           ),
           ListTile(
-            onTap: () => ProfileViewConstants.dialogContent(
-                context: context, content: [UploadingModalLoader()]),
+            onTap: () {
+              Navigator.pop(context);
+              ProfileViewConstants.dialogContent(
+                  context: context, content: [UploadingModalLoader()]);
+            },
             leading: Icon(
               Icons.image,
               color: Colors.white,

@@ -66,7 +66,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
   Stack _subscriptionCardWithButton(PlansSuccess state, BuildContext context) {
     return Stack(
       clipBehavior: Clip.none,
-      alignment: Alignment.center,
+      alignment: Alignment.bottomCenter,
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
