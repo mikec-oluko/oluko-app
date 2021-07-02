@@ -19,7 +19,7 @@ class TagUtils {
   }
 
   /*
-  Returns Map with a list of Courses for each Category
+  Returns Map with a list of Tags for each Category
   */
   static Map<TagCategory, List<Tag>> mapTagsByCategories(
       List<Tag> courses, List<TagCategory> courseCategories) {
