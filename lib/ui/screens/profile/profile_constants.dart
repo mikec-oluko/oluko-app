@@ -4,10 +4,6 @@ import 'package:oluko_app/ui/components/dialog.dart';
 class ProfileViewConstants {
   //Constants used on Profile Feature
   static const profileTitle = "Profile";
-  static const profileUserFirstName = "First Name";
-  static const profileUserLastName = "Last Name";
-  static const profileUserEmail = "Email";
-  static const profileUserName = "Username";
   static const profileUserNameContent = "myUserName";
   static const profileSettingsTitle = "Settings";
   static const profileMyAccountTitle = "My Account";
@@ -36,10 +32,11 @@ class ProfileViewConstants {
   static const profileHelpAndSupportSubTitle = "Need more help?";
   static const profileHelpAndSupportButtonText = "Contact us";
   static const profileUpcomingChallengesTitle = "Upcoming Challenges";
-  static const profileOwnProfileViewAll = "View All";
   static const profileOwnProfileActiveCourses = 'Active Courses';
-  static const profileSubscriptionLogout = "Logout";
   static const profileChallengesPageTitle = "Challenges";
+  static const profileChangePaymentMethodTitle = "Change Payment Method";
+  static const profileUnsuscribeTitle = "Unsubscribe";
+  static const profileSelectFromGalleryTitle = "Select from Gallery";
 
   //List of options for Profile settings.
   static const List<String> profileOptions = [

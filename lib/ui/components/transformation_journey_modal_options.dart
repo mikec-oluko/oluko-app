@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/ui/components/uploading_modal_loader.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class TransformationJourneyOptions extends StatelessWidget {
   @override
@@ -25,7 +26,7 @@ class TransformationJourneyOptions extends StatelessWidget {
               Icons.camera_alt_outlined,
               color: Colors.white,
             ),
-            title: Text("Camera",
+            title: Text(OlukoLocalizations.of(context).find('camera'),
                 style:
                     OlukoFonts.olukoSmallFont(customColor: OlukoColors.white)),
           ),
@@ -39,7 +40,7 @@ class TransformationJourneyOptions extends StatelessWidget {
               Icons.image,
               color: Colors.white,
             ),
-            title: Text("Select from Gallery",
+            title: Text(OlukoLocalizations.of(context).find('fromGallery'),
                 style:
                     OlukoFonts.olukoSmallFont(customColor: OlukoColors.white)),
           ),

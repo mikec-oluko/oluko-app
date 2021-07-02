@@ -39,78 +39,89 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
         color: OlukoColors.black,
         child: SafeArea(
           child: SingleChildScrollView(
-            child: Column(children: [
-              ListTile(
-                leading: Transform.translate(
-                  offset: Offset(-20, 0),
-                  child: IconButton(
-                    icon: Icon(
-                      Icons.chevron_left,
-                      size: 35,
-                      color: OlukoColors.white,
+            child: Flexible(
+              child: Column(children: [
+                ListTile(
+                  leading: Transform.translate(
+                    offset: Offset(-20, 0),
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.chevron_left,
+                        size: 35,
+                        color: OlukoColors.white,
+                      ),
+                      onPressed: () => Navigator.pop(context),
                     ),
-                    onPressed: () => Navigator.pop(context),
+                  ),
+                  title: Transform.translate(
+                      offset: Offset(-40, 0),
+                      child:
+                          UserProfileInformation(userInformation: profileInfo)),
+                ),
+                UserProfileProgress(
+                    userChallenges:
+                        ProfileViewConstants.profileChallengesContent,
+                    userFriends: ProfileViewConstants.profileFriendsContent),
+                Padding(
+                  padding: const EdgeInsets.only(top: 25),
+                  child: CarouselSmallSection(
+                    routeToGo: ProfileRoutes.goToAssessmentVideos(),
+                    title: ProfileViewConstants.profileOptionsAssessmentVideos,
+                    children: [
+                      _getImageAndVideoCard(
+                          'assets/courses/course_sample_3.png',
+                          isVideo: true),
+                      _getImageAndVideoCard(
+                          'assets/courses/course_sample_5.png',
+                          isVideo: true),
+                      _getImageAndVideoCard(
+                          'assets/courses/course_sample_4.png',
+                          isVideo: true),
+                    ],
                   ),
                 ),
-                title: Transform.translate(
-                    offset: Offset(-40, 0),
-                    child:
-                        UserProfileInformation(userInformation: profileInfo)),
-              ),
-              UserProfileProgress(
-                  userChallenges: ProfileViewConstants.profileChallengesContent,
-                  userFriends: ProfileViewConstants.profileFriendsContent),
-              Padding(
-                padding: const EdgeInsets.only(top: 25),
-                child: CarouselSmallSection(
-                  routeToGo: ProfileRoutes.goToAssessmentVideos(),
-                  title: ProfileViewConstants.profileOptionsAssessmentVideos,
-                  children: [
-                    _getImageAndVideoCard('assets/courses/course_sample_3.png',
-                        isVideo: true),
-                    _getImageAndVideoCard('assets/courses/course_sample_5.png',
-                        isVideo: true),
-                    _getImageAndVideoCard('assets/courses/course_sample_4.png',
-                        isVideo: true),
-                  ],
+                Padding(
+                  padding: const EdgeInsets.only(top: 25),
+                  child: CarouselSmallSection(
+                    routeToGo: ProfileRoutes.goToTransformationJourney(),
+                    title: ProfileViewConstants
+                        .profileOptionsTransformationJourney,
+                    children: [
+                      _getImageAndVideoCard(
+                          'assets/courses/course_sample_6.png',
+                          isVideo: false),
+                      _getImageAndVideoCard(
+                          'assets/courses/course_sample_7.png',
+                          isVideo: false),
+                      _getImageAndVideoCard(
+                          'assets/courses/course_sample_8.png',
+                          isVideo: false),
+                    ],
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 25),
-                child: CarouselSmallSection(
-                  routeToGo: ProfileRoutes.goToTransformationJourney(),
-                  title:
-                      ProfileViewConstants.profileOptionsTransformationJourney,
-                  children: [
-                    _getImageAndVideoCard('assets/courses/course_sample_6.png',
-                        isVideo: false),
-                    _getImageAndVideoCard('assets/courses/course_sample_7.png',
-                        isVideo: false),
-                    _getImageAndVideoCard('assets/courses/course_sample_8.png',
-                        isVideo: false),
-                  ],
+                Padding(
+                  padding: const EdgeInsets.all(10.0).copyWith(bottom: 0),
+                  child: CarouselSection(
+                    height: 250,
+                    width: MediaQuery.of(context).size.width,
+                    title: ProfileViewConstants.profileOwnProfileActiveCourses,
+                    children: [
+                      _getCourseCard('assets/courses/course_sample_1.png',
+                          progress: 0.3),
+                      _getCourseCard('assets/courses/course_sample_2.png',
+                          progress: 0.7),
+                    ],
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10.0).copyWith(bottom: 0),
-                child: CarouselSection(
-                  title: ProfileViewConstants.profileOwnProfileActiveCourses,
-                  children: [
-                    _getCourseCard('assets/courses/course_sample_1.png',
-                        progress: 0.3),
-                    _getCourseCard('assets/courses/course_sample_2.png',
-                        progress: 0.7),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10.0).copyWith(top: 0),
-                child: ChallengesCard(
-                  challenge: challengeDefault,
-                  routeToGo: ProfileRoutes.goToChallenges(),
-                ),
-              )
-            ]),
+                Padding(
+                  padding: const EdgeInsets.all(10.0).copyWith(top: 0),
+                  child: ChallengesCard(
+                    challenge: challengeDefault,
+                    routeToGo: ProfileRoutes.goToChallenges(),
+                  ),
+                )
+              ]),
+            ),
           ),
         ),
       ),
@@ -127,6 +138,8 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
     return Padding(
       padding: const EdgeInsets.only(right: 15.0),
       child: CourseCard(
+        width: 120,
+        height: 120,
         imageCover: Image.asset(assetImage),
         progress: progress,
       ),

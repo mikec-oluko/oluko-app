@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/ui/components/uploading_modal_success.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class UploadingModalLoader extends StatelessWidget {
   @override
@@ -33,7 +34,7 @@ class UploadingModalLoader extends StatelessWidget {
                     context: context, content: [UploadingModalSuccess()]);
               },
               child: Text(
-                "Uploading...",
+                OlukoLocalizations.of(context).find('uploadingWithDots'),
                 style:
                     OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.w400),
               ),

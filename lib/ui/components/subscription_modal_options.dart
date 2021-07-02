@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 
 class SubscriptionModalOption extends StatelessWidget {
   @override
@@ -19,7 +20,7 @@ class SubscriptionModalOption extends StatelessWidget {
               Icons.credit_card,
               color: Colors.white,
             ),
-            title: Text("Change Payment Method",
+            title: Text(ProfileViewConstants.profileChangePaymentMethodTitle,
                 style:
                     OlukoFonts.olukoSmallFont(customColor: OlukoColors.white)),
           ),
@@ -29,7 +30,7 @@ class SubscriptionModalOption extends StatelessWidget {
               Icons.emoji_emotions_outlined,
               color: Colors.white,
             ),
-            title: Text("Unsubscribe",
+            title: Text(ProfileViewConstants.profileUnsuscribeTitle,
                 style:
                     OlukoFonts.olukoSmallFont(customColor: OlukoColors.white)),
           ),

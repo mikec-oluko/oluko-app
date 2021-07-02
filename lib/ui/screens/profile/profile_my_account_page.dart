@@ -12,6 +12,7 @@ import 'package:oluko_app/ui/components/oluko_user_info.dart';
 import 'package:oluko_app/ui/components/subscription_card.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/app_messages.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ProfileMyAccountPage extends StatefulWidget {
   @override
@@ -89,14 +90,14 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
   Column buildUserInformationFields() {
     return Column(
       children: [
-        userInformationFields(ProfileViewConstants.profileUserName,
+        userInformationFields(OlukoLocalizations.of(context).find('userName'),
             ProfileViewConstants.profileUserNameContent),
+        userInformationFields(OlukoLocalizations.of(context).find('firstName'),
+            profileInfo.firstName),
+        userInformationFields(OlukoLocalizations.of(context).find('lastName'),
+            profileInfo.lastName),
         userInformationFields(
-            ProfileViewConstants.profileUserFirstName, profileInfo.firstName),
-        userInformationFields(
-            ProfileViewConstants.profileUserLastName, profileInfo.lastName),
-        userInformationFields(
-            ProfileViewConstants.profileUserEmail, profileInfo.email),
+            OlukoLocalizations.of(context).find('email'), profileInfo.email),
       ],
     );
   }
@@ -158,7 +159,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
       child: Padding(
         padding: const EdgeInsets.only(left: 5.0),
         child: TextButton(
-          child: Text(ProfileViewConstants.profileSubscriptionLogout,
+          child: Text(OlukoLocalizations.of(context).find('logout'),
               style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary)),
           onPressed: () {
             BlocProvider.of<AuthBloc>(context).logout(context);

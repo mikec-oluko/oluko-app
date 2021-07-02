@@ -214,7 +214,7 @@ class _State extends State<ChallengesCard> {
           child: TextButton(
             onPressed: () => Navigator.pushNamed(context, widget.routeToGo),
             child: Text(
-              ProfileViewConstants.profileOwnProfileViewAll,
+              OlukoLocalizations.of(context).find('viewAll'),
               style: TextStyle(color: OlukoColors.primary),
             ),
           ),

@@ -62,7 +62,7 @@ class _ParentTileWidgetState extends State<ParentTileWidget> {
                   customColor: OlukoColors.grayColor)),
           children: tiles
               .map((tile) => Padding(
-                    padding: const EdgeInsets.fromLTRB(15, 10, 15, 0),
+                    padding: const EdgeInsets.fromLTRB(15, 5, 15, 5),
                     child: ChildTileWidget(tile: tile),
                   ))
               .toList()),
