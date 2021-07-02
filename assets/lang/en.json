@@ -3,8 +3,15 @@
     "maxChars": "or more characters",
     "signUp": "Sign Up",
     "profile": "Profile",
+    "home": "Home",
+    "coach": "Coach",
+    "friends": "Friends",
     "logout": "Log out",
+    "courses": "Courses",
+    "viewAll": "View All",
+    "activeCourses": "Active Courses",
     "videos": "Videos",
+    "search": "Search",
     "assessments": "Assessments",
     "plans": "Plans",
     "alreadySubscribedUser": "Already a subscribed user?",
@@ -25,5 +32,6 @@
     "uploadingVideoFile": " Uploading video file ",
     "outOf": " out of ",
     "yetToUnlock": "Yet to 'Unlock'",
-    "tapToUpload": "Tap to Upload"
+    "tapToUpload": "Tap to Upload",
+    "recordedVideo": "Recorded video"
 }

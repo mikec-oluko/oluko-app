@@ -1,18 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/elements/card_carousel.dart';
-import 'package:oluko_app/elements/card_info.dart';
 import 'package:oluko_app/elements/gallery_carousel.dart';
-import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';
-import 'package:oluko_app/ui/screens/assessment_videos.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/app_messages.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
@@ -39,7 +37,33 @@ class _MyHomePageState extends State<MyHomePage> {
           bottomNavigationBar: OlukoBottomNavigationBar(),
           appBar: AppBar(
             title: Text(widget.title, style: TextStyle(color: Colors.white)),
-            actions: menuOptions(state),
+            actions: [
+              Stack(
+                children: [
+                  Container(
+                      width: ScreenUtils.width(context) * 1,
+                      child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          children: menuOptions(state))),
+                  Positioned(
+                      right: 0,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                          stops: [0, 1],
+                          begin: Alignment.centerRight,
+                          end: Alignment.centerLeft,
+                          colors: [
+                            Colors.black,
+                            Colors.transparent,
+                          ],
+                        )),
+                        width: ScreenUtils.width(context) / 10,
+                        height: kToolbarHeight,
+                      )),
+                ],
+              )
+            ],
             backgroundColor: Colors.black,
             actionsIconTheme: IconThemeData(color: Colors.white),
             iconTheme: IconThemeData(color: Colors.white),

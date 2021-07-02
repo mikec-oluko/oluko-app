@@ -3,8 +3,15 @@
     "maxChars": "o más caracteres",
     "signUp": "Registrarse",
     "profile": "Perfil",
+    "home": "Inicio",
+    "coach": "Coach",
+    "friends": "Amigos",
     "logout": "Cerrar sesión",
+    "courses": "Cursos",
+    "activeCourses": "Cursos Activos",
     "videos": "Videos",
+    "viewAll": "Ver Todo",
+    "search": "Buscar",
     "assessments": "Evaluaciones",
     "plans": "Planes",
     "alreadySubscribedUser": "Ya eres usuario registrado?",
@@ -25,6 +32,7 @@
     "uploadingVideoFile": "Subiendo archivo de video ",
     "outOf": " de ",
     "yetToUnlock": "Por 'Desbloquear'",
-    "tapToUpload": "Toca para Subir"
+    "tapToUpload": "Toca para Subir",
+    "recordedVideo": "Video grabado"
 
 }

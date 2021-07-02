@@ -4,9 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:oluko_app/models/draw_point.dart';
-import 'package:oluko_app/models/event.dart';
-import 'package:oluko_app/models/video_info.dart';
+import 'package:oluko_app/models/submodels/draw_point.dart';
+import 'package:oluko_app/models/submodels/event.dart';
+import 'package:oluko_app/models/submodels/video_info.dart';
 import 'package:video_player/video_player.dart';
 
 import 'draw.dart';
@@ -113,7 +113,7 @@ class _PlayerDoubleState extends State<PlayerDouble> {
   checkEventToPerform(List<Event> events, int position) {
     if (events.length > 0 &&
         index < events.length &&
-        position > events[index].position) {
+        position > events[index].recordingPosition) {
       EventType eventType = events[index].eventType;
       playOrPauseParentVideo(eventType);
       setState(() {
@@ -341,7 +341,6 @@ class _PlayerDoubleState extends State<PlayerDouble> {
   //DRAWING FUNCTIONS
 
   playBackCanvas() async {
-
     List<DrawPoint> drawingsUntilTimeStamp = getDrawingsUntilTimestamp(
         this._videoController.value.position.inMilliseconds,
         List.from(this.canvasPointsRecording));
@@ -376,8 +375,10 @@ class _PlayerDoubleState extends State<PlayerDouble> {
     });
   }
 
-  List<DrawPoint> getPointsUntilTimestamp(//se tendria que usar en el onChangeEnd
-      num timeStamp, List<DrawPoint> canvasPoints) {
+  List<DrawPoint> getPointsUntilTimestamp(
+      //se tendria que usar en el onChangeEnd
+      num timeStamp,
+      List<DrawPoint> canvasPoints) {
     for (var i = 0; i < canvasPoints.length; i++) {
       if (canvasPoints[i].timeStamp > timeStamp) {
         return canvasPoints.getRange(0, i).toList();

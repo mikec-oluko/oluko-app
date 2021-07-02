@@ -30,7 +30,6 @@
 .pub-cache/
 .pub/
 /build/
-pubspec.lock
 
 # Web related
 lib/generated_plugin_registrant.dart
@@ -51,3 +50,4 @@ ios/build/*
 android/key.properties
 ios/Runner.app.dSYM.zip
 ios/Runner.ipa
+ios/Podfile.save

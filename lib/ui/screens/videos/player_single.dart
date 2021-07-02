@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:oluko_app/models/video_info.dart';
+import 'package:oluko_app/models/submodels/video_info.dart';
 import 'package:video_player/video_player.dart';
 
 typedef OnCameraCallBack = void Function();

@@ -4,10 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_ffmpeg/statistics.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/video_info_bloc.dart';
-import 'package:oluko_app/models/video.dart';
-import 'package:oluko_app/models/video_info.dart';
+import 'package:oluko_app/models/submodels/video.dart';
+import 'package:oluko_app/models/submodels/video_info.dart';
+import 'package:oluko_app/ui/components/progress_bar.dart';
 import 'package:oluko_app/ui/screens/videos/player_double.dart';
-import 'package:oluko_app/ui/screens/videos/player_response.dart';
 import 'package:oluko_app/ui/screens/videos/player_single.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/ui/screens/videos/recording_response.dart';
@@ -53,7 +53,9 @@ class _HomeState extends State<Home> {
                 body: Center(child: BlocBuilder<VideoInfoBloc, VideoInfoState>(
                     builder: (context, state) {
                   if (state is TakeVideoSuccess) {
-                    return _getProgressBar(state.processPhase, state.progress);
+                    return ProgressBar(
+                                  processPhase: state.processPhase,
+                                  progress: state.progress);
                   } else if (state is VideoInfoSuccess) {
                     return _getListView(state.videosInfo);
                   } else {
@@ -240,27 +242,7 @@ class _HomeState extends State<Home> {
     }
   }
 
-  _getProgressBar(String processPhase, double progress) {
-    return Container(
-      padding: EdgeInsets.all(30.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Container(
-            margin: EdgeInsets.only(bottom: 30.0),
-            child: Text(processPhase),
-          ),
-          LinearProgressIndicator(
-            value: progress,
-          ),
-        ],
-      ),
-    );
-  }
-
   _setUpParameters() {
-    //NO SE PARA QUE SIRVE ESTO
     final Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;
     if (args == null) {
       return;

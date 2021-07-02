@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:oluko_app/models/draw_point.dart';
-import 'package:oluko_app/models/video_info.dart';
+import 'package:oluko_app/models/submodels/draw_point.dart';
+import 'package:oluko_app/models/submodels/video_info.dart';
 
 class VideoInfoRepository {
   FirebaseFirestore firestoreInstance;
@@ -26,7 +26,7 @@ class VideoInfoRepository {
     return mapQueryToVideoInfo(querySnapshot);
   }
 
-  static mapQueryToVideoInfo(QuerySnapshot qs) {
+  static List<VideoInfo> mapQueryToVideoInfo(QuerySnapshot qs) {
     return qs.docs.map((DocumentSnapshot ds) {
       return VideoInfo.fromJson(ds.data());
     }).toList();

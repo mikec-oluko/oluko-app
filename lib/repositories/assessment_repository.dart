@@ -26,4 +26,19 @@ class AssessmentRepository {
     });
     return response;
   }
+
+  Future<List<Assessment>> getById(String id) async {
+    QuerySnapshot docRef = await FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue("projectId"))
+        .collection('assessments')
+        .where('id', isEqualTo: id)
+        .get();
+    List<Assessment> response = [];
+    docRef.docs.forEach((doc) {
+      final Map<String, dynamic> element = doc.data();
+      response.add(Assessment.fromJson(element));
+    });
+    return response;
+  }
 }

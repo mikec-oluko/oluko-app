@@ -4,17 +4,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
+import 'package:oluko_app/blocs/task_submission_bloc.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/models/task.dart';
+import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
-import 'package:oluko_app/ui/components/title_header.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/screens/self_recording.dart';
+import 'package:oluko_app/ui/screens/task_submission_recorded_video.dart';
+import 'package:oluko_app/ui/screens/task_submission_review.dart';
 import 'package:oluko_app/ui/screens/self_recording_preview.dart';
+import 'package:oluko_app/ui/screens/task_submission_review_preview.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/time_converter.dart';
 
 class TaskDetails extends StatefulWidget {
   TaskDetails({this.task, this.showRecordedVideos = false, Key key})
@@ -32,11 +39,26 @@ class _TaskDetailsState extends State<TaskDetails> {
   SignUpResponse profileInfo;
   ChewieController _controller;
   bool _makePublic = false;
+  TaskSubmissionBloc _taskSubmissionBloc;
+
+  @override
+  void initState() {
+    _taskSubmissionBloc = TaskSubmissionBloc();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => TaskBloc()..get(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<TaskBloc>(
+          create: (context) => TaskBloc()..get(),
+        ),
+        BlocProvider<TaskSubmissionBloc>(
+          create: (context) =>
+              _taskSubmissionBloc..getTaskSubmissionOfTask(widget.task),
+        ),
+      ],
       child: form(),
     );
   }
@@ -100,6 +122,31 @@ class _TaskDetailsState extends State<TaskDetails> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               formFields(state),
+              BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
+                  builder: (context, state) {
+                if (state is GetSuccess && state.taskSubmission != null) {
+                  return Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      OlukoPrimaryButton(
+                        title: 'Send Feedback',
+                        onPressed: () {
+                          if (_controller != null) {
+                            _controller.pause();
+                          }
+                          return Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TaskSubmissionReview(
+                                      taskSubmission: state.taskSubmission)));
+                        },
+                      ),
+                    ],
+                  );
+                } else {
+                  return Text("");
+                }
+              }),
               Row(
                 mainAxisSize: MainAxisSize.max,
                 children: [
@@ -149,9 +196,16 @@ class _TaskDetailsState extends State<TaskDetails> {
           ),
           Text(
             widget.task.description,
-            style: TextStyle(fontSize: 17, color: Colors.white60),
+            style: OlukoFonts.olukoMediumFont(),
           ),
-          widget.showRecordedVideos ? recordedVideos() : SizedBox(),
+          BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
+              builder: (context, state) {
+            if (state is GetSuccess && state.taskSubmission != null) {
+              return SizedBox()/*recordedVideos(state.taskSubmission)*/;
+            } else {
+              return SizedBox();
+            }
+          })
         ],
       );
     } else {
@@ -159,14 +213,14 @@ class _TaskDetailsState extends State<TaskDetails> {
     }
   }
 
-  recordedVideos() {
+  recordedVideos(TaskSubmission taskSubmission) {
     return Column(children: [
       Padding(
         padding: const EdgeInsets.symmetric(vertical: 25.0),
         child: Align(
             alignment: Alignment.centerLeft,
-            child: TitleHeader(
-              'Recorded Videos',
+            child: TitleBody(
+              OlukoLocalizations.of(context).find('recordedVideo') ,
               bold: true,
             )),
       ),
@@ -174,14 +228,17 @@ class _TaskDetailsState extends State<TaskDetails> {
         onTap: () => Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => SelfRecordingPreview(task: widget.task))),
+                builder: (context) => TaskSubmissionRecordedVideo(
+                    task: widget.task, videoUrl: taskSubmission.video.url))),
         child: Align(
           alignment: Alignment.centerLeft,
           child: Container(
-            height: 200,
+            height: 150,
             child: ListView(scrollDirection: Axis.horizontal, children: [
               taskResponse(
-                  '00:15', 'assets/assessment/task_response_thumbnail.png'),
+                  TimeConverter.fromMillisecondsToSecondsStringFormat(
+                      taskSubmission.video.duration),
+                  taskSubmission.video.thumbUrl),
             ]),
           ),
         ),
@@ -195,7 +252,7 @@ class _TaskDetailsState extends State<TaskDetails> {
       child: ClipRRect(
         borderRadius: BorderRadius.all(Radius.circular(20)),
         child: Stack(alignment: AlignmentDirectional.center, children: [
-          Image.asset(thumbnail),
+          Image.network(thumbnail),
           Align(
               alignment: Alignment.center,
               child: Image.asset(

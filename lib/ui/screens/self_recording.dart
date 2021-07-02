@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
+import 'package:oluko_app/blocs/task_submission_bloc.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
@@ -27,7 +28,7 @@ class _State extends State<SelfRecording> {
   CameraController cameraController;
   bool _isReady = false;
   bool _recording = false;
-  bool iscamerafront = true;
+  bool isCameraFront = true;
 
   @override
   void initState() {
@@ -69,15 +70,10 @@ class _State extends State<SelfRecording> {
                         ),
                         onPressed: () async {
                           setState(() {
-                            iscamerafront = !iscamerafront;
+                            isCameraFront = !isCameraFront;
                           });
                           _setupCameras();
                         }),
-                    /*Icon(
-                      Icons.photo_camera,
-                      size: 45,
-                      color: Colors.white,
-                    ),*/
                     GestureDetector(
                       onTap: () async {
                         if (_recording) {
@@ -188,7 +184,7 @@ class _State extends State<SelfRecording> {
   }
 
   Future<void> _setupCameras() async {
-    int cameraPos = iscamerafront ? 0 : 1;
+    int cameraPos = isCameraFront ? 0 : 1;
     try {
       cameras = await availableCameras();
       cameraController =

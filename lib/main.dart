@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/course_bloc.dart';
+import 'package:oluko_app/blocs/course_category_bloc.dart';
 import 'package:oluko_app/config/s3_settings.dart';
 import 'package:oluko_app/ui/screens/app_plans.dart';
 import 'package:oluko_app/ui/screens/assessment_videos.dart';
@@ -94,7 +96,10 @@ class _MyAppState extends State<MyApp> {
             BlocProvider.value(value: _authBloc, child: AppPlans()),
         '/assessment-videos': (context) => MultiBlocProvider(providers: [
               BlocProvider.value(value: _authBloc),
-              BlocProvider(create: (context) => AssessmentBloc()..get())
+              //TODO Change this when using more than 1 assessment.
+              BlocProvider(
+                  create: (context) =>
+                      AssessmentBloc()..getById('ndRa0ldHCwCUaDxEQm25'))
             ], child: AsessmentVideos()),
         '/task-details': (context) => BlocProvider.value(
             value: _authBloc,
@@ -103,8 +108,11 @@ class _MyAppState extends State<MyApp> {
             )),
         '/choose-plan-payment': (context) =>
             BlocProvider.value(value: _authBloc, child: ChoosePlayPayments()),
-        '/courses': (context) =>
-            BlocProvider.value(value: _authBloc, child: Courses()),
+        '/courses': (context) => MultiBlocProvider(providers: [
+              BlocProvider.value(value: _authBloc),
+              BlocProvider(create: (context) => CourseBloc()),
+              BlocProvider(create: (context) => CourseCategoryBloc())
+            ], child: Courses()),
         '/videos': (context) => BlocProvider.value(
             value: _authBloc,
             child: Home(

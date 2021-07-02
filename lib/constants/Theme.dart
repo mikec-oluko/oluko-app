@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 
 class OlukoColors {
   static const Color black = Color(0xFF000000);
+  
+  static const Color black87 = Colors.black87;
 
   static const Color white = Color(0xFFFFFFFF);
 
@@ -38,6 +40,17 @@ class OlukoColors {
   static const Color text = Color.fromRGBO(50, 50, 93, 1.0);
 
   static const Color taskCardBackground = Color.fromRGBO(40, 40, 40, 1.0);
+
+  static const Color divider = Colors.white12;
+
+  static const Color searchBarText = Colors.white;
+
+  static const Color searchSuggestionsText = Colors.white;
+
+  static const Color searchSuggestionsAlreadyWrittenText =
+      Color.fromRGBO(170, 176, 144, 1.0);
+
+  static const Color appBarIcon = Colors.white;
 
   static const Color grayColor = Color.fromRGBO(149, 149, 149, 1.0);
 
