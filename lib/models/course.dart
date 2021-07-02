@@ -63,8 +63,10 @@ class Course extends Base {
         engagementGapTime: json['engagement_gap_time'],
         engagementTime: json['engagement_time'],
         mandatoryGapTime: json['mandatory_gap_time'],
-        classes: List<ObjectSubmodel>.from(
-            json['classes'].map((c) => ObjectSubmodel.fromJson(c))),
+        classes: json['classes'] != null
+            ? List<ObjectSubmodel>.from(
+                json['classes'].map((c) => ObjectSubmodel.fromJson(c)))
+            : null,
         imageUrl: json['image_url']);
     course.setBase(json);
     return course;
