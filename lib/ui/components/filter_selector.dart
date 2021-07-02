@@ -96,11 +96,26 @@ class _State<T extends Base> extends State<FilterSelector> {
   }
 
   List<Base> _getSelectedItemList() {
-    return _selected.entries
-        .where((element) => element.value == true)
-        .map((entry) => widget.itemList.entries.first.value.keys
-            .firstWhere((item) => item.id == entry.key))
+    List<MapEntry<String, bool>> selectedEntries =
+        _selected.entries.where((element) => element.value == true).toList();
+
+    List<T> allItems =
+        _getAllValuesFromCategories(widget.itemList.entries.toList())
+            .map((item) => item.key)
+            .toList();
+
+    return selectedEntries
+        .map((entry) => allItems.firstWhere((item) => item.id == entry.key))
         .toList();
+  }
+
+  List<MapEntry<T, String>> _getAllValuesFromCategories(
+      List<MapEntry<String, Map<T, String>>> itemsInCategories) {
+    List<MapEntry<T, String>> allItems = [];
+
+    itemsInCategories.forEach((MapEntry<String, Map<T, String>> entry) =>
+        entry.value.entries.forEach((item) => allItems.add(item)));
+    return allItems;
   }
 
   void clearSelectedItems() {

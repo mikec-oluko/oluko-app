@@ -35,7 +35,7 @@ class _State extends State<Courses> {
       SearchResults(query: '', suggestedItems: []);
   double carouselSectionHeight;
   TextEditingController searchBarController;
-  List selectedTags = [];
+  List<Tag> selectedTags = [];
   //Used to trigger AppBar Search Functions
   final searchKey = GlobalKey<SearchState>();
   //Flags to control on-screen components
@@ -69,7 +69,8 @@ class _State extends State<Courses> {
                               width: ScreenUtils.width(context),
                               child: showFilterSelector
                                   ? _filterSelector(tagState)
-                                  : searchResults.query.isEmpty
+                                  : searchResults.query.isEmpty &&
+                                          selectedTags.isEmpty
                                       ? _mainPage(courseState)
                                       : showSearchSuggestions
                                           ? _searchSuggestions()
@@ -143,10 +144,30 @@ class _State extends State<Courses> {
   }
 
   List<Course> _searchMethod(String query, List<Course> collection) {
-    return collection
+    List<Course> resultsWithoutFilters = collection
         .where(
             (course) => course.name.toLowerCase().contains(query.toLowerCase()))
         .toList();
+    List<Course> filteredResults = resultsWithoutFilters.where((Course course) {
+      final List<String> courseTagIds = course.tags != null
+          ? course.tags.map((e) => e.objectId).toList()
+          : [];
+      final List<String> selectedTagIds =
+          selectedTags.map((e) => e.id).toList();
+      //Return true if no filters are selected
+      if (selectedTags.isEmpty) {
+        return true;
+      }
+      //Check if this course match with the current tag filters.
+      bool tagMatch = false;
+      courseTagIds.forEach((tagId) {
+        if (selectedTagIds.contains(tagId)) {
+          tagMatch = true;
+        }
+      });
+      return tagMatch;
+    }).toList();
+    return filteredResults;
   }
 
   Widget _mainPage(CourseSuccess courseState) {
@@ -214,6 +235,7 @@ class _State extends State<Courses> {
           onSubmit: (List<Base> selectedItems) => this.setState(() {
             selectedTags = selectedItems;
             showFilterSelector = false;
+            searchKey.currentState.updateSearchResults('');
           }),
           onClosed: () => this.setState(() {
             showFilterSelector = false;
@@ -229,7 +251,9 @@ class _State extends State<Courses> {
       child: Padding(
         padding: const EdgeInsets.only(right: 20.0, top: 4),
         child: Icon(
-          showFilterSelector ? Icons.filter_alt : Icons.filter_alt_outlined,
+          showFilterSelector || selectedTags.length > 0
+              ? Icons.filter_alt
+              : Icons.filter_alt_outlined,
           color: OlukoColors.appBarIcon,
           size: 25,
         ),
