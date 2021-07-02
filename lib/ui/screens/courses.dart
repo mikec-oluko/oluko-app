@@ -15,8 +15,6 @@ import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/course_card.dart';
 import 'package:oluko_app/ui/components/filter_selector.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
-import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
-import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/search_bar.dart';
 import 'package:oluko_app/ui/components/search_results_grid.dart';
 import 'package:oluko_app/ui/components/search_suggestions.dart';
@@ -34,13 +32,14 @@ class Courses extends StatefulWidget {
 class _State extends State<Courses> {
   SearchResults<Course> searchResults =
       SearchResults(query: '', suggestedItems: []);
-  bool showSearchSuggestions = false;
-  bool showFilterSelector = false;
   double carouselSectionHeight;
   TextEditingController searchBarController;
-  final searchKey = GlobalKey<SearchState>();
   List selectedTags = [];
-
+  //Used to trigger AppBar Search Functions
+  final searchKey = GlobalKey<SearchState>();
+  //Flags to control on-screen components
+  bool showSearchSuggestions = false;
+  bool showFilterSelector = false;
   //Constants to display cards
   final double cardsAspectRatio = 0.69333;
   final int cardsToShowOnPortrait = 3;
@@ -201,37 +200,18 @@ class _State extends State<Courses> {
 
   Widget _filterSelector(courseState) {
     return Padding(
-      padding: EdgeInsets.only(top: 15.0, left: 8, right: 8),
-      child: Stack(
-        children: [
-          Positioned(
-              bottom: 15,
-              left: 0,
-              right: 0,
-              child: Container(
-                  width: ScreenUtils.width(context),
-                  child: Row(
-                    children: [
-                      OlukoPrimaryButton(
-                        onPressed: () => print(
-                            '${selectedTags.map((e) => e.name).toString()} items selected'),
-                        title: 'Apply',
-                      ),
-                      SizedBox(
-                        width: 15,
-                      ),
-                      OlukoOutlinedButton(title: 'Close')
-                    ],
-                  ))),
-          FilterSelector<Course>(
-            itemList: Map.fromIterable(courseState.values,
-                key: (course) => course, value: (course) => course.name),
-            onPressed: (List<Base> selectedItems) =>
-                selectedTags = selectedItems,
-          ),
-        ],
-      ),
-    );
+        padding: EdgeInsets.only(top: 15.0, left: 8, right: 8),
+        child: FilterSelector<Course>(
+          itemList: Map.fromIterable(courseState.values,
+              key: (course) => course, value: (course) => course.name),
+          onSubmit: (List<Base> selectedItems) => this.setState(() {
+            selectedTags = selectedItems;
+            showFilterSelector = false;
+          }),
+          onClosed: () => this.setState(() {
+            showFilterSelector = false;
+          }),
+        ));
   }
 
   Widget _filterWidget() {

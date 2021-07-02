@@ -2,15 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:oluko_app/models/base.dart';
 import 'package:oluko_app/ui/components/search_filters.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
+
+import 'oluko_outlined_button.dart';
+import 'oluko_primary_button.dart';
 
 class FilterSelector<T extends Base> extends StatefulWidget {
   final String textInput;
   final Map<T, String> itemList;
   final Function(List<T>) onPressed;
   final Function(List<T>) onSubmit;
+  final Function() onClosed;
 
   FilterSelector(
-      {this.textInput, this.itemList, this.onPressed, this.onSubmit});
+      {this.textInput,
+      this.itemList,
+      this.onPressed,
+      this.onSubmit,
+      this.onClosed});
 
   @override
   State<StatefulWidget> createState() => _State<T>();
@@ -27,6 +36,33 @@ class _State<T extends Base> extends State<FilterSelector> {
 
   @override
   Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Positioned(
+            bottom: 15,
+            left: 0,
+            right: 0,
+            child: Container(
+                width: ScreenUtils.width(context),
+                child: Row(
+                  children: [
+                    OlukoPrimaryButton(
+                      onPressed: submit,
+                      title: 'Apply',
+                    ),
+                    SizedBox(
+                      width: 15,
+                    ),
+                    OlukoOutlinedButton(
+                        title: 'Close', onPressed: () => widget.onClosed())
+                  ],
+                ))),
+        _getFilterSelectorContent()
+      ],
+    );
+  }
+
+  Widget _getFilterSelectorContent() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
