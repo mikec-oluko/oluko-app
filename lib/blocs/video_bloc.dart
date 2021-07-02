@@ -8,7 +8,6 @@ import 'package:oluko_app/models/enums/file_extension_enum.dart';
 import 'package:oluko_app/models/submodels/video.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/file_processing.dart';
-import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 import 'package:oluko_app/utils/video_process.dart';
 import 'package:path/path.dart' as p;

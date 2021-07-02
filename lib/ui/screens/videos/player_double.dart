@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/models/submodels/draw_point.dart';
 import 'package:oluko_app/models/submodels/event.dart';
-import 'package:oluko_app/models/video_info.dart';
+import 'package:oluko_app/models/submodels/video_info.dart';
 import 'package:video_player/video_player.dart';
 
 import 'draw.dart';
@@ -113,7 +113,7 @@ class _PlayerDoubleState extends State<PlayerDouble> {
   checkEventToPerform(List<Event> events, int position) {
     if (events.length > 0 &&
         index < events.length &&
-        position > events[index].position) {
+        position > events[index].recordingPosition) {
       EventType eventType = events[index].eventType;
       playOrPauseParentVideo(eventType);
       setState(() {

@@ -1,8 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'base.dart';
 
 class Task extends Base {
+  String name;
+  String video;
+  String stepsDescription;
+  String stepsTitle;
+  String description;
+  String shortDescription;
+  String thumbnailImage;
+
   Task(
       {this.name,
       this.video,
@@ -26,15 +33,6 @@ class Task extends Base {
             updatedBy: updatedBy,
             isDeleted: isDeleted,
             isHidden: isHidden);
-
-  String id;
-  String name;
-  String video;
-  String stepsDescription;
-  String stepsTitle;
-  String description;
-  String shortDescription;
-  String thumbnailImage;
 
   factory Task.fromJson(Map<String, dynamic> json) {
     Task task = Task(
@@ -64,3 +62,4 @@ class Task extends Base {
     return taskJson;
   }
 }
+

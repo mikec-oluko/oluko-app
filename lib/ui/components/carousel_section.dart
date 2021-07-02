@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
