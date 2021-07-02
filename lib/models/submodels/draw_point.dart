@@ -3,7 +3,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/ui/screens/videos/draw.dart';
 
-class DrawPoint {
+import '../base.dart';
+
+class DrawPoint extends Base {
   DrawingPoints point;
   num timeStamp;
 
