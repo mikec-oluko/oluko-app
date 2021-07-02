@@ -9,7 +9,7 @@ import 'oluko_primary_button.dart';
 
 class FilterSelector<T extends Base> extends StatefulWidget {
   final String textInput;
-  final Map<T, String> itemList;
+  final Map<String, Map<T, String>> itemList;
   final Function(List<T>) onPressed;
   final Function(List<T>) onSubmit;
   final Function() onClosed;
@@ -63,38 +63,28 @@ class _State<T extends Base> extends State<FilterSelector> {
   }
 
   Widget _getFilterSelectorContent() {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+    return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: widget.itemList.entries
+            .map((entry) => Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: _getFilterCategory(entry),
+                ))
+            .toList());
+  }
+
+  List<Widget> _getFilterCategory(
+      MapEntry<String, Map<Base, String>> filterEntry) {
+    return [
       Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: TitleBody('Intensity'),
+        child: TitleBody(filterEntry.key),
       ),
       SearchFilters<T>(
-          itemList: Map<T, String>.fromIterable(
-              widget.itemList.keys.toList().sublist(0, 4),
-              key: (item) => item,
-              value: (item) => item.name),
-          onPressed: _loadTagsFromSearchFilter),
-      Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: TitleBody('Equipment'),
-      ),
-      SearchFilters<T>(
-          itemList: Map<T, String>.fromIterable(
-              widget.itemList.keys.toList().sublist(4, 8),
-              key: (item) => item,
-              value: (item) => item.name),
-          onPressed: _loadTagsFromSearchFilter),
-      Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: TitleBody('Workout Duration'),
-      ),
-      SearchFilters<T>(
-          itemList: Map<T, String>.fromIterable(
-              widget.itemList.keys.toList().sublist(8, 12),
-              key: (item) => item,
-              value: (item) => item.name),
-          onPressed: _loadTagsFromSearchFilter),
-    ]);
+          itemList: Map<T, String>.fromIterable(filterEntry.value.keys,
+              key: (item) => item, value: (item) => item.name),
+          onPressed: _loadTagsFromSearchFilter)
+    ];
   }
 
   void _loadTagsFromSearchFilter(Map<String, bool> selectedItems) {
@@ -108,14 +98,16 @@ class _State<T extends Base> extends State<FilterSelector> {
   List<Base> _getSelectedItemList() {
     return _selected.entries
         .where((element) => element.value == true)
-        .map((entry) =>
-            widget.itemList.keys.firstWhere((item) => item.id == entry.key))
+        .map((entry) => widget.itemList.entries.first.value.keys
+            .firstWhere((item) => item.id == entry.key))
         .toList();
   }
 
   void clearSelectedItems() {
-    _selected = Map<String, bool>.fromIterable(widget.itemList.keys,
-        key: (item) => item.id, value: (item) => false);
+    _selected = Map<String, bool>.fromIterable(
+        widget.itemList.values.first.keys,
+        key: (item) => item.id,
+        value: (item) => false);
   }
 
   void submit() {

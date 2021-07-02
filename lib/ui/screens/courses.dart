@@ -203,12 +203,14 @@ class _State extends State<Courses> {
     );
   }
 
-  Widget _filterSelector(state) {
+  Widget _filterSelector(TagSuccess state) {
     return Padding(
         padding: EdgeInsets.only(top: 15.0, left: 8, right: 8),
         child: FilterSelector<Tag>(
-          itemList: Map.fromIterable(state.values,
-              key: (course) => course, value: (course) => course.name),
+          itemList: Map.fromIterable(state.tagsByCategories.entries,
+              key: (entry) => entry.key.name,
+              value: (entry) => Map.fromIterable(entry.value,
+                  key: (tag) => tag, value: (tag) => tag.name)),
           onSubmit: (List<Base> selectedItems) => this.setState(() {
             selectedTags = selectedItems;
             showFilterSelector = false;
