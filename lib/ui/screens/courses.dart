@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
+import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/base.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/search_results.dart';
+import 'package:oluko_app/models/tag.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';
 import 'package:oluko_app/ui/components/carousel_section.dart';
@@ -52,26 +54,30 @@ class _State extends State<Courses> {
         ((ScreenUtils.width(context) / _cardsToShow()) / cardsAspectRatio) + 75;
     return BlocBuilder<CourseBloc, CourseState>(
         bloc: BlocProvider.of<CourseBloc>(context)..getByCategories(),
-        builder: (context, state) {
-          return Scaffold(
-              backgroundColor: Colors.black,
-              appBar: _appBar(state),
-              bottomNavigationBar: OlukoBottomNavigationBar(),
-              body: state is CourseSuccess
-                  ? OrientationBuilder(builder: (context, orientation) {
-                      return Container(
-                        height: ScreenUtils.height(context),
-                        width: ScreenUtils.width(context),
-                        child: showFilterSelector
-                            ? _filterSelector(state)
-                            : searchResults.query.isEmpty
-                                ? _mainPage(state)
-                                : showSearchSuggestions
-                                    ? _searchSuggestions()
-                                    : _searchResults(),
-                      );
-                    })
-                  : OlukoCircularProgressIndicator());
+        builder: (context, courseState) {
+          return BlocBuilder<TagBloc, TagState>(
+              bloc: BlocProvider.of<TagBloc>(context)..getByCategories(),
+              builder: (context, tagState) {
+                return Scaffold(
+                    backgroundColor: Colors.black,
+                    appBar: _appBar(courseState),
+                    bottomNavigationBar: OlukoBottomNavigationBar(),
+                    body: courseState is CourseSuccess && tagState is TagSuccess
+                        ? OrientationBuilder(builder: (context, orientation) {
+                            return Container(
+                              height: ScreenUtils.height(context),
+                              width: ScreenUtils.width(context),
+                              child: showFilterSelector
+                                  ? _filterSelector(tagState)
+                                  : searchResults.query.isEmpty
+                                      ? _mainPage(courseState)
+                                      : showSearchSuggestions
+                                          ? _searchSuggestions()
+                                          : _searchResults(),
+                            );
+                          })
+                        : OlukoCircularProgressIndicator());
+              });
         });
   }
 
@@ -197,11 +203,11 @@ class _State extends State<Courses> {
     );
   }
 
-  Widget _filterSelector(courseState) {
+  Widget _filterSelector(state) {
     return Padding(
         padding: EdgeInsets.only(top: 15.0, left: 8, right: 8),
-        child: FilterSelector<Course>(
-          itemList: Map.fromIterable(courseState.values,
+        child: FilterSelector<Tag>(
+          itemList: Map.fromIterable(state.values,
               key: (course) => course, value: (course) => course.name),
           onSubmit: (List<Base> selectedItems) => this.setState(() {
             selectedTags = selectedItems;
