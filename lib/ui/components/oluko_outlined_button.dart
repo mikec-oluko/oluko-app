@@ -15,16 +15,18 @@ class OlukoOutlinedButton extends StatefulWidget {
 class _State extends State<OlukoOutlinedButton> {
   @override
   Widget build(BuildContext context) {
-    return OutlinedButton(
-        style: OutlinedButton.styleFrom(
-            side: BorderSide(color: OlukoColors.primary)),
-        onPressed: () => widget.onPressed(),
-        child: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Text(
-            widget.title,
-            style: TextStyle(fontSize: 18),
-          ),
-        ));
+    return Expanded(
+      child: OutlinedButton(
+          style: OutlinedButton.styleFrom(
+              side: BorderSide(color: OlukoColors.primary)),
+          onPressed: () => widget.onPressed(),
+          child: Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Text(
+              widget.title,
+              style: TextStyle(fontSize: 18),
+            ),
+          )),
+    );
   }
 }

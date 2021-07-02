@@ -6,6 +6,7 @@ import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
 import 'package:oluko_app/blocs/course_category_bloc.dart';
+import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/config/s3_settings.dart';
 import 'package:oluko_app/ui/screens/app_plans.dart';
 import 'package:oluko_app/ui/screens/assessment_videos.dart';
@@ -108,7 +109,7 @@ class _MyAppState extends State<MyApp> {
         '/courses': (context) => MultiBlocProvider(providers: [
               BlocProvider.value(value: _authBloc),
               BlocProvider(create: (context) => CourseBloc()),
-              BlocProvider(create: (context) => CourseCategoryBloc())
+              BlocProvider(create: (context) => TagBloc())
             ], child: Courses()),
         '/videos': (context) => BlocProvider.value(
             value: _authBloc,
