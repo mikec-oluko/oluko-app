@@ -5,7 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
-import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/models/base.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/search_results.dart';
@@ -19,6 +19,7 @@ import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/search_bar.dart';
 import 'package:oluko_app/ui/components/search_results_grid.dart';
 import 'package:oluko_app/ui/components/search_suggestions.dart';
+import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -63,20 +64,24 @@ class _State extends State<Courses> {
                     appBar: _appBar(courseState),
                     bottomNavigationBar: OlukoBottomNavigationBar(),
                     body: courseState is CourseSuccess && tagState is TagSuccess
-                        ? OrientationBuilder(builder: (context, orientation) {
-                            return Container(
-                              height: ScreenUtils.height(context),
-                              width: ScreenUtils.width(context),
-                              child: showFilterSelector
-                                  ? _filterSelector(tagState)
-                                  : searchResults.query.isEmpty &&
-                                          selectedTags.isEmpty
-                                      ? _mainPage(courseState)
-                                      : showSearchSuggestions
-                                          ? _searchSuggestions()
-                                          : _searchResults(),
-                            );
-                          })
+                        ? WillPopScope(
+                            onWillPop: _onWillPop,
+                            child: OrientationBuilder(
+                                builder: (context, orientation) {
+                              return Container(
+                                height: ScreenUtils.height(context),
+                                width: ScreenUtils.width(context),
+                                child: showFilterSelector
+                                    ? _filterSelector(tagState)
+                                    : searchResults.query.isEmpty &&
+                                            selectedTags.isEmpty
+                                        ? _mainPage(courseState)
+                                        : showSearchSuggestions
+                                            ? _searchSuggestions()
+                                            : _searchResults(),
+                              );
+                            }),
+                          )
                         : OlukoCircularProgressIndicator());
               });
         });
@@ -121,7 +126,9 @@ class _State extends State<Courses> {
     return state is CourseSuccess
         ? OlukoAppBar<Course>(
             searchKey: searchKey,
-            title: OlukoLocalizations.of(context).find('courses'),
+            title: showFilterSelector
+                ? OlukoLocalizations.of(context).find('filters')
+                : OlukoLocalizations.of(context).find('courses'),
             actions: [_filterWidget()],
             onSearchSubmit: (SearchResults results) => this.setState(() {
               showSearchSuggestions = false;
@@ -246,18 +253,58 @@ class _State extends State<Courses> {
   Widget _filterWidget() {
     return GestureDetector(
       onTap: () => this.setState(() {
-        showFilterSelector = !showFilterSelector;
+        if (showFilterSelector == true) {
+          //Clear all filters
+          selectedTags.clear();
+        } else {
+          //Toggle filter view
+          showFilterSelector = !showFilterSelector;
+        }
       }),
       child: Padding(
-        padding: const EdgeInsets.only(right: 20.0, top: 4),
-        child: Icon(
-          showFilterSelector || selectedTags.length > 0
-              ? Icons.filter_alt
-              : Icons.filter_alt_outlined,
-          color: OlukoColors.appBarIcon,
-          size: 25,
-        ),
+        padding: const EdgeInsets.only(right: 20.0, top: 5),
+        child: showFilterSelector
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    OlukoLocalizations.of(context).find('clearAll'),
+                    style: OlukoFonts.olukoBigFont(
+                        customColor: OlukoColors.primary),
+                  ),
+                ],
+              )
+            : Icon(
+                showFilterSelector || selectedTags.length > 0
+                    ? Icons.filter_alt
+                    : Icons.filter_alt_outlined,
+                color: OlukoColors.appBarIcon,
+                size: 25,
+              ),
       ),
     );
+  }
+
+  Future<bool> _onWillPop() async {
+    return (await showDialog(
+          context: context,
+          builder: (context) => new AlertDialog(
+            backgroundColor: Colors.black,
+            title: TitleBody('Are you Sure?'),
+            content: new Text('Do you want to exit Oluko MVT?',
+                style: OlukoFonts.olukoBigFont()),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: new Text('No'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: new Text('Yes'),
+              ),
+            ],
+          ),
+        )) ??
+        false;
   }
 }

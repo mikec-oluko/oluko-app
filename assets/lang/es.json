@@ -7,10 +7,12 @@
     "coach": "Coach",
     "friends": "Amigos",
     "logout": "Cerrar sesión",
+    "filters": "Filtros",
     "courses": "Cursos",
     "activeCourses": "Cursos Activos",
     "videos": "Videos",
     "viewAll": "Ver Todo",
+    "clearAll": "Limpiar Todo",
     "search": "Buscar",
     "assessments": "Evaluaciones",
     "plans": "Planes",
@@ -35,5 +37,4 @@
     "tapToUpload": "Toca para Subir",
     "recordedVideo": "Video grabado",
     "classes": "Clases"
-
 }
