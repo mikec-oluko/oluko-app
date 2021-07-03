@@ -125,6 +125,7 @@ class _State extends State<Courses> {
   Widget _appBar(CourseState state) {
     return state is CourseSuccess
         ? OlukoAppBar<Course>(
+            showBackButton: false,
             searchKey: searchKey,
             title: showFilterSelector
                 ? OlukoLocalizations.of(context).find('filters')
@@ -239,6 +240,7 @@ class _State extends State<Courses> {
               key: (entry) => entry.key.name,
               value: (entry) => Map.fromIterable(entry.value,
                   key: (tag) => tag, value: (tag) => tag.name)),
+          selectedTags: selectedTags,
           onSubmit: (List<Base> selectedItems) => this.setState(() {
             selectedTags = selectedItems;
             showFilterSelector = false;
@@ -256,6 +258,7 @@ class _State extends State<Courses> {
         if (showFilterSelector == true) {
           //Clear all filters
           selectedTags.clear();
+          showFilterSelector = false;
         } else {
           //Toggle filter view
           showFilterSelector = !showFilterSelector;

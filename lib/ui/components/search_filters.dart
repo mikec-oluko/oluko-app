@@ -6,8 +6,10 @@ class SearchFilters<T extends Base> extends StatefulWidget {
   final String textInput;
   final Map<T, String> itemList;
   final Function(Map<String, bool>) onPressed;
+  final List<Base> selectedTags;
 
-  SearchFilters({this.textInput, this.itemList, this.onPressed});
+  SearchFilters(
+      {this.textInput, this.itemList, this.onPressed, this.selectedTags});
 
   @override
   State<StatefulWidget> createState() => _State<T>();
@@ -18,13 +20,12 @@ class _State<T extends Base> extends State<SearchFilters> {
 
   @override
   void initState() {
-    selected = Map<String, bool>.fromIterable(widget.itemList.keys,
-        key: (item) => item.id, value: (item) => false);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    selected = _setSelectedTags();
     return Wrap(
         spacing: 10,
         crossAxisAlignment: WrapCrossAlignment.center,
@@ -53,5 +54,12 @@ class _State<T extends Base> extends State<SearchFilters> {
               ),
             )
             .toList());
+  }
+
+  Map<String, bool> _setSelectedTags() {
+    return Map<String, bool>.fromIterable(widget.itemList.keys,
+        key: (item) => item.id,
+        value: (item) =>
+            widget.selectedTags.map((e) => e.id).contains(item.id));
   }
 }

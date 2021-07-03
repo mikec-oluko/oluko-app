@@ -12,6 +12,7 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
   final Function(TextEditingController) whenSearchBarInitialized;
   final List<T> Function(String, List<T>) suggestionMethod;
   final List<T> Function(String, List<T>) searchMethod;
+  final bool showBackButton;
   final String title;
   final List<Widget> actions;
   final List<T> searchResultItems;
@@ -27,6 +28,7 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
       this.showSearchBar = false,
       this.suggestionMethod,
       this.searchMethod,
+      this.showBackButton = true,
       this.onSearchSubmit,
       this.whenSearchBarInitialized,
       this.searchKey});
@@ -36,14 +38,16 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
       preferredSize: Size.fromHeight(kToolbarHeight),
       child: AppBar(
           backgroundColor: Colors.black,
-          leading: IconButton(
-            icon: Icon(
-              Icons.chevron_left,
-              size: 35,
-              color: Colors.white,
-            ),
-            onPressed: () => Navigator.pop(context),
-          ),
+          leading: showBackButton
+              ? IconButton(
+                  icon: Icon(
+                    Icons.chevron_left,
+                    size: 35,
+                    color: Colors.white,
+                  ),
+                  onPressed: () => Navigator.pop(context),
+                )
+              : null,
           title: TitleHeader(
             title,
             bold: true,
