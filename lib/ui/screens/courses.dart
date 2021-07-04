@@ -14,8 +14,11 @@ import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';
 import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/course_card.dart';
+import 'package:oluko_app/ui/components/dialog.dart';
 import 'package:oluko_app/ui/components/filter_selector.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
+import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
+import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/search_bar.dart';
 import 'package:oluko_app/ui/components/search_results_grid.dart';
 import 'package:oluko_app/ui/components/search_suggestions.dart';
@@ -257,8 +260,12 @@ class _State extends State<Courses> {
       onTap: () => this.setState(() {
         if (showFilterSelector == true) {
           //Clear all filters
-          selectedTags.clear();
-          showFilterSelector = false;
+          _onClearFilters().then((value) => value
+              ? this.setState(() {
+                  selectedTags.clear();
+                  showFilterSelector = false;
+                })
+              : null);
         } else {
           //Toggle filter view
           showFilterSelector = !showFilterSelector;
@@ -304,6 +311,55 @@ class _State extends State<Courses> {
               TextButton(
                 onPressed: () => Navigator.of(context).pop(true),
                 child: new Text('Yes'),
+              ),
+            ],
+          ),
+        )) ??
+        false;
+  }
+
+  Future<bool> _onClearFilters() async {
+    return (await showDialog(
+          context: context,
+          builder: (context) => new AlertDialog(
+            backgroundColor: Colors.grey.shade900,
+            content: Container(
+              height: 100,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Text('Would you like to cancel?',
+                        textAlign: TextAlign.center,
+                        style: OlukoFonts.olukoBigFont()),
+                  ),
+                  Text(
+                    'Cancelling would remove all the selected filters, please confirm the action.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.white24),
+                  )
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              Container(
+                width: ScreenUtils.width(context),
+                child: Row(
+                  children: [
+                    OlukoPrimaryButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      title: 'No',
+                    ),
+                    SizedBox(
+                      width: 20,
+                    ),
+                    OlukoOutlinedButton(
+                        onPressed: () => Navigator.of(context).pop(true),
+                        title: 'Yes')
+                  ],
+                ),
               ),
             ],
           ),
