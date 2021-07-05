@@ -116,7 +116,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                     return ListView(
                                       shrinkWrap: true,
                                       children: [
-                                        StoriesHeader(),
                                         Container(
                                           height: ScreenUtils.height(context),
                                           width: ScreenUtils.width(context),
@@ -235,6 +234,7 @@ class _MyHomePageState extends State<MyHomePage> {
       padding: const EdgeInsets.only(top: 0.0, left: 8, right: 8),
       child: ListView(
         children: [
+          StoriesHeader(),
           ListView.builder(
               physics: NeverScrollableScrollPhysics(),
               itemCount: courseState.coursesByCategories.length,
