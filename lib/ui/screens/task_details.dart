@@ -122,7 +122,7 @@ class _TaskDetailsState extends State<TaskDetails> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               formFields(state),
-              /*BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
+              BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
                   builder: (context, state) {
                 if (state is GetSuccess && state.taskSubmission != null) {
                   return Row(
@@ -144,27 +144,27 @@ class _TaskDetailsState extends State<TaskDetails> {
                     ],
                   );
                 } else {
-                  return Text("");
+                  return Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      OlukoPrimaryButton(
+                        title: OlukoLocalizations.of(context)
+                            .find('startRecording'),
+                        onPressed: () {
+                          if (_controller != null) {
+                            _controller.pause();
+                          }
+                          return Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      SelfRecording(task: widget.task)));
+                        },
+                      ),
+                    ],
+                  );
                 }
-              }),*/
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  OlukoPrimaryButton(
-                    title: OlukoLocalizations.of(context).find('startRecording'),
-                    onPressed: () {
-                      if (_controller != null) {
-                        _controller.pause();
-                      }
-                      return Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  SelfRecording(task: widget.task)));
-                    },
-                  ),
-                ],
-              ),
+              }),
             ]);
       }),
     );

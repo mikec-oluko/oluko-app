@@ -374,10 +374,10 @@ class _MyHomePageState extends State<MyHomePage> {
     List<Widget> options = [];
     //TODO: Remove this when take it to the correct place inside courses
     options.add(ElevatedButton(
-      onPressed: () => Navigator.pushNamed(context, '/classes')
+      onPressed: () => Navigator.pushNamed(context, '/movement-detail')
           .then((value) => onGoBack()),
       child: Text(
-        OlukoLocalizations.of(context).find('classes').toUpperCase(),
+        "TEST",
         style: TextStyle(color: Colors.white),
       ),
       style: ElevatedButton.styleFrom(
