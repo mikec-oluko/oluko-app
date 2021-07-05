@@ -34,6 +34,13 @@
     "yetToUnlock": "Por 'Desbloquear'",
     "tapToUpload": "Toca para Subir",
     "recordedVideo": "Video grabado",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "userName": "Nombre de Usuario",
+    "settings": "Ajustes",
+    "upgrade": "Mejorar",
+    "fromGallery": "Seleccionar desde Galeria",
+    "camera": "Camara",
+    "uploadingWithDots":  "Subiendo...",
     "classes": "Clases"
-
 }
