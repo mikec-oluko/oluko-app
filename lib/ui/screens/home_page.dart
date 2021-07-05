@@ -24,6 +24,7 @@ import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/search_bar.dart';
 import 'package:oluko_app/ui/components/search_results_grid.dart';
 import 'package:oluko_app/ui/components/search_suggestions.dart';
+import 'package:oluko_app/ui/components/stories_header.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -112,17 +113,23 @@ class _MyHomePageState extends State<MyHomePage> {
                                   onWillPop: _onWillPop,
                                   child: OrientationBuilder(
                                       builder: (context, orientation) {
-                                    return Container(
-                                      height: ScreenUtils.height(context),
-                                      width: ScreenUtils.width(context),
-                                      child: showFilterSelector
-                                          ? _filterSelector(tagState)
-                                          : searchResults.query.isEmpty &&
-                                                  selectedTags.isEmpty
-                                              ? _mainPage(courseState)
-                                              : showSearchSuggestions
-                                                  ? _searchSuggestions()
-                                                  : _searchResults(),
+                                    return ListView(
+                                      shrinkWrap: true,
+                                      children: [
+                                        StoriesHeader(),
+                                        Container(
+                                          height: ScreenUtils.height(context),
+                                          width: ScreenUtils.width(context),
+                                          child: showFilterSelector
+                                              ? _filterSelector(tagState)
+                                              : searchResults.query.isEmpty &&
+                                                      selectedTags.isEmpty
+                                                  ? _mainPage(courseState)
+                                                  : showSearchSuggestions
+                                                      ? _searchSuggestions()
+                                                      : _searchResults(),
+                                        ),
+                                      ],
                                     );
                                   }),
                                 )
