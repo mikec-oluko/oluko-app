@@ -42,5 +42,9 @@
     "fromGallery": "Select from Gallery",
     "camera": "Camera",
     "uploadingWithDots":  "Uploading...",
-    "classes": "Classes"
+    "classes": "Classes",
+    "course": "Course",
+    "enroll": "Enroll",
+    "loadingWhithDots": "Loading...",
+    "weeks": "Weeks"
 }

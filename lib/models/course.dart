@@ -4,6 +4,7 @@ import 'base.dart';
 
 class Course extends Base {
   String name;
+  String video;
   Timestamp duration;
   String description;
   List<String> equipment;
@@ -32,6 +33,7 @@ class Course extends Base {
       this.mandatoryGapTime,
       this.classes,
       this.imageUrl,
+      this.video,
       this.description,
       String id,
       Timestamp createdAt,
@@ -52,6 +54,7 @@ class Course extends Base {
   factory Course.fromJson(Map<String, dynamic> json) {
     Course course = Course(
         name: json['name'],
+        video: json['video'],
         duration: json['duration'],
         description: json['description'],
         equipment: json['equipment'],
@@ -75,6 +78,7 @@ class Course extends Base {
   Map<String, dynamic> toJson() {
     Map<String, dynamic> courseJson = {
       'name': name,
+      'video': video,
       'duration': duration,
       'description': description,
       'equipment': equipment,
@@ -86,7 +90,9 @@ class Course extends Base {
       'engagement_gap_time': engagementGapTime,
       'engagement_time': engagementTime,
       'mandatory_gap_time': mandatoryGapTime,
-      'classes': List<dynamic>.from(classes.map((c) => c.toJson())),
+      'classes': classes == null
+          ? null
+          : List<dynamic>.from(classes.map((c) => c.toJson())),
       'image_url': imageUrl,
     };
     courseJson.addEntries(super.toJson().entries);

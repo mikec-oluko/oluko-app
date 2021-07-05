@@ -27,10 +27,11 @@ class Segment extends Base {
 
   factory Segment.fromJson(Map<String, dynamic> json) {
     Segment segment = Segment(
-      name: json['name'],
-      movements: List<ObjectSubmodel>.from(
-          json['segments'].map((movement) => ObjectSubmodel.fromJson(movement)))
-    );
+        name: json['name'],
+        movements: json['movements'] == null
+            ? null
+            : List<ObjectSubmodel>.from(json['movements']
+                .map((movement) => ObjectSubmodel.fromJson(movement))));
     segment.setBase(json);
     return segment;
   }
@@ -38,7 +39,9 @@ class Segment extends Base {
   Map<String, dynamic> toJson() {
     Map<String, dynamic> movementJson = {
       'name': name,
-      'movements': List<dynamic>.from(movements.map((movement) => movement.toJson()))
+      'movements': movements == null
+          ? null
+          : List<dynamic>.from(movements.map((movement) => movement.toJson()))
     };
     movementJson.addEntries(super.toJson().entries);
     return movementJson;

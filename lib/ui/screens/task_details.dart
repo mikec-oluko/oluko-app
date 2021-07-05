@@ -220,7 +220,7 @@ class _TaskDetailsState extends State<TaskDetails> {
         child: Align(
             alignment: Alignment.centerLeft,
             child: TitleBody(
-              OlukoLocalizations.of(context).find('recordedVideo') ,
+              OlukoLocalizations.of(context).find('recordedVideo'),
               bold: true,
             )),
       ),
