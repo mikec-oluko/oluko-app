@@ -10,6 +10,9 @@ import 'package:oluko_app/blocs/course_bloc.dart';
 import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course.dart';
+import 'package:oluko_app/models/movement.dart';
+import 'package:oluko_app/repositories/movement_repository.dart';
+import 'package:oluko_app/repositories/segment_repository.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/class_section.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
@@ -31,11 +34,11 @@ class _ClassesState extends State<Classes> {
   ClassBloc _classBloc;
 
   //TODO: remove hardcoded reference
-  DocumentReference classReference = FirebaseFirestore.instance
+  DocumentReference segmentReference = FirebaseFirestore.instance
       .collection("projects")
       .doc(GlobalConfiguration().getValue("projectId"))
-      .collection("classes")
-      .doc('QqwulqE1o6u1wtVeq9AE');
+      .collection("segments")
+      .doc('jwKrMyYxnmeN6HqWGHw9');
 
   @override
   void initState() {
@@ -46,6 +49,7 @@ class _ClassesState extends State<Classes> {
 
   @override
   Widget build(BuildContext context) {
+    //MovementRepository.create(Movement(name: "Chin-Ups"),segmentReference);
     return MultiBlocProvider(
         providers: [
           BlocProvider<CourseBloc>(
