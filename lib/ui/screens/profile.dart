@@ -5,6 +5,7 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';
+import 'package:oluko_app/ui/components/oluko_error_message_view.dart';
 import 'package:oluko_app/ui/components/user_profile_information.dart';
 import 'package:oluko_app/ui/components/user_profile_progress.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
@@ -20,6 +21,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final _formKey = GlobalKey<FormState>();
+  bool _isTesting = false;
   SignUpResponse profileInfo;
   final String profileTitle = ProfileViewConstants.profileTitle;
 
@@ -54,18 +56,23 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget userInformationSection() {
-    return Column(
-      children: [
-        GestureDetector(
-            onTap: () =>
-                Navigator.pushNamed(context, ProfileRoutes.userInformationRoute)
-                    .then((value) => onGoBack()),
-            child: UserProfileInformation(userInformation: profileInfo)),
-        UserProfileProgress(
-            userChallenges: ProfileViewConstants.profileChallengesContent,
-            userFriends: ProfileViewConstants.profileFriendsContent)
-      ],
-    );
+    Widget returnWidget;
+    _isTesting == false
+        ? returnWidget = Column(
+            children: [
+              GestureDetector(
+                  onTap: () => Navigator.pushNamed(
+                          context, ProfileRoutes.userInformationRoute)
+                      .then((value) => onGoBack()),
+                  child: UserProfileInformation(userInformation: profileInfo)),
+              UserProfileProgress(
+                  userChallenges: ProfileViewConstants.profileChallengesContent,
+                  userFriends: ProfileViewConstants.profileFriendsContent)
+            ],
+          )
+        : returnWidget = Center(child: OlukoErrorMessage());
+
+    return returnWidget;
   }
 
   Padding buildOptionsList() {

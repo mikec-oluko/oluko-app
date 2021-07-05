@@ -17,7 +17,7 @@
     "alreadySubscribedUser": "Already a subscribed user?",
     "emailExample": "example@yourcompany.com",
     "email": "Email",
-    "required": "Campo requerido",
+    "required": "Required field",
     "password": "Password",
     "forgotPassword": "Forgot password?",
     "login": "Login",
@@ -41,5 +41,7 @@
     "upgrade": "upgrade",
     "fromGallery": "Select from Gallery",
     "camera": "Camera",
-    "uploadingWithDots":  "Uploading..."
+    "uploadingWithDots":  "Uploading...",
+    "errorOcurred": "An error ocurred.",
+    "errorOcurredOn": "An error ocurred on: "
 }

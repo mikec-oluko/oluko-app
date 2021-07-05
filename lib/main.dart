@@ -70,8 +70,11 @@ class _MyAppState extends State<MyApp> {
             BlocProvider.value(value: _authBloc, child: SignUpPage()),
         '/sign-up-with-email': (context) =>
             BlocProvider.value(value: _authBloc, child: SignUpWithMailPage()),
-        '/profile': (context) =>
-            BlocProvider.value(value: _authBloc, child: ProfilePage()),
+        '/profile': (context) => MultiBlocProvider(providers: [
+              BlocProvider.value(value: _authBloc),
+              BlocProvider(create: (context) => CourseBloc()),
+              BlocProvider(create: (context) => AssessmentBloc())
+            ], child: ProfilePage()),
         '/profile-settings': (context) =>
             BlocProvider.value(value: _authBloc, child: ProfileSettingsPage()),
         '/profile-my-account': (context) =>

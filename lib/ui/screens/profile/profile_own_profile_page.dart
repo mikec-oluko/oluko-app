@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+// import 'package:flutter_bloc/flutter_bloc.dart';
+// import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/course_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/ui/components/carousel_section.dart';
@@ -19,6 +23,24 @@ class ProfileOwnProfilePage extends StatefulWidget {
 
 class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
   SignUpResponse profileInfo;
+  List<Content> listOfContent = [];
+
+  @override
+  void initState() {
+    setState(() {
+      listOfContent = uploadListContent;
+    });
+    // BlocProvider.of<BlocToUse>(context).method();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    setState(() {
+      listOfContent = [];
+    });
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,57 +84,50 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
                     userChallenges:
                         ProfileViewConstants.profileChallengesContent,
                     userFriends: ProfileViewConstants.profileFriendsContent),
-                Padding(
-                  padding: const EdgeInsets.only(top: 25),
-                  child: CarouselSmallSection(
-                    routeToGo: ProfileRoutes.goToAssessmentVideos(),
-                    title: ProfileViewConstants.profileOptionsAssessmentVideos,
-                    children: [
-                      _getImageAndVideoCard(
-                          'assets/courses/course_sample_3.png',
-                          isVideo: true),
-                      _getImageAndVideoCard(
-                          'assets/courses/course_sample_5.png',
-                          isVideo: true),
-                      _getImageAndVideoCard(
-                          'assets/courses/course_sample_4.png',
-                          isVideo: true),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 25),
-                  child: CarouselSmallSection(
-                    routeToGo: ProfileRoutes.goToTransformationJourney(),
-                    title: ProfileViewConstants
+                // BlocListener<AssessmentBloc, AssessmentState>(
+                //   listener: (context, state) {
+                //     // TODO: implement listener
+                //     if (state is AssessmentSuccess) {
+                //       listOfContent = state.values;
+                //     } else {
+                //       listOfContent = uploadListContent;
+                //     }
+                //   },
+                //   child: buildUserContentSection(
+                //       titleForSection:
+                //           ProfileViewConstants.profileOptionsAssessmentVideos,
+                //       routeForSection: ProfileRoutes.goToAssessmentVideos(),
+                //       contentForSection: listOfContent),
+                // ),
+                buildUserContentSection(
+                    titleForSection:
+                        ProfileViewConstants.profileOptionsAssessmentVideos,
+                    routeForSection: ProfileRoutes.goToAssessmentVideos(),
+                    contentForSection: returnContentForSection(listOfContent)),
+                // BlocListener<SubjectBloc, SubjectState>(
+                //   listener: (context, state) {
+                //     // TODO: implement listener
+                //   },
+                //   child: buildUserContentSection(
+                //     titleForSection: ProfileViewConstants
+                //         .profileOptionsTransformationJourney,
+                //     routeForSection: ProfileRoutes.goToTransformationJourney(),
+                //   ),
+                // ),
+                buildUserContentSection(
+                    titleForSection: ProfileViewConstants
                         .profileOptionsTransformationJourney,
-                    children: [
-                      _getImageAndVideoCard(
-                          'assets/courses/course_sample_6.png',
-                          isVideo: false),
-                      _getImageAndVideoCard(
-                          'assets/courses/course_sample_7.png',
-                          isVideo: false),
-                      _getImageAndVideoCard(
-                          'assets/courses/course_sample_8.png',
-                          isVideo: false),
-                    ],
-                  ),
+                    routeForSection: ProfileRoutes.goToTransformationJourney(),
+                    contentForSection: returnContentForSection(listOfContent)),
+                BlocConsumer<CourseBloc, CourseState>(
+                  listener: (context, state) {
+                    // TODO: implement listener
+                  },
+                  builder: (context, state) {
+                    return buildCourseSection(context);
+                  },
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(10.0).copyWith(bottom: 0),
-                  child: CarouselSection(
-                    height: 250,
-                    width: MediaQuery.of(context).size.width,
-                    title: ProfileViewConstants.profileOwnProfileActiveCourses,
-                    children: [
-                      _getCourseCard('assets/courses/course_sample_1.png',
-                          progress: 0.3),
-                      _getCourseCard('assets/courses/course_sample_2.png',
-                          progress: 0.7),
-                    ],
-                  ),
-                ),
+                buildCourseSection(context),
                 Padding(
                   padding: const EdgeInsets.all(10.0).copyWith(top: 0),
                   child: ChallengesCard(
@@ -125,6 +140,34 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
           ),
         ),
       ),
+    );
+  }
+
+  Padding buildCourseSection(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(10.0).copyWith(bottom: 0),
+      child: CarouselSection(
+        height: 250,
+        width: MediaQuery.of(context).size.width,
+        title: ProfileViewConstants.profileOwnProfileActiveCourses,
+        children: [
+          _getCourseCard('assets/courses/course_sample_1.png', progress: 0.3),
+          _getCourseCard('assets/courses/course_sample_2.png', progress: 0.7),
+        ],
+      ),
+    );
+  }
+
+  Padding buildUserContentSection(
+      {String routeForSection,
+      String titleForSection,
+      List<Widget> contentForSection}) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 25),
+      child: CarouselSmallSection(
+          routeToGo: routeForSection,
+          title: titleForSection,
+          children: contentForSection),
     );
   }
 
@@ -146,10 +189,18 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
     );
   }
 
-  Widget _getImageAndVideoCard(String assetImage, {bool isVideo}) {
+  Widget _getImageAndVideoCard(Content contentFromUser) {
     return ImageAndVideoContainer(
-      assetImage: assetImage,
-      isVideo: isVideo,
+      assetImage: contentFromUser.imgUrl,
+      isVideo: contentFromUser.isVideo,
     );
+  }
+
+  List<Widget> returnContentForSection(List<Content> listOfContent) {
+    List<Widget> contentForSection = [];
+    listOfContent.forEach((content) {
+      contentForSection.add(_getImageAndVideoCard(content));
+    });
+    return contentForSection.toList();
   }
 }
