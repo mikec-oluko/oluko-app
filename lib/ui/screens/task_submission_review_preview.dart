@@ -296,7 +296,9 @@ class _TaskSubmissionReviewPreviewState
     _videoController = VideoPlayerController.network(
       widget.taskSubmission.video.url,
     );
-    _initializeVideoPlayerFuture = _videoController.initialize();
+    _initializeVideoPlayerFuture = _videoController
+        .initialize()
+        .then((value) => _videoController.setVolume(0.0));
     _videoController.setLooping(true);
 
     _videoRecordedController =

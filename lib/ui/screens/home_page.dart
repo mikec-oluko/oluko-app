@@ -372,6 +372,18 @@ class _MyHomePageState extends State<MyHomePage> {
 
   List<Widget> menuOptions(AuthState state) {
     List<Widget> options = [];
+    //TODO: Remove this when take it to the correct place inside courses
+    options.add(ElevatedButton(
+      onPressed: () => Navigator.pushNamed(context, '/classes')
+          .then((value) => onGoBack()),
+      child: Text(
+        OlukoLocalizations.of(context).find('classes').toUpperCase(),
+        style: TextStyle(color: Colors.white),
+      ),
+      style: ElevatedButton.styleFrom(
+          shadowColor: Colors.transparent, primary: Colors.transparent),
+    ));
+
     options.add(ElevatedButton(
       onPressed: () => Navigator.pushNamed(context, '/app-plans')
           .then((value) => onGoBack()),

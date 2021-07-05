@@ -41,5 +41,6 @@
     "upgrade": "upgrade",
     "fromGallery": "Select from Gallery",
     "camera": "Camera",
-    "uploadingWithDots":  "Uploading..."
+    "uploadingWithDots":  "Uploading...",
+    "classes": "Classes"
 }

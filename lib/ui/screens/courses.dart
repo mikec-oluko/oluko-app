@@ -1,11 +1,15 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
+import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/base.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/search_results.dart';
+import 'package:oluko_app/models/tag.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';
 import 'package:oluko_app/ui/components/carousel_section.dart';
@@ -29,90 +33,51 @@ class Courses extends StatefulWidget {
 class _State extends State<Courses> {
   SearchResults<Course> searchResults =
       SearchResults(query: '', suggestedItems: []);
-  bool showSearchSuggestions = false;
   double carouselSectionHeight;
-  double cardsAspectRatio;
-  int cardsToShowOnPortrait = 3;
-  int cardsToShowOnLandscape = 5;
-  int searchResultsPortrait = 2;
-  int searchResultsLandscape = 5;
   TextEditingController searchBarController;
+  List selectedTags = [];
+  //Used to trigger AppBar Search Functions
   final searchKey = GlobalKey<SearchState>();
+  //Flags to control on-screen components
+  bool showSearchSuggestions = false;
+  bool showFilterSelector = false;
+  //Constants to display cards
+  final double cardsAspectRatio = 0.69333;
+  final int cardsToShowOnPortrait = 3;
+  final int cardsToShowOnLandscape = 5;
+  final int searchResultsPortrait = 2;
+  final int searchResultsLandscape = 5;
 
   @override
   Widget build(BuildContext context) {
-    cardsAspectRatio = 0.69333;
     carouselSectionHeight =
         ((ScreenUtils.width(context) / _cardsToShow()) / cardsAspectRatio) + 75;
     return BlocBuilder<CourseBloc, CourseState>(
         bloc: BlocProvider.of<CourseBloc>(context)..getByCategories(),
-        builder: (context, state) {
-          return Scaffold(
-              backgroundColor: Colors.black,
-              appBar: state is CourseSuccess
-                  ? OlukoAppBar<Course>(
-                      searchKey: searchKey,
-                      title: OlukoLocalizations.of(context).find('courses'),
-                      actions: [_filterWidget()],
-                      onSearchSubmit: (SearchResults results) =>
-                          this.setState(() {
-                        showSearchSuggestions = false;
-                        searchResults = results;
-                      }),
-                      onSearchResults: (SearchResults results) =>
-                          this.setState(() {
-                        showSearchSuggestions = true;
-                        searchResults = SearchResults<Course>(
-                            query: results.query,
-                            suggestedItems:
-                                List<Course>.from(results.suggestedItems));
-                      }),
-                      suggestionMethod: _suggestionMethod,
-                      searchMethod: _searchMethod,
-                      searchResultItems: state.values,
-                      showSearchBar: true,
-                      whenSearchBarInitialized:
-                          (TextEditingController controller) =>
-                              searchBarController = controller,
-                    )
-                  : null,
-              bottomNavigationBar: OlukoBottomNavigationBar(),
-              body: state is CourseSuccess
-                  ? OrientationBuilder(builder: (context, orientation) {
-                      return Container(
-                        height: ScreenUtils.height(context),
-                        width: ScreenUtils.width(context),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 0.0),
-                          child: searchResults.query == ''
-                              ? Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 15.0, left: 8, right: 8),
-                                  child: _mainPage(state),
-                                )
-                              : showSearchSuggestions
-                                  ? SearchSuggestions<Course>(
-                                      textInput: searchResults.query,
-                                      itemList: searchResults.suggestedItems,
-                                      onPressed: (dynamic item) => searchKey
-                                          .currentState
-                                          .updateSearchResults(item.name),
-                                      keyNameList: searchResults.suggestedItems
-                                          .map((e) => e.name)
-                                          .toList())
-                                  : SearchResultsGrid<Course>(
-                                      childAspectRatio: cardsAspectRatio,
-                                      crossAxisCount:
-                                          MediaQuery.of(context).orientation ==
-                                                  Orientation.portrait
-                                              ? searchResultsPortrait
-                                              : searchResultsLandscape,
-                                      textInput: searchResults.query,
-                                      itemList: searchResults.searchResults),
-                        ),
-                      );
-                    })
-                  : OlukoCircularProgressIndicator());
+        builder: (context, courseState) {
+          return BlocBuilder<TagBloc, TagState>(
+              bloc: BlocProvider.of<TagBloc>(context)..getByCategories(),
+              builder: (context, tagState) {
+                return Scaffold(
+                    backgroundColor: Colors.black,
+                    appBar: _appBar(courseState),
+                    bottomNavigationBar: OlukoBottomNavigationBar(),
+                    body: courseState is CourseSuccess && tagState is TagSuccess
+                        ? OrientationBuilder(builder: (context, orientation) {
+                            return Container(
+                              height: ScreenUtils.height(context),
+                              width: ScreenUtils.width(context),
+                              child: showFilterSelector
+                                  ? _filterSelector(tagState)
+                                  : searchResults.query.isEmpty
+                                      ? _mainPage(courseState)
+                                      : showSearchSuggestions
+                                          ? _searchSuggestions()
+                                          : _searchResults(),
+                            );
+                          })
+                        : OlukoCircularProgressIndicator());
+              });
         });
   }
 
@@ -131,6 +96,52 @@ class _State extends State<Courses> {
         .toList();
   }
 
+  Widget _searchResults() {
+    return SearchResultsGrid<Course>(
+        childAspectRatio: cardsAspectRatio,
+        crossAxisCount:
+            MediaQuery.of(context).orientation == Orientation.portrait
+                ? searchResultsPortrait
+                : searchResultsLandscape,
+        textInput: searchResults.query,
+        itemList: searchResults.searchResults);
+  }
+
+  Widget _searchSuggestions() {
+    return SearchSuggestions<Course>(
+        textInput: searchResults.query,
+        itemList: searchResults.suggestedItems,
+        onPressed: (dynamic item) =>
+            searchKey.currentState.updateSearchResults(item.name),
+        keyNameList: searchResults.suggestedItems.map((e) => e.name).toList());
+  }
+
+  Widget _appBar(CourseState state) {
+    return state is CourseSuccess
+        ? OlukoAppBar<Course>(
+            searchKey: searchKey,
+            title: OlukoLocalizations.of(context).find('courses'),
+            actions: [_filterWidget()],
+            onSearchSubmit: (SearchResults results) => this.setState(() {
+              showSearchSuggestions = false;
+              searchResults = results;
+            }),
+            onSearchResults: (SearchResults results) => this.setState(() {
+              showSearchSuggestions = true;
+              searchResults = SearchResults<Course>(
+                  query: results.query,
+                  suggestedItems: List<Course>.from(results.suggestedItems));
+            }),
+            suggestionMethod: _suggestionMethod,
+            searchMethod: _searchMethod,
+            searchResultItems: state.values,
+            showSearchBar: true,
+            whenSearchBarInitialized: (TextEditingController controller) =>
+                searchBarController = controller,
+          )
+        : null;
+  }
+
   List<Course> _searchMethod(String query, List<Course> collection) {
     return collection
         .where(
@@ -138,43 +149,47 @@ class _State extends State<Courses> {
         .toList();
   }
 
-  ListView _mainPage(CourseSuccess courseState) {
-    return ListView(
-      children: [
-        ListView.builder(
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: courseState.coursesByCategories.length,
-            shrinkWrap: true,
-            itemBuilder: (context, index) {
-              final List<Course> coursesList =
-                  courseState.coursesByCategories.values.elementAt(index);
-              return CarouselSection(
-                height: carouselSectionHeight,
-                title:
-                    courseState.coursesByCategories.keys.elementAt(index).name,
-                optionLabel: OlukoLocalizations.of(context).find('viewAll'),
-                children: coursesList
-                    .map((course) => Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: _getCourseCard(
-                              Image.network(
-                                course.imageUrl,
-                                fit: BoxFit.cover,
-                                frameBuilder: (BuildContext context,
-                                        Widget child,
-                                        int frame,
-                                        bool wasSynchronouslyLoaded) =>
-                                    ImageUtils.frameBuilder(context, child,
-                                        frame, wasSynchronouslyLoaded,
-                                        height: 120),
-                              ),
-                              width: ScreenUtils.width(context) /
-                                  (0.2 + _cardsToShow())),
-                        ))
-                    .toList(),
-              );
-            })
-      ],
+  Widget _mainPage(CourseSuccess courseState) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 15.0, left: 8, right: 8),
+      child: ListView(
+        children: [
+          ListView.builder(
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: courseState.coursesByCategories.length,
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                final List<Course> coursesList =
+                    courseState.coursesByCategories.values.elementAt(index);
+                return CarouselSection(
+                  height: carouselSectionHeight,
+                  title: courseState.coursesByCategories.keys
+                      .elementAt(index)
+                      .name,
+                  optionLabel: OlukoLocalizations.of(context).find('viewAll'),
+                  children: coursesList
+                      .map((course) => Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: _getCourseCard(
+                                Image.network(
+                                  course.imageUrl,
+                                  fit: BoxFit.cover,
+                                  frameBuilder: (BuildContext context,
+                                          Widget child,
+                                          int frame,
+                                          bool wasSynchronouslyLoaded) =>
+                                      ImageUtils.frameBuilder(context, child,
+                                          frame, wasSynchronouslyLoaded,
+                                          height: 120),
+                                ),
+                                width: ScreenUtils.width(context) /
+                                    (0.2 + _cardsToShow())),
+                          ))
+                      .toList(),
+                );
+              })
+        ],
+      ),
     );
   }
 
@@ -188,20 +203,36 @@ class _State extends State<Courses> {
     );
   }
 
-  Widget _showFilterMenu(List<dynamic> items) {
-    return FilterSelector<Course>(
-      itemList: Map<Course, String>.fromIterable(items,
-          key: (course) => course, value: (course) => course.name),
-    );
+  Widget _filterSelector(TagSuccess state) {
+    return Padding(
+        padding: EdgeInsets.only(top: 15.0, left: 8, right: 8),
+        child: FilterSelector<Tag>(
+          itemList: Map.fromIterable(state.tagsByCategories.entries,
+              key: (entry) => entry.key.name,
+              value: (entry) => Map.fromIterable(entry.value,
+                  key: (tag) => tag, value: (tag) => tag.name)),
+          onSubmit: (List<Base> selectedItems) => this.setState(() {
+            selectedTags = selectedItems;
+            showFilterSelector = false;
+          }),
+          onClosed: () => this.setState(() {
+            showFilterSelector = false;
+          }),
+        ));
   }
 
   Widget _filterWidget() {
-    return Padding(
-      padding: const EdgeInsets.only(right: 20.0, top: 4),
-      child: Icon(
-        Icons.filter_alt_outlined,
-        color: OlukoColors.appBarIcon,
-        size: 25,
+    return GestureDetector(
+      onTap: () => this.setState(() {
+        showFilterSelector = !showFilterSelector;
+      }),
+      child: Padding(
+        padding: const EdgeInsets.only(right: 20.0, top: 4),
+        child: Icon(
+          showFilterSelector ? Icons.filter_alt : Icons.filter_alt_outlined,
+          color: OlukoColors.appBarIcon,
+          size: 25,
+        ),
       ),
     );
   }

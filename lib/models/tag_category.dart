@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oluko_app/models/base.dart';
 import 'package:oluko_app/models/tag.dart';
+import 'package:oluko_app/models/tag_category_item.dart';
 
 class TagCategory extends Base {
   TagCategory(
@@ -23,13 +24,15 @@ class TagCategory extends Base {
             isHidden: isHidden);
 
   String name;
-  List<Tag> tags;
+  List<TagCategoryItem> tags;
 
   factory TagCategory.fromJson(Map<String, dynamic> json) {
     TagCategory tagCategory = TagCategory(
       name: json['name'],
       tags: json['tags'] != null
-          ? json['tags'].map<Tag>((item) => Tag.fromJson(item)).toList()
+          ? json['tags']
+              .map<TagCategoryItem>((item) => TagCategoryItem.fromJson(item))
+              .toList()
           : [],
     );
     tagCategory.setBase(json);
