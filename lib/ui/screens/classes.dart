@@ -14,6 +14,7 @@ import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/class_section.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class Classes extends StatefulWidget {
@@ -48,6 +49,7 @@ class _ClassesState extends State<Classes> {
     return MultiBlocProvider(
         providers: [
           BlocProvider<CourseBloc>(
+            //TODO: change this when the view is in the correct place
             create: (context) => _courseBloc..getById("CC5HBkSV8DthLQNKyBlc"),
           ),
           BlocProvider<ClassBloc>(
@@ -68,7 +70,7 @@ class _ClassesState extends State<Classes> {
     return Form(
         key: _formKey,
         child: Scaffold(
-            appBar: OlukoAppBar(title: "Course"),
+            appBar: OlukoAppBar(title: OlukoLocalizations.of(context).find('course')),
             body: Container(
                 color: Colors.black,
                 child: ListView(children: [
@@ -117,9 +119,10 @@ class _ClassesState extends State<Classes> {
                                   padding: const EdgeInsets.only(
                                       top: 10.0, right: 10),
                                   child: Text(
-                                    "6 Weeks, " +
+                                    //TODO: change weeks number
+                                    "6 " + OlukoLocalizations.of(context).find('weeks') + ", " +
                                         course.classes.length.toString() +
-                                        " Classes.",
+                                        " " + OlukoLocalizations.of(context).find('classes'),
                                     style: OlukoFonts.olukoBigFont(
                                         custoFontWeight: FontWeight.normal,
                                         customColor: OlukoColors.grayColor),
@@ -174,7 +177,7 @@ class _ClassesState extends State<Classes> {
                                         return Padding(
                                           padding: const EdgeInsets.all(50.0),
                                           child: Center(
-                                            child: Text('Loading...',
+                                            child: Text(OlukoLocalizations.of(context).find('loadingWhithDots'),
                                                 style: TextStyle(
                                                   color: Colors.white,
                                                 )),
@@ -186,7 +189,7 @@ class _ClassesState extends State<Classes> {
                                       mainAxisSize: MainAxisSize.max,
                                       children: [
                                         OlukoPrimaryButton(
-                                          title: 'Enroll',
+                                          title: OlukoLocalizations.of(context).find('enroll'),
                                           onPressed: () {},
                                         ),
                                       ],
@@ -206,7 +209,6 @@ class _ClassesState extends State<Classes> {
       widgets.add(Center(child: CircularProgressIndicator()));
     }
     widgets.add(OlukoVideoPlayer(
-        //videoUrl: _mainAssessment.video,
         autoPlay: false,
         whenInitialized: (ChewieController chewieController) =>
             this.setState(() {
