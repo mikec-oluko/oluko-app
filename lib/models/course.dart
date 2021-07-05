@@ -17,6 +17,7 @@ class Course extends Base {
   dynamic engagementTime;
   bool mandatoryGapTime;
   List<ObjectSubmodel> classes;
+  List<ObjectSubmodel> tags;
   String imageUrl;
 
   Course(
@@ -32,6 +33,7 @@ class Course extends Base {
       this.engagementTime,
       this.mandatoryGapTime,
       this.classes,
+      this.tags,
       this.imageUrl,
       this.video,
       this.description,
@@ -69,6 +71,10 @@ class Course extends Base {
         classes: json['classes'] != null
             ? List<ObjectSubmodel>.from(
                 json['classes'].map((c) => ObjectSubmodel.fromJson(c)))
+            : null,
+        tags: json['tags'] != null
+            ? List<ObjectSubmodel>.from(
+                json['tags'].map((c) => ObjectSubmodel.fromJson(c)))
             : null,
         imageUrl: json['image_url']);
     course.setBase(json);

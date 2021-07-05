@@ -3,7 +3,6 @@ import 'package:oluko_app/models/base.dart';
 import 'package:oluko_app/ui/components/search_filters.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
-
 import 'oluko_outlined_button.dart';
 import 'oluko_primary_button.dart';
 
@@ -13,13 +12,15 @@ class FilterSelector<T extends Base> extends StatefulWidget {
   final Function(List<T>) onPressed;
   final Function(List<T>) onSubmit;
   final Function() onClosed;
+  List<Base> selectedTags;
 
   FilterSelector(
       {this.textInput,
       this.itemList,
       this.onPressed,
       this.onSubmit,
-      this.onClosed});
+      this.onClosed,
+      this.selectedTags});
 
   @override
   State<StatefulWidget> createState() => _State<T>();
@@ -30,7 +31,7 @@ class _State<T extends Base> extends State<FilterSelector> {
 
   @override
   void initState() {
-    clearSelectedItems();
+    initializeSelectedItems();
     super.initState();
   }
 
@@ -83,31 +84,53 @@ class _State<T extends Base> extends State<FilterSelector> {
       SearchFilters<T>(
           itemList: Map<T, String>.fromIterable(filterEntry.value.keys,
               key: (item) => item, value: (item) => item.name),
+          selectedTags: _getSelectedItemList(),
           onPressed: _loadTagsFromSearchFilter)
     ];
   }
 
   void _loadTagsFromSearchFilter(Map<String, bool> selectedItems) {
-    selectedItems.entries.forEach(
-        (MapEntry<String, bool> entry) => _selected[entry.key] = entry.value);
-    if (widget.onPressed != null) {
-      widget.onPressed(_getSelectedItemList());
-    }
+    this.setState(() {
+      selectedItems.entries.forEach(
+          (MapEntry<String, bool> entry) => _selected[entry.key] = entry.value);
+      if (widget.onPressed != null) {
+        widget.onPressed(_getSelectedItemList());
+      }
+    });
   }
 
   List<Base> _getSelectedItemList() {
-    return _selected.entries
-        .where((element) => element.value == true)
-        .map((entry) => widget.itemList.entries.first.value.keys
-            .firstWhere((item) => item.id == entry.key))
+    List<MapEntry<String, bool>> selectedEntries =
+        _selected.entries.where((element) => element.value == true).toList();
+
+    List<T> allItems =
+        _getAllValuesFromCategories(widget.itemList.entries.toList())
+            .map((item) => item.key)
+            .toList();
+
+    return selectedEntries
+        .map((entry) => allItems.firstWhere((item) => item.id == entry.key))
         .toList();
   }
 
-  void clearSelectedItems() {
-    _selected = Map<String, bool>.fromIterable(
-        widget.itemList.values.first.keys,
-        key: (item) => item.id,
-        value: (item) => false);
+  List<MapEntry<T, String>> _getAllValuesFromCategories(
+      List<MapEntry<String, Map<T, String>>> itemsInCategories) {
+    List<MapEntry<T, String>> allItems = [];
+
+    itemsInCategories.forEach((MapEntry<String, Map<T, String>> entry) =>
+        entry.value.entries.forEach((item) => allItems.add(item)));
+    return allItems;
+  }
+
+  //Populate selected items array for first time at widget init
+  void initializeSelectedItems() {
+    List<MapEntry<T, String>> allItems =
+        _getAllValuesFromCategories(widget.itemList.entries.toList()).toList();
+
+    _selected = Map.fromIterable(allItems,
+        key: (item) => item.key.id,
+        value: (item) =>
+            widget.selectedTags.map((tag) => tag.id).contains(item.key.id));
   }
 
   void submit() {
