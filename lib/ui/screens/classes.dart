@@ -78,7 +78,7 @@ class _ClassesState extends State<Classes> {
                 color: Colors.black,
                 child: ListView(children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 25),
+                    padding: const EdgeInsets.only(bottom: 25),
                     child: OrientationBuilder(
                       builder: (context, orientation) {
                         return showVideoPlayer();
