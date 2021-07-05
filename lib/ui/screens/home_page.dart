@@ -232,7 +232,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _mainPage(CourseSuccess courseState) {
     return Padding(
-      padding: const EdgeInsets.only(top: 15.0, left: 8, right: 8),
+      padding: const EdgeInsets.only(top: 0.0, left: 8, right: 8),
       child: ListView(
         children: [
           ListView.builder(
@@ -251,20 +251,24 @@ class _MyHomePageState extends State<MyHomePage> {
                   children: coursesList
                       .map((course) => Padding(
                             padding: const EdgeInsets.only(right: 8.0),
-                            child: _getCourseCard(
-                                Image.network(
-                                  course.imageUrl,
-                                  fit: BoxFit.cover,
-                                  frameBuilder: (BuildContext context,
-                                          Widget child,
-                                          int frame,
-                                          bool wasSynchronouslyLoaded) =>
-                                      ImageUtils.frameBuilder(context, child,
-                                          frame, wasSynchronouslyLoaded,
-                                          height: 120),
-                                ),
-                                width: ScreenUtils.width(context) /
-                                    (0.2 + _cardsToShow())),
+                            child: GestureDetector(
+                              onTap: () =>
+                                  Navigator.pushNamed(context, '/classes'),
+                              child: _getCourseCard(
+                                  Image.network(
+                                    course.imageUrl,
+                                    fit: BoxFit.cover,
+                                    frameBuilder: (BuildContext context,
+                                            Widget child,
+                                            int frame,
+                                            bool wasSynchronouslyLoaded) =>
+                                        ImageUtils.frameBuilder(context, child,
+                                            frame, wasSynchronouslyLoaded,
+                                            height: 120),
+                                  ),
+                                  width: ScreenUtils.width(context) /
+                                      (0.2 + _cardsToShow())),
+                            ),
                           ))
                       .toList(),
                 );
