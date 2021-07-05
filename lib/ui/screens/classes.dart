@@ -12,6 +12,7 @@ import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/class_section.dart';
+import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
@@ -29,11 +30,11 @@ class _ClassesState extends State<Classes> {
   ClassBloc _classBloc;
 
   //TODO: remove hardcoded reference
-  DocumentReference courseReference = FirebaseFirestore.instance
+  DocumentReference classReference = FirebaseFirestore.instance
       .collection("projects")
       .doc(GlobalConfiguration().getValue("projectId"))
-      .collection("courses")
-      .doc('CC5HBkSV8DthLQNKyBlc');
+      .collection("classes")
+      .doc('QqwulqE1o6u1wtVeq9AE');
 
   @override
   void initState() {
@@ -44,15 +45,6 @@ class _ClassesState extends State<Classes> {
 
   @override
   Widget build(BuildContext context) {
-    /*CourseRepository.create(Course(
-        name: "6 Weeks to great abs",
-        imageUrl:
-            "https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_1.png?alt=media&token=2de41e42-fd00-4acc-8027-662792090253",
-        video: "https://oluko-mvt.s3.us-west-1.amazonaws.com/assessments/85b2f81c1fe74f9cb5e804c57db30137/85b2f81c1fe74f9cb5e804c57db30137_2.mp4"));*/
-    /*ClassRepository.create(Class(name: "Strength",
-    video: "https://oluko-mvt.s3.us-west-1.amazonaws.com/assessments/85b2f81c1fe74f9cb5e804c57db30137/85b2f81c1fe74f9cb5e804c57db30137_2.mp4",
-    image: "https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/classes_sample_images%2Fclass_sample_2.png?alt=media&token=f3ac6b80-a2f5-4612-ab72-ea72f88ad00e",
-    description: "Contrary to popular belief, Lor em Ipsum is not sim ply rando mie text. Pular belief, Lor em Ipsum is not sim ply rando mie text."), courseReference);*/
     return MultiBlocProvider(
         providers: [
           BlocProvider<CourseBloc>(
@@ -161,9 +153,9 @@ class _ClassesState extends State<Classes> {
                                                           .symmetric(
                                                       vertical: 15.0),
                                                   child: ClassSection(
-                                                classObj: classObj,
-                                                onPressed: () {
-                                                  /*if (_controller != null) {
+                                                    classObj: classObj,
+                                                    onPressed: () {
+                                                      /*if (_controller != null) {
                                                     _controller.pause();
                                                   }
                                                   return Navigator.push(context,
@@ -175,8 +167,8 @@ class _ClassesState extends State<Classes> {
                                                       this.setState(() {
                                                         _controller = null;
                                                       }));*/
-                                                },
-                                              ));
+                                                    },
+                                                  ));
                                             });
                                       } else {
                                         return Padding(
@@ -190,6 +182,15 @@ class _ClassesState extends State<Classes> {
                                         );
                                       }
                                     }),
+                                    Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: [
+                                        OlukoPrimaryButton(
+                                          title: 'Enroll',
+                                          onPressed: () {},
+                                        ),
+                                      ],
+                                    ),
                                   ],
                                 ),
                                 SizedBox(

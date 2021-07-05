@@ -1,10 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:oluko_app/blocs/class_bloc.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
-import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/repositories/course_repository.dart';
 
 class ClassRepository {
@@ -19,19 +17,21 @@ class ClassRepository {
   }
 
   static Future<List<Class>> getAll(Course course) async {
-    List<String> courseClassesId = [];
+    List<String> courseClassesIds = [];
     course.classes.forEach((ObjectSubmodel classObj) {
-      courseClassesId.add(classObj.objectId);
-     });
+      courseClassesIds.add(classObj.objectId);
+    });
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"))
-        .collection('classes').where("id", whereIn: courseClassesId)
+        .collection('classes')
+        .where("id", whereIn: courseClassesIds)
         .get();
     return mapQueryToClass(querySnapshot);
   }
 
-  static Future<Class> create(Class newClass, DocumentReference courseReference) async{
+  static Future<Class> create(
+      Class newClass, DocumentReference courseReference) async {
     CollectionReference reference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"))
@@ -51,5 +51,22 @@ class ClassRepository {
     return qs.docs.map((DocumentSnapshot ds) {
       return Class.fromJson(ds.data());
     }).toList();
+  }
+
+  static Future<void> updateSegments(
+      ObjectSubmodel segment, DocumentReference reference) async {
+    DocumentSnapshot ds = await reference.get();
+    Class classObj = Class.fromJson(ds.data());
+    List<ObjectSubmodel> segments;
+    if (classObj.segments == null) {
+      segments = [];
+    } else {
+      segments = classObj.segments;
+    }
+    segments.add(segment);
+    reference.update({
+      'segments':
+          List<dynamic>.from(segments.map((segment) => segment.toJson()))
+    });
   }
 }
