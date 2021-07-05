@@ -67,6 +67,8 @@ class _MyAppState extends State<MyApp> {
       routes: {
         '/': (context) => MultiBlocProvider(providers: [
               BlocProvider.value(value: _authBloc),
+              BlocProvider(create: (context) => CourseBloc()),
+              BlocProvider(create: (context) => TagBloc())
             ], child: MyHomePage(title: '')),
         '/sign-up': (context) =>
             BlocProvider.value(value: _authBloc, child: SignUpPage()),

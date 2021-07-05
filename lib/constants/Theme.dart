@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 class OlukoColors {
   static const Color black = Color(0xFF000000);
-  
+
   static const Color black87 = Colors.black87;
 
   static const Color white = Color(0xFFFFFFFF);
