@@ -122,7 +122,7 @@ class _TaskDetailsState extends State<TaskDetails> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               formFields(state),
-              BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
+              /*BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
                   builder: (context, state) {
                 if (state is GetSuccess && state.taskSubmission != null) {
                   return Row(
@@ -146,12 +146,12 @@ class _TaskDetailsState extends State<TaskDetails> {
                 } else {
                   return Text("");
                 }
-              }),
+              }),*/
               Row(
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   OlukoPrimaryButton(
-                    title: 'Start Recording',
+                    title: OlukoLocalizations.of(context).find('startRecording'),
                     onPressed: () {
                       if (_controller != null) {
                         _controller.pause();
@@ -201,7 +201,7 @@ class _TaskDetailsState extends State<TaskDetails> {
           BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
               builder: (context, state) {
             if (state is GetSuccess && state.taskSubmission != null) {
-              return SizedBox()/*recordedVideos(state.taskSubmission)*/;
+              return recordedVideos(state.taskSubmission);
             } else {
               return SizedBox();
             }
@@ -216,11 +216,11 @@ class _TaskDetailsState extends State<TaskDetails> {
   recordedVideos(TaskSubmission taskSubmission) {
     return Column(children: [
       Padding(
-        padding: const EdgeInsets.symmetric(vertical: 25.0),
+        padding: const EdgeInsets.symmetric(vertical: 15.0),
         child: Align(
             alignment: Alignment.centerLeft,
             child: TitleBody(
-              OlukoLocalizations.of(context).find('recordedVideo') ,
+              OlukoLocalizations.of(context).find('recordedVideo'),
               bold: true,
             )),
       ),

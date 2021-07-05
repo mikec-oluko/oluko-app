@@ -4,13 +4,17 @@ import 'package:oluko_app/models/submodels/object_submodel.dart';
 
 class Class extends Base {
   String video;
+  String image;
   String name;
+  String description;
   List<ObjectSubmodel> segments;
 
   Class(
       {this.video,
       this.name,
       this.segments,
+      this.description,
+      this.image,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -29,11 +33,14 @@ class Class extends Base {
 
   factory Class.fromJson(Map<String, dynamic> json) {
     Class classObject = Class(
-      video: json['video'],
-      name: json['name'],
-      segments: List<ObjectSubmodel>.from(
-          json['segments'].map((segment) => ObjectSubmodel.fromJson(segment)))
-    );
+        video: json['video'],
+        name: json['name'],
+        image: json['image'],
+        description: json['description'],
+        segments: json['segments'] == null
+            ? null
+            : List<ObjectSubmodel>.from(json['segments']
+                .map((segment) => ObjectSubmodel.fromJson(segment))));
     classObject.setBase(json);
     return classObject;
   }
@@ -42,7 +49,11 @@ class Class extends Base {
     Map<String, dynamic> classJson = {
       'video': video,
       'name': name,
-      'segments': List<dynamic>.from(segments.map((segment) => segment.toJson())),
+      'description': description,
+      'image': image,
+      'segments': segments == null
+          ? null
+          : List<dynamic>.from(segments.map((segment) => segment.toJson())),
     };
     classJson.addEntries(super.toJson().entries);
     return classJson;

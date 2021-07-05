@@ -36,5 +36,18 @@
     "yetToUnlock": "Yet to 'Unlock'",
     "tapToUpload": "Tap to Upload",
     "recordedVideo": "Recorded video",
-    "classes": "Classes"
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "userName": "User Name",
+    "settings": "Settings",
+    "upgrade": "upgrade",
+    "fromGallery": "Select from Gallery",
+    "camera": "Camera",
+    "uploadingWithDots":  "Uploading...",
+    "classes": "Classes",
+    "course": "Course",
+    "enroll": "Enroll",
+    "loadingWhithDots": "Loading...",
+    "weeks": "Weeks",
+    "startRecording": "Start Recording"
 }

@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
+import 'package:oluko_app/ui/components/dialog.dart';
+import 'package:oluko_app/ui/components/image_and_video_container.dart';
 import 'package:oluko_app/ui/components/image_and_video_preview_card.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
+import 'package:oluko_app/ui/components/transformation_journey_modal_options.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
+import 'package:oluko_app/ui/screens/profile/profile_routes.dart';
+import 'package:oluko_app/ui/screens/profile/transformation_journey_post.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ProfileTransformationJourneyPage extends StatefulWidget {
@@ -14,42 +19,17 @@ class ProfileTransformationJourneyPage extends StatefulWidget {
 
 class _ProfileTransformationJourneyPageState
     extends State<ProfileTransformationJourneyPage> {
-  List<Widget> widgetsToUse;
-  String titleForContent;
-
-  List<Content> _uploadListContent = [
-    Content(imgUrl: 'assets/courses/course_sample_3.png', isVideo: true),
-    Content(imgUrl: 'assets/courses/course_sample_5.png', isVideo: true),
-    Content(imgUrl: 'assets/courses/course_sample_4.png', isVideo: true),
-    Content(imgUrl: 'assets/courses/course_sample_6.png', isVideo: false),
-    Content(imgUrl: 'assets/courses/course_sample_7.png', isVideo: false),
-    Content(imgUrl: 'assets/courses/course_sample_8.png', isVideo: false),
-  ];
+  List<Widget> _contentGallery;
+  String _titleForContent;
 
   Widget _getImageAndVideoCard(String assetImage, {bool isVideo}) {
-    return Padding(
-      padding: const EdgeInsets.all(5),
-      child: Container(
-        height: 120,
-        width: 100,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-          color: OlukoColors.black,
-        ),
-        child: ImageAndVideoPreviewCard(
-          imageCover: Image.asset(
-            assetImage,
-            fit: BoxFit.fill,
-            height: 120,
-            width: 120,
-          ),
-          isVideo: isVideo,
-        ),
-      ),
+    return ImageAndVideoContainer(
+      assetImage: assetImage,
+      isVideo: isVideo,
     );
   }
 
-  List<Widget> buildPageContent({List<Content> uploadListContent}) {
+  List<Widget> buildContentGallery({List<Content> uploadListContent}) {
     List<Widget> widgetListOfContentTempt = [];
 
     uploadListContent.forEach((content) => {
@@ -64,22 +44,22 @@ class _ProfileTransformationJourneyPageState
     return widgetListOfContentTempt;
   }
 
-  String buildPageTitleContent({List<Content> uploadListContent}) {
-    int videos = 0;
-    int images = 0;
+  String getTitleForContent({List<Content> uploadListContent}) {
+    int _videos = 0;
+    int _images = 0;
     uploadListContent
-        .forEach((content) => {content.isVideo ? videos += 1 : images += 1});
-    return "Uploaded  $images Images & $videos Videos";
+        .forEach((content) => content.isVideo ? _videos += 1 : _images += 1);
+    return "Uploaded $_images Images & $_videos Videos";
   }
 
   @override
   void initState() {
     setState(() {
-      widgetsToUse = buildPageContent(uploadListContent: _uploadListContent);
-      titleForContent =
-          buildPageTitleContent(uploadListContent: _uploadListContent);
+      _contentGallery =
+          buildContentGallery(uploadListContent: uploadListContent);
+      _titleForContent =
+          getTitleForContent(uploadListContent: uploadListContent);
     });
-
     super.initState();
   }
 
@@ -102,20 +82,28 @@ class _ProfileTransformationJourneyPageState
                         width: MediaQuery.of(context).size.width,
                         child: Padding(
                           padding: const EdgeInsets.all(15.0),
-                          child: OlukoOutlinedButton(title: "Tap to Upload"),
+                          child: OlukoOutlinedButton(
+                              title: OlukoLocalizations.of(context)
+                                  .find('tapToUpload'),
+                              onPressed: () =>
+                                  ProfileViewConstants.dialogContent(
+                                      context: context,
+                                      content: [
+                                        TransformationJourneyOptions()
+                                      ])),
                         )))),
             Padding(
               padding: const EdgeInsets.fromLTRB(10, 100, 10, 0),
               child: Align(
                   alignment: Alignment.topLeft,
                   child:
-                      Text(titleForContent, style: OlukoFonts.olukoBigFont())),
+                      Text(_titleForContent, style: OlukoFonts.olukoBigFont())),
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(10, 150, 10, 0),
               child: GridView.count(
                 crossAxisCount: 3,
-                children: widgetsToUse,
+                children: _contentGallery,
               ),
             ),
           ]),

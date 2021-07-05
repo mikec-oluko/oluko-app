@@ -48,10 +48,12 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
                   onPressed: () => Navigator.pop(context),
                 )
               : null,
-          title: TitleHeader(
-            title,
-            bold: true,
-          ),
+          title: FittedBox(
+              fit: BoxFit.fitWidth,
+              child: TitleHeader(
+                title,
+                bold: true,
+              )),
           actions: actions,
           bottom: showSearchBar == true
               ? PreferredSize(

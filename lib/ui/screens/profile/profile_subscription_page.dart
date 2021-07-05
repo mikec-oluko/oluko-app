@@ -6,8 +6,10 @@ import 'package:oluko_app/helpers/enum_helper.dart';
 import 'package:oluko_app/models/plan.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/subscription_card.dart';
+import 'package:oluko_app/ui/components/subscription_modal_options.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ProfileSubscriptionPage extends StatefulWidget {
   @override
@@ -65,7 +67,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
   Stack _subscriptionCardWithButton(PlansSuccess state, BuildContext context) {
     return Stack(
       clipBehavior: Clip.none,
-      alignment: Alignment.center,
+      alignment: Alignment.bottomCenter,
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
@@ -87,11 +89,14 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
                               bottomRight: Radius.circular(10.0))),
                       primary: OlukoColors.primary,
                       side: BorderSide(color: OlukoColors.primary)),
-                  onPressed: () => {},
+                  onPressed: () => ProfileViewConstants.dialogContent(
+                      context: context,
+                      content: [SubscriptionModalOption()],
+                      closeButton: true),
                   child: Padding(
                       padding: const EdgeInsets.all(15.0),
                       child: Text(
-                        ProfileViewConstants.profileUpgradeText,
+                        OlukoLocalizations.of(context).find('upgrade'),
                         style: TextStyle(fontSize: 18),
                       ))),
             ),

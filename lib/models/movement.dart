@@ -33,7 +33,7 @@ class Movement extends Base {
         name: json['name'],
         video: json['video'],
         description: json['description'],
-        tags: List<String>.from(json['tags']));
+        tags: json['tags'] == null ? null : List<String>.from(json['tags']));
     movement.setBase(json);
     return movement;
   }
@@ -43,7 +43,7 @@ class Movement extends Base {
       'name': name,
       'video': video,
       'description': description,
-      'tags': List<dynamic>.from(tags),
+      'tags': tags == null ? null : List<dynamic>.from(tags),
     };
     movementJson.addEntries(super.toJson().entries);
     return movementJson;

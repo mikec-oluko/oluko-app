@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class CarouselSmallSection extends StatefulWidget {
   final String title;
@@ -21,7 +22,6 @@ class CarouselSmallSection extends StatefulWidget {
 }
 
 class _State extends State<CarouselSmallSection> {
-  final String _viewAll = "View All";
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -40,7 +40,7 @@ class _State extends State<CarouselSmallSection> {
               child: TextButton(
                 onPressed: () => Navigator.pushNamed(context, widget.routeToGo),
                 child: Text(
-                  _viewAll,
+                  OlukoLocalizations.of(context).find('viewAll'),
                   style: TextStyle(color: OlukoColors.primary),
                 ),
               ),

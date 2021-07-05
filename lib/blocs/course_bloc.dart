@@ -15,6 +15,11 @@ class CourseSuccess extends CourseState {
   CourseSuccess({this.values, this.coursesByCategories});
 }
 
+class GetCourseSuccess extends CourseState {
+  final Course course;
+  GetCourseSuccess({this.course});
+}
+
 class CourseFailure extends CourseState {
   final Exception exception;
 
@@ -47,6 +52,18 @@ class CourseBloc extends Cubit<CourseState> {
       Map<CourseCategory, List<Course>> mappedCourses =
           CourseUtils.mapCoursesByCategories(courses, courseCategories);
       emit(CourseSuccess(values: courses, coursesByCategories: mappedCourses));
+    } catch (e) {
+      emit(CourseFailure(exception: e));
+    }
+  }
+
+  void getById(String id) async {
+    if (!(state is GetCourseSuccess)) {
+      emit(CourseLoading());
+    }
+    try {
+      Course course = await CourseRepository.get(id);
+      emit(GetCourseSuccess(course: course));
     } catch (e) {
       emit(CourseFailure(exception: e));
     }

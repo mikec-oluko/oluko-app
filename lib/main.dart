@@ -23,6 +23,8 @@ import 'package:oluko_app/ui/screens/profile/profile_own_profile_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_settings_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_subscription_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_transformation_journey_page.dart';
+import 'package:oluko_app/ui/screens/profile/transformation_journey_post.dart';
+import 'package:oluko_app/ui/screens/self_recording_preview.dart';
 import 'package:oluko_app/ui/screens/sign_up_with_email.dart';
 import 'package:oluko_app/ui/screens/sign_up.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -56,6 +58,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: '${OLUKO}',
       theme: ThemeData(
         primarySwatch: Colors.grey,
@@ -87,6 +90,10 @@ class _MyAppState extends State<MyApp> {
             value: _authBloc, child: ProfileChallengesPage()),
         '/profile-transformation-journey': (context) => BlocProvider.value(
             value: _authBloc, child: ProfileTransformationJourneyPage()),
+        '/transformation-journey-post': (context) => BlocProvider.value(
+            value: _authBloc, child: TransformationJourneyPostPage()),
+        '/transformation-journey-post-view': (context) => BlocProvider.value(
+            value: _authBloc, child: TransformationJourneyPostPage()),
         '/log-in': (context) =>
             BlocProvider.value(value: _authBloc, child: LoginPage()),
         '/app-plans': (context) =>
