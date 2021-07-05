@@ -34,5 +34,13 @@
     "yetToUnlock": "Yet to 'Unlock'",
     "tapToUpload": "Tap to Upload",
     "recordedVideo": "Recorded video",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "userName": "User Name",
+    "settings": "Settings",
+    "upgrade": "upgrade",
+    "fromGallery": "Select from Gallery",
+    "camera": "Camera",
+    "uploadingWithDots":  "Uploading...",
     "classes": "Classes"
 }

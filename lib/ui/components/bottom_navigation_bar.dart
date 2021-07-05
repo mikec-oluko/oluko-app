@@ -107,8 +107,7 @@ class _State extends State<OlukoBottomNavigationBar> {
       OlukoBottomNavigationBarItem(
           title: OlukoLocalizations.of(context).find('profile'),
           assetImageUrl: 'assets/bottom_navigation_bar/profile.png',
-          route: '/profile',
-          disabled: true),
+          route: '/profile'),
     ];
     return items;
   }

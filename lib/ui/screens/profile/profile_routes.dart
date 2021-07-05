@@ -7,6 +7,11 @@ class ProfileRoutes {
   static const String profileSubscriptionRoute = '/profile-subscription';
   static const String profileMyAccountRoute = '/profile-my-account';
   static const String profileChallengesRoute = '/profile-challenges';
+  static const String profileAssessmentsVideosRoute = '/assessment-videos';
+  static const String profileTransformaionJourneyPostRoute =
+      '/transformation-journey-post-view';
+  static const String profileTransformationJourneyPostRoute =
+      '/transformation-journey-post';
   static const String profileHelpAndSupportRoute = '/profile-help-and-support';
   static const String profileTransformationJourneyRoute =
       '/profile-transformation-journey';
@@ -16,7 +21,7 @@ class ProfileRoutes {
       case ProfileViewConstants.profileOptionsMyAccount:
         return ProfileRoutes.profileMyAccountRoute;
       case ProfileViewConstants.profileOptionsAssessmentVideos:
-        return '/';
+        return ProfileRoutes.profileAssessmentsVideosRoute;
       case ProfileViewConstants.profileOptionsTransformationJourney:
         return ProfileRoutes.profileTransformationJourneyRoute;
       case ProfileViewConstants.profileOptionsSubscription:
@@ -38,4 +43,6 @@ class ProfileRoutes {
 
   static goToTransformationJourney() =>
       ProfileRoutes.profileTransformationJourneyRoute;
+
+  static goToAssessmentVideos() => ProfileRoutes.profileAssessmentsVideosRoute;
 }

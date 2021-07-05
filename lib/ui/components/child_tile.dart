@@ -15,9 +15,10 @@ class _ChildTileWidgetState extends State<ChildTileWidget> {
     Icons.keyboard_arrow_right,
     color: OlukoColors.grayColor,
   );
+
   @override
   Widget build(BuildContext context) {
-    final title = widget.tile.title;
+    final displayText = widget.tile.title;
     final tiles = widget.tile.tiles;
     if (tiles.isEmpty) {
       return Container(
@@ -25,9 +26,9 @@ class _ChildTileWidgetState extends State<ChildTileWidget> {
             color: OlukoColors.primary,
             borderRadius: BorderRadius.all(Radius.circular(10))),
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(title,
-              style: OlukoFonts.olukoSmallFont(customColor: Colors.black)),
+          padding: const EdgeInsets.all(10.0),
+          child: Text(displayText,
+              style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.black)),
         ),
       );
     }
@@ -36,6 +37,7 @@ class _ChildTileWidgetState extends State<ChildTileWidget> {
           color: OlukoColors.listGrayColor,
           borderRadius: BorderRadius.all(Radius.circular(10))),
       child: ExpansionTile(
+          initiallyExpanded: widget.tile.isExpanded,
           backgroundColor: OlukoColors.listGrayColor,
           onExpansionChanged: (bool value) {
             setState(() {
@@ -53,7 +55,7 @@ class _ChildTileWidgetState extends State<ChildTileWidget> {
             });
           },
           trailing: iconToUse,
-          title: Text(title,
+          title: Text(displayText,
               style: OlukoFonts.olukoMediumFont(
                   customColor: OlukoColors.grayColor)),
           children: tiles.map((tile) => ChildTileWidget(tile: tile)).toList()),

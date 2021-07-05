@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:oluko_app/ui/components/dialog.dart';
 
 class ProfileViewConstants {
+  //Constants used on Profile Feature
   static const profileTitle = "Profile";
-  static const profileUserFirstName = "First Name";
-  static const profileUserLastName = "Last Name";
-  static const profileUserEmail = "Email";
-  static const profileUserName = "Username";
   static const profileUserNameContent = "myUserName";
   static const profileSettingsTitle = "Settings";
   static const profileMyAccountTitle = "My Account";
@@ -34,11 +32,13 @@ class ProfileViewConstants {
   static const profileHelpAndSupportSubTitle = "Need more help?";
   static const profileHelpAndSupportButtonText = "Contact us";
   static const profileUpcomingChallengesTitle = "Upcoming Challenges";
-  static const profileOwnProfileViewAll = "View All";
   static const profileOwnProfileActiveCourses = 'Active Courses';
-  static const profileSubscriptionLogout = "Logout";
   static const profileChallengesPageTitle = "Challenges";
+  static const profileChangePaymentMethodTitle = "Change Payment Method";
+  static const profileUnsuscribeTitle = "Unsubscribe";
+  static const profileSelectFromGalleryTitle = "Select from Gallery";
 
+  //List of options for Profile settings.
   static const List<String> profileOptions = [
     profileOptionsMyAccount,
     profileOptionsAssessmentVideos,
@@ -47,11 +47,37 @@ class ProfileViewConstants {
     profileOptionsSettings,
     profileOptionsHelpAndSupport,
   ];
+
+  //Function handler Dialog/Modal
+  static dialogContent(
+      {BuildContext context, List<Widget> content, bool closeButton = false}) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext _) {
+          if (closeButton == true) {
+            content.insert(
+                0,
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: Container(
+                    height: 10,
+                    child: IconButton(
+                        padding: EdgeInsets.all(0),
+                        icon: Icon(Icons.close, color: Colors.white),
+                        onPressed: () => Navigator.pop(context)),
+                  ),
+                ));
+          }
+
+          return DialogWidget(content: content);
+        });
+  }
 }
 
-//TODO: Used as options != String on the view
+//Options to update on settings
 enum SettingsOptions { notification, public, restricted, anonymous }
 
+//Basic model for Tile (Help and Support)
 class BasicTile {
   final String title;
   final List<BasicTile> tiles;
@@ -99,6 +125,7 @@ final basicTiles = <BasicTile>[
   ])
 ];
 
+//Basic model of Challenge, used on profile/Challenges
 class Challenge {
   String title;
   String subtitle;
@@ -109,13 +136,14 @@ class Challenge {
       {this.title, this.subtitle, this.type, this.isLocked, this.imageCover});
 }
 
+//Basic model for Content uploade for user, image/video
 class Content {
   String imgUrl;
   bool isVideo;
   Content({this.imgUrl, this.isVideo});
 }
 
-//Challenge example
+//Challenges examples
 final challengeDefault = Challenge(
     title: "20min EMOM challenge",
     subtitle: "Innterval traiinning",
@@ -137,8 +165,19 @@ final _lockedChallenge = Challenge(
     isLocked: true,
     imageCover: 'assets/courses/course_sample_3.png');
 
+//List of challenges, (Challenges)
 final List<Challenge> challengeCollection = [
   challengeDefault,
   _secondChallenge,
   _lockedChallenge
+];
+
+//List of content (Displayed on Transformation Journey)
+final List<Content> uploadListContent = [
+  Content(imgUrl: 'assets/courses/course_sample_3.png', isVideo: true),
+  Content(imgUrl: 'assets/courses/course_sample_5.png', isVideo: true),
+  Content(imgUrl: 'assets/courses/course_sample_4.png', isVideo: true),
+  Content(imgUrl: 'assets/courses/course_sample_6.png', isVideo: false),
+  Content(imgUrl: 'assets/courses/course_sample_7.png', isVideo: false),
+  Content(imgUrl: 'assets/courses/course_sample_8.png', isVideo: false),
 ];
