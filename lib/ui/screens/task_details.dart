@@ -7,6 +7,7 @@ import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_submission_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
@@ -150,7 +151,8 @@ class _TaskDetailsState extends State<TaskDetails> {
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   OlukoPrimaryButton(
-                    title: OlukoLocalizations.of(context).find('startRecording'),
+                    title:
+                        OlukoLocalizations.of(context).find('startRecording'),
                     onPressed: () {
                       if (_controller != null) {
                         _controller.pause();

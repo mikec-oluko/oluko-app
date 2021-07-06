@@ -7,7 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/blocs/class_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
-import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/movement.dart';
@@ -74,7 +74,8 @@ class _ClassesState extends State<Classes> {
     return Form(
         key: _formKey,
         child: Scaffold(
-            appBar: OlukoAppBar(title: OlukoLocalizations.of(context).find('course')),
+            appBar: OlukoAppBar(
+                title: OlukoLocalizations.of(context).find('course')),
             body: Container(
                 color: Colors.black,
                 child: ListView(children: [
@@ -124,9 +125,14 @@ class _ClassesState extends State<Classes> {
                                       top: 10.0, right: 10),
                                   child: Text(
                                     //TODO: change weeks number
-                                    "6 " + OlukoLocalizations.of(context).find('weeks') + ", " +
+                                    "6 " +
+                                        OlukoLocalizations.of(context)
+                                            .find('weeks') +
+                                        ", " +
                                         course.classes.length.toString() +
-                                        " " + OlukoLocalizations.of(context).find('classes'),
+                                        " " +
+                                        OlukoLocalizations.of(context)
+                                            .find('classes'),
                                     style: OlukoFonts.olukoBigFont(
                                         custoFontWeight: FontWeight.normal,
                                         customColor: OlukoColors.grayColor),
@@ -181,7 +187,9 @@ class _ClassesState extends State<Classes> {
                                         return Padding(
                                           padding: const EdgeInsets.all(50.0),
                                           child: Center(
-                                            child: Text(OlukoLocalizations.of(context).find('loadingWhithDots'),
+                                            child: Text(
+                                                OlukoLocalizations.of(context)
+                                                    .find('loadingWhithDots'),
                                                 style: TextStyle(
                                                   color: Colors.white,
                                                 )),
@@ -193,7 +201,8 @@ class _ClassesState extends State<Classes> {
                                       mainAxisSize: MainAxisSize.max,
                                       children: [
                                         OlukoPrimaryButton(
-                                          title: OlukoLocalizations.of(context).find('enroll'),
+                                          title: OlukoLocalizations.of(context)
+                                              .find('enroll'),
                                           onPressed: () {},
                                         ),
                                       ],

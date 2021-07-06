@@ -7,7 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/blocs/task_review_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
-import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/models/submodels/event.dart';
 import 'package:oluko_app/models/submodels/video_info.dart';
@@ -34,7 +34,6 @@ class TaskSubmissionReviewPreview extends StatefulWidget {
 class _TaskSubmissionReviewPreviewState
     extends State<TaskSubmissionReviewPreview> {
   final _formKey = GlobalKey<FormState>();
-  SignUpResponse profileInfo;
 
   int actualPos = 0;
   int duration = 100;

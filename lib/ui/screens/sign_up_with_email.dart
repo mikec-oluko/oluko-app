@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
-import 'package:oluko_app/blocs/user_bloc.dart';
+import 'package:oluko_app/blocs/sign_up_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/utils/app_loader.dart';
