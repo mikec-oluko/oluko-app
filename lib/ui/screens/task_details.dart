@@ -36,7 +36,6 @@ class TaskDetails extends StatefulWidget {
 
 class _TaskDetailsState extends State<TaskDetails> {
   final _formKey = GlobalKey<FormState>();
-  SignUpResponse profileInfo;
   ChewieController _controller;
   bool _makePublic = false;
   TaskSubmissionBloc _taskSubmissionBloc;

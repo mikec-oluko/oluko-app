@@ -14,6 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthRepository {
   Client http;
   FirebaseAuth firebaseAuthInstance;
+  // final String url = 'https://us-central1-oluko-2671e.cloudfunctions.net';
   final String url = 'https://us-central1-oluko-2671e.cloudfunctions.net/api';
   AuthRepository.test({Client http, FirebaseAuth firebaseAuthInstance}) {
     this.http = http;
@@ -30,12 +31,12 @@ class AuthRepository {
     body.removeWhere((key, value) => value == null);
     Response response =
         await http.post(Uri.parse("$url/auth/login"), body: body);
-    var signUpResponseBody = jsonDecode(response.body);
-    if (signUpResponseBody['message'] is String) {
-      List<String> messageList = [signUpResponseBody['message'].toString()];
-      signUpResponseBody['message'] = messageList;
+    var loginResponseBody = jsonDecode(response.body);
+    if (loginResponseBody['message'] is String) {
+      List<String> messageList = [loginResponseBody['message'].toString()];
+      loginResponseBody['message'] = messageList;
     }
-    ApiResponse apiResponse = ApiResponse.fromJson(signUpResponseBody);
+    ApiResponse apiResponse = ApiResponse.fromJson(loginResponseBody);
     if (apiResponse.statusCode == 200) {
       await firebaseAuthInstance
           .signInWithCustomToken(apiResponse.data['accessToken']);
@@ -114,9 +115,10 @@ class AuthRepository {
     return apiResponse;
   }
 
-  Future<bool> storeLoginData(UserResponse signUpResponse) async {
+  Future<bool> storeLoginData(UserResponse loginResponse) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String encodedJson = jsonEncode(signUpResponse);
+    UserResponse loginInfo = loginResponse.cleanBase();
+    String encodedJson = jsonEncode(loginInfo);
     bool loginSaved = await prefs.setString('login-data', encodedJson);
     print('Saved login info.');
     return loginSaved;
@@ -129,9 +131,9 @@ class AuthRepository {
       return null;
     }
     dynamic decodedJson = jsonDecode(savedData);
-    UserResponse signUpResponse = UserResponse.fromJson(decodedJson);
+    UserResponse loginResponse = UserResponse.fromJson(decodedJson);
     print('Retrieved login info.');
-    return signUpResponse;
+    return loginResponse;
   }
 
   Future<bool> removeLoginData() async {

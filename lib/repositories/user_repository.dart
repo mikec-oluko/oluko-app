@@ -18,7 +18,7 @@ class UserRepository {
         .where('email', isEqualTo: email)
         .get();
     var response = docRef.docs[0].data();
-    var signUpResponseBody = UserResponse.fromJson(response);
-    return signUpResponseBody;
+    var loginResponseBody = UserResponse.fromJson(response);
+    return loginResponseBody;
   }
 }

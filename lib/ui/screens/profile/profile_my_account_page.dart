@@ -7,6 +7,7 @@ import 'package:oluko_app/helpers/enum_helper.dart';
 import 'package:oluko_app/models/plan.dart';
 // import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_user_info.dart';
 import 'package:oluko_app/ui/components/subscription_card.dart';
@@ -20,7 +21,7 @@ class ProfileMyAccountPage extends StatefulWidget {
 }
 
 class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
-  SignUpResponse profileInfo;
+  UserResponse profileInfo;
 
   @override
   Widget build(BuildContext context) {
@@ -172,8 +173,8 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
   }
 
   Future<void> getProfileInfo() async {
-    profileInfo = SignUpResponse.fromJson(
-        (await AuthBloc().retrieveLoginData()).toJson());
+    profileInfo =
+        UserResponse.fromJson((await AuthBloc().retrieveLoginData()).toJson());
     return profileInfo;
   }
 }
