@@ -282,7 +282,7 @@ class _ClassesState extends State<Classes> {
                       Row(
                         children: [
                           TitleBody(
-                            '1200',
+                            '10',
                             bold: true,
                           ),
                           TitleBody(' People')
@@ -291,9 +291,9 @@ class _ClassesState extends State<Classes> {
                       Row(
                         children: [
                           Text(
-                            'have taking up this course',
+                            'have taking up this \ncourse',
                             style: OlukoFonts.olukoMediumFont(),
-                          )
+                          ),
                         ],
                       ),
                     ]),

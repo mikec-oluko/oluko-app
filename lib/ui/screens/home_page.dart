@@ -6,8 +6,6 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/elements/card_carousel.dart';
-import 'package:oluko_app/elements/gallery_carousel.dart';
 import 'package:oluko_app/models/base.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/search_results.dart';
@@ -249,10 +247,10 @@ class _MyHomePageState extends State<MyHomePage> {
     List<Widget> options = [];
     //TODO: Remove this when take it to the correct place inside courses
     options.add(ElevatedButton(
-      onPressed: () =>
-          Navigator.pushNamed(context, '/classes').then((value) => onGoBack()),
+      onPressed: () => Navigator.pushNamed(context, '/movement-detail')
+          .then((value) => onGoBack()),
       child: Text(
-        OlukoLocalizations.of(context).find('classes').toUpperCase(),
+        "TEST",
         style: TextStyle(color: Colors.white),
       ),
       style: ElevatedButton.styleFrom(

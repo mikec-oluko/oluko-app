@@ -16,6 +16,7 @@ import 'package:oluko_app/ui/screens/courses.dart';
 import 'package:oluko_app/ui/screens/home_page.dart';
 import 'package:oluko_app/ui/screens/Login.dart';
 import 'package:oluko_app/ui/screens/Profile.dart';
+import 'package:oluko_app/ui/screens/movement_detail.dart';
 import 'package:oluko_app/ui/screens/profile/profile_challenges_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_help_and_support_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_my_account_page.dart';
@@ -99,6 +100,8 @@ class _MyAppState extends State<MyApp> {
         '/app-plans': (context) =>
             BlocProvider.value(value: _authBloc, child: AppPlans()),
         //TODO: Remove this when take it to the correct place inside courses
+        '/movement-detail': (context) =>
+            BlocProvider.value(value: _authBloc, child: MovementDetail()),
         '/classes': (context) =>
             BlocProvider.value(value: _authBloc, child: Classes()),
         '/assessment-videos': (context) => MultiBlocProvider(providers: [
