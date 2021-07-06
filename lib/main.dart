@@ -102,6 +102,8 @@ class _MyAppState extends State<MyApp> {
         //TODO: Remove this when take it to the correct place inside courses
         '/movement-detail': (context) =>
             BlocProvider.value(value: _authBloc, child: MovementDetail()),
+        '/classes': (context) =>
+            BlocProvider.value(value: _authBloc, child: Classes()),
         '/assessment-videos': (context) => MultiBlocProvider(providers: [
               BlocProvider.value(value: _authBloc),
               //TODO Change this when using more than 1 assessment.

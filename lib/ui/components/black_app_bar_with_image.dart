@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:oluko_app/ui/components/stories_item.dart';
 import 'package:oluko_app/ui/components/title_header.dart';
 
 class OlukoImageBar<T> extends StatelessWidget implements PreferredSizeWidget {
@@ -25,14 +26,10 @@ class OlukoImageBar<T> extends StatelessWidget implements PreferredSizeWidget {
           actions: actions,
           flexibleSpace: Align(
             alignment: Alignment.centerLeft,
-            child: CircleAvatar(
-                radius: 100,
-                backgroundColor: Colors.black,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(80),
-                  child: Image.network(
-                      "https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/airsquats-icon.ico?alt=media&token=3dd95779-2e94-4d2f-a255-8f559b1c7fa5"),
-                )),
+            child: StoriesItem(
+                name: "Airsquats",
+                imageUrl:
+                    "https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/Airsquats.jpg?alt=media&token=641c2dff-ac0e-4b22-8a8d-aee9adbca3a1"),
           )),
     );
   }
