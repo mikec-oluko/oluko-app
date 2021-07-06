@@ -26,14 +26,18 @@ class OlukoImageBar<T> extends StatelessWidget implements PreferredSizeWidget {
           actions: actions,
           flexibleSpace: Align(
             alignment: Alignment.centerLeft,
-            child: StoriesItem(
-                name: "Airsquats",
-                imageUrl:
-                    "https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/Airsquats.jpg?alt=media&token=641c2dff-ac0e-4b22-8a8d-aee9adbca3a1"),
+            child: Padding(
+              padding: const EdgeInsets.only(left: 50, top: 25),
+              child: StoriesItem(
+                  maxRadius: 25,
+                  name: "Airsquats",
+                  imageUrl:
+                      "https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/Airsquats.jpg?alt=media&token=641c2dff-ac0e-4b22-8a8d-aee9adbca3a1"),
+            ),
           )),
     );
   }
 
   @override
-  Size get preferredSize => new Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => new Size.fromHeight(kToolbarHeight * 1.5);
 }
