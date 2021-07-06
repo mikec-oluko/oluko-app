@@ -30,6 +30,7 @@ import 'package:oluko_app/ui/screens/task_details.dart';
 import 'package:oluko_app/ui/screens/videos/home.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'blocs/transformation_journey_bloc.dart';
 import 'config/project_settings.dart';
 import 'models/task.dart';
 
@@ -70,11 +71,8 @@ class _MyAppState extends State<MyApp> {
             BlocProvider.value(value: _authBloc, child: SignUpPage()),
         '/sign-up-with-email': (context) =>
             BlocProvider.value(value: _authBloc, child: SignUpWithMailPage()),
-        '/profile': (context) => MultiBlocProvider(providers: [
-              BlocProvider.value(value: _authBloc),
-              BlocProvider(create: (context) => CourseBloc()),
-              BlocProvider(create: (context) => AssessmentBloc())
-            ], child: ProfilePage()),
+        '/profile': (context) =>
+            BlocProvider.value(value: _authBloc, child: ProfilePage()),
         '/profile-settings': (context) =>
             BlocProvider.value(value: _authBloc, child: ProfileSettingsPage()),
         '/profile-my-account': (context) =>
@@ -83,8 +81,12 @@ class _MyAppState extends State<MyApp> {
             value: _authBloc, child: ProfileSubscriptionPage()),
         '/profile-help-and-support': (context) => BlocProvider.value(
             value: _authBloc, child: ProfileHelpAndSupportPage()),
-        '/profile-view-own-profile': (context) => BlocProvider.value(
-            value: _authBloc, child: ProfileOwnProfilePage()),
+        '/profile-view-own-profile': (context) => MultiBlocProvider(providers: [
+              BlocProvider.value(value: _authBloc),
+              BlocProvider(create: (context) => CourseBloc()),
+              BlocProvider(create: (context) => AssessmentBloc()),
+              BlocProvider(create: (context) => TransformationJourneyBloc())
+            ], child: ProfileOwnProfilePage()),
         '/profile-challenges': (context) => BlocProvider.value(
             value: _authBloc, child: ProfileChallengesPage()),
         '/profile-transformation-journey': (context) => BlocProvider.value(

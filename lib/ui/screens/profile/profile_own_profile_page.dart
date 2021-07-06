@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
+import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/course.dart';
+import 'package:oluko_app/models/enums/file_type_enum.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
+import 'package:oluko_app/models/transformation_journey_uploads.dart';
 import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/carousel_small_section.dart';
 import 'package:oluko_app/ui/components/challenges_card.dart';
@@ -22,22 +24,27 @@ class ProfileOwnProfilePage extends StatefulWidget {
 }
 
 class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
-  SignUpResponse profileInfo;
-  List<Content> listOfContent = [];
+  SignUpResponse _profileInfo;
+  List<TransformationJourneyUpload> _transformationJourneyContent = [];
+  List<dynamic> _assessmentVideosContent = [];
+  List<Content> _listOfContent = [];
+  List<Course> _coursesToUse = [];
 
   @override
   void initState() {
     setState(() {
-      listOfContent = uploadListContent;
+      _listOfContent = uploadListContent;
     });
-    // BlocProvider.of<BlocToUse>(context).method();
+    BlocProvider.of<CourseBloc>(context).get();
     super.initState();
   }
 
   @override
   void dispose() {
     setState(() {
-      listOfContent = [];
+      _assessmentVideosContent = [];
+      _transformationJourneyContent = [];
+      _listOfContent = [];
     });
     super.dispose();
   }
@@ -48,7 +55,7 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
         future: _getProfileInfo(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return _buildOwnProfileView(context, profileInfo);
+            return _buildOwnProfileView(context, _profileInfo);
           } else {
             return SizedBox();
           }
@@ -56,6 +63,7 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
   }
 
   _buildOwnProfileView(BuildContext context, SignUpResponse profileInfo) {
+    _requestTransformationJourneyData(context, profileInfo);
     return Scaffold(
       body: Container(
         color: OlukoColors.black,
@@ -84,50 +92,9 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
                     userChallenges:
                         ProfileViewConstants.profileChallengesContent,
                     userFriends: ProfileViewConstants.profileFriendsContent),
-                // BlocListener<AssessmentBloc, AssessmentState>(
-                //   listener: (context, state) {
-                //     // TODO: implement listener
-                //     if (state is AssessmentSuccess) {
-                //       listOfContent = state.values;
-                //     } else {
-                //       listOfContent = uploadListContent;
-                //     }
-                //   },
-                //   child: buildUserContentSection(
-                //       titleForSection:
-                //           ProfileViewConstants.profileOptionsAssessmentVideos,
-                //       routeForSection: ProfileRoutes.goToAssessmentVideos(),
-                //       contentForSection: listOfContent),
-                // ),
-                buildUserContentSection(
-                    titleForSection:
-                        ProfileViewConstants.profileOptionsAssessmentVideos,
-                    routeForSection: ProfileRoutes.goToAssessmentVideos(),
-                    contentForSection: returnContentForSection(listOfContent)),
-                // BlocListener<SubjectBloc, SubjectState>(
-                //   listener: (context, state) {
-                //     // TODO: implement listener
-                //   },
-                //   child: buildUserContentSection(
-                //     titleForSection: ProfileViewConstants
-                //         .profileOptionsTransformationJourney,
-                //     routeForSection: ProfileRoutes.goToTransformationJourney(),
-                //   ),
-                // ),
-                buildUserContentSection(
-                    titleForSection: ProfileViewConstants
-                        .profileOptionsTransformationJourney,
-                    routeForSection: ProfileRoutes.goToTransformationJourney(),
-                    contentForSection: returnContentForSection(listOfContent)),
-                BlocConsumer<CourseBloc, CourseState>(
-                  listener: (context, state) {
-                    // TODO: implement listener
-                  },
-                  builder: (context, state) {
-                    return buildCourseSection(context);
-                  },
-                ),
-                buildCourseSection(context),
+                _buildAssessmentVideosSection(),
+                _buildTransformationJourneySection(),
+                _buildCourseSectionView(),
                 Padding(
                   padding: const EdgeInsets.all(10.0).copyWith(top: 0),
                   child: ChallengesCard(
@@ -143,17 +110,61 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
     );
   }
 
-  Padding buildCourseSection(BuildContext context) {
+  BlocConsumer<CourseBloc, CourseState> _buildCourseSectionView() {
+    return BlocConsumer<CourseBloc, CourseState>(
+      listener: (context, state) {
+        if (state is CourseSuccess) {
+          _coursesToUse = state.values;
+        }
+      },
+      builder: (context, state) {
+        return buildCourseSection(
+            context: context,
+            contentForCourse: returnCoursesWidget(_coursesToUse));
+      },
+    );
+  }
+
+  BlocListener<TransformationJourneyBloc, TransformationJourneyState>
+      _buildTransformationJourneySection() {
+    return BlocListener<TransformationJourneyBloc, TransformationJourneyState>(
+      listener: (context, state) {
+        if (state is TransformationJourneySuccess) {
+          _transformationJourneyContent = state.contentFromUser;
+        }
+      },
+      //TODO: Use transformationJourneyContent
+      child: buildUserContentSection(
+          titleForSection:
+              ProfileViewConstants.profileOptionsTransformationJourney,
+          routeForSection: ProfileRoutes.goToTransformationJourney(),
+          contentForSection: returnContentForSection(_listOfContent)),
+    );
+  }
+
+  Padding _buildAssessmentVideosSection() {
+    //TODO: Use bloc
+    return buildUserContentSection(
+        titleForSection: ProfileViewConstants.profileOptionsAssessmentVideos,
+        routeForSection: ProfileRoutes.goToAssessmentVideos(),
+        contentForSection: returnContentForSection(_listOfContent));
+  }
+
+  void _requestTransformationJourneyData(
+      BuildContext context, SignUpResponse profileInfo) {
+    BlocProvider.of<TransformationJourneyBloc>(context)
+        .getContentById(profileInfo.id);
+  }
+
+  Padding buildCourseSection(
+      {BuildContext context, List<Widget> contentForCourse}) {
     return Padding(
       padding: const EdgeInsets.all(10.0).copyWith(bottom: 0),
       child: CarouselSection(
         height: 250,
         width: MediaQuery.of(context).size.width,
         title: ProfileViewConstants.profileOwnProfileActiveCourses,
-        children: [
-          _getCourseCard('assets/courses/course_sample_1.png', progress: 0.3),
-          _getCourseCard('assets/courses/course_sample_2.png', progress: 0.7),
-        ],
+        children: contentForCourse,
       ),
     );
   }
@@ -172,34 +183,74 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
   }
 
   Future<void> _getProfileInfo() async {
-    profileInfo = SignUpResponse.fromJson(
+    _profileInfo = SignUpResponse.fromJson(
         (await AuthBloc().retrieveLoginData()).toJson());
-    return profileInfo;
+    return _profileInfo;
   }
 
-  Widget _getCourseCard(String assetImage, {double progress}) {
+  Widget _getCourseCard(Course courseForCard) {
     return Padding(
       padding: const EdgeInsets.only(right: 15.0),
       child: CourseCard(
         width: 120,
         height: 120,
-        imageCover: Image.asset(assetImage),
-        progress: progress,
+        imageCover: Image.network((courseForCard.imageUrl)),
+        progress: 0.4,
       ),
     );
   }
 
-  Widget _getImageAndVideoCard(Content contentFromUser) {
-    return ImageAndVideoContainer(
-      assetImage: contentFromUser.imgUrl,
-      isVideo: contentFromUser.isVideo,
-    );
+  Widget _getImageAndVideoCard(
+      {Content contentFromUser, TransformationJourneyUpload uploadFromUser}) {
+    Widget contentForReturn;
+    if (contentFromUser != null) {
+      contentForReturn = ImageAndVideoContainer(
+        assetImage: contentFromUser.imgUrl,
+        isVideo: contentFromUser.isVideo,
+      );
+    }
+    if (uploadFromUser != null) {
+      contentForReturn = ImageAndVideoContainer(
+        assetImage: uploadFromUser.thumbnail,
+        isVideo: uploadFromUser.type == FileTypeEnum.video,
+      );
+    }
+
+    return contentForReturn;
+  }
+
+  List<Widget> returnCoursesWidget(List<Course> listOfCourses) {
+    List<Widget> contentForCourseSection = [];
+    listOfCourses.forEach((course) {
+      contentForCourseSection.add(_getCourseCard(course));
+    });
+    return contentForCourseSection.toList();
   }
 
   List<Widget> returnContentForSection(List<Content> listOfContent) {
     List<Widget> contentForSection = [];
     listOfContent.forEach((content) {
-      contentForSection.add(_getImageAndVideoCard(content));
+      contentForSection.add(_getImageAndVideoCard(contentFromUser: content));
+    });
+    return contentForSection.toList();
+  }
+
+  List<Widget> returnTransformationJourneyWidget(
+      List<TransformationJourneyUpload> uploadsFromUser) {
+    List<Widget> contentForCourseSection = [];
+    uploadsFromUser.forEach((content) {
+      contentForCourseSection
+          .add(_getImageAndVideoCard(uploadFromUser: content));
+    });
+    return contentForCourseSection.toList();
+  }
+
+  List<Widget> mapContentToWidget({List<Content> statitContent, List<TransformationJourneyUpload> tansformationJourneyData }) {
+    List<Widget> contentForSection = [];
+  
+
+    listOfContent.forEach((content) {
+      contentForSection.add(_getImageAndVideoCard(contentFromUser: content));
     });
     return contentForSection.toList();
   }
