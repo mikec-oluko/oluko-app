@@ -3,6 +3,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 // import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';
 import 'package:oluko_app/ui/components/user_profile_information.dart';
@@ -20,7 +21,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final _formKey = GlobalKey<FormState>();
-  SignUpResponse profileInfo;
+  UserResponse profileInfo;
   final String profileTitle = ProfileViewConstants.profileTitle;
 
   @override
@@ -125,8 +126,8 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> getProfileInfo() async {
-    profileInfo = SignUpResponse.fromJson(
-        (await AuthBloc().retrieveLoginData()).toJson());
+    profileInfo =
+        UserResponse.fromJson((await AuthBloc().retrieveLoginData()).toJson());
     return profileInfo;
   }
 }

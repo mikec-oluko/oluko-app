@@ -7,7 +7,8 @@ import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 
 class TaskSubmissionRecordedVideo extends StatefulWidget {
-  TaskSubmissionRecordedVideo({this.videoUrl, this.task, key}) : super(key: key);
+  TaskSubmissionRecordedVideo({this.videoUrl, this.task, key})
+      : super(key: key);
 
   String videoUrl;
   Task task;
@@ -20,7 +21,6 @@ class TaskSubmissionRecordedVideo extends StatefulWidget {
 class _TaskSubmissionRecordedVideoState
     extends State<TaskSubmissionRecordedVideo> {
   final _formKey = GlobalKey<FormState>();
-  SignUpResponse profileInfo;
   ChewieController _controller;
 
   @override

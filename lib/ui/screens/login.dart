@@ -5,6 +5,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/form_helper.dart';
 import 'package:oluko_app/models/dto/login_request.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/peek_password.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/app_loader.dart';
@@ -20,7 +21,6 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   LoginRequest _requestData = LoginRequest();
-  SignUpResponse profileInfo;
   bool _peekPassword = false;
 
   @override

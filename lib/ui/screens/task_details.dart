@@ -7,6 +7,7 @@ import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_submission_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
@@ -36,7 +37,6 @@ class TaskDetails extends StatefulWidget {
 
 class _TaskDetailsState extends State<TaskDetails> {
   final _formKey = GlobalKey<FormState>();
-  SignUpResponse profileInfo;
   ChewieController _controller;
   bool _makePublic = false;
   TaskSubmissionBloc _taskSubmissionBloc;
@@ -164,7 +164,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                     ],
                   );
                 }
-              }),
+              }),     
             ]);
       }),
     );

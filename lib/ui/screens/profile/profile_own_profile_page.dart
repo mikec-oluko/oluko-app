@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/carousel_small_section.dart';
 import 'package:oluko_app/ui/components/challenges_card.dart';
@@ -18,7 +19,7 @@ class ProfileOwnProfilePage extends StatefulWidget {
 }
 
 class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
-  SignUpResponse profileInfo;
+  UserResponse profileInfo;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +34,7 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
         });
   }
 
-  _buildOwnProfileView(BuildContext context, SignUpResponse profileInfo) {
+  _buildOwnProfileView(BuildContext context, UserResponse profileInfo) {
     return Scaffold(
       body: Container(
         color: OlukoColors.black,
@@ -129,8 +130,8 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
   }
 
   Future<void> _getProfileInfo() async {
-    profileInfo = SignUpResponse.fromJson(
-        (await AuthBloc().retrieveLoginData()).toJson());
+    profileInfo =
+        UserResponse.fromJson((await AuthBloc().retrieveLoginData()).toJson());
     return profileInfo;
   }
 

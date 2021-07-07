@@ -34,7 +34,6 @@ class TaskSubmissionReviewPreview extends StatefulWidget {
 class _TaskSubmissionReviewPreviewState
     extends State<TaskSubmissionReviewPreview> {
   final _formKey = GlobalKey<FormState>();
-  SignUpResponse profileInfo;
 
   int actualPos = 0;
   int duration = 100;

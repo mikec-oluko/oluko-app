@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 
 class UserProfileInformation extends StatelessWidget {
-  final SignUpResponse userInformation;
+  final UserResponse userInformation;
 
   const UserProfileInformation({this.userInformation}) : super();
 

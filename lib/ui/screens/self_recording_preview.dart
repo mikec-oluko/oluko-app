@@ -28,7 +28,6 @@ class SelfRecordingPreview extends StatefulWidget {
 
 class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
   final _formKey = GlobalKey<FormState>();
-  SignUpResponse profileInfo;
   ChewieController _controller;
   VideoBloc _videoBloc;
   TaskSubmissionBloc _taskSubmissionBloc;

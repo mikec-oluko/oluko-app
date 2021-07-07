@@ -21,7 +21,6 @@ class SelfRecording extends StatefulWidget {
 
 class _State extends State<SelfRecording> {
   final _formKey = GlobalKey<FormState>();
-  SignUpResponse profileInfo;
 
   //camera
   List<CameraDescription> cameras;
