@@ -6,17 +6,20 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/blocs/class_bloc.dart';
+import 'package:oluko_app/blocs/statistics_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
-import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/class_section.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
+import 'package:oluko_app/ui/components/statistics_chart.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/time_converter.dart';
 
 class Classes extends StatefulWidget {
   Classes({Key key}) : super(key: key);
@@ -30,6 +33,7 @@ class _ClassesState extends State<Classes> {
   ChewieController _controller;
   CourseBloc _courseBloc;
   ClassBloc _classBloc;
+  StatisticsBloc _statisticsBloc;
 
   //TODO: remove hardcoded reference
   DocumentReference segmentReference = FirebaseFirestore.instance
@@ -43,6 +47,7 @@ class _ClassesState extends State<Classes> {
     super.initState();
     _courseBloc = CourseBloc();
     _classBloc = ClassBloc();
+    _statisticsBloc = StatisticsBloc();
   }
 
   @override
@@ -57,10 +62,14 @@ class _ClassesState extends State<Classes> {
           BlocProvider<ClassBloc>(
             create: (context) => _classBloc,
           ),
+          BlocProvider<StatisticsBloc>(
+            create: (context) => _statisticsBloc,
+          ),
         ],
         child: BlocBuilder<CourseBloc, CourseState>(builder: (context, state) {
           if (state is GetCourseSuccess) {
             _classBloc..getAll(state.course);
+            _statisticsBloc..get(state.course.statisticsReference);
             return form(state.course);
           } else {
             return SizedBox();
@@ -102,22 +111,36 @@ class _ClassesState extends State<Classes> {
                                       top: 10.0, right: 10),
                                   child: Text(
                                     //TODO: change weeks number
-                                    "6 " +
-                                        OlukoLocalizations.of(context)
-                                            .find('weeks') +
-                                        ", " +
-                                        course.classes.length.toString() +
-                                        " " +
-                                        OlukoLocalizations.of(context)
-                                            .find('classes'),
+                                    TimeConverter.toCourseDuration(
+                                        6, course.classes.length, context),
                                     style: OlukoFonts.olukoBigFont(
                                         custoFontWeight: FontWeight.normal,
                                         customColor: OlukoColors.grayColor),
                                   ),
                                 ),
-                                Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 15),
-                                    child: _statisticsChart()),
+                                BlocBuilder<StatisticsBloc, StatisticsState>(
+                                    builder: (context, state) {
+                                  if (state is StatisticsSuccess) {
+                                    return Padding(
+                                        padding:
+                                            EdgeInsets.symmetric(vertical: 15),
+                                        child: StatisticChart(
+                                            courseStatistics:
+                                                state.courseStatistics));
+                                  } else {
+                                    return Padding(
+                                      padding: const EdgeInsets.all(50.0),
+                                      child: Center(
+                                        child: Text(
+                                            OlukoLocalizations.of(context)
+                                                .find('loadingWhithDots'),
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                            )),
+                                      ),
+                                    );
+                                  }
+                                }),
                                 Padding(
                                   padding: const EdgeInsets.only(
                                       top: 10.0, right: 10),
@@ -222,141 +245,5 @@ class _ClassesState extends State<Classes> {
                     ? ScreenUtils.height(context) / 4
                     : ScreenUtils.height(context) / 1.5),
         child: Container(height: 400, child: Stack(children: widgets)));
-  }
-
-  _statisticsChart() {
-    return Container(
-      decoration: BoxDecoration(
-          color: OlukoColors.listGrayColor.withOpacity(0.5),
-          borderRadius: BorderRadius.all(Radius.circular(15))),
-      width: ScreenUtils.width(context),
-      child: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    flex: 5,
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Row(
-                            children: [
-                              TitleBody(
-                                '500',
-                                bold: true,
-                              ),
-                              TitleBody(' People')
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                'are doing this course',
-                                style: OlukoFonts.olukoMediumFont(),
-                              )
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(top: 5.0),
-                                child: Text(
-                                  'Explore',
-                                  style: OlukoFonts.olukoMediumFont(
-                                      customColor: OlukoColors.primary),
-                                ),
-                              )
-                            ],
-                          )
-                        ]),
-                  ),
-                  Expanded(
-                    flex: 4,
-                    child: Column(children: [
-                      Row(
-                        children: [
-                          TitleBody(
-                            '10',
-                            bold: true,
-                          ),
-                          TitleBody(' People')
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            'have taking up this \ncourse',
-                            style: OlukoFonts.olukoMediumFont(),
-                          ),
-                        ],
-                      ),
-                    ]),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Expanded(
-                    flex: 5,
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              TitleBody(
-                                '960',
-                                bold: true,
-                              ),
-                              TitleBody(' People')
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                'completed it',
-                                style: OlukoFonts.olukoMediumFont(),
-                              )
-                            ],
-                          ),
-                        ]),
-                  ),
-                  Expanded(
-                    flex: 4,
-                    child: Column(children: [
-                      Row(
-                        children: [
-                          TitleBody(
-                            '80%',
-                            bold: true,
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            'completion rate',
-                            style: OlukoFonts.olukoMediumFont(),
-                          )
-                        ],
-                      ),
-                    ]),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
