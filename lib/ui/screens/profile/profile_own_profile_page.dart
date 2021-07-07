@@ -245,13 +245,14 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
     return contentForCourseSection.toList();
   }
 
-  List<Widget> mapContentToWidget({List<Content> statitContent, List<TransformationJourneyUpload> tansformationJourneyData }) {
+  List<Widget> mapContentToWidget(
+      {List<Content> statitContent,
+      List<TransformationJourneyUpload> tansformationJourneyData}) {
     List<Widget> contentForSection = [];
-  
 
-    listOfContent.forEach((content) {
-      contentForSection.add(_getImageAndVideoCard(contentFromUser: content));
-    });
+    // listOfContent.forEach((content) {
+    //   contentForSection.add(_getImageAndVideoCard(contentFromUser: content));
+    // });
     return contentForSection.toList();
   }
 }
