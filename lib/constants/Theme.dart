@@ -70,11 +70,12 @@ class OlukoFonts {
   static const double olukoSmallFontSize = 11.0;
 
   static TextStyle olukoMediumFont(
-      {FontWeight custoFontWeight, Color customColor}) {
+      {FontWeight custoFontWeight, Color customColor, TextDecoration decoration}) {
     return TextStyle(
         fontSize: olukoMediumFontSize,
         fontWeight: custoFontWeight != null ? custoFontWeight : FontWeight.w500,
-        color: customColor != null ? customColor : OlukoColors.white);
+        color: customColor != null ? customColor : OlukoColors.white,
+        decoration: decoration);
   }
 
   static TextStyle olukoTitleFont(

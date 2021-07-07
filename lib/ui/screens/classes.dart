@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/class_bloc.dart';
 import 'package:oluko_app/blocs/statistics_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
@@ -35,13 +36,6 @@ class _ClassesState extends State<Classes> {
   ClassBloc _classBloc;
   StatisticsBloc _statisticsBloc;
 
-  //TODO: remove hardcoded reference
-  DocumentReference segmentReference = FirebaseFirestore.instance
-      .collection("projects")
-      .doc(GlobalConfiguration().getValue("projectId"))
-      .collection("segments")
-      .doc('jwKrMyYxnmeN6HqWGHw9');
-
   @override
   void initState() {
     super.initState();
@@ -52,29 +46,36 @@ class _ClassesState extends State<Classes> {
 
   @override
   Widget build(BuildContext context) {
-    //MovementRepository.create(Movement(name: "Chin-Ups"),segmentReference);
-    return MultiBlocProvider(
-        providers: [
-          BlocProvider<CourseBloc>(
-            //TODO: change this when the view is in the correct place
-            create: (context) => _courseBloc..getById("CC5HBkSV8DthLQNKyBlc"),
-          ),
-          BlocProvider<ClassBloc>(
-            create: (context) => _classBloc,
-          ),
-          BlocProvider<StatisticsBloc>(
-            create: (context) => _statisticsBloc,
-          ),
-        ],
-        child: BlocBuilder<CourseBloc, CourseState>(builder: (context, state) {
-          if (state is GetCourseSuccess) {
-            _classBloc..getAll(state.course);
-            _statisticsBloc..get(state.course.statisticsReference);
-            return form(state.course);
-          } else {
-            return SizedBox();
-          }
-        }));
+    return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
+      if (state is AuthSuccess) {
+        return MultiBlocProvider(
+            providers: [
+              BlocProvider<CourseBloc>(
+                //TODO: change this when the view is in the correct place
+                create: (context) =>
+                    _courseBloc..getById("CC5HBkSV8DthLQNKyBlc"),
+              ),
+              BlocProvider<ClassBloc>(
+                create: (context) => _classBloc,
+              ),
+              BlocProvider<StatisticsBloc>(
+                create: (context) => _statisticsBloc,
+              ),
+            ],
+            child:
+                BlocBuilder<CourseBloc, CourseState>(builder: (context, state) {
+              if (state is GetCourseSuccess) {
+                _classBloc..getAll(state.course);
+                _statisticsBloc..get(state.course.statisticsReference);
+                return form(state.course);
+              } else {
+                return SizedBox();
+              }
+            }));
+      } else {
+        return Text("Not logged user.");
+      }
+    });
   }
 
   Widget form(Course course) {
@@ -90,7 +91,7 @@ class _ClassesState extends State<Classes> {
                     padding: const EdgeInsets.only(bottom: 25),
                     child: OrientationBuilder(
                       builder: (context, orientation) {
-                        return showVideoPlayer();
+                        return showVideoPlayer(course.video);
                       },
                     ),
                   ),
@@ -222,12 +223,13 @@ class _ClassesState extends State<Classes> {
                 ]))));
   }
 
-  Widget showVideoPlayer() {
+  Widget showVideoPlayer(String videoUrl) {
     List<Widget> widgets = [];
     if (_controller == null) {
       widgets.add(Center(child: CircularProgressIndicator()));
     }
     widgets.add(OlukoVideoPlayer(
+        videoUrl: videoUrl,
         autoPlay: false,
         whenInitialized: (ChewieController chewieController) =>
             this.setState(() {

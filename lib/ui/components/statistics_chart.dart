@@ -66,7 +66,8 @@ class _State extends State<StatisticChart> {
                                   OlukoLocalizations.of(context)
                                       .find('explore'),
                                   style: OlukoFonts.olukoMediumFont(
-                                      customColor: OlukoColors.primary),
+                                      customColor: OlukoColors.primary,
+                                      decoration: TextDecoration.underline),
                                 ),
                               )
                             ],
