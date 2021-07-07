@@ -14,8 +14,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthRepository {
   Client http;
   FirebaseAuth firebaseAuthInstance;
-  // final String url = 'https://us-central1-oluko-2671e.cloudfunctions.net';
-  final String url = 'https://us-central1-oluko-2671e.cloudfunctions.net/api';
+  final String url =
+      'https://us-central1-oluko-2671e.cloudfunctions.net/api/auth';
   AuthRepository.test({Client http, FirebaseAuth firebaseAuthInstance}) {
     this.http = http;
     this.firebaseAuthInstance = firebaseAuthInstance;
@@ -29,8 +29,7 @@ class AuthRepository {
   Future<ApiResponse> login(LoginRequest loginRequest) async {
     var body = loginRequest.toJson();
     body.removeWhere((key, value) => value == null);
-    Response response =
-        await http.post(Uri.parse("$url/auth/login"), body: body);
+    Response response = await http.post(Uri.parse("$url/login"), body: body);
     var loginResponseBody = jsonDecode(response.body);
     if (loginResponseBody['message'] is String) {
       List<String> messageList = [loginResponseBody['message'].toString()];
@@ -55,7 +54,7 @@ class AuthRepository {
   Future<ApiResponse> verifyToken(VerifyTokenRequest verifyTokenRequest) async {
     Map<String, dynamic> body = verifyTokenRequest.toJson();
     Response response =
-        await http.post(Uri.parse("$url/auth/token/verify"), body: body);
+        await http.post(Uri.parse("$url/token/verify"), body: body);
     var responseBody = jsonDecode(response.body);
     if (responseBody['message'] != null &&
         responseBody['message'].length == null) {
@@ -104,8 +103,7 @@ class AuthRepository {
 
   Future<ApiResponse> signUp(SignUpRequest signUpRequest) async {
     var body2 = signUpRequest.toJson();
-    Response response =
-        await http.post(Uri.parse("$url/auth/signup"), body: body2);
+    Response response = await http.post(Uri.parse("$url/signup"), body: body2);
     var signUpResponseBody = jsonDecode(response.body);
     if (signUpResponseBody['message'] != null &&
         signUpResponseBody['message'] is String) {
