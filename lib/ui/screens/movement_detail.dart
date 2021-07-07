@@ -4,6 +4,8 @@ import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/ui/components/black_app_bar_with_image.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
+import 'package:oluko_app/ui/components/title_body.dart';
+import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class MovementDetail extends StatefulWidget {
@@ -14,8 +16,9 @@ class MovementDetail extends StatefulWidget {
 }
 
 class _MovementDetailState extends State<MovementDetail> {
-  final _formKey = GlobalKey<FormState>();
   final toolbarHeight = kToolbarHeight * 2;
+  bool startRecordingAndWorkoutTogether = false;
+
   @override
   void initState() {
     super.initState();
@@ -24,17 +27,24 @@ class _MovementDetailState extends State<MovementDetail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: OlukoImageBar(),
+      appBar: OlukoImageBar(actions: []),
       backgroundColor: Colors.black,
       body: Container(
+        decoration: BoxDecoration(
+            image: DecorationImage(
+                colorFilter: ColorFilter.mode(
+                    Colors.black.withOpacity(0.94), BlendMode.darken),
+                fit: BoxFit.cover,
+                image: NetworkImage(
+                    'https://c0.wallpaperflare.com/preview/26/779/700/fitness-men-sports-gym.jpg'))),
         width: ScreenUtils.width(context),
-        height: ScreenUtils.height(context) - kToolbarHeight * 2,
+        height: ScreenUtils.height(context) - toolbarHeight,
         child: _viewBody(),
       ),
     );
   }
 
-  _viewBody() {
+  Widget _viewBody() {
     return Container(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -46,48 +56,15 @@ class _MovementDetailState extends State<MovementDetail> {
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Padding(
-                          padding: const EdgeInsets.only(top: 40.0),
-                          child: Text(
-                            "Intense Airsquat",
-                            style: OlukoFonts.olukoTitleFont(
-                                custoFontWeight: FontWeight.bold),
-                          )),
-                      Padding(
-                          padding: const EdgeInsets.only(top: 30.0),
-                          child: Text(
-                            "Description:",
-                            style: OlukoFonts.olukoBigFont(
-                                custoFontWeight: FontWeight.bold),
-                          )),
-                      Column(
-                        children: [
-                          Text(
-                            "Each round is considered to be compleated once all the workouts are finished.",
-                            style: OlukoFonts.olukoBigFont(
-                                custoFontWeight: FontWeight.normal,
-                                customColor: OlukoColors.white),
-                          ),
-                        ],
-                      ),
-                      Padding(
-                          padding: const EdgeInsets.only(top: 30.0),
-                          child: Text(
-                            "Workouts:",
-                            style: OlukoFonts.olukoBigFont(
-                                custoFontWeight: FontWeight.bold),
-                          )),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            top: 10.0, bottom: 10, right: 10),
-                        child: Text(
-                          "8 Rounds.\n• 30 sec airsquads\n• 30 sec rest",
-                          style: OlukoFonts.olukoBigFont(
-                              custoFontWeight: FontWeight.normal,
-                              customColor: OlukoColors.white),
-                        ),
-                      ),
+                      MovementUtils.movementTitle("Intense Airsquat"),
+                      SizedBox(height: 25),
+                      MovementUtils.description(
+                          "Each round is considered to be completed once all the workouts are finished."),
+                      SizedBox(height: 25),
+                      MovementUtils.workout(
+                          ['30 sec airsquats', '30 sec rest']),
                     ],
                   ),
                 )
@@ -137,9 +114,15 @@ class _MovementDetailState extends State<MovementDetail> {
                       ),
                     ),
                     Checkbox(
-                        value: false,
-                        onChanged: (bool value) {},
-                        fillColor: MaterialStateProperty.all(Colors.white)),
+                      value: startRecordingAndWorkoutTogether,
+                      onChanged: (bool value) {
+                        this.setState(() {
+                          startRecordingAndWorkoutTogether = value;
+                        });
+                      },
+                      fillColor: MaterialStateProperty.all(Colors.white),
+                      checkColor: Colors.black,
+                    ),
                   ],
                 ),
               ],
@@ -194,10 +177,49 @@ class _MovementDetailState extends State<MovementDetail> {
           ),
         ),
         //Submit button
-        Row(children: [
-          OlukoPrimaryButton(title: 'START WORKOUTS', color: Colors.white)
-        ])
+        Padding(
+          padding: const EdgeInsets.all(25.0),
+          child: Row(children: [
+            OlukoPrimaryButton(
+              title: 'START WORKOUTS',
+              color: Colors.white,
+              onPressed: () => MovementUtils.movementDialog(
+                  context, _confirmDialogContent()),
+            )
+          ]),
+        )
       ],
     );
+  }
+
+  _confirmDialogContent() {
+    return [
+      Icon(Icons.warning_amber_rounded, color: Colors.white, size: 100),
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+            'The coach recommends to record the video of this segment. Are you sure you want to continue the segment without recording?',
+            textAlign: TextAlign.center,
+            style: OlukoFonts.olukoBigFont()),
+      ),
+      Padding(
+        padding: const EdgeInsets.only(top: 16.0),
+        child: Row(
+          children: [
+            OlukoPrimaryButton(
+              color: Colors.white,
+              title: 'RECORD & START SEGMENT',
+            ),
+          ],
+        ),
+      ),
+      TextButton(
+        onPressed: () {},
+        child: Text(
+          'CONTINUE WITHOUT RECORDING',
+          style: OlukoFonts.olukoMediumFont(),
+        ),
+      )
+    ];
   }
 }

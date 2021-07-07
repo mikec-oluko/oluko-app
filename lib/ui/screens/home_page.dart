@@ -79,7 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           Stack(
                             children: [
                               Container(
-                                  width: ScreenUtils.width(context) * 1,
+                                  width: ScreenUtils.width(context),
                                   child: ListView(
                                       scrollDirection: Axis.horizontal,
                                       children: menuOptions(authState))),
