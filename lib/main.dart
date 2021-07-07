@@ -6,10 +6,12 @@ import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
 import 'package:oluko_app/blocs/course_category_bloc.dart';
+import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/config/s3_settings.dart';
 import 'package:oluko_app/ui/screens/app_plans.dart';
 import 'package:oluko_app/ui/screens/assessment_videos.dart';
 import 'package:oluko_app/ui/screens/choose_plan_payment.dart';
+import 'package:oluko_app/ui/screens/classes.dart';
 import 'package:oluko_app/ui/screens/courses.dart';
 import 'package:oluko_app/ui/screens/home_page.dart';
 import 'package:oluko_app/ui/screens/Login.dart';
@@ -66,6 +68,8 @@ class _MyAppState extends State<MyApp> {
       routes: {
         '/': (context) => MultiBlocProvider(providers: [
               BlocProvider.value(value: _authBloc),
+              BlocProvider(create: (context) => CourseBloc()),
+              BlocProvider(create: (context) => TagBloc())
             ], child: MyHomePage(title: '')),
         '/sign-up': (context) =>
             BlocProvider.value(value: _authBloc, child: SignUpPage()),
@@ -99,6 +103,9 @@ class _MyAppState extends State<MyApp> {
             BlocProvider.value(value: _authBloc, child: LoginPage()),
         '/app-plans': (context) =>
             BlocProvider.value(value: _authBloc, child: AppPlans()),
+        //TODO: Remove this when take it to the correct place inside courses
+        '/classes': (context) =>
+            BlocProvider.value(value: _authBloc, child: Classes()),
         '/assessment-videos': (context) => MultiBlocProvider(providers: [
               BlocProvider.value(value: _authBloc),
               //TODO Change this when using more than 1 assessment.
@@ -116,7 +123,7 @@ class _MyAppState extends State<MyApp> {
         '/courses': (context) => MultiBlocProvider(providers: [
               BlocProvider.value(value: _authBloc),
               BlocProvider(create: (context) => CourseBloc()),
-              BlocProvider(create: (context) => CourseCategoryBloc())
+              BlocProvider(create: (context) => TagBloc())
             ], child: Courses()),
         '/videos': (context) => BlocProvider.value(
             value: _authBloc,

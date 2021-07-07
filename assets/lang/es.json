@@ -7,10 +7,12 @@
     "coach": "Coach",
     "friends": "Amigos",
     "logout": "Cerrar sesión",
+    "filters": "Filtros",
     "courses": "Cursos",
     "activeCourses": "Cursos Activos",
     "videos": "Videos",
     "viewAll": "Ver Todo",
+    "clearAll": "Limpiar Todo",
     "search": "Buscar",
     "assessments": "Evaluaciones",
     "plans": "Planes",
@@ -43,8 +45,11 @@
     "camera": "Camara",
     "uploadingWithDots":  "Subiendo...",
     "errorOcurred": "Ocurrio un error.",
-    "errorOcurredOn": "Ocurrio un error en: "
-
-
-
+    "errorOcurredOn": "Ocurrio un error en: ",
+    "classes": "Clases",
+    "course": "Curso",
+    "enroll": "Inscribirse",
+    "loadingWhithDots": "Cargando...",
+    "weeks": "Semanas",
+    "startRecording": "Comenzar a grabar"
 }

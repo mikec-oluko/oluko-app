@@ -7,8 +7,10 @@
     "coach": "Coach",
     "friends": "Friends",
     "logout": "Log out",
+    "filters": "Filters",
     "courses": "Courses",
     "viewAll": "View All",
+    "clearAll": "Clear All",
     "activeCourses": "Active Courses",
     "videos": "Videos",
     "search": "Search",
@@ -43,5 +45,11 @@
     "camera": "Camera",
     "uploadingWithDots":  "Uploading...",
     "errorOcurred": "An error ocurred.",
-    "errorOcurredOn": "An error ocurred on: "
+    "errorOcurredOn": "An error ocurred on: ",
+    "classes": "Classes",
+    "course": "Course",
+    "enroll": "Enroll",
+    "loadingWhithDots": "Loading...",
+    "weeks": "Weeks",
+    "startRecording": "Start Recording"
 }
