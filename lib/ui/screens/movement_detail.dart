@@ -4,8 +4,8 @@ import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/ui/components/black_app_bar_with_image.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
-import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/utils/movement_utils.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class MovementDetail extends StatefulWidget {
@@ -95,7 +95,8 @@ class _MovementDetailState extends State<MovementDetail> {
                           color: Colors.white),
                       child: Padding(
                         padding: const EdgeInsets.all(5.0),
-                        child: Text('COACH RECOMMENDED'),
+                        child: Text(OlukoLocalizations.of(context)
+                            .find('coachRecommended')),
                       ))
                 ]),
                 Row(
@@ -109,7 +110,8 @@ class _MovementDetailState extends State<MovementDetail> {
                     ),
                     Expanded(
                       child: Text(
-                        'Start video recording & workout together',
+                        OlukoLocalizations.of(context)
+                            .find('startVideoAndWorkoutTogether'),
                         style: OlukoFonts.olukoMediumFont(),
                       ),
                     ),
@@ -139,7 +141,7 @@ class _MovementDetailState extends State<MovementDetail> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Segment 1/4',
+                      '${OlukoLocalizations.of(context).find('segment')} 1/4',
                       style: OlukoFonts.olukoMediumFont(),
                     )
                   ],
@@ -181,7 +183,7 @@ class _MovementDetailState extends State<MovementDetail> {
           padding: const EdgeInsets.all(25.0),
           child: Row(children: [
             OlukoPrimaryButton(
-              title: 'START WORKOUTS',
+              title: OlukoLocalizations.of(context).find('startWorkouts'),
               color: Colors.white,
               onPressed: () => MovementUtils.movementDialog(
                   context, _confirmDialogContent()),
@@ -198,7 +200,7 @@ class _MovementDetailState extends State<MovementDetail> {
       Padding(
         padding: const EdgeInsets.all(8.0),
         child: Text(
-            'The coach recommends to record the video of this segment. Are you sure you want to continue the segment without recording?',
+            OlukoLocalizations.of(context).find('coachRecommendsRecording'),
             textAlign: TextAlign.center,
             style: OlukoFonts.olukoBigFont()),
       ),
@@ -208,7 +210,8 @@ class _MovementDetailState extends State<MovementDetail> {
           children: [
             OlukoPrimaryButton(
               color: Colors.white,
-              title: 'RECORD & START SEGMENT',
+              title:
+                  OlukoLocalizations.of(context).find('recordAndStartSegment'),
             ),
           ],
         ),
@@ -216,7 +219,7 @@ class _MovementDetailState extends State<MovementDetail> {
       TextButton(
         onPressed: () {},
         child: Text(
-          'CONTINUE WITHOUT RECORDING',
+          OlukoLocalizations.of(context).find('continueWithoutRecording'),
           style: OlukoFonts.olukoMediumFont(),
         ),
       )
