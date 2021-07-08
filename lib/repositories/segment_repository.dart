@@ -3,7 +3,7 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
-import 'package:oluko_app/repositories/class_reopoistory.dart';
+import 'package:oluko_app/repositories/class_reopository.dart';
 
 class SegmentRepository {
   FirebaseFirestore firestoreInstance;

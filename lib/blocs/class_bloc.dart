@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course.dart';
-import 'package:oluko_app/repositories/class_reopoistory.dart';
+import 'package:oluko_app/repositories/class_reopository.dart';
 
 abstract class ClassState {}
 
