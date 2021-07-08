@@ -202,8 +202,20 @@ class _SegmentRecordingState extends State<SegmentRecording> {
         Expanded(
           child: Container(
             color: Colors.grey,
-            child: Center(
-              child: MovementUtils.movementTitle('CAMERA SECTION'),
+            child: Stack(
+              children: [
+                Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: _feedbackButton(Icons.stop,
+                            onPressed: () => this.setState(() {
+                                  this.workoutType = WorkoutType.segment;
+                                })))),
+                Center(
+                  child: MovementUtils.movementTitle('CAMERA SECTION'),
+                ),
+              ],
             ),
           ),
         ),
