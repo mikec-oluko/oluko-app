@@ -54,7 +54,7 @@ class CourseEnrollmentRepository {
         userReference: userReference,
         courseId: course.id,
         courseReference: courseReference,
-        enrollmentClasses: []);
+        classes: []);
     courseEnrollment.id = docRef.id;
     courseEnrollment = await setEnrollmentClasses(course, courseEnrollment);
     docRef.set(courseEnrollment.toJson());
@@ -68,9 +68,9 @@ class CourseEnrollmentRepository {
           classId: classObj.objectId,
           className: classObj.objectName,
           classReference: classObj.objectReference,
-          enrollmentSegments: []);
+          segments: []);
       enrollmentClass = await setEnrollmentSegments(enrollmentClass);
-      courseEnrollment.enrollmentClasses.add(enrollmentClass);
+      courseEnrollment.classes.add(enrollmentClass);
     }
     return courseEnrollment;
   }
@@ -80,7 +80,7 @@ class CourseEnrollmentRepository {
     DocumentSnapshot qs = await enrollmentClass.classReference.get();
     Class classObj = Class.fromJson(qs.data());
     classObj.segments.forEach((ObjectSubmodel segment) {
-      enrollmentClass.enrollmentSegments.add(EnrollmentSegment(
+      enrollmentClass.segments.add(EnrollmentSegment(
           segmentId: segment.objectId,
           segmentName: segment.objectName,
           segmentReference: segment.objectReference));

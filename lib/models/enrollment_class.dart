@@ -7,14 +7,14 @@ class EnrollmentClass extends Base {
   DocumentReference classReference;
   String className;
   Timestamp compleatedAt;
-  List<EnrollmentSegment> enrollmentSegments;
+  List<EnrollmentSegment> segments;
 
   EnrollmentClass(
       {this.classId,
       this.classReference,
       this.className,
       this.compleatedAt,
-      this.enrollmentSegments});
+      this.segments});
 
   factory EnrollmentClass.fromJson(Map<String, dynamic> json) {
     return EnrollmentClass(
@@ -22,11 +22,11 @@ class EnrollmentClass extends Base {
         classReference: json['class_reference'],
         className: json['class_name'],
         compleatedAt: json['compleated_at'],
-        enrollmentSegments: json['enrollment_segments'] == null
+        segments: json['segments'] == null
             ? null
-            : List<EnrollmentSegment>.from(json['enrollment_segments'].map(
-                (enrollmentSegment) =>
-                    EnrollmentSegment.fromJson(enrollmentSegment))));
+            : List<EnrollmentSegment>.from(json['segments'].map(
+                (segment) =>
+                    EnrollmentSegment.fromJson(segment))));
   }
 
   Map<String, dynamic> toJson() => {
@@ -34,9 +34,9 @@ class EnrollmentClass extends Base {
         'class_reference': classReference,
         'class_name': className,
         'compleated_at': compleatedAt,
-        'enrollment_segments': enrollmentSegments == null
+        'segments': segments == null
             ? null
-            : List<dynamic>.from(enrollmentSegments
-                .map((enrollmentSegment) => enrollmentSegment.toJson())),
+            : List<dynamic>.from(segments
+                .map((segment) => segment.toJson())),
       };
 }

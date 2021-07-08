@@ -10,7 +10,7 @@ class CourseEnrollment extends Base {
   int completion;
   Timestamp completedAt;
   Timestamp finishedAt;
-  List<EnrollmentClass> enrollmentClasses;
+  List<EnrollmentClass> classes;
 
   CourseEnrollment(
       {this.userId,
@@ -20,7 +20,7 @@ class CourseEnrollment extends Base {
       this.completion,
       this.completedAt,
       this.finishedAt,
-      this.enrollmentClasses,
+      this.classes,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -46,8 +46,8 @@ class CourseEnrollment extends Base {
         completion: json['completion'],
         completedAt: json['completed_at'],
         finishedAt: json['finished_at'],
-        enrollmentClasses: json['enrollment_classes'] != null
-            ? List<EnrollmentClass>.from(json['enrollment_classes']
+        classes: json['classes'] != null
+            ? List<EnrollmentClass>.from(json['classes']
                 .map((c) => EnrollmentClass.fromJson(c)))
             : null);
     courseEnrollment.setBase(json);
@@ -63,9 +63,9 @@ class CourseEnrollment extends Base {
       'completion': completion,
       'completed_at': completedAt,
       'finished_at': finishedAt,
-      'enrollment_classes': enrollmentClasses == null
+      'classes': classes == null
           ? null
-          : List<dynamic>.from(enrollmentClasses.map((c) => c.toJson())),
+          : List<dynamic>.from(classes.map((c) => c.toJson())),
     };
     courseEnrollmentJson.addEntries(super.toJson().entries);
     return courseEnrollmentJson;

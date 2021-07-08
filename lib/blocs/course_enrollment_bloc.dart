@@ -32,7 +32,7 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
     try {
       CourseEnrollment courseEnrollment =
           await CourseEnrollmentRepository.create(user, course);
-      emit(CreateEnrollmentSuccess(courseEnrollment: courseEnrollment));
+      emit(GetEnrollmentSuccess(courseEnrollment: courseEnrollment));
     } catch (e) {
       emit(Failure(exception: e));
     }
