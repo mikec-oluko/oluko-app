@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/repositories/course_enrollment_repository.dart';
@@ -25,6 +26,12 @@ class Failure extends CourseEnrollmentState {
   Failure({this.exception});
 }
 
+class CourseEnrollmentGetChallenge extends CourseEnrollmentState {
+  final List<Challenge> challenges;
+
+  CourseEnrollmentGetChallenge({this.challenges});
+}
+
 class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
   CourseEnrollmentBloc() : super(Loading());
 
@@ -43,6 +50,18 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
       CourseEnrollment courseEnrollment =
           await CourseEnrollmentRepository.get(course, user);
       emit(GetEnrollmentSuccess(courseEnrollment: courseEnrollment));
+    } catch (e) {
+      emit(Failure(exception: e));
+    }
+  }
+
+  void getChallengesForUser(String userId) async {
+    try {
+      List<Challenge> courseEnrollmentsChallenges =
+          await CourseEnrollmentRepository().getUserChallenges(userId);
+
+      emit(CourseEnrollmentGetChallenge(
+          challenges: courseEnrollmentsChallenges));
     } catch (e) {
       emit(Failure(exception: e));
     }

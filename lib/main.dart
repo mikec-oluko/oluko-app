@@ -5,8 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
-import 'package:oluko_app/blocs/course_category_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
+import 'package:oluko_app/blocs/task_submission_bloc.dart';
 import 'package:oluko_app/config/s3_settings.dart';
 import 'package:oluko_app/ui/screens/app_plans.dart';
 import 'package:oluko_app/ui/screens/assessment_videos.dart';
@@ -25,7 +26,6 @@ import 'package:oluko_app/ui/screens/profile/profile_settings_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_subscription_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_transformation_journey_page.dart';
 import 'package:oluko_app/ui/screens/profile/transformation_journey_post.dart';
-import 'package:oluko_app/ui/screens/self_recording_preview.dart';
 import 'package:oluko_app/ui/screens/sign_up_with_email.dart';
 import 'package:oluko_app/ui/screens/sign_up.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -90,6 +90,8 @@ class _MyAppState extends State<MyApp> {
               BlocProvider.value(value: _authBloc),
               BlocProvider(create: (context) => CourseBloc()),
               BlocProvider(create: (context) => AssessmentBloc()),
+              BlocProvider(create: (context) => TaskSubmissionBloc()),
+              BlocProvider(create: (context) => CourseEnrollmentBloc()),
               BlocProvider(create: (context) => TransformationJourneyBloc())
             ], child: ProfileOwnProfilePage()),
         '/profile-challenges': (context) => BlocProvider.value(

@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment_bloc.dart';
+import 'package:oluko_app/blocs/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/models/challenges.dart';
+import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/enums/file_type_enum.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
@@ -53,8 +55,6 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
     super.dispose();
   }
 
-  UserResponse profileInfo;
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -70,7 +70,7 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
 
   _buildOwnProfileView(BuildContext context, UserResponse profileInfo) {
     _requestTransformationJourneyData(context, profileInfo);
-    // _requestCourseEnrollmentChallengesData(context, profileInfo);
+    _requestCourseEnrollmentChallengesData(context, profileInfo);
     return Scaffold(
       body: Container(
         color: OlukoColors.black,
@@ -117,16 +117,18 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
   }
 
   _buildAssessmentVideosSection() {
-    // return BlocListener<AssessmentsBloc, AssessmentsBlocState>(
-    //   listener: (context, state) {
-    //     if(state is success)
-    //   },
-    // child:
-    return buildUserContentSection(
-        titleForSection: ProfileViewConstants.profileOptionsAssessmentVideos,
-        routeForSection: ProfileRoutes.goToAssessmentVideos(),
-        contentForSection: mapContentToWidget(staticContent: _listOfContent));
-    // );
+    return BlocListener<TaskSubmissionBloc, TaskSubmissionState>(
+        listener: (context, state) {
+          if (state is GetUserTaskSubmissionSuccess) {
+            _assessmentVideosContent = state.taskSubmissions;
+          }
+        },
+        child: buildUserContentSection(
+            titleForSection:
+                ProfileViewConstants.profileOptionsAssessmentVideos,
+            routeForSection: ProfileRoutes.goToAssessmentVideos(),
+            contentForSection:
+                mapContentToWidget(staticContent: _listOfContent)));
   }
 
   BlocListener<TransformationJourneyBloc, TransformationJourneyState>
@@ -147,6 +149,7 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
   }
 
   BlocConsumer<CourseBloc, CourseState> _buildCourseSectionView() {
+    //TODO: USE COURSES FROM COURSEENROLLMENTS
     return BlocConsumer<CourseBloc, CourseState>(
       listener: (context, state) {
         if (state is CourseSuccess) {
@@ -162,33 +165,27 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
   }
 
   _buildChallengeSection() {
-    // return BlocListener<CourseEnrollmentBloc, CourseEnrollmentState>(
-    //   listener: (context, state) {
-    //     if (state is CourseEnrollmentContentSuccess) {
-    //       _activeChallenges = state.challenges;
-    //     }
-    //   },
-    //   child:
-    return Padding(
-        padding: const EdgeInsets.all(10.0).copyWith(top: 0),
-        child: ChallengesCard(
-          challenge: _activeChallenges.length != 0
-              ? _activeChallenges[0]
-              : challengeDefault,
-          routeToGo: ProfileRoutes.goToChallenges(),
-        ));
-    // ),
-    // );
+    return BlocListener<CourseEnrollmentBloc, CourseEnrollmentState>(
+      listener: (context, state) {
+        if (state is CourseEnrollmentGetChallenge) {
+          _activeChallenges = state.challenges;
+        }
+      },
+      child: Padding(
+          padding: const EdgeInsets.all(10.0).copyWith(top: 0),
+          child: ChallengesCard(
+            challenge: _activeChallenges.length != 0
+                ? _activeChallenges[0]
+                : challengeDefault,
+            routeToGo: ProfileRoutes.goToChallenges(),
+          )),
+    );
   }
 
   Future<void> _getProfileInfo() async {
-    profileInfo =
+    _profileInfo =
         UserResponse.fromJson((await AuthBloc().retrieveLoginData()).toJson());
-    return profileInfo;
-
-    // _profileInfo = SignUpResponse.fromJson(
-    //     (await AuthBloc().retrieveLoginData()).toJson());
-    // return _profileInfo;
+    return _profileInfo;
   }
 
   void _requestTransformationJourneyData(
@@ -197,11 +194,11 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
         .getContentById(profileInfo.id);
   }
 
-  // void _requestCourseEnrollmentChallengesData(
-  //     BuildContext context, SignUpResponse profileInfo) {
-  //   BlocProvider.of<CourseEnrollmentBloc>(context)
-  //       .getChallengesForUser(profileInfo.id);
-  // }
+  void _requestCourseEnrollmentChallengesData(
+      BuildContext context, UserResponse profileInfo) {
+    BlocProvider.of<CourseEnrollmentBloc>(context)
+        .getChallengesForUser(profileInfo.id);
+  }
 
   Padding buildCourseSection(
       {BuildContext context, List<Widget> contentForCourse}) {
