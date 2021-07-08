@@ -12,20 +12,20 @@ import 'package:oluko_app/utils/app_navigator.dart';
 
 abstract class UserState {}
 
-class UserSuccess extends UserState {
+class SignupSuccess extends UserState {
   final SignUpResponse user;
-  UserSuccess({this.user});
+  SignupSuccess({this.user});
 }
 
-class UserLoading extends UserState {}
+class SignupLoading extends UserState {}
 
-class UserFailure extends UserState {
+class SignupFailure extends UserState {
   final Exception exception;
-  UserFailure({this.exception});
+  SignupFailure({this.exception});
 }
 
-class UserBloc extends Cubit<UserState> {
-  UserBloc() : super(UserLoading());
+class SignupBloc extends Cubit<UserState> {
+  SignupBloc() : super(SignupLoading());
 
   final _repository = AuthRepository();
 
@@ -35,7 +35,7 @@ class UserBloc extends Cubit<UserState> {
           context,
           OlukoLocalizations.of(context)
               .find('passwordShouldNotContainUsername'));
-      emit(UserFailure(
+      emit(SignupFailure(
           exception: Exception(OlukoLocalizations.of(context)
               .find('passwordShouldNotContainUsername'))));
       return;
@@ -43,7 +43,7 @@ class UserBloc extends Cubit<UserState> {
     if (request.password.contains(request.email)) {
       AppMessages.showSnackbar(context,
           OlukoLocalizations.of(context).find('passwordShouldNotContainEmail'));
-      emit(UserFailure(
+      emit(SignupFailure(
           exception: Exception(OlukoLocalizations.of(context)
               .find('passwordShouldNotContainEmail'))));
       return;
@@ -56,7 +56,7 @@ class UserBloc extends Cubit<UserState> {
       _repository.sendEmailVerification(request);
       AppLoader.stopLoading();
       AppNavigator().returnToHome(context);
-      emit(UserSuccess(user: response));
+      emit(SignupSuccess(user: response));
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(OlukoLocalizations.of(context).find('checkYourEmail')),
       ));
@@ -65,7 +65,7 @@ class UserBloc extends Cubit<UserState> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(apiResponse.message[0]),
       ));
-      emit(UserFailure(exception: Exception(apiResponse.message[0])));
+      emit(SignupFailure(exception: Exception(apiResponse.message[0])));
     }
   }
 }

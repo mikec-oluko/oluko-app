@@ -19,9 +19,11 @@ class Course extends Base {
   List<ObjectSubmodel> classes;
   List<ObjectSubmodel> tags;
   String imageUrl;
+  DocumentReference statisticsReference;
 
   Course(
       {this.name,
+      this.statisticsReference,
       this.duration,
       this.equipment,
       this.intensity,
@@ -56,6 +58,7 @@ class Course extends Base {
   factory Course.fromJson(Map<String, dynamic> json) {
     Course course = Course(
         name: json['name'],
+        statisticsReference: json['statistics_reference'],
         video: json['video'],
         duration: json['duration'],
         description: json['description'],
@@ -84,6 +87,7 @@ class Course extends Base {
   Map<String, dynamic> toJson() {
     Map<String, dynamic> courseJson = {
       'name': name,
+      'statistics_reference': statisticsReference,
       'video': video,
       'duration': duration,
       'description': description,

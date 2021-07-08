@@ -17,17 +17,13 @@ class ClassRepository {
   }
 
   static Future<List<Class>> getAll(Course course) async {
-    List<String> courseClassesIds = [];
-    course.classes.forEach((ObjectSubmodel classObj) {
-      courseClassesIds.add(classObj.objectId);
-    });
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
-        .collection('classes')
-        .where("id", whereIn: courseClassesIds)
-        .get();
-    return mapQueryToClass(querySnapshot);
+    List<Class> classes = [];
+    for (ObjectSubmodel classObj in course.classes) {
+      DocumentSnapshot ds = await classObj.objectReference.get();
+      Class retrievedClass = Class.fromJson(ds.data());
+      classes.add(retrievedClass);
+    }
+    return classes;
   }
 
   static Future<Class> create(
@@ -45,12 +41,6 @@ class ClassRepository {
         objectName: newClass.name);
     await CourseRepository.updateClasses(classObj, courseReference);
     return newClass;
-  }
-
-  static List<Class> mapQueryToClass(QuerySnapshot qs) {
-    return qs.docs.map((DocumentSnapshot ds) {
-      return Class.fromJson(ds.data());
-    }).toList();
   }
 
   static Future<void> updateSegments(

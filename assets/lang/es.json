@@ -65,5 +65,14 @@
     "enroll": "Inscribirse",
     "loadingWhithDots": "Cargando...",
     "weeks": "Semanas",
-    "startRecording": "Comenzar a grabar"
+    "startRecording": "Comenzar a grabar",
+    "people": "Personas",
+    "areDoingThisCourse": "estan haciendo este curso",
+    "haveTakingUpThis": "han tomado este",
+    "completedIt": "lo completaron",
+    "completionRate": "tasa de completitud",
+    "explore": "Explorar",
+    "courseSmall": "curso",
+    "start": "Comenzar",
+    "class": "Clase"
 }

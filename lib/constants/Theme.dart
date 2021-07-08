@@ -65,15 +65,17 @@ class OlukoColors {
 class OlukoFonts {
   static const double olukoTitleFontSize = 30.0;
   static const double olukoBigFontSize = 18.0;
+  static const double olukoSuperBigFontSize = 21.0;
   static const double olukoMediumFontSize = 14.0;
   static const double olukoSmallFontSize = 11.0;
 
   static TextStyle olukoMediumFont(
-      {FontWeight custoFontWeight, Color customColor}) {
+      {FontWeight custoFontWeight, Color customColor, TextDecoration decoration}) {
     return TextStyle(
         fontSize: olukoMediumFontSize,
         fontWeight: custoFontWeight != null ? custoFontWeight : FontWeight.w500,
-        color: customColor != null ? customColor : OlukoColors.white);
+        color: customColor != null ? customColor : OlukoColors.white,
+        decoration: decoration);
   }
 
   static TextStyle olukoTitleFont(
@@ -88,6 +90,14 @@ class OlukoFonts {
       {FontWeight custoFontWeight, Color customColor}) {
     return TextStyle(
         fontSize: olukoBigFontSize,
+        fontWeight: custoFontWeight != null ? custoFontWeight : FontWeight.w500,
+        color: customColor != null ? customColor : OlukoColors.white);
+  }
+
+  static TextStyle olukoSuperBigFont(
+      {FontWeight custoFontWeight, Color customColor}) {
+    return TextStyle(
+        fontSize: olukoSuperBigFontSize,
         fontWeight: custoFontWeight != null ? custoFontWeight : FontWeight.w500,
         color: customColor != null ? customColor : OlukoColors.white);
   }

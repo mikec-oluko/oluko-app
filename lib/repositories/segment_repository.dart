@@ -3,7 +3,7 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
-import 'package:oluko_app/repositories/class_reopoistory.dart';
+import 'package:oluko_app/repositories/class_reopository.dart';
 
 class SegmentRepository {
   FirebaseFirestore firestoreInstance;
@@ -17,16 +17,13 @@ class SegmentRepository {
   }
 
   static Future<List<Segment>> getAll(Class classObj) async {
-    List<String> classSegmentsIds = [];
-    classObj.segments.forEach((ObjectSubmodel segment) {
-      classSegmentsIds.add(segment.objectId);
-     });
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
-        .collection('segments').where("id", whereIn: classSegmentsIds)
-        .get();
-    return mapQueryToSegment(querySnapshot);
+    List<Segment> segments = [];
+    for (ObjectSubmodel segment in classObj.segments) {
+      DocumentSnapshot ds = await segment.objectReference.get();
+      Segment retrievedSegment = Segment.fromJson(ds.data());
+      segments.add(retrievedSegment);
+    }
+    return segments;
   }
 
   static Future<Segment> create(Segment segment, DocumentReference classReference) async{

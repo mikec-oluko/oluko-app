@@ -1,7 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/models/submodels/event.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
@@ -20,7 +19,6 @@ class TaskSubmissionReview extends StatefulWidget {
 
 class _TaskSubmissionReviewState extends State<TaskSubmissionReview> {
   final _formKey = GlobalKey<FormState>();
-  SignUpResponse profileInfo;
 
   //camera
   List<CameraDescription> cameras;
