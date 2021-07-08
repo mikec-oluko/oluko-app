@@ -1,22 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/constants/Theme.dart';
-import 'package:oluko_app/models/base.dart';
-import 'package:oluko_app/models/course.dart';
-import 'package:oluko_app/models/course_category.dart';
-import 'package:oluko_app/models/course_category_item.dart';
-import 'package:oluko_app/models/search_results.dart';
-import 'package:oluko_app/models/tag.dart';
-import 'package:oluko_app/ui/components/filter_selector.dart';
-import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
-import 'package:oluko_app/ui/components/oluko_primary_button.dart';
-import 'package:oluko_app/ui/components/search_bar.dart';
-import 'package:oluko_app/ui/components/search_results_grid.dart';
-import 'package:oluko_app/ui/components/search_suggestions.dart';
-import 'package:oluko_app/utils/screen_utils.dart';
 
 class MovementUtils {
-  static movementTitle(String title) {
+  static Text movementTitle(String title) {
     return Text(
       title,
       style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
@@ -41,7 +27,7 @@ class MovementUtils {
     );
   }
 
-  static workout(List<String> workouts) {
+  static Column workout(List<String> workouts) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -62,8 +48,9 @@ class MovementUtils {
     );
   }
 
-  static movementDialog(BuildContext context, List<Widget> content) {
-    showDialog(
+  static Future<dynamic> movementDialog(
+      BuildContext context, List<Widget> content) {
+    return showDialog(
       context: context,
       builder: (context) => new AlertDialog(
           backgroundColor: Colors.black,

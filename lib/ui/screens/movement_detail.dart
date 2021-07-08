@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/ui/components/black_app_bar_with_image.dart';
+import 'package:oluko_app/ui/components/countdown_overlay.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
+import 'package:oluko_app/ui/screens/segment_recording.dart';
 import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -18,6 +20,18 @@ class MovementDetail extends StatefulWidget {
 class _MovementDetailState extends State<MovementDetail> {
   final toolbarHeight = kToolbarHeight * 2;
   bool startRecordingAndWorkoutTogether = false;
+
+  //TODO Make Dynamic
+  String segmentTitle = "Intense Airsquat";
+  String backgroundImageUrl =
+      'https://c0.wallpaperflare.com/preview/26/779/700/fitness-men-sports-gym.jpg';
+  String segmentDescription =
+      "Each round is considered to be completed once all the workouts are finished.";
+  List<String> segmentMovements = ['30 sec airsquats', '30 sec rest'];
+  //Used in "segment 1/4"
+  num currentSegmentStep = 1;
+  num totalSegmentStep = 4;
+  // ---------
 
   @override
   void initState() {
@@ -35,8 +49,7 @@ class _MovementDetailState extends State<MovementDetail> {
                 colorFilter: ColorFilter.mode(
                     Colors.black.withOpacity(0.94), BlendMode.darken),
                 fit: BoxFit.cover,
-                image: NetworkImage(
-                    'https://c0.wallpaperflare.com/preview/26/779/700/fitness-men-sports-gym.jpg'))),
+                image: NetworkImage(backgroundImageUrl))),
         width: ScreenUtils.width(context),
         height: ScreenUtils.height(context) - toolbarHeight,
         child: _viewBody(),
@@ -58,13 +71,11 @@ class _MovementDetailState extends State<MovementDetail> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      MovementUtils.movementTitle("Intense Airsquat"),
+                      MovementUtils.movementTitle(segmentTitle),
                       SizedBox(height: 25),
-                      MovementUtils.description(
-                          "Each round is considered to be completed once all the workouts are finished."),
+                      MovementUtils.description(segmentDescription),
                       SizedBox(height: 25),
-                      MovementUtils.workout(
-                          ['30 sec airsquats', '30 sec rest']),
+                      MovementUtils.workout(segmentMovements),
                     ],
                   ),
                 )
@@ -141,7 +152,7 @@ class _MovementDetailState extends State<MovementDetail> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      '${OlukoLocalizations.of(context).find('segment')} 1/4',
+                      '${OlukoLocalizations.of(context).find('segment')} $currentSegmentStep/$totalSegmentStep',
                       style: OlukoFonts.olukoMediumFont(),
                     )
                   ],
@@ -183,18 +194,44 @@ class _MovementDetailState extends State<MovementDetail> {
           padding: const EdgeInsets.all(25.0),
           child: Row(children: [
             OlukoPrimaryButton(
-              title: OlukoLocalizations.of(context).find('startWorkouts'),
-              color: Colors.white,
-              onPressed: () => MovementUtils.movementDialog(
-                  context, _confirmDialogContent()),
-            )
+                title: OlukoLocalizations.of(context).find('startWorkouts'),
+                color: Colors.white,
+                onPressed: () {
+                  startRecordingAndWorkoutTogether
+                      ? _startCountdown(WorkoutType.segmentWithRecording)
+                      : MovementUtils.movementDialog(
+                              context, _confirmDialogContent())
+                          .then((value) => value != null
+                              ? _startCountdown(value == true
+                                  ? WorkoutType.segmentWithRecording
+                                  : WorkoutType.segment)
+                              : null);
+                })
           ]),
         )
       ],
     );
   }
 
-  _confirmDialogContent() {
+  _startCountdown(WorkoutType workoutType) {
+    return Navigator.of(context)
+        .push(PageRouteBuilder(
+            opaque: false,
+            pageBuilder: (BuildContext context, _, __) => CountdownOverlay(
+                  seconds: 5,
+                  title: workoutType == WorkoutType.segmentWithRecording
+                      ? OlukoLocalizations.of(context)
+                          .find("segmentAndRecordingStartsIn")
+                      : OlukoLocalizations.of(context).find("segmentStartsIn"),
+                )))
+        .then((value) => Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    SegmentRecording(workoutType: workoutType))));
+  }
+
+  List<Widget> _confirmDialogContent() {
     return [
       Icon(Icons.warning_amber_rounded, color: Colors.white, size: 100),
       Padding(
@@ -209,6 +246,9 @@ class _MovementDetailState extends State<MovementDetail> {
         child: Row(
           children: [
             OlukoPrimaryButton(
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
               color: Colors.white,
               title:
                   OlukoLocalizations.of(context).find('recordAndStartSegment'),
@@ -217,7 +257,9 @@ class _MovementDetailState extends State<MovementDetail> {
         ),
       ),
       TextButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.of(context).pop(false);
+        },
         child: Text(
           OlukoLocalizations.of(context).find('continueWithoutRecording'),
           style: OlukoFonts.olukoMediumFont(),
