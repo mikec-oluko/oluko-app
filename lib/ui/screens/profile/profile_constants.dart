@@ -101,13 +101,13 @@ final basicTiles = <BasicTile>[
 ];
 
 //Basic model of Challenge, used on profile/Challenges
-class Challenge {
+class ChallengeStatic {
   String title;
   String subtitle;
   String type;
   bool isLocked;
   String imageCover;
-  Challenge(
+  ChallengeStatic(
       {this.title, this.subtitle, this.type, this.isLocked, this.imageCover});
 }
 
@@ -119,21 +119,21 @@ class Content {
 }
 
 //Challenges examples
-final challengeDefault = Challenge(
+final challengeDefault = ChallengeStatic(
     title: "20min EMOM challenge",
     subtitle: "Innterval traiinning",
     type: "Class",
     isLocked: false,
     imageCover: 'assets/courses/course_sample_1.png');
 
-final _secondChallenge = Challenge(
+final _secondChallenge = ChallengeStatic(
     title: "Fish Arms",
     subtitle: "Abdominal Crunches",
     type: "Class",
     isLocked: false,
     imageCover: 'assets/courses/course_sample_2.png');
 
-final _lockedChallenge = Challenge(
+final _lockedChallenge = ChallengeStatic(
     title: "Screaming Squat Challenge",
     subtitle: "Drop and give me 20!",
     type: "Class",
@@ -141,7 +141,7 @@ final _lockedChallenge = Challenge(
     imageCover: 'assets/courses/course_sample_3.png');
 
 //List of challenges, (Challenges)
-final List<Challenge> challengeCollection = [
+final List<ChallengeStatic> challengeCollection = [
   challengeDefault,
   _secondChallenge,
   _lockedChallenge
