@@ -6,8 +6,6 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/elements/card_carousel.dart';
-import 'package:oluko_app/elements/gallery_carousel.dart';
 import 'package:oluko_app/models/base.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/search_results.dart';
@@ -116,7 +114,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                     return ListView(
                                       shrinkWrap: true,
                                       children: [
-                                        StoriesHeader(),
                                         Container(
                                           height: ScreenUtils.height(context),
                                           width: ScreenUtils.width(context),
@@ -232,9 +229,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _mainPage(CourseSuccess courseState) {
     return Padding(
-      padding: const EdgeInsets.only(top: 15.0, left: 8, right: 8),
+      padding: const EdgeInsets.only(top: 0.0, left: 8, right: 8),
       child: ListView(
         children: [
+          StoriesHeader(),
           ListView.builder(
               physics: NeverScrollableScrollPhysics(),
               itemCount: courseState.coursesByCategories.length,
@@ -251,20 +249,24 @@ class _MyHomePageState extends State<MyHomePage> {
                   children: coursesList
                       .map((course) => Padding(
                             padding: const EdgeInsets.only(right: 8.0),
-                            child: _getCourseCard(
-                                Image.network(
-                                  course.imageUrl,
-                                  fit: BoxFit.cover,
-                                  frameBuilder: (BuildContext context,
-                                          Widget child,
-                                          int frame,
-                                          bool wasSynchronouslyLoaded) =>
-                                      ImageUtils.frameBuilder(context, child,
-                                          frame, wasSynchronouslyLoaded,
-                                          height: 120),
-                                ),
-                                width: ScreenUtils.width(context) /
-                                    (0.2 + _cardsToShow())),
+                            child: GestureDetector(
+                              onTap: () =>
+                                  Navigator.pushNamed(context, '/classes'),
+                              child: _getCourseCard(
+                                  Image.network(
+                                    course.imageUrl,
+                                    fit: BoxFit.cover,
+                                    frameBuilder: (BuildContext context,
+                                            Widget child,
+                                            int frame,
+                                            bool wasSynchronouslyLoaded) =>
+                                        ImageUtils.frameBuilder(context, child,
+                                            frame, wasSynchronouslyLoaded,
+                                            height: 120),
+                                  ),
+                                  width: ScreenUtils.width(context) /
+                                      (0.2 + _cardsToShow())),
+                            ),
                           ))
                       .toList(),
                 );
@@ -425,10 +427,10 @@ class _MyHomePageState extends State<MyHomePage> {
     List<Widget> options = [];
     //TODO: Remove this when take it to the correct place inside courses
     options.add(ElevatedButton(
-      onPressed: () =>
-          Navigator.pushNamed(context, '/classes').then((value) => onGoBack()),
+      onPressed: () => Navigator.pushNamed(context, '/movement-detail')
+          .then((value) => onGoBack()),
       child: Text(
-        OlukoLocalizations.of(context).find('classes').toUpperCase(),
+        "TEST",
         style: TextStyle(color: Colors.white),
       ),
       style: ElevatedButton.styleFrom(

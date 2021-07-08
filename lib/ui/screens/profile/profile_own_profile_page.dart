@@ -9,6 +9,7 @@ import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/enums/file_type_enum.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/carousel_small_section.dart';
 import 'package:oluko_app/ui/components/challenges_card.dart';
@@ -25,7 +26,7 @@ class ProfileOwnProfilePage extends StatefulWidget {
 }
 
 class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
-  SignUpResponse _profileInfo;
+  UserResponse _profileInfo;
   List<TransformationJourneyUpload> _transformationJourneyContent = [];
   List<dynamic> _assessmentVideosContent = [];
   List<Challenge> _activeChallenges = [];
@@ -52,6 +53,8 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
     super.dispose();
   }
 
+  UserResponse profileInfo;
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -65,7 +68,7 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
         });
   }
 
-  _buildOwnProfileView(BuildContext context, SignUpResponse profileInfo) {
+  _buildOwnProfileView(BuildContext context, UserResponse profileInfo) {
     _requestTransformationJourneyData(context, profileInfo);
     // _requestCourseEnrollmentChallengesData(context, profileInfo);
     return Scaffold(
@@ -179,13 +182,17 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
   }
 
   Future<void> _getProfileInfo() async {
-    _profileInfo = SignUpResponse.fromJson(
-        (await AuthBloc().retrieveLoginData()).toJson());
-    return _profileInfo;
+    profileInfo =
+        UserResponse.fromJson((await AuthBloc().retrieveLoginData()).toJson());
+    return profileInfo;
+
+    // _profileInfo = SignUpResponse.fromJson(
+    //     (await AuthBloc().retrieveLoginData()).toJson());
+    // return _profileInfo;
   }
 
   void _requestTransformationJourneyData(
-      BuildContext context, SignUpResponse profileInfo) {
+      BuildContext context, UserResponse profileInfo) {
     BlocProvider.of<TransformationJourneyBloc>(context)
         .getContentById(profileInfo.id);
   }

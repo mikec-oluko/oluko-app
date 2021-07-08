@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
+
 class TimeConverter {
   static double fromSecondsToMilliSeconds(double seconds) {
     return (seconds * 1000);
@@ -20,5 +23,15 @@ class TimeConverter {
 
   static String fromMillisecondsToSecondsStringFormat(int milliseconds) {
     return fromSecondsToStringFormat(fromMillisecondsToSeconds(milliseconds));
+  }
+
+  static String toCourseDuration(int weeks, int classes, BuildContext context) {
+    return weeks.toString() +
+        " " +
+        OlukoLocalizations.of(context).find('weeks') +
+        ", " +
+        classes.toString() +
+        " " +
+        OlukoLocalizations.of(context).find('classes');
   }
 }

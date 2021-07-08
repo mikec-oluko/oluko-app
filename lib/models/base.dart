@@ -38,12 +38,18 @@ class Base {
 
   setBase(Map<String, dynamic> json) {
     id = json['id'];
-    createdAt = json['created_at'];
+    createdAt = json['created_at'] is FieldValue ? null : json['created_at'];
     createdBy = json['created_by'];
-    updatedAt = json['updated_at'];
+    updatedAt = json['updated_at'] is FieldValue ? null : json['created_at'];
     updatedBy = json['updated_by'];
     isDeleted = json['is_deleted'];
     isHidden = json['is_hidden'];
+  }
+
+  cleanBase() {
+    this.createdAtSentinel = null;
+    this.updatedAtSentinel = null;
+    return this;
   }
 
   Map<String, dynamic> toJson() {

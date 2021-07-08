@@ -25,6 +25,7 @@ class UserResponse extends Base {
             updatedBy: updatedBy,
             isDeleted: isDeleted,
             isHidden: isHidden);
+
   String firstName;
   String lastName;
   String email;

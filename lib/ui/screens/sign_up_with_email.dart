@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
-import 'package:oluko_app/blocs/user_bloc.dart';
+import 'package:oluko_app/blocs/sign_up_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/utils/app_loader.dart';
@@ -21,7 +21,7 @@ class _SignUpWithMailPageState extends State<SignUpWithMailPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-        create: (context) => UserBloc(), child: SignUpWithMailContentPage());
+        create: (context) => SignupBloc(), child: SignUpWithMailContentPage());
   }
 }
 
@@ -42,7 +42,7 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UserBloc, UserState>(
+    return BlocBuilder<SignupBloc, UserState>(
         builder: (context, UserState state) {
       return signUpForm();
     });
@@ -147,15 +147,15 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
             SizedBox(
                 width: double.infinity,
                 height: 50,
-                child:
-                    BlocBuilder<UserBloc, UserState>(builder: (context, state) {
+                child: BlocBuilder<SignupBloc, UserState>(
+                    builder: (context, state) {
                   return ElevatedButton(
                       style: ElevatedButton.styleFrom(
                           primary: OlukoColors.primary),
                       onPressed: () async {
                         if (_formKey.currentState.validate()) {
                           _formKey.currentState.save();
-                          UserBloc()..signUp(context, _requestData);
+                          SignupBloc()..signUp(context, _requestData);
                         }
                       },
                       child: Stack(children: [

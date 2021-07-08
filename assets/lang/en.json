@@ -51,5 +51,13 @@
     "enroll": "Enroll",
     "loadingWhithDots": "Loading...",
     "weeks": "Weeks",
-    "startRecording": "Start Recording"
+    "startRecording": "Start Recording",
+    "people": "People",
+    "areDoingThisCourse": "are doing this course",
+    "haveTakingUpThis": "have taking up this",
+    "completedIt": "completed it",
+    "completionRate": "completion rate",
+    "explore": "Explore",
+    "courseSmall": "course",
+    "start": "Start"
 }

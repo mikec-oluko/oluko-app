@@ -19,7 +19,6 @@ class ChoosePlayPayments extends StatefulWidget {
 
 class _ChoosePlayPaymentsState extends State<ChoosePlayPayments> {
   final _formKey = GlobalKey<FormState>();
-  SignUpResponse profileInfo;
 
   @override
   Widget build(BuildContext context) {

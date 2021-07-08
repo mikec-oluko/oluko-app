@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/models/course.dart';
+import 'package:oluko_app/models/course_statistics.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
 
 class CourseRepository {
@@ -36,6 +37,12 @@ class CourseRepository {
         .doc(courseId);
     DocumentSnapshot ds = await docRef.get();
     return Course.fromJson(ds.data());
+  }
+
+  static Future<CourseStatistics> getStatistics(
+      DocumentReference reference) async {
+    DocumentSnapshot docRef = await reference.get();
+    return CourseStatistics.fromJson(docRef.data());
   }
 
   static Course create(Course course) {

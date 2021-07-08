@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_category.dart';
+import 'package:oluko_app/models/course_statistics.dart';
 import 'package:oluko_app/repositories/course_category_repository.dart';
 import 'package:oluko_app/repositories/course_repository.dart';
 import 'package:oluko_app/utils/course_utils.dart';
@@ -53,6 +54,7 @@ class CourseBloc extends Cubit<CourseState> {
           CourseUtils.mapCoursesByCategories(courses, courseCategories);
       emit(CourseSuccess(values: courses, coursesByCategories: mappedCourses));
     } catch (e) {
+      print(e.toString());
       emit(CourseFailure(exception: e));
     }
   }

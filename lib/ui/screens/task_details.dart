@@ -7,6 +7,7 @@ import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_submission_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
@@ -36,7 +37,6 @@ class TaskDetails extends StatefulWidget {
 
 class _TaskDetailsState extends State<TaskDetails> {
   final _formKey = GlobalKey<FormState>();
-  SignUpResponse profileInfo;
   ChewieController _controller;
   bool _makePublic = false;
   TaskSubmissionBloc _taskSubmissionBloc;
@@ -122,7 +122,7 @@ class _TaskDetailsState extends State<TaskDetails> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               formFields(state),
-              /*BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
+              BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
                   builder: (context, state) {
                 if (state is GetSuccess && state.taskSubmission != null) {
                   return Row(
@@ -144,27 +144,27 @@ class _TaskDetailsState extends State<TaskDetails> {
                     ],
                   );
                 } else {
-                  return Text("");
+                  return Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      OlukoPrimaryButton(
+                        title: OlukoLocalizations.of(context)
+                            .find('startRecording'),
+                        onPressed: () {
+                          if (_controller != null) {
+                            _controller.pause();
+                          }
+                          return Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      SelfRecording(task: widget.task)));
+                        },
+                      ),
+                    ],
+                  );
                 }
-              }),*/
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  OlukoPrimaryButton(
-                    title: OlukoLocalizations.of(context).find('startRecording'),
-                    onPressed: () {
-                      if (_controller != null) {
-                        _controller.pause();
-                      }
-                      return Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  SelfRecording(task: widget.task)));
-                    },
-                  ),
-                ],
-              ),
+              }),     
             ]);
       }),
     );
