@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:oluko_app/models/class.dart';
-import 'package:oluko_app/models/movement.dart';
-import 'package:oluko_app/models/segment.dart';
-import 'package:oluko_app/models/submodels/object_submodel.dart';
-import 'package:oluko_app/repositories/class_reopoistory.dart';
-import 'package:oluko_app/repositories/segment_repository.dart';
+import 'package:mvt_fitness/models/class.dart';
+import 'package:mvt_fitness/models/movement.dart';
+import 'package:mvt_fitness/models/segment.dart';
+import 'package:mvt_fitness/models/submodels/object_submodel.dart';
+import 'package:mvt_fitness/repositories/class_reopoistory.dart';
+import 'package:mvt_fitness/repositories/segment_repository.dart';
 
 class MovementRepository {
   FirebaseFirestore firestoreInstance;
@@ -22,16 +22,18 @@ class MovementRepository {
     List<String> segmentMovementsIds = [];
     segment.movements.forEach((ObjectSubmodel movement) {
       segmentMovementsIds.add(movement.objectId);
-     });
+    });
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"))
-        .collection('movements').where("id", whereIn: segmentMovementsIds)
+        .collection('movements')
+        .where("id", whereIn: segmentMovementsIds)
         .get();
     return mapQueryToMovement(querySnapshot);
   }
 
-  static Future<Movement> create(Movement movement, DocumentReference segmentReference) async{
+  static Future<Movement> create(
+      Movement movement, DocumentReference segmentReference) async {
     CollectionReference reference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"))

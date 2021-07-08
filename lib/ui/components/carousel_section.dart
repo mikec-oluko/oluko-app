@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/ui/components/title_body.dart';
+import 'package:mvt_fitness/constants/theme.dart';
+import 'package:mvt_fitness/ui/components/title_body.dart';
 
 class CarouselSection extends StatefulWidget {
   final String title;

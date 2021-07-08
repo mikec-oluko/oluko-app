@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:oluko_app/models/submodels/object_submodel.dart';
+import 'package:mvt_fitness/models/submodels/object_submodel.dart';
 import 'base.dart';
 
 class Course extends Base {

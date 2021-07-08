@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:oluko_app/models/assessment_assignment.dart';
+import 'package:mvt_fitness/models/assessment_assignment.dart';
 
 class AssessmentAssignmentRepository {
   FirebaseFirestore firestoreInstance;
@@ -9,8 +9,8 @@ class AssessmentAssignmentRepository {
   }
 
   static AssessmentAssignment createAssessmentAsignment(
-      AssessmentAssignment
-          assessmentAssignment, CollectionReference reference) {
+      AssessmentAssignment assessmentAssignment,
+      CollectionReference reference) {
     /*String projectId = GlobalConfiguration().getValue("projectId");
     CollectionReference reference = FirebaseFirestore.instance
         .collection("projects")

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/blocs/auth_bloc.dart';
-import 'package:oluko_app/constants/theme.dart';
+import 'package:mvt_fitness/blocs/auth_bloc.dart';
+import 'package:mvt_fitness/constants/theme.dart';
 
 class SignUpPage extends StatefulWidget {
   SignUpPage({Key key}) : super(key: key);

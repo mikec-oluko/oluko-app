@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:oluko_app/blocs/auth_bloc.dart';
-import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/models/sign_up_response.dart';
-import 'package:oluko_app/models/user_response.dart';
-import 'package:oluko_app/ui/components/carousel_section.dart';
-import 'package:oluko_app/ui/components/carousel_small_section.dart';
-import 'package:oluko_app/ui/components/challenges_card.dart';
-import 'package:oluko_app/ui/components/course_card.dart';
-import 'package:oluko_app/ui/components/image_and_video_container.dart';
-import 'package:oluko_app/ui/components/user_profile_information.dart';
-import 'package:oluko_app/ui/components/user_profile_progress.dart';
-import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
-import 'package:oluko_app/ui/screens/profile/profile_routes.dart';
+import 'package:mvt_fitness/blocs/auth_bloc.dart';
+import 'package:mvt_fitness/constants/theme.dart';
+import 'package:mvt_fitness/models/sign_up_response.dart';
+import 'package:mvt_fitness/models/user_response.dart';
+import 'package:mvt_fitness/ui/components/carousel_section.dart';
+import 'package:mvt_fitness/ui/components/carousel_small_section.dart';
+import 'package:mvt_fitness/ui/components/challenges_card.dart';
+import 'package:mvt_fitness/ui/components/course_card.dart';
+import 'package:mvt_fitness/ui/components/image_and_video_container.dart';
+import 'package:mvt_fitness/ui/components/user_profile_information.dart';
+import 'package:mvt_fitness/ui/components/user_profile_progress.dart';
+import 'package:mvt_fitness/ui/screens/profile/profile_constants.dart';
+import 'package:mvt_fitness/ui/screens/profile/profile_routes.dart';
 
 class ProfileOwnProfilePage extends StatefulWidget {
   @override

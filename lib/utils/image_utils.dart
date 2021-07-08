@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
+import 'package:mvt_fitness/ui/components/oluko_circular_progress_indicator.dart';
 
 class ImageUtils {
   static Widget frameBuilder(

@@ -1,10 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/models/course.dart';
-import 'package:oluko_app/models/course_category.dart';
-import 'package:oluko_app/models/course_statistics.dart';
-import 'package:oluko_app/repositories/course_category_repository.dart';
-import 'package:oluko_app/repositories/course_repository.dart';
-import 'package:oluko_app/utils/course_utils.dart';
+import 'package:mvt_fitness/models/course.dart';
+import 'package:mvt_fitness/models/course_category.dart';
+import 'package:mvt_fitness/models/course_statistics.dart';
+import 'package:mvt_fitness/repositories/course_category_repository.dart';
+import 'package:mvt_fitness/repositories/course_repository.dart';
+import 'package:mvt_fitness/utils/course_utils.dart';
 
 abstract class CourseState {}
 

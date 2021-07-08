@@ -5,16 +5,16 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:oluko_app/blocs/task_review_bloc.dart';
-import 'package:oluko_app/blocs/video_bloc.dart';
-import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/models/sign_up_response.dart';
-import 'package:oluko_app/models/submodels/event.dart';
-import 'package:oluko_app/models/submodels/video_info.dart';
-import 'package:oluko_app/models/task_submission.dart';
-import 'package:oluko_app/ui/components/black_app_bar.dart';
-import 'package:oluko_app/ui/components/oluko_primary_button.dart';
-import 'package:oluko_app/ui/components/progress_bar.dart';
+import 'package:mvt_fitness/blocs/task_review_bloc.dart';
+import 'package:mvt_fitness/blocs/video_bloc.dart';
+import 'package:mvt_fitness/constants/theme.dart';
+import 'package:mvt_fitness/models/sign_up_response.dart';
+import 'package:mvt_fitness/models/submodels/event.dart';
+import 'package:mvt_fitness/models/submodels/video_info.dart';
+import 'package:mvt_fitness/models/task_submission.dart';
+import 'package:mvt_fitness/ui/components/black_app_bar.dart';
+import 'package:mvt_fitness/ui/components/oluko_primary_button.dart';
+import 'package:mvt_fitness/ui/components/progress_bar.dart';
 import 'package:video_player/video_player.dart';
 
 class TaskSubmissionReviewPreview extends StatefulWidget {

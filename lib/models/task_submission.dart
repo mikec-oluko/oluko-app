@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:oluko_app/models/base.dart';
-import 'package:oluko_app/models/submodels/video.dart';
+import 'package:mvt_fitness/models/base.dart';
+import 'package:mvt_fitness/models/submodels/video.dart';
 
 class TaskSubmission extends Base {
   Video video;
@@ -31,11 +31,10 @@ class TaskSubmission extends Base {
 
   factory TaskSubmission.fromJson(Map<String, dynamic> json) {
     TaskSubmission taskSubmission = TaskSubmission(
-      video: Video.fromJson(json['video']),
-      reviewReference: json['review_reference'],
-      taskReference: json['task_reference'],
-      taskId: json['task_id']
-    );
+        video: Video.fromJson(json['video']),
+        reviewReference: json['review_reference'],
+        taskReference: json['task_reference'],
+        taskId: json['task_id']);
     taskSubmission.setBase(json);
     return taskSubmission;
   }

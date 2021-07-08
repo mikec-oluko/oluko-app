@@ -6,7 +6,7 @@ import 'package:path/path.dart' as path;
 import 'package:async/async.dart';
 import 'package:http/http.dart' as http;
 import 'package:amazon_cognito_identity_dart_2/sig_v4.dart';
-import 'package:oluko_app/helpers/s3_policy.dart';
+import 'package:mvt_fitness/helpers/s3_policy.dart';
 
 class S3Provider {
   String accessKeyId = GlobalConfiguration().getValue("accessKeyID");

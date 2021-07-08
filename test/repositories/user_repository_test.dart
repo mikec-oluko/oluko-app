@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:oluko_app/models/user_response.dart';
-import 'package:oluko_app/repositories/user_repository.dart';
+import 'package:mvt_fitness/models/user_response.dart';
+import 'package:mvt_fitness/repositories/user_repository.dart';
 
 class MockFirestore extends Mock implements FirebaseFirestore {}
 

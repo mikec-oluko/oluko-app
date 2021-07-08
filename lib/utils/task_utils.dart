@@ -1,6 +1,6 @@
-import 'package:oluko_app/models/assessment.dart';
-import 'package:oluko_app/models/assessment_task.dart';
-import 'package:oluko_app/models/task.dart';
+import 'package:mvt_fitness/models/assessment.dart';
+import 'package:mvt_fitness/models/assessment_task.dart';
+import 'package:mvt_fitness/models/task.dart';
 
 class TaskUtils {
   static List<Task> filterByAssessment(

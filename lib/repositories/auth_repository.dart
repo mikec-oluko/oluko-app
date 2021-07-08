@@ -1,14 +1,14 @@
 import 'dart:convert';
 import 'package:http/http.dart';
-import 'package:oluko_app/models/dto/api_response.dart';
-import 'package:oluko_app/models/dto/login_request.dart';
+import 'package:mvt_fitness/models/dto/api_response.dart';
+import 'package:mvt_fitness/models/dto/login_request.dart';
 import 'package:http/http.dart' show Client, Response;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
-import 'package:oluko_app/models/sign_up_request.dart';
-import 'package:oluko_app/models/user_response.dart';
-import 'package:oluko_app/models/dto/verify_token_request.dart';
+import 'package:mvt_fitness/models/sign_up_request.dart';
+import 'package:mvt_fitness/models/user_response.dart';
+import 'package:mvt_fitness/models/dto/verify_token_request.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthRepository {

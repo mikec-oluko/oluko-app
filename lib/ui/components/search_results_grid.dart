@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:oluko_app/utils/image_utils.dart';
+import 'package:mvt_fitness/utils/image_utils.dart';
 
 import 'course_card.dart';
 

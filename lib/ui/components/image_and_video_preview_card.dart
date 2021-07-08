@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:oluko_app/constants/theme.dart';
+import 'package:mvt_fitness/constants/theme.dart';
 
 class ImageAndVideoPreviewCard extends StatefulWidget {
   final Image imageCover;

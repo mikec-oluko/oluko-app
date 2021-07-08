@@ -1,6 +1,6 @@
 {
-    "name": "oluko_app",
-    "short_name": "oluko_app",
+    "name": "mvt_fitness",
+    "short_name": "mvt_fitness",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

@@ -1,6 +1,6 @@
-import 'package:oluko_app/models/course.dart';
-import 'package:oluko_app/models/course_category.dart';
-import 'package:oluko_app/models/course_category_item.dart';
+import 'package:mvt_fitness/models/course.dart';
+import 'package:mvt_fitness/models/course_category.dart';
+import 'package:mvt_fitness/models/course_category_item.dart';
 
 class CourseUtils {
   static List<Course> filterByCategories(

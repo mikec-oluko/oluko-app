@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/models/course_statistics.dart';
-import 'package:oluko_app/utils/oluko_localizations.dart';
-import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:mvt_fitness/constants/theme.dart';
+import 'package:mvt_fitness/models/course_statistics.dart';
+import 'package:mvt_fitness/utils/oluko_localizations.dart';
+import 'package:mvt_fitness/utils/screen_utils.dart';
 
 class StatisticChart extends StatefulWidget {
   final CourseStatistics courseStatistics;

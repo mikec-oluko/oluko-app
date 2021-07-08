@@ -1,13 +1,11 @@
-# oluko_app
+# MVT Fitness App - Branch
 
 A Flutter project for Android and iOS app Oluko
 ## Getting Started
 
-
 For help getting started with Flutter, view our
 [online documentation](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
-
 
 ## Add languages
 main.dart file you need to add the extra language 

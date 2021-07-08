@@ -1,9 +1,9 @@
-import 'package:oluko_app/helpers/s3_provider.dart';
+import 'package:mvt_fitness/helpers/s3_provider.dart';
 import 'package:path/path.dart' as p;
 import 'dart:io';
 
-class VideoProcess{
-    static Future<String> uploadFile(filePath, folderName) async {
+class VideoProcess {
+  static Future<String> uploadFile(filePath, folderName) async {
     final file = new File(filePath);
     final basename = p.basename(filePath);
 
@@ -14,7 +14,8 @@ class VideoProcess{
     return downloadUrl;
   }
 
-    static void updatePlaylistUrls(File file, String videoName, {bool s3Storage}) {
+  static void updatePlaylistUrls(File file, String videoName,
+      {bool s3Storage}) {
     final lines = file.readAsLinesSync();
     var updatedLines = [];
 

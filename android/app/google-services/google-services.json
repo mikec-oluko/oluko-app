@@ -7,7 +7,7 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:14784345427:android:f745cc798bc6936d131da6",
+        "mobilesdk_app_id": "1:14784345427:android:ef9728bf02a11589131da6",
         "android_client_info": {
           "package_name": "com.app.oluko.mvt"
         }
@@ -31,11 +31,10 @@
               "client_type": 3
             },
             {
-              "client_id": "14784345427-18l9mjbgebs3ts9n8tkj27vk7ks2bns7.apps.googleusercontent.com",
+              "client_id": "14784345427-pplsgvchmr84euv6v6cf3ts98ct1im42.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.app.olukoApp",
-                "app_store_id": "1566271606"
+                "bundle_id": "com.app.oluko.mvt"
               }
             }
           ]
@@ -51,22 +50,6 @@
       },
       "oauth_client": [
         {
-          "client_id": "14784345427-bi8fgmvikguffc4rvu3006roheodeqna.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.app.oluko.mvt",
-            "certificate_hash": "4b374314dfe5005f2e787bcb5cbaceddb3e3151c"
-          }
-        },
-        {
-          "client_id": "14784345427-qprj0m9712q62j9tajdb2csjshadma7a.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.app.oluko.mvt",
-            "certificate_hash": "daeee9cd9daea51cc77148ceb151b8d745af89ca"
-          }
-        },
-        {
           "client_id": "14784345427-1j8gk6itg11t5e7i7dmpjgdj7k7dlfa6.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -84,11 +67,10 @@
               "client_type": 3
             },
             {
-              "client_id": "14784345427-18l9mjbgebs3ts9n8tkj27vk7ks2bns7.apps.googleusercontent.com",
+              "client_id": "14784345427-pplsgvchmr84euv6v6cf3ts98ct1im42.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.app.olukoApp",
-                "app_store_id": "1566271606"
+                "bundle_id": "com.app.oluko.mvt"
               }
             }
           ]

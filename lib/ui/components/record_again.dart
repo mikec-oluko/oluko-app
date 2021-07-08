@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/helpers/enum_helper.dart';
-import 'package:oluko_app/models/plan.dart';
-import 'package:oluko_app/models/task.dart';
-import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
-import 'package:oluko_app/ui/components/oluko_primary_button.dart';
+import 'package:mvt_fitness/constants/theme.dart';
+import 'package:mvt_fitness/helpers/enum_helper.dart';
+import 'package:mvt_fitness/models/plan.dart';
+import 'package:mvt_fitness/models/task.dart';
+import 'package:mvt_fitness/ui/components/oluko_outlined_button.dart';
+import 'package:mvt_fitness/ui/components/oluko_primary_button.dart';
 
 class RecordAgain extends StatefulWidget {
   final Function() onPressed;

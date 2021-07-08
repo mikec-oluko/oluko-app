@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "oluko-app",
+            "name": "mvt_fitness",
             "request": "launch",
             "type": "dart"
         }

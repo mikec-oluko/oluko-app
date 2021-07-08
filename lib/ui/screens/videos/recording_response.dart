@@ -7,9 +7,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/blocs/video_info_bloc.dart';
-import 'package:oluko_app/models/submodels/event.dart';
-import 'package:oluko_app/models/submodels/video_info.dart';
+import 'package:mvt_fitness/blocs/video_info_bloc.dart';
+import 'package:mvt_fitness/models/submodels/event.dart';
+import 'package:mvt_fitness/models/submodels/video_info.dart';
 import 'package:video_player/video_player.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 
@@ -251,7 +251,8 @@ class _RecordingResponseState extends State<RecordingResponse> {
                                           setState(() {
                                             this.videoEvents.add(Event(
                                                 eventType: eventType,
-                                                recordingPosition: milliseconds));
+                                                recordingPosition:
+                                                    milliseconds));
                                           });
                                         })
                                     : Text(""),

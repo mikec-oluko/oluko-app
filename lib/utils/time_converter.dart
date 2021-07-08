@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:mvt_fitness/utils/oluko_localizations.dart';
 
 class TimeConverter {
   static double fromSecondsToMilliSeconds(double seconds) {

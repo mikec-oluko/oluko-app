@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/blocs/auth_bloc.dart';
-import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/helpers/form_helper.dart';
-import 'package:oluko_app/models/dto/login_request.dart';
-import 'package:oluko_app/models/sign_up_response.dart';
-import 'package:oluko_app/models/user_response.dart';
-import 'package:oluko_app/ui/peek_password.dart';
-import 'package:oluko_app/utils/oluko_localizations.dart';
-import 'package:oluko_app/utils/app_loader.dart';
+import 'package:mvt_fitness/blocs/auth_bloc.dart';
+import 'package:mvt_fitness/constants/theme.dart';
+import 'package:mvt_fitness/helpers/form_helper.dart';
+import 'package:mvt_fitness/models/dto/login_request.dart';
+import 'package:mvt_fitness/models/sign_up_response.dart';
+import 'package:mvt_fitness/models/user_response.dart';
+import 'package:mvt_fitness/ui/peek_password.dart';
+import 'package:mvt_fitness/utils/oluko_localizations.dart';
+import 'package:mvt_fitness/utils/app_loader.dart';
 import 'package:global_configuration/global_configuration.dart';
 
 class LoginPage extends StatefulWidget {

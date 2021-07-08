@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/models/search_results.dart';
-import 'package:oluko_app/ui/components/search_bar.dart';
-import 'package:oluko_app/ui/components/title_header.dart';
+import 'package:mvt_fitness/constants/theme.dart';
+import 'package:mvt_fitness/models/search_results.dart';
+import 'package:mvt_fitness/ui/components/search_bar.dart';
+import 'package:mvt_fitness/ui/components/title_header.dart';
 
 class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
   final Function() onPressed;

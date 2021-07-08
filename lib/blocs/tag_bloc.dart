@@ -1,9 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/models/tag.dart';
-import 'package:oluko_app/models/tag_category.dart';
-import 'package:oluko_app/repositories/tag_category_repository.dart';
-import 'package:oluko_app/repositories/tag_repository.dart';
-import 'package:oluko_app/utils/tag_utils.dart';
+import 'package:mvt_fitness/models/tag.dart';
+import 'package:mvt_fitness/models/tag_category.dart';
+import 'package:mvt_fitness/repositories/tag_category_repository.dart';
+import 'package:mvt_fitness/repositories/tag_repository.dart';
+import 'package:mvt_fitness/utils/tag_utils.dart';
 
 abstract class TagState {}
 

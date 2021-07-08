@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/models/base.dart';
+import 'package:mvt_fitness/constants/theme.dart';
+import 'package:mvt_fitness/models/base.dart';
 
 class SearchFilters<T extends Base> extends StatefulWidget {
   final String textInput;

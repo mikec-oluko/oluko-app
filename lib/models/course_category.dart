@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:oluko_app/models/base.dart';
-import 'package:oluko_app/models/course_category_item.dart';
+import 'package:mvt_fitness/models/base.dart';
+import 'package:mvt_fitness/models/course_category_item.dart';
 
 class CourseCategory extends Base {
   CourseCategory(

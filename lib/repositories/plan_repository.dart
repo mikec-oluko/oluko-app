@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:oluko_app/models/plan.dart';
+import 'package:mvt_fitness/models/plan.dart';
 
 class PlanRepository {
   FirebaseFirestore firestoreInstance;

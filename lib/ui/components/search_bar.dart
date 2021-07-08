@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/models/search_results.dart';
+import 'package:mvt_fitness/constants/theme.dart';
+import 'package:mvt_fitness/models/search_results.dart';
 
 class SearchBar<T> extends StatefulWidget {
   final Function(SearchResults<T>) onSearchResults;

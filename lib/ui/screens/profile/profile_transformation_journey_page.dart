@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/ui/components/black_app_bar.dart';
-import 'package:oluko_app/ui/components/dialog.dart';
-import 'package:oluko_app/ui/components/image_and_video_container.dart';
-import 'package:oluko_app/ui/components/image_and_video_preview_card.dart';
-import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
-import 'package:oluko_app/ui/components/transformation_journey_modal_options.dart';
-import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
-import 'package:oluko_app/ui/screens/profile/profile_routes.dart';
-import 'package:oluko_app/ui/screens/profile/transformation_journey_post.dart';
-import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:mvt_fitness/constants/theme.dart';
+import 'package:mvt_fitness/ui/components/black_app_bar.dart';
+import 'package:mvt_fitness/ui/components/dialog.dart';
+import 'package:mvt_fitness/ui/components/image_and_video_container.dart';
+import 'package:mvt_fitness/ui/components/image_and_video_preview_card.dart';
+import 'package:mvt_fitness/ui/components/oluko_outlined_button.dart';
+import 'package:mvt_fitness/ui/components/transformation_journey_modal_options.dart';
+import 'package:mvt_fitness/ui/screens/profile/profile_constants.dart';
+import 'package:mvt_fitness/ui/screens/profile/profile_routes.dart';
+import 'package:mvt_fitness/ui/screens/profile/transformation_journey_post.dart';
+import 'package:mvt_fitness/utils/oluko_localizations.dart';
 
 class ProfileTransformationJourneyPage extends StatefulWidget {
   @override

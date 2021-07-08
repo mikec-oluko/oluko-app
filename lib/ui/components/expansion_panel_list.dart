@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:oluko_app/ui/components/parent_tile.dart';
-import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
+import 'package:mvt_fitness/ui/components/parent_tile.dart';
+import 'package:mvt_fitness/ui/screens/profile/profile_constants.dart';
 
 class ExpansionPanelListWidget extends StatefulWidget {
   @override

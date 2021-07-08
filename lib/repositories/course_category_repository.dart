@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:oluko_app/models/course_category.dart';
+import 'package:mvt_fitness/models/course_category.dart';
 
 class CourseCategoryRepository {
   FirebaseFirestore firestoreInstance;

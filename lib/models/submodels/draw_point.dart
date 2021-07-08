@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:oluko_app/ui/screens/videos/draw.dart';
+import 'package:mvt_fitness/ui/screens/videos/draw.dart';
 
 import '../base.dart';
 

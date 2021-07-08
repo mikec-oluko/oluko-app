@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:oluko_app/ui/screens/videos/fade_animation.dart';
+import 'package:mvt_fitness/ui/screens/videos/fade_animation.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoPlayPause extends StatefulWidget {

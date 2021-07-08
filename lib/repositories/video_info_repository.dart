@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:oluko_app/models/submodels/draw_point.dart';
-import 'package:oluko_app/models/submodels/video_info.dart';
+import 'package:mvt_fitness/models/submodels/draw_point.dart';
+import 'package:mvt_fitness/models/submodels/video_info.dart';
 
 class VideoInfoRepository {
   FirebaseFirestore firestoreInstance;

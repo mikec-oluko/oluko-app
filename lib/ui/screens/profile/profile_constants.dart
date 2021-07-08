@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:oluko_app/ui/components/dialog.dart';
+import 'package:mvt_fitness/ui/components/dialog.dart';
 
 class ProfileViewConstants {
   //Constants used on Profile Feature
