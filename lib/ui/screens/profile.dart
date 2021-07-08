@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
-import 'package:oluko_app/models/sign_up_request.dart';
+// import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
+import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/ui/components/black_app_bar.dart';
+import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';
+import 'package:oluko_app/ui/components/user_profile_information.dart';
+import 'package:oluko_app/ui/components/user_profile_progress.dart';
+import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
+import 'package:oluko_app/ui/screens/profile/profile_routes.dart';
+import '../../constants/theme.dart';
 
 class ProfilePage extends StatefulWidget {
   ProfilePage({Key key}) : super(key: key);
@@ -13,228 +21,113 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final _formKey = GlobalKey<FormState>();
-  SignUpRequest _requestData = SignUpRequest();
-  SignUpResponse profileInfo;
+  UserResponse profileInfo;
+  final String profileTitle = ProfileViewConstants.profileTitle;
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
         future: getProfileInfo(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return signUpForm();
+            return profileHomeView();
           } else {
             return SizedBox();
           }
         });
   }
 
-  Widget signUpForm() {
+  Widget profileHomeView() {
     return Form(
         key: _formKey,
         child: Scaffold(
-            appBar: AppBar(
-              // Here we take the value from the MyHomePage object that was created by
-              // the App.build method, and use it to set our appbar title.
-              title: Text('Sign Up'),
-              backgroundColor: Colors.white,
-              actions: [],
-            ),
+            appBar: OlukoAppBar(
+                title: ProfileViewConstants.profileTitle, showSearchBar: false),
             body: Container(
-                color: Colors.brown.shade100,
-                child: ListView(children: [
-                  Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 15),
-                      child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          child: Column(children: [
-                            SizedBox(height: 20),
-                            Align(
-                                alignment: Alignment.centerRight,
-                                child: IconButton(
-                                  icon: Icon(Icons.cancel),
-                                  color: Colors.grey,
-                                  iconSize: 30,
-                                  onPressed: () => Navigator.pop(context),
-                                )),
-                            SizedBox(height: 20),
-                            titleSection(),
-                            SizedBox(height: 75),
-                            formSection()
-                          ])))
-                ]))));
+                color: OlukoColors.black,
+                child: Stack(
+                  children: [
+                    userInformationSection(),
+                    buildOptionsList(),
+                  ],
+                )),
+            bottomNavigationBar: OlukoBottomNavigationBar()));
   }
 
-  Widget formSection() {
+  Widget userInformationSection() {
+    return Column(
+      children: [
+        GestureDetector(
+            onTap: () =>
+                Navigator.pushNamed(context, ProfileRoutes.userInformationRoute)
+                    .then((value) => onGoBack()),
+            child: UserProfileInformation(userInformation: profileInfo)),
+        UserProfileProgress(
+            userChallenges: ProfileViewConstants.profileChallengesContent,
+            userFriends: ProfileViewConstants.profileFriendsContent)
+      ],
+    );
+  }
+
+  Padding buildOptionsList() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 150),
+      child: ListView.builder(
+          itemCount: ProfileViewConstants.profileOptions.length,
+          itemBuilder: (_, index) =>
+              profileOptions(ProfileViewConstants.profileOptions[index])),
+    );
+  }
+
+  Widget profileOptions(String pageTitle) {
     return Container(
-        width: MediaQuery.of(context).size.width,
-        height: 400,
-        child:
-            Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-          Column(children: formFields()),
-        ]));
+      width: MediaQuery.of(context).size.width,
+      decoration: BoxDecoration(
+          border: Border(
+              bottom: BorderSide(width: 1.0, color: OlukoColors.grayColor))),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              GestureDetector(
+                onTap: () => Navigator.pushNamed(
+                    context, ProfileRoutes.returnRouteName(pageTitle)),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 25.0),
+                  child: Text(pageTitle, style: OlukoFonts.olukoMediumFont()),
+                ),
+              ),
+              IconButton(
+                  icon: Icon(Icons.arrow_forward_ios,
+                      color: OlukoColors.grayColor),
+                  onPressed: () => Navigator.pushNamed(
+                          context, ProfileRoutes.returnRouteName(pageTitle))
+                      .then((value) => onGoBack()))
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
-  Widget titleSection() {
-    return Container(
-        width: MediaQuery.of(context).size.width,
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(
-            'Your profile',
-            textAlign: TextAlign.start,
-            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Text(
-            'Your personal information',
-            style: TextStyle(fontSize: 17, fontWeight: FontWeight.w300),
-          )
-        ]));
-  }
-
-  List<Widget> formFields() {
-    return [
-      TextFormField(
-        decoration: new InputDecoration(
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.white),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(10.0),
-                topRight: Radius.circular(10.0),
-              ),
-            ),
-            border: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.white),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(10.0),
-                topRight: Radius.circular(10.0),
-              ),
-            ),
-            filled: true,
-            hintStyle: new TextStyle(color: Colors.grey[800]),
-            hintText: "First Name",
-            labelText: "First Name",
-            fillColor: Colors.white70),
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please enter some text';
-          }
-          return null;
-        },
-        initialValue: this.profileInfo.firstName,
-        enabled: false,
-        onSaved: (value) {
-          this._requestData.firstName = value;
-        },
-      ),
-      TextFormField(
-        decoration: new InputDecoration(
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.white),
-              borderRadius: const BorderRadius.only(),
-            ),
-            border: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.white),
-              borderRadius: const BorderRadius.only(),
-            ),
-            filled: true,
-            hintStyle: new TextStyle(color: Colors.grey[800]),
-            hintText: "Last Name",
-            labelText: "Last Name",
-            fillColor: Colors.white70),
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please enter some text';
-          }
-          return null;
-        },
-        initialValue: this.profileInfo.lastName,
-        enabled: false,
-        onSaved: (value) {
-          this._requestData.lastName = value;
-        },
-      ),
-      TextFormField(
-        decoration: new InputDecoration(
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.white),
-              borderRadius: const BorderRadius.only(),
-            ),
-            border: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.white),
-              borderRadius: const BorderRadius.only(),
-            ),
-            filled: true,
-            hintStyle: new TextStyle(color: Colors.grey[800]),
-            hintText: "Your Email",
-            labelText: "Email Address",
-            fillColor: Colors.white70),
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please enter some text';
-          }
-          return null;
-        },
-        initialValue: this.profileInfo.email,
-        enabled: false,
-        onSaved: (value) {
-          this._requestData.email = value;
-        },
-      ),
-      TextFormField(
-        decoration: new InputDecoration(
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.white),
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(10.0),
-                bottomRight: Radius.circular(10.0),
-              ),
-            ),
-            border: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.white),
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(10.0),
-                bottomRight: Radius.circular(10.0),
-              ),
-            ),
-            filled: true,
-            errorStyle: TextStyle(height: 0.5),
-            hintStyle: new TextStyle(color: Colors.grey[800]),
-            hintText: "8 or more characters",
-            labelText: "Password",
-            fillColor: Colors.white70),
-        obscureText: true,
-        onSaved: (value) {
-          this._requestData.password = value;
-        },
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please enter some text';
-          }
-          return null;
-        },
-        initialValue: 'samplePassword',
-        enabled: false,
-      )
-    ];
+  onGoBack() {
+    setState(() {});
   }
 
   handleError(AsyncSnapshot snapshot) {}
 
   handleResult(AsyncSnapshot snapshot) {
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      returnToHome();
+      ProfileRoutes.returnToHome(context: context);
     });
   }
 
   Future<void> getProfileInfo() async {
-    profileInfo = SignUpResponse.fromJson(
-        (await AuthBloc().retrieveLoginData()).toJson());
+    profileInfo =
+        UserResponse.fromJson((await AuthBloc().retrieveLoginData()).toJson());
     return profileInfo;
-  }
-
-  Future<void> returnToHome() async {
-    Navigator.popUntil(context, ModalRoute.withName('/'));
   }
 }

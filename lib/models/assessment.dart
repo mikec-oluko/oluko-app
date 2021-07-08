@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'assessment_task.dart';
 import 'base.dart';
 
@@ -41,7 +40,7 @@ class Assessment extends Base {
       coverImage: json['cover_image'],
       thumbnailImage: json['thumbnail_image'],
       description: json['description'],
-      tasks: json['tasks'] != null && json['tasks'].length > 0
+      tasks: json['tasks'] != null
           ? json['tasks'].map<AssessmentTask>((task) {
               AssessmentTask assessmentTask = AssessmentTask.fromJson(task);
               return assessmentTask;

@@ -12,7 +12,7 @@ import 'package:oluko_app/models/submodels/event.dart';
 import 'package:oluko_app/models/submodels/video.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-import 'package:oluko_app/models/video_info.dart';
+import 'package:oluko_app/models/submodels/video_info.dart';
 import 'package:oluko_app/repositories/video_info_repository.dart';
 
 abstract class VideoInfoState {
@@ -112,7 +112,7 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
     }
     try {
       VideoInfo newVideoInfo = VideoInfo(
-        createdBy: user.uid,
+        //createdBy: user.uid,
         markers: [],
         events: (events != null) ? events : [],
         drawing: [],

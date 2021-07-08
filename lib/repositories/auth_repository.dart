@@ -14,7 +14,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthRepository {
   Client http;
   FirebaseAuth firebaseAuthInstance;
-  final String url = 'https://us-central1-oluko-2671e.cloudfunctions.net/api';
+  final String url =
+      'https://us-central1-oluko-2671e.cloudfunctions.net/api/auth';
   AuthRepository.test({Client http, FirebaseAuth firebaseAuthInstance}) {
     this.http = http;
     this.firebaseAuthInstance = firebaseAuthInstance;
@@ -28,14 +29,13 @@ class AuthRepository {
   Future<ApiResponse> login(LoginRequest loginRequest) async {
     var body = loginRequest.toJson();
     body.removeWhere((key, value) => value == null);
-    Response response =
-        await http.post(Uri.parse("$url/auth/login"), body: body);
-    var signUpResponseBody = jsonDecode(response.body);
-    if (signUpResponseBody['message'] is String) {
-      List<String> messageList = [signUpResponseBody['message'].toString()];
-      signUpResponseBody['message'] = messageList;
+    Response response = await http.post(Uri.parse("$url/login"), body: body);
+    var loginResponseBody = jsonDecode(response.body);
+    if (loginResponseBody['message'] is String) {
+      List<String> messageList = [loginResponseBody['message'].toString()];
+      loginResponseBody['message'] = messageList;
     }
-    ApiResponse apiResponse = ApiResponse.fromJson(signUpResponseBody);
+    ApiResponse apiResponse = ApiResponse.fromJson(loginResponseBody);
     if (apiResponse.statusCode == 200) {
       await firebaseAuthInstance
           .signInWithCustomToken(apiResponse.data['accessToken']);
@@ -54,7 +54,7 @@ class AuthRepository {
   Future<ApiResponse> verifyToken(VerifyTokenRequest verifyTokenRequest) async {
     Map<String, dynamic> body = verifyTokenRequest.toJson();
     Response response =
-        await http.post(Uri.parse("$url/auth/token/verify"), body: body);
+        await http.post(Uri.parse("$url/token/verify"), body: body);
     var responseBody = jsonDecode(response.body);
     if (responseBody['message'] != null &&
         responseBody['message'].length == null) {
@@ -103,8 +103,7 @@ class AuthRepository {
 
   Future<ApiResponse> signUp(SignUpRequest signUpRequest) async {
     var body2 = signUpRequest.toJson();
-    Response response =
-        await http.post(Uri.parse("$url/auth/signup"), body: body2);
+    Response response = await http.post(Uri.parse("$url/signup"), body: body2);
     var signUpResponseBody = jsonDecode(response.body);
     if (signUpResponseBody['message'] != null &&
         signUpResponseBody['message'] is String) {
@@ -114,9 +113,10 @@ class AuthRepository {
     return apiResponse;
   }
 
-  Future<bool> storeLoginData(UserResponse signUpResponse) async {
+  Future<bool> storeLoginData(UserResponse loginResponse) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String encodedJson = jsonEncode(signUpResponse);
+    UserResponse loginInfo = loginResponse.cleanBase();
+    String encodedJson = jsonEncode(loginInfo);
     bool loginSaved = await prefs.setString('login-data', encodedJson);
     print('Saved login info.');
     return loginSaved;
@@ -129,9 +129,9 @@ class AuthRepository {
       return null;
     }
     dynamic decodedJson = jsonDecode(savedData);
-    UserResponse signUpResponse = UserResponse.fromJson(decodedJson);
+    UserResponse loginResponse = UserResponse.fromJson(decodedJson);
     print('Retrieved login info.');
-    return signUpResponse;
+    return loginResponse;
   }
 
   Future<bool> removeLoginData() async {

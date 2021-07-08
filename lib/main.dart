@@ -4,14 +4,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/course_bloc.dart';
+import 'package:oluko_app/blocs/course_category_bloc.dart';
+import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/config/s3_settings.dart';
 import 'package:oluko_app/ui/screens/app_plans.dart';
 import 'package:oluko_app/ui/screens/assessment_videos.dart';
 import 'package:oluko_app/ui/screens/choose_plan_payment.dart';
+import 'package:oluko_app/ui/screens/classes.dart';
 import 'package:oluko_app/ui/screens/courses.dart';
 import 'package:oluko_app/ui/screens/home_page.dart';
 import 'package:oluko_app/ui/screens/Login.dart';
 import 'package:oluko_app/ui/screens/Profile.dart';
+import 'package:oluko_app/ui/screens/movement_detail.dart';
+import 'package:oluko_app/ui/screens/profile/profile_challenges_page.dart';
+import 'package:oluko_app/ui/screens/profile/profile_help_and_support_page.dart';
+import 'package:oluko_app/ui/screens/profile/profile_my_account_page.dart';
+import 'package:oluko_app/ui/screens/profile/profile_own_profile_page.dart';
+import 'package:oluko_app/ui/screens/profile/profile_settings_page.dart';
+import 'package:oluko_app/ui/screens/profile/profile_subscription_page.dart';
+import 'package:oluko_app/ui/screens/profile/profile_transformation_journey_page.dart';
+import 'package:oluko_app/ui/screens/profile/transformation_journey_post.dart';
+import 'package:oluko_app/ui/screens/self_recording_preview.dart';
 import 'package:oluko_app/ui/screens/sign_up_with_email.dart';
 import 'package:oluko_app/ui/screens/sign_up.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -45,6 +59,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: '${OLUKO}',
       theme: ThemeData(
         primarySwatch: Colors.grey,
@@ -53,6 +68,8 @@ class _MyAppState extends State<MyApp> {
       routes: {
         '/': (context) => MultiBlocProvider(providers: [
               BlocProvider.value(value: _authBloc),
+              BlocProvider(create: (context) => CourseBloc()),
+              BlocProvider(create: (context) => TagBloc())
             ], child: MyHomePage(title: '')),
         '/sign-up': (context) =>
             BlocProvider.value(value: _authBloc, child: SignUpPage()),
@@ -60,13 +77,39 @@ class _MyAppState extends State<MyApp> {
             BlocProvider.value(value: _authBloc, child: SignUpWithMailPage()),
         '/profile': (context) =>
             BlocProvider.value(value: _authBloc, child: ProfilePage()),
+        '/profile-settings': (context) =>
+            BlocProvider.value(value: _authBloc, child: ProfileSettingsPage()),
+        '/profile-my-account': (context) =>
+            BlocProvider.value(value: _authBloc, child: ProfileMyAccountPage()),
+        '/profile-subscription': (context) => BlocProvider.value(
+            value: _authBloc, child: ProfileSubscriptionPage()),
+        '/profile-help-and-support': (context) => BlocProvider.value(
+            value: _authBloc, child: ProfileHelpAndSupportPage()),
+        '/profile-view-own-profile': (context) => BlocProvider.value(
+            value: _authBloc, child: ProfileOwnProfilePage()),
+        '/profile-challenges': (context) => BlocProvider.value(
+            value: _authBloc, child: ProfileChallengesPage()),
+        '/profile-transformation-journey': (context) => BlocProvider.value(
+            value: _authBloc, child: ProfileTransformationJourneyPage()),
+        '/transformation-journey-post': (context) => BlocProvider.value(
+            value: _authBloc, child: TransformationJourneyPostPage()),
+        '/transformation-journey-post-view': (context) => BlocProvider.value(
+            value: _authBloc, child: TransformationJourneyPostPage()),
         '/log-in': (context) =>
             BlocProvider.value(value: _authBloc, child: LoginPage()),
         '/app-plans': (context) =>
             BlocProvider.value(value: _authBloc, child: AppPlans()),
+        //TODO: Remove this when take it to the correct place inside courses
+        '/movement-detail': (context) =>
+            BlocProvider.value(value: _authBloc, child: MovementDetail()),
+        '/classes': (context) =>
+            BlocProvider.value(value: _authBloc, child: Classes()),
         '/assessment-videos': (context) => MultiBlocProvider(providers: [
               BlocProvider.value(value: _authBloc),
-              BlocProvider(create: (context) => AssessmentBloc()..get())
+              //TODO Change this when using more than 1 assessment.
+              BlocProvider(
+                  create: (context) =>
+                      AssessmentBloc()..getById('ndRa0ldHCwCUaDxEQm25'))
             ], child: AsessmentVideos()),
         '/task-details': (context) => BlocProvider.value(
             value: _authBloc,
@@ -75,8 +118,11 @@ class _MyAppState extends State<MyApp> {
             )),
         '/choose-plan-payment': (context) =>
             BlocProvider.value(value: _authBloc, child: ChoosePlayPayments()),
-        '/courses': (context) =>
-            BlocProvider.value(value: _authBloc, child: Courses()),
+        '/courses': (context) => MultiBlocProvider(providers: [
+              BlocProvider.value(value: _authBloc),
+              BlocProvider(create: (context) => CourseBloc()),
+              BlocProvider(create: (context) => TagBloc())
+            ], child: Courses()),
         '/videos': (context) => BlocProvider.value(
             value: _authBloc,
             child: Home(

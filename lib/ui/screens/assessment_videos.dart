@@ -28,7 +28,6 @@ class AsessmentVideos extends StatefulWidget {
 class _AsessmentVideosState extends State<AsessmentVideos> {
   final _formKey = GlobalKey<FormState>();
   ChewieController _controller;
-  SignUpResponse profileInfo;
   Assessment _mainAssessment;
 
   @override

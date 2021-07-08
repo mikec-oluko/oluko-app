@@ -88,7 +88,7 @@ class _State extends State<SubscriptionCard> {
                             EdgeInsets.symmetric(vertical: 30, horizontal: 10),
                         child: Container(
                           height:
-                              30.0 + (widget.subtitles.length * 15).toDouble(),
+                              41.0 + (widget.subtitles.length * 15).toDouble(),
                           child: Column(children: [
                             Row(
                               children: [
