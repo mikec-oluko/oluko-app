@@ -1,17 +1,17 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/submodels/enrollment_class.dart';
 import 'package:oluko_app/repositories/course_enrollment_repository.dart';
 
 abstract class CourseEnrollmentState {}
 
 class Loading extends CourseEnrollmentState {}
 
-class CreateEnrollmentSuccess extends CourseEnrollmentState {
-  CourseEnrollment courseEnrollment;
-  CreateEnrollmentSuccess({this.courseEnrollment});
+class UncompletedClassSuccess extends CourseEnrollmentState {
+  EnrollmentClass enrollmentClass;
+  UncompletedClassSuccess({this.enrollmentClass});
 }
 
 class GetEnrollmentSuccess extends CourseEnrollmentState {

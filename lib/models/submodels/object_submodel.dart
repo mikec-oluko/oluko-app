@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../base.dart';
-
-class ObjectSubmodel extends Base {
+class ObjectSubmodel{
   DocumentReference objectReference;
   String objectId;
   String objectName;

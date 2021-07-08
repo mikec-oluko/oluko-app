@@ -4,8 +4,8 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
-import 'package:oluko_app/models/enrollment_class.dart';
-import 'package:oluko_app/models/enrollment_segment.dart';
+import 'package:oluko_app/models/submodels/enrollment_class.dart';
+import 'package:oluko_app/models/submodels/enrollment_segment.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
 
 class CourseEnrollmentRepository {

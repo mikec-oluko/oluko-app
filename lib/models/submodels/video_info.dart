@@ -1,9 +1,10 @@
 import 'package:oluko_app/models/submodels/draw_point.dart';
 import 'package:oluko_app/models/submodels/event.dart';
 import 'package:oluko_app/models/submodels/video.dart';
+
 import '../base.dart';
 
-class VideoInfo extends Base {
+class VideoInfo extends Base{
   List<DrawPoint> drawing;
   List<Event> events;
   List<double> markers;
