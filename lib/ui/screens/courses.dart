@@ -21,6 +21,8 @@ import 'package:oluko_app/ui/components/search_bar.dart';
 import 'package:oluko_app/ui/components/search_results_grid.dart';
 import 'package:oluko_app/ui/components/search_suggestions.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
+import 'package:oluko_app/utils/app_navigator.dart';
+import 'package:oluko_app/utils/course_utils.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -66,20 +68,38 @@ class _State extends State<Courses> {
                     bottomNavigationBar: OlukoBottomNavigationBar(),
                     body: courseState is CourseSuccess && tagState is TagSuccess
                         ? WillPopScope(
-                            onWillPop: _onWillPop,
+                            onWillPop: () => AppNavigator.onWillPop(context),
                             child: OrientationBuilder(
                                 builder: (context, orientation) {
                               return Container(
                                 height: ScreenUtils.height(context),
                                 width: ScreenUtils.width(context),
                                 child: showFilterSelector
-                                    ? _filterSelector(tagState)
+                                    ? CourseUtils.filterSelector(
+                                        tagState,
+                                        onSubmit: (List<Base> selectedItems) =>
+                                            this.setState(() {
+                                          selectedTags = selectedItems;
+                                          showFilterSelector = false;
+                                          searchKey.currentState
+                                              .updateSearchResults('');
+                                        }),
+                                        onClosed: () => this.setState(() {
+                                          showFilterSelector = false;
+                                        }),
+                                      )
                                     : searchResults.query.isEmpty &&
                                             selectedTags.isEmpty
                                         ? _mainPage(courseState)
                                         : showSearchSuggestions
-                                            ? _searchSuggestions()
-                                            : _searchResults(),
+                                            ? CourseUtils.searchSuggestions(
+                                                searchResults, searchKey)
+                                            : CourseUtils.searchResults(
+                                                context,
+                                                searchResults,
+                                                cardsAspectRatio,
+                                                searchResultsPortrait,
+                                                searchResultsLandscape),
                               );
                             }),
                           )
@@ -94,33 +114,6 @@ class _State extends State<Courses> {
     } else {
       return cardsToShowOnLandscape;
     }
-  }
-
-  List<Course> _suggestionMethod(String query, List<Course> collection) {
-    return collection
-        .where((course) =>
-            course.name.toLowerCase().indexOf(query.toLowerCase()) == 0)
-        .toList();
-  }
-
-  Widget _searchResults() {
-    return SearchResultsGrid<Course>(
-        childAspectRatio: cardsAspectRatio,
-        crossAxisCount:
-            MediaQuery.of(context).orientation == Orientation.portrait
-                ? searchResultsPortrait
-                : searchResultsLandscape,
-        textInput: searchResults.query,
-        itemList: searchResults.searchResults);
-  }
-
-  Widget _searchSuggestions() {
-    return SearchSuggestions<Course>(
-        textInput: searchResults.query,
-        itemList: searchResults.suggestedItems,
-        onPressed: (dynamic item) =>
-            searchKey.currentState.updateSearchResults(item.name),
-        keyNameList: searchResults.suggestedItems.map((e) => e.name).toList());
   }
 
   Widget _appBar(CourseState state) {
@@ -142,41 +135,14 @@ class _State extends State<Courses> {
                   query: results.query,
                   suggestedItems: List<Course>.from(results.suggestedItems));
             }),
-            suggestionMethod: _suggestionMethod,
-            searchMethod: _searchMethod,
+            suggestionMethod: CourseUtils.suggestionMethod,
+            searchMethod: CourseUtils.searchMethod,
             searchResultItems: state.values,
             showSearchBar: true,
             whenSearchBarInitialized: (TextEditingController controller) =>
                 searchBarController = controller,
           )
         : null;
-  }
-
-  List<Course> _searchMethod(String query, List<Course> collection) {
-    List<Course> resultsWithoutFilters = collection
-        .where(
-            (course) => course.name.toLowerCase().contains(query.toLowerCase()))
-        .toList();
-    List<Course> filteredResults = resultsWithoutFilters.where((Course course) {
-      final List<String> courseTagIds = course.tags != null
-          ? course.tags.map((e) => e.objectId).toList()
-          : [];
-      final List<String> selectedTagIds =
-          selectedTags.map((e) => e.id).toList();
-      //Return true if no filters are selected
-      if (selectedTags.isEmpty) {
-        return true;
-      }
-      //Check if this course match with the current tag filters.
-      bool tagMatch = false;
-      courseTagIds.forEach((tagId) {
-        if (selectedTagIds.contains(tagId)) {
-          tagMatch = true;
-        }
-      });
-      return tagMatch;
-    }).toList();
-    return filteredResults;
   }
 
   Widget _mainPage(CourseSuccess courseState) {
@@ -237,32 +203,12 @@ class _State extends State<Courses> {
     );
   }
 
-  Widget _filterSelector(TagSuccess state) {
-    return Padding(
-        padding: EdgeInsets.only(top: 15.0, left: 8, right: 8),
-        child: FilterSelector<Tag>(
-          itemList: Map.fromIterable(state.tagsByCategories.entries,
-              key: (entry) => entry.key.name,
-              value: (entry) => Map.fromIterable(entry.value,
-                  key: (tag) => tag, value: (tag) => tag.name)),
-          selectedTags: selectedTags,
-          onSubmit: (List<Base> selectedItems) => this.setState(() {
-            selectedTags = selectedItems;
-            showFilterSelector = false;
-            searchKey.currentState.updateSearchResults('');
-          }),
-          onClosed: () => this.setState(() {
-            showFilterSelector = false;
-          }),
-        ));
-  }
-
   Widget _filterWidget() {
     return GestureDetector(
       onTap: () => this.setState(() {
         if (showFilterSelector == true) {
           //Clear all filters
-          _onClearFilters().then((value) => value
+          CourseUtils.onClearFilters(context).then((value) => value
               ? this.setState(() {
                   selectedTags.clear();
                   showFilterSelector = false;
@@ -295,77 +241,5 @@ class _State extends State<Courses> {
               ),
       ),
     );
-  }
-
-  Future<bool> _onWillPop() async {
-    return (await showDialog(
-          context: context,
-          builder: (context) => new AlertDialog(
-            backgroundColor: Colors.black,
-            title: TitleBody('Are you Sure?'),
-            content: new Text('Do you want to exit Oluko MVT?',
-                style: OlukoFonts.olukoBigFont()),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: new Text('No'),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: new Text('Yes'),
-              ),
-            ],
-          ),
-        )) ??
-        false;
-  }
-
-  Future<bool> _onClearFilters() async {
-    return (await showDialog(
-          context: context,
-          builder: (context) => new AlertDialog(
-            backgroundColor: Colors.grey.shade900,
-            content: Container(
-              height: 100,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Text('Would you like to cancel?',
-                        textAlign: TextAlign.center,
-                        style: OlukoFonts.olukoBigFont()),
-                  ),
-                  Text(
-                    'Cancelling would remove all the selected filters, please confirm the action.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white24),
-                  )
-                ],
-              ),
-            ),
-            actions: <Widget>[
-              Container(
-                width: ScreenUtils.width(context),
-                child: Row(
-                  children: [
-                    OlukoPrimaryButton(
-                      onPressed: () => Navigator.of(context).pop(false),
-                      title: 'No',
-                    ),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    OlukoOutlinedButton(
-                        onPressed: () => Navigator.of(context).pop(true),
-                        title: 'Yes')
-                  ],
-                ),
-              ),
-            ],
-          ),
-        )) ??
-        false;
   }
 }
