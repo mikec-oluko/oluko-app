@@ -74,5 +74,6 @@
     "explore": "Explorar",
     "courseSmall": "curso",
     "start": "Comenzar",
-    "class": "Clase"
+    "class": "Clase",
+    "enrollWarning": "Debes estar inscripto en este curso para comenzar el segmento"
 }

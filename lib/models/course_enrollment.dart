@@ -7,7 +7,7 @@ class CourseEnrollment extends Base {
   DocumentReference userReference;
   String courseId;
   DocumentReference courseReference;
-  int completion;
+  double completion;
   Timestamp completedAt;
   Timestamp finishedAt;
   List<EnrollmentClass> classes;
