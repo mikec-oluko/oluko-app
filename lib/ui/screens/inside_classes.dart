@@ -8,6 +8,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
+import 'package:oluko_app/ui/components/course_progress_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/segment_section.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
@@ -15,8 +16,11 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class InsideClasses extends StatefulWidget {
-  InsideClasses({this.actualClass, this.courseName, Key key}) : super(key: key);
+  InsideClasses(
+      {this.actualClass, this.classProgress, this.courseName, Key key})
+      : super(key: key);
 
+  double classProgress;
   Class actualClass;
   String courseName;
 
@@ -63,15 +67,18 @@ class _InsideClassesState extends State<InsideClasses> {
                 color: Colors.black,
                 child: ListView(children: [
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 25),
+                    padding: const EdgeInsets.only(bottom: 3),
                     child: OrientationBuilder(
                       builder: (context, orientation) {
                         return showVideoPlayer(widget.actualClass.video);
                       },
                     ),
                   ),
+                  widget.classProgress > 0
+                      ? CourseProgressBar(value: widget.classProgress)
+                      : SizedBox(),
                   Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 15),
+                      padding: EdgeInsets.only(right: 15, left: 15, top: 25),
                       child: Container(
                           width: MediaQuery.of(context).size.width,
                           child: Column(

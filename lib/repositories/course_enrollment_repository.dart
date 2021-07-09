@@ -65,9 +65,9 @@ class CourseEnrollmentRepository {
       Course course, CourseEnrollment courseEnrollment) async {
     for (ObjectSubmodel classObj in course.classes) {
       EnrollmentClass enrollmentClass = EnrollmentClass(
-          classId: classObj.objectId,
-          className: classObj.objectName,
-          classReference: classObj.objectReference,
+          classId: classObj.id,
+          className: classObj.name,
+          classReference: classObj.reference,
           segments: []);
       enrollmentClass = await setEnrollmentSegments(enrollmentClass);
       courseEnrollment.classes.add(enrollmentClass);
@@ -81,9 +81,9 @@ class CourseEnrollmentRepository {
     Class classObj = Class.fromJson(qs.data());
     classObj.segments.forEach((ObjectSubmodel segment) {
       enrollmentClass.segments.add(EnrollmentSegment(
-          segmentId: segment.objectId,
-          segmentName: segment.objectName,
-          segmentReference: segment.objectReference));
+          segmentId: segment.id,
+          segmentName: segment.name,
+          segmentReference: segment.reference));
     });
     return enrollmentClass;
   }

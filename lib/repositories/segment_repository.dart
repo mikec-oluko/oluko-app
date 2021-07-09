@@ -19,7 +19,7 @@ class SegmentRepository {
   static Future<List<Segment>> getAll(Class classObj) async {
     List<Segment> segments = [];
     for (ObjectSubmodel segment in classObj.segments) {
-      DocumentSnapshot ds = await segment.objectReference.get();
+      DocumentSnapshot ds = await segment.reference.get();
       Segment retrievedSegment = Segment.fromJson(ds.data());
       segments.add(retrievedSegment);
     }
@@ -35,9 +35,9 @@ class SegmentRepository {
     segment.id = docRef.id;
     docRef.set(segment.toJson());
     ObjectSubmodel segmentObj = ObjectSubmodel(
-        objectId: segment.id,
-        objectReference: reference.doc(segment.id),
-        objectName: segment.name);
+        id: segment.id,
+        reference: reference.doc(segment.id),
+        name: segment.name);
     await ClassRepository.updateSegments(segmentObj, classReference);
     return segment;
   }
