@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/segment.dart';
+import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
 import 'package:oluko_app/repositories/class_reopository.dart';
 
@@ -49,10 +50,10 @@ class SegmentRepository {
   }
 
     static Future<void> updateMovements(
-      ObjectSubmodel movement, DocumentReference reference) async {
+      MovementSubmodel movement, DocumentReference reference) async {
     DocumentSnapshot ds = await reference.get();
     Segment segment = Segment.fromJson(ds.data());
-    List<ObjectSubmodel> movements;
+    List<MovementSubmodel> movements;
     if (segment.movements == null) {
       movements = [];
     } else {

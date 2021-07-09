@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
+import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
 import 'package:oluko_app/repositories/segment_repository.dart';
 
@@ -18,7 +19,7 @@ class MovementRepository {
 
   static Future<List<Movement>> getAll(Segment segment) async {
     List<String> segmentMovementsIds = [];
-    segment.movements.forEach((ObjectSubmodel movement) {
+    segment.movements.forEach((MovementSubmodel movement) {
       segmentMovementsIds.add(movement.id);
      });
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
@@ -37,7 +38,7 @@ class MovementRepository {
     final DocumentReference docRef = reference.doc();
     movement.id = docRef.id;
     docRef.set(movement.toJson());
-    ObjectSubmodel movementObj = ObjectSubmodel(
+    MovementSubmodel movementObj = MovementSubmodel(
         id: movement.id,
         reference: reference.doc(movement.id),
         name: movement.name);
