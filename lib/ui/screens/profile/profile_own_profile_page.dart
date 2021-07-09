@@ -8,8 +8,9 @@ import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/course.dart';
+import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/enums/file_type_enum.dart';
-import 'package:oluko_app/models/sign_up_response.dart';
+import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/carousel_section.dart';
@@ -30,16 +31,17 @@ class ProfileOwnProfilePage extends StatefulWidget {
 class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
   UserResponse _profileInfo;
   List<TransformationJourneyUpload> _transformationJourneyContent = [];
-  List<dynamic> _assessmentVideosContent = [];
+  List<TaskSubmission> _assessmentVideosContent = [];
   List<Challenge> _activeChallenges = [];
-  List<Content> _listOfContent = [];
-  List<Course> _coursesToUse = [];
+  List<CourseEnrollment> _coursesToUse = [];
+  List<Content> _listOfStaticContent = [];
 
   @override
   void initState() {
     setState(() {
-      _listOfContent = uploadListContent;
+      _listOfStaticContent = uploadListContent;
     });
+    //TODO: Use CourseEnrollments to display courses data.
     BlocProvider.of<CourseBloc>(context).get();
     super.initState();
   }
@@ -47,10 +49,10 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
   @override
   void dispose() {
     setState(() {
-      _assessmentVideosContent = [];
       _transformationJourneyContent = [];
+      _assessmentVideosContent = [];
       _activeChallenges = [];
-      _listOfContent = [];
+      _listOfStaticContent = [];
     });
     super.dispose();
   }
@@ -71,6 +73,7 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
   _buildOwnProfileView(BuildContext context, UserResponse profileInfo) {
     _requestTransformationJourneyData(context, profileInfo);
     _requestCourseEnrollmentChallengesData(context, profileInfo);
+    _requestCourseEnrollmentListForUser(context, profileInfo);
     return Scaffold(
       body: Container(
         color: OlukoColors.black,
@@ -128,7 +131,7 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
                 ProfileViewConstants.profileOptionsAssessmentVideos,
             routeForSection: ProfileRoutes.goToAssessmentVideos(),
             contentForSection:
-                mapContentToWidget(staticContent: _listOfContent)));
+                mapContentToWidget(staticContent: _listOfStaticContent)));
   }
 
   BlocListener<TransformationJourneyBloc, TransformationJourneyState>
@@ -144,22 +147,24 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
           titleForSection:
               ProfileViewConstants.profileOptionsTransformationJourney,
           routeForSection: ProfileRoutes.goToTransformationJourney(),
-          contentForSection: mapContentToWidget(staticContent: _listOfContent)),
+          contentForSection:
+              mapContentToWidget(staticContent: _listOfStaticContent)),
     );
   }
 
-  BlocConsumer<CourseBloc, CourseState> _buildCourseSectionView() {
-    //TODO: USE COURSES FROM COURSEENROLLMENTS
-    return BlocConsumer<CourseBloc, CourseState>(
+  BlocConsumer<CourseEnrollmentBloc, CourseEnrollmentState>
+      _buildCourseSectionView() {
+    return BlocConsumer<CourseEnrollmentBloc, CourseEnrollmentState>(
       listener: (context, state) {
-        if (state is CourseSuccess) {
-          _coursesToUse = state.values;
+        if (state is CourseEnrollmentListSuccess) {
+          _coursesToUse = state.courseEnrollmentList;
         }
       },
       builder: (context, state) {
         return buildCourseSection(
             context: context,
-            contentForCourse: returnCoursesWidget(_coursesToUse));
+            contentForCourse:
+                returnCoursesWidget(listOfCourses: _coursesToUse));
       },
     );
   }
@@ -167,7 +172,7 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
   _buildChallengeSection() {
     return BlocListener<CourseEnrollmentBloc, CourseEnrollmentState>(
       listener: (context, state) {
-        if (state is CourseEnrollmentGetChallenge) {
+        if (state is GetCourseEnrollmentChallenge) {
           _activeChallenges = state.challenges;
         }
       },
@@ -200,6 +205,12 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
         .getChallengesForUser(profileInfo.id);
   }
 
+  void _requestCourseEnrollmentListForUser(
+      BuildContext context, UserResponse profileInfo) {
+    BlocProvider.of<CourseEnrollmentBloc>(context)
+        .getCourseEnrollmentsByUserId(profileInfo.id);
+  }
+
   Padding buildCourseSection(
       {BuildContext context, List<Widget> contentForCourse}) {
     return Padding(
@@ -226,57 +237,78 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
     );
   }
 
-  Widget _getCourseCard(Course courseForCard) {
+  Widget _getCourseCard({CourseEnrollment courseForCard, Course staticCourse}) {
     return Padding(
       padding: const EdgeInsets.only(right: 15.0),
       child: CourseCard(
         width: 120,
         height: 120,
-        imageCover: Image.network((courseForCard.imageUrl)),
+        //TODO: Use CourseEnrollment -> Course
+        imageCover: Image.network((staticCourse.imageUrl)),
         progress: 0.4,
       ),
     );
   }
 
   Widget _getImageAndVideoCard(
-      {Content contentFromUser, TransformationJourneyUpload uploadFromUser}) {
+      {Content staticContent,
+      TransformationJourneyUpload transformationJourneyContent,
+      TaskSubmission taskSubmissionContent}) {
     Widget contentForReturn;
-    if (contentFromUser != null) {
+    if (staticContent != null) {
       contentForReturn = ImageAndVideoContainer(
-        assetImage: contentFromUser.imgUrl,
-        isVideo: contentFromUser.isVideo,
+        assetImage: staticContent.imgUrl,
+        isVideo: staticContent.isVideo,
       );
     }
-    if (uploadFromUser != null) {
+    if (transformationJourneyContent != null) {
       contentForReturn = ImageAndVideoContainer(
-        assetImage: uploadFromUser.thumbnail,
-        isVideo: uploadFromUser.type == FileTypeEnum.video,
+        assetImage: transformationJourneyContent.thumbnail,
+        isVideo: transformationJourneyContent.type == FileTypeEnum.video,
+      );
+    }
+    if (taskSubmissionContent != null) {
+      contentForReturn = ImageAndVideoContainer(
+        assetImage: taskSubmissionContent.video.thumbUrl,
+        isVideo: taskSubmissionContent.video != null,
       );
     }
 
     return contentForReturn;
   }
 
-  List<Widget> returnCoursesWidget(List<Course> listOfCourses) {
+  List<Widget> returnCoursesWidget({List<CourseEnrollment> listOfCourses}) {
+    //TODO: Use CourseEnrollment
     List<Widget> contentForCourseSection = [];
     listOfCourses.forEach((course) {
-      contentForCourseSection.add(_getCourseCard(course));
+      contentForCourseSection.add(_getCourseCard(courseForCard: course));
     });
     return contentForCourseSection.toList();
   }
 
   List<Widget> mapContentToWidget(
       {List<Content> staticContent,
-      List<TransformationJourneyUpload> tansformationJourneyData}) {
+      List<TransformationJourneyUpload> tansformationJourneyData,
+      List<TaskSubmission> assessmentVideoData}) {
     List<Widget> contentForSection = [];
-    if (staticContent != null) {
+    if (staticContent != null &&
+        (tansformationJourneyData.isEmpty && assessmentVideoData.isEmpty)) {
       staticContent.forEach((content) {
-        contentForSection.add(_getImageAndVideoCard(contentFromUser: content));
+        contentForSection.add(_getImageAndVideoCard(staticContent: content));
       });
     }
-    if (tansformationJourneyData != null) {
+    if (tansformationJourneyData != null &&
+        (staticContent.isEmpty && assessmentVideoData.isEmpty)) {
       tansformationJourneyData.forEach((content) {
-        contentForSection.add(_getImageAndVideoCard(uploadFromUser: content));
+        contentForSection
+            .add(_getImageAndVideoCard(transformationJourneyContent: content));
+      });
+    }
+    if (assessmentVideoData != null &&
+        (tansformationJourneyData.isEmpty && staticContent.isEmpty)) {
+      assessmentVideoData.forEach((content) {
+        contentForSection
+            .add(_getImageAndVideoCard(taskSubmissionContent: content));
       });
     }
 

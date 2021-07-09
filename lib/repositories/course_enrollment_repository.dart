@@ -89,6 +89,25 @@ class CourseEnrollmentRepository {
     return enrollmentClass;
   }
 
+  static Future<List<CourseEnrollment>> getUserCourseEnrollments(
+      String userId) async {
+    QuerySnapshot docRef = await FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue("projectId"))
+        .collection('courseEnrollments')
+        .where('user_id', isEqualTo: userId)
+        .get();
+
+    //TODO: Use courseEnrollment.courseReference to get Course
+
+    List<CourseEnrollment> courseEnrollmentList = [];
+    docRef.docs.forEach((doc) {
+      final Map<String, dynamic> course = doc.data();
+      courseEnrollmentList.add(CourseEnrollment.fromJson(course));
+    });
+    return courseEnrollmentList;
+  }
+
   Future<List<Challenge>> getUserChallenges(String userId) async {
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
@@ -99,11 +118,11 @@ class CourseEnrollmentRepository {
 
     //TODO: Map userData and return List<Challenge>
 
-    List<Challenge> response = [];
+    List<Challenge> listOfChallenges = [];
     docRef.docs.forEach((doc) {
-      final Map<String, dynamic> element = doc.data();
-      response.add(Challenge.fromJson(element));
+      final Map<String, dynamic> challenge = doc.data();
+      listOfChallenges.add(Challenge.fromJson(challenge));
     });
-    return response;
+    return listOfChallenges;
   }
 }
