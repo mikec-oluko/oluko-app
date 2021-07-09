@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:oluko_app/models/base.dart';
-
-class EnrollmentSegment extends Base {
+class EnrollmentSegment{
   String segmentId;
   DocumentReference segmentReference;
   String segmentName;

@@ -26,6 +26,7 @@ import 'package:oluko_app/ui/screens/profile/profile_settings_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_subscription_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_transformation_journey_page.dart';
 import 'package:oluko_app/ui/screens/profile/transformation_journey_post.dart';
+import 'package:oluko_app/ui/screens/segment_recording.dart';
 import 'package:oluko_app/ui/screens/sign_up_with_email.dart';
 import 'package:oluko_app/ui/screens/sign_up.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -109,6 +110,8 @@ class _MyAppState extends State<MyApp> {
         //TODO: Remove this when take it to the correct place inside courses
         '/movement-detail': (context) =>
             BlocProvider.value(value: _authBloc, child: MovementDetail()),
+        '/segment-recording': (context) =>
+            BlocProvider.value(value: _authBloc, child: SegmentRecording()),
         '/classes': (context) =>
             BlocProvider.value(value: _authBloc, child: Classes()),
         '/assessment-videos': (context) => MultiBlocProvider(providers: [

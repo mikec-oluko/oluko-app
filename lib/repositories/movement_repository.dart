@@ -4,7 +4,7 @@ import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
-import 'package:oluko_app/repositories/class_reopoistory.dart';
+import 'package:oluko_app/repositories/class_reopository.dart';
 import 'package:oluko_app/repositories/segment_repository.dart';
 
 class MovementRepository {
