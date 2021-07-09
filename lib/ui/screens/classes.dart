@@ -194,7 +194,8 @@ class _ClassesState extends State<Classes> {
                                             const EdgeInsets.only(top: 25.0),
                                         child: TitleBody(
                                             OlukoLocalizations.of(context)
-                                                .find('classes')),
+                                                .find('classes'),
+                                            bold: true),
                                       ),
                                       Column(
                                         children: [

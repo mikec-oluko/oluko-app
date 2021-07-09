@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -49,9 +50,17 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   //TODO Placeholder functionality. Remove when implementing timer
   Timer countdownTimer;
 
+  //camera
+  List<CameraDescription> cameras;
+  CameraController cameraController;
+  bool _isReady = false;
+  bool _recording = false;
+  bool isCameraFront = true;
+
   @override
   void initState() {
     _playCountdown();
+    _setupCameras();
     this.workoutType = widget.workoutType;
     super.initState();
   }
@@ -201,9 +210,14 @@ class _SegmentRecordingState extends State<SegmentRecording> {
       children: [
         Expanded(
           child: Container(
-            color: Colors.grey,
             child: Stack(
               children: [
+                (!_isReady)
+                    ? Container()
+                    : Center(
+                        child: AspectRatio(
+                            aspectRatio: 3.0 / 4.0,
+                            child: CameraPreview(cameraController))),
                 Align(
                     alignment: Alignment.bottomCenter,
                     child: Padding(
@@ -212,9 +226,18 @@ class _SegmentRecordingState extends State<SegmentRecording> {
                             onPressed: () => this.setState(() {
                                   this.workoutType = WorkoutType.segment;
                                 })))),
-                Center(
-                  child: MovementUtils.movementTitle('CAMERA SECTION'),
-                ),
+                Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Padding(
+                        padding: const EdgeInsets.only(
+                            right: 20.0, left: 80.0, top: 20.0, bottom: 20.0),
+                        child: _flipCameraButton(Icons.flip_camera_android,
+                            onPressed: () {
+                          setState(() {
+                            isCameraFront = !isCameraFront;
+                          });
+                          _setupCameras();
+                        }))),
               ],
             ),
           ),
@@ -470,11 +493,36 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     );
   }
 
+  Widget _flipCameraButton(IconData iconData, {Function() onPressed}) {
+    return OutlinedButton(
+      onPressed: onPressed,
+      child: Icon(
+        iconData,
+        color: Colors.white,
+        size: 30,
+      ),
+    );
+  }
+
   @override
   void dispose() {
     if (this.countdownTimer != null && this.countdownTimer.isActive) {
       this.countdownTimer.cancel();
     }
     super.dispose();
+  }
+
+  Future<void> _setupCameras() async {
+    int cameraPos = isCameraFront ? 0 : 1;
+    try {
+      cameras = await availableCameras();
+      cameraController =
+          new CameraController(cameras[cameraPos], ResolutionPreset.medium);
+      await cameraController.initialize();
+    } on CameraException catch (_) {}
+    if (!mounted) return;
+    setState(() {
+      _isReady = true;
+    });
   }
 }
