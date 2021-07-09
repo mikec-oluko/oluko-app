@@ -22,6 +22,7 @@ import 'package:oluko_app/ui/components/statistics_chart.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/screens/inside_classes.dart';
+import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
@@ -97,6 +98,7 @@ class _ClassesState extends State<Classes> {
       return BlocBuilder<ClassBloc, ClassState>(builder: (context, classState) {
         if ((enrollmentState is GetEnrollmentSuccess) &&
             classState is GetSuccess) {
+          bool existsEnrollment = enrollmentState.courseEnrollment != null;
           return Form(
               key: _formKey,
               child: Scaffold(
@@ -109,7 +111,7 @@ class _ClassesState extends State<Classes> {
                           padding: const EdgeInsets.only(bottom: 3),
                           child: OrientationBuilder(
                             builder: (context, orientation) {
-                              if (enrollmentState.courseEnrollment != null) {
+                              if (existsEnrollment) {
                                 return showVideoPlayer(
                                     classState.classes[0].video);
                               } else {
@@ -118,7 +120,7 @@ class _ClassesState extends State<Classes> {
                             },
                           ),
                         ),
-                        enrollmentState.courseEnrollment != null
+                        existsEnrollment
                             ? CourseProgressBar(
                                 value:
                                     enrollmentState.courseEnrollment.completion)
@@ -220,7 +222,14 @@ class _ClassesState extends State<Classes> {
                                                       classProgresss:
                                                           classProgress,
                                                       classObj: classObj,
-                                                      onPressed: () {},
+                                                      onPressed: () {
+                                                        if (!existsEnrollment) {
+                                                          MovementUtils
+                                                              .movementDialog(
+                                                                  context,
+                                                                  _confirmDialogContent());
+                                                        }
+                                                      },
                                                     ));
                                               }),
                                           showButton(
@@ -304,5 +313,16 @@ class _ClassesState extends State<Classes> {
                     ? ScreenUtils.height(context) / 4
                     : ScreenUtils.height(context) / 1.5),
         child: Container(height: 400, child: Stack(children: widgets)));
+  }
+
+  List<Widget> _confirmDialogContent() {
+    return [
+      Icon(Icons.warning_amber_rounded, color: Colors.white, size: 100),
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(OlukoLocalizations.of(context).find('enrollWarning'),
+            textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont()),
+      )
+    ];
   }
 }
