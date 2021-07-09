@@ -1,28 +1,28 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 class EnrollmentSegment{
-  String segmentId;
-  DocumentReference segmentReference;
-  String segmentName;
+  String id;
+  DocumentReference reference;
+  String name;
   Timestamp compleatedAt;
 
   EnrollmentSegment(
-      {this.segmentId,
-      this.segmentReference,
-      this.segmentName,
+      {this.id,
+      this.reference,
+      this.name,
       this.compleatedAt});
 
   factory EnrollmentSegment.fromJson(Map<String, dynamic> json) {
     return EnrollmentSegment(
-        segmentId: json['segment_id'],
-        segmentReference: json['segment_reference'],
-        segmentName: json['segment_name'],
+        id: json['id'],
+        reference: json['reference'],
+        name: json['name'],
         compleatedAt: json['compleated_at']);
   }
 
   Map<String, dynamic> toJson() => {
-        'segment_id': segmentId,
-        'segment_reference': segmentReference,
-        'segment_name': segmentName,
+        'id': id,
+        'reference': reference,
+        'name': name,
         'compleated_at': compleatedAt
       };
 }

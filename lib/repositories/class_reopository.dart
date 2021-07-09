@@ -19,7 +19,7 @@ class ClassRepository {
   static Future<List<Class>> getAll(Course course) async {
     List<Class> classes = [];
     for (ObjectSubmodel classObj in course.classes) {
-      DocumentSnapshot ds = await classObj.objectReference.get();
+      DocumentSnapshot ds = await classObj.reference.get();
       Class retrievedClass = Class.fromJson(ds.data());
       classes.add(retrievedClass);
     }
@@ -36,9 +36,9 @@ class ClassRepository {
     newClass.id = docRef.id;
     docRef.set(newClass.toJson());
     ObjectSubmodel classObj = ObjectSubmodel(
-        objectId: newClass.id,
-        objectReference: reference.doc(newClass.id),
-        objectName: newClass.name);
+        id: newClass.id,
+        reference: reference.doc(newClass.id),
+        name: newClass.name);
     await CourseRepository.updateClasses(classObj, courseReference);
     return newClass;
   }

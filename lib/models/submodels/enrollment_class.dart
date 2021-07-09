@@ -2,24 +2,24 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oluko_app/models/submodels/enrollment_segment.dart';
 
 class EnrollmentClass{
-  String classId;
-  DocumentReference classReference;
-  String className;
+  String id;
+  DocumentReference reference;
+  String name;
   Timestamp compleatedAt;
   List<EnrollmentSegment> segments;
 
   EnrollmentClass(
-      {this.classId,
-      this.classReference,
-      this.className,
+      {this.id,
+      this.reference,
+      this.name,
       this.compleatedAt,
       this.segments});
 
   factory EnrollmentClass.fromJson(Map<String, dynamic> json) {
     return EnrollmentClass(
-        classId: json['class_id'],
-        classReference: json['class_reference'],
-        className: json['class_name'],
+        id: json['id'],
+        reference: json['reference'],
+        name: json['name'],
         compleatedAt: json['compleated_at'],
         segments: json['segments'] == null
             ? null
@@ -29,9 +29,9 @@ class EnrollmentClass{
   }
 
   Map<String, dynamic> toJson() => {
-        'class_id': classId,
-        'class_reference': classReference,
-        'class_name': className,
+        'id': id,
+        'reference': reference,
+        'name': name,
         'compleated_at': compleatedAt,
         'segments': segments == null
             ? null
