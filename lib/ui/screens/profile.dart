@@ -95,24 +95,26 @@ class _ProfilePageState extends State<ProfilePage> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              GestureDetector(
-                onTap: () => Navigator.pushNamed(
-                    context, ProfileRoutes.returnRouteName(pageTitle)),
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 25.0),
-                  child: Text(pageTitle, style: OlukoFonts.olukoMediumFont()),
-                ),
+          InkWell(
+            onTap: () => Navigator.pushNamed(
+                context, ProfileRoutes.returnRouteName(pageTitle)),
+            child: Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 25.0),
+                    child: Text(pageTitle, style: OlukoFonts.olukoMediumFont()),
+                  ),
+                  IconButton(
+                      icon: Icon(Icons.arrow_forward_ios,
+                          color: OlukoColors.grayColor),
+                      onPressed: () => Navigator.pushNamed(
+                              context, ProfileRoutes.returnRouteName(pageTitle))
+                          .then((value) => onGoBack()))
+                ],
               ),
-              IconButton(
-                  icon: Icon(Icons.arrow_forward_ios,
-                      color: OlukoColors.grayColor),
-                  onPressed: () => Navigator.pushNamed(
-                          context, ProfileRoutes.returnRouteName(pageTitle))
-                      .then((value) => onGoBack()))
-            ],
+            ),
           ),
         ],
       ),
