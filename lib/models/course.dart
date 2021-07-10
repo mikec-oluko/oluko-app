@@ -5,7 +5,7 @@ import 'base.dart';
 class Course extends Base {
   String name;
   String video;
-  Timestamp duration;
+  String duration;
   String description;
   List<String> equipment;
   List<String> intensity;
