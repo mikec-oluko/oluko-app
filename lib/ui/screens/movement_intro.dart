@@ -5,11 +5,13 @@ import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/movement.dart';
+import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/ui/components/black_app_bar_with_image.dart';
 import 'package:oluko_app/ui/components/movement_item_bubbles.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/utils/movement_utils.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class MovementIntro extends StatefulWidget {
@@ -22,15 +24,20 @@ class MovementIntro extends StatefulWidget {
 class _MovementIntroState extends State<MovementIntro>
     with SingleTickerProviderStateMixin {
   final toolbarHeight = kToolbarHeight * 2;
-  final tabs = ['Technique', 'Modifier', 'Rehab 1', 'Rehab 2'];
+  final tabs = ['Intro', 'Technique', 'Modifier', 'Rehab 1', 'Rehab 2'];
+  Map<String, bool> coursesBookmarked = {};
 
   //TODO Make Dynamic
-  Map<String, bool> coursesBookmarked = {};
-  String segmentTitle = "Airsquats";
+  Movement movement = Movement(
+      video:
+          'https://oluko-mvt.s3.us-west-1.amazonaws.com/assessments/85b2f81c1fe74f9cb5e804c57db30137/85b2f81c1fe74f9cb5e804c57db30137_2.mp4',
+      description:
+          'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. ',
+      name: "Airsquats");
   String backgroundImageUrl =
       'https://c0.wallpaperflare.com/preview/26/779/700/fitness-men-sports-gym.jpg';
-  String descriptionBody =
-      'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. ';
+  String _secondTabVideoUrl =
+      'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/production%20ID_4701508.mp4?alt=media&token=815819a5-72f9-4bec-bee0-59064c634c03';
   List<Movement> referenceMovements = [
     Movement(
         name: 'Airsquats',
@@ -74,7 +81,8 @@ class _MovementIntroState extends State<MovementIntro>
 
   @override
   void initState() {
-    tabController = TabController(initialIndex: 0, length: 4, vsync: this);
+    tabController =
+        TabController(initialIndex: 0, length: tabs.length, vsync: this);
     referenceCourses.forEach((course) => coursesBookmarked[course.id] = false);
     super.initState();
   }
@@ -116,7 +124,8 @@ class _MovementIntroState extends State<MovementIntro>
                         children: [
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: MovementUtils.movementTitle(segmentTitle),
+                            child:
+                                MovementUtils.movementTitle(this.movement.name),
                           ),
                           SizedBox(height: 25),
                           Column(
@@ -211,7 +220,7 @@ class _MovementIntroState extends State<MovementIntro>
                             color: Colors.white,
                           ),
                           Text(
-                            'Bookmark',
+                            OlukoLocalizations.of(context).find('bookMark'),
                             style: OlukoFonts.olukoBigFont(),
                           )
                         ],
@@ -257,10 +266,7 @@ class _MovementIntroState extends State<MovementIntro>
       child: Column(children: [
         Container(
             height: 200,
-            child: Stack(
-                children: _videoPlayer(
-                    'https://oluko-mvt.s3.us-west-1.amazonaws.com/assessments/85b2f81c1fe74f9cb5e804c57db30137/85b2f81c1fe74f9cb5e804c57db30137_2.mp4',
-                    0))),
+            child: Stack(children: _videoPlayer(this.movement.video, 0))),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -268,7 +274,7 @@ class _MovementIntroState extends State<MovementIntro>
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: Text(
-                  descriptionBody,
+                  movement.description,
                   style: OlukoFonts.olukoMediumFont(),
                 ),
               ),
@@ -276,7 +282,7 @@ class _MovementIntroState extends State<MovementIntro>
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   TitleBody(
-                    'REFERENCE MOVEMENTS',
+                    OlukoLocalizations.of(context).find('referenceMovements'),
                     bold: true,
                   ),
                 ],
@@ -298,7 +304,7 @@ class _MovementIntroState extends State<MovementIntro>
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: TitleBody(
-                      'REFERENCE COURSES',
+                      OlukoLocalizations.of(context).find('referenceCourses'),
                       bold: true,
                     ),
                   ),
@@ -320,10 +326,7 @@ class _MovementIntroState extends State<MovementIntro>
       child: Column(children: [
         Container(
             height: 200,
-            child: Stack(
-                children: _videoPlayer(
-                    'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/production%20ID_4701508.mp4?alt=media&token=815819a5-72f9-4bec-bee0-59064c634c03',
-                    1))),
+            child: Stack(children: _videoPlayer(_secondTabVideoUrl, 1))),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -331,7 +334,7 @@ class _MovementIntroState extends State<MovementIntro>
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: Text(
-                  descriptionBody,
+                  movement.description,
                   style: OlukoFonts.olukoMediumFont(),
                 ),
               ),
@@ -339,7 +342,7 @@ class _MovementIntroState extends State<MovementIntro>
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   TitleBody(
-                    'REFERENCE MOVEMENTS',
+                    OlukoLocalizations.of(context).find('referenceMovements'),
                     bold: true,
                   ),
                 ],
@@ -361,7 +364,7 @@ class _MovementIntroState extends State<MovementIntro>
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: TitleBody(
-                      'REFERENCE COURSES',
+                      OlukoLocalizations.of(context).find('referenceCourses'),
                       bold: true,
                     ),
                   ),
