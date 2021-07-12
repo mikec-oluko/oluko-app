@@ -214,6 +214,7 @@ class _MovementIntroState extends State<MovementIntro>
   }
 
   List<Widget> _videoPlayer(String videoUrl, num index) {
+    _clearUnusedVideoControllers(index);
     List<Widget> widgets = [];
     widgets.add(OlukoVideoPlayer(
         key: _videoKeys[index],
@@ -223,12 +224,18 @@ class _MovementIntroState extends State<MovementIntro>
             this.setState(() {
               _videoControllers[index] = chewieController;
             })));
-    if (_videoControllers[index] == null ||
-        _videoControllers[index].videoPlayerController.value.initialized !=
-            true) {
+    if (_videoControllers[index] == null) {
       widgets.add(Center(child: CircularProgressIndicator()));
     }
     return widgets;
+  }
+
+  _clearUnusedVideoControllers(num currentIndex) {
+    for (var i = 0; i < _videoControllers.length; i++) {
+      if (i != currentIndex && _videoControllers[i] != null) {
+        _videoControllers[i] = null;
+      }
+    }
   }
 
   _firstTab() {
