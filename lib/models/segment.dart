@@ -5,10 +5,24 @@ import 'package:oluko_app/models/submodels/movement_submodel.dart';
 class Segment extends Base {
   String name;
   List<MovementSubmodel> movements;
+  String cover;
+  String description;
+  int duration;
+  int initialTimer;
+  int roundBreakDuration;
+  bool isChallange;
+  bool isPublished;
 
   Segment(
       {this.name,
       this.movements,
+      this.cover,
+      this.description,
+      this.duration,
+      this.initialTimer,
+      this.roundBreakDuration,
+      this.isChallange,
+      this.isPublished,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -28,6 +42,13 @@ class Segment extends Base {
   factory Segment.fromJson(Map<String, dynamic> json) {
     Segment segment = Segment(
         name: json['name'],
+        cover: json['cover'],
+        description: json['description'],
+        duration: json['duration'],
+        initialTimer: json['initial_timer'],
+        roundBreakDuration: json['round_break_duration'],
+        isChallange: json['is_challange'],
+        isPublished: json['is_published'],
         movements: json['movements'] == null
             ? null
             : List<MovementSubmodel>.from(json['movements']
@@ -39,6 +60,13 @@ class Segment extends Base {
   Map<String, dynamic> toJson() {
     Map<String, dynamic> movementJson = {
       'name': name,
+      'cover': cover,
+      'duration': duration,
+      'description': description,
+      'initial_timer': initialTimer,
+      'round_break_duration': roundBreakDuration,
+      'is_challange': isChallange,
+      'is_published': isPublished,
       'movements': movements == null
           ? null
           : List<dynamic>.from(movements.map((movement) => movement.toJson()))
