@@ -13,6 +13,7 @@ import 'package:oluko_app/ui/screens/assessment_videos.dart';
 import 'package:oluko_app/ui/screens/choose_plan_payment.dart';
 import 'package:oluko_app/ui/screens/classes.dart';
 import 'package:oluko_app/ui/screens/courses.dart';
+import 'package:oluko_app/ui/screens/friends_page.dart';
 import 'package:oluko_app/ui/screens/home_page.dart';
 import 'package:oluko_app/ui/screens/Login.dart';
 import 'package:oluko_app/ui/screens/Profile.dart';
@@ -75,6 +76,8 @@ class _MyAppState extends State<MyApp> {
             BlocProvider.value(value: _authBloc, child: SignUpPage()),
         '/sign-up-with-email': (context) =>
             BlocProvider.value(value: _authBloc, child: SignUpWithMailPage()),
+        '/friends': (context) =>
+            BlocProvider.value(value: _authBloc, child: FriendsPage()),
         '/profile': (context) =>
             BlocProvider.value(value: _authBloc, child: ProfilePage()),
         '/profile-settings': (context) =>
