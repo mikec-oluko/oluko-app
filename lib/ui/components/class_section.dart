@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/class.dart';
+import 'package:oluko_app/ui/components/course_progress_bar.dart';
 import 'oluko_primary_button.dart';
 
 class ClassSection extends StatefulWidget {
   final Class classObj;
+  final double classProgresss;
   final Function() onPressed;
 
-  ClassSection({this.classObj, this.onPressed});
+  ClassSection({this.classObj, this.classProgresss, this.onPressed});
 
   @override
   _State createState() => _State();
@@ -50,15 +52,21 @@ class _State extends State<ClassSection> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Padding(
-                            padding: const EdgeInsets.all(20.0),
+                            padding: const EdgeInsets.all(15.0),
                             child: Text(
                               widget.classObj.name,
                               style: TextStyle(
-                                  fontSize: 25,
+                                  fontSize: 22,
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold),
                             ),
                           ),
+                          widget.classProgresss > 0
+                              ? Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 15.0, right: 160.0),
+                                  child: CourseProgressBar(value: widget.classProgresss))
+                              : SizedBox()
                         ],
                       ),
                     ),
@@ -91,7 +99,7 @@ class _State extends State<ClassSection> {
                   child: Row(
                     children: [
                       OlukoPrimaryButton(
-                        title: segment.objectName,
+                        title: segment.name,
                         color: OlukoColors.listGrayColor,
                         textColor: Colors.white,
                         textAlign: TextAlign.start,

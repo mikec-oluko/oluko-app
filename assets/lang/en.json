@@ -75,5 +75,6 @@
     "explore": "Explore",
     "courseSmall": "course",
     "start": "Start",
-    "class": "Class"
+    "class": "Class",
+    "enrollWarning": "You must be enrolled in this course to start the segment"
 }

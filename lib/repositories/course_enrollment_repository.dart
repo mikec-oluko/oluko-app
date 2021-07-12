@@ -65,9 +65,9 @@ class CourseEnrollmentRepository {
       Course course, CourseEnrollment courseEnrollment) async {
     for (ObjectSubmodel classObj in course.classes) {
       EnrollmentClass enrollmentClass = EnrollmentClass(
-          classId: classObj.objectId,
-          className: classObj.objectName,
-          classReference: classObj.objectReference,
+          id: classObj.id,
+          name: classObj.name,
+          reference: classObj.reference,
           segments: []);
       enrollmentClass = await setEnrollmentSegments(enrollmentClass);
       courseEnrollment.classes.add(enrollmentClass);
@@ -77,13 +77,13 @@ class CourseEnrollmentRepository {
 
   static Future<EnrollmentClass> setEnrollmentSegments(
       EnrollmentClass enrollmentClass) async {
-    DocumentSnapshot qs = await enrollmentClass.classReference.get();
+    DocumentSnapshot qs = await enrollmentClass.reference.get();
     Class classObj = Class.fromJson(qs.data());
     classObj.segments.forEach((ObjectSubmodel segment) {
       enrollmentClass.segments.add(EnrollmentSegment(
-          segmentId: segment.objectId,
-          segmentName: segment.objectName,
-          segmentReference: segment.objectReference));
+          id: segment.id,
+          name: segment.name,
+          reference: segment.reference));
     });
     return enrollmentClass;
   }

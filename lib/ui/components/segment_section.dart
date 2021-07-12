@@ -62,7 +62,7 @@ class _State extends State<SegmentSection> {
                   child: Row(
                     children: [
                       OlukoPrimaryButton(
-                        title: movement.objectName,
+                        title: movement.name,
                         color: OlukoColors.listGrayColor,
                         textColor: Colors.white,
                         textAlign: TextAlign.start,

@@ -16,17 +16,21 @@ import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/services/course_enrollment_service.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/class_section.dart';
+import 'package:oluko_app/ui/components/course_progress_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/statistics_chart.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/screens/inside_classes.dart';
+import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 
 class Classes extends StatefulWidget {
   Classes({Key key}) : super(key: key);
+
+  get progress => null;
 
   @override
   _ClassesState createState() => _ClassesState();
@@ -94,6 +98,7 @@ class _ClassesState extends State<Classes> {
       return BlocBuilder<ClassBloc, ClassState>(builder: (context, classState) {
         if ((enrollmentState is GetEnrollmentSuccess) &&
             classState is GetSuccess) {
+          bool existsEnrollment = enrollmentState.courseEnrollment != null;
           return Form(
               key: _formKey,
               child: Scaffold(
@@ -103,10 +108,10 @@ class _ClassesState extends State<Classes> {
                       color: Colors.black,
                       child: ListView(children: [
                         Padding(
-                          padding: const EdgeInsets.only(bottom: 25),
+                          padding: const EdgeInsets.only(bottom: 3),
                           child: OrientationBuilder(
                             builder: (context, orientation) {
-                              if (enrollmentState.courseEnrollment != null) {
+                              if (existsEnrollment) {
                                 return showVideoPlayer(
                                     classState.classes[0].video);
                               } else {
@@ -115,8 +120,14 @@ class _ClassesState extends State<Classes> {
                             },
                           ),
                         ),
+                        existsEnrollment
+                            ? CourseProgressBar(
+                                value:
+                                    enrollmentState.courseEnrollment.completion)
+                            : SizedBox(),
                         Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 15),
+                            padding:
+                                EdgeInsets.only(right: 15, left: 15, top: 25),
                             child: Container(
                                 width: MediaQuery.of(context).size.width,
                                 child: Column(
@@ -183,7 +194,8 @@ class _ClassesState extends State<Classes> {
                                             const EdgeInsets.only(top: 25.0),
                                         child: TitleBody(
                                             OlukoLocalizations.of(context)
-                                                .find('classes')),
+                                                .find('classes'),
+                                            bold: true),
                                       ),
                                       Column(
                                         children: [
@@ -197,13 +209,28 @@ class _ClassesState extends State<Classes> {
                                                   (context, num index) {
                                                 Class classObj =
                                                     classState.classes[index];
+                                                double classProgress =
+                                                    CourseEnrollmentService
+                                                        .getClassProgress(
+                                                            enrollmentState
+                                                                .courseEnrollment,
+                                                            index);
                                                 return Padding(
                                                     padding: const EdgeInsets
                                                             .symmetric(
                                                         vertical: 5.0),
                                                     child: ClassSection(
+                                                      classProgresss:
+                                                          classProgress,
                                                       classObj: classObj,
-                                                      onPressed: () {},
+                                                      onPressed: () {
+                                                        if (!existsEnrollment) {
+                                                          MovementUtils
+                                                              .movementDialog(
+                                                                  context,
+                                                                  _confirmDialogContent());
+                                                        }
+                                                      },
                                                     ));
                                               }),
                                           showButton(
@@ -243,10 +270,14 @@ class _ClassesState extends State<Classes> {
                   int index =
                       CourseEnrollmentService.getFirstUncompletedClassIndex(
                           courseEnrollment);
+                  double classProgress =
+                      CourseEnrollmentService.getClassProgress(
+                          courseEnrollment, index);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => InsideClasses(
+                                classProgress: classProgress,
                                 actualClass: classes[index],
                                 courseName: course.name,
                               )));
@@ -283,5 +314,16 @@ class _ClassesState extends State<Classes> {
                     ? ScreenUtils.height(context) / 4
                     : ScreenUtils.height(context) / 1.5),
         child: Container(height: 400, child: Stack(children: widgets)));
+  }
+
+  List<Widget> _confirmDialogContent() {
+    return [
+      Icon(Icons.warning_amber_rounded, color: Colors.white, size: 100),
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(OlukoLocalizations.of(context).find('enrollWarning'),
+            textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont()),
+      )
+    ];
   }
 }

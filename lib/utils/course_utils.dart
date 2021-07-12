@@ -66,7 +66,7 @@ class CourseUtils {
         .toList();
     List<Course> filteredResults = resultsWithoutFilters.where((Course course) {
       final List<String> courseTagIds = course.tags != null
-          ? course.tags.map((e) => e.objectId).toList()
+          ? course.tags.map((e) => e.id).toList()
           : [];
       final List<String> selectedTagIds =
           selectedTags.map((e) => e.id).toList();
