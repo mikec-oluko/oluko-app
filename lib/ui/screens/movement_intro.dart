@@ -99,7 +99,10 @@ class _MovementIntroState extends State<MovementIntro>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          MovementUtils.movementTitle(segmentTitle),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: MovementUtils.movementTitle(segmentTitle),
+                          ),
                           SizedBox(height: 25),
                           Column(
                             children: [
@@ -248,48 +251,55 @@ class _MovementIntroState extends State<MovementIntro>
                     'https://oluko-mvt.s3.us-west-1.amazonaws.com/assessments/85b2f81c1fe74f9cb5e804c57db30137/85b2f81c1fe74f9cb5e804c57db30137_2.mp4',
                     0))),
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16.0),
-          child: Text(
-            descriptionBody,
-            style: OlukoFonts.olukoMediumFont(),
-          ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            TitleBody(
-              'REFERENCE MOVEMENTS',
-              bold: true,
-            ),
-          ],
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
             children: [
-              MovementItemBubbles(
-                  content: this.referenceMovements,
-                  width: ScreenUtils.width(context) / 1.2),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                child: Text(
+                  descriptionBody,
+                  style: OlukoFonts.olukoMediumFont(),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  TitleBody(
+                    'REFERENCE MOVEMENTS',
+                    bold: true,
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    MovementItemBubbles(
+                        content: this.referenceMovements,
+                        width: ScreenUtils.width(context) / 1.2),
+                  ],
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: TitleBody(
+                      'REFERENCE COURSES',
+                      bold: true,
+                    ),
+                  ),
+                ],
+              ),
+              Column(
+                  children: referenceCourses
+                      .map((Course course) => courseRow(course))
+                      .toList()),
             ],
           ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: TitleBody(
-                'REFERENCE COURSES',
-                bold: true,
-              ),
-            ),
-          ],
-        ),
-        Column(
-            children: referenceCourses
-                .map((Course course) => courseRow(course))
-                .toList())
+        )
       ]),
     );
   }
@@ -304,48 +314,55 @@ class _MovementIntroState extends State<MovementIntro>
                     'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/production%20ID_4701508.mp4?alt=media&token=815819a5-72f9-4bec-bee0-59064c634c03',
                     1))),
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16.0),
-          child: Text(
-            descriptionBody,
-            style: OlukoFonts.olukoMediumFont(),
-          ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            TitleBody(
-              'REFERENCE MOVEMENTS',
-              bold: true,
-            ),
-          ],
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
             children: [
-              MovementItemBubbles(
-                  content: this.referenceMovements,
-                  width: ScreenUtils.width(context) / 1.2),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                child: Text(
+                  descriptionBody,
+                  style: OlukoFonts.olukoMediumFont(),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  TitleBody(
+                    'REFERENCE MOVEMENTS',
+                    bold: true,
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    MovementItemBubbles(
+                        content: this.referenceMovements,
+                        width: ScreenUtils.width(context) / 1.2),
+                  ],
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: TitleBody(
+                      'REFERENCE COURSES',
+                      bold: true,
+                    ),
+                  ),
+                ],
+              ),
+              Column(
+                  children: referenceCourses
+                      .map((Course course) => courseRow(course))
+                      .toList()),
             ],
           ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: TitleBody(
-                'REFERENCE COURSES',
-                bold: true,
-              ),
-            ),
-          ],
-        ),
-        Column(
-            children: referenceCourses
-                .map((Course course) => courseRow(course))
-                .toList())
+        )
       ]),
     );
   }
