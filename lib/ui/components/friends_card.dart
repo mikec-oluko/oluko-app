@@ -1,53 +1,26 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/Theme.dart';
-import 'package:oluko_app/ui/components/friends_card.dart';
+import 'package:oluko_app/models/user_response.dart';
 
-class FriendsListPage extends StatefulWidget {
-  final List<User> friends;
-  FriendsListPage({this.friends});
+class FriendCard extends StatefulWidget {
+  final UserResponse userToDisplay;
+  final User userData;
+  FriendCard({this.userToDisplay, this.userData});
   @override
-  _FriendsListPageState createState() => _FriendsListPageState();
+  _FriendCardState createState() => _FriendCardState();
 }
 
-class _FriendsListPageState extends State<FriendsListPage> {
-  final _title = "Starred";
-  final _firstName = "FirstName";
-  final _lastName = "LastName";
-  final _userName = "UserName";
+/**
+ * TODO:
+ * List of user from Friends bloc
+ * get data to display (firstName, LastName, image)
+ * attribute to set star button 
+ */
 
+class _FriendCardState extends State<FriendCard> {
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        color: OlukoColors.black,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 10),
-              child: Text(_title, style: OlukoFonts.olukoBigFont()),
-            ),
-            // Column(
-            //     children: widget.friends
-            //         .map((friend) => FriendCard(
-            //               userData: friend,
-            //             ))
-            //         .toList()),
-            Column(
-              children: [card(), card()],
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  //TODO: changed to widget FriendCard, still function to show view
-  Container card() {
     return Container(
       alignment: Alignment.center,
       decoration: BoxDecoration(
@@ -62,6 +35,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
           Row(
             children: [
               CircleAvatar(
+                backgroundImage: NetworkImage(widget.userData.photoURL),
                 backgroundColor: Colors.red,
                 radius: 30,
               ),
@@ -77,19 +51,19 @@ class _FriendsListPageState extends State<FriendsListPage> {
                         Row(
                           children: [
                             Text(
-                              _firstName,
+                              widget.userToDisplay.firstName,
                               style: OlukoFonts.olukoMediumFont(),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(left: 5),
-                              child: Text(_lastName,
+                              child: Text(widget.userToDisplay.lastName,
                                   style: OlukoFonts.olukoMediumFont()),
                             ),
                           ],
                         ),
                       ],
                     ),
-                    Text(_userName,
+                    Text(widget.userData.displayName,
                         style: OlukoFonts.olukoMediumFont(
                             customColor: OlukoColors.grayColor)),
                   ],

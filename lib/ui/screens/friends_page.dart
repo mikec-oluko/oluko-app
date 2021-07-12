@@ -22,11 +22,11 @@ class _FriendsPageState extends State<FriendsPage>
 
   @override
   void initState() {
-    _tabController.addListener(() {
-      setState(() {
-        _activeTabIndex = _tabController.index;
-      });
-    });
+    // _tabController.addListener(() {
+    //   setState(() {
+    //     _activeTabIndex = _tabController.index;
+    //   });
+    // });
 
     setState(() {});
     _tabController = TabController(length: _pages.length, vsync: this);
