@@ -18,34 +18,44 @@ class TransformationJourneyUpload extends Base {
   String updatedBy;
   bool isHidden;
 
-  TransformationJourneyUpload.fromJson(Map json)
-      : name = json['name'],
-        from = json['from'],
-        description = json['description'],
-        index = json['index'],
-        type = json['type'],
-        file = json['file'],
-        isPublic = json['isPublic'],
-        thumbnail = json['thumbnail'],
-        createdAt = json['createdAt'],
-        createdBy = json['createdBy'],
-        updatedAt = json['updatedAt'],
-        updatedBy = json['updatedBy'];
+  factory TransformationJourneyUpload.fromJson(Map<String, dynamic> json) {
+    TransformationJourneyUpload transformationJourneyUpload =
+        TransformationJourneyUpload(
+            name: json['name'],
+            from: json['from'],
+            description: json['description'],
+            index: json['index'],
+            type: json['type'],
+            file: json['file'],
+            isPublic: json['isPublic'],
+            thumbnail: json['thumbnail'],
+            createdAt: json['createdAt'],
+            createdBy: json['createdBy'],
+            updatedAt: json['updatedAt'],
+            updatedBy: json['updatedBy']);
 
-  Map<String, dynamic> toJson() => {
-        'name': name,
-        'from': from,
-        'description': description,
-        'index': index,
-        'type': type,
-        'file': file,
-        'isPublic': isPublic,
-        'thumbnail': thumbnail,
-        'createdAt': createdAt,
-        'createdBy': createdBy,
-        'updatedAt': updatedAt,
-        'updatedBy': updatedBy,
-      };
+    transformationJourneyUpload.setBase(json);
+    return transformationJourneyUpload;
+  }
+
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> transformationJourneyUploadJson = {
+      'name': name,
+      'from': from,
+      'description': description,
+      'index': index,
+      'type': type,
+      'file': file,
+      'isPublic': isPublic,
+      'thumbnail': thumbnail,
+      'createdAt': createdAt,
+      'createdBy': createdBy,
+      'updatedAt': updatedAt,
+      'updatedBy': updatedBy,
+    };
+    transformationJourneyUploadJson.addEntries(super.toJson().entries);
+    return transformationJourneyUploadJson;
+  }
 
   TransformationJourneyUpload(
       {this.name,
@@ -56,15 +66,19 @@ class TransformationJourneyUpload extends Base {
       this.file,
       this.isPublic,
       this.thumbnail,
+      String id,
       Timestamp createdAt,
       String createdBy,
       Timestamp updatedAt,
+      String updatedBy,
       bool isHidden,
-      String updatedBy})
+      bool isDeleted})
       : super(
+            id: id,
             createdBy: createdBy,
             createdAt: createdAt,
             updatedAt: updatedAt,
             updatedBy: updatedBy,
+            isDeleted: isDeleted,
             isHidden: isHidden);
 }
