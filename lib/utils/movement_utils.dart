@@ -48,6 +48,22 @@ class MovementUtils {
     );
   }
 
+  static Column labelWithTitle(String title, String label) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.bold),
+        ),
+        Text(
+          label,
+          style: OlukoFonts.olukoBigFont(),
+        )
+      ],
+    );
+  }
+
   static Future<dynamic> movementDialog(
       BuildContext context, List<Widget> content) {
     return showDialog(
