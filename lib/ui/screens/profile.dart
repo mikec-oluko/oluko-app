@@ -126,8 +126,11 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> getProfileInfo() async {
-    profileInfo =
-        UserResponse.fromJson((await AuthBloc().retrieveLoginData()).toJson());
-    return profileInfo;
+    UserResponse user = (await AuthBloc().retrieveLoginData());
+    if (user != null) {
+      profileInfo = UserResponse.fromJson(user.toJson());
+      return profileInfo;
+    }
+    return null;
   }
 }
