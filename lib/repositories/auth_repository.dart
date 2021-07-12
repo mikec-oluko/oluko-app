@@ -104,7 +104,7 @@ class AuthRepository {
   }
 
   Future<ApiResponse> signUp(SignUpRequest signUpRequest) async {
-    var body2 = signUpRequest.toJson();
+    var body2 = signUpRequest.toDTOJson();
     Response response = await http.post(Uri.parse("$url/signup"), body: body2);
     var signUpResponseBody = jsonDecode(response.body);
     if (signUpResponseBody['message'] != null &&
