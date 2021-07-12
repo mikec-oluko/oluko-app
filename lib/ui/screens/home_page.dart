@@ -247,7 +247,7 @@ class _MyHomePageState extends State<MyHomePage> {
     List<Widget> options = [];
     //TODO: Remove this when take it to the correct place inside courses
     options.add(ElevatedButton(
-      onPressed: () => Navigator.pushNamed(context, '/movement-detail')
+      onPressed: () => Navigator.pushNamed(context, '/segment-detail')
           .then((value) => onGoBack()),
       child: Text(
         "TEST",
