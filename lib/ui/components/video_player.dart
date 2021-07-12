@@ -43,6 +43,7 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
             videoPlayerController: _controller,
             autoPlay: widget.autoPlay,
             showControls: widget.showControls,
+            placeholder: Center(child: CircularProgressIndicator()),
             materialProgressColors: ChewieProgressColors(
                 handleColor: Colors.black,
                 backgroundColor: Colors.black,

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
 import 'package:oluko_app/ui/screens/movement_intro.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class MovementItemBubbles extends StatefulWidget {
-  final List<Widget> content;
+  final List<Movement> content;
   final double width;
   MovementItemBubbles({this.content, this.width});
   @override
@@ -40,18 +41,12 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
           children: [
             SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
-                child: Row(children: <Widget>[
-                  _imageItem(context, imageItemUrl, itemName,
-                      onPressed: onPressedMovement),
-                  _imageItem(context, imageItemUrl, itemName,
-                      onPressed: onPressedMovement),
-                  _imageItem(context, imageItemUrl, itemName,
-                      onPressed: onPressedMovement),
-                  _imageItem(context, imageItemUrl, itemName,
-                      onPressed: onPressedMovement),
-                  _imageItem(context, imageItemUrl, itemName,
-                      onPressed: onPressedMovement),
-                ])),
+                child: Row(
+                    children: widget.content
+                        .map((movement) => _imageItem(
+                            context, movement.iconImage, movement.name,
+                            onPressed: onPressedMovement))
+                        .toList())),
           ],
         ),
       ),
@@ -64,7 +59,7 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
       onTap: () => onPressed(context),
       child: Column(
         children: [
-          StoriesItem(maxRadius: 25, imageUrl: imageItemUrl),
+          StoriesItem(maxRadius: 25, imageUrl: imageUrl),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
