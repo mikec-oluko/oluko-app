@@ -42,11 +42,16 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
             SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: widget.content
                         .map((movement) => _imageItem(
                             context, movement.iconImage, movement.name,
                             onPressed: onPressedMovement))
-                        .toList())),
+                        .toList()
+                          //Prevent the last item to be overlayed by the carousel gradient
+                          ..add(SizedBox(
+                            width: 100,
+                          )))),
           ],
         ),
       ),
@@ -57,17 +62,22 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
       {Function(BuildContext) onPressed}) {
     return GestureDetector(
       onTap: () => onPressed(context),
-      child: Column(
-        children: [
-          StoriesItem(maxRadius: 25, imageUrl: imageUrl),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              name,
-              style: OlukoFonts.olukoMediumFont(),
-            ),
-          )
-        ],
+      child: Container(
+        width: 70,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            StoriesItem(maxRadius: 25, imageUrl: imageUrl),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                name,
+                textAlign: TextAlign.center,
+                style: OlukoFonts.olukoMediumFont(),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

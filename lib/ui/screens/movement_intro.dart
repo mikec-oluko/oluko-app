@@ -22,10 +22,10 @@ class MovementIntro extends StatefulWidget {
 class _MovementIntroState extends State<MovementIntro>
     with SingleTickerProviderStateMixin {
   final toolbarHeight = kToolbarHeight * 2;
-  final tabs = ['TECHNIQUE', 'MODIFIER', 'REHAB 1', 'REHAB 2'];
+  final tabs = ['Technique', 'Modifier', 'Rehab 1', 'Rehab 2'];
 
   //TODO Make Dynamic
-  bool bookMarked = false;
+  Map<String, bool> coursesBookmarked = {};
   String segmentTitle = "Airsquats";
   String backgroundImageUrl =
       'https://c0.wallpaperflare.com/preview/26/779/700/fitness-men-sports-gym.jpg';
@@ -40,13 +40,27 @@ class _MovementIntroState extends State<MovementIntro>
         name: 'Body Building',
         iconImage:
             'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_16.png?alt=media&token=2528a228-cabf-49f1-a606-433b83508f42'),
+    Movement(
+        name: 'Triceps',
+        iconImage:
+            'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_17.png?alt=media&token=89e4809d-7cc8-40ac-88e0-eebac4ccc93a'),
+    Movement(
+        name: 'Yoga',
+        iconImage:
+            'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_3.png?alt=media&token=8918da2d-5f50-45a7-992e-41e3112678f6'),
+    Movement(
+        name: 'Body Building',
+        iconImage:
+            'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_16.png?alt=media&token=2528a228-cabf-49f1-a606-433b83508f42'),
   ];
   List<Course> referenceCourses = [
     Course(
+        id: '1',
         name: 'Builder Booty',
         imageUrl:
             'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_10.png?alt=media&token=e48354c6-6670-472a-9789-516287543cb4'),
     Course(
+        id: '2',
         name: 'Marathon Prep',
         imageUrl:
             'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_16.png?alt=media&token=2528a228-cabf-49f1-a606-433b83508f42'),
@@ -61,6 +75,7 @@ class _MovementIntroState extends State<MovementIntro>
   @override
   void initState() {
     tabController = TabController(initialIndex: 0, length: 4, vsync: this);
+    referenceCourses.forEach((course) => coursesBookmarked[course.id] = false);
     super.initState();
   }
 
@@ -118,12 +133,7 @@ class _MovementIntroState extends State<MovementIntro>
                                   controller: tabController,
                                   indicatorSize: TabBarIndicatorSize.tab,
                                   indicator: BoxDecoration(color: Colors.white),
-                                  tabs: [
-                                    _tabItem('TECHNIQUE', 0),
-                                    _tabItem('MODIFIER', 1),
-                                    _tabItem('REHAB 1', 2),
-                                    _tabItem('REHAB 2', 3),
-                                  ],
+                                  tabs: _getTabs(),
                                 ),
                               ),
                             ],
@@ -185,7 +195,8 @@ class _MovementIntroState extends State<MovementIntro>
                   ),
                   GestureDetector(
                     onTap: () => this.setState(() {
-                      bookMarked = !bookMarked;
+                      coursesBookmarked[course.id] =
+                          !coursesBookmarked[course.id];
                     }),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -193,7 +204,7 @@ class _MovementIntroState extends State<MovementIntro>
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Icon(
-                            this.bookMarked
+                            this.coursesBookmarked[course.id]
                                 ? Icons.bookmark
                                 : Icons.bookmark_border,
                             size: 20,
@@ -367,14 +378,14 @@ class _MovementIntroState extends State<MovementIntro>
     );
   }
 
-  _tabItem(String name, int index) {
+  Tab _tabItem(String name, int index) {
     return Tab(
       child: Container(
         decoration: BoxDecoration(),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Text(
-            name,
+            name.toUpperCase(),
             style: OlukoFonts.olukoMediumFont(
                 customColor:
                     tabController.index == index ? Colors.black : Colors.white),
@@ -382,5 +393,13 @@ class _MovementIntroState extends State<MovementIntro>
         ),
       ),
     );
+  }
+
+  List<Tab> _getTabs() {
+    List<Tab> tabItems = [];
+    for (var i = 0; i < tabs.length; i++) {
+      tabItems.add(_tabItem(tabs[i], i));
+    }
+    return tabItems;
   }
 }
