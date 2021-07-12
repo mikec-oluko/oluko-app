@@ -77,7 +77,6 @@ class MovementUtils {
                   right: 0,
                   child: IconButton(
                     onPressed: () {
-                      print('wow');
                       Navigator.pop(context);
                     },
                     icon: Icon(
