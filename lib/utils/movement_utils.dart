@@ -35,7 +35,7 @@ class MovementUtils {
   }
 
   static Column workout(Segment segment, BuildContext context) {
-    List<String> workouts = getWorkouts(segment, context);
+    List<Widget> workoutWidgets = getWorkouts(segment, context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -57,42 +57,52 @@ class MovementUtils {
             : SizedBox(),
         ListView.builder(
             shrinkWrap: true,
-            itemCount: workouts.length,
+            itemCount: workoutWidgets.length,
             itemBuilder: (context, index) {
-              return index % 4 == 0
-                  ? Text(
-                      workouts[index],
-                      style: OlukoFonts.olukoMediumFont(),
-                    )
-                  : Text(
-                      workouts[index],
-                      style: OlukoFonts.olukoBigFont(),
-                    );
+              return workoutWidgets[index];
             })
       ],
     );
   }
 
-  static List<String> getWorkouts(Segment segment, BuildContext context) {
-    List<String> workouts = [];
-    String workout;
+  static List<Widget> getWorkouts(Segment segment, BuildContext context) {
+    List<Widget> workouts = [];
+    String workoutString;
     segment.movements.forEach((MovementSubmodel movement) {
-      workouts.add(movement.timerSets.toString() +
-          " " +
-          OlukoLocalizations.of(context).find('sets'));
+      if (movement.timerSets != null && movement.timerSets > 1) {
+        workoutString = movement.timerSets.toString() +
+            " " +
+            OlukoLocalizations.of(context).find('sets');
+
+        workouts.add(getTextWidget(workoutString, false));
+      }
+
       if (movement.timerReps != null) {
-        workout =
+        workoutString =
             '• ' + movement.timerReps.toString() + ' rep ' + movement.name;
       } else {
-        workout =
+        workoutString =
             '• ' + movement.timerWorkTime.toString() + ' sec ' + movement.name;
       }
-      workouts.add(workout);
-      workout = '• ' + movement.timerRestTime.toString() + ' sec rest';
-      workouts.add(workout);
-      workouts.add(' ');
+      workouts.add(getTextWidget(workoutString, true));
+      workoutString = '• ' + movement.timerRestTime.toString() + ' sec rest';
+      workouts.add(getTextWidget(workoutString, true));
+      workouts.add(getTextWidget(" ", true));
     });
     return workouts;
+  }
+
+  static Widget getTextWidget(String text, bool big) {
+    TextStyle style;
+    if (big) {
+      style = OlukoFonts.olukoBigFont();
+    } else {
+      style = OlukoFonts.olukoMediumFont();
+    }
+    return Text(
+      text,
+      style: style,
+    );
   }
 
   static Column labelWithTitle(String title, String label) {
