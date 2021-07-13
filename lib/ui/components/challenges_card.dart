@@ -5,7 +5,7 @@ import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ChallengesCard extends StatefulWidget {
-  final Challenge challenge;
+  final ChallengeStatic challenge;
   final String routeToGo;
   final bool needHeader;
 

@@ -39,10 +39,11 @@ class ProfileRoutes {
     Navigator.popUntil(context, ModalRoute.withName('/'));
   }
 
-  static goToChallenges() => ProfileRoutes.profileChallengesRoute;
+  static String goToChallenges() => ProfileRoutes.profileChallengesRoute;
 
-  static goToTransformationJourney() =>
+  static String goToTransformationJourney() =>
       ProfileRoutes.profileTransformationJourneyRoute;
 
-  static goToAssessmentVideos() => ProfileRoutes.profileAssessmentsVideosRoute;
+  static String goToAssessmentVideos() =>
+      ProfileRoutes.profileAssessmentsVideosRoute;
 }

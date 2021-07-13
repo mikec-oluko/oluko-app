@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 // import 'package:oluko_app/models/sign_up_request.dart';
-import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';
+import 'package:oluko_app/ui/components/oluko_error_message_view.dart';
 import 'package:oluko_app/ui/components/user_profile_information.dart';
 import 'package:oluko_app/ui/components/user_profile_progress.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
@@ -21,6 +21,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final _formKey = GlobalKey<FormState>();
+  bool _isTesting = false;
   UserResponse profileInfo;
   final String profileTitle = ProfileViewConstants.profileTitle;
 
@@ -55,18 +56,23 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget userInformationSection() {
-    return Column(
-      children: [
-        GestureDetector(
-            onTap: () =>
-                Navigator.pushNamed(context, ProfileRoutes.userInformationRoute)
-                    .then((value) => onGoBack()),
-            child: UserProfileInformation(userInformation: profileInfo)),
-        UserProfileProgress(
-            userChallenges: ProfileViewConstants.profileChallengesContent,
-            userFriends: ProfileViewConstants.profileFriendsContent)
-      ],
-    );
+    Widget returnWidget;
+    _isTesting == false
+        ? returnWidget = Column(
+            children: [
+              GestureDetector(
+                  onTap: () => Navigator.pushNamed(
+                          context, ProfileRoutes.userInformationRoute)
+                      .then((value) => onGoBack()),
+                  child: UserProfileInformation(userInformation: profileInfo)),
+              UserProfileProgress(
+                  userChallenges: ProfileViewConstants.profileChallengesContent,
+                  userFriends: ProfileViewConstants.profileFriendsContent)
+            ],
+          )
+        : returnWidget = Center(child: OlukoErrorMessage());
+
+    return returnWidget;
   }
 
   Padding buildOptionsList() {
@@ -89,24 +95,26 @@ class _ProfilePageState extends State<ProfilePage> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              GestureDetector(
-                onTap: () => Navigator.pushNamed(
-                    context, ProfileRoutes.returnRouteName(pageTitle)),
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 25.0),
-                  child: Text(pageTitle, style: OlukoFonts.olukoMediumFont()),
-                ),
+          InkWell(
+            onTap: () => Navigator.pushNamed(
+                context, ProfileRoutes.returnRouteName(pageTitle)),
+            child: Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 25.0),
+                    child: Text(pageTitle, style: OlukoFonts.olukoMediumFont()),
+                  ),
+                  IconButton(
+                      icon: Icon(Icons.arrow_forward_ios,
+                          color: OlukoColors.grayColor),
+                      onPressed: () => Navigator.pushNamed(
+                              context, ProfileRoutes.returnRouteName(pageTitle))
+                          .then((value) => onGoBack()))
+                ],
               ),
-              IconButton(
-                  icon: Icon(Icons.arrow_forward_ios,
-                      color: OlukoColors.grayColor),
-                  onPressed: () => Navigator.pushNamed(
-                          context, ProfileRoutes.returnRouteName(pageTitle))
-                      .then((value) => onGoBack()))
-            ],
+            ),
           ),
         ],
       ),
