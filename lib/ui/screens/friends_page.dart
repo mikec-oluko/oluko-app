@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/friend_bloc.dart';
 import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/helpers/page_content.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
@@ -11,23 +13,22 @@ class FriendsPage extends StatefulWidget {
   _FriendsPageState createState() => _FriendsPageState();
 }
 
+final FriendBloc friendBloc = FriendBloc();
+
 class _FriendsPageState extends State<FriendsPage>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
   int _activeTabIndex;
   List<PageContent> _pages = [
-    PageContent("Friends", FriendsListPage()),
-    PageContent("Requests", FriendsRequestPage())
+    PageContent("Friends",
+        BlocProvider.value(value: friendBloc, child: FriendsListPage())),
+    PageContent("Requests",
+        BlocProvider.value(value: friendBloc, child: FriendsRequestPage()))
   ];
+  final String _title = "Friends";
 
   @override
   void initState() {
-    // _tabController.addListener(() {
-    //   setState(() {
-    //     _activeTabIndex = _tabController.index;
-    //   });
-    // });
-
     setState(() {});
     _tabController = TabController(length: _pages.length, vsync: this);
     super.initState();
@@ -49,7 +50,7 @@ class _FriendsPageState extends State<FriendsPage>
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: OlukoAppBar(
-          title: "Friends",
+          title: _title,
           // showSearchBar: true,
         ),
         body: Container(

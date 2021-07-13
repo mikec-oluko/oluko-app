@@ -4,9 +4,14 @@ import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/models/user_response.dart';
 
 class FriendCard extends StatefulWidget {
-  final UserResponse userToDisplay;
-  final User userData;
-  FriendCard({this.userToDisplay, this.userData});
+  // final UserResponse userToDisplay;
+  // final User userData;
+  // FriendCard({this.userToDisplay, this.userData});
+  final String name;
+  final String lastName;
+  final String userName;
+  final String imageUser;
+  FriendCard({this.name, this.lastName, this.userName, this.imageUser});
   @override
   _FriendCardState createState() => _FriendCardState();
 }
@@ -35,7 +40,8 @@ class _FriendCardState extends State<FriendCard> {
           Row(
             children: [
               CircleAvatar(
-                backgroundImage: NetworkImage(widget.userData.photoURL),
+                // backgroundImage: NetworkImage(widget.userData.photoURL),
+                backgroundImage: NetworkImage(widget.imageUser),
                 backgroundColor: Colors.red,
                 radius: 30,
               ),
@@ -51,21 +57,27 @@ class _FriendCardState extends State<FriendCard> {
                         Row(
                           children: [
                             Text(
-                              widget.userToDisplay.firstName,
+                              // widget.userToDisplay.firstName,
+                              widget.name,
                               style: OlukoFonts.olukoMediumFont(),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(left: 5),
-                              child: Text(widget.userToDisplay.lastName,
+                              // child: Text(widget.userToDisplay.lastName,
+                              //     style: OlukoFonts.olukoMediumFont()),
+                              child: Text(widget.lastName,
                                   style: OlukoFonts.olukoMediumFont()),
                             ),
                           ],
                         ),
                       ],
                     ),
-                    Text(widget.userData.displayName,
+                    Text(widget.userName,
                         style: OlukoFonts.olukoMediumFont(
                             customColor: OlukoColors.grayColor)),
+                    // Text(widget.userData.displayName,
+                    //     style: OlukoFonts.olukoMediumFont(
+                    //         customColor: OlukoColors.grayColor)),
                   ],
                 ),
               )

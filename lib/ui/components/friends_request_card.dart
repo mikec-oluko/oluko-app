@@ -6,9 +6,16 @@ import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 
 class FriendRequestCard extends StatefulWidget {
-  final UserResponse userToDisplay;
-  final User userData;
-  FriendRequestCard({this.userToDisplay, this.userData});
+  // final UserResponse userToDisplay;
+  // final User userData;
+  // FriendRequestCard({this.userToDisplay, this.userData});
+
+  //Demo data
+  final String name;
+  final String lastName;
+  final String userName;
+  final String imageUser;
+  FriendRequestCard({this.name, this.lastName, this.userName, this.imageUser});
   @override
   _FriendRequestCardState createState() => _FriendRequestCardState();
 }
@@ -42,6 +49,7 @@ class _FriendRequestCardState extends State<FriendRequestCard> {
                 children: [
                   CircleAvatar(
                     // backgroundImage: NetworkImage(widget.userData.photoURL),
+                    backgroundImage: NetworkImage(widget.imageUser),
                     backgroundColor: Colors.red,
                     radius: 30,
                   ),
@@ -55,21 +63,21 @@ class _FriendRequestCardState extends State<FriendRequestCard> {
                           children: [
                             Text(
                               // widget.userToDisplay.firstName,
-                              "Name",
+                              widget.name,
                               style: OlukoFonts.olukoMediumFont(),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(left: 5),
                               child: Text(
                                   // widget.userToDisplay.lastName,
-                                  "LastName",
+                                  widget.lastName,
                                   style: OlukoFonts.olukoMediumFont()),
                             ),
                           ],
                         ),
                         Text(
                             // widget.userData.displayName,
-                            "UserName",
+                            widget.userName,
                             style: OlukoFonts.olukoMediumFont(
                                 customColor: OlukoColors.grayColor)),
                       ],
