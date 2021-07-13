@@ -29,7 +29,7 @@ class MovementSubmodel {
         name: json['name'],
         timerType: json['timer_type'],
         timerTotalTime: json['timer_total_time'],
-        timerWorkTime: json['time_work_time'],
+        timerWorkTime: json['timer_work_time'],
         timerRestTime: json['timer_rest_time'],
         timerSets: json['timer_sets'],
         timerReps: json['timer_reps']);
@@ -41,7 +41,7 @@ class MovementSubmodel {
         'name': name,
         'timer_type': timerType,
         'timer_total_time': timerTotalTime,
-        'time_work_time': timerWorkTime,
+        'timer_work_time': timerWorkTime,
         'timer_rest_time': timerRestTime,
         'timer_sets': timerSets,
         'timer_reps': timerReps,

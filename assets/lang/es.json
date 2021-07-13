@@ -15,9 +15,13 @@
     "shareYourVideo": "Comparte tu video",
     "pause": "Pause",
     "howWasYourWorkoutSession": "How was your workout session?",
-    "resumeWorkouts": "Resume Workouts",
+    "resumeWorkouts": "Reanudar Ejercicio",
+    "duration": "Duración",
     "paused": "Pausa",
     "seconds": "Segundos",
+    "bookMark": "Marcador",
+    "referenceMovements": "Movimientos de referencia",
+    "referenceCourses": "Cursos de referencia",
     "segmentAndRecordingStartsIn": "Segmento y grabación comienza en",
     "segmentStartsIn": "Segmento comienza en",
     "rounds": "Rounds",
@@ -77,5 +81,8 @@
     "courseSmall": "curso",
     "start": "Comenzar",
     "class": "Clase",
-    "enrollWarning": "Debes estar inscripto en este curso para comenzar el segmento"
+    "enrollWarning": "Debes estar inscripto en este curso para comenzar el segmento",
+    "workouts": "Ejercicios",
+    "description": "Descripción",
+    "sets": "Sets"
 }

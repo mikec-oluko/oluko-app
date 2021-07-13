@@ -6,24 +6,33 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/class.dart';
+import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/segment.dart';
+import 'package:oluko_app/services/course_enrollment_service.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/course_progress_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/segment_section.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
+import 'package:oluko_app/ui/screens/segment_detail.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class InsideClasses extends StatefulWidget {
   InsideClasses(
-      {this.actualClass, this.classProgress, this.courseName, Key key})
+      {this.actualClass,
+      this.classProgress,
+      this.courseName,
+      this.courseEnrollment,
+      this.classIndex,
+      Key key})
       : super(key: key);
 
   double classProgress;
   Class actualClass;
   String courseName;
-
+  CourseEnrollment courseEnrollment;
+  int classIndex;
   @override
   _InsideClassesState createState() => _InsideClassesState();
 }
@@ -137,7 +146,27 @@ class _InsideClassesState extends State<InsideClasses> {
                                               title:
                                                   OlukoLocalizations.of(context)
                                                       .find('start'),
-                                              onPressed: () {},
+                                              onPressed: () {
+                                                int segmentIndex =
+                                                    CourseEnrollmentService
+                                                        .getFirstUncompletedSegmentIndex(
+                                                            widget.courseEnrollment
+                                                                    .classes[
+                                                                widget
+                                                                    .classIndex]);
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) => SegmentDetail(
+                                                            segment: segments[
+                                                                segmentIndex],
+                                                            segmentIndex:
+                                                                segmentIndex,
+                                                            classIndex: widget
+                                                                .classIndex,
+                                                            courseEnrollment: widget
+                                                                .courseEnrollment)));
+                                              },
                                             ),
                                           ],
                                         ))
