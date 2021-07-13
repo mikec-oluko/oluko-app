@@ -288,10 +288,10 @@ class _SegmentRecordingState extends State<SegmentRecording> {
                 '${OlukoLocalizations.of(context).find('rounds')}:',
                 '$rounds ${OlukoLocalizations.of(context).find('rounds')}'),
           ),
-          Padding(
+          /*Padding(
             padding: const EdgeInsets.all(8.0),
-            child: MovementUtils.workout(tasks),
-          ),
+            child: MovementUtils.workout(tasks, context),
+          ),*/
           Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),

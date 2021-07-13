@@ -12,6 +12,15 @@ class CourseEnrollmentService {
     return -1;
   }
 
+  static int getFirstUncompletedSegmentIndex(EnrollmentClass enrollmentClass) {
+    for (var i = 0; i < enrollmentClass.segments.length; i++) {
+      if (enrollmentClass.segments[i].compleatedAt == null) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
   static double getClassProgress(
       CourseEnrollment courseEnrollment, int classIndex) {
     int segmentsCompleated = 0;
