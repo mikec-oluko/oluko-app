@@ -6,12 +6,14 @@ class Movement extends Base {
   String description;
   String video;
   List<String> tags;
+  String iconImage;
 
   Movement(
       {this.name,
       this.video,
       this.description,
       this.tags,
+      this.iconImage,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -33,6 +35,7 @@ class Movement extends Base {
         name: json['name'],
         video: json['video'],
         description: json['description'],
+        iconImage: json['icon_image'],
         tags: json['tags'] == null ? null : List<String>.from(json['tags']));
     movement.setBase(json);
     return movement;
@@ -43,6 +46,7 @@ class Movement extends Base {
       'name': name,
       'video': video,
       'description': description,
+      'icon_image': iconImage,
       'tags': tags == null ? null : List<dynamic>.from(tags),
     };
     movementJson.addEntries(super.toJson().entries);

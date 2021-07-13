@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
+import 'package:oluko_app/ui/screens/movement_intro.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class OlukoImageBar<T> extends StatelessWidget implements PreferredSizeWidget {
@@ -12,6 +13,10 @@ class OlukoImageBar<T> extends StatelessWidget implements PreferredSizeWidget {
   final String imageItemUrl =
       "https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/Airsquats.jpg?alt=media&token=641c2dff-ac0e-4b22-8a8d-aee9adbca3a1";
   final String itemName = 'Airsquats';
+  final Function(BuildContext) onPressedMovement = (context) {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => MovementIntro()));
+  };
 
   OlukoImageBar(
       {this.title,
@@ -65,7 +70,8 @@ class OlukoImageBar<T> extends StatelessWidget implements PreferredSizeWidget {
                           SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
                               child: Row(children: <Widget>[
-                                _imageItem(imageItemUrl, itemName),
+                                _imageItem(context, imageItemUrl, itemName,
+                                    onPressed: onPressedMovement),
                               ])),
                         ],
                       ),
@@ -93,18 +99,22 @@ class OlukoImageBar<T> extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
-  Widget _imageItem(String imageUrl, String name) {
-    return Column(
-      children: [
-        StoriesItem(maxRadius: 25, imageUrl: imageItemUrl),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            name,
-            style: OlukoFonts.olukoMediumFont(),
-          ),
-        )
-      ],
+  Widget _imageItem(BuildContext context, String imageUrl, String name,
+      {Function(BuildContext) onPressed}) {
+    return GestureDetector(
+      onTap: () => onPressed(context),
+      child: Column(
+        children: [
+          StoriesItem(maxRadius: 25, imageUrl: imageItemUrl),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              name,
+              style: OlukoFonts.olukoMediumFont(),
+            ),
+          )
+        ],
+      ),
     );
   }
 
