@@ -19,6 +19,7 @@ import 'package:oluko_app/ui/screens/friends_page.dart';
 import 'package:oluko_app/ui/screens/home_page.dart';
 import 'package:oluko_app/ui/screens/Login.dart';
 import 'package:oluko_app/ui/screens/Profile.dart';
+import 'package:oluko_app/ui/screens/movement_intro.dart';
 import 'package:oluko_app/ui/screens/segment_detail.dart';
 import 'package:oluko_app/ui/screens/profile/profile_challenges_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_help_and_support_page.dart';
@@ -122,6 +123,8 @@ class _MyAppState extends State<MyApp> {
         //TODO: Remove this when take it to the correct place inside courses
         '/segment-detail': (context) =>
             BlocProvider.value(value: _authBloc, child: SegmentDetail()),
+        '/movement-intro': (context) =>
+            BlocProvider.value(value: _authBloc, child: MovementIntro()),
         '/segment-recording': (context) =>
             BlocProvider.value(value: _authBloc, child: SegmentRecording()),
         '/classes': (context) =>
