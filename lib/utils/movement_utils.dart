@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/models/segment.dart';
+import 'package:oluko_app/models/submodels/movement_submodel.dart';
+
+import 'oluko_localizations.dart';
 
 class MovementUtils {
   static Text movementTitle(String title) {
@@ -9,14 +13,17 @@ class MovementUtils {
     );
   }
 
-  static description(String description) {
+  static description(String description, BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "Description:",
-          style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.bold),
-        ),
+        Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: Text(
+              OlukoLocalizations.of(context).find('description') + ":",
+              style: OlukoFonts.olukoSuperBigFont(
+                  custoFontWeight: FontWeight.bold),
+            )),
         Text(
           description,
           style: OlukoFonts.olukoBigFont(
@@ -27,25 +34,65 @@ class MovementUtils {
     );
   }
 
-  static Column workout(List<String> workouts) {
+  static Column workout(Segment segment, BuildContext context) {
+    List<String> workouts = getWorkouts(segment, context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "Workouts:",
-          style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.bold),
-        ),
+        Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: Text(
+              OlukoLocalizations.of(context).find('workouts') + ":",
+              style: OlukoFonts.olukoSuperBigFont(
+                  custoFontWeight: FontWeight.bold),
+            )),
+        segment.rounds != null
+            ? Text(
+                segment.rounds.toString() +
+                    " " +
+                    OlukoLocalizations.of(context).find('rounds') +
+                    "\n",
+                style: OlukoFonts.olukoMediumFont(),
+              )
+            : SizedBox(),
         ListView.builder(
             shrinkWrap: true,
             itemCount: workouts.length,
             itemBuilder: (context, index) {
-              return Text(
-                '• ${workouts[index]}',
-                style: OlukoFonts.olukoBigFont(),
-              );
+              return index % 4 == 0
+                  ? Text(
+                      workouts[index],
+                      style: OlukoFonts.olukoMediumFont(),
+                    )
+                  : Text(
+                      workouts[index],
+                      style: OlukoFonts.olukoBigFont(),
+                    );
             })
       ],
     );
+  }
+
+  static List<String> getWorkouts(Segment segment, BuildContext context) {
+    List<String> workouts = [];
+    String workout;
+    segment.movements.forEach((MovementSubmodel movement) {
+      workouts.add(movement.timerSets.toString() +
+          " " +
+          OlukoLocalizations.of(context).find('sets'));
+      if (movement.timerReps != null) {
+        workout =
+            '• ' + movement.timerReps.toString() + ' rep ' + movement.name;
+      } else {
+        workout =
+            '• ' + movement.timerWorkTime.toString() + ' sec ' + movement.name;
+      }
+      workouts.add(workout);
+      workout = '• ' + movement.timerRestTime.toString() + ' sec rest';
+      workouts.add(workout);
+      workouts.add(' ');
+    });
+    return workouts;
   }
 
   static Column labelWithTitle(String title, String label) {

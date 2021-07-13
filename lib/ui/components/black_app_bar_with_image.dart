@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
-import 'package:oluko_app/ui/components/title_header.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class OlukoImageBar<T> extends StatelessWidget implements PreferredSizeWidget {

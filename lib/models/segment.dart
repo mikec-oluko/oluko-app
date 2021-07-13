@@ -5,10 +5,11 @@ import 'package:oluko_app/models/submodels/movement_submodel.dart';
 class Segment extends Base {
   String name;
   List<MovementSubmodel> movements;
-  String cover;
+  String image;
   String description;
   int duration;
   int initialTimer;
+  int rounds;
   int roundBreakDuration;
   bool isChallange;
   bool isPublished;
@@ -16,7 +17,8 @@ class Segment extends Base {
   Segment(
       {this.name,
       this.movements,
-      this.cover,
+      this.image,
+      this.rounds,
       this.description,
       this.duration,
       this.initialTimer,
@@ -42,7 +44,8 @@ class Segment extends Base {
   factory Segment.fromJson(Map<String, dynamic> json) {
     Segment segment = Segment(
         name: json['name'],
-        cover: json['cover'],
+        image: json['image'],
+        rounds: json['rounds'],
         description: json['description'],
         duration: json['duration'],
         initialTimer: json['initial_timer'],
@@ -60,7 +63,8 @@ class Segment extends Base {
   Map<String, dynamic> toJson() {
     Map<String, dynamic> movementJson = {
       'name': name,
-      'cover': cover,
+      'image': image,
+      'rounds': rounds,
       'duration': duration,
       'description': description,
       'initial_timer': initialTimer,
