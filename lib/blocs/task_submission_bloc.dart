@@ -20,6 +20,11 @@ class GetSuccess extends TaskSubmissionState {
   GetSuccess({this.taskSubmission});
 }
 
+class GetUserTaskSubmissionSuccess extends TaskSubmissionState {
+  List<TaskSubmission> taskSubmissions;
+  GetUserTaskSubmissionSuccess({this.taskSubmissions});
+}
+
 class UpdateSuccess extends TaskSubmissionState {}
 
 class Failure extends TaskSubmissionState {
@@ -48,7 +53,8 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
     }
   }
 
-  void updateTaskSubmissionVideo(DocumentReference reference, Video video) async {
+  void updateTaskSubmissionVideo(
+      DocumentReference reference, Video video) async {
     try {
       await TaskSubmissionRepository.updateTaskSubmissionVideo(
           video, reference);
@@ -65,6 +71,17 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
       if (taskSubmission != null && taskSubmission.video.url != null) {
         emit(GetSuccess(taskSubmission: taskSubmission));
       }
+    } catch (e) {
+      emit(Failure(exception: e));
+    }
+  }
+
+  void getTaskSubmissionByUserId(String userId) async {
+    try {
+      List<TaskSubmission> taskSubmissions =
+          await TaskSubmissionRepository.getTaskSubmissionsByUserId(userId);
+
+      emit(GetUserTaskSubmissionSuccess(taskSubmissions: taskSubmissions));
     } catch (e) {
       emit(Failure(exception: e));
     }

@@ -38,4 +38,21 @@ class TaskSubmissionRepository {
     }
     return null;
   }
+
+  static Future<List<TaskSubmission>> getTaskSubmissionsByUserId(
+      String userId) async {
+    QuerySnapshot docRef = await FirebaseFirestore.instance
+        .collection("projects")
+        .doc(GlobalConfiguration().getValue("projectId"))
+        .collection("taskSubmissions")
+        .where('user_id', isEqualTo: userId)
+        .get();
+
+    List<TaskSubmission> response = [];
+    docRef.docs.forEach((doc) {
+      final Map<String, dynamic> element = doc.data();
+      response.add(TaskSubmission.fromJson(element));
+    });
+    return response;
+  }
 }

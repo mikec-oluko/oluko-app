@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
-import 'package:oluko_app/ui/components/dialog.dart';
 import 'package:oluko_app/ui/components/image_and_video_container.dart';
-import 'package:oluko_app/ui/components/image_and_video_preview_card.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/transformation_journey_modal_options.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
-import 'package:oluko_app/ui/screens/profile/profile_routes.dart';
-import 'package:oluko_app/ui/screens/profile/transformation_journey_post.dart';
+import 'package:oluko_app/utils/app_modal.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ProfileTransformationJourneyPage extends StatefulWidget {
@@ -85,12 +82,9 @@ class _ProfileTransformationJourneyPageState
                           child: OlukoOutlinedButton(
                               title: OlukoLocalizations.of(context)
                                   .find('tapToUpload'),
-                              onPressed: () =>
-                                  ProfileViewConstants.dialogContent(
-                                      context: context,
-                                      content: [
-                                        TransformationJourneyOptions()
-                                      ])),
+                              onPressed: () => AppModal.dialogContent(
+                                  context: context,
+                                  content: [TransformationJourneyOptions()])),
                         )))),
             Padding(
               padding: const EdgeInsets.fromLTRB(10, 100, 10, 0),

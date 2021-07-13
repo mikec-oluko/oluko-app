@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/ui/components/uploading_modal_success.dart';
-import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
+import 'package:oluko_app/utils/app_modal.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class UploadingModalLoader extends StatelessWidget {
@@ -30,7 +30,7 @@ class UploadingModalLoader extends StatelessWidget {
             child: GestureDetector(
               onDoubleTap: () {
                 Navigator.pop(context);
-                ProfileViewConstants.dialogContent(
+                AppModal.dialogContent(
                     context: context, content: [UploadingModalSuccess()]);
               },
               child: Text(
