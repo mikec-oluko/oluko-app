@@ -28,6 +28,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   Duration movementDuration = Duration(seconds: 35);
   Duration timeLeft = Duration(seconds: 35);
   List<String> tasks = ['30 Sec air squats', '30 Sec rest'];
+  String durationLabel = '4 Minutes';
   String segmentName = 'Intense Airsquats';
   num rounds = 8;
   String backgroundImage =
@@ -92,6 +93,19 @@ class _SegmentRecordingState extends State<SegmentRecording> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Expanded(
+            //   flex: 8,
+            //   child: _segmentInfoSection(),
+            // ),
+            // Expanded(
+            //     flex: 2,
+            //     child: Padding(
+            //       padding: const EdgeInsets.all(8.0),
+            //       child: Row(
+            //         children: _onCompletedActions(),
+            //       ),
+            //     ))
+
             Expanded(
                 flex: this.flexProportions(this.workoutType)[0],
                 child: _timerSection(this.workoutType, this.workoutState)),
@@ -255,13 +269,24 @@ class _SegmentRecordingState extends State<SegmentRecording> {
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: MovementUtils.movementTitle(segmentName),
+            child: Row(
+              children: [
+                MovementUtils.movementTitle(segmentName),
+                _completedBadge()
+              ],
+            ),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Text(
-                '$rounds ${OlukoLocalizations.of(context).find('rounds')}',
-                style: OlukoFonts.olukoBigFont()),
+            child: MovementUtils.labelWithTitle(
+                '${OlukoLocalizations.of(context).find('duration')}:',
+                durationLabel),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: MovementUtils.labelWithTitle(
+                '${OlukoLocalizations.of(context).find('rounds')}:',
+                '$rounds ${OlukoLocalizations.of(context).find('rounds')}'),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -425,6 +450,23 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   Other Methods
   */
 
+  Widget _completedBadge() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: OlukoColors.listGrayColor,
+          borderRadius: BorderRadius.all(Radius.circular(5)),
+        ),
+        padding: EdgeInsets.all(5),
+        child: Text(
+          'COMPLETED',
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
+    );
+  }
+
   List<Widget> _onPlayingActions() {
     return [
       OlukoPrimaryButton(
@@ -460,6 +502,26 @@ class _SegmentRecordingState extends State<SegmentRecording> {
         title:
             OlukoLocalizations.of(context).find('resumeWorkouts').toUpperCase(),
       ),
+    ];
+  }
+
+  List<Widget> _onCompletedActions() {
+    return [
+      OlukoPrimaryButton(
+          color: Colors.white,
+          onPressed: () => this.setState(() {}),
+          title:
+              'GO TO CLASS' //OlukoLocalizations.of(context).find('goToClass').toUpperCase(),
+          ),
+      SizedBox(
+        width: 25,
+      ),
+      OlukoPrimaryButton(
+          color: Colors.white,
+          onPressed: () => this.setState(() {}),
+          title:
+              'NEXT SEGMENT' //OlukoLocalizations.of(context).find('goToClass').toUpperCase(),
+          ),
     ];
   }
 

@@ -10,14 +10,14 @@ import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
-class MovementDetail extends StatefulWidget {
-  MovementDetail({Key key}) : super(key: key);
+class SegmentDetail extends StatefulWidget {
+  SegmentDetail({Key key}) : super(key: key);
 
   @override
-  _MovementDetailState createState() => _MovementDetailState();
+  _SegmentDetailState createState() => _SegmentDetailState();
 }
 
-class _MovementDetailState extends State<MovementDetail> {
+class _SegmentDetailState extends State<SegmentDetail> {
   final toolbarHeight = kToolbarHeight * 2;
   bool startRecordingAndWorkoutTogether = false;
 
