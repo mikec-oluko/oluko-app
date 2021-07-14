@@ -30,24 +30,28 @@ class SegmentRecording extends StatefulWidget {
 class _SegmentRecordingState extends State<SegmentRecording> {
   //TODO --- Make Dynamic ---
 
-  Segment segment =
-      Segment(duration: 60, rounds: 2, initialTimer: 5, movements: [
-    MovementSubmodel(
-        name: 'Air Squats',
-        timerType: TaskType.DEFAULT.toString(),
-        timerTotalTime: 90,
-        timerRestTime: 3,
-        timerWorkTime: null,
-        timerReps: 5,
-        timerSets: 3),
-    MovementSubmodel(
-        name: 'Crunches',
-        timerType: TaskType.DEFAULT.toString(),
-        timerTotalTime: 75,
-        timerRestTime: 10,
-        timerWorkTime: 15,
-        timerSets: 3)
-  ]);
+  Segment segment = Segment(
+      duration: 60,
+      rounds: 2,
+      initialTimer: 5,
+      roundBreakDuration: 7,
+      movements: [
+        MovementSubmodel(
+            name: 'Air Squats',
+            timerType: TaskType.DEFAULT.toString(),
+            timerTotalTime: 90,
+            timerRestTime: 3,
+            timerWorkTime: null,
+            timerReps: 5,
+            timerSets: 3),
+        MovementSubmodel(
+            name: 'Crunches',
+            timerType: TaskType.DEFAULT.toString(),
+            timerTotalTime: 75,
+            timerRestTime: 10,
+            timerWorkTime: 15,
+            timerSets: 3)
+      ]);
 
   //Dynamic images
   String backgroundImage =
@@ -675,29 +679,38 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   List<TimerEntry> _getExercisesList(num rounds) {
     List<TimerEntry> entries = [];
     for (var roundIndex = 0; roundIndex < rounds; roundIndex++) {
-      segment.movements.forEach((movement) {
-        for (var setIndex = 0; setIndex < movement.timerSets; setIndex++) {
-          bool isTimedEntry = movement.timerWorkTime != null;
+      for (var movementIndex = 0;
+          movementIndex < segment.movements.length;
+          movementIndex++) {
+        for (var setIndex = 0;
+            setIndex < segment.movements[movementIndex].timerSets;
+            setIndex++) {
+          bool isTimedEntry =
+              segment.movements[movementIndex].timerWorkTime != null;
+          bool isLastMovement = movementIndex == segment.movements.length - 1;
           //Add work entry
           entries.add(TimerEntry(
-              time: movement.timerWorkTime,
-              reps: movement.timerReps,
-              movement: movement,
+              time: segment.movements[movementIndex].timerWorkTime,
+              reps: segment.movements[movementIndex].timerReps,
+              movement: segment.movements[movementIndex],
               setNumber: setIndex,
               roundNumber: roundIndex,
               label:
-                  '${isTimedEntry ? movement.timerWorkTime : movement.timerReps} ${isTimedEntry ? 'Sec' : 'Reps'} ${movement.name}',
+                  '${isTimedEntry ? segment.movements[movementIndex].timerWorkTime : segment.movements[movementIndex].timerReps} ${isTimedEntry ? 'Sec' : 'Reps'} ${segment.movements[movementIndex].name}',
               workState: WorkState.exercising));
           //Add rest entry
           entries.add(TimerEntry(
-              time: movement.timerRestTime,
-              movement: movement,
+              time: isLastMovement
+                  ? segment.roundBreakDuration
+                  : segment.movements[movementIndex].timerRestTime,
+              movement: segment.movements[movementIndex],
               setNumber: setIndex,
               roundNumber: roundIndex,
-              label: '${movement.timerRestTime} Sec rest',
+              label:
+                  '${isLastMovement ? segment.roundBreakDuration : segment.movements[movementIndex].timerRestTime} Sec rest',
               workState: WorkState.exercising));
         }
-      });
+      }
     }
     return entries;
   }
