@@ -10,6 +10,7 @@ import 'package:oluko_app/blocs/friend_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/blocs/task_submission_bloc.dart';
 import 'package:oluko_app/config/s3_settings.dart';
+import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/ui/screens/app_plans.dart';
 import 'package:oluko_app/ui/screens/assessment_videos.dart';
 import 'package:oluko_app/ui/screens/choose_plan_payment.dart';
@@ -60,16 +61,17 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final AuthBloc _authBloc = AuthBloc();
-
+  final alreadyLoggedUser = AuthRepository.getLoggedUser();
   @override
   Widget build(BuildContext context) {
+    print(alreadyLoggedUser);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: '${OLUKO}',
       theme: ThemeData(
         primarySwatch: Colors.grey,
       ),
-      initialRoute: '/',
+      initialRoute: alreadyLoggedUser != null ? '/' : '/sign-up',
       routes: {
         '/': (context) => MultiBlocProvider(providers: [
               BlocProvider.value(value: _authBloc),

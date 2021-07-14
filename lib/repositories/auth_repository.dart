@@ -139,6 +139,7 @@ class AuthRepository {
   Future<bool> removeLoginData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     Future<bool> removed = prefs.remove('login-data');
+    FirebaseAuth.instance.signOut();
     print('Removed login info.');
     return removed;
   }

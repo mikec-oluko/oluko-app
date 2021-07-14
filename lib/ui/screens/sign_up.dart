@@ -74,27 +74,28 @@ class MainSignUpPage extends StatelessWidget {
                                                 child:
                                                     Icon(Icons.navigate_next)),
                                             Align(
-                                              child: Text('Login'),
+                                              child: Text('LOGIN'),
                                             )
                                           ]))),
-                                  SizedBox(
-                                      width: double.infinity,
-                                      height: 50,
-                                      child: ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                              primary: OlukoColors.primary),
-                                          onPressed: () => Navigator.pushNamed(
-                                              context, '/sign-up-with-email'),
-                                          child: Stack(children: [
-                                            Align(
-                                                alignment:
-                                                    Alignment.centerRight,
-                                                child:
-                                                    Icon(Icons.navigate_next)),
-                                            Align(
-                                              child: Text('Sign Up'),
-                                            )
-                                          ]))),
+                                  // TODO Enable Signup
+                                  // SizedBox(
+                                  //     width: double.infinity,
+                                  //     height: 50,
+                                  //     child: ElevatedButton(
+                                  //         style: ElevatedButton.styleFrom(
+                                  //             primary: OlukoColors.primary),
+                                  //         onPressed: () => Navigator.pushNamed(
+                                  //             context, '/sign-up-with-email'),
+                                  //         child: Stack(children: [
+                                  //           Align(
+                                  //               alignment:
+                                  //                   Alignment.centerRight,
+                                  //               child:
+                                  //                   Icon(Icons.navigate_next)),
+                                  //           Align(
+                                  //             child: Text('SIGN UP'),
+                                  //           )
+                                  //         ]))),
                                   SizedBox(height: 10),
                                 ],
                               )))

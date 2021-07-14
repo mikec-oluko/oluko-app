@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/dto/api_response.dart';
 import 'package:oluko_app/models/dto/login_request.dart';
@@ -109,6 +110,7 @@ class AuthBloc extends Cubit<AuthState> {
   Future<void> logout(context) async {
     final success = await AuthRepository().removeLoginData();
     if (success == true) {
+      Navigator.pushNamedAndRemoveUntil(context, '/sign-up', (route) => false);
       emit(AuthGuest());
     }
   }
