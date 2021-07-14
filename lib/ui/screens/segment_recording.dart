@@ -650,6 +650,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   }
 
   void _finishWorkout() {
+    workState = WorkState.finished;
     print('Workout finished');
   }
 
