@@ -1,8 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/ui/components/black_app_bar_with_image.dart';
 import 'package:oluko_app/ui/components/countdown_overlay.dart';
@@ -19,6 +23,7 @@ class SegmentDetail extends StatefulWidget {
       this.courseEnrollment,
       this.segmentIndex,
       this.classIndex,
+      this.user,
       Key key})
       : super(key: key);
 
@@ -26,6 +31,7 @@ class SegmentDetail extends StatefulWidget {
   CourseEnrollment courseEnrollment;
   int segmentIndex;
   int classIndex;
+  User user;
 
   @override
   _SegmentDetailState createState() => _SegmentDetailState();
@@ -37,19 +43,38 @@ class _SegmentDetailState extends State<SegmentDetail> {
 
   num currentSegmentStep;
   num totalSegmentStep;
+  MovementBloc _movementBloc;
 
   @override
   void initState() {
     currentSegmentStep = widget.segmentIndex + 1;
     totalSegmentStep =
         widget.courseEnrollment.classes[widget.classIndex].segments.length;
+    _movementBloc = MovementBloc();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    return MultiBlocProvider(
+        providers: [
+          BlocProvider<MovementBloc>(
+            create: (context) => _movementBloc..getAll(widget.segment),
+          )
+        ],
+        child:
+            BlocBuilder<MovementBloc, MovementState>(builder: (context, state) {
+          if (state is GetMovementsSuccess) {
+            return form(state.movements);
+          } else {
+            return SizedBox();
+          }
+        }));
+  }
+
+  Widget form(List<Movement> movements) {
     return Scaffold(
-      appBar: OlukoImageBar(actions: []),
+      appBar: OlukoImageBar(actions: [], movements: movements),
       backgroundColor: Colors.black,
       body: Container(
         decoration: BoxDecoration(
@@ -200,8 +225,11 @@ class _SegmentDetailState extends State<SegmentDetail> {
         .then((value) => Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) =>
-                    SegmentRecording(workoutType: workoutType))));
+                builder: (context) => SegmentRecording(
+                    user: widget.user,
+                    workoutType: workoutType,
+                    courseEnrollment: widget.courseEnrollment,
+                    segment: widget.segment))));
   }
 
   List<Widget> _confirmDialogContent() {
