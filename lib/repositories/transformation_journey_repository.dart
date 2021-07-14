@@ -14,21 +14,19 @@ class TransformationJourneyRepository {
   }
 
   //TODO: Filter or not, userInfo to return only the List
-  Future<List<TransformationJourneyUpload>> getUploadedContentByUserId(
-      String userId) async {
+  Future<List<TransformationJourneyUpload>> getUploadedContentByUserName(
+      String userName) async {
     try {
       QuerySnapshot docRef = await FirebaseFirestore.instance
           .collection('projects')
           .doc(GlobalConfiguration().getValue("projectId"))
           .collection('users')
-          .where('id', isEqualTo: userId)
+          .where('username', isEqualTo: userName)
           .get();
-      List<TransformationJourneyUpload> listOfContent = [];
-      docRef.docs.forEach((doc) {
-        final Map<String, dynamic> element = doc.data();
-        listOfContent.add(TransformationJourneyUpload.fromJson(element));
-      });
-      return listOfContent;
+
+      var first = docRef.docs[0].data();
+
+      return first;
     } catch (e) {
       throw e;
     }

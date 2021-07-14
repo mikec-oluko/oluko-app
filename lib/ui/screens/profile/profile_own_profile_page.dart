@@ -72,7 +72,7 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
   }
 
   _buildOwnProfileView(BuildContext context, UserResponse profileInfo) {
-    // _requestTransformationJourneyData(context, profileInfo);
+    _requestTransformationJourneyData(context, profileInfo);
     // _requestCourseEnrollmentChallengesData(context, profileInfo);
     // _requestCourseEnrollmentListForUser(context, profileInfo);
     return Scaffold(
@@ -197,7 +197,7 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
   void _requestTransformationJourneyData(
       BuildContext context, UserResponse profileInfo) {
     BlocProvider.of<TransformationJourneyBloc>(context)
-        .getContentById(profileInfo.username);
+        .getContentByUserName(profileInfo.username);
   }
 
   void _requestCourseEnrollmentChallengesData(
