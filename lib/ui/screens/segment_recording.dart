@@ -497,6 +497,29 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   Other Methods
   */
 
+  Widget _feedbackButton(IconData iconData, {Function() onPressed}) {
+    return OutlinedButton(
+      onPressed: onPressed,
+      child: Icon(iconData, color: Colors.white),
+      style: OutlinedButton.styleFrom(
+        padding: EdgeInsets.all(15),
+        shape: CircleBorder(),
+        side: BorderSide(color: Colors.white),
+      ),
+    );
+  }
+
+  Widget _flipCameraButton(IconData iconData, {Function() onPressed}) {
+    return OutlinedButton(
+      onPressed: onPressed,
+      child: Icon(
+        iconData,
+        color: Colors.white,
+        size: 30,
+      ),
+    );
+  }
+
   Widget _completedBadge() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -589,6 +612,10 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     ];
   }
 
+  /*
+  Timer Functions
+  */
+
   void _goToNextStep() {
     if (timerTaskIndex == timerEntries.length - 1) {
       _finishWorkout();
@@ -662,29 +689,6 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     return entries;
   }
 
-  Widget _feedbackButton(IconData iconData, {Function() onPressed}) {
-    return OutlinedButton(
-      onPressed: onPressed,
-      child: Icon(iconData, color: Colors.white),
-      style: OutlinedButton.styleFrom(
-        padding: EdgeInsets.all(15),
-        shape: CircleBorder(),
-        side: BorderSide(color: Colors.white),
-      ),
-    );
-  }
-
-  Widget _flipCameraButton(IconData iconData, {Function() onPressed}) {
-    return OutlinedButton(
-      onPressed: onPressed,
-      child: Icon(
-        iconData,
-        color: Colors.white,
-        size: 30,
-      ),
-    );
-  }
-
   @override
   void dispose() {
     if (this.countdownTimer != null && this.countdownTimer.isActive) {
@@ -692,6 +696,10 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     }
     super.dispose();
   }
+
+  /*
+  Camera Functions
+  */
 
   Future<void> _setupCameras() async {
     int cameraPos = isCameraFront ? 0 : 1;
