@@ -125,7 +125,7 @@ class _TaskDetailsState extends State<TaskDetails> {
               BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
                   builder: (context, state) {
                 if (state is GetSuccess && state.taskSubmission != null) {
-                  return Row(
+                  return SizedBox() /*Row(
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       OlukoPrimaryButton(
@@ -142,7 +142,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                         },
                       ),
                     ],
-                  );
+                  )*/;
                 } else {
                   return Row(
                     mainAxisSize: MainAxisSize.max,

@@ -226,7 +226,10 @@ class _SegmentDetailState extends State<SegmentDetail> {
             context,
             MaterialPageRoute(
                 builder: (context) => SegmentRecording(
-                    user: widget.user, workoutType: workoutType, courseEnrollment: widget.courseEnrollment))));
+                    user: widget.user,
+                    workoutType: workoutType,
+                    courseEnrollment: widget.courseEnrollment,
+                    segment: widget.segment))));
   }
 
   List<Widget> _confirmDialogContent() {

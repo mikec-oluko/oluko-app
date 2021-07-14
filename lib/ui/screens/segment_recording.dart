@@ -30,9 +30,14 @@ class SegmentRecording extends StatefulWidget {
   final WorkoutType workoutType;
   final User user;
   final CourseEnrollment courseEnrollment;
+  final Segment segment;
 
   SegmentRecording(
-      {Key key, this.workoutType, this.user, this.courseEnrollment})
+      {Key key,
+      this.workoutType,
+      this.user,
+      this.courseEnrollment,
+      this.segment})
       : super(key: key);
 
   @override
@@ -42,7 +47,7 @@ class SegmentRecording extends StatefulWidget {
 class _SegmentRecordingState extends State<SegmentRecording> {
   //TODO --- Make Dynamic ---
 
-  Segment segment =
+  /*Segment segment =
       Segment(duration: 60, rounds: 1, initialTimer: 5, movements: [
     MovementSubmodel(
         name: 'Air Squats',
@@ -58,7 +63,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
         timerRestTime: 10,
         timerWorkTime: 15,
         timerSets: 3)
-  ]);
+  ]);*/
 
   //Dynamic images
   String backgroundImage =
@@ -107,8 +112,8 @@ class _SegmentRecordingState extends State<SegmentRecording> {
 
   @override
   void initState() {
-    this.timerEntries = _getExercisesList(segment.movements[0], segment.rounds);
-    timeLeft = Duration(seconds: segment.movements[0].timerWorkTime);
+    this.timerEntries = _getExercisesList(widget.segment.movements[0], widget.segment.rounds);
+    timeLeft = Duration(seconds: widget.segment.movements[0].timerWorkTime);
     workState = WorkState.exercising;
     _playCountdown();
     _setupCameras();
@@ -381,7 +386,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
-                MovementUtils.movementTitle(segment.name),
+                MovementUtils.movementTitle(widget.segment.name),
                 _completedBadge()
               ],
             ),
@@ -390,13 +395,13 @@ class _SegmentRecordingState extends State<SegmentRecording> {
             padding: const EdgeInsets.all(8.0),
             child: MovementUtils.labelWithTitle(
                 '${OlukoLocalizations.of(context).find('duration')}:',
-                '${segment.duration} Seconds'),
+                '${widget.segment.duration} Seconds'),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: MovementUtils.labelWithTitle(
                 '${OlukoLocalizations.of(context).find('rounds')}:',
-                '${segment.rounds} ${OlukoLocalizations.of(context).find('rounds')}'),
+                '${widget.segment.rounds} ${OlukoLocalizations.of(context).find('rounds')}'),
           ),
           /*Padding(
             padding: const EdgeInsets.all(8.0),
