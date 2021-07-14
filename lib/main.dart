@@ -77,7 +77,7 @@ class _MyAppState extends State<MyApp> {
               BlocProvider.value(value: _authBloc),
               BlocProvider(create: (context) => CourseBloc()),
               BlocProvider(create: (context) => TagBloc())
-            ], child: MyHomePage(title: '')),
+            ], child: MyHomePage()),
         '/sign-up': (context) =>
             BlocProvider.value(value: _authBloc, child: SignUpPage()),
         '/sign-up-with-email': (context) =>

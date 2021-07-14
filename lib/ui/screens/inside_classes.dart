@@ -1,4 +1,5 @@
 import 'package:chewie/chewie.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -25,6 +26,7 @@ class InsideClasses extends StatefulWidget {
       this.courseName,
       this.courseEnrollment,
       this.classIndex,
+      this.user,
       Key key})
       : super(key: key);
 
@@ -33,9 +35,13 @@ class InsideClasses extends StatefulWidget {
   String courseName;
   CourseEnrollment courseEnrollment;
   int classIndex;
+  User user;
+
   @override
   _InsideClassesState createState() => _InsideClassesState();
 }
+
+class FirebaseUser {}
 
 class _InsideClassesState extends State<InsideClasses> {
   final _formKey = GlobalKey<FormState>();
@@ -158,6 +164,7 @@ class _InsideClassesState extends State<InsideClasses> {
                                                     context,
                                                     MaterialPageRoute(
                                                         builder: (context) => SegmentDetail(
+                                                            user: widget.user,
                                                             segment: segments[
                                                                 segmentIndex],
                                                             segmentIndex:

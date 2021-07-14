@@ -7,9 +7,11 @@ class UserResponse extends Base {
       {this.firstName,
       this.lastName,
       this.email,
+      this.username,
       this.firebaseId,
       this.hubspotCompanyId,
       this.hubspotContactId,
+      this.avatar,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -29,7 +31,9 @@ class UserResponse extends Base {
   String firstName;
   String lastName;
   String email;
+  String username;
   String firebaseId;
+  String avatar;
   num hubspotCompanyId;
   num hubspotContactId;
 
@@ -38,6 +42,8 @@ class UserResponse extends Base {
       firstName: json['first_name'],
       lastName: json['last_name'],
       email: json['email'],
+      username: json['username'],
+      avatar: json['avatar'],
       firebaseId: json['firebase_id'],
       hubspotCompanyId: json['hubspot_company_id'],
       hubspotContactId: json['hubspot_contact_id'],
@@ -55,6 +61,8 @@ class UserResponse extends Base {
       'first_name': firstName,
       'last_name': lastName,
       'email': email,
+      'username': username,
+      'avatar': avatar,
       'firebase_id': firebaseId,
       'hubspot_company_id': hubspotCompanyId,
       'hubspot_contact_id': hubspotContactId,

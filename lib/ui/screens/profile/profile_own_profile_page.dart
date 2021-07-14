@@ -196,7 +196,7 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
   void _requestTransformationJourneyData(
       BuildContext context, UserResponse profileInfo) {
     BlocProvider.of<TransformationJourneyBloc>(context)
-        .getContentById(profileInfo.id);
+        .getContentById(profileInfo.username);
   }
 
   void _requestCourseEnrollmentChallengesData(
@@ -292,6 +292,7 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
       List<TaskSubmission> assessmentVideoData}) {
     List<Widget> contentForSection = [];
     if (staticContent != null &&
+        tansformationJourneyData != null &&
         (tansformationJourneyData.isEmpty && assessmentVideoData.isEmpty)) {
       staticContent.forEach((content) {
         contentForSection.add(_getImageAndVideoCard(staticContent: content));

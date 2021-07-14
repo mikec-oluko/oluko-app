@@ -5,9 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/models/assessment.dart';
-import 'package:oluko_app/utils/info_dialog.dart';
-import 'package:oluko_app/models/plan.dart';
-import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/ui/components/task_card.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
@@ -119,7 +116,7 @@ class _AsessmentVideosState extends State<AsessmentVideos> {
                               ),
                             ),
                             TitleBody(
-                              'Complete the below tasks to get a coach assigned',
+                              _mainAssessment.description,
                               bold: true,
                             ),
                             Column(

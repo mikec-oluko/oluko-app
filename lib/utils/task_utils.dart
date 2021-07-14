@@ -21,11 +21,11 @@ class TaskUtils {
   static List<Task> sortByAssessmentIndex(
       List<Task> tasks, Assessment assessment) {
     tasks.sort((Task taskA, Task taskB) {
-      AssessmentTask assessmentTaskA = assessment.tasks
-          .firstWhere((AssessmentTask element) => element.taskId == taskA.id);
-      AssessmentTask assessmentTaskB = assessment.tasks
-          .firstWhere((AssessmentTask element) => element.taskId == taskB.id);
-      return assessmentTaskA.index.compareTo(assessmentTaskB.index);
+      int assessmentTaskA = assessment.tasks
+          .indexWhere((AssessmentTask element) => element.taskId == taskA.id);
+      int assessmentTaskB = assessment.tasks
+          .indexWhere((AssessmentTask element) => element.taskId == taskB.id);
+      return assessmentTaskA.compareTo(assessmentTaskB);
     });
     return tasks;
   }

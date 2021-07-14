@@ -1,12 +1,19 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:camera/camera.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/movement_submission_bloc.dart';
+import 'package:oluko_app/blocs/segment_submission_bloc.dart';
+import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/Theme.dart';
-import 'package:oluko_app/models/movement.dart';
+import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/movement_submission.dart';
+import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/segment.dart';
-import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/timer_entry.dart';
 import 'package:oluko_app/models/timer_model.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
@@ -20,8 +27,17 @@ enum WorkoutType { segment, segmentWithRecording }
 
 class SegmentRecording extends StatefulWidget {
   final WorkoutType workoutType;
+  final User user;
+  final CourseEnrollment courseEnrollment;
+  final Segment segment;
 
-  SegmentRecording({Key key, this.workoutType}) : super(key: key);
+  SegmentRecording(
+      {Key key,
+      this.workoutType,
+      this.user,
+      this.courseEnrollment,
+      this.segment})
+      : super(key: key);
 
   @override
   _SegmentRecordingState createState() => _SegmentRecordingState();
@@ -29,29 +45,24 @@ class SegmentRecording extends StatefulWidget {
 
 class _SegmentRecordingState extends State<SegmentRecording> {
   //TODO --- Make Dynamic ---
-
-  Segment segment = Segment(
-      duration: 60,
-      rounds: 2,
-      initialTimer: 5,
-      roundBreakDuration: 7,
-      movements: [
-        MovementSubmodel(
-            name: 'Air Squats',
-            timerType: TaskType.DEFAULT.toString(),
-            timerTotalTime: 90,
-            timerRestTime: 3,
-            timerWorkTime: null,
-            timerReps: 5,
-            timerSets: 3),
-        MovementSubmodel(
-            name: 'Crunches',
-            timerType: TaskType.DEFAULT.toString(),
-            timerTotalTime: 75,
-            timerRestTime: 10,
-            timerWorkTime: 15,
-            timerSets: 3)
-      ]);
+  /*Segment segment =
+      Segment(duration: 60, rounds: 2, initialTimer: 5, movements: [
+    MovementSubmodel(
+        name: 'Air Squats',
+        timerType: TaskType.DEFAULT.toString(),
+        timerTotalTime: 90,
+        timerRestTime: 3,
+        timerWorkTime: null,
+        timerReps: 5,
+        timerSets: 3),
+    MovementSubmodel(
+        name: 'Crunches',
+        timerType: TaskType.DEFAULT.toString(),
+        timerTotalTime: 75,
+        timerRestTime: 10,
+        timerWorkTime: 15,
+        timerSets: 3)
+  ]);*/
 
   //Dynamic images
   String backgroundImage =
@@ -91,13 +102,19 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   bool isCameraFront = true;
   List<TimerEntry> timerEntries;
 
+  SegmentSubmissionBloc _segmentSubmissionBloc;
+  MovementSubmissionBloc _movementSubmissionBloc;
+  VideoBloc _videoBloc;
+  SegmentSubmission segmentSubmission;
+  MovementSubmission movementSubmission;
+
   _startMovement(num movementIndex) {
     //Reset countdown variables
     timerTaskIndex = 0;
     currentSet = 0;
     currentMovementIndex = 0;
     //Merge all movement exercises (Workouts & Rests) into a List iterable by the Timer
-    this.timerEntries = _getExercisesList(segment.rounds);
+    this.timerEntries = _getExercisesList(widget.segment.rounds);
     _playTask(timerTaskIndex);
   }
 
@@ -106,11 +123,50 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     _startMovement(currentMovementIndex);
     _setupCameras();
     this.workoutType = widget.workoutType;
+    _segmentSubmissionBloc = SegmentSubmissionBloc();
+    _movementSubmissionBloc = MovementSubmissionBloc();
+    _videoBloc = VideoBloc();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    return MultiBlocProvider(
+        providers: [
+          BlocProvider<SegmentSubmissionBloc>(
+            create: (context) => _segmentSubmissionBloc
+              ..create(widget.user, widget.courseEnrollment),
+          ),
+          BlocProvider<MovementSubmissionBloc>(
+            create: (context) => _movementSubmissionBloc,
+          ),
+          BlocProvider<VideoBloc>(
+            create: (context) => _videoBloc,
+          )
+        ],
+        child: BlocBuilder<SegmentSubmissionBloc, SegmentSubmissionState>(
+            builder: (context, state) {
+          if (state is CreateSuccess) {
+            segmentSubmission = state.segmentSubmission;
+            if (movementSubmission == null) {
+              _movementSubmissionBloc.create(segmentSubmission);
+            }
+            return BlocBuilder<MovementSubmissionBloc, MovementSubmissionState>(
+                builder: (context, movementState) {
+              if (movementState is CreateMovementSubmissionSuccess) {
+                movementSubmission = movementState.movementSubmission;
+                return form();
+              } else {
+                return SizedBox();
+              }
+            });
+          } else {
+            return SizedBox();
+          }
+        }));
+  }
+
+  form() {
     return Scaffold(
       appBar: OlukoAppBar(
         title: ' ',
@@ -286,14 +342,31 @@ class _SegmentRecordingState extends State<SegmentRecording> {
                         child: AspectRatio(
                             aspectRatio: 3.0 / 4.0,
                             child: CameraPreview(cameraController))),
-                Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: _feedbackButton(Icons.stop,
-                            onPressed: () => this.setState(() {
+                BlocListener<VideoBloc, VideoState>(
+                    listener: (context, state) {
+                      if (state is VideoSuccess) {
+                        movementSubmission.video = state.video;
+                        _movementSubmissionBloc..update(movementSubmission);
+                      }
+                    },
+                    child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: _feedbackButton(Icons.stop,
+                                onPressed: () async {
+                              XFile videopath =
+                                  await cameraController.stopVideoRecording();
+                              print("el path es: " + videopath.path);
+                              File file = File(videopath.path);
+                              print(file.toString());
+                              _videoBloc
+                                ..createVideo(context, file, 3.0 / 4.0,
+                                    movementSubmission.id);
+                            } /*=> this.setState(() {
                                   this.workoutType = WorkoutType.segment;
-                                })))),
+                                })*/
+                                )))),
                 Align(
                     alignment: Alignment.bottomLeft,
                     child: Padding(
@@ -326,7 +399,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
-                MovementUtils.movementTitle(segment.name),
+                MovementUtils.movementTitle(widget.segment.name),
                 _completedBadge()
               ],
             ),
@@ -335,13 +408,13 @@ class _SegmentRecordingState extends State<SegmentRecording> {
             padding: const EdgeInsets.all(8.0),
             child: MovementUtils.labelWithTitle(
                 '${OlukoLocalizations.of(context).find('duration')}:',
-                '${segment.duration} Seconds'),
+                '${widget.segment.duration} Seconds'),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: MovementUtils.labelWithTitle(
                 '${OlukoLocalizations.of(context).find('rounds')}:',
-                '${segment.rounds} ${OlukoLocalizations.of(context).find('rounds')}'),
+                '${widget.segment.rounds} ${OlukoLocalizations.of(context).find('rounds')}'),
           ),
           /*Padding(
             padding: const EdgeInsets.all(8.0),
@@ -621,9 +694,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     ];
   }
 
-  /*
-  Timer Functions
-  */
+  //Timer Functions
 
   _saveLastStep(TimerEntry timerEntry) {
     //TODO implement saving of excercise.
@@ -681,34 +752,35 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     List<TimerEntry> entries = [];
     for (var roundIndex = 0; roundIndex < rounds; roundIndex++) {
       for (var movementIndex = 0;
-          movementIndex < segment.movements.length;
+          movementIndex < widget.segment.movements.length;
           movementIndex++) {
         for (var setIndex = 0;
-            setIndex < segment.movements[movementIndex].timerSets;
+            setIndex < widget.segment.movements[movementIndex].timerSets;
             setIndex++) {
           bool isTimedEntry =
-              segment.movements[movementIndex].timerWorkTime != null;
-          bool isLastMovement = movementIndex == segment.movements.length - 1;
+              widget.segment.movements[movementIndex].timerWorkTime != null;
+          bool isLastMovement =
+              movementIndex == widget.segment.movements.length - 1;
           //Add work entry
           entries.add(TimerEntry(
-              time: segment.movements[movementIndex].timerWorkTime,
-              reps: segment.movements[movementIndex].timerReps,
-              movement: segment.movements[movementIndex],
+              time: widget.segment.movements[movementIndex].timerWorkTime,
+              reps: widget.segment.movements[movementIndex].timerReps,
+              movement: widget.segment.movements[movementIndex],
               setNumber: setIndex,
               roundNumber: roundIndex,
               label:
-                  '${isTimedEntry ? segment.movements[movementIndex].timerWorkTime : segment.movements[movementIndex].timerReps} ${isTimedEntry ? 'Sec' : 'Reps'} ${segment.movements[movementIndex].name}',
+                  '${isTimedEntry ? widget.segment.movements[movementIndex].timerWorkTime : widget.segment.movements[movementIndex].timerReps} ${isTimedEntry ? 'Sec' : 'Reps'} ${widget.segment.movements[movementIndex].name}',
               workState: WorkState.exercising));
           //Add rest entry
           entries.add(TimerEntry(
               time: isLastMovement
-                  ? segment.roundBreakDuration
-                  : segment.movements[movementIndex].timerRestTime,
-              movement: segment.movements[movementIndex],
+                  ? widget.segment.roundBreakDuration
+                  : widget.segment.movements[movementIndex].timerRestTime,
+              movement: widget.segment.movements[movementIndex],
               setNumber: setIndex,
               roundNumber: roundIndex,
               label:
-                  '${isLastMovement ? segment.roundBreakDuration : segment.movements[movementIndex].timerRestTime} Sec rest',
+                  '${isLastMovement ? widget.segment.roundBreakDuration : widget.segment.movements[movementIndex].timerRestTime} Sec rest',
               workState: WorkState.exercising));
         }
       }
@@ -721,6 +793,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     if (this.countdownTimer != null && this.countdownTimer.isActive) {
       this.countdownTimer.cancel();
     }
+    cameraController?.dispose();
     super.dispose();
   }
 
@@ -735,6 +808,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
       cameraController =
           new CameraController(cameras[cameraPos], ResolutionPreset.medium);
       await cameraController.initialize();
+      await cameraController.startVideoRecording();
     } on CameraException catch (_) {}
     if (!mounted) return;
     setState(() {

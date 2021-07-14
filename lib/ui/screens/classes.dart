@@ -277,6 +277,7 @@ class _ClassesState extends State<Classes> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => InsideClasses(
+                                user: user,
                                 courseEnrollment: courseEnrollment,
                                 classIndex: index,
                                 classProgress: classProgress,

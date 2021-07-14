@@ -50,7 +50,10 @@ class UserProfileInformation extends StatelessWidget {
                     ],
                   ),
                   //TODO: Use username instead profilLevel
-                  Text(ProfileViewConstants.profileUserNameContent,
+                  Text(
+                      this.userInformation.username != null
+                          ? this.userInformation.username
+                          : '-',
                       style: OlukoFonts.olukoMediumFont(
                           customColor: OlukoColors.grayColor))
                 ],
