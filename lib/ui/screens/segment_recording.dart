@@ -78,14 +78,12 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   //Flex proportions to display sections vertically in body.
   List<num> flexProportions(WorkoutType workoutType) =>
       workoutType == WorkoutType.segmentWithRecording ? [3, 7] : [8, 2];
-  //TODO Placeholder functionality. Remove when implementing timer
   Timer countdownTimer;
   //Camera
   List<CameraDescription> cameras;
   CameraController cameraController;
   //Used to check if camera input is ready
   bool _isReady = false;
-  bool _recording = false;
   bool isCameraFront = true;
   List<TimerEntry> timerEntries;
 
@@ -267,7 +265,6 @@ class _SegmentRecordingState extends State<SegmentRecording> {
 
   ///Camera recording section. Shows camera Input and start/stop buttons.
   Widget _cameraSection() {
-    //TODO Implement camera component.
     return Column(
       children: [
         Expanded(
@@ -309,6 +306,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   }
 
   ///Section with information about segment and workout movements.
+  // ignore: unused_element
   Widget _segmentInfoSection() {
     return Padding(
       padding: const EdgeInsets.all(30.0),
@@ -451,6 +449,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   }
 
   //Information card with Feedback Options
+  // ignore: unused_element
   Widget _feedbackCard() {
     return Container(
       decoration: BoxDecoration(
@@ -522,7 +521,6 @@ class _SegmentRecordingState extends State<SegmentRecording> {
             color: Colors.white,
             title: OlukoLocalizations.of(context).find('pause').toUpperCase(),
             onPressed: () => this.setState(() {
-              this.workState = WorkState.paused;
               _pauseCountdown();
             }),
             icon: Icon(Icons.pause),
@@ -552,12 +550,15 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   }
 
   List<Widget> _onPausedActions() {
+    bool isCurrentTaskTimed = this.timerEntries[timerTaskIndex].time != null;
     return [
       OlukoPrimaryButton(
         color: Colors.white,
         onPressed: () => this.setState(() {
           this.workState = this.lastWorkStateBeforePause;
-          _playCountdown();
+          if (isCurrentTaskTimed) {
+            _playCountdown();
+          }
         }),
         title:
             OlukoLocalizations.of(context).find('resumeWorkouts').toUpperCase(),
@@ -565,6 +566,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     ];
   }
 
+  // ignore: unused_element
   List<Widget> _onCompletedActions() {
     return [
       OlukoPrimaryButton(
@@ -610,7 +612,6 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     print('Workout finished');
   }
 
-  //TODO Implement this function with the Timer.
   void _playCountdown() {
     if (timerTaskIndex == 0) {
       timeLeft = Duration(seconds: timerEntries[0].time);
@@ -627,9 +628,9 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     });
   }
 
-  //TODO Implement this function with the Timer.
   void _pauseCountdown() {
     lastWorkStateBeforePause = workState;
+    this.workState = WorkState.paused;
     countdownTimer.cancel();
   }
 
