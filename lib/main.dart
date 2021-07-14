@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
@@ -10,6 +11,7 @@ import 'package:oluko_app/blocs/friend_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/blocs/task_submission_bloc.dart';
 import 'package:oluko_app/config/s3_settings.dart';
+import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/ui/screens/app_plans.dart';
 import 'package:oluko_app/ui/screens/assessment_videos.dart';
@@ -133,10 +135,9 @@ class _MyAppState extends State<MyApp> {
             BlocProvider.value(value: _authBloc, child: Classes()),
         '/assessment-videos': (context) => MultiBlocProvider(providers: [
               BlocProvider.value(value: _authBloc),
+              BlocProvider(create: (context) => AssessmentAssignmentBloc()),
               //TODO Change this when using more than 1 assessment.
-              BlocProvider(
-                  create: (context) =>
-                      AssessmentBloc()..getById('ndRa0ldHCwCUaDxEQm25'))
+              BlocProvider(create: (context) => AssessmentBloc())
             ], child: AsessmentVideos()),
         '/task-details': (context) => BlocProvider.value(
             value: _authBloc,

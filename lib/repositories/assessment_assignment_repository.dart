@@ -66,4 +66,16 @@ class AssessmentAssignmentRepository {
     });
     return response;
   }
+
+  Future<AssessmentAssignment> create(
+      AssessmentAssignment assessmentAssignment) async {
+    CollectionReference reference = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue("projectId"))
+        .collection('assessmentAssignments');
+    final DocumentReference docRef = reference.doc();
+    assessmentAssignment.id = docRef.id;
+    await docRef.set(assessmentAssignment.toJson());
+    return assessmentAssignment;
+  }
 }
