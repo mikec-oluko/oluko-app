@@ -8,6 +8,7 @@ class TimerEntry {
   num setNumber;
   num roundNumber;
   num time;
+  num reps;
 
   TimerEntry(
       {this.movement,
@@ -15,7 +16,8 @@ class TimerEntry {
       this.label,
       this.setNumber,
       this.roundNumber,
-      this.time});
+      this.time,
+      this.reps});
 
   factory TimerEntry.fromJson(Map<String, dynamic> json) {
     return TimerEntry(
@@ -24,7 +26,8 @@ class TimerEntry {
         label: json['label'],
         setNumber: json['set_number'],
         roundNumber: json['round_number'],
-        time: json['time']);
+        time: json['time'],
+        reps: json['reps']);
   }
 
   Map<String, dynamic> toJson() => {
@@ -34,5 +37,6 @@ class TimerEntry {
         'set_number': setNumber,
         'round_number': roundNumber,
         'time': time,
+        'reps': reps,
       };
 }

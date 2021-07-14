@@ -33,7 +33,8 @@ class MovementSubmission extends Base {
     MovementSubmission movementSubmission = MovementSubmission(
         userId: json['user_id'],
         userReference: json['user_reference'],
-        video: Video.fromJson(json['coach_id']));
+        video:
+            json['coach_id'] == null ? null : Video.fromJson(json['coach_id']));
     movementSubmission.setBase(json);
     return movementSubmission;
   }
@@ -43,7 +44,7 @@ class MovementSubmission extends Base {
       'user_id': userId,
       'user_reference': userReference,
       'seen_at': seenAt,
-      'video': video.toJson()
+      'video': video == null ? null : video.toJson()
     };
     movementSubmissionJson.addEntries(super.toJson().entries);
     return movementSubmissionJson;
