@@ -197,7 +197,7 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
   void _requestTransformationJourneyData(
       BuildContext context, UserResponse profileInfo) {
     BlocProvider.of<TransformationJourneyBloc>(context)
-        .getContentById(profileInfo.id);
+        .getContentById(profileInfo.username);
   }
 
   void _requestCourseEnrollmentChallengesData(
