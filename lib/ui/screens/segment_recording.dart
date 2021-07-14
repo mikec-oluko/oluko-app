@@ -37,7 +37,8 @@ class _SegmentRecordingState extends State<SegmentRecording> {
         timerType: TaskType.DEFAULT.toString(),
         timerTotalTime: 90,
         timerRestTime: 3,
-        timerWorkTime: 5,
+        timerWorkTime: null,
+        timerReps: 5,
         timerSets: 3),
     MovementSubmodel(
         name: 'Crunches',
@@ -67,6 +68,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   //Current task running on Countdown Timer
   num timerTaskIndex = 0;
   num currentSet = 0;
+  num currentMovementIndex = 0;
   Duration timeLeft;
 
   // ---- End Make Dynamic ----
@@ -87,12 +89,14 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   bool isCameraFront = true;
   List<TimerEntry> timerEntries;
 
+  _startMovement() {
+    this.timerEntries = _getExercisesList(segment.movements[0], segment.rounds);
+    _playTask(timerTaskIndex);
+  }
+
   @override
   void initState() {
-    this.timerEntries = _getExercisesList(segment.movements[0], segment.rounds);
-    timeLeft = Duration(seconds: segment.movements[0].timerWorkTime);
-    workState = WorkState.exercising;
-    _playCountdown();
+    _startMovement();
     _setupCameras();
     this.workoutType = widget.workoutType;
     super.initState();
@@ -180,24 +184,31 @@ class _SegmentRecordingState extends State<SegmentRecording> {
 
   ///Clock countdown label
   Widget _countdownSection(WorkState workState) {
+    bool isTimedTask = timerEntries[timerTaskIndex].time != null;
+    double circularProgressIndicatorValue = isTimedTask
+        ? (this.timeLeft.inSeconds / timerEntries[timerTaskIndex].time)
+        : 100;
     return Stack(fit: StackFit.loose, alignment: Alignment.center, children: [
       Padding(
         padding: const EdgeInsets.all(18.0),
         child: AspectRatio(
             aspectRatio: 1,
             child: CircularProgressIndicator(
-                value: this.timeLeft.inSeconds /
-                    timerEntries[timerTaskIndex].time)),
+                value: isTimedTask ? circularProgressIndicatorValue : 1)),
       ),
       Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(TimeConverter.durationToString(this.timeLeft),
+          Text(
+              isTimedTask
+                  ? TimeConverter.durationToString(this.timeLeft)
+                  : timerEntries[timerTaskIndex].reps.toString(),
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontSize: 40,
                   fontWeight: FontWeight.bold,
                   color: Colors.white)),
+          !isTimedTask ? MovementUtils.movementTitle('REPS') : SizedBox(),
           workState == WorkState.paused
               ? MovementUtils.movementTitle(
                   OlukoLocalizations.of(context).find('paused').toUpperCase())
@@ -505,16 +516,28 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   }
 
   List<Widget> _onPlayingActions() {
+    bool isCurrentTaskTimed = this.timerEntries[timerTaskIndex].time != null;
+    OlukoPrimaryButton mainButton = isCurrentTaskTimed
+        ? OlukoPrimaryButton(
+            color: Colors.white,
+            title: OlukoLocalizations.of(context).find('pause').toUpperCase(),
+            onPressed: () => this.setState(() {
+              this.workState = WorkState.paused;
+              _pauseCountdown();
+            }),
+            icon: Icon(Icons.pause),
+          )
+        : OlukoPrimaryButton(
+            color: Colors.white,
+            //TODO translate
+            title: 'NEXT',
+            onPressed: () => this.setState(() {
+                  _goToNextStep();
+                }),
+            icon: Icon(Icons.fast_forward));
+
     return [
-      OlukoPrimaryButton(
-        color: Colors.white,
-        title: OlukoLocalizations.of(context).find('pause').toUpperCase(),
-        onPressed: () => this.setState(() {
-          this.workState = WorkState.paused;
-          _pauseCountdown();
-        }),
-        icon: Icon(Icons.pause),
-      ),
+      mainButton,
       SizedBox(
         width: 25,
       ),
@@ -548,6 +571,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
           color: Colors.white,
           onPressed: () => this.setState(() {}),
           title:
+              //TODO translate
               'GO TO CLASS' //OlukoLocalizations.of(context).find('goToClass').toUpperCase(),
           ),
       SizedBox(
@@ -557,6 +581,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
           color: Colors.white,
           onPressed: () => this.setState(() {}),
           title:
+              //TODO translate
               'NEXT SEGMENT' //OlukoLocalizations.of(context).find('goToClass').toUpperCase(),
           ),
     ];
@@ -569,10 +594,16 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     }
     this.setState(() {
       timerTaskIndex++;
-      timeLeft = Duration(seconds: timerEntries[timerTaskIndex].time);
-      workState = timerEntries[timerTaskIndex].workState;
-      _playCountdown();
+      _playTask(timerTaskIndex);
     });
+  }
+
+  _playTask(num timerTaskIndex) {
+    workState = timerEntries[timerTaskIndex].workState;
+    if (timerEntries[timerTaskIndex].time != null) {
+      _playCountdown();
+      timeLeft = Duration(seconds: timerEntries[timerTaskIndex].time);
+    }
   }
 
   void _finishWorkout() {
@@ -606,13 +637,16 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     List<TimerEntry> entries = [];
     for (var roundIndex = 0; roundIndex < rounds; roundIndex++) {
       for (var setIndex = 0; setIndex < movement.timerSets; setIndex++) {
+        bool isTimedEntry = movement.timerWorkTime != null;
         //Add work entry
         entries.add(TimerEntry(
             time: movement.timerWorkTime,
+            reps: movement.timerReps,
             movement: movement,
             setNumber: setIndex,
             roundNumber: 0,
-            label: '${movement.timerWorkTime} Sec ${movement.name}',
+            label:
+                '${isTimedEntry ? movement.timerWorkTime : movement.timerReps} ${isTimedEntry ? 'Sec' : 'Reps'} ${movement.name}',
             workState: WorkState.exercising));
         //Add rest entry
         entries.add(TimerEntry(
