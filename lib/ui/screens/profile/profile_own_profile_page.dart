@@ -1,3 +1,4 @@
+import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
@@ -71,9 +72,9 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
   }
 
   _buildOwnProfileView(BuildContext context, UserResponse profileInfo) {
-    _requestTransformationJourneyData(context, profileInfo);
-    _requestCourseEnrollmentChallengesData(context, profileInfo);
-    _requestCourseEnrollmentListForUser(context, profileInfo);
+    // _requestTransformationJourneyData(context, profileInfo);
+    // _requestCourseEnrollmentChallengesData(context, profileInfo);
+    // _requestCourseEnrollmentListForUser(context, profileInfo);
     return Scaffold(
       body: Container(
         color: OlukoColors.black,
@@ -122,9 +123,9 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
   _buildAssessmentVideosSection() {
     return BlocListener<TaskSubmissionBloc, TaskSubmissionState>(
         listener: (context, state) {
-          if (state is GetUserTaskSubmissionSuccess) {
-            _assessmentVideosContent = state.taskSubmissions;
-          }
+          // if (state is GetUserTaskSubmissionSuccess) {
+          //   _assessmentVideosContent = state.taskSubmissions;
+          // }
         },
         child: buildUserContentSection(
             titleForSection:
@@ -259,18 +260,22 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
       contentForReturn = ImageAndVideoContainer(
         assetImage: staticContent.imgUrl,
         isVideo: staticContent.isVideo,
+        videoUrl:
+            'https://oluko-mvt.s3.us-west-1.amazonaws.com/assessments/85b2f81c1fe74f9cb5e804c57db30137/85b2f81c1fe74f9cb5e804c57db30137_2.mp4',
       );
     }
     if (transformationJourneyContent != null) {
       contentForReturn = ImageAndVideoContainer(
         assetImage: transformationJourneyContent.thumbnail,
         isVideo: transformationJourneyContent.type == FileTypeEnum.video,
+        videoUrl: transformationJourneyContent.file,
       );
     }
     if (taskSubmissionContent != null) {
       contentForReturn = ImageAndVideoContainer(
         assetImage: taskSubmissionContent.video.thumbUrl,
         isVideo: taskSubmissionContent.video != null,
+        videoUrl: taskSubmissionContent.video.url,
       );
     }
 
@@ -291,14 +296,15 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
       List<TransformationJourneyUpload> tansformationJourneyData,
       List<TaskSubmission> assessmentVideoData}) {
     List<Widget> contentForSection = [];
+
     if (staticContent != null &&
-        (tansformationJourneyData.isEmpty && assessmentVideoData.isEmpty)) {
+        (tansformationJourneyData == null && assessmentVideoData == null)) {
       staticContent.forEach((content) {
         contentForSection.add(_getImageAndVideoCard(staticContent: content));
       });
     }
     if (tansformationJourneyData != null &&
-        (staticContent.isEmpty && assessmentVideoData.isEmpty)) {
+        (staticContent == null && assessmentVideoData == null)) {
       tansformationJourneyData.forEach((content) {
         contentForSection
             .add(_getImageAndVideoCard(transformationJourneyContent: content));
