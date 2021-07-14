@@ -4,6 +4,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/models/movement.dart';
+import 'package:oluko_app/models/segment.dart';
+import 'package:oluko_app/models/submodels/movement_submodel.dart';
+import 'package:oluko_app/models/timer_entry.dart';
+import 'package:oluko_app/models/timer_model.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/utils/movement_utils.dart';
@@ -12,7 +17,6 @@ import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 
 enum WorkoutType { segment, segmentWithRecording }
-enum WorkoutState { pause, playing }
 
 class SegmentRecording extends StatefulWidget {
   final WorkoutType workoutType;
@@ -24,42 +28,70 @@ class SegmentRecording extends StatefulWidget {
 }
 
 class _SegmentRecordingState extends State<SegmentRecording> {
-  //TODO Make Dynamic
-  Duration movementDuration = Duration(seconds: 35);
-  Duration timeLeft = Duration(seconds: 35);
-  List<String> tasks = ['30 Sec air squats', '30 Sec rest'];
-  String durationLabel = '4 Minutes';
-  String segmentName = 'Intense Airsquats';
-  num rounds = 8;
+  //TODO --- Make Dynamic ---
+
+  Segment segment =
+      Segment(duration: 60, rounds: 1, initialTimer: 5, movements: [
+    MovementSubmodel(
+        name: 'Air Squats',
+        timerType: TaskType.DEFAULT.toString(),
+        timerTotalTime: 90,
+        timerRestTime: 3,
+        timerWorkTime: 5,
+        timerSets: 3),
+    MovementSubmodel(
+        name: 'Crunches',
+        timerType: TaskType.DEFAULT.toString(),
+        timerTotalTime: 75,
+        timerRestTime: 10,
+        timerWorkTime: 15,
+        timerSets: 3)
+  ]);
+
+  //Dynamic images
   String backgroundImage =
       'https://c0.wallpaperflare.com/preview/26/779/700/fitness-men-sports-gym.jpg';
   WorkoutType workoutType;
-  WorkoutState workoutState = WorkoutState.playing;
   //Used in 'Share' image
   Image movementVideoThumbnailImage = Image.asset(
     'assets/assessment/task_response_thumbnail.png',
     fit: BoxFit.cover,
   );
-  // ----
+
+  //Imported from Timer POC Models
+  TaskType taskType = TaskType.DEFAULT;
+  TimerScreen timerScreen = TimerScreen.stop_watch;
+  WorkState workState = WorkState.initial;
+  WorkState lastWorkStateBeforePause = WorkState.initial;
+
+  //Current task running on Countdown Timer
+  num timerTaskIndex = 0;
+  num currentSet = 0;
+  Duration timeLeft;
+
+  // ---- End Make Dynamic ----
 
   final toolbarHeight = kToolbarHeight * 2;
 
   //Flex proportions to display sections vertically in body.
   List<num> flexProportions(WorkoutType workoutType) =>
       workoutType == WorkoutType.segmentWithRecording ? [3, 7] : [8, 2];
-
   //TODO Placeholder functionality. Remove when implementing timer
   Timer countdownTimer;
-
-  //camera
+  //Camera
   List<CameraDescription> cameras;
   CameraController cameraController;
+  //Used to check if camera input is ready
   bool _isReady = false;
   bool _recording = false;
   bool isCameraFront = true;
+  List<TimerEntry> timerEntries;
 
   @override
   void initState() {
+    this.timerEntries = _getExercisesList(segment.movements[0], segment.rounds);
+    timeLeft = Duration(seconds: segment.movements[0].timerWorkTime);
+    workState = WorkState.exercising;
     _playCountdown();
     _setupCameras();
     this.workoutType = widget.workoutType;
@@ -108,10 +140,10 @@ class _SegmentRecordingState extends State<SegmentRecording> {
 
             Expanded(
                 flex: this.flexProportions(this.workoutType)[0],
-                child: _timerSection(this.workoutType, this.workoutState)),
+                child: _timerSection(this.workoutType, this.workState)),
             Expanded(
                 flex: this.flexProportions(this.workoutType)[1],
-                child: _lowerSection(this.workoutType, this.workoutState))
+                child: _lowerSection(this.workoutType, this.workState))
           ]),
     );
   }
@@ -121,10 +153,15 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   */
 
   ///Countdown & movements information
-  Widget _timerSection(WorkoutType workoutType, WorkoutState workoutState) {
+  Widget _timerSection(WorkoutType workoutType, WorkState workState) {
     List<Widget> widgetsToShow = [
-      Expanded(child: _countdownSection(workoutState)),
-      Expanded(child: _tasksSection(tasks[0], tasks[1]))
+      Expanded(child: _countdownSection(workState)),
+      Expanded(
+          child: _tasksSection(
+              timerEntries[timerTaskIndex].label,
+              timerTaskIndex < timerEntries.length - 1
+                  ? timerEntries[timerTaskIndex + 1].label
+                  : ''))
     ];
     return workoutType == WorkoutType.segmentWithRecording
         ? Row(
@@ -142,15 +179,15 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   }
 
   ///Clock countdown label
-  Widget _countdownSection(WorkoutState workoutState) {
+  Widget _countdownSection(WorkState workState) {
     return Stack(fit: StackFit.loose, alignment: Alignment.center, children: [
       Padding(
         padding: const EdgeInsets.all(18.0),
         child: AspectRatio(
             aspectRatio: 1,
             child: CircularProgressIndicator(
-                value:
-                    this.timeLeft.inSeconds / this.movementDuration.inSeconds)),
+                value: this.timeLeft.inSeconds /
+                    timerEntries[timerTaskIndex].time)),
       ),
       Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -161,7 +198,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
                   fontSize: 40,
                   fontWeight: FontWeight.bold,
                   color: Colors.white)),
-          workoutState == WorkoutState.pause
+          workState == WorkState.paused
               ? MovementUtils.movementTitle(
                   OlukoLocalizations.of(context).find('paused').toUpperCase())
               : SizedBox()
@@ -196,7 +233,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   }
 
   ///Lower half of the view
-  Widget _lowerSection(WorkoutType workoutType, WorkoutState workoutState) {
+  Widget _lowerSection(WorkoutType workoutType, WorkState workoutState) {
     return Container(
       color: Colors.black,
       child: workoutType == WorkoutType.segmentWithRecording
@@ -206,11 +243,11 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   }
 
   ///Section with an Array of buttons to handle workout control from user
-  Widget _controlsSection(WorkoutState workoutState) {
+  Widget _controlsSection(WorkState workoutState) {
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: Row(
-        children: workoutState == WorkoutState.playing
+        children: workoutState != WorkState.paused
             ? _onPlayingActions()
             : _onPausedActions(),
       ),
@@ -271,7 +308,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
-                MovementUtils.movementTitle(segmentName),
+                MovementUtils.movementTitle(segment.name),
                 _completedBadge()
               ],
             ),
@@ -280,13 +317,13 @@ class _SegmentRecordingState extends State<SegmentRecording> {
             padding: const EdgeInsets.all(8.0),
             child: MovementUtils.labelWithTitle(
                 '${OlukoLocalizations.of(context).find('duration')}:',
-                durationLabel),
+                '${segment.duration} Seconds'),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: MovementUtils.labelWithTitle(
                 '${OlukoLocalizations.of(context).find('rounds')}:',
-                '$rounds ${OlukoLocalizations.of(context).find('rounds')}'),
+                '${segment.rounds} ${OlukoLocalizations.of(context).find('rounds')}'),
           ),
           /*Padding(
             padding: const EdgeInsets.all(8.0),
@@ -473,7 +510,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
         color: Colors.white,
         title: OlukoLocalizations.of(context).find('pause').toUpperCase(),
         onPressed: () => this.setState(() {
-          this.workoutState = WorkoutState.pause;
+          this.workState = WorkState.paused;
           _pauseCountdown();
         }),
         icon: Icon(Icons.pause),
@@ -496,7 +533,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
       OlukoPrimaryButton(
         color: Colors.white,
         onPressed: () => this.setState(() {
-          this.workoutState = WorkoutState.playing;
+          this.workState = this.lastWorkStateBeforePause;
           _playCountdown();
         }),
         title:
@@ -525,11 +562,32 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     ];
   }
 
+  void _goToNextStep() {
+    if (timerTaskIndex == timerEntries.length - 1) {
+      _finishWorkout();
+      return;
+    }
+    this.setState(() {
+      timerTaskIndex++;
+      timeLeft = Duration(seconds: timerEntries[timerTaskIndex].time);
+      workState = timerEntries[timerTaskIndex].workState;
+      _playCountdown();
+    });
+  }
+
+  void _finishWorkout() {
+    print('Workout finished');
+  }
+
   //TODO Implement this function with the Timer.
   void _playCountdown() {
+    if (timerTaskIndex == 0) {
+      timeLeft = Duration(seconds: timerEntries[0].time);
+    }
     countdownTimer = Timer.periodic(Duration(seconds: 1), (Timer timer) {
       if (timeLeft.inSeconds == 0) {
         _pauseCountdown();
+        _goToNextStep();
         return;
       }
       this.setState(() {
@@ -540,7 +598,33 @@ class _SegmentRecordingState extends State<SegmentRecording> {
 
   //TODO Implement this function with the Timer.
   void _pauseCountdown() {
+    lastWorkStateBeforePause = workState;
     countdownTimer.cancel();
+  }
+
+  List<TimerEntry> _getExercisesList(MovementSubmodel movement, num rounds) {
+    List<TimerEntry> entries = [];
+    for (var roundIndex = 0; roundIndex < rounds; roundIndex++) {
+      for (var setIndex = 0; setIndex < movement.timerSets; setIndex++) {
+        //Add work entry
+        entries.add(TimerEntry(
+            time: movement.timerWorkTime,
+            movement: movement,
+            setNumber: setIndex,
+            roundNumber: 0,
+            label: '${movement.timerWorkTime} Sec ${movement.name}',
+            workState: WorkState.exercising));
+        //Add rest entry
+        entries.add(TimerEntry(
+            time: movement.timerRestTime,
+            movement: movement,
+            setNumber: setIndex,
+            roundNumber: 0,
+            label: '${movement.timerRestTime} Sec rest',
+            workState: WorkState.exercising));
+      }
+    }
+    return entries;
   }
 
   Widget _feedbackButton(IconData iconData, {Function() onPressed}) {

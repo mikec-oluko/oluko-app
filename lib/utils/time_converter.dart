@@ -25,6 +25,20 @@ class TimeConverter {
     return fromSecondsToStringFormat(fromMillisecondsToSeconds(milliseconds));
   }
 
+  //FORMAT TIME FUNCTION
+  String formatTimeWithCentiSeconds(Duration duration) {
+    String minutes = (duration.inMinutes).toString().padLeft(2, '0');
+    String seconds = (duration.inSeconds % 60).toString().padLeft(2, '0');
+    String centisecond = ((duration.inMilliseconds / 10) -
+            (duration.inSeconds % 60 * 100) -
+            (duration.inMinutes * 60 * 100) -
+            (duration.inHours * 60 * 60 * 100))
+        .round()
+        .toString()
+        .padLeft(2, '0');
+    return '$minutes:$seconds:$centisecond';
+  }
+
   static String durationToString(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, "0");
     String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
