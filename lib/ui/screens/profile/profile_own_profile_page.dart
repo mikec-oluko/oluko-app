@@ -298,7 +298,8 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
     List<Widget> contentForSection = [];
 
     if (staticContent != null &&
-        (tansformationJourneyData == null && assessmentVideoData == null)) {
+        tansformationJourneyData != null &&
+        (tansformationJourneyData.isEmpty && assessmentVideoData.isEmpty)) {
       staticContent.forEach((content) {
         contentForSection.add(_getImageAndVideoCard(staticContent: content));
       });
