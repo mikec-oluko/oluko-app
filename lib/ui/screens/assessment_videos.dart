@@ -119,7 +119,7 @@ class _AsessmentVideosState extends State<AsessmentVideos> {
                               ),
                             ),
                             TitleBody(
-                              'Complete the below tasks to get a coach assigned',
+                              _mainAssessment.description,
                               bold: true,
                             ),
                             Column(

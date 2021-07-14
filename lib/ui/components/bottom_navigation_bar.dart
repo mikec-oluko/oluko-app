@@ -96,10 +96,10 @@ class _State extends State<OlukoBottomNavigationBar> {
           route: '/coach',
           disabled: true),
       OlukoBottomNavigationBarItem(
-          title: OlukoLocalizations.of(context).find('friends'),
-          assetImageUrl: 'assets/bottom_navigation_bar/friends.png',
-          route: '/friends',
-          disabled: true),
+        title: OlukoLocalizations.of(context).find('friends'),
+        assetImageUrl: 'assets/bottom_navigation_bar/friends.png',
+        route: '/friends',
+      ),
       OlukoBottomNavigationBarItem(
           title: OlukoLocalizations.of(context).find('courses'),
           assetImageUrl: 'assets/bottom_navigation_bar/course.png',

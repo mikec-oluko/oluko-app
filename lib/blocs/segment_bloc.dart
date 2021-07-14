@@ -1,7 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/segment.dart';
-import 'package:oluko_app/repositories/class_reopository.dart';
 import 'package:oluko_app/repositories/segment_repository.dart';
 
 abstract class SegmentState {}

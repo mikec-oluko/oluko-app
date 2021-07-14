@@ -292,6 +292,7 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
       List<TaskSubmission> assessmentVideoData}) {
     List<Widget> contentForSection = [];
     if (staticContent != null &&
+        tansformationJourneyData != null &&
         (tansformationJourneyData.isEmpty && assessmentVideoData.isEmpty)) {
       staticContent.forEach((content) {
         contentForSection.add(_getImageAndVideoCard(staticContent: content));
