@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -22,6 +23,7 @@ class SegmentDetail extends StatefulWidget {
       this.courseEnrollment,
       this.segmentIndex,
       this.classIndex,
+      this.user,
       Key key})
       : super(key: key);
 
@@ -29,6 +31,7 @@ class SegmentDetail extends StatefulWidget {
   CourseEnrollment courseEnrollment;
   int segmentIndex;
   int classIndex;
+  User user;
 
   @override
   _SegmentDetailState createState() => _SegmentDetailState();
@@ -222,8 +225,8 @@ class _SegmentDetailState extends State<SegmentDetail> {
         .then((value) => Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) =>
-                    SegmentRecording(workoutType: workoutType))));
+                builder: (context) => SegmentRecording(
+                    user: widget.user, workoutType: workoutType, courseEnrollment: widget.courseEnrollment))));
   }
 
   List<Widget> _confirmDialogContent() {

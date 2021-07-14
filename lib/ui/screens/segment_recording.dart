@@ -1,9 +1,18 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:camera/camera.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/movement_submission_bloc.dart';
+import 'package:oluko_app/blocs/segment_submission_bloc.dart';
+import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/movement_submission.dart';
+import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/utils/movement_utils.dart';
@@ -16,8 +25,12 @@ enum WorkoutState { pause, playing }
 
 class SegmentRecording extends StatefulWidget {
   final WorkoutType workoutType;
+  final User user;
+  final CourseEnrollment courseEnrollment;
 
-  SegmentRecording({Key key, this.workoutType}) : super(key: key);
+  SegmentRecording(
+      {Key key, this.workoutType, this.user, this.courseEnrollment})
+      : super(key: key);
 
   @override
   _SegmentRecordingState createState() => _SegmentRecordingState();
@@ -58,16 +71,61 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   bool _recording = false;
   bool isCameraFront = true;
 
+  SegmentSubmissionBloc _segmentSubmissionBloc;
+  MovementSubmissionBloc _movementSubmissionBloc;
+  VideoBloc _videoBloc;
+  SegmentSubmission segmentSubmission;
+  MovementSubmission movementSubmission;
+
   @override
   void initState() {
     _playCountdown();
     _setupCameras();
     this.workoutType = widget.workoutType;
+    _segmentSubmissionBloc = SegmentSubmissionBloc();
+    _movementSubmissionBloc = MovementSubmissionBloc();
+    _videoBloc = VideoBloc();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    return MultiBlocProvider(
+        providers: [
+          BlocProvider<SegmentSubmissionBloc>(
+            create: (context) => _segmentSubmissionBloc
+              ..create(widget.user, widget.courseEnrollment),
+          ),
+          BlocProvider<MovementSubmissionBloc>(
+            create: (context) => _movementSubmissionBloc,
+          ),
+          BlocProvider<VideoBloc>(
+            create: (context) => _videoBloc,
+          )
+        ],
+        child: BlocBuilder<SegmentSubmissionBloc, SegmentSubmissionState>(
+            builder: (context, state) {
+          if (state is CreateSuccess) {
+            segmentSubmission = state.segmentSubmission;
+            if (movementSubmission == null) {
+              _movementSubmissionBloc.create(segmentSubmission);
+            }
+            return BlocBuilder<MovementSubmissionBloc, MovementSubmissionState>(
+                builder: (context, movementState) {
+              if (movementState is CreateMovementSubmissionSuccess) {
+                movementSubmission = movementState.movementSubmission;
+                return form();
+              } else {
+                return SizedBox();
+              }
+            });
+          } else {
+            return SizedBox();
+          }
+        }));
+  }
+
+  form() {
     return Scaffold(
       appBar: OlukoAppBar(
         title: ' ',
@@ -219,7 +277,6 @@ class _SegmentRecordingState extends State<SegmentRecording> {
 
   ///Camera recording section. Shows camera Input and start/stop buttons.
   Widget _cameraSection() {
-    //TODO Implement camera component.
     return Column(
       children: [
         Expanded(
@@ -232,14 +289,31 @@ class _SegmentRecordingState extends State<SegmentRecording> {
                         child: AspectRatio(
                             aspectRatio: 3.0 / 4.0,
                             child: CameraPreview(cameraController))),
-                Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: _feedbackButton(Icons.stop,
-                            onPressed: () => this.setState(() {
+                BlocListener<VideoBloc, VideoState>(
+                    listener: (context, state) {
+                      if (state is VideoSuccess) {
+                        movementSubmission.video = state.video;
+                        _movementSubmissionBloc..update(movementSubmission);
+                      }
+                    },
+                    child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: _feedbackButton(Icons.stop,
+                                onPressed: () async {
+                              XFile videopath =
+                                  await cameraController.stopVideoRecording();
+                              print("el path es: " + videopath.path);
+                              File file = File(videopath.path);
+                              print(file.toString());
+                              _videoBloc
+                                ..createVideo(context, file, 3.0 / 4.0,
+                                    movementSubmission.id);
+                            } /*=> this.setState(() {
                                   this.workoutType = WorkoutType.segment;
-                                })))),
+                                })*/
+                                )))),
                 Align(
                     alignment: Alignment.bottomLeft,
                     child: Padding(
@@ -571,6 +645,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     if (this.countdownTimer != null && this.countdownTimer.isActive) {
       this.countdownTimer.cancel();
     }
+    cameraController?.dispose();
     super.dispose();
   }
 
@@ -581,6 +656,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
       cameraController =
           new CameraController(cameras[cameraPos], ResolutionPreset.medium);
       await cameraController.initialize();
+      await cameraController.startVideoRecording();
     } on CameraException catch (_) {}
     if (!mounted) return;
     setState(() {
