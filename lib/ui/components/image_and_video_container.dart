@@ -7,8 +7,10 @@ class ImageAndVideoContainer extends StatefulWidget {
   final String assetImage;
   final bool isVideo;
   final String videoUrl;
+  final bool local;
 
-  ImageAndVideoContainer({this.assetImage, this.isVideo, this.videoUrl});
+  ImageAndVideoContainer(
+      {this.assetImage, this.isVideo, this.videoUrl, this.local = false});
 
   @override
   _ImageAndVideoContainerState createState() => _ImageAndVideoContainerState();
@@ -26,16 +28,27 @@ class _ImageAndVideoContainerState extends State<ImageAndVideoContainer> {
           borderRadius: BorderRadius.all(Radius.circular(10)),
           color: OlukoColors.black,
         ),
-        child: ImageAndVideoPreviewCard(
-          imageCover: Image.asset(
-            widget.assetImage,
-            fit: BoxFit.fill,
-            height: 120,
-            width: 120,
-          ),
-          videoUrl: widget.videoUrl,
-          isVideo: widget.isVideo,
-        ),
+        child: widget.local == false
+            ? ImageAndVideoPreviewCard(
+                imageCover: Image.network(
+                  widget.assetImage,
+                  fit: BoxFit.fill,
+                  height: 120,
+                  width: 120,
+                ),
+                videoUrl: widget.videoUrl,
+                isVideo: widget.isVideo,
+              )
+            : ImageAndVideoPreviewCard(
+                imageCover: Image.asset(
+                  widget.assetImage,
+                  fit: BoxFit.fill,
+                  height: 120,
+                  width: 120,
+                ),
+                videoUrl: widget.videoUrl,
+                isVideo: widget.isVideo,
+              ),
       ),
     );
   }

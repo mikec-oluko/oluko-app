@@ -121,8 +121,15 @@ class _MyAppState extends State<MyApp> {
 
         '/profile-challenges': (context) => BlocProvider.value(
             value: _authBloc, child: ProfileChallengesPage()),
-        '/profile-transformation-journey': (context) => BlocProvider.value(
-            value: _authBloc, child: ProfileTransformationJourneyPage()),
+        '/profile-transformation-journey': (context) =>
+            MultiBlocProvider(providers: [
+              BlocProvider.value(value: _authBloc),
+              BlocProvider(create: (context) => CourseBloc()),
+              BlocProvider(create: (context) => AssessmentBloc()),
+              BlocProvider(create: (context) => TaskSubmissionBloc()),
+              BlocProvider(create: (context) => CourseEnrollmentBloc()),
+              BlocProvider(create: (context) => TransformationJourneyBloc())
+            ], child: ProfileTransformationJourneyPage()),
         '/transformation-journey-post': (context) => BlocProvider.value(
             value: _authBloc, child: TransformationJourneyPostPage()),
         '/transformation-journey-post-view': (context) => BlocProvider.value(

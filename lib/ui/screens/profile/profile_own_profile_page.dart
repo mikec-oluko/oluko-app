@@ -281,7 +281,9 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
     if (transformationJourneyContent != null) {
       contentForReturn = ImageAndVideoContainer(
         assetImage: transformationJourneyContent.thumbnail,
-        isVideo: transformationJourneyContent.type == FileTypeEnum.video,
+        isVideo: transformationJourneyContent.type == FileTypeEnum.video
+            ? true
+            : false,
         videoUrl: transformationJourneyContent.file,
       );
     }
