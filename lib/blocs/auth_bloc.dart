@@ -54,7 +54,6 @@ class AuthBloc extends Cubit<AuthState> {
     } else {
       user = await _userRepository.get(request.email);
     }
-    AuthRepository().storeLoginData(user);
     AppLoader.stopLoading();
     final firebaseUser = FirebaseAuth.instance.currentUser;
     if (!firebaseUser.emailVerified) {
@@ -64,42 +63,52 @@ class AuthBloc extends Cubit<AuthState> {
           context, 'Please check your Email for account confirmation.');
       emit(AuthGuest());
     } else {
+      AuthRepository().storeLoginData(user);
       AppMessages.showSnackbar(context, 'Welcome, ${user.firstName}');
       emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
+      await AppNavigator().returnToHome(context);
     }
-    await AppNavigator().returnToHome(context);
   }
 
   Future<void> loginWithGoogle(context) async {
     UserCredential result = await _authRepository.signInWithGoogle();
     User firebaseUser = result.user;
-    UserResponse user = UserResponse();
-    List<String> splitDisplayName = firebaseUser.displayName.split(' ');
-    user.firstName = splitDisplayName[0];
-    user.email = firebaseUser.email;
-    user.firebaseId = firebaseUser.uid;
-    if (splitDisplayName.length > 1) {
-      user.lastName = splitDisplayName[1];
-    }
-    // dynamic userResponse = await UserRepository().get(firebaseUser.email);
+    dynamic userResponse = await UserRepository().get(firebaseUser.email);
+
+    //TODO (Not implemented in MVP) If Firebase user document not found, create one.
+
     // if (userResponse == null) {
-    //   SignUpRequest signUpRequest = SignUpRequest(
-    //     email: firebaseUser.email,
-    //     firstName: splitDisplayName[0],
-    //     lastName: splitDisplayName[1],
-    //     password: getRandString(10),
-    //     projectId: GlobalConfiguration().getValue("projectId"),
-    //     username: firebaseUser.displayName.replaceAll(' ', '-'),
-    //   );
-    //   ApiResponse apiResponse = await AuthRepository().signUp(signUpRequest);
-    //   apiResponse.statusCode == 200
-    //       ? emit(
-    //           AuthSuccess(user: apiResponse.data, firebaseUser: firebaseUser))
-    //       : emit(AuthFailure(exception: Exception(apiResponse.message)));
-    //   return;
+    //   UserResponse dbResponse = await _signUpWithSSO(firebaseUser);
+    //   if (dbResponse == null) {
+    //     FirebaseAuth.instance.signOut();
+    //     emit(AuthFailure(
+    //         exception: Exception('Error creating user in database.')));
+    //     return;
+    //   } else {
+    //     userResponse = dbResponse;
+    //   }
     // }
-    AuthRepository().storeLoginData(user);
-    emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
+
+    if (!firebaseUser.emailVerified) {
+      //TODO: trigger to send another email
+      FirebaseAuth.instance.signOut();
+      AppMessages.showSnackbar(
+          context, 'Please check your Email for account confirmation.');
+      emit(AuthGuest());
+      return;
+    }
+
+    //If there is no associated user for this account
+    if (userResponse == null) {
+      FirebaseAuth.instance.signOut();
+      AppMessages.showSnackbar(
+          context, 'User for this account not found. Please sign up.');
+      emit(AuthGuest());
+      return;
+    }
+
+    AuthRepository().storeLoginData(userResponse);
+    emit(AuthSuccess(user: userResponse, firebaseUser: firebaseUser));
     await AppNavigator().returnToHome(context);
   }
 
@@ -155,5 +164,17 @@ class AuthBloc extends Cubit<AuthState> {
     var random = Random.secure();
     var values = List<int>.generate(len, (i) => random.nextInt(255));
     return base64UrlEncode(values);
+  }
+
+  Future<UserResponse> _signUpWithSSO(User firebaseUser) async {
+    List<String> splitDisplayName = firebaseUser.displayName.split(' ');
+    SignUpRequest signUpRequest = SignUpRequest(
+      email: firebaseUser.email,
+      firstName: splitDisplayName[0],
+      lastName: splitDisplayName[1],
+      projectId: GlobalConfiguration().getValue("projectId"),
+    );
+    UserResponse response = await UserRepository().createSSO(signUpRequest);
+    return response;
   }
 }
