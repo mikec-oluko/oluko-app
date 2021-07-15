@@ -51,7 +51,7 @@ class _FriendsPageState extends State<FriendsPage>
     return Scaffold(
         appBar: OlukoAppBar(
           title: _title,
-          // showSearchBar: true,
+          showBackButton: false,
         ),
         body: Container(
           color: OlukoColors.black,
