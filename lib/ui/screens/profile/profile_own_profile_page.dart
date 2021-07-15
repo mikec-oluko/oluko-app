@@ -34,7 +34,7 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
   List<TransformationJourneyUpload> _transformationJourneyContent = [];
   List<TaskSubmission> _assessmentVideosContent = [];
   List<Challenge> _activeChallenges = [];
-  List<CourseEnrollment> _coursesToUse = [];
+  List<Course> _coursesToUse = [];
   List<Content> _listOfStaticContent = [];
 
   @override
@@ -74,7 +74,8 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
   _buildOwnProfileView(BuildContext context, UserResponse profileInfo) {
     _requestTransformationJourneyData(context, profileInfo);
     // _requestCourseEnrollmentChallengesData(context, profileInfo);
-    // _requestCourseEnrollmentListForUser(context, profileInfo);
+    _requestCourseListForUser(context, profileInfo);
+    _requestCourseEnrollmentListForUser(context, profileInfo);
     return Scaffold(
       body: Container(
         color: OlukoColors.black,
@@ -157,8 +158,8 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
       _buildCourseSectionView() {
     return BlocConsumer<CourseEnrollmentBloc, CourseEnrollmentState>(
       listener: (context, state) {
-        if (state is CourseEnrollmentListSuccess) {
-          _coursesToUse = state.courseEnrollmentList;
+        if (state is CourseEnrollmentCourses) {
+          _coursesToUse = state.courseEnrollmentCourses;
         }
       },
       builder: (context, state) {
@@ -210,6 +211,12 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
       BuildContext context, UserResponse profileInfo) {
     BlocProvider.of<CourseEnrollmentBloc>(context)
         .getCourseEnrollmentsByUserId(profileInfo.id);
+  }
+
+  void _requestCourseListForUser(
+      BuildContext context, UserResponse profileInfo) {
+    BlocProvider.of<CourseEnrollmentBloc>(context)
+        .getCourseEnrollmentsCoursesByUserId(profileInfo.id);
   }
 
   Padding buildCourseSection(
@@ -282,11 +289,11 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
     return contentForReturn;
   }
 
-  List<Widget> returnCoursesWidget({List<CourseEnrollment> listOfCourses}) {
+  List<Widget> returnCoursesWidget({List<Course> listOfCourses}) {
     //TODO: Use CourseEnrollment
     List<Widget> contentForCourseSection = [];
     listOfCourses.forEach((course) {
-      contentForCourseSection.add(_getCourseCard(courseForCard: course));
+      contentForCourseSection.add(_getCourseCard(staticCourse: course));
     });
     return contentForCourseSection.toList();
   }

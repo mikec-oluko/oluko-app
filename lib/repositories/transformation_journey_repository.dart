@@ -21,14 +21,21 @@ class TransformationJourneyRepository {
           .collection('projects')
           .doc(GlobalConfiguration().getValue("projectId"))
           .collection('users')
-          .where('username', isEqualTo: userName)
+          .doc(userName)
+          .collection('transformationJourneyUploads')
           .get();
 
-      var first = docRef.docs[0].data();
+      // var first = docRef.docs[0].data();
+      // final content = TransformationJourneyUpload.fromJson(first);
+      List<TransformationJourneyUpload> contentUploaded = [];
+      docRef.docs.forEach((doc) {
+        final Map<String, dynamic> content = doc.data();
+        contentUploaded.add(TransformationJourneyUpload.fromJson(content));
+      });
 
-      return first;
+      return contentUploaded;
     } catch (e) {
-      throw e;
+      print("ESTO:" + e);
     }
   }
 }
