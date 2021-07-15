@@ -73,7 +73,7 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
 
   _buildOwnProfileView(BuildContext context, UserResponse profileInfo) {
     _requestTransformationJourneyData(context, profileInfo);
-    // _requestCourseEnrollmentChallengesData(context, profileInfo);
+    _requestCourseEnrollmentChallengesData(context, profileInfo);
     _requestCourseListForUser(context, profileInfo);
     _requestCourseEnrollmentListForUser(context, profileInfo);
     return Scaffold(
@@ -149,8 +149,8 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
           titleForSection:
               ProfileViewConstants.profileOptionsTransformationJourney,
           routeForSection: ProfileRoutes.goToTransformationJourney(),
-          contentForSection:
-              mapContentToWidget(staticContent: _listOfStaticContent)),
+          contentForSection: mapContentToWidget(
+              tansformationJourneyData: _transformationJourneyContent)),
     );
   }
 

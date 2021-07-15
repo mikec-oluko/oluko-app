@@ -98,15 +98,15 @@ class CourseEnrollmentRepository {
         .get();
 
     //TODO: Use courseEnrollment.courseReference to get Course
-    // var result = docRef.docs[0].data();
-    // final courseEnroll = CourseEnrollment.fromJson(result);
+    var result = docRef.docs[0].data();
+    final courseEnroll = CourseEnrollment.fromJson(result);
 
-    List<CourseEnrollment> courseEnrollmentList = [];
-    docRef.docs.forEach((doc) {
-      final Map<String, dynamic> course = doc.data();
-      courseEnrollmentList.add(CourseEnrollment.fromJson(course));
-    });
-    return courseEnrollmentList;
+    // List<CourseEnrollment> courseEnrollmentList = [];
+    // docRef.docs.forEach((doc) {
+    //   final Map<String, dynamic> course = doc.data();
+    //   courseEnrollmentList.add(CourseEnrollment.fromJson(course));
+    // });
+    return [courseEnroll];
   }
 
   static testFunction(String courseId) async {
@@ -123,11 +123,24 @@ class CourseEnrollmentRepository {
         .where('user_id', isEqualTo: userId)
         .get();
 
-    //TODO: Use courseEnrollment.courseReference to get Course
+    // List<CourseEnrollment> courseEnrollmentList = [];
+    // docRef.docs.forEach((doc) {
+    //   final Map<String, dynamic> course = doc.data();
+    //   courseEnrollmentList.add(CourseEnrollment.fromJson(course));
+    // });
+    // List<Course> courseList = [];
+
+    // courseEnrollmentList.forEach((courseEnrollment) async {
+    //   final Course cursito = await testFunction(courseEnrollment.courseId);
+    //   courseList.add(cursito);
+    // });
+
+    // return courseList;
+
+    // //TODO: Use courseEnrollment.courseReference to get Course
     var result = docRef.docs[0].data();
     final courseEnroll = CourseEnrollment.fromJson(result);
     final Course cursito = await testFunction(courseEnroll.courseId);
-    print(cursito);
     return [cursito];
   }
 
@@ -139,7 +152,7 @@ class CourseEnrollmentRepository {
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"))
         .collection('challenges')
-        .where('course-enrollment-id', isEqualTo: courseEnrollmentId[0].id)
+        .where('course_enrollment_id', isEqualTo: courseEnrollmentId[0].id)
         .get();
 
     // List<Challenge> listOfChallenges = docRef.docs[0].data();
