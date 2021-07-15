@@ -125,7 +125,8 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                                       child: Container(
                                           height: 400,
                                           child: Stack(
-                                              children: showVideoPlayer())));
+                                              children: showVideoPlayer(
+                                                  assessment.video))));
                                 },
                               ),
                             ),
@@ -188,7 +189,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                 ]))));
   }
 
-  List<Widget> showVideoPlayer() {
+  List<Widget> showVideoPlayer(String videoUrl) {
     List<Widget> widgets = [];
     if (_controller == null) {
       widgets.add(Center(child: CircularProgressIndicator()));

@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
@@ -10,6 +12,9 @@ import 'package:oluko_app/blocs/friend_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/blocs/task_submission_bloc.dart';
 import 'package:oluko_app/config/s3_settings.dart';
+import 'package:oluko_app/models/assessment_assignment.dart';
+import 'package:oluko_app/repositories/auth_repository.dart';
+import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/screens/app_plans.dart';
 import 'package:oluko_app/ui/screens/assessment_videos.dart';
 import 'package:oluko_app/ui/screens/choose_plan_payment.dart';
@@ -46,13 +51,20 @@ Future<void> main() async {
   GlobalConfiguration().loadFromMap(projectSettings);
   GlobalConfiguration().loadFromMap(s3Settings);
   await Firebase.initializeApp();
-  runApp(MyApp());
+  User alreadyLoggedUser = await AuthBloc().checkCurrentUser();
+  final MyApp myApp = MyApp(
+    initialRoute: alreadyLoggedUser == null ? '/sign-up' : '/',
+  );
+  runApp(myApp);
 }
 
 const OLUKO = 'Oluko';
 
 class MyApp extends StatefulWidget {
   // This widget is the root of your application.
+  final String initialRoute;
+
+  MyApp({this.initialRoute});
 
   @override
   _MyAppState createState() => _MyAppState();
@@ -61,7 +73,6 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final AuthBloc _authBloc = AuthBloc();
 
-  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -69,7 +80,7 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         primarySwatch: Colors.grey,
       ),
-      initialRoute: '/',
+      initialRoute: widget.initialRoute,
       routes: {
         '/': (context) => MultiBlocProvider(providers: [
               BlocProvider.value(value: _authBloc),
