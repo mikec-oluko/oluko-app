@@ -9,6 +9,7 @@ import 'package:oluko_app/ui/components/user_profile_information.dart';
 import 'package:oluko_app/ui/components/user_profile_progress.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/ui/screens/profile/profile_routes.dart';
+import 'package:oluko_app/utils/app_navigator.dart';
 import '../../constants/theme.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -46,15 +47,21 @@ class _ProfilePageState extends State<ProfilePage> {
         key: _formKey,
         child: Scaffold(
             appBar: OlukoAppBar(
-                title: ProfileViewConstants.profileTitle, showBackButton: false,),
-            body: Container(
-                color: OlukoColors.black,
-                child: Stack(
-                  children: [
-                    userInformationSection(),
-                    buildOptionsList(),
-                  ],
-                )),
+                showBackButton: false,
+                title: ProfileViewConstants.profileTitle,
+                showSearchBar: false),
+            body: WillPopScope(
+              onWillPop: () => AppNavigator.onWillPop(context),
+              child: Container(
+                  color: OlukoColors.black,
+                  child: Stack(
+                    children: [
+                      userInformationSection(),
+                      buildOptionsList(),
+                    ],
+                  )),
+            ),
+
             bottomNavigationBar: OlukoBottomNavigationBar()));
   }
 
