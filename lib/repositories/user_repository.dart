@@ -27,4 +27,17 @@ class UserRepository {
     var loginResponseBody = UserResponse.fromJson(response);
     return loginResponseBody;
   }
+
+  Future<UserResponse> getByUsername(String username) async {
+    DocumentSnapshot<Map<String, dynamic>> docRef = await FirebaseFirestore
+        .instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue("projectId"))
+        .collection('users')
+        .doc(username)
+        .get();
+    var response = docRef.data();
+    var loginResponseBody = UserResponse.fromJson(response);
+    return loginResponseBody;
+  }
 }

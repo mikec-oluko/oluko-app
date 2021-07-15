@@ -48,7 +48,12 @@ class AuthBloc extends Cubit<AuthState> {
       emit(AuthFailure(exception: Exception(apiResponse.message)));
       return;
     }
-    UserResponse user = await _userRepository.get(request.email);
+    UserResponse user;
+    if (request.email == null) {
+      user = await _userRepository.getByUsername(request.userName);
+    } else {
+      user = await _userRepository.get(request.email);
+    }
     AuthRepository().storeLoginData(user);
     AppLoader.stopLoading();
     final firebaseUser = FirebaseAuth.instance.currentUser;
