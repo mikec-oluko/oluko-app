@@ -20,6 +20,9 @@ class UserRepository {
         .collection('users')
         .where('email', isEqualTo: email)
         .get();
+    if (docRef.docs == null || docRef.docs.length == 0) {
+      return null;
+    }
     var response = docRef.docs[0].data();
     var loginResponseBody = UserResponse.fromJson(response);
     return loginResponseBody;

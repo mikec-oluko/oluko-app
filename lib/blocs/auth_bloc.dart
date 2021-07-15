@@ -1,9 +1,13 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/models/dto/api_response.dart';
 import 'package:oluko_app/models/dto/login_request.dart';
+import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/repositories/user_repository.dart';
@@ -72,6 +76,23 @@ class AuthBloc extends Cubit<AuthState> {
     if (splitDisplayName.length > 1) {
       user.lastName = splitDisplayName[1];
     }
+    // dynamic userResponse = await UserRepository().get(firebaseUser.email);
+    // if (userResponse == null) {
+    //   SignUpRequest signUpRequest = SignUpRequest(
+    //     email: firebaseUser.email,
+    //     firstName: splitDisplayName[0],
+    //     lastName: splitDisplayName[1],
+    //     password: getRandString(10),
+    //     projectId: GlobalConfiguration().getValue("projectId"),
+    //     username: firebaseUser.displayName.replaceAll(' ', '-'),
+    //   );
+    //   ApiResponse apiResponse = await AuthRepository().signUp(signUpRequest);
+    //   apiResponse.statusCode == 200
+    //       ? emit(
+    //           AuthSuccess(user: apiResponse.data, firebaseUser: firebaseUser))
+    //       : emit(AuthFailure(exception: Exception(apiResponse.message)));
+    //   return;
+    // }
     AuthRepository().storeLoginData(user);
     emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
     await AppNavigator().returnToHome(context);
@@ -97,13 +118,15 @@ class AuthBloc extends Cubit<AuthState> {
     return AuthRepository().retrieveLoginData();
   }
 
-  Future<void> checkCurrentUser() async {
+  Future<User> checkCurrentUser() async {
     final loggedUser = AuthRepository.getLoggedUser();
     final userData = await AuthRepository().retrieveLoginData();
     if (loggedUser != null && userData != null) {
       emit(AuthSuccess(user: userData, firebaseUser: loggedUser));
+      return loggedUser;
     } else {
       emit(AuthGuest());
+      return null;
     }
   }
 
@@ -121,5 +144,11 @@ class AuthBloc extends Cubit<AuthState> {
     await AuthRepository().sendPasswordResetEmail(loginRequest.email);
     AppMessages.showSnackbar(
         context, 'Please check your email for instructions.');
+  }
+
+  String getRandString(int len) {
+    var random = Random.secure();
+    var values = List<int>.generate(len, (i) => random.nextInt(255));
+    return base64UrlEncode(values);
   }
 }
