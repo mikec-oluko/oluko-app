@@ -19,12 +19,12 @@ import 'package:oluko_app/ui/components/search_bar.dart';
 import 'package:oluko_app/ui/components/search_results_grid.dart';
 import 'package:oluko_app/ui/components/search_suggestions.dart';
 import 'package:oluko_app/ui/components/stories_header.dart';
-import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/course_utils.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'classes.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key}) : super(key: key);
@@ -98,7 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                             )
                                           : searchResults.query.isEmpty &&
                                                   selectedTags.isEmpty
-                                              ? _mainPage(courseState)
+                                              ? _mainPage(context, courseState)
                                               : showSearchSuggestions
                                                   ? _searchSuggestions()
                                                   : _searchResults(),
@@ -141,7 +141,7 @@ class _MyHomePageState extends State<MyHomePage> {
         keyNameList: searchResults.suggestedItems.map((e) => e.name).toList());
   }
 
-  Widget _mainPage(CourseSuccess courseState) {
+  Widget _mainPage(mainContext, CourseSuccess courseState) {
     return Padding(
       padding: const EdgeInsets.only(top: 0.0, left: 8, right: 8),
       child: ListView(
@@ -164,8 +164,18 @@ class _MyHomePageState extends State<MyHomePage> {
                       .map((course) => Padding(
                             padding: const EdgeInsets.only(right: 8.0),
                             child: GestureDetector(
-                              onTap: () =>
-                                  Navigator.pushNamed(context, '/classes'),
+                              onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          BlocProvider<AuthBloc>(
+                                            create: (context) =>
+                                                BlocProvider.of<AuthBloc>(
+                                                    mainContext),
+                                            child: Classes(
+                                                courseId:
+                                                    'CC5HBkSV8DthLQNKyBlc' /*course.id*/),
+                                          ))),
                               child: _getCourseCard(
                                   Image.network(
                                     course.imageUrl,
