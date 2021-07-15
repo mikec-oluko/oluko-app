@@ -19,6 +19,7 @@ import 'package:oluko_app/ui/components/carousel_small_section.dart';
 import 'package:oluko_app/ui/components/challenges_card.dart';
 import 'package:oluko_app/ui/components/course_card.dart';
 import 'package:oluko_app/ui/components/image_and_video_container.dart';
+import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/user_profile_information.dart';
 import 'package:oluko_app/ui/components/user_profile_progress.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
@@ -124,16 +125,16 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
   _buildAssessmentVideosSection() {
     return BlocListener<TaskSubmissionBloc, TaskSubmissionState>(
         listener: (context, state) {
-          // if (state is GetUserTaskSubmissionSuccess) {
-          //   _assessmentVideosContent = state.taskSubmissions;
-          // }
+          if (state is GetUserTaskSubmissionSuccess) {
+            _assessmentVideosContent = state.taskSubmissions;
+          }
         },
         child: buildUserContentSection(
             titleForSection:
                 ProfileViewConstants.profileOptionsAssessmentVideos,
             routeForSection: ProfileRoutes.goToAssessmentVideos(),
-            contentForSection:
-                mapContentToWidget(staticContent: _listOfStaticContent)));
+            contentForSection: mapContentToWidget(
+                assessmentVideoData: _assessmentVideosContent)));
   }
 
   BlocListener<TransformationJourneyBloc, TransformationJourneyState>
@@ -217,6 +218,12 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
       BuildContext context, UserResponse profileInfo) {
     BlocProvider.of<CourseEnrollmentBloc>(context)
         .getCourseEnrollmentsCoursesByUserId(profileInfo.id);
+  }
+
+  void _requestTaskSubmissionForUser(
+      BuildContext context, UserResponse profileInfo) {
+    BlocProvider.of<TaskSubmissionBloc>(context)
+        .getTaskSubmissionByUserId(profileInfo.id);
   }
 
   Padding buildCourseSection(
@@ -305,8 +312,7 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
     List<Widget> contentForSection = [];
 
     if (staticContent != null &&
-        tansformationJourneyData != null &&
-        (tansformationJourneyData.isEmpty && assessmentVideoData.isEmpty)) {
+        (tansformationJourneyData == null && assessmentVideoData == null)) {
       staticContent.forEach((content) {
         contentForSection.add(_getImageAndVideoCard(staticContent: content));
       });
@@ -319,7 +325,7 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
       });
     }
     if (assessmentVideoData != null &&
-        (tansformationJourneyData.isEmpty && staticContent.isEmpty)) {
+        (tansformationJourneyData == null && staticContent == null)) {
       assessmentVideoData.forEach((content) {
         contentForSection
             .add(_getImageAndVideoCard(taskSubmissionContent: content));

@@ -97,51 +97,31 @@ class CourseEnrollmentRepository {
         .where('user_id', isEqualTo: userId)
         .get();
 
-    //TODO: Use courseEnrollment.courseReference to get Course
-    var result = docRef.docs[0].data();
-    final courseEnroll = CourseEnrollment.fromJson(result);
-
-    // List<CourseEnrollment> courseEnrollmentList = [];
-    // docRef.docs.forEach((doc) {
-    //   final Map<String, dynamic> course = doc.data();
-    //   courseEnrollmentList.add(CourseEnrollment.fromJson(course));
-    // });
-    return [courseEnroll];
+    List<CourseEnrollment> courseEnrollmentList = [];
+    docRef.docs.forEach((doc) {
+      final Map<String, dynamic> course = doc.data();
+      courseEnrollmentList.add(CourseEnrollment.fromJson(course));
+    });
+    return courseEnrollmentList;
   }
 
-  static testFunction(String courseId) async {
+  static getCourseByCourseEnrollmentId(String courseId) async {
     Course curso = await CourseRepository.get(courseId);
     return curso;
   }
 
-  //Future<List<CourseEnrollment>>
-  static getUserCourseEnrollmentsCourse(String userId) async {
-    QuerySnapshot docRef = await FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
-        .collection('courseEnrollments')
-        .where('user_id', isEqualTo: userId)
-        .get();
+  static Future<List<Course>> getUserCourseEnrollmentsCourse(
+      String userId) async {
+    List<CourseEnrollment> listOfCoruseEnrollment =
+        await getUserCourseEnrollments(userId);
 
-    // List<CourseEnrollment> courseEnrollmentList = [];
-    // docRef.docs.forEach((doc) {
-    //   final Map<String, dynamic> course = doc.data();
-    //   courseEnrollmentList.add(CourseEnrollment.fromJson(course));
-    // });
-    // List<Course> courseList = [];
-
-    // courseEnrollmentList.forEach((courseEnrollment) async {
-    //   final Course cursito = await testFunction(courseEnrollment.courseId);
-    //   courseList.add(cursito);
-    // });
-
-    // return courseList;
-
-    // //TODO: Use courseEnrollment.courseReference to get Course
-    var result = docRef.docs[0].data();
-    final courseEnroll = CourseEnrollment.fromJson(result);
-    final Course cursito = await testFunction(courseEnroll.courseId);
-    return [cursito];
+    List<Course> coursesList = [];
+    listOfCoruseEnrollment.forEach((courseEnrollment) async {
+      final Course course =
+          await getCourseByCourseEnrollmentId(courseEnrollment.courseId);
+      coursesList.add(course);
+    });
+    return coursesList;
   }
 
   Future<List<Challenge>> getUserChallengesuserId(String userId) async {
