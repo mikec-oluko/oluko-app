@@ -3,12 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_submission_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
@@ -17,9 +13,6 @@ import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/screens/self_recording.dart';
 import 'package:oluko_app/ui/screens/task_submission_recorded_video.dart';
-import 'package:oluko_app/ui/screens/task_submission_review.dart';
-import 'package:oluko_app/ui/screens/self_recording_preview.dart';
-import 'package:oluko_app/ui/screens/task_submission_review_preview.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
@@ -51,9 +44,6 @@ class _TaskDetailsState extends State<TaskDetails> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<TaskBloc>(
-          create: (context) => TaskBloc()..get(),
-        ),
         BlocProvider<TaskSubmissionBloc>(
           create: (context) =>
               _taskSubmissionBloc..getTaskSubmissionOfTask(widget.task),
@@ -89,10 +79,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                                           ? ScreenUtils.height(context) / 4
                                           : ScreenUtils.height(context) / 1.5),
                               child: Stack(children: showVideoPlayer())),
-                          BlocBuilder<TaskBloc, TaskState>(
-                              builder: (context, state) {
-                            return formSection();
-                          }),
+                          formSection(),
                         ],
                       ),
                     )))));
@@ -115,13 +102,12 @@ class _TaskDetailsState extends State<TaskDetails> {
 
   Widget formSection() {
     return Container(
-      height: MediaQuery.of(context).size.height / 1.75,
-      child: BlocBuilder<TaskBloc, TaskState>(builder: (context, state) {
-        return Column(
+        height: MediaQuery.of(context).size.height / 1.75,
+        child: Column(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              formFields(state),
+              formFields(),
               BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
                   builder: (context, state) {
                 if (state is GetSuccess && state.taskSubmission != null) {
@@ -142,7 +128,8 @@ class _TaskDetailsState extends State<TaskDetails> {
                         },
                       ),
                     ],
-                  )*/;
+                  )*/
+                      ;
                 } else {
                   return Row(
                     mainAxisSize: MainAxisSize.max,
@@ -164,53 +151,47 @@ class _TaskDetailsState extends State<TaskDetails> {
                     ],
                   );
                 }
-              }),     
-            ]);
-      }),
-    );
+              }),
+            ]));
   }
 
-  Widget formFields(TaskState state) {
-    if (state is TaskSuccess) {
-      return Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                TitleBody(
-                  'Make this public',
-                  bold: true,
-                ),
-                Switch(
-                  value: _makePublic,
-                  onChanged: (bool value) => this.setState(() {
-                    _makePublic = value;
-                  }),
-                  trackColor: MaterialStateProperty.all(Colors.grey),
-                  activeColor: OlukoColors.primary,
-                )
-              ],
-            ),
+  Widget formFields() {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TitleBody(
+                'Make this public',
+                bold: true,
+              ),
+              Switch(
+                value: _makePublic,
+                onChanged: (bool value) => this.setState(() {
+                  _makePublic = value;
+                }),
+                trackColor: MaterialStateProperty.all(Colors.grey),
+                activeColor: OlukoColors.primary,
+              )
+            ],
           ),
-          Text(
-            widget.task.description,
-            style: OlukoFonts.olukoMediumFont(),
-          ),
-          BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
-              builder: (context, state) {
-            if (state is GetSuccess && state.taskSubmission != null) {
-              return recordedVideos(state.taskSubmission);
-            } else {
-              return SizedBox();
-            }
-          })
-        ],
-      );
-    } else {
-      return SizedBox();
-    }
+        ),
+        Text(
+          widget.task.description,
+          style: OlukoFonts.olukoMediumFont(),
+        ),
+        BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
+            builder: (context, state) {
+          if (state is GetSuccess && state.taskSubmission != null) {
+            return recordedVideos(state.taskSubmission);
+          } else {
+            return SizedBox();
+          }
+        })
+      ],
+    );
   }
 
   recordedVideos(TaskSubmission taskSubmission) {

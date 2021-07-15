@@ -41,10 +41,7 @@ class _State extends State<SelfRecording> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => TaskBloc()..get(),
-      child: form(),
-    );
+    return form();
   }
 
   Widget form() {
@@ -116,10 +113,7 @@ class _State extends State<SelfRecording> {
                                   : AspectRatio(
                                       aspectRatio: 3.0 / 4.0,
                                       child: CameraPreview(cameraController))),
-                          BlocBuilder<TaskBloc, TaskState>(
-                              builder: (context, state) {
-                            return formSection();
-                          }),
+                          formSection(),
                         ],
                       ),
                     )))));

@@ -52,9 +52,6 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
         providers: [
-          BlocProvider<TaskBloc>(
-            create: (context) => TaskBloc()..get(),
-          ),
           BlocProvider<VideoBloc>(
             create: (context) => _videoBloc,
           ),

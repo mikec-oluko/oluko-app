@@ -13,36 +13,50 @@ import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/screens/task_details.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
-class AsessmentVideos extends StatefulWidget {
-  final Assessment assessment;
-
-  AsessmentVideos({Key key, this.assessment}) : super(key: key);
+class AssessmentVideos extends StatefulWidget {
+  AssessmentVideos({Key key}) : super(key: key);
 
   @override
-  _AsessmentVideosState createState() => _AsessmentVideosState();
+  _AssessmentVideosState createState() => _AssessmentVideosState();
 }
 
-class _AsessmentVideosState extends State<AsessmentVideos> {
+class _AssessmentVideosState extends State<AssessmentVideos> {
   final _formKey = GlobalKey<FormState>();
   ChewieController _controller;
-  Assessment _mainAssessment;
+  AssessmentBloc _assessmentBloc;
+  TaskBloc _taskBloc;
+  Assessment assessment;
+
+  @override
+  void initState() {
+    _assessmentBloc = AssessmentBloc();
+    _taskBloc = TaskBloc();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    //TODO Remove BlocBuilder & MainAssessment assignation when we got Assessment List view.
-    return BlocBuilder<AssessmentBloc, AssessmentState>(
-        builder: (context, state) {
-      if (state is AssessmentSuccess) {
-        _mainAssessment =
-            widget.assessment != null ? widget.assessment : state.values[0];
-        return BlocProvider(
-          create: (context) => TaskBloc()..getForAssessment(_mainAssessment),
-          child: form(),
-        );
-      } else {
-        return SizedBox();
-      }
-    });
+    return MultiBlocProvider(
+        providers: [
+          BlocProvider<AssessmentBloc>(
+            //TODO: Change this when we have multiple assessments
+            create: (context) =>
+                _assessmentBloc..getById('ndRa0ldHCwCUaDxEQm25'),
+          ),
+          BlocProvider<TaskBloc>(
+            create: (context) => _taskBloc,
+          ),
+        ],
+        child: BlocBuilder<AssessmentBloc, AssessmentState>(
+            builder: (context, state) {
+          if (state is AssessmentSuccess) {
+            assessment = state.assessment;
+            _taskBloc..get(assessment);
+            return form();
+          } else {
+            return SizedBox();
+          }
+        }));
   }
 
   Widget form() {
@@ -116,7 +130,7 @@ class _AsessmentVideosState extends State<AsessmentVideos> {
                               ),
                             ),
                             TitleBody(
-                              _mainAssessment.description,
+                              assessment.description,
                               bold: true,
                             ),
                             Column(
@@ -180,7 +194,7 @@ class _AsessmentVideosState extends State<AsessmentVideos> {
       widgets.add(Center(child: CircularProgressIndicator()));
     }
     widgets.add(OlukoVideoPlayer(
-        videoUrl: _mainAssessment.video,
+        videoUrl: assessment.video,
         autoPlay: false,
         whenInitialized: (ChewieController chewieController) =>
             this.setState(() {
