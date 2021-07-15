@@ -55,6 +55,11 @@ dependencies:
   global_configuration: ^2.0.0-nullsafety.1
   intl: ^0.17.0 
   enum_to_string: ^2.0.1
+  # percent_indicator: "^2.1.5"
+  # simple_timer: ^2.0.0
+  # audioplayers: ^0.18.0
+  # sound_mode: ^1.0.2
+  # numberpicker: ^2.1.1
   flutter_localizations:
     sdk: flutter
 

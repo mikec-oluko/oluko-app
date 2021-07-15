@@ -14,7 +14,7 @@ class AppModal {
                 Align(
                   alignment: Alignment.bottomRight,
                   child: Container(
-                    height: 10,
+                    height: 20,
                     child: IconButton(
                         padding: EdgeInsets.all(0),
                         icon: Icon(Icons.close, color: Colors.white),

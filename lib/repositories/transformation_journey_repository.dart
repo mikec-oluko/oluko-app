@@ -14,24 +14,28 @@ class TransformationJourneyRepository {
   }
 
   //TODO: Filter or not, userInfo to return only the List
-  Future<List<TransformationJourneyUpload>> getUploadedContentByUserId(
-      String username) async {
+  Future<List<TransformationJourneyUpload>> getUploadedContentByUserName(
+      String userName) async {
     try {
       QuerySnapshot docRef = await FirebaseFirestore.instance
           .collection('projects')
           .doc(GlobalConfiguration().getValue("projectId"))
           .collection('users')
-          .doc(username)
+          .doc(userName)
           .collection('transformationJourneyUploads')
           .get();
-      List<TransformationJourneyUpload> listOfContent = [];
+
+      // var first = docRef.docs[0].data();
+      // final content = TransformationJourneyUpload.fromJson(first);
+      List<TransformationJourneyUpload> contentUploaded = [];
       docRef.docs.forEach((doc) {
-        final Map<String, dynamic> element = doc.data();
-        listOfContent.add(TransformationJourneyUpload.fromJson(element));
+        final Map<String, dynamic> content = doc.data();
+        contentUploaded.add(TransformationJourneyUpload.fromJson(content));
       });
-      return listOfContent;
+
+      return contentUploaded;
     } catch (e) {
-      throw e;
+      print("ESTO:" + e);
     }
   }
 }

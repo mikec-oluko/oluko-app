@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
 import 'package:oluko_app/ui/screens/movement_intro.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+
+import 'movement_item_bubbles.dart';
 
 class OlukoImageBar<T> extends StatelessWidget implements PreferredSizeWidget {
   final Function() onPressed;
   final String title;
   final List<Widget> actions;
+  final List<Movement> movements;
   final double toolbarHeight;
   final String imageItemUrl =
       "https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/Airsquats.jpg?alt=media&token=641c2dff-ac0e-4b22-8a8d-aee9adbca3a1";
@@ -22,6 +26,7 @@ class OlukoImageBar<T> extends StatelessWidget implements PreferredSizeWidget {
       {this.title,
       this.onPressed,
       this.actions,
+      this.movements,
       this.toolbarHeight = kToolbarHeight * 1.75});
   @override
   Widget build(BuildContext context) {
@@ -69,10 +74,9 @@ class OlukoImageBar<T> extends StatelessWidget implements PreferredSizeWidget {
                         children: [
                           SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
-                              child: Row(children: <Widget>[
-                                _imageItem(context, imageItemUrl, itemName,
-                                    onPressed: onPressedMovement),
-                              ])),
+                              child:MovementItemBubbles(
+                        content: movements,
+                        width: ScreenUtils.width(context) / 1.2)),
                         ],
                       ),
                     ),
@@ -120,4 +124,7 @@ class OlukoImageBar<T> extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => new Size.fromHeight(toolbarHeight);
+}
+
+class Segement {
 }

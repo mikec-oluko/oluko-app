@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
-import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/base.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/search_results.dart';
@@ -15,10 +14,7 @@ import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/course_card.dart';
-import 'package:oluko_app/ui/components/filter_selector.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
-import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
-import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/search_bar.dart';
 import 'package:oluko_app/ui/components/search_results_grid.dart';
 import 'package:oluko_app/ui/components/search_suggestions.dart';
@@ -28,13 +24,10 @@ import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/course_utils.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
-import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  final String title;
+  MyHomePage({Key key}) : super(key: key);
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -72,40 +65,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 builder: (context, tagState) {
                   return Scaffold(
                       backgroundColor: Colors.black,
-                      appBar: AppBar(
-                        title: Text(widget.title,
-                            style: TextStyle(color: Colors.white)),
-                        actions: [
-                          Stack(
-                            children: [
-                              Container(
-                                  width: ScreenUtils.width(context),
-                                  child: ListView(
-                                      scrollDirection: Axis.horizontal,
-                                      children: menuOptions(authState))),
-                              Positioned(
-                                  right: 0,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                      stops: [0, 1],
-                                      begin: Alignment.centerRight,
-                                      end: Alignment.centerLeft,
-                                      colors: [
-                                        Colors.black,
-                                        Colors.transparent,
-                                      ],
-                                    )),
-                                    width: ScreenUtils.width(context) / 10,
-                                    height: kToolbarHeight,
-                                  )),
-                            ],
-                          )
-                        ],
-                        backgroundColor: Colors.black,
-                        actionsIconTheme: IconThemeData(color: Colors.white),
-                        iconTheme: IconThemeData(color: Colors.white),
-                      ),
+                      appBar: OlukoAppBar(
+                          title: OlukoLocalizations.of(context).find('home'),
+                          showBackButton: false),
                       bottomNavigationBar: OlukoBottomNavigationBar(),
                       body: courseState is CourseSuccess &&
                               tagState is TagSuccess
@@ -241,116 +203,6 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> getProfile() async {
     final profileData = AuthRepository.getLoggedUser();
     profile = profileData != null ? profileData : null;
-  }
-
-  List<Widget> menuOptions(AuthState state) {
-    List<Widget> options = [];
-    //TODO: Remove this when take it to the correct place inside courses
-    options.add(ElevatedButton(
-      onPressed: () => Navigator.pushNamed(context, '/segment-detail')
-          .then((value) => onGoBack()),
-      child: Text(
-        "TEST",
-        style: TextStyle(color: Colors.white),
-      ),
-      style: ElevatedButton.styleFrom(
-          shadowColor: Colors.transparent, primary: Colors.transparent),
-    ));
-
-    options.add(ElevatedButton(
-      onPressed: () => Navigator.pushNamed(context, '/app-plans')
-          .then((value) => onGoBack()),
-      child: Text(
-        OlukoLocalizations.of(context).find('plans').toUpperCase(),
-        style: TextStyle(color: Colors.white),
-      ),
-      style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.symmetric(horizontal: 3),
-          shadowColor: Colors.transparent,
-          primary: Colors.transparent),
-    ));
-
-    options.add(ElevatedButton(
-      onPressed: () => Navigator.pushNamed(context, '/assessment-videos')
-          .then((value) => onGoBack()),
-      child: Text(
-        OlukoLocalizations.of(context).find('assessments').toUpperCase(),
-        style: TextStyle(color: Colors.white),
-      ),
-      style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.symmetric(horizontal: 3),
-          shadowColor: Colors.transparent,
-          primary: Colors.transparent),
-    ));
-
-    if (state is AuthSuccess) {
-      options.add(ElevatedButton(
-        onPressed: () =>
-            Navigator.pushNamed(context, '/videos').then((value) => onGoBack()),
-        child: Text(
-          OlukoLocalizations.of(context).find('videos').toUpperCase(),
-          style: TextStyle(color: Colors.white),
-        ),
-        style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.symmetric(horizontal: 3),
-            shadowColor: Colors.transparent,
-            primary: Colors.transparent),
-      ));
-      options.add(ElevatedButton(
-        onPressed: () {
-          BlocProvider.of<AuthBloc>(context).logout(context);
-          AppMessages.showSnackbar(context, 'Logged out.');
-          setState(() {});
-        },
-        child: Text(
-          OlukoLocalizations.of(context).find('logout').toUpperCase(),
-          style: TextStyle(color: Colors.white),
-        ),
-        style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.symmetric(horizontal: 3),
-            shadowColor: Colors.transparent,
-            primary: Colors.transparent),
-      ));
-      options.add(ElevatedButton(
-        onPressed: () => Navigator.pushNamed(context, '/profile')
-            .then((value) => onGoBack()),
-        child: Text(
-          OlukoLocalizations.of(context).find('profile').toUpperCase(),
-          style: TextStyle(color: Colors.white),
-        ),
-        style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.symmetric(horizontal: 3),
-            shadowColor: Colors.transparent,
-            primary: Colors.transparent),
-      ));
-    } else {
-      options.add(ElevatedButton(
-        onPressed: () => Navigator.pushNamed(context, '/sign-up')
-            .then((value) => onGoBack()),
-        child: Text(
-          OlukoLocalizations.of(context).find('signUp').toUpperCase(),
-          style: TextStyle(color: Colors.white),
-        ),
-        style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.symmetric(horizontal: 3),
-            shadowColor: Colors.transparent,
-            primary: Colors.transparent),
-      ));
-      options.add(ElevatedButton(
-        onPressed: () =>
-            Navigator.pushNamed(context, '/log-in').then((value) => onGoBack()),
-        child: Text(
-          OlukoLocalizations.of(context).find('login').toUpperCase(),
-          style: TextStyle(color: Colors.white),
-        ),
-        style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.symmetric(horizontal: 3),
-            shadowColor: Colors.transparent,
-            primary: Colors.transparent),
-      ));
-    }
-
-    return options;
   }
 
   onGoBack() {

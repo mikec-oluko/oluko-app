@@ -74,9 +74,13 @@ class _State extends State<TaskCard> {
                 padding: const EdgeInsets.only(top: 20),
                 child: Container(
                     width: double.infinity,
-                    child: OlukoOutlinedButton(
-                      title: 'Start',
-                      onPressed: () => widget.onPressed(),
+                    child: Row(
+                      children: [
+                        OlukoOutlinedButton(
+                          title: 'Start',
+                          onPressed: () => widget.onPressed(),
+                        ),
+                      ],
                     )),
               )
             ],

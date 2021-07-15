@@ -23,6 +23,9 @@ class CourseEnrollmentService {
 
   static double getClassProgress(
       CourseEnrollment courseEnrollment, int classIndex) {
+    if (courseEnrollment == null) {
+      return 0;
+    }
     int segmentsCompleated = 0;
     EnrollmentClass enrollmentClass = courseEnrollment.classes[classIndex];
     List<EnrollmentSegment> segments = enrollmentClass.segments;
