@@ -1,8 +1,10 @@
 import 'package:chewie/chewie.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
+import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/task.dart';
@@ -26,6 +28,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
   AssessmentBloc _assessmentBloc;
   TaskBloc _taskBloc;
   Assessment assessment;
+  User user;
 
   @override
   void initState() {
@@ -36,27 +39,34 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-        providers: [
-          BlocProvider<AssessmentBloc>(
-            //TODO: Change this when we have multiple assessments
-            create: (context) =>
-                _assessmentBloc..getById('ndRa0ldHCwCUaDxEQm25'),
-          ),
-          BlocProvider<TaskBloc>(
-            create: (context) => _taskBloc,
-          ),
-        ],
-        child: BlocBuilder<AssessmentBloc, AssessmentState>(
-            builder: (context, state) {
-          if (state is AssessmentSuccess) {
-            assessment = state.assessment;
-            _taskBloc..get(assessment);
-            return form();
-          } else {
-            return SizedBox();
-          }
-        }));
+    return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
+      if (authState is AuthSuccess) {
+        user = authState.firebaseUser;
+        return MultiBlocProvider(
+            providers: [
+              BlocProvider<AssessmentBloc>(
+                //TODO: Change this when we have multiple assessments
+                create: (context) =>
+                    _assessmentBloc..getById('ndRa0ldHCwCUaDxEQm25'),
+              ),
+              BlocProvider<TaskBloc>(
+                create: (context) => _taskBloc,
+              ),
+            ],
+            child: BlocBuilder<AssessmentBloc, AssessmentState>(
+                builder: (context, state) {
+              if (state is AssessmentSuccess) {
+                assessment = state.assessment;
+                _taskBloc..get(assessment);
+                return form();
+              } else {
+                return SizedBox();
+              }
+            }));
+      } else {
+        return Text("Not logged user");
+      }
+    });
   }
 
   Widget form() {
@@ -160,7 +170,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                                                       MaterialPageRoute(
                                                           builder: (context) {
                                                     return TaskDetails(
-                                                        task: task);
+                                                        user: user, task: task);
                                                   })).then((value) =>
                                                       this.setState(() {
                                                         _controller = null;

@@ -1,10 +1,13 @@
 import 'package:chewie/chewie.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/task_submission_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
@@ -18,11 +21,10 @@ import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 
 class TaskDetails extends StatefulWidget {
-  TaskDetails({this.task, this.showRecordedVideos = false, Key key})
-      : super(key: key);
+  TaskDetails({this.task, this.user, Key key}) : super(key: key);
 
   final Task task;
-  final bool showRecordedVideos;
+  User user;
 
   @override
   _TaskDetailsState createState() => _TaskDetailsState();
@@ -32,11 +34,16 @@ class _TaskDetailsState extends State<TaskDetails> {
   final _formKey = GlobalKey<FormState>();
   ChewieController _controller;
   bool _makePublic = false;
+
   TaskSubmissionBloc _taskSubmissionBloc;
+  AssessmentAssignmentBloc _assessmentAssignmentBloc;
+
+  AssessmentAssignment assessmentAssignment;
 
   @override
   void initState() {
     _taskSubmissionBloc = TaskSubmissionBloc();
+    _assessmentAssignmentBloc = AssessmentAssignmentBloc();
     super.initState();
   }
 
@@ -44,12 +51,25 @@ class _TaskDetailsState extends State<TaskDetails> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<TaskSubmissionBloc>(
+        BlocProvider<AssessmentAssignmentBloc>(
           create: (context) =>
-              _taskSubmissionBloc..getTaskSubmissionOfTask(widget.task),
+              _assessmentAssignmentBloc..getOrCreate(widget.user),
+        ),
+        BlocProvider<TaskSubmissionBloc>(
+          create: (context) => _taskSubmissionBloc,
         ),
       ],
-      child: form(),
+      child: BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(
+          builder: (context, state) {
+        if (state is AssessmentAssignmentSuccess) {
+          assessmentAssignment = state.assessmentAssignment;
+          _taskSubmissionBloc
+            ..getTaskSubmissionOfTask(assessmentAssignment, widget.task);
+          return form();
+        } else {
+          return SizedBox();
+        }
+      }),
     );
   }
 
@@ -144,8 +164,11 @@ class _TaskDetailsState extends State<TaskDetails> {
                           return Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      SelfRecording(task: widget.task)));
+                                  builder: (context) => SelfRecording(
+                                      task: widget.task,
+                                      assessmentAssignment:
+                                          assessmentAssignment,
+                                      user: widget.user)));
                         },
                       ),
                     ],
