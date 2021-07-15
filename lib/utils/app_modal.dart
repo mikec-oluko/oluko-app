@@ -4,7 +4,10 @@ import 'package:oluko_app/ui/components/dialog.dart';
 class AppModal {
   //Function handler Dialog/Modal
   static dialogContent(
-      {BuildContext context, List<Widget> content, bool closeButton = false}) {
+      {BuildContext context,
+      List<Widget> content,
+      dynamic valueToReturn,
+      bool closeButton = false}) {
     showModalBottomSheet(
         context: context,
         builder: (BuildContext _) {
@@ -24,6 +27,8 @@ class AppModal {
           }
 
           return DialogWidget(content: content);
-        });
+        }).whenComplete(() {
+      return valueToReturn;
+    });
   }
 }
