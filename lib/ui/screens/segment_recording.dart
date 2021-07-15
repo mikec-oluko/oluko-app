@@ -44,7 +44,6 @@ class SegmentRecording extends StatefulWidget {
 }
 
 class _SegmentRecordingState extends State<SegmentRecording> {
-  
   //TODO --- Make Dynamic ---
   /*Segment segment =
       Segment(duration: 60, rounds: 2, initialTimer: 5, movements: [
@@ -103,14 +102,13 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   bool isCameraFront = true;
   List<TimerEntry> timerEntries;
 
-
   SegmentSubmissionBloc _segmentSubmissionBloc;
   MovementSubmissionBloc _movementSubmissionBloc;
   VideoBloc _videoBloc;
   SegmentSubmission segmentSubmission;
   MovementSubmission movementSubmission;
 
-    _startMovement(num movementIndex) {
+  _startMovement(num movementIndex) {
     //Reset countdown variables
     timerTaskIndex = 0;
     currentSet = 0;
@@ -723,6 +721,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   }
 
   void _finishWorkout() {
+    workState = WorkState.finished;
     print('Workout finished');
   }
 
@@ -752,29 +751,39 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   List<TimerEntry> _getExercisesList(num rounds) {
     List<TimerEntry> entries = [];
     for (var roundIndex = 0; roundIndex < rounds; roundIndex++) {
-      widget.segment.movements.forEach((movement) {
-        for (var setIndex = 0; setIndex < movement.timerSets; setIndex++) {
-          bool isTimedEntry = movement.timerWorkTime != null;
+      for (var movementIndex = 0;
+          movementIndex < widget.segment.movements.length;
+          movementIndex++) {
+        for (var setIndex = 0;
+            setIndex < widget.segment.movements[movementIndex].timerSets;
+            setIndex++) {
+          bool isTimedEntry =
+              widget.segment.movements[movementIndex].timerWorkTime != null;
+          bool isLastMovement =
+              movementIndex == widget.segment.movements.length - 1;
           //Add work entry
           entries.add(TimerEntry(
-              time: movement.timerWorkTime,
-              reps: movement.timerReps,
-              movement: movement,
+              time: widget.segment.movements[movementIndex].timerWorkTime,
+              reps: widget.segment.movements[movementIndex].timerReps,
+              movement: widget.segment.movements[movementIndex],
               setNumber: setIndex,
               roundNumber: roundIndex,
               label:
-                  '${isTimedEntry ? movement.timerWorkTime : movement.timerReps} ${isTimedEntry ? 'Sec' : 'Reps'} ${movement.name}',
+                  '${isTimedEntry ? widget.segment.movements[movementIndex].timerWorkTime : widget.segment.movements[movementIndex].timerReps} ${isTimedEntry ? 'Sec' : 'Reps'} ${widget.segment.movements[movementIndex].name}',
               workState: WorkState.exercising));
           //Add rest entry
           entries.add(TimerEntry(
-              time: movement.timerRestTime,
-              movement: movement,
+              time: isLastMovement
+                  ? widget.segment.roundBreakDuration
+                  : widget.segment.movements[movementIndex].timerRestTime,
+              movement: widget.segment.movements[movementIndex],
               setNumber: setIndex,
               roundNumber: roundIndex,
-              label: '${movement.timerRestTime} Sec rest',
+              label:
+                  '${isLastMovement ? widget.segment.roundBreakDuration : widget.segment.movements[movementIndex].timerRestTime} Sec rest',
               workState: WorkState.exercising));
         }
-      });
+      }
     }
     return entries;
   }

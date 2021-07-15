@@ -66,7 +66,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   return Scaffold(
                       backgroundColor: Colors.black,
                       appBar: OlukoAppBar(
-                          title: OlukoLocalizations.of(context).find('home'), showBackButton: false),
+                          title: OlukoLocalizations.of(context).find('home'),
+                          showBackButton: false),
                       bottomNavigationBar: OlukoBottomNavigationBar(),
                       body: courseState is CourseSuccess &&
                               tagState is TagSuccess

@@ -97,12 +97,19 @@ class CourseEnrollmentRepository {
         .where('user_id', isEqualTo: userId)
         .get();
 
-    List<CourseEnrollment> courseEnrollmentList = [];
-    docRef.docs.forEach((doc) {
-      final Map<String, dynamic> course = doc.data();
-      courseEnrollmentList.add(CourseEnrollment.fromJson(course));
-    });
-    return courseEnrollmentList;
+    //TODO: Use courseEnrollment.courseReference to get Course
+    if (docRef.docs.isEmpty) {
+      return null;
+    }
+    var result = docRef.docs[0].data();
+    final courseEnroll = CourseEnrollment.fromJson(result);
+
+    // List<CourseEnrollment> courseEnrollmentList = [];
+    // docRef.docs.forEach((doc) {
+    //   final Map<String, dynamic> course = doc.data();
+    //   courseEnrollmentList.add(CourseEnrollment.fromJson(course));
+    // });
+    return [courseEnroll];
   }
 
   static getCourseByCourseEnrollmentId(String courseId) async {

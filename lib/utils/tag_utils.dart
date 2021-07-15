@@ -32,12 +32,12 @@ class TagUtils {
   }
 
   static List<Tag> sortByIndex(List<Tag> items, TagCategory itemCategory) {
-    items.sort((Tag taskA, Tag taskB) {
-      TagCategoryItem itemCategoryA = itemCategory.tags
-          .firstWhere((TagCategoryItem element) => element.id == taskA.id);
-      TagCategoryItem itemCategoryB = itemCategory.tags
-          .firstWhere((TagCategoryItem element) => element.id == taskB.id);
-      return itemCategoryA.index.compareTo(itemCategoryB.index);
+    items.sort((Tag tagA, Tag tagB) {
+      int itemCategoryAIndex = itemCategory.tags
+          .indexWhere((TagCategoryItem element) => element.id == tagA.id);
+      int itemCategoryBIndex = itemCategory.tags
+          .indexWhere((TagCategoryItem element) => element.id == tagB.id);
+      return itemCategoryAIndex.compareTo(itemCategoryBIndex);
     });
     return items;
   }

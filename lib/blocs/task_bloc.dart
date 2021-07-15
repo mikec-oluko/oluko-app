@@ -42,7 +42,7 @@ class TaskBloc extends Cubit<TaskState> {
     try {
       List<Task> tasks = await TaskRepository().getAll();
       List<Task> tasksToShow = TaskUtils.filterByAssessment(tasks, assessment);
-      tasksToShow = TaskUtils.sortByAssessmentIndex(tasksToShow, assessment);
+      //tasksToShow = TaskUtils.sortByAssessmentIndex(tasksToShow, assessment);
       emit(TaskSuccess(values: tasksToShow));
     } catch (e) {
       emit(TaskFailure(exception: e));
