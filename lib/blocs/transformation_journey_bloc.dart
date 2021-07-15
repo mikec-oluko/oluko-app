@@ -20,14 +20,14 @@ class TransformationJourneyFailure extends TransformationJourneyState {
 class TransformationJourneyBloc extends Cubit<TransformationJourneyState> {
   TransformationJourneyBloc() : super(TransformationJourneyLoading());
 
-  void getContentById(String userId) async {
+  void getContentById(String username) async {
     if (!(state is TransformationJourneySuccess)) {
       emit(TransformationJourneyLoading());
     }
     try {
       List<TransformationJourneyUpload> contentUploaded =
           await TransformationJourneyRepository()
-              .getUploadedContentByUserId(userId);
+              .getUploadedContentByUserId(username);
       emit(TransformationJourneySuccess(contentFromUser: contentUploaded));
     } catch (e) {
       emit(TransformationJourneyFailure(exception: e));
