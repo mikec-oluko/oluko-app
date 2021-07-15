@@ -41,7 +41,7 @@ class _State extends State<Courses> {
   bool showFilterSelector = false;
   //Constants to display cards
   final double cardsAspectRatio = 0.69333;
-  final int cardsToShowOnPortrait = 3;
+  final int cardsToShowOnPortrait = 4;
   final int cardsToShowOnLandscape = 5;
   final int searchResultsPortrait = 2;
   final int searchResultsLandscape = 5;
@@ -49,7 +49,7 @@ class _State extends State<Courses> {
   @override
   Widget build(BuildContext context) {
     carouselSectionHeight =
-        ((ScreenUtils.width(context) / _cardsToShow()) / cardsAspectRatio) + 75;
+        ((ScreenUtils.width(context) / _cardsToShow()) / cardsAspectRatio) + 60;
     return BlocBuilder<CourseBloc, CourseState>(
         bloc: BlocProvider.of<CourseBloc>(context)..getByCategories(),
         builder: (context, courseState) {

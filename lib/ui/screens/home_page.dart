@@ -47,7 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool showFilterSelector = false;
   //Constants to display cards
   final double cardsAspectRatio = 0.69333;
-  final int cardsToShowOnPortrait = 3;
+  final int cardsToShowOnPortrait = 4;
   final int cardsToShowOnLandscape = 5;
   final int searchResultsPortrait = 2;
   final int searchResultsLandscape = 5;
@@ -55,7 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     carouselSectionHeight =
-        ((ScreenUtils.width(context) / _cardsToShow()) / cardsAspectRatio) + 75;
+        ((ScreenUtils.width(context) / _cardsToShow()) / cardsAspectRatio) + 60;
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       return BlocBuilder<CourseBloc, CourseState>(
           bloc: BlocProvider.of<CourseBloc>(context)..getByCategories(),
