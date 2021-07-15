@@ -1,20 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CourseCategoryItem {
-  CourseCategoryItem({this.courseReference, this.index, this.courseId});
+  CourseCategoryItem({this.reference, this.id});
 
-  DocumentReference courseReference;
-  num index;
-  String courseId;
+  DocumentReference reference;
+  String id;
 
   CourseCategoryItem.fromJson(Map json)
-      : courseReference = json['course_reference'],
-        index = json['index'],
-        courseId = json['course_id'];
+      : reference = json['reference'],
+        id = json['id'];
 
   Map<String, dynamic> toJson() => {
-        'course_reference': courseReference,
-        'index': index,
-        'course_id': courseId,
+        'reference': reference,
+        'id': id,
       };
 }
