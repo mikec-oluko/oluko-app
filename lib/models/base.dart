@@ -49,6 +49,8 @@ class Base {
   cleanBase() {
     this.createdAtSentinel = null;
     this.updatedAtSentinel = null;
+    this.createdAt = null;
+    this.updatedAt = null;
     return this;
   }
 
