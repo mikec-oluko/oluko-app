@@ -7,6 +7,7 @@ import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';
 import 'package:oluko_app/ui/screens/friends/friends_list_page.dart';
 import 'package:oluko_app/ui/screens/friends/friends_requests_page.dart';
+import 'package:oluko_app/utils/app_navigator.dart';
 
 class FriendsPage extends StatefulWidget {
   @override
@@ -50,72 +51,76 @@ class _FriendsPageState extends State<FriendsPage>
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: OlukoAppBar(
+          showBackButton: false,
           title: _title,
           // showSearchBar: true,
         ),
         body: Container(
           color: OlukoColors.black,
-          child: Stack(
-            children: [
-              Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5),
-                    child: Padding(
+          child: WillPopScope(
+            onWillPop: () => AppNavigator.onWillPop(context),
+            child: Stack(
+              children: [
+                Column(
+                  children: [
+                    Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 5),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
-                          color: OlukoColors.grayColor,
-                        ),
-                        child: Expanded(
-                          child: TabBar(
-                            onTap: (int value) {
-                              _setActiveTabIndex(value: value);
-                            },
-                            labelPadding: EdgeInsets.all(0),
-                            indicatorColor: OlukoColors.grayColor,
-                            indicator: BoxDecoration(
-                                borderRadius: _activeTabIndex == 0
-                                    ? BorderRadius.only(
-                                        topLeft: Radius.circular(5),
-                                        bottomLeft: Radius.circular(5))
-                                    : BorderRadius.only(
-                                        topRight: Radius.circular(5),
-                                        bottomRight: Radius.circular(5)),
-                                color: OlukoColors.primary),
-                            unselectedLabelColor: OlukoColors.white,
-                            labelColor: OlukoColors.black,
-                            controller: _tabController,
-                            tabs: [
-                              Tab(
-                                text: _pages[0].title,
-                              ),
-                              Tab(
-                                text: _pages[1].title,
-                              )
-                            ],
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 5),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            color: OlukoColors.grayColor,
+                          ),
+                          child: Expanded(
+                            child: TabBar(
+                              onTap: (int value) {
+                                _setActiveTabIndex(value: value);
+                              },
+                              labelPadding: EdgeInsets.all(0),
+                              indicatorColor: OlukoColors.grayColor,
+                              indicator: BoxDecoration(
+                                  borderRadius: _activeTabIndex == 0
+                                      ? BorderRadius.only(
+                                          topLeft: Radius.circular(5),
+                                          bottomLeft: Radius.circular(5))
+                                      : BorderRadius.only(
+                                          topRight: Radius.circular(5),
+                                          bottomRight: Radius.circular(5)),
+                                  color: OlukoColors.primary),
+                              unselectedLabelColor: OlukoColors.white,
+                              labelColor: OlukoColors.black,
+                              controller: _tabController,
+                              tabs: [
+                                Tab(
+                                  text: _pages[0].title,
+                                ),
+                                Tab(
+                                  text: _pages[1].title,
+                                )
+                              ],
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      color: OlukoColors.black,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: TabBarView(
-                            controller: _tabController,
-                            children: _pages
-                                .map<Widget>((PageContent page) => page.page)
-                                .toList()),
+                    Expanded(
+                      child: Container(
+                        color: OlukoColors.black,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: TabBarView(
+                              controller: _tabController,
+                              children: _pages
+                                  .map<Widget>((PageContent page) => page.page)
+                                  .toList()),
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              )
-            ],
+                  ],
+                )
+              ],
+            ),
           ),
         ),
         bottomNavigationBar: OlukoBottomNavigationBar());

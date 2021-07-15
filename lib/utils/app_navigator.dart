@@ -4,7 +4,7 @@ import 'package:oluko_app/ui/components/title_body.dart';
 
 class AppNavigator {
   Future<void> returnToHome(context) async {
-    Navigator.popUntil(context, ModalRoute.withName('/'));
+    Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
   }
 
   static Future<bool> onWillPop(context) async {
