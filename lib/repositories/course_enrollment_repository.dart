@@ -98,6 +98,9 @@ class CourseEnrollmentRepository {
         .get();
 
     //TODO: Use courseEnrollment.courseReference to get Course
+    if (docRef.docs.isEmpty) {
+      return null;
+    }
     var result = docRef.docs[0].data();
     final courseEnroll = CourseEnrollment.fromJson(result);
 

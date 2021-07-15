@@ -25,7 +25,7 @@ class TransformationJourneyUpload extends Base {
             from: json['from'],
             description: json['description'],
             index: json['index'],
-            type: json['type'],
+            type: getFileTypeEnumFromString(json['type']),
             file: json['file'],
             isPublic: json['isPublic'],
             thumbnail: json['thumbnail'],
