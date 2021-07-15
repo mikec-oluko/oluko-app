@@ -21,8 +21,7 @@ class CourseUtils {
     List<Course> tasksToShow = [];
     courses.forEach((Course course) {
       List<String> courseIds = courseCategory.courses
-          .map((CourseCategoryItem courseCategoryItem) =>
-              courseCategoryItem.courseId)
+          .map((CourseCategoryItem courseCategoryItem) => courseCategoryItem.id)
           .toList();
 
       if (courseIds.indexOf(course.id) != -1) {
@@ -48,12 +47,12 @@ class CourseUtils {
 
   static List<Course> sortByCategoriesIndex(
       List<Course> courses, CourseCategory courseCategory) {
-    courses.sort((Course taskA, Course taskB) {
-      CourseCategoryItem courseCategoryA = courseCategory.courses.firstWhere(
-          (CourseCategoryItem element) => element.courseId == taskA.id);
-      CourseCategoryItem courseCategoryB = courseCategory.courses.firstWhere(
-          (CourseCategoryItem element) => element.courseId == taskB.id);
-      return courseCategoryA.index.compareTo(courseCategoryB.index);
+    courses.sort((Course courseCategoryA, Course courseCategoryB) {
+      int courseCategoryAIndex = courseCategory.courses.indexWhere(
+          (CourseCategoryItem element) => element.id == courseCategoryA.id);
+      int courseCategoryBIndex = courseCategory.courses.indexWhere(
+          (CourseCategoryItem element) => element.id == courseCategoryB.id);
+      return courseCategoryAIndex.compareTo(courseCategoryBIndex);
     });
     return courses;
   }
@@ -65,9 +64,8 @@ class CourseUtils {
             (course) => course.name.toLowerCase().contains(query.toLowerCase()))
         .toList();
     List<Course> filteredResults = resultsWithoutFilters.where((Course course) {
-      final List<String> courseTagIds = course.tags != null
-          ? course.tags.map((e) => e.id).toList()
-          : [];
+      final List<String> courseTagIds =
+          course.tags != null ? course.tags.map((e) => e.id).toList() : [];
       final List<String> selectedTagIds =
           selectedTags.map((e) => e.id).toList();
       //Return true if no filters are selected
