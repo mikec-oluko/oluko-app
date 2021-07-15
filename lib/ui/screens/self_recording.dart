@@ -1,17 +1,20 @@
 import 'package:camera/camera.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/blocs/task_bloc.dart';
+import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/screens/self_recording_preview.dart';
 
 class SelfRecording extends StatefulWidget {
-  SelfRecording({this.task, Key key}) : super(key: key);
+  SelfRecording({this.task, this.assessmentAssignment, this.user, Key key})
+      : super(key: key);
 
   final Task task;
+  final AssessmentAssignment assessmentAssignment;
+  User user;
 
   @override
   _State createState() => _State();
@@ -41,10 +44,7 @@ class _State extends State<SelfRecording> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => TaskBloc()..get(),
-      child: form(),
-    );
+    return form();
   }
 
   Widget form() {
@@ -77,12 +77,15 @@ class _State extends State<SelfRecording> {
                           XFile videopath =
                               await cameraController.stopVideoRecording();
                           String path = videopath.path;
-
                           Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => SelfRecordingPreview(
-                                      task: widget.task, filePath: path)));
+                                      user: widget.user,
+                                      task: widget.task,
+                                      filePath: path,
+                                      assessmentAssignment:
+                                          widget.assessmentAssignment)));
                         } else {
                           await cameraController.startVideoRecording();
                         }
@@ -116,10 +119,7 @@ class _State extends State<SelfRecording> {
                                   : AspectRatio(
                                       aspectRatio: 3.0 / 4.0,
                                       child: CameraPreview(cameraController))),
-                          BlocBuilder<TaskBloc, TaskState>(
-                              builder: (context, state) {
-                            return formSection();
-                          }),
+                          formSection(),
                         ],
                       ),
                     )))));
@@ -127,57 +127,49 @@ class _State extends State<SelfRecording> {
 
   Widget formSection() {
     return Container(
-      child: BlocBuilder<TaskBloc, TaskState>(builder: (context, state) {
-        return Column(
+        child: Column(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              formFields(state),
-            ]);
-      }),
-    );
+          formFields(),
+        ]));
   }
 
-  Widget formFields(TaskState state) {
-    if (state is TaskSuccess) {
-      return Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 15.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                widget.task.stepsTitle != null
-                    ? TitleBody(widget.task.stepsTitle)
-                    : SizedBox()
-              ],
-            ),
+  Widget formFields() {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 15.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              widget.task.stepsTitle != null
+                  ? TitleBody(widget.task.stepsTitle)
+                  : SizedBox()
+            ],
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    widget.task.stepsDescription != null
-                        ? Text(
-                            '${widget.task.stepsDescription.replaceAll('\\n', '\n')} ',
-                            style:
-                                TextStyle(fontSize: 20, color: Colors.white60),
-                          )
-                        : SizedBox(),
-                  ],
-                ),
-              ],
-            ),
-          )
-        ],
-      );
-    } else {
-      return SizedBox();
-    }
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  widget.task.stepsDescription != null
+                      ? Text(
+                          '${widget.task.stepsDescription.replaceAll('\\n', '\n')} ',
+                          style: TextStyle(fontSize: 20, color: Colors.white60),
+                        )
+                      : SizedBox(),
+                ],
+              ),
+            ],
+          ),
+        )
+      ],
+    );
   }
 
   Future<void> _setupCameras() async {

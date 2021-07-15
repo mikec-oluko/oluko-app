@@ -1,10 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/submodels/video.dart';
 
 class TaskSubmissionRepository {
+  static DocumentReference projectReference = FirebaseFirestore.instance
+      .collection("projects")
+      .doc(GlobalConfiguration().getValue("projectId"));
+
   FirebaseFirestore firestoreInstance;
 
   TaskSubmissionRepository() {
@@ -12,7 +17,20 @@ class TaskSubmissionRepository {
   }
 
   static TaskSubmission createTaskSubmission(
-      TaskSubmission taskSubmission, CollectionReference reference) {
+      AssessmentAssignment assessmentAssignment, Task task) {
+    DocumentReference assessmentAReference = projectReference
+        .collection('assessmentAssignments')
+        .doc(assessmentAssignment.id);
+
+    DocumentReference taskReference =
+        projectReference.collection("tasks").doc(task.id);
+
+    TaskSubmission taskSubmission =
+        TaskSubmission(taskId: task.id, taskReference: taskReference);
+
+    CollectionReference reference =
+        assessmentAReference.collection('taskSubmissions');
+
     final DocumentReference docRef = reference.doc();
     taskSubmission.id = docRef.id;
     docRef.set(taskSubmission.toJson());
@@ -20,16 +38,20 @@ class TaskSubmissionRepository {
   }
 
   static updateTaskSubmissionVideo(
-      Video video, DocumentReference reference) async {
+      AssessmentAssignment assessmentA, String id, Video video) async {
+    DocumentReference reference = projectReference
+        .collection('assessmentAssignments')
+        .doc(assessmentA.id)
+        .collection('taskSubmissions')
+        .doc(id);
     reference.update({'video': video.toJson()});
   }
 
-  static Future<TaskSubmission> getTaskSubmissionOfTask(Task task) async {
-    CollectionReference reference = FirebaseFirestore.instance
-        .collection("projects")
-        .doc(GlobalConfiguration().getValue("projectId"))
+  static Future<TaskSubmission> getTaskSubmissionOfTask(
+      AssessmentAssignment assessmentAssignment, Task task) async {
+    CollectionReference reference = projectReference
         .collection("assessmentAssignments")
-        .doc('8dWwPNggqruMQr0OSV9f')
+        .doc(assessmentAssignment.id)
         .collection('taskSubmissions');
     final querySnapshot =
         await reference.where("task_id", isEqualTo: task.id).get();
@@ -41,9 +63,7 @@ class TaskSubmissionRepository {
 
   static Future<List<TaskSubmission>> getTaskSubmissionsByUserName(
       String userName) async {
-    QuerySnapshot docRef = await FirebaseFirestore.instance
-        .collection("projects")
-        .doc(GlobalConfiguration().getValue("projectId"))
+    QuerySnapshot docRef = await projectReference
         .collection("taskSubmissions")
         // .where('user_id', isEqualTo: userId)
         .get();

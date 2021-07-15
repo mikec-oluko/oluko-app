@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
-// import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';
@@ -62,6 +61,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ],
                   )),
             ),
+
             bottomNavigationBar: OlukoBottomNavigationBar()));
   }
 
