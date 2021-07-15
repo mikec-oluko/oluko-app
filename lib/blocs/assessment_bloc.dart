@@ -6,9 +6,14 @@ abstract class AssessmentState {}
 
 class AssessmentLoading extends AssessmentState {}
 
+class AssessmentsSuccess extends AssessmentState {
+  final List<Assessment> assessments;
+  AssessmentsSuccess({this.assessments});
+}
+
 class AssessmentSuccess extends AssessmentState {
-  final List<Assessment> values;
-  AssessmentSuccess({this.values});
+  final Assessment assessment;
+  AssessmentSuccess({this.assessment});
 }
 
 class AssessmentFailure extends AssessmentState {
@@ -26,7 +31,7 @@ class AssessmentBloc extends Cubit<AssessmentState> {
     }
     try {
       List<Assessment> assessments = await AssessmentRepository().getAll();
-      emit(AssessmentSuccess(values: assessments));
+      emit(AssessmentsSuccess(assessments: assessments));
     } catch (e) {
       emit(AssessmentFailure(exception: e));
     }
@@ -37,8 +42,8 @@ class AssessmentBloc extends Cubit<AssessmentState> {
       emit(AssessmentLoading());
     }
     try {
-      List<Assessment> assessments = await AssessmentRepository().getById(id);
-      emit(AssessmentSuccess(values: assessments));
+      Assessment assessment = await AssessmentRepository().getById(id);
+      emit(AssessmentSuccess(assessment: assessment));
     } catch (e) {
       emit(AssessmentFailure(exception: e));
     }
