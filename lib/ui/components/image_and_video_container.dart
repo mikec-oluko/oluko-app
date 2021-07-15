@@ -6,8 +6,9 @@ import 'image_and_video_preview_card.dart';
 class ImageAndVideoContainer extends StatefulWidget {
   final String assetImage;
   final bool isVideo;
+  final String videoUrl;
 
-  ImageAndVideoContainer({this.assetImage, this.isVideo});
+  ImageAndVideoContainer({this.assetImage, this.isVideo, this.videoUrl});
 
   @override
   _ImageAndVideoContainerState createState() => _ImageAndVideoContainerState();
@@ -32,6 +33,7 @@ class _ImageAndVideoContainerState extends State<ImageAndVideoContainer> {
             height: 120,
             width: 120,
           ),
+          videoUrl: widget.videoUrl,
           isVideo: widget.isVideo,
         ),
       ),

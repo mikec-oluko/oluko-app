@@ -38,6 +38,12 @@ class CourseEnrollmentListSuccess extends CourseEnrollmentState {
   CourseEnrollmentListSuccess({this.courseEnrollmentList});
 }
 
+class CourseEnrollmentCourses extends CourseEnrollmentState {
+  final List<Course> courseEnrollmentCourses;
+
+  CourseEnrollmentCourses({this.courseEnrollmentCourses});
+}
+
 class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
   CourseEnrollmentBloc() : super(Loading());
 
@@ -64,7 +70,7 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
   void getChallengesForUser(String userId) async {
     try {
       List<Challenge> courseEnrollmentsChallenges =
-          await CourseEnrollmentRepository().getUserChallenges(userId);
+          await CourseEnrollmentRepository().getUserChallengesuserId(userId);
 
       emit(GetCourseEnrollmentChallenge(
           challenges: courseEnrollmentsChallenges));
@@ -79,6 +85,18 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
           await CourseEnrollmentRepository.getUserCourseEnrollments(userId);
       emit(
           CourseEnrollmentListSuccess(courseEnrollmentList: courseEnrollments));
+    } catch (e) {
+      emit(Failure(exception: e));
+    }
+  }
+
+  void getCourseEnrollmentsCoursesByUserId(String userId) async {
+    try {
+      List<Course> coursesFromEnrollments =
+          await CourseEnrollmentRepository.getUserCourseEnrollmentsCourse(
+              userId);
+      emit(CourseEnrollmentCourses(
+          courseEnrollmentCourses: coursesFromEnrollments));
     } catch (e) {
       emit(Failure(exception: e));
     }

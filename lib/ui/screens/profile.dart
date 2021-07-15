@@ -33,7 +33,11 @@ class _ProfilePageState extends State<ProfilePage> {
           if (snapshot.hasData) {
             return profileHomeView();
           } else {
-            return SizedBox();
+            return Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              color: Colors.red,
+            );
           }
         });
   }

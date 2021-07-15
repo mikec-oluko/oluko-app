@@ -8,6 +8,7 @@ import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/submodels/enrollment_class.dart';
 import 'package:oluko_app/models/submodels/enrollment_segment.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
+import 'package:oluko_app/repositories/course_repository.dart';
 
 class CourseEnrollmentRepository {
   FirebaseFirestore firestoreInstance;
@@ -82,9 +83,7 @@ class CourseEnrollmentRepository {
     Class classObj = Class.fromJson(qs.data());
     classObj.segments.forEach((ObjectSubmodel segment) {
       enrollmentClass.segments.add(EnrollmentSegment(
-          id: segment.id,
-          name: segment.name,
-          reference: segment.reference));
+          id: segment.id, name: segment.name, reference: segment.reference));
     });
     return enrollmentClass;
   }
@@ -99,6 +98,8 @@ class CourseEnrollmentRepository {
         .get();
 
     //TODO: Use courseEnrollment.courseReference to get Course
+    // var result = docRef.docs[0].data();
+    // final courseEnroll = CourseEnrollment.fromJson(result);
 
     List<CourseEnrollment> courseEnrollmentList = [];
     docRef.docs.forEach((doc) {
@@ -108,7 +109,13 @@ class CourseEnrollmentRepository {
     return courseEnrollmentList;
   }
 
-  Future<List<Challenge>> getUserChallenges(String userId) async {
+  static testFunction(String courseId) async {
+    Course curso = await CourseRepository.get(courseId);
+    return curso;
+  }
+
+  //Future<List<CourseEnrollment>>
+  static getUserCourseEnrollmentsCourse(String userId) async {
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"))
@@ -116,13 +123,33 @@ class CourseEnrollmentRepository {
         .where('user_id', isEqualTo: userId)
         .get();
 
-    //TODO: Map userData and return List<Challenge>
+    //TODO: Use courseEnrollment.courseReference to get Course
+    var result = docRef.docs[0].data();
+    final courseEnroll = CourseEnrollment.fromJson(result);
+    final Course cursito = await testFunction(courseEnroll.courseId);
+    print(cursito);
+    return [cursito];
+  }
 
-    List<Challenge> listOfChallenges = [];
+  Future<List<Challenge>> getUserChallengesuserId(String userId) async {
+    List<CourseEnrollment> courseEnrollmentId =
+        await getUserCourseEnrollments(userId);
+
+    QuerySnapshot docRef = await FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue("projectId"))
+        .collection('challenges')
+        .where('course-enrollment-id', isEqualTo: courseEnrollmentId[0].id)
+        .get();
+
+    // List<Challenge> listOfChallenges = docRef.docs[0].data();
+    // return listOfChallenges;
+
+    List<Challenge> challengeList = [];
     docRef.docs.forEach((doc) {
       final Map<String, dynamic> challenge = doc.data();
-      listOfChallenges.add(Challenge.fromJson(challenge));
+      challengeList.add(Challenge.fromJson(challenge));
     });
-    return listOfChallenges;
+    return challengeList;
   }
 }

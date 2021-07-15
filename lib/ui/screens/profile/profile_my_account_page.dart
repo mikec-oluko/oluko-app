@@ -91,8 +91,11 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
   Column buildUserInformationFields() {
     return Column(
       children: [
-        userInformationFields(OlukoLocalizations.of(context).find('userName'),
-            ProfileViewConstants.profileUserNameContent),
+        userInformationFields(
+            OlukoLocalizations.of(context).find('userName'),
+            profileInfo.username != null
+                ? profileInfo.username
+                : ProfileViewConstants.profileUserNameContent),
         userInformationFields(OlukoLocalizations.of(context).find('firstName'),
             profileInfo.firstName),
         userInformationFields(OlukoLocalizations.of(context).find('lastName'),
@@ -165,6 +168,8 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
           onPressed: () {
             BlocProvider.of<AuthBloc>(context).logout(context);
             AppMessages.showSnackbar(context, 'Logged out.');
+            Navigator.pushNamed(context, '/');
+
             setState(() {});
           },
         ),
@@ -173,8 +178,11 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
   }
 
   Future<void> getProfileInfo() async {
-    profileInfo =
-        UserResponse.fromJson((await AuthBloc().retrieveLoginData()).toJson());
-    return profileInfo;
+    UserResponse loginData = (await AuthBloc().retrieveLoginData());
+    if (loginData != null) {
+      profileInfo = UserResponse.fromJson(loginData.toJson());
+      return profileInfo;
+    }
+    return null;
   }
 }

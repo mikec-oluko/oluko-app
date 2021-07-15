@@ -1,3 +1,4 @@
+import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
@@ -33,7 +34,7 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
   List<TransformationJourneyUpload> _transformationJourneyContent = [];
   List<TaskSubmission> _assessmentVideosContent = [];
   List<Challenge> _activeChallenges = [];
-  List<CourseEnrollment> _coursesToUse = [];
+  List<Course> _coursesToUse = [];
   List<Content> _listOfStaticContent = [];
 
   @override
@@ -72,7 +73,8 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
 
   _buildOwnProfileView(BuildContext context, UserResponse profileInfo) {
     _requestTransformationJourneyData(context, profileInfo);
-    _requestCourseEnrollmentChallengesData(context, profileInfo);
+    // _requestCourseEnrollmentChallengesData(context, profileInfo);
+    _requestCourseListForUser(context, profileInfo);
     _requestCourseEnrollmentListForUser(context, profileInfo);
     return Scaffold(
       body: Container(
@@ -122,9 +124,9 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
   _buildAssessmentVideosSection() {
     return BlocListener<TaskSubmissionBloc, TaskSubmissionState>(
         listener: (context, state) {
-          if (state is GetUserTaskSubmissionSuccess) {
-            _assessmentVideosContent = state.taskSubmissions;
-          }
+          // if (state is GetUserTaskSubmissionSuccess) {
+          //   _assessmentVideosContent = state.taskSubmissions;
+          // }
         },
         child: buildUserContentSection(
             titleForSection:
@@ -156,8 +158,8 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
       _buildCourseSectionView() {
     return BlocConsumer<CourseEnrollmentBloc, CourseEnrollmentState>(
       listener: (context, state) {
-        if (state is CourseEnrollmentListSuccess) {
-          _coursesToUse = state.courseEnrollmentList;
+        if (state is CourseEnrollmentCourses) {
+          _coursesToUse = state.courseEnrollmentCourses;
         }
       },
       builder: (context, state) {
@@ -196,7 +198,7 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
   void _requestTransformationJourneyData(
       BuildContext context, UserResponse profileInfo) {
     BlocProvider.of<TransformationJourneyBloc>(context)
-        .getContentById(profileInfo.username);
+        .getContentByUserName(profileInfo.username);
   }
 
   void _requestCourseEnrollmentChallengesData(
@@ -209,6 +211,12 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
       BuildContext context, UserResponse profileInfo) {
     BlocProvider.of<CourseEnrollmentBloc>(context)
         .getCourseEnrollmentsByUserId(profileInfo.id);
+  }
+
+  void _requestCourseListForUser(
+      BuildContext context, UserResponse profileInfo) {
+    BlocProvider.of<CourseEnrollmentBloc>(context)
+        .getCourseEnrollmentsCoursesByUserId(profileInfo.id);
   }
 
   Padding buildCourseSection(
@@ -259,29 +267,33 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
       contentForReturn = ImageAndVideoContainer(
         assetImage: staticContent.imgUrl,
         isVideo: staticContent.isVideo,
+        videoUrl:
+            'https://oluko-mvt.s3.us-west-1.amazonaws.com/assessments/85b2f81c1fe74f9cb5e804c57db30137/85b2f81c1fe74f9cb5e804c57db30137_2.mp4',
       );
     }
     if (transformationJourneyContent != null) {
       contentForReturn = ImageAndVideoContainer(
         assetImage: transformationJourneyContent.thumbnail,
         isVideo: transformationJourneyContent.type == FileTypeEnum.video,
+        videoUrl: transformationJourneyContent.file,
       );
     }
     if (taskSubmissionContent != null) {
       contentForReturn = ImageAndVideoContainer(
         assetImage: taskSubmissionContent.video.thumbUrl,
         isVideo: taskSubmissionContent.video != null,
+        videoUrl: taskSubmissionContent.video.url,
       );
     }
 
     return contentForReturn;
   }
 
-  List<Widget> returnCoursesWidget({List<CourseEnrollment> listOfCourses}) {
+  List<Widget> returnCoursesWidget({List<Course> listOfCourses}) {
     //TODO: Use CourseEnrollment
     List<Widget> contentForCourseSection = [];
     listOfCourses.forEach((course) {
-      contentForCourseSection.add(_getCourseCard(courseForCard: course));
+      contentForCourseSection.add(_getCourseCard(staticCourse: course));
     });
     return contentForCourseSection.toList();
   }
@@ -291,6 +303,7 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
       List<TransformationJourneyUpload> tansformationJourneyData,
       List<TaskSubmission> assessmentVideoData}) {
     List<Widget> contentForSection = [];
+
     if (staticContent != null &&
         tansformationJourneyData != null &&
         (tansformationJourneyData.isEmpty && assessmentVideoData.isEmpty)) {
@@ -299,7 +312,7 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
       });
     }
     if (tansformationJourneyData != null &&
-        (staticContent.isEmpty && assessmentVideoData.isEmpty)) {
+        (staticContent == null && assessmentVideoData == null)) {
       tansformationJourneyData.forEach((content) {
         contentForSection
             .add(_getImageAndVideoCard(transformationJourneyContent: content));
