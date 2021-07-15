@@ -4,8 +4,6 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/form_helper.dart';
 import 'package:oluko_app/models/dto/login_request.dart';
-import 'package:oluko_app/models/sign_up_response.dart';
-import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/peek_password.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/app_loader.dart';
@@ -196,7 +194,9 @@ class _LoginPageState extends State<LoginPage> {
                   },
                   child: Stack(children: [
                     Align(
-                      child: Text(OlukoLocalizations.of(context).find('login')),
+                      child: Text(OlukoLocalizations.of(context)
+                          .find('login')
+                          .toUpperCase()),
                     )
                   ])))),
       Padding(
@@ -252,23 +252,24 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ])))),
       ]),
-      InkWell(
-        onTap: () => Navigator.pushNamed(context, '/sign-up-with-email'),
-        child: Padding(
-          padding: EdgeInsets.only(top: 10),
-          child: Column(
-            children: [
-              Text(
-                'Tap here to create an account',
-                style: TextStyle(color: Colors.white),
-              ),
-              Text('Sign Up',
-                  style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold))
-            ],
-          ),
-        ),
-      )
+      // TODO Enable Signup
+      // InkWell(
+      //   onTap: () => Navigator.pushNamed(context, '/sign-up-with-email'),
+      //   child: Padding(
+      //     padding: EdgeInsets.only(top: 10),
+      //     child: Column(
+      //       children: [
+      //         Text(
+      //           'Tap here to create an account',
+      //           style: TextStyle(color: Colors.white),
+      //         ),
+      //         Text('Sign Up',
+      //             style: TextStyle(
+      //                 color: Colors.white, fontWeight: FontWeight.bold))
+      //       ],
+      //     ),
+      //   ),
+      // )
     ];
   }
 }
