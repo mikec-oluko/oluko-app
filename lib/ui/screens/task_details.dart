@@ -170,6 +170,9 @@ class _TaskDetailsState extends State<TaskDetails> {
                   title: OlukoLocalizations.of(context).find('next'),
                   onPressed: () {
                     if (widget.index < widget.tasks.length - 1) {
+                      if (_controller != null) {
+                        _controller.pause();
+                      }
                       return Navigator.push(context,
                           MaterialPageRoute(builder: (context) {
                         return TaskDetails(
@@ -235,6 +238,9 @@ class _TaskDetailsState extends State<TaskDetails> {
                     OlukoOutlinedButton(
                       title: OlukoLocalizations.of(context).find('yes'),
                       onPressed: () {
+                        if (_controller != null) {
+                          _controller.pause();
+                        }
                         Navigator.push(
                             context,
                             MaterialPageRoute(
