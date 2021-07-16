@@ -67,7 +67,9 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
       TaskSubmission taskSubmission =
           await TaskSubmissionRepository.getTaskSubmissionOfTask(
               assessmentAssignment, task);
-      if (taskSubmission != null && taskSubmission.video.url == null) {
+      if (taskSubmission == null ||
+          taskSubmission.video == null ||
+          taskSubmission.video.url == null) {
         taskSubmission = null;
       }
       emit(GetSuccess(taskSubmission: taskSubmission));
