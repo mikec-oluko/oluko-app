@@ -28,7 +28,9 @@ import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 
 class Classes extends StatefulWidget {
-  Classes({Key key}) : super(key: key);
+  final String courseId;
+
+  Classes({Key key, this.courseId}) : super(key: key);
 
   get progress => null;
 
@@ -60,9 +62,7 @@ class _ClassesState extends State<Classes> {
         return MultiBlocProvider(
             providers: [
               BlocProvider<CourseBloc>(
-                //TODO: change this when the view is in the correct place
-                create: (context) =>
-                    _courseBloc..getById("CC5HBkSV8DthLQNKyBlc"),
+                create: (context) => _courseBloc..getById(widget.courseId),
               ),
               BlocProvider<ClassBloc>(
                 create: (context) => _classBloc,

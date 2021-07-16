@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -15,6 +16,10 @@ import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/course_card.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/search_bar.dart';
+import 'package:oluko_app/ui/components/search_results_grid.dart';
+import 'package:oluko_app/ui/components/search_suggestions.dart';
+import 'package:oluko_app/ui/components/title_body.dart';
+import 'package:oluko_app/ui/screens/classes.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/course_utils.dart';
 import 'package:oluko_app/utils/image_utils.dart';
@@ -84,7 +89,7 @@ class _State extends State<Courses> {
                                       )
                                     : searchResults.query.isEmpty &&
                                             selectedTags.isEmpty
-                                        ? _mainPage(courseState)
+                                        ? _mainPage(context, courseState)
                                         : showSearchSuggestions
                                             ? CourseUtils.searchSuggestions(
                                                 searchResults, searchKey)
@@ -139,7 +144,7 @@ class _State extends State<Courses> {
         : null;
   }
 
-  Widget _mainPage(CourseSuccess courseState) {
+  Widget _mainPage(mainContext, CourseSuccess courseState) {
     return Padding(
       padding: const EdgeInsets.only(top: 15.0, left: 8, right: 8),
       child: ListView(
@@ -161,8 +166,18 @@ class _State extends State<Courses> {
                       .map((course) => Padding(
                             padding: const EdgeInsets.only(right: 8.0),
                             child: GestureDetector(
-                              onTap: () =>
-                                  Navigator.pushNamed(context, '/classes'),
+                              onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          BlocProvider<AuthBloc>(
+                                            create: (context) =>
+                                                BlocProvider.of<AuthBloc>(
+                                                    mainContext),
+                                            child: Classes(
+                                                courseId:
+                                                    'CC5HBkSV8DthLQNKyBlc' /*course.id*/),
+                                          ))),
                               child: _getCourseCard(
                                   Image.network(
                                     course.imageUrl,
