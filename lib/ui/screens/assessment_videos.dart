@@ -108,7 +108,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 10),
                                     child: Text(
-                                      'Skip',
+                                      '', // REMOVE FOR MVT 'Skip',
                                       style: TextStyle(
                                           color: Colors.white, fontSize: 18),
                                     ),
@@ -169,8 +169,11 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                                                   return Navigator.push(context,
                                                       MaterialPageRoute(
                                                           builder: (context) {
-                                                    return TaskDetails(tasks: state.values, index: index,
-                                                        user: user, task: task);
+                                                    return TaskDetails(
+                                                        tasks: state.values,
+                                                        index: index,
+                                                        user: user,
+                                                        task: task);
                                                   })).then((value) =>
                                                       this.setState(() {
                                                         _controller = null;
