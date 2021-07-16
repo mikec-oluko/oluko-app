@@ -195,15 +195,15 @@ class _SegmentDetailState extends State<SegmentDetail> {
                     .toUpperCase(),
                 color: Colors.white,
                 onPressed: () {
-                  startRecordingAndWorkoutTogether
-                      ? _startCountdown(WorkoutType.segmentWithRecording)
-                      : MovementUtils.movementDialog(
-                              context, _confirmDialogContent())
-                          .then((value) => value != null
-                              ? _startCountdown(value == true
-                                  ? WorkoutType.segmentWithRecording
-                                  : WorkoutType.segment)
-                              : null);
+                  // startRecordingAndWorkoutTogether
+                  //     ? _startCountdown(WorkoutType.segmentWithRecording)
+                  //     : MovementUtils.movementDialog(
+                  //             context, _confirmDialogContent())
+                  //         .then((value) => value != null
+                  //             ? _startCountdown(value == true
+                  //                 ? WorkoutType.segmentWithRecording
+                  //                 : WorkoutType.segment)
+                  //             : null);
                 })
           ]),
         )
