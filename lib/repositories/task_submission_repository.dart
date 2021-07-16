@@ -61,11 +61,13 @@ class TaskSubmissionRepository {
     return null;
   }
 
-  static Future<List<TaskSubmission>> getTaskSubmissionsByUserName(
-      String userName) async {
-    QuerySnapshot docRef = await projectReference
+  static Future<List<TaskSubmission>> getTaskSubmissionsByUserId(
+      String userId) async {
+    QuerySnapshot docRef = await FirebaseFirestore.instance
+        .collection("projects")
+        .doc(GlobalConfiguration().getValue("projectId"))
         .collection("taskSubmissions")
-        // .where('user_id', isEqualTo: userId)
+        .where('user_id', isEqualTo: userId)
         .get();
 
     List<TaskSubmission> response = [];

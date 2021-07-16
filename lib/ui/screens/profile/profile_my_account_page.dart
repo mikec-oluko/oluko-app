@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/plan_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -9,17 +12,39 @@ import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_user_info.dart';
 import 'package:oluko_app/ui/components/subscription_card.dart';
+import 'package:oluko_app/ui/components/transformation_journey_modal_options.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/app_messages.dart';
+import 'package:oluko_app/utils/app_modal.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ProfileMyAccountPage extends StatefulWidget {
+  final File image;
+  ProfileMyAccountPage({this.image});
   @override
   _ProfileMyAccountPageState createState() => _ProfileMyAccountPageState();
 }
 
 class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
   UserResponse profileInfo;
+
+  File _image;
+  File _imageFromGallery;
+  final imagePicker = ImagePicker();
+
+  Future getImage() async {
+    final image = await imagePicker.getImage(source: ImageSource.camera);
+    setState(() {
+      _image = File(image.path);
+    });
+  }
+
+  Future getImageFromGallery() async {
+    final image = await imagePicker.getImage(source: ImageSource.gallery);
+    setState(() {
+      _imageFromGallery = File(image.path);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,17 +95,30 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Center(
-              child: CircleAvatar(
-                // backgroundImage: //TODO: Get image,
-                backgroundColor: OlukoColors.primary,
-                radius: 50.0,
-                child: IconButton(
-                    icon: Icon(Icons.linked_camera_outlined,
-                        color: OlukoColors.white),
-                    onPressed: () {
-                      //TODO: Change profile picture
-                    }),
-              ),
+              child: _image != null
+                  ? CircleAvatar(
+                      backgroundImage: Image.file(_image).image,
+                      backgroundColor: OlukoColors.primary,
+                      radius: 50.0,
+                      child: IconButton(
+                          icon: Icon(Icons.linked_camera_outlined,
+                              color: OlukoColors.white),
+                          onPressed: () {
+                            getImage();
+                            //TODO: Change profile picture
+                          }),
+                    )
+                  : CircleAvatar(
+                      backgroundColor: OlukoColors.primary,
+                      radius: 50.0,
+                      child: IconButton(
+                          icon: Icon(Icons.linked_camera_outlined,
+                              color: OlukoColors.white),
+                          onPressed: () {
+                            getImage();
+                            //TODO: Change profile picture
+                          }),
+                    ),
             )
           ],
         ));

@@ -72,7 +72,17 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
       }
       emit(GetSuccess(taskSubmission: taskSubmission));
     } catch (e) {
-      print(e.toString());
+      emit(Failure(exception: e));
+    }
+  }
+
+  void getTaskSubmissionByUserId(String userId) async {
+    try {
+      List<TaskSubmission> taskSubmissions =
+          await TaskSubmissionRepository.getTaskSubmissionsByUserId(userId);
+
+      emit(GetUserTaskSubmissionSuccess(taskSubmissions: taskSubmissions));
+    } catch (e) {
       emit(Failure(exception: e));
     }
   }
