@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
-// import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';
@@ -62,6 +61,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ],
                   )),
             ),
+
             bottomNavigationBar: OlukoBottomNavigationBar()));
   }
 
@@ -108,22 +108,20 @@ class _ProfilePageState extends State<ProfilePage> {
           InkWell(
             onTap: () => Navigator.pushNamed(
                 context, ProfileRoutes.returnRouteName(pageTitle)),
-            child: Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 25.0),
-                    child: Text(pageTitle, style: OlukoFonts.olukoMediumFont()),
-                  ),
-                  IconButton(
-                      icon: Icon(Icons.arrow_forward_ios,
-                          color: OlukoColors.grayColor),
-                      onPressed: () => Navigator.pushNamed(
-                              context, ProfileRoutes.returnRouteName(pageTitle))
-                          .then((value) => onGoBack()))
-                ],
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 25.0),
+                  child: Text(pageTitle, style: OlukoFonts.olukoMediumFont()),
+                ),
+                IconButton(
+                    icon: Icon(Icons.arrow_forward_ios,
+                        color: OlukoColors.grayColor),
+                    onPressed: () => Navigator.pushNamed(
+                            context, ProfileRoutes.returnRouteName(pageTitle))
+                        .then((value) => onGoBack()))
+              ],
             ),
           ),
         ],

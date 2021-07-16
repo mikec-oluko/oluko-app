@@ -98,6 +98,9 @@ class CourseEnrollmentRepository {
         .get();
 
     //TODO: Use courseEnrollment.courseReference to get Course
+    if (docRef.docs.isEmpty) {
+      return null;
+    }
     // var result = docRef.docs[0].data();
     // final courseEnroll = CourseEnrollment.fromJson(result);
 
@@ -109,26 +112,23 @@ class CourseEnrollmentRepository {
     return courseEnrollmentList;
   }
 
-  static testFunction(String courseId) async {
+  static getCourseByCourseEnrollmentId(String courseId) async {
     Course curso = await CourseRepository.get(courseId);
     return curso;
   }
 
-  //Future<List<CourseEnrollment>>
-  static getUserCourseEnrollmentsCourse(String userId) async {
-    QuerySnapshot docRef = await FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
-        .collection('courseEnrollments')
-        .where('user_id', isEqualTo: userId)
-        .get();
+  static Future<List<Course>> getUserCourseEnrollmentsCourse(
+      String userId) async {
+    List<CourseEnrollment> listOfCoruseEnrollment =
+        await getUserCourseEnrollments(userId);
 
-    //TODO: Use courseEnrollment.courseReference to get Course
-    var result = docRef.docs[0].data();
-    final courseEnroll = CourseEnrollment.fromJson(result);
-    final Course cursito = await testFunction(courseEnroll.courseId);
-    print(cursito);
-    return [cursito];
+    List<Course> coursesList = [];
+    listOfCoruseEnrollment.forEach((courseEnrollment) async {
+      final Course course =
+          await getCourseByCourseEnrollmentId(courseEnrollment.courseId);
+      coursesList.add(course);
+    });
+    return coursesList;
   }
 
   Future<List<Challenge>> getUserChallengesuserId(String userId) async {
@@ -139,7 +139,7 @@ class CourseEnrollmentRepository {
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"))
         .collection('challenges')
-        .where('course-enrollment-id', isEqualTo: courseEnrollmentId[0].id)
+        .where('course_enrollment_id', isEqualTo: courseEnrollmentId[0].id)
         .get();
 
     // List<Challenge> listOfChallenges = docRef.docs[0].data();

@@ -1,9 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/assessment.dart';
-import 'package:oluko_app/models/assessment_task.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/repositories/task_repository.dart';
-import 'package:oluko_app/utils/task_utils.dart';
 
 abstract class TaskState {}
 
@@ -23,28 +21,15 @@ class TaskFailure extends TaskState {
 class TaskBloc extends Cubit<TaskState> {
   TaskBloc() : super(TaskLoading());
 
-  void get() async {
+  void get(Assessment assessment) async {
     if (!(state is TaskSuccess)) {
       emit(TaskLoading());
     }
     try {
-      List<Task> tasks = await TaskRepository().getAll();
+      List<Task> tasks = await TaskRepository.getAllByAssessment(assessment);
       emit(TaskSuccess(values: tasks));
     } catch (e) {
-      emit(TaskFailure(exception: e));
-    }
-  }
-
-  void getForAssessment(Assessment assessment) async {
-    if (!(state is TaskSuccess)) {
-      emit(TaskLoading());
-    }
-    try {
-      List<Task> tasks = await TaskRepository().getAll();
-      List<Task> tasksToShow = TaskUtils.filterByAssessment(tasks, assessment);
-      //tasksToShow = TaskUtils.sortByAssessmentIndex(tasksToShow, assessment);
-      emit(TaskSuccess(values: tasksToShow));
-    } catch (e) {
+      print(e.toString());
       emit(TaskFailure(exception: e));
     }
   }

@@ -121,8 +121,15 @@ class _MyAppState extends State<MyApp> {
 
         '/profile-challenges': (context) => BlocProvider.value(
             value: _authBloc, child: ProfileChallengesPage()),
-        '/profile-transformation-journey': (context) => BlocProvider.value(
-            value: _authBloc, child: ProfileTransformationJourneyPage()),
+        '/profile-transformation-journey': (context) =>
+            MultiBlocProvider(providers: [
+              BlocProvider.value(value: _authBloc),
+              BlocProvider(create: (context) => CourseBloc()),
+              BlocProvider(create: (context) => AssessmentBloc()),
+              BlocProvider(create: (context) => TaskSubmissionBloc()),
+              BlocProvider(create: (context) => CourseEnrollmentBloc()),
+              BlocProvider(create: (context) => TransformationJourneyBloc())
+            ], child: ProfileTransformationJourneyPage()),
         '/transformation-journey-post': (context) => BlocProvider.value(
             value: _authBloc, child: TransformationJourneyPostPage()),
         '/transformation-journey-post-view': (context) => BlocProvider.value(
@@ -140,12 +147,8 @@ class _MyAppState extends State<MyApp> {
             BlocProvider.value(value: _authBloc, child: SegmentRecording()),
         '/classes': (context) =>
             BlocProvider.value(value: _authBloc, child: Classes()),
-        '/assessment-videos': (context) => MultiBlocProvider(providers: [
-              BlocProvider.value(value: _authBloc),
-              BlocProvider(create: (context) => AssessmentAssignmentBloc()),
-              //TODO Change this when using more than 1 assessment.
-              BlocProvider(create: (context) => AssessmentBloc())
-            ], child: AsessmentVideos()),
+        '/assessment-videos': (context) =>
+            BlocProvider.value(value: _authBloc, child: AssessmentVideos()),
         '/task-details': (context) => BlocProvider.value(
             value: _authBloc,
             child: TaskDetails(

@@ -21,9 +21,9 @@ class TransformationJourneyBloc extends Cubit<TransformationJourneyState> {
   TransformationJourneyBloc() : super(TransformationJourneyLoading());
 
   void getContentByUserName(String userName) async {
-    if (!(state is TransformationJourneySuccess)) {
-      emit(TransformationJourneyLoading());
-    }
+    // if (!(state is TransformationJourneySuccess)) {
+    //   emit(TransformationJourneyLoading());
+    // }
     try {
       List<TransformationJourneyUpload> contentUploaded =
           await TransformationJourneyRepository()

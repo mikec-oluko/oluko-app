@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:oluko_app/models/enums/file_type_enum.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
 
 class TransformationJourneyRepository {
@@ -27,6 +28,7 @@ class TransformationJourneyRepository {
 
       // var first = docRef.docs[0].data();
       // final content = TransformationJourneyUpload.fromJson(first);
+      // return [content];
       List<TransformationJourneyUpload> contentUploaded = [];
       docRef.docs.forEach((doc) {
         final Map<String, dynamic> content = doc.data();
@@ -35,7 +37,9 @@ class TransformationJourneyRepository {
 
       return contentUploaded;
     } catch (e) {
-      print("ESTO:" + e);
+      throw e;
     }
   }
+
+  //TODO: UPDATE PHOTO FOR TRANSFORMATION JOURNEY GALLERY
 }
