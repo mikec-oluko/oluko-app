@@ -49,7 +49,7 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
                         .toList()
                           //Prevent the last item to be overlayed by the carousel gradient
                           ..add(SizedBox(
-                            width: 100,
+                            width: 180,
                           )))),
           ],
         ),
