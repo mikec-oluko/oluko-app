@@ -44,26 +44,6 @@ class SegmentRecording extends StatefulWidget {
 }
 
 class _SegmentRecordingState extends State<SegmentRecording> {
-  //TODO --- Make Dynamic ---
-  /*Segment segment =
-      Segment(duration: 60, rounds: 2, initialTimer: 5, movements: [
-    MovementSubmodel(
-        name: 'Air Squats',
-        timerType: TaskType.DEFAULT.toString(),
-        timerTotalTime: 90,
-        timerRestTime: 3,
-        timerWorkTime: null,
-        timerReps: 5,
-        timerSets: 3),
-    MovementSubmodel(
-        name: 'Crunches',
-        timerType: TaskType.DEFAULT.toString(),
-        timerTotalTime: 75,
-        timerRestTime: 10,
-        timerWorkTime: 15,
-        timerSets: 3)
-  ]);*/
-
   //Dynamic images
   String backgroundImage =
       'https://c0.wallpaperflare.com/preview/26/779/700/fitness-men-sports-gym.jpg';
@@ -120,8 +100,8 @@ class _SegmentRecordingState extends State<SegmentRecording> {
 
   @override
   void initState() {
-    _startMovement(currentMovementIndex);
     _setupCameras();
+    _startMovement(currentMovementIndex);
     this.workoutType = widget.workoutType;
     _segmentSubmissionBloc = SegmentSubmissionBloc();
     _movementSubmissionBloc = MovementSubmissionBloc();
@@ -354,16 +334,8 @@ class _SegmentRecordingState extends State<SegmentRecording> {
                         child: Padding(
                             padding: const EdgeInsets.all(20.0),
                             child: _feedbackButton(Icons.stop,
-                                onPressed: () async {
-                              XFile videopath =
-                                  await cameraController.stopVideoRecording();
-                              print("el path es: " + videopath.path);
-                              File file = File(videopath.path);
-                              print(file.toString());
-                              _videoBloc
-                                ..createVideo(context, file, 3.0 / 4.0,
-                                    movementSubmission.id);
-                            } /*=> this.setState(() {
+                                onPressed:
+                                    () async {} /*=> this.setState(() {
                                   this.workoutType = WorkoutType.segment;
                                 })*/
                                 )))),
@@ -695,9 +667,21 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   }
 
   //Timer Functions
-
-  _saveLastStep(TimerEntry timerEntry) {
-    //TODO implement saving of excercise.
+  _saveLastStep(TimerEntry timerEntry) async {
+    if (timerEntry.workState == WorkState.exercising) {
+      XFile videopath = await cameraController.stopVideoRecording();
+      File file = File(videopath.path);
+      print(file.toString());
+      BlocListener<MovementSubmissionBloc, MovementSubmissionState>(
+          listener: (context, state) {
+        if (state is CreateMovementSubmissionSuccess) {
+          movementSubmission = state.movementSubmission;
+          _videoBloc
+            ..createVideo(
+                context, file, 3.0 / 4.0, state.movementSubmission.id);
+        }
+      });
+    }
   }
 
   void _goToNextStep() {
@@ -712,9 +696,15 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     });
   }
 
-  _playTask(num timerTaskIndex) {
+  _playTask(num timerTaskIndex) async {
     workState = timerEntries[timerTaskIndex].workState;
     if (timerEntries[timerTaskIndex].time != null) {
+      if (timerEntries[timerTaskIndex].workState == WorkState.exercising) {
+        if (timerTaskIndex > 0) {
+          _movementSubmissionBloc.create(segmentSubmission);
+          await cameraController.startVideoRecording();
+        }
+      }
       _playCountdown();
       timeLeft = Duration(seconds: timerEntries[timerTaskIndex].time);
     }
@@ -781,7 +771,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
               roundNumber: roundIndex,
               label:
                   '${isLastMovement ? widget.segment.roundBreakDuration : widget.segment.movements[movementIndex].timerRestTime} Sec rest',
-              workState: WorkState.exercising));
+              workState: WorkState.repResting));
         }
       }
     }
