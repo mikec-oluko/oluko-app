@@ -71,17 +71,17 @@ final basicTiles = <BasicTile>[
     BasicTile(title: "What is included in the memebership?", tiles: [
       BasicTile(
           title:
-              " is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley"),
+              " No information to display, information will be added as soon as possible, check back later."),
     ]),
     BasicTile(title: "How many courses do i get?", tiles: [
       BasicTile(
           title:
-              " is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley"),
+              " No information to display, information will be added as soon as possible, check back later. "),
     ]),
     BasicTile(title: "Which classes are right for me?", tiles: [
       BasicTile(
           title:
-              " is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley"),
+              " No information to display, information will be added as soon as possible, check back later. "),
     ]),
   ]),
   BasicTile(title: "Plans, Pricing and Payments", tiles: [
@@ -89,12 +89,12 @@ final basicTiles = <BasicTile>[
       BasicTile(title: "Plan 1", tiles: [
         BasicTile(
             title:
-                " is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley"),
+                " No information to display, information will be added as soon as possible, check back later. "),
       ]),
       BasicTile(title: "Plan 2", tiles: [
         BasicTile(
             title:
-                " is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley"),
+                " No information to display, information will be added as soon as possible, check back later. "),
       ]),
     ]),
   ])
