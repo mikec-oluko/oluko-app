@@ -89,22 +89,33 @@ class _TaskDetailsState extends State<TaskDetails> {
                     padding: EdgeInsets.symmetric(horizontal: 15),
                     child: Container(
                       width: MediaQuery.of(context).size.width,
-                      child: ListView(
+                      height:
+                          MediaQuery.of(context).size.height - kToolbarHeight,
+                      child: Stack(
                         children: [
-                          ConstrainedBox(
-                              constraints: BoxConstraints(
-                                  maxHeight:
-                                      MediaQuery.of(context).orientation ==
+                          ListView(
+                            children: [
+                              ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                      maxHeight: MediaQuery.of(context)
+                                                  .orientation ==
                                               Orientation.portrait
                                           ? ScreenUtils.height(context) / 4
                                           : ScreenUtils.height(context) / 1.5,
-                                  minHeight:
-                                      MediaQuery.of(context).orientation ==
+                                      minHeight: MediaQuery.of(context)
+                                                  .orientation ==
                                               Orientation.portrait
                                           ? ScreenUtils.height(context) / 4
                                           : ScreenUtils.height(context) / 1.5),
-                              child: Stack(children: showVideoPlayer())),
-                          formSection(),
+                                  child: Stack(children: showVideoPlayer())),
+                              formSection(),
+                            ],
+                          ),
+                          Positioned(
+                              bottom: 25,
+                              left: 0,
+                              right: 0,
+                              child: _actionButtons()),
                         ],
                       ),
                     )))));
@@ -133,67 +144,71 @@ class _TaskDetailsState extends State<TaskDetails> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
           formFields(),
-          BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
-              builder: (context, state) {
-            if (state is GetSuccess && state.taskSubmission != null) {
-              return Padding(
-                  padding: const EdgeInsets.only(top: 20.0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      OlukoOutlinedButton(
-                        thinPadding: true,
-                        title:
-                            OlukoLocalizations.of(context).find('recordAgain'),
-                        onPressed: () {
-                          MovementUtils.movementDialog(context,
-                              _confirmDialogContent(state.taskSubmission),
-                              showExitButton: false);
-                        },
-                      ),
-                      SizedBox(width: 20),
-                      OlukoPrimaryButton(
-                        title: OlukoLocalizations.of(context).find('next'),
-                        onPressed: () {
-                          if (widget.index < widget.tasks.length - 1) {
-                            return Navigator.push(context,
-                                MaterialPageRoute(builder: (context) {
-                              return TaskDetails(
-                                  tasks: widget.tasks,
-                                  index: widget.index + 1,
-                                  user: widget.user,
-                                  task: widget.tasks[widget.index + 1]);
-                            }));
-                          }
-                        },
-                      ),
-                    ],
-                  ));
-            } else {
-              return Row(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  OlukoPrimaryButton(
-                    title:
-                        OlukoLocalizations.of(context).find('startRecording'),
-                    onPressed: () {
+        ]));
+  }
+
+  _actionButtons() {
+    return BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
+        builder: (context, state) {
+      if (state is GetSuccess && state.taskSubmission != null) {
+        return Padding(
+            padding: const EdgeInsets.only(top: 20.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                OlukoOutlinedButton(
+                  thinPadding: true,
+                  title: OlukoLocalizations.of(context).find('recordAgain'),
+                  onPressed: () {
+                    MovementUtils.movementDialog(
+                        context, _confirmDialogContent(state.taskSubmission),
+                        showExitButton: false);
+                  },
+                ),
+                SizedBox(width: 20),
+                OlukoPrimaryButton(
+                  title: OlukoLocalizations.of(context).find('next'),
+                  onPressed: () {
+                    if (widget.index < widget.tasks.length - 1) {
                       if (_controller != null) {
                         _controller.pause();
                       }
-                      return Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SelfRecording(
-                                  task: widget.task,
-                                  assessmentAssignment: assessmentAssignment,
-                                  user: widget.user)));
-                    },
-                  ),
-                ],
-              );
-            }
-          }),
-        ]));
+                      return Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return TaskDetails(
+                            tasks: widget.tasks,
+                            index: widget.index + 1,
+                            user: widget.user,
+                            task: widget.tasks[widget.index + 1]);
+                      }));
+                    }
+                  },
+                ),
+              ],
+            ));
+      } else {
+        return Row(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            OlukoPrimaryButton(
+              title: OlukoLocalizations.of(context).find('startRecording'),
+              onPressed: () {
+                if (_controller != null) {
+                  _controller.pause();
+                }
+                return Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SelfRecording(
+                            task: widget.task,
+                            assessmentAssignment: assessmentAssignment,
+                            user: widget.user)));
+              },
+            ),
+          ],
+        );
+      }
+    });
   }
 
   List<Widget> _confirmDialogContent(TaskSubmission taskSubmission) {
@@ -223,6 +238,9 @@ class _TaskDetailsState extends State<TaskDetails> {
                     OlukoOutlinedButton(
                       title: OlukoLocalizations.of(context).find('yes'),
                       onPressed: () {
+                        if (_controller != null) {
+                          _controller.pause();
+                        }
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -301,8 +319,8 @@ class _TaskDetailsState extends State<TaskDetails> {
             height: 150,
             child: ListView(scrollDirection: Axis.horizontal, children: [
               taskResponse(
-                  TimeConverter.fromMillisecondsToSecondsStringFormat(
-                      taskSubmission.video.duration),
+                  TimeConverter.durationToString(
+                      Duration(milliseconds: taskSubmission.video.duration)),
                   taskSubmission.video.thumbUrl),
             ]),
           ),
