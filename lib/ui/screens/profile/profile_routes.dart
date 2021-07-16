@@ -4,7 +4,8 @@ import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 class ProfileRoutes {
   static const String userInformationRoute = '/profile-view-own-profile';
   static const String profileSettingsRoute = '/profile-settings';
-  static const String profileSubscriptionRoute = '/profile-subscription';
+  static const String profileSubscriptionRoute = '/';
+  // static const String profileSubscriptionRoute = '/profile-subscription';
   static const String profileMyAccountRoute = '/profile-my-account';
   static const String profileChallengesRoute = '/profile-challenges';
   static const String profileAssessmentsVideosRoute = '/assessment-videos';

@@ -58,6 +58,8 @@ class AuthBloc extends Cubit<AuthState> {
     final firebaseUser = FirebaseAuth.instance.currentUser;
     if (!firebaseUser.emailVerified) {
       //TODO: trigger to send another email
+      await firebaseUser.updateEmail(user.email);
+      firebaseUser.sendEmailVerification();
       FirebaseAuth.instance.signOut();
       AppMessages.showSnackbar(
           context, 'Please check your Email for account confirmation.');

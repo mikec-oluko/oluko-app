@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 
 class CarouselSection extends StatefulWidget {
@@ -40,7 +41,8 @@ class _State extends State<CarouselSection> {
                 child: Padding(
                   padding: const EdgeInsets.only(top: 3.0),
                   child: Text(
-                    widget.optionLabel != null ? widget.optionLabel : '',
+                    '',
+                    // Removed for MVP --------  widget.optionLabel != null ? widget.optionLabel : '',
                     style: TextStyle(color: OlukoColors.primary, fontSize: 18),
                   ),
                 ),

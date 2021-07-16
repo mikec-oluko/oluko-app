@@ -24,6 +24,7 @@ import 'package:oluko_app/ui/components/user_profile_information.dart';
 import 'package:oluko_app/ui/components/user_profile_progress.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/ui/screens/profile/profile_routes.dart';
+import 'package:oluko_app/utils/image_utils.dart';
 
 class ProfileOwnProfilePage extends StatefulWidget {
   @override
@@ -231,11 +232,17 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
     return Padding(
       padding: const EdgeInsets.all(10.0).copyWith(bottom: 0),
       child: CarouselSection(
-        height: 250,
-        width: MediaQuery.of(context).size.width,
-        title: ProfileViewConstants.profileOwnProfileActiveCourses,
-        children: contentForCourse,
-      ),
+          height: 250,
+          width: MediaQuery.of(context).size.width,
+          title: ProfileViewConstants.profileOwnProfileActiveCourses,
+          children: contentForCourse.length != 0
+              ? contentForCourse
+              : [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 150),
+                    child: OlukoCircularProgressIndicator(),
+                  )
+                ]),
     );
   }
 
@@ -244,12 +251,18 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
       String titleForSection,
       List<Widget> contentForSection}) {
     return Padding(
-      padding: const EdgeInsets.only(top: 25),
-      child: CarouselSmallSection(
-          routeToGo: routeForSection,
-          title: titleForSection,
-          children: contentForSection),
-    );
+        padding: const EdgeInsets.only(top: 25),
+        child: CarouselSmallSection(
+            routeToGo: routeForSection,
+            title: titleForSection,
+            children: contentForSection.length != 0
+                ? contentForSection
+                : [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 150),
+                      child: OlukoCircularProgressIndicator(),
+                    )
+                  ]));
   }
 
   Widget _getCourseCard({CourseEnrollment courseForCard, Course staticCourse}) {
@@ -259,7 +272,14 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
         width: 120,
         height: 120,
         //TODO: Use CourseEnrollment -> Course
-        imageCover: Image.network((staticCourse.imageUrl)),
+        imageCover: Image.network(
+          staticCourse.imageUrl,
+          frameBuilder: (BuildContext context, Widget child, int frame,
+                  bool wasSynchronouslyLoaded) =>
+              ImageUtils.frameBuilder(
+                  context, child, frame, wasSynchronouslyLoaded,
+                  height: 120, width: 120),
+        ),
         progress: 0.4,
       ),
     );
