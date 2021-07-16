@@ -1,17 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mvt_fitness/models/base.dart';
+import 'package:mvt_fitness/models/submodels/object_submodel.dart';
 
 class Movement extends Base {
   String name;
   String description;
   String video;
-  List<String> tags;
+  List<ObjectSubmodel> tags;
+  String iconImage;
 
   Movement(
       {this.name,
       this.video,
       this.description,
       this.tags,
+      this.iconImage,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -33,7 +36,12 @@ class Movement extends Base {
         name: json['name'],
         video: json['video'],
         description: json['description'],
-        tags: json['tags'] == null ? null : List<String>.from(json['tags']));
+        iconImage: json['icon_image'],
+        tags: json['tags'] == null
+            ? null
+            : json['tags']
+                .map<ObjectSubmodel>((tag) => ObjectSubmodel.fromJson(tag))
+                .toList());
     movement.setBase(json);
     return movement;
   }
@@ -43,6 +51,7 @@ class Movement extends Base {
       'name': name,
       'video': video,
       'description': description,
+      'icon_image': iconImage,
       'tags': tags == null ? null : List<dynamic>.from(tags),
     };
     movementJson.addEntries(super.toJson().entries);

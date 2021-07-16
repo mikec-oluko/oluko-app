@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mvt_fitness/constants/theme.dart';
-import 'package:mvt_fitness/helpers/enum_helper.dart';
-import 'package:mvt_fitness/models/plan.dart';
 import 'package:mvt_fitness/models/task.dart';
 import 'package:mvt_fitness/ui/components/oluko_outlined_button.dart';
 
@@ -74,9 +72,13 @@ class _State extends State<TaskCard> {
                 padding: const EdgeInsets.only(top: 20),
                 child: Container(
                     width: double.infinity,
-                    child: OlukoOutlinedButton(
-                      title: 'Start',
-                      onPressed: () => widget.onPressed(),
+                    child: Row(
+                      children: [
+                        OlukoOutlinedButton(
+                          title: 'Start',
+                          onPressed: () => widget.onPressed(),
+                        ),
+                      ],
                     )),
               )
             ],

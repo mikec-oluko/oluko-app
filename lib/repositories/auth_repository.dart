@@ -14,8 +14,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthRepository {
   Client http;
   FirebaseAuth firebaseAuthInstance;
-  final String url =
-      'https://us-central1-oluko-2671e.cloudfunctions.net/api/auth';
+  final String url = 'https://us-central1-oluko-2671e.cloudfunctions.net/auth';
+
+  // final String url =
+  //     'https://us-central1-oluko-2671e.cloudfunctions.net/api/auth';
   AuthRepository.test({Client http, FirebaseAuth firebaseAuthInstance}) {
     this.http = http;
     this.firebaseAuthInstance = firebaseAuthInstance;
@@ -102,7 +104,7 @@ class AuthRepository {
   }
 
   Future<ApiResponse> signUp(SignUpRequest signUpRequest) async {
-    var body2 = signUpRequest.toJson();
+    var body2 = signUpRequest.toDTOJson();
     Response response = await http.post(Uri.parse("$url/signup"), body: body2);
     var signUpResponseBody = jsonDecode(response.body);
     if (signUpResponseBody['message'] != null &&
@@ -137,6 +139,7 @@ class AuthRepository {
   Future<bool> removeLoginData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     Future<bool> removed = prefs.remove('login-data');
+    FirebaseAuth.instance.signOut();
     print('Removed login info.');
     return removed;
   }

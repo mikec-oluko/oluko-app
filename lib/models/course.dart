@@ -5,7 +5,7 @@ import 'base.dart';
 class Course extends Base {
   String name;
   String video;
-  Timestamp duration;
+  String duration;
   String description;
   List<String> equipment;
   List<String> intensity;
@@ -62,10 +62,10 @@ class Course extends Base {
         video: json['video'],
         duration: json['duration'],
         description: json['description'],
-        equipment: json['equipment'],
-        intensity: json['intensity'],
-        categories: json['categories'],
-        workoutDuration: json['workout_duration'],
+        equipment: json['equipment'] == null ? null : json['equipment'],
+        intensity: json['intensity'] == null ? null : json['intensity'],
+        categories: json['categories'] == null ? null : json['categories'],
+        workoutDuration: json['workout_duration'] == null ? null : json['workout_duration'],
         recommendedEngagement: json['recommended_engagement'],
         recommendedEngagementGap: json['recommended_engagementGap'],
         engagementGapTime: json['engagement_gap_time'],
@@ -91,15 +91,16 @@ class Course extends Base {
       'video': video,
       'duration': duration,
       'description': description,
-      'equipment': equipment,
-      'intensity': intensity,
-      'categories': categories,
-      'workout_duration': workoutDuration,
+      'equipment': equipment == null ? null : equipment,
+      'intensity': intensity == null ? null : intensity,
+      'categories': categories == null ? null : categories,
+      'workout_duration': workoutDuration == null ? null : workoutDuration,
       'recommended_engagement': recommendedEngagement,
       'recommended_engagementGap': recommendedEngagementGap,
       'engagement_gap_time': engagementGapTime,
       'engagement_time': engagementTime,
       'mandatory_gap_time': mandatoryGapTime,
+      'tags': tags == null ? null : tags,
       'classes': classes == null
           ? null
           : List<dynamic>.from(classes.map((c) => c.toJson())),

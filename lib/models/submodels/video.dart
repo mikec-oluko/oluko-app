@@ -1,6 +1,4 @@
-import '../base.dart';
-
-class Video extends Base {
+class Video{
   String url;
   String thumbUrl;
   double aspectRatio;

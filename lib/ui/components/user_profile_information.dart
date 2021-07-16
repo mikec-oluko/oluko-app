@@ -19,13 +19,17 @@ class UserProfileInformation extends StatelessWidget {
         child: Row(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(5, 5, 10, 5),
-              child: CircleAvatar(
-                backgroundColor: OlukoColors.white,
-                // backgroundImage: ,
-                radius: 30.0,
-              ),
-            ),
+                padding: const EdgeInsets.fromLTRB(5, 5, 10, 5),
+                child: userInformation.avatar != null
+                    ? CircleAvatar(
+                        backgroundColor: OlukoColors.white,
+                        backgroundImage: NetworkImage(userInformation.avatar),
+                        radius: 30.0,
+                      )
+                    : CircleAvatar(
+                        backgroundColor: OlukoColors.white,
+                        radius: 30.0,
+                      )),
             Padding(
               padding: const EdgeInsets.only(left: 5.0),
               child: Column(
@@ -50,7 +54,10 @@ class UserProfileInformation extends StatelessWidget {
                     ],
                   ),
                   //TODO: Use username instead profilLevel
-                  Text(ProfileViewConstants.profileUserNameContent,
+                  Text(
+                      this.userInformation.username != null
+                          ? this.userInformation.username
+                          : '-',
                       style: OlukoFonts.olukoMediumFont(
                           customColor: OlukoColors.grayColor))
                 ],

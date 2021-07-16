@@ -1,11 +1,8 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:mvt_fitness/ui/screens/videos/draw.dart';
 
-import '../base.dart';
-
-class DrawPoint extends Base {
+class DrawPoint{
   DrawingPoints point;
   num timeStamp;
 

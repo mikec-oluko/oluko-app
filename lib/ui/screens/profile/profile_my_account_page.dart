@@ -1,27 +1,68 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mvt_fitness/blocs/auth_bloc.dart';
 import 'package:mvt_fitness/blocs/plan_bloc.dart';
 import 'package:mvt_fitness/constants/theme.dart';
 import 'package:mvt_fitness/helpers/enum_helper.dart';
+import 'package:mvt_fitness/helpers/s3_provider.dart';
 import 'package:mvt_fitness/models/plan.dart';
-// import 'package:mvt_fitness/models/sign_up_request.dart';
-import 'package:mvt_fitness/models/sign_up_response.dart';
 import 'package:mvt_fitness/models/user_response.dart';
+import 'package:mvt_fitness/repositories/user_repository.dart';
 import 'package:mvt_fitness/ui/components/black_app_bar.dart';
 import 'package:mvt_fitness/ui/components/oluko_user_info.dart';
 import 'package:mvt_fitness/ui/components/subscription_card.dart';
+import 'package:mvt_fitness/ui/components/transformation_journey_modal_options.dart';
 import 'package:mvt_fitness/ui/screens/profile/profile_constants.dart';
 import 'package:mvt_fitness/utils/app_messages.dart';
+import 'package:mvt_fitness/utils/app_modal.dart';
 import 'package:mvt_fitness/utils/oluko_localizations.dart';
+import 'package:path/path.dart' as p;
 
 class ProfileMyAccountPage extends StatefulWidget {
+  final File image;
+  ProfileMyAccountPage({this.image});
   @override
   _ProfileMyAccountPageState createState() => _ProfileMyAccountPageState();
 }
 
 class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
   UserResponse profileInfo;
+
+  File _image;
+  File _imageFromGallery;
+  final imagePicker = ImagePicker();
+
+  static Future<String> _uploadFile(filePath, folderName) async {
+    final file = new File(filePath);
+    final basename = p.basename(filePath);
+
+    final S3Provider s3Provider = S3Provider();
+    String downloadUrl =
+        await s3Provider.putFile(file.readAsBytesSync(), folderName, basename);
+
+    return downloadUrl;
+  }
+
+  Future getImage() async {
+    final image = await imagePicker.getImage(source: ImageSource.camera);
+    if (image == null) return;
+
+    UserRepository().updateUserAvatar(profileInfo, image);
+
+    setState(() {
+      _image = File(image.path);
+    });
+  }
+
+  Future getImageFromGallery() async {
+    final image = await imagePicker.getImage(source: ImageSource.gallery);
+    setState(() {
+      _imageFromGallery = File(image.path);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,17 +113,30 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Center(
-              child: CircleAvatar(
-                // backgroundImage: //TODO: Get image,
-                backgroundColor: OlukoColors.primary,
-                radius: 50.0,
-                child: IconButton(
-                    icon: Icon(Icons.linked_camera_outlined,
-                        color: OlukoColors.white),
-                    onPressed: () {
-                      //TODO: Change profile picture
-                    }),
-              ),
+              child: profileInfo.avatar != null
+                  ? CircleAvatar(
+                      backgroundImage: NetworkImage(profileInfo.avatar),
+                      backgroundColor: OlukoColors.primary,
+                      radius: 50.0,
+                      child: IconButton(
+                          icon: Icon(Icons.linked_camera_outlined,
+                              color: OlukoColors.white),
+                          onPressed: () {
+                            getImage();
+                            //TODO: Change profile picture
+                          }),
+                    )
+                  : CircleAvatar(
+                      backgroundColor: OlukoColors.primary,
+                      radius: 50.0,
+                      child: IconButton(
+                          icon: Icon(Icons.linked_camera_outlined,
+                              color: OlukoColors.white),
+                          onPressed: () {
+                            getImage();
+                            //TODO: Change profile picture
+                          }),
+                    ),
             )
           ],
         ));
@@ -91,8 +145,11 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
   Column buildUserInformationFields() {
     return Column(
       children: [
-        userInformationFields(OlukoLocalizations.of(context).find('userName'),
-            ProfileViewConstants.profileUserNameContent),
+        userInformationFields(
+            OlukoLocalizations.of(context).find('userName'),
+            profileInfo.username != null
+                ? profileInfo.username
+                : ProfileViewConstants.profileUserNameContent),
         userInformationFields(OlukoLocalizations.of(context).find('firstName'),
             profileInfo.firstName),
         userInformationFields(OlukoLocalizations.of(context).find('lastName'),
@@ -165,6 +222,8 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
           onPressed: () {
             BlocProvider.of<AuthBloc>(context).logout(context);
             AppMessages.showSnackbar(context, 'Logged out.');
+            Navigator.pushNamed(context, '/');
+
             setState(() {});
           },
         ),
@@ -173,8 +232,11 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
   }
 
   Future<void> getProfileInfo() async {
-    profileInfo =
-        UserResponse.fromJson((await AuthBloc().retrieveLoginData()).toJson());
-    return profileInfo;
+    UserResponse loginData = (await AuthBloc().retrieveLoginData());
+    if (loginData != null) {
+      profileInfo = UserResponse.fromJson(loginData.toJson());
+      return profileInfo;
+    }
+    return null;
   }
 }

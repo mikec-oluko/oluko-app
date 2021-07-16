@@ -29,7 +29,7 @@ class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
     );
   }
 
-  List<Widget> buildListOfChallenges(List<Challenge> challenges) => challenges
+  List<Widget> buildListOfChallenges(List<ChallengeStatic> challenges) => challenges
       .map((challenge) => ChallengesCard(
             challenge: challenge,
             needHeader: false,

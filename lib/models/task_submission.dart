@@ -31,7 +31,7 @@ class TaskSubmission extends Base {
 
   factory TaskSubmission.fromJson(Map<String, dynamic> json) {
     TaskSubmission taskSubmission = TaskSubmission(
-        video: Video.fromJson(json['video']),
+        video: json['video'] == null ? null : Video.fromJson(json['video']),
         reviewReference: json['review_reference'],
         taskReference: json['task_reference'],
         taskId: json['task_id']);
@@ -41,7 +41,7 @@ class TaskSubmission extends Base {
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> taskSubmissionJson = {
-      'video': video.toJson(),
+      'video': video == null ? null : video.toJson(),
       'review_reference': reviewReference,
       'task_reference': taskReference,
       'task_id': taskId

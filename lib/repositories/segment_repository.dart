@@ -2,8 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:mvt_fitness/models/class.dart';
 import 'package:mvt_fitness/models/segment.dart';
+import 'package:mvt_fitness/models/submodels/movement_submodel.dart';
 import 'package:mvt_fitness/models/submodels/object_submodel.dart';
-import 'package:mvt_fitness/repositories/class_reopoistory.dart';
+import 'package:mvt_fitness/repositories/class_reopository.dart';
 
 class SegmentRepository {
   FirebaseFirestore firestoreInstance;
@@ -17,17 +18,13 @@ class SegmentRepository {
   }
 
   static Future<List<Segment>> getAll(Class classObj) async {
-    List<String> classSegmentsIds = [];
-    classObj.segments.forEach((ObjectSubmodel segment) {
-      classSegmentsIds.add(segment.objectId);
-    });
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
-        .collection('segments')
-        .where("id", whereIn: classSegmentsIds)
-        .get();
-    return mapQueryToSegment(querySnapshot);
+    List<Segment> segments = [];
+    for (ObjectSubmodel segment in classObj.segments) {
+      DocumentSnapshot ds = await segment.reference.get();
+      Segment retrievedSegment = Segment.fromJson(ds.data());
+      segments.add(retrievedSegment);
+    }
+    return segments;
   }
 
   static Future<Segment> create(
@@ -40,9 +37,9 @@ class SegmentRepository {
     segment.id = docRef.id;
     docRef.set(segment.toJson());
     ObjectSubmodel segmentObj = ObjectSubmodel(
-        objectId: segment.id,
-        objectReference: reference.doc(segment.id),
-        objectName: segment.name);
+        id: segment.id,
+        reference: reference.doc(segment.id),
+        name: segment.name);
     await ClassRepository.updateSegments(segmentObj, classReference);
     return segment;
   }
@@ -54,10 +51,10 @@ class SegmentRepository {
   }
 
   static Future<void> updateMovements(
-      ObjectSubmodel movement, DocumentReference reference) async {
+      MovementSubmodel movement, DocumentReference reference) async {
     DocumentSnapshot ds = await reference.get();
     Segment segment = Segment.fromJson(ds.data());
-    List<ObjectSubmodel> movements;
+    List<MovementSubmodel> movements;
     if (segment.movements == null) {
       movements = [];
     } else {

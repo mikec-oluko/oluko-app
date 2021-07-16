@@ -9,6 +9,7 @@ import 'package:mvt_fitness/ui/components/subscription_card.dart';
 import 'package:mvt_fitness/ui/components/subscription_modal_options.dart';
 import 'package:mvt_fitness/ui/components/title_body.dart';
 import 'package:mvt_fitness/ui/screens/profile/profile_constants.dart';
+import 'package:mvt_fitness/utils/app_modal.dart';
 import 'package:mvt_fitness/utils/oluko_localizations.dart';
 
 class ProfileSubscriptionPage extends StatefulWidget {
@@ -89,7 +90,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
                               bottomRight: Radius.circular(10.0))),
                       primary: OlukoColors.primary,
                       side: BorderSide(color: OlukoColors.primary)),
-                  onPressed: () => ProfileViewConstants.dialogContent(
+                  onPressed: () => AppModal.dialogContent(
                       context: context,
                       content: [SubscriptionModalOption()],
                       closeButton: true),

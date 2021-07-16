@@ -1,10 +1,8 @@
 import 'package:enum_to_string/enum_to_string.dart';
 
-import '../base.dart';
-
 enum EventType { play, pause }
 
-class Event extends Base {
+class Event{
   int recordingPosition;
   int videoPosition;
   EventType eventType;

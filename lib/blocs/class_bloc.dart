@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvt_fitness/models/class.dart';
 import 'package:mvt_fitness/models/course.dart';
-import 'package:mvt_fitness/repositories/class_reopoistory.dart';
+import 'package:mvt_fitness/repositories/class_reopository.dart';
 
 abstract class ClassState {}
 

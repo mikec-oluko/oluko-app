@@ -1,29 +1,38 @@
 import 'package:chewie/chewie.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:global_configuration/global_configuration.dart';
 import 'package:mvt_fitness/blocs/auth_bloc.dart';
 import 'package:mvt_fitness/blocs/class_bloc.dart';
+import 'package:mvt_fitness/blocs/course_enrollment_bloc.dart';
 import 'package:mvt_fitness/blocs/statistics_bloc.dart';
 import 'package:mvt_fitness/blocs/course_bloc.dart';
 import 'package:mvt_fitness/constants/theme.dart';
 import 'package:mvt_fitness/models/class.dart';
 import 'package:mvt_fitness/models/course.dart';
+import 'package:mvt_fitness/models/course_enrollment.dart';
+import 'package:mvt_fitness/services/course_enrollment_service.dart';
 import 'package:mvt_fitness/ui/components/black_app_bar.dart';
 import 'package:mvt_fitness/ui/components/class_section.dart';
+import 'package:mvt_fitness/ui/components/course_progress_bar.dart';
 import 'package:mvt_fitness/ui/components/oluko_primary_button.dart';
 import 'package:mvt_fitness/ui/components/statistics_chart.dart';
 import 'package:mvt_fitness/ui/components/title_body.dart';
 import 'package:mvt_fitness/ui/components/video_player.dart';
+import 'package:mvt_fitness/ui/screens/inside_classes.dart';
+import 'package:mvt_fitness/utils/movement_utils.dart';
 import 'package:mvt_fitness/utils/oluko_localizations.dart';
 import 'package:mvt_fitness/utils/screen_utils.dart';
 import 'package:mvt_fitness/utils/time_converter.dart';
 
 class Classes extends StatefulWidget {
-  Classes({Key key}) : super(key: key);
+  final String courseId;
+
+  Classes({Key key, this.courseId}) : super(key: key);
+
+  get progress => null;
 
   @override
   _ClassesState createState() => _ClassesState();
@@ -35,6 +44,7 @@ class _ClassesState extends State<Classes> {
   CourseBloc _courseBloc;
   ClassBloc _classBloc;
   StatisticsBloc _statisticsBloc;
+  CourseEnrollmentBloc _courseEnrollmentBloc;
 
   @override
   void initState() {
@@ -42,18 +52,17 @@ class _ClassesState extends State<Classes> {
     _courseBloc = CourseBloc();
     _classBloc = ClassBloc();
     _statisticsBloc = StatisticsBloc();
+    _courseEnrollmentBloc = CourseEnrollmentBloc();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
-      if (state is AuthSuccess) {
+    return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
+      if (authState is AuthSuccess) {
         return MultiBlocProvider(
             providers: [
               BlocProvider<CourseBloc>(
-                //TODO: change this when the view is in the correct place
-                create: (context) =>
-                    _courseBloc..getById("CC5HBkSV8DthLQNKyBlc"),
+                create: (context) => _courseBloc..getById(widget.courseId),
               ),
               BlocProvider<ClassBloc>(
                 create: (context) => _classBloc,
@@ -61,13 +70,18 @@ class _ClassesState extends State<Classes> {
               BlocProvider<StatisticsBloc>(
                 create: (context) => _statisticsBloc,
               ),
+              BlocProvider<CourseEnrollmentBloc>(
+                create: (context) => _courseEnrollmentBloc,
+              ),
             ],
             child:
                 BlocBuilder<CourseBloc, CourseState>(builder: (context, state) {
               if (state is GetCourseSuccess) {
                 _classBloc..getAll(state.course);
                 _statisticsBloc..get(state.course.statisticsReference);
-                return form(state.course);
+                _courseEnrollmentBloc
+                  ..get(authState.firebaseUser, state.course);
+                return form(state.course, authState.firebaseUser);
               } else {
                 return SizedBox();
               }
@@ -78,149 +92,205 @@ class _ClassesState extends State<Classes> {
     });
   }
 
-  Widget form(Course course) {
-    return Form(
-        key: _formKey,
-        child: Scaffold(
-            appBar: OlukoAppBar(
-                title: OlukoLocalizations.of(context).find('course')),
-            body: Container(
-                color: Colors.black,
-                child: ListView(children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 25),
-                    child: OrientationBuilder(
-                      builder: (context, orientation) {
-                        return showVideoPlayer(course.video);
-                      },
-                    ),
-                  ),
-                  Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 15),
-                      child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  course.name,
-                                  style: OlukoFonts.olukoTitleFont(
-                                      custoFontWeight: FontWeight.bold),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 10.0, right: 10),
-                                  child: Text(
-                                    //TODO: change weeks number
-                                    TimeConverter.toCourseDuration(
-                                        6, course.classes.length, context),
-                                    style: OlukoFonts.olukoBigFont(
-                                        custoFontWeight: FontWeight.normal,
-                                        customColor: OlukoColors.grayColor),
-                                  ),
-                                ),
-                                BlocBuilder<StatisticsBloc, StatisticsState>(
-                                    builder: (context, state) {
-                                  if (state is StatisticsSuccess) {
-                                    return Padding(
-                                        padding:
-                                            EdgeInsets.symmetric(vertical: 15),
-                                        child: StatisticChart(
-                                            courseStatistics:
-                                                state.courseStatistics));
-                                  } else {
-                                    return Padding(
-                                      padding: const EdgeInsets.all(50.0),
-                                      child: Center(
-                                        child: Text(
-                                            OlukoLocalizations.of(context)
-                                                .find('loadingWhithDots'),
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                            )),
+  Widget form(Course course, User user) {
+    return BlocBuilder<CourseEnrollmentBloc, CourseEnrollmentState>(
+        builder: (context, enrollmentState) {
+      return BlocBuilder<ClassBloc, ClassState>(builder: (context, classState) {
+        if ((enrollmentState is GetEnrollmentSuccess) &&
+            classState is GetSuccess) {
+          bool existsEnrollment = enrollmentState.courseEnrollment != null;
+          return Form(
+              key: _formKey,
+              child: Scaffold(
+                  appBar: OlukoAppBar(
+                      title: OlukoLocalizations.of(context).find('course')),
+                  body: Container(
+                      color: Colors.black,
+                      child: ListView(children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 3),
+                          child: OrientationBuilder(
+                            builder: (context, orientation) {
+                              if (existsEnrollment) {
+                                return showVideoPlayer(
+                                    classState.classes[0].video);
+                              } else {
+                                return showVideoPlayer(course.video);
+                              }
+                            },
+                          ),
+                        ),
+                        existsEnrollment
+                            ? CourseProgressBar(
+                                value:
+                                    enrollmentState.courseEnrollment.completion)
+                            : SizedBox(),
+                        Padding(
+                            padding:
+                                EdgeInsets.only(right: 15, left: 15, top: 25),
+                            child: Container(
+                                width: MediaQuery.of(context).size.width,
+                                child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        course.name,
+                                        style: OlukoFonts.olukoTitleFont(
+                                            custoFontWeight: FontWeight.bold),
                                       ),
-                                    );
-                                  }
-                                }),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 10.0, right: 10),
-                                  child: Text(
-                                    course.description,
-                                    style: OlukoFonts.olukoBigFont(
-                                        custoFontWeight: FontWeight.normal,
-                                        customColor: OlukoColors.grayColor),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 25.0),
-                                  child: TitleBody('Classes'),
-                                ),
-                                Column(
-                                  children: [
-                                    BlocBuilder<ClassBloc, ClassState>(
-                                        builder: (context, state) {
-                                      if (state is GetSuccess) {
-                                        return ListView.builder(
-                                            physics:
-                                                const NeverScrollableScrollPhysics(),
-                                            itemCount: state.classes.length,
-                                            shrinkWrap: true,
-                                            itemBuilder: (context, num index) {
-                                              Class classObj =
-                                                  state.classes[index];
-                                              return Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(vertical: 5.0),
-                                                  child: ClassSection(
-                                                    classObj: classObj,
-                                                    onPressed: () {
-                                                      /*if (_controller != null) {
-                                                    _controller.pause();
-                                                  }
-                                                  return Navigator.push(context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) {
-                                                    return TaskDetails(
-                                                        task: task);
-                                                  })).then((value) =>
-                                                      this.setState(() {
-                                                        _controller = null;
-                                                      }));*/
-                                                    },
-                                                  ));
-                                            });
-                                      } else {
-                                        return Padding(
-                                          padding: const EdgeInsets.all(50.0),
-                                          child: Center(
-                                            child: Text(
-                                                OlukoLocalizations.of(context)
-                                                    .find('loadingWhithDots'),
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                )),
-                                          ),
-                                        );
-                                      }
-                                    }),
-                                    Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      children: [
-                                        OlukoPrimaryButton(
-                                          title: OlukoLocalizations.of(context)
-                                              .find('enroll'),
-                                          onPressed: () {},
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 10.0, right: 10),
+                                        child: Text(
+                                          //TODO: change weeks number
+                                          TimeConverter.toCourseDuration(6,
+                                              course.classes.length, context),
+                                          style: OlukoFonts.olukoBigFont(
+                                              custoFontWeight:
+                                                  FontWeight.normal,
+                                              customColor:
+                                                  OlukoColors.grayColor),
                                         ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 100,
-                                )
-                              ])))
-                ]))));
+                                      ),
+                                      BlocBuilder<StatisticsBloc,
+                                              StatisticsState>(
+                                          builder: (context, state) {
+                                        if (state is StatisticsSuccess) {
+                                          return Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 15),
+                                              child: StatisticChart(
+                                                  courseStatistics:
+                                                      state.courseStatistics));
+                                        } else {
+                                          return Padding(
+                                            padding: const EdgeInsets.all(50.0),
+                                            child: Center(
+                                              child: Text(
+                                                  OlukoLocalizations.of(context)
+                                                      .find('loadingWhithDots'),
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                  )),
+                                            ),
+                                          );
+                                        }
+                                      }),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 10.0, right: 10),
+                                        child: Text(
+                                          course.description,
+                                          style: OlukoFonts.olukoBigFont(
+                                              custoFontWeight:
+                                                  FontWeight.normal,
+                                              customColor:
+                                                  OlukoColors.grayColor),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 25.0),
+                                        child: TitleBody(
+                                            OlukoLocalizations.of(context)
+                                                .find('classes'),
+                                            bold: true),
+                                      ),
+                                      Column(
+                                        children: [
+                                          ListView.builder(
+                                              physics:
+                                                  const NeverScrollableScrollPhysics(),
+                                              itemCount:
+                                                  classState.classes.length,
+                                              shrinkWrap: true,
+                                              itemBuilder:
+                                                  (context, num index) {
+                                                Class classObj =
+                                                    classState.classes[index];
+                                                double classProgress =
+                                                    CourseEnrollmentService
+                                                        .getClassProgress(
+                                                            enrollmentState
+                                                                .courseEnrollment,
+                                                            index);
+                                                return Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        vertical: 5.0),
+                                                    child: ClassSection(
+                                                      classProgresss:
+                                                          classProgress,
+                                                      classObj: classObj,
+                                                      onPressed: () {
+                                                        if (!existsEnrollment) {
+                                                          MovementUtils
+                                                              .movementDialog(
+                                                                  context,
+                                                                  _confirmDialogContent());
+                                                        }
+                                                      },
+                                                    ));
+                                              }),
+                                          showButton(
+                                              enrollmentState.courseEnrollment,
+                                              context,
+                                              user,
+                                              course,
+                                              classState.classes)
+                                        ],
+                                      )
+                                    ])))
+                      ]))));
+        } else {
+          return SizedBox();
+        }
+      });
+    });
+  }
+
+  Widget showButton(CourseEnrollment courseEnrollment, BuildContext context,
+      User user, Course course, List<Class> classes) {
+    String buttonText;
+    if (courseEnrollment != null) {
+      buttonText = OlukoLocalizations.of(context).find('start');
+    } else {
+      buttonText = OlukoLocalizations.of(context).find('enroll');
+    }
+    return Padding(
+        padding: EdgeInsets.symmetric(vertical: 20),
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            OlukoPrimaryButton(
+              title: buttonText,
+              onPressed: () {
+                if (courseEnrollment != null) {
+                  int index =
+                      CourseEnrollmentService.getFirstUncompletedClassIndex(
+                          courseEnrollment);
+                  double classProgress =
+                      CourseEnrollmentService.getClassProgress(
+                          courseEnrollment, index);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => InsideClasses(
+                                user: user,
+                                courseEnrollment: courseEnrollment,
+                                classIndex: index,
+                                classProgress: classProgress,
+                                actualClass: classes[index],
+                                courseName: course.name,
+                              )));
+                } else {
+                  _courseEnrollmentBloc..create(user, course);
+                }
+              },
+            ),
+          ],
+        ));
   }
 
   Widget showVideoPlayer(String videoUrl) {
@@ -247,5 +317,16 @@ class _ClassesState extends State<Classes> {
                     ? ScreenUtils.height(context) / 4
                     : ScreenUtils.height(context) / 1.5),
         child: Container(height: 400, child: Stack(children: widgets)));
+  }
+
+  List<Widget> _confirmDialogContent() {
+    return [
+      Icon(Icons.warning_amber_rounded, color: Colors.white, size: 100),
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(OlukoLocalizations.of(context).find('enrollWarning'),
+            textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont()),
+      )
+    ];
   }
 }

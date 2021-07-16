@@ -1,13 +1,12 @@
 import 'package:chewie/chewie.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvt_fitness/blocs/assessment_bloc.dart';
+import 'package:mvt_fitness/blocs/auth_bloc.dart';
 import 'package:mvt_fitness/blocs/task_bloc.dart';
 import 'package:mvt_fitness/models/assessment.dart';
-import 'package:mvt_fitness/utils/info_dialog.dart';
-import 'package:mvt_fitness/models/plan.dart';
-import 'package:mvt_fitness/models/sign_up_response.dart';
 import 'package:mvt_fitness/models/task.dart';
 import 'package:mvt_fitness/ui/components/task_card.dart';
 import 'package:mvt_fitness/ui/components/title_body.dart';
@@ -16,34 +15,56 @@ import 'package:mvt_fitness/ui/components/video_player.dart';
 import 'package:mvt_fitness/ui/screens/task_details.dart';
 import 'package:mvt_fitness/utils/screen_utils.dart';
 
-class AsessmentVideos extends StatefulWidget {
-  final Assessment assessment;
-
-  AsessmentVideos({Key key, this.assessment}) : super(key: key);
+class AssessmentVideos extends StatefulWidget {
+  AssessmentVideos({Key key}) : super(key: key);
 
   @override
-  _AsessmentVideosState createState() => _AsessmentVideosState();
+  _AssessmentVideosState createState() => _AssessmentVideosState();
 }
 
-class _AsessmentVideosState extends State<AsessmentVideos> {
+class _AssessmentVideosState extends State<AssessmentVideos> {
   final _formKey = GlobalKey<FormState>();
   ChewieController _controller;
-  Assessment _mainAssessment;
+  AssessmentBloc _assessmentBloc;
+  TaskBloc _taskBloc;
+  Assessment assessment;
+  User user;
+
+  @override
+  void initState() {
+    _assessmentBloc = AssessmentBloc();
+    _taskBloc = TaskBloc();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    //TODO Remove BlocBuilder & MainAssessment assignation when we got Assessment List view.
-    return BlocBuilder<AssessmentBloc, AssessmentState>(
-        builder: (context, state) {
-      if (state is AssessmentSuccess) {
-        _mainAssessment =
-            widget.assessment != null ? widget.assessment : state.values[0];
-        return BlocProvider(
-          create: (context) => TaskBloc()..getForAssessment(_mainAssessment),
-          child: form(),
-        );
+    return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
+      if (authState is AuthSuccess) {
+        user = authState.firebaseUser;
+        return MultiBlocProvider(
+            providers: [
+              BlocProvider<AssessmentBloc>(
+                //TODO: Change this when we have multiple assessments
+                create: (context) =>
+                    _assessmentBloc..getById('ndRa0ldHCwCUaDxEQm25'),
+              ),
+              BlocProvider<TaskBloc>(
+                create: (context) => _taskBloc,
+              ),
+            ],
+            child: BlocBuilder<AssessmentBloc, AssessmentState>(
+                builder: (context, state) {
+              if (state is AssessmentSuccess) {
+                assessment = state.assessment;
+                _taskBloc..get(assessment);
+                return form();
+              } else {
+                return SizedBox();
+              }
+            }));
       } else {
-        return SizedBox();
+        return Text("Not logged user");
       }
     });
   }
@@ -114,12 +135,13 @@ class _AsessmentVideosState extends State<AsessmentVideos> {
                                       child: Container(
                                           height: 400,
                                           child: Stack(
-                                              children: showVideoPlayer())));
+                                              children: showVideoPlayer(
+                                                  assessment.video))));
                                 },
                               ),
                             ),
                             TitleBody(
-                              'Complete the below tasks to get a coach assigned',
+                              assessment.description,
                               bold: true,
                             ),
                             Column(
@@ -148,6 +170,9 @@ class _AsessmentVideosState extends State<AsessmentVideos> {
                                                       MaterialPageRoute(
                                                           builder: (context) {
                                                     return TaskDetails(
+                                                        tasks: state.values,
+                                                        index: index,
+                                                        user: user,
                                                         task: task);
                                                   })).then((value) =>
                                                       this.setState(() {
@@ -177,13 +202,13 @@ class _AsessmentVideosState extends State<AsessmentVideos> {
                 ]))));
   }
 
-  List<Widget> showVideoPlayer() {
+  List<Widget> showVideoPlayer(String videoUrl) {
     List<Widget> widgets = [];
     if (_controller == null) {
       widgets.add(Center(child: CircularProgressIndicator()));
     }
     widgets.add(OlukoVideoPlayer(
-        videoUrl: _mainAssessment.video,
+        videoUrl: assessment.video,
         autoPlay: false,
         whenInitialized: (ChewieController chewieController) =>
             this.setState(() {

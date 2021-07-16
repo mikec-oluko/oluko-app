@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:mvt_fitness/blocs/auth_bloc.dart';
-// import 'package:mvt_fitness/models/sign_up_request.dart';
-import 'package:mvt_fitness/models/sign_up_response.dart';
 import 'package:mvt_fitness/models/user_response.dart';
 import 'package:mvt_fitness/ui/components/black_app_bar.dart';
 import 'package:mvt_fitness/ui/components/bottom_navigation_bar.dart';
+import 'package:mvt_fitness/ui/components/oluko_error_message_view.dart';
 import 'package:mvt_fitness/ui/components/user_profile_information.dart';
 import 'package:mvt_fitness/ui/components/user_profile_progress.dart';
 import 'package:mvt_fitness/ui/screens/profile/profile_constants.dart';
 import 'package:mvt_fitness/ui/screens/profile/profile_routes.dart';
+import 'package:mvt_fitness/utils/app_navigator.dart';
 import '../../constants/theme.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -21,6 +21,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final _formKey = GlobalKey<FormState>();
+  bool _isTesting = false;
   UserResponse profileInfo;
   final String profileTitle = ProfileViewConstants.profileTitle;
 
@@ -32,7 +33,11 @@ class _ProfilePageState extends State<ProfilePage> {
           if (snapshot.hasData) {
             return profileHomeView();
           } else {
-            return SizedBox();
+            return Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              color: Colors.red,
+            );
           }
         });
   }
@@ -42,31 +47,41 @@ class _ProfilePageState extends State<ProfilePage> {
         key: _formKey,
         child: Scaffold(
             appBar: OlukoAppBar(
-                title: ProfileViewConstants.profileTitle, showSearchBar: false),
-            body: Container(
-                color: OlukoColors.black,
-                child: Stack(
-                  children: [
-                    userInformationSection(),
-                    buildOptionsList(),
-                  ],
-                )),
+                showBackButton: false,
+                title: ProfileViewConstants.profileTitle,
+                showSearchBar: false),
+            body: WillPopScope(
+              onWillPop: () => AppNavigator.onWillPop(context),
+              child: Container(
+                  color: OlukoColors.black,
+                  child: Stack(
+                    children: [
+                      userInformationSection(),
+                      buildOptionsList(),
+                    ],
+                  )),
+            ),
             bottomNavigationBar: OlukoBottomNavigationBar()));
   }
 
   Widget userInformationSection() {
-    return Column(
-      children: [
-        GestureDetector(
-            onTap: () =>
-                Navigator.pushNamed(context, ProfileRoutes.userInformationRoute)
-                    .then((value) => onGoBack()),
-            child: UserProfileInformation(userInformation: profileInfo)),
-        UserProfileProgress(
-            userChallenges: ProfileViewConstants.profileChallengesContent,
-            userFriends: ProfileViewConstants.profileFriendsContent)
-      ],
-    );
+    Widget returnWidget;
+    _isTesting == false
+        ? returnWidget = Column(
+            children: [
+              GestureDetector(
+                  onTap: () => Navigator.pushNamed(
+                          context, ProfileRoutes.userInformationRoute)
+                      .then((value) => onGoBack()),
+                  child: UserProfileInformation(userInformation: profileInfo)),
+              UserProfileProgress(
+                  userChallenges: ProfileViewConstants.profileChallengesContent,
+                  userFriends: ProfileViewConstants.profileFriendsContent)
+            ],
+          )
+        : returnWidget = Center(child: OlukoErrorMessage());
+
+    return returnWidget;
   }
 
   Padding buildOptionsList() {
@@ -89,24 +104,24 @@ class _ProfilePageState extends State<ProfilePage> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              GestureDetector(
-                onTap: () => Navigator.pushNamed(
-                    context, ProfileRoutes.returnRouteName(pageTitle)),
-                child: Padding(
+          InkWell(
+            onTap: () => Navigator.pushNamed(
+                context, ProfileRoutes.returnRouteName(pageTitle)),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
                   padding: const EdgeInsets.only(left: 25.0),
                   child: Text(pageTitle, style: OlukoFonts.olukoMediumFont()),
                 ),
-              ),
-              IconButton(
-                  icon: Icon(Icons.arrow_forward_ios,
-                      color: OlukoColors.grayColor),
-                  onPressed: () => Navigator.pushNamed(
-                          context, ProfileRoutes.returnRouteName(pageTitle))
-                      .then((value) => onGoBack()))
-            ],
+                IconButton(
+                    icon: Icon(Icons.arrow_forward_ios,
+                        color: OlukoColors.grayColor),
+                    onPressed: () => Navigator.pushNamed(
+                            context, ProfileRoutes.returnRouteName(pageTitle))
+                        .then((value) => onGoBack()))
+              ],
+            ),
           ),
         ],
       ),
@@ -126,8 +141,11 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> getProfileInfo() async {
-    profileInfo =
-        UserResponse.fromJson((await AuthBloc().retrieveLoginData()).toJson());
-    return profileInfo;
+    UserResponse user = (await AuthBloc().retrieveLoginData());
+    if (user != null) {
+      profileInfo = UserResponse.fromJson(user.toJson());
+      return profileInfo;
+    }
+    return null;
   }
 }

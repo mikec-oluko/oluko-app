@@ -4,7 +4,8 @@ import 'package:mvt_fitness/ui/screens/profile/profile_constants.dart';
 class ProfileRoutes {
   static const String userInformationRoute = '/profile-view-own-profile';
   static const String profileSettingsRoute = '/profile-settings';
-  static const String profileSubscriptionRoute = '/profile-subscription';
+  static const String profileSubscriptionRoute = '/';
+  // static const String profileSubscriptionRoute = '/profile-subscription';
   static const String profileMyAccountRoute = '/profile-my-account';
   static const String profileChallengesRoute = '/profile-challenges';
   static const String profileAssessmentsVideosRoute = '/assessment-videos';
@@ -39,10 +40,11 @@ class ProfileRoutes {
     Navigator.popUntil(context, ModalRoute.withName('/'));
   }
 
-  static goToChallenges() => ProfileRoutes.profileChallengesRoute;
+  static String goToChallenges() => ProfileRoutes.profileChallengesRoute;
 
-  static goToTransformationJourney() =>
+  static String goToTransformationJourney() =>
       ProfileRoutes.profileTransformationJourneyRoute;
 
-  static goToAssessmentVideos() => ProfileRoutes.profileAssessmentsVideosRoute;
+  static String goToAssessmentVideos() =>
+      ProfileRoutes.profileAssessmentsVideosRoute;
 }

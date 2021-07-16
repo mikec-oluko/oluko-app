@@ -16,6 +16,6 @@ class LoginRequest {
         'email': email,
         'password': password,
         'projectId': projectId,
-        'userName': userName
+        'username': userName
       };
 }

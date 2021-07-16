@@ -1,35 +1,35 @@
 import 'package:chewie/chewie.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mvt_fitness/blocs/task_bloc.dart';
+import 'package:mvt_fitness/blocs/assessment_assignment_bloc.dart';
 import 'package:mvt_fitness/blocs/task_submission_bloc.dart';
 import 'package:mvt_fitness/constants/theme.dart';
-import 'package:mvt_fitness/constants/theme.dart';
-import 'package:mvt_fitness/constants/theme.dart';
-import 'package:mvt_fitness/models/sign_up_response.dart';
+import 'package:mvt_fitness/models/assessment_assignment.dart';
 import 'package:mvt_fitness/models/task.dart';
 import 'package:mvt_fitness/models/task_submission.dart';
 import 'package:mvt_fitness/ui/components/black_app_bar.dart';
+import 'package:mvt_fitness/ui/components/oluko_outlined_button.dart';
 import 'package:mvt_fitness/ui/components/oluko_primary_button.dart';
 import 'package:mvt_fitness/ui/components/title_body.dart';
 import 'package:mvt_fitness/ui/components/video_player.dart';
 import 'package:mvt_fitness/ui/screens/self_recording.dart';
 import 'package:mvt_fitness/ui/screens/task_submission_recorded_video.dart';
-import 'package:mvt_fitness/ui/screens/task_submission_review.dart';
-import 'package:mvt_fitness/ui/screens/self_recording_preview.dart';
-import 'package:mvt_fitness/ui/screens/task_submission_review_preview.dart';
+import 'package:mvt_fitness/utils/movement_utils.dart';
 import 'package:mvt_fitness/utils/oluko_localizations.dart';
 import 'package:mvt_fitness/utils/screen_utils.dart';
 import 'package:mvt_fitness/utils/time_converter.dart';
 
 class TaskDetails extends StatefulWidget {
-  TaskDetails({this.task, this.showRecordedVideos = false, Key key})
+  TaskDetails({this.task, this.user, this.tasks, this.index, Key key})
       : super(key: key);
 
   final Task task;
-  final bool showRecordedVideos;
+  User user;
+  List<Task> tasks;
+  int index;
 
   @override
   _TaskDetailsState createState() => _TaskDetailsState();
@@ -39,11 +39,16 @@ class _TaskDetailsState extends State<TaskDetails> {
   final _formKey = GlobalKey<FormState>();
   ChewieController _controller;
   bool _makePublic = false;
+
   TaskSubmissionBloc _taskSubmissionBloc;
+  AssessmentAssignmentBloc _assessmentAssignmentBloc;
+
+  AssessmentAssignment assessmentAssignment;
 
   @override
   void initState() {
     _taskSubmissionBloc = TaskSubmissionBloc();
+    _assessmentAssignmentBloc = AssessmentAssignmentBloc();
     super.initState();
   }
 
@@ -51,15 +56,25 @@ class _TaskDetailsState extends State<TaskDetails> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<TaskBloc>(
-          create: (context) => TaskBloc()..get(),
+        BlocProvider<AssessmentAssignmentBloc>(
+          create: (context) =>
+              _assessmentAssignmentBloc..getOrCreate(widget.user),
         ),
         BlocProvider<TaskSubmissionBloc>(
-          create: (context) =>
-              _taskSubmissionBloc..getTaskSubmissionOfTask(widget.task),
+          create: (context) => _taskSubmissionBloc,
         ),
       ],
-      child: form(),
+      child: BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(
+          builder: (context, state) {
+        if (state is AssessmentAssignmentSuccess) {
+          assessmentAssignment = state.assessmentAssignment;
+          _taskSubmissionBloc
+            ..getTaskSubmissionOfTask(assessmentAssignment, widget.task);
+          return form();
+        } else {
+          return SizedBox();
+        }
+      }),
     );
   }
 
@@ -74,25 +89,33 @@ class _TaskDetailsState extends State<TaskDetails> {
                     padding: EdgeInsets.symmetric(horizontal: 15),
                     child: Container(
                       width: MediaQuery.of(context).size.width,
-                      child: ListView(
+                      height:
+                          MediaQuery.of(context).size.height - kToolbarHeight,
+                      child: Stack(
                         children: [
-                          ConstrainedBox(
-                              constraints: BoxConstraints(
-                                  maxHeight:
-                                      MediaQuery.of(context).orientation ==
+                          ListView(
+                            children: [
+                              ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                      maxHeight: MediaQuery.of(context)
+                                                  .orientation ==
                                               Orientation.portrait
                                           ? ScreenUtils.height(context) / 4
                                           : ScreenUtils.height(context) / 1.5,
-                                  minHeight:
-                                      MediaQuery.of(context).orientation ==
+                                      minHeight: MediaQuery.of(context)
+                                                  .orientation ==
                                               Orientation.portrait
                                           ? ScreenUtils.height(context) / 4
                                           : ScreenUtils.height(context) / 1.5),
-                              child: Stack(children: showVideoPlayer())),
-                          BlocBuilder<TaskBloc, TaskState>(
-                              builder: (context, state) {
-                            return formSection();
-                          }),
+                                  child: Stack(children: showVideoPlayer())),
+                              formSection(),
+                            ],
+                          ),
+                          Positioned(
+                              bottom: 25,
+                              left: 0,
+                              right: 0,
+                              child: _actionButtons()),
                         ],
                       ),
                     )))));
@@ -115,102 +138,162 @@ class _TaskDetailsState extends State<TaskDetails> {
 
   Widget formSection() {
     return Container(
-      height: MediaQuery.of(context).size.height / 1.75,
-      child: BlocBuilder<TaskBloc, TaskState>(builder: (context, state) {
-        return Column(
+        //height: MediaQuery.of(context).size.height / 1.75,
+        child: Column(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              formFields(state),
-              BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
-                  builder: (context, state) {
-                if (state is GetSuccess && state.taskSubmission != null) {
-                  return Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      OlukoPrimaryButton(
-                        title: 'Send Feedback',
-                        onPressed: () {
-                          if (_controller != null) {
-                            _controller.pause();
-                          }
-                          return Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => TaskSubmissionReview(
-                                      taskSubmission: state.taskSubmission)));
-                        },
-                      ),
-                    ],
-                  );
-                } else {
-                  return Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      OlukoPrimaryButton(
-                        title: OlukoLocalizations.of(context)
-                            .find('startRecording'),
-                        onPressed: () {
-                          if (_controller != null) {
-                            _controller.pause();
-                          }
-                          return Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      SelfRecording(task: widget.task)));
-                        },
-                      ),
-                    ],
-                  );
-                }
-              }),
-            ]);
-      }),
-    );
+          formFields(),
+        ]));
   }
 
-  Widget formFields(TaskState state) {
-    if (state is TaskSuccess) {
-      return Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10.0),
+  _actionButtons() {
+    return BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
+        builder: (context, state) {
+      if (state is GetSuccess && state.taskSubmission != null) {
+        return Padding(
+            padding: const EdgeInsets.only(top: 20.0),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisSize: MainAxisSize.max,
               children: [
-                TitleBody(
-                  'Make this public',
-                  bold: true,
+                OlukoOutlinedButton(
+                  thinPadding: true,
+                  title: OlukoLocalizations.of(context).find('recordAgain'),
+                  onPressed: () {
+                    MovementUtils.movementDialog(
+                        context, _confirmDialogContent(state.taskSubmission),
+                        showExitButton: false);
+                  },
                 ),
-                Switch(
-                  value: _makePublic,
-                  onChanged: (bool value) => this.setState(() {
-                    _makePublic = value;
-                  }),
-                  trackColor: MaterialStateProperty.all(Colors.grey),
-                  activeColor: OlukoColors.primary,
-                )
+                SizedBox(width: 20),
+                OlukoPrimaryButton(
+                  title: OlukoLocalizations.of(context).find('next'),
+                  onPressed: () {
+                    if (widget.index < widget.tasks.length - 1) {
+                      if (_controller != null) {
+                        _controller.pause();
+                      }
+                      return Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return TaskDetails(
+                            tasks: widget.tasks,
+                            index: widget.index + 1,
+                            user: widget.user,
+                            task: widget.tasks[widget.index + 1]);
+                      }));
+                    }
+                  },
+                ),
               ],
+            ));
+      } else {
+        return Row(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            OlukoPrimaryButton(
+              title: OlukoLocalizations.of(context).find('startRecording'),
+              onPressed: () {
+                if (_controller != null) {
+                  _controller.pause();
+                }
+                return Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SelfRecording(
+                            task: widget.task,
+                            assessmentAssignment: assessmentAssignment,
+                            user: widget.user)));
+              },
             ),
+          ],
+        );
+      }
+    });
+  }
+
+  List<Widget> _confirmDialogContent(TaskSubmission taskSubmission) {
+    return [
+      Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(children: [
+            Padding(
+                padding: const EdgeInsets.only(bottom: 15.0),
+                child: TitleBody(
+                    OlukoLocalizations.of(context).find('recordAgainQuestion'),
+                    bold: true)),
+            Text(OlukoLocalizations.of(context).find('recordAgainWarning'),
+                textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont()),
+            Padding(
+                padding: const EdgeInsets.only(top: 25.0),
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    OlukoPrimaryButton(
+                      title: OlukoLocalizations.of(context).find('no'),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                    SizedBox(width: 20),
+                    OlukoOutlinedButton(
+                      title: OlukoLocalizations.of(context).find('yes'),
+                      onPressed: () {
+                        if (_controller != null) {
+                          _controller.pause();
+                        }
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => SelfRecording(
+                                    recordedTaskSubmission: taskSubmission,
+                                    task: widget.task,
+                                    assessmentAssignment: assessmentAssignment,
+                                    user: widget.user)));
+                      },
+                    ),
+                  ],
+                ))
+          ]))
+    ];
+  }
+
+  Widget formFields() {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TitleBody(
+                'Make this public',
+                bold: true,
+              ),
+              Switch(
+                value: _makePublic,
+                onChanged: (bool value) => this.setState(() {
+                  _makePublic = value;
+                }),
+                trackColor: MaterialStateProperty.all(Colors.grey),
+                activeColor: OlukoColors.primary,
+              )
+            ],
           ),
-          Text(
-            widget.task.description,
-            style: OlukoFonts.olukoMediumFont(),
-          ),
-          BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
-              builder: (context, state) {
-            if (state is GetSuccess && state.taskSubmission != null) {
-              return recordedVideos(state.taskSubmission);
-            } else {
-              return SizedBox();
-            }
-          })
-        ],
-      );
-    } else {
-      return SizedBox();
-    }
+        ),
+        Text(
+          widget.task.description,
+          style: OlukoFonts.olukoMediumFont(),
+        ),
+        BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
+            builder: (context, state) {
+          if (state is GetSuccess && state.taskSubmission != null) {
+            return recordedVideos(state.taskSubmission);
+          } else {
+            return SizedBox();
+          }
+        })
+      ],
+    );
   }
 
   recordedVideos(TaskSubmission taskSubmission) {
@@ -236,8 +319,8 @@ class _TaskDetailsState extends State<TaskDetails> {
             height: 150,
             child: ListView(scrollDirection: Axis.horizontal, children: [
               taskResponse(
-                  TimeConverter.fromMillisecondsToSecondsStringFormat(
-                      taskSubmission.video.duration),
+                  TimeConverter.durationToString(
+                      Duration(milliseconds: taskSubmission.video.duration)),
                   taskSubmission.video.thumbUrl),
             ]),
           ),

@@ -1,8 +1,13 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:global_configuration/global_configuration.dart';
 import 'package:mvt_fitness/models/dto/api_response.dart';
 import 'package:mvt_fitness/models/dto/login_request.dart';
+import 'package:mvt_fitness/models/sign_up_request.dart';
 import 'package:mvt_fitness/models/user_response.dart';
 import 'package:mvt_fitness/repositories/auth_repository.dart';
 import 'package:mvt_fitness/repositories/user_repository.dart';
@@ -43,36 +48,69 @@ class AuthBloc extends Cubit<AuthState> {
       emit(AuthFailure(exception: Exception(apiResponse.message)));
       return;
     }
-    UserResponse user = await _userRepository.get(request.email);
-    AuthRepository().storeLoginData(user);
+    UserResponse user;
+    if (request.email == null) {
+      user = await _userRepository.getByUsername(request.userName);
+    } else {
+      user = await _userRepository.get(request.email);
+    }
     AppLoader.stopLoading();
     final firebaseUser = FirebaseAuth.instance.currentUser;
+    if (!firebaseUser.emailVerified) {
+      //TODO: trigger to send another email
+      await firebaseUser.updateEmail(user.email);
+      firebaseUser.sendEmailVerification();
+      FirebaseAuth.instance.signOut();
+      AppMessages.showSnackbar(
+          context, 'Please check your Email for account confirmation.');
+      emit(AuthGuest());
+    } else {
+      AuthRepository().storeLoginData(user);
+      AppMessages.showSnackbar(context, 'Welcome, ${user.firstName}');
+      emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
+      await AppNavigator().returnToHome(context);
+    }
+  }
+
+  Future<void> loginWithGoogle(context) async {
+    UserCredential result = await _authRepository.signInWithGoogle();
+    User firebaseUser = result.user;
+    dynamic userResponse = await UserRepository().get(firebaseUser.email);
+
+    //TODO (Not implemented in MVP) If Firebase user document not found, create one.
+
+    // if (userResponse == null) {
+    //   UserResponse dbResponse = await _signUpWithSSO(firebaseUser);
+    //   if (dbResponse == null) {
+    //     FirebaseAuth.instance.signOut();
+    //     emit(AuthFailure(
+    //         exception: Exception('Error creating user in database.')));
+    //     return;
+    //   } else {
+    //     userResponse = dbResponse;
+    //   }
+    // }
+
     if (!firebaseUser.emailVerified) {
       //TODO: trigger to send another email
       FirebaseAuth.instance.signOut();
       AppMessages.showSnackbar(
           context, 'Please check your Email for account confirmation.');
       emit(AuthGuest());
-    } else {
-      AppMessages.showSnackbar(context, 'Welcome, ${user.firstName}');
-      emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
+      return;
     }
-    await AppNavigator().returnToHome(context);
-  }
 
-  Future<void> loginWithGoogle(context) async {
-    UserCredential result = await _authRepository.signInWithGoogle();
-    User firebaseUser = result.user;
-    UserResponse user = UserResponse();
-    List<String> splitDisplayName = firebaseUser.displayName.split(' ');
-    user.firstName = splitDisplayName[0];
-    user.email = firebaseUser.email;
-    user.firebaseId = firebaseUser.uid;
-    if (splitDisplayName.length > 1) {
-      user.lastName = splitDisplayName[1];
+    //If there is no associated user for this account
+    if (userResponse == null) {
+      FirebaseAuth.instance.signOut();
+      AppMessages.showSnackbar(
+          context, 'User for this account not found. Please sign up.');
+      emit(AuthGuest());
+      return;
     }
-    AuthRepository().storeLoginData(user);
-    emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
+
+    AuthRepository().storeLoginData(userResponse);
+    emit(AuthSuccess(user: userResponse, firebaseUser: firebaseUser));
     await AppNavigator().returnToHome(context);
   }
 
@@ -96,19 +134,22 @@ class AuthBloc extends Cubit<AuthState> {
     return AuthRepository().retrieveLoginData();
   }
 
-  Future<void> checkCurrentUser() async {
+  Future<User> checkCurrentUser() async {
     final loggedUser = AuthRepository.getLoggedUser();
     final userData = await AuthRepository().retrieveLoginData();
     if (loggedUser != null && userData != null) {
       emit(AuthSuccess(user: userData, firebaseUser: loggedUser));
+      return loggedUser;
     } else {
       emit(AuthGuest());
+      return null;
     }
   }
 
   Future<void> logout(context) async {
     final success = await AuthRepository().removeLoginData();
     if (success == true) {
+      Navigator.pushNamedAndRemoveUntil(context, '/sign-up', (route) => false);
       emit(AuthGuest());
     }
   }
@@ -119,5 +160,23 @@ class AuthBloc extends Cubit<AuthState> {
     await AuthRepository().sendPasswordResetEmail(loginRequest.email);
     AppMessages.showSnackbar(
         context, 'Please check your email for instructions.');
+  }
+
+  String getRandString(int len) {
+    var random = Random.secure();
+    var values = List<int>.generate(len, (i) => random.nextInt(255));
+    return base64UrlEncode(values);
+  }
+
+  Future<UserResponse> _signUpWithSSO(User firebaseUser) async {
+    List<String> splitDisplayName = firebaseUser.displayName.split(' ');
+    SignUpRequest signUpRequest = SignUpRequest(
+      email: firebaseUser.email,
+      firstName: splitDisplayName[0],
+      lastName: splitDisplayName[1],
+      projectId: GlobalConfiguration().getValue("projectId"),
+    );
+    UserResponse response = await UserRepository().createSSO(signUpRequest);
+    return response;
   }
 }

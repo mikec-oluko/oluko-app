@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mvt_fitness/blocs/auth_bloc.dart';
+import 'package:mvt_fitness/ui/screens/classes.dart';
 import 'package:mvt_fitness/utils/image_utils.dart';
 
 import 'course_card.dart';
@@ -31,15 +34,27 @@ class _State extends State<SearchResultsGrid> {
             .map((e) => Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Container(
-                      child: _getCourseCard(
-                    Image.network(
-                      e.imageUrl,
-                      fit: BoxFit.cover,
-                      frameBuilder: (BuildContext context, Widget child,
-                              int frame, bool wasSynchronouslyLoaded) =>
-                          ImageUtils.frameBuilder(
-                              context, child, frame, wasSynchronouslyLoaded,
-                              height: 120),
+                      child: GestureDetector(
+                    onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context2) => BlocProvider<AuthBloc>(
+                                  create: (context2) =>
+                                      BlocProvider.of<AuthBloc>(context),
+                                  child: Classes(
+                                      courseId:
+                                          'OYyjeSBYcumpcg2VbMXO' /*course.id*/),
+                                ))),
+                    child: _getCourseCard(
+                      Image.network(
+                        e.imageUrl,
+                        fit: BoxFit.cover,
+                        frameBuilder: (BuildContext context, Widget child,
+                                int frame, bool wasSynchronouslyLoaded) =>
+                            ImageUtils.frameBuilder(
+                                context, child, frame, wasSynchronouslyLoaded,
+                                height: 120),
+                      ),
                     ),
                   )),
                 ))

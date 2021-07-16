@@ -30,4 +30,13 @@ class SignUpRequest {
         'projectId': projectId,
         'username': username
       };
+
+  Map<String, dynamic> toDTOJson() => {
+        'email': email,
+        'password': password,
+        'firstName': firstName,
+        'lastName': lastName,
+        'projectId': projectId,
+        'username': username
+      };
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mvt_fitness/constants/theme.dart';
+import 'package:mvt_fitness/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:mvt_fitness/ui/components/title_body.dart';
 
 class CarouselSection extends StatefulWidget {
@@ -31,14 +32,19 @@ class _State extends State<CarouselSection> {
         Flexible(
           flex: 1,
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               TitleBody(widget.title),
               GestureDetector(
                 onTap: () => widget.onOptionTap(),
-                child: Text(
-                  widget.optionLabel != null ? widget.optionLabel : '',
-                  style: TextStyle(color: OlukoColors.primary, fontSize: 20),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 3.0),
+                  child: Text(
+                    '',
+                    // Removed for MVP --------  widget.optionLabel != null ? widget.optionLabel : '',
+                    style: TextStyle(color: OlukoColors.primary, fontSize: 18),
+                  ),
                 ),
               )
             ],
@@ -47,7 +53,7 @@ class _State extends State<CarouselSection> {
         Flexible(
           flex: 9,
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20),
+            padding: const EdgeInsets.symmetric(vertical: 10),
             child: Container(
                 child: Align(
               alignment: Alignment.centerLeft,

@@ -76,9 +76,10 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
                             customColor: OlukoColors.grayColor))
                     : null,
                 trailing: Switch(
-                  value: valueToUse,
-                  onChanged: (bool value) => _setValue(optionToUse, value),
-                  trackColor: MaterialStateProperty.all(Colors.grey),
+                  value: false,
+                  // onChanged: (bool value) => _setValue(optionToUse, value),
+                  onChanged: (bool value) => {},
+                  trackColor: MaterialStateProperty.all(OlukoColors.grayColor),
                   activeColor: OlukoColors.primary,
                 )),
           ),

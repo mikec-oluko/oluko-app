@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:mvt_fitness/constants/theme.dart';
+import 'package:mvt_fitness/utils/image_utils.dart';
 
 import 'image_and_video_preview_card.dart';
 
 class ImageAndVideoContainer extends StatefulWidget {
   final String assetImage;
   final bool isVideo;
+  final String videoUrl;
+  final bool local;
 
-  ImageAndVideoContainer({this.assetImage, this.isVideo});
+  ImageAndVideoContainer(
+      {this.assetImage, this.isVideo, this.videoUrl, this.local = false});
 
   @override
   _ImageAndVideoContainerState createState() => _ImageAndVideoContainerState();
@@ -25,15 +29,32 @@ class _ImageAndVideoContainerState extends State<ImageAndVideoContainer> {
           borderRadius: BorderRadius.all(Radius.circular(10)),
           color: OlukoColors.black,
         ),
-        child: ImageAndVideoPreviewCard(
-          imageCover: Image.asset(
-            widget.assetImage,
-            fit: BoxFit.fill,
-            height: 120,
-            width: 120,
-          ),
-          isVideo: widget.isVideo,
-        ),
+        child: widget.local == false
+            ? ImageAndVideoPreviewCard(
+                imageCover: Image.network(
+                  widget.assetImage,
+                  fit: BoxFit.fill,
+                  frameBuilder: (BuildContext context, Widget child, int frame,
+                          bool wasSynchronouslyLoaded) =>
+                      ImageUtils.frameBuilder(
+                          context, child, frame, wasSynchronouslyLoaded,
+                          height: 120, width: 120),
+                  height: 120,
+                  width: 120,
+                ),
+                videoUrl: widget.videoUrl,
+                isVideo: widget.isVideo,
+              )
+            : ImageAndVideoPreviewCard(
+                imageCover: Image.asset(
+                  widget.assetImage,
+                  fit: BoxFit.fill,
+                  height: 120,
+                  width: 120,
+                ),
+                videoUrl: widget.videoUrl,
+                isVideo: widget.isVideo,
+              ),
       ),
     );
   }

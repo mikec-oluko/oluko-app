@@ -70,7 +70,9 @@ class OlukoFonts {
   static const double olukoSmallFontSize = 11.0;
 
   static TextStyle olukoMediumFont(
-      {FontWeight custoFontWeight, Color customColor, TextDecoration decoration}) {
+      {FontWeight custoFontWeight,
+      Color customColor,
+      TextDecoration decoration}) {
     return TextStyle(
         fontSize: olukoMediumFontSize,
         fontWeight: custoFontWeight != null ? custoFontWeight : FontWeight.w500,

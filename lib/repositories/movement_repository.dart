@@ -1,10 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:mvt_fitness/models/class.dart';
 import 'package:mvt_fitness/models/movement.dart';
 import 'package:mvt_fitness/models/segment.dart';
+import 'package:mvt_fitness/models/submodels/movement_submodel.dart';
 import 'package:mvt_fitness/models/submodels/object_submodel.dart';
-import 'package:mvt_fitness/repositories/class_reopoistory.dart';
 import 'package:mvt_fitness/repositories/segment_repository.dart';
 
 class MovementRepository {
@@ -20,8 +19,8 @@ class MovementRepository {
 
   static Future<List<Movement>> getAll(Segment segment) async {
     List<String> segmentMovementsIds = [];
-    segment.movements.forEach((ObjectSubmodel movement) {
-      segmentMovementsIds.add(movement.objectId);
+    segment.movements.forEach((MovementSubmodel movement) {
+      segmentMovementsIds.add(movement.id);
     });
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('projects')
@@ -41,17 +40,18 @@ class MovementRepository {
     final DocumentReference docRef = reference.doc();
     movement.id = docRef.id;
     docRef.set(movement.toJson());
-    ObjectSubmodel movementObj = ObjectSubmodel(
-        objectId: movement.id,
-        objectReference: reference.doc(movement.id),
-        objectName: movement.name);
+    MovementSubmodel movementObj = MovementSubmodel(
+        id: movement.id,
+        reference: reference.doc(movement.id),
+        name: movement.name);
     await SegmentRepository.updateMovements(movementObj, segmentReference);
     return movement;
   }
 
   static List<Movement> mapQueryToMovement(QuerySnapshot qs) {
     return qs.docs.map((DocumentSnapshot ds) {
-      return Movement.fromJson(ds.data());
+      dynamic movementData = ds.data();
+      return Movement.fromJson(movementData);
     }).toList();
   }
 }

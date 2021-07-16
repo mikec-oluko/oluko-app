@@ -1,15 +1,14 @@
 import 'dart:io';
 
 import 'package:chewie/chewie.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:global_configuration/global_configuration.dart';
-import 'package:mvt_fitness/blocs/task_bloc.dart';
 import 'package:mvt_fitness/blocs/task_submission_bloc.dart';
 import 'package:mvt_fitness/blocs/video_bloc.dart';
-import 'package:mvt_fitness/models/sign_up_response.dart';
+import 'package:mvt_fitness/models/assessment_assignment.dart';
 import 'package:mvt_fitness/models/task.dart';
+import 'package:mvt_fitness/models/task_submission.dart';
 import 'package:mvt_fitness/ui/components/black_app_bar.dart';
 import 'package:mvt_fitness/ui/components/oluko_primary_button.dart';
 import 'package:mvt_fitness/ui/components/progress_bar.dart';
@@ -17,10 +16,20 @@ import 'package:mvt_fitness/ui/components/video_player.dart';
 import 'package:mvt_fitness/ui/screens/task_details.dart';
 
 class SelfRecordingPreview extends StatefulWidget {
-  SelfRecordingPreview({this.task, this.filePath, key}) : super(key: key);
+  SelfRecordingPreview(
+      {this.task,
+      this.filePath,
+      this.assessmentAssignment,
+      this.user,
+      this.recordedTaskSubmission,
+      Key key})
+      : super(key: key);
 
   Task task;
   String filePath;
+  AssessmentAssignment assessmentAssignment;
+  User user;
+  TaskSubmission recordedTaskSubmission;
 
   @override
   _SelfRecordingPreviewState createState() => _SelfRecordingPreviewState();
@@ -34,14 +43,6 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
 
   String taskSubmissionId;
 
-  //TODO: remove hardcoded reference
-  CollectionReference reference = FirebaseFirestore.instance
-      .collection("projects")
-      .doc(GlobalConfiguration().getValue("projectId"))
-      .collection("assessmentAssignments")
-      .doc('8dWwPNggqruMQr0OSV9f')
-      .collection('taskSubmissions');
-
   @override
   void initState() {
     _videoBloc = VideoBloc();
@@ -53,9 +54,6 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
         providers: [
-          BlocProvider<TaskBloc>(
-            create: (context) => TaskBloc()..get(),
-          ),
           BlocProvider<VideoBloc>(
             create: (context) => _videoBloc,
           ),
@@ -98,9 +96,23 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                                 title: 'Done',
                                 onPressed: () async {
                                   _controller.pause();
-                                  _taskSubmissionBloc
-                                    ..createTaskSubmission(
-                                        reference, widget.task);
+                                  if (widget.recordedTaskSubmission == null) {
+                                    _taskSubmissionBloc
+                                      ..createTaskSubmission(
+                                          widget.assessmentAssignment,
+                                          widget.task);
+                                  } else {
+                                    setState(() {
+                                      taskSubmissionId =
+                                          widget.recordedTaskSubmission.id;
+                                    });
+                                    _videoBloc
+                                      ..createVideo(
+                                          context,
+                                          File(widget.filePath),
+                                          3.0 / 4.0,
+                                          taskSubmissionId);
+                                  }
                                 },
                               )),
                           BlocConsumer<VideoBloc, VideoState>(
@@ -108,14 +120,15 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                             if (state is VideoSuccess) {
                               _taskSubmissionBloc
                                 ..updateTaskSubmissionVideo(
-                                    reference.doc(taskSubmissionId),
+                                    widget.assessmentAssignment,
+                                    taskSubmissionId,
                                     state.video);
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => TaskDetails(
                                           task: widget.task,
-                                          showRecordedVideos: true)));
+                                          user: widget.user)));
                             }
                           }, builder: (context, state) {
                             if (state is VideoProcessing) {

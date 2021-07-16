@@ -5,7 +5,7 @@ import 'package:mvt_fitness/ui/screens/profile/profile_constants.dart';
 import 'package:mvt_fitness/utils/oluko_localizations.dart';
 
 class ChallengesCard extends StatefulWidget {
-  final Challenge challenge;
+  final ChallengeStatic challenge;
   final String routeToGo;
   final bool needHeader;
 
