@@ -63,6 +63,7 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
           await CourseEnrollmentRepository.get(course, user);
       emit(GetEnrollmentSuccess(courseEnrollment: courseEnrollment));
     } catch (e) {
+      print(e.toString());
       emit(Failure(exception: e));
     }
   }

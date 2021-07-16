@@ -29,6 +29,7 @@ class StatisticsBloc extends Cubit<StatisticsState> {
           await CourseRepository.getStatistics(reference);
       emit(StatisticsSuccess(courseStatistics: courseStatistics));
     } catch (e) {
+      print(e.toStriing());
       emit(StatisticsFailure(exception: e));
     }
   }

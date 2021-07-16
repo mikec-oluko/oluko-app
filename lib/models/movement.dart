@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oluko_app/models/base.dart';
+import 'package:oluko_app/models/submodels/object_submodel.dart';
 
 class Movement extends Base {
   String name;
   String description;
   String video;
-  List<String> tags;
+  List<ObjectSubmodel> tags;
   String iconImage;
 
   Movement(
@@ -36,7 +37,11 @@ class Movement extends Base {
         video: json['video'],
         description: json['description'],
         iconImage: json['icon_image'],
-        tags: json['tags'] == null ? null : List<String>.from(json['tags']));
+        tags: json['tags'] == null
+            ? null
+            : json['tags']
+                .map<ObjectSubmodel>((tag) => ObjectSubmodel.fromJson(tag))
+                .toList());
     movement.setBase(json);
     return movement;
   }

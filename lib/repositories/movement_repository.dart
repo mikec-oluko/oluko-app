@@ -21,16 +21,18 @@ class MovementRepository {
     List<String> segmentMovementsIds = [];
     segment.movements.forEach((MovementSubmodel movement) {
       segmentMovementsIds.add(movement.id);
-     });
+    });
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"))
-        .collection('movements').where("id", whereIn: segmentMovementsIds)
+        .collection('movements')
+        .where("id", whereIn: segmentMovementsIds)
         .get();
     return mapQueryToMovement(querySnapshot);
   }
 
-  static Future<Movement> create(Movement movement, DocumentReference segmentReference) async{
+  static Future<Movement> create(
+      Movement movement, DocumentReference segmentReference) async {
     CollectionReference reference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"))
@@ -48,7 +50,8 @@ class MovementRepository {
 
   static List<Movement> mapQueryToMovement(QuerySnapshot qs) {
     return qs.docs.map((DocumentSnapshot ds) {
-      return Movement.fromJson(ds.data());
+      dynamic movementData = ds.data();
+      return Movement.fromJson(movementData);
     }).toList();
   }
 }

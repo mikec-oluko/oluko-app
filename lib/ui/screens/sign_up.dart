@@ -41,7 +41,7 @@ class MainSignUpPage extends StatelessWidget {
             return Stack(alignment: Alignment.bottomCenter, children: [
               Image.asset(
                 'assets/login/sign_up_splash_screen.png',
-                fit: BoxFit.fitHeight,
+                fit: BoxFit.cover,
                 colorBlendMode: BlendMode.colorBurn,
                 height: MediaQuery.of(context).size.height,
               ),
