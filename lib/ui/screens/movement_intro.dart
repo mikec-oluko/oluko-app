@@ -15,7 +15,9 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class MovementIntro extends StatefulWidget {
-  MovementIntro({Key key}) : super(key: key);
+  Movement movement;
+
+  MovementIntro({Key key, this.movement}) : super(key: key);
 
   @override
   _MovementIntroState createState() => _MovementIntroState();
@@ -28,7 +30,7 @@ class _MovementIntroState extends State<MovementIntro>
   Map<String, bool> coursesBookmarked = {};
 
   //TODO Make Dynamic
-  Movement movement = Movement(
+  Movement movement2 = Movement(
       iconImage:
           'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/Airsquats.jpg?alt=media&token=641c2dff-ac0e-4b22-8a8d-aee9adbca3a1',
       video:
@@ -92,7 +94,7 @@ class _MovementIntroState extends State<MovementIntro>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: OlukoImageBar(actions: [], movements: [movement]),
+      appBar: OlukoImageBar(actions: [], movements: [widget.movement]),
       backgroundColor: Colors.black,
       body: Container(
         decoration: BoxDecoration(
@@ -126,8 +128,8 @@ class _MovementIntroState extends State<MovementIntro>
                         children: [
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child:
-                                MovementUtils.movementTitle(this.movement.name),
+                            child: MovementUtils.movementTitle(
+                                widget.movement.name),
                           ),
                           SizedBox(height: 25),
                           Column(
@@ -140,7 +142,10 @@ class _MovementIntroState extends State<MovementIntro>
                                             BorderSide(color: Colors.white))),
                                 child: TabBar(
                                   isScrollable: true,
-                                  onTap: (index) => this.setState(() {}),
+                                  onTap: (index) => this.setState(() {
+                                    tabController.index =
+                                        0; //Remove after adding tabs
+                                  }),
                                   controller: tabController,
                                   indicatorSize: TabBarIndicatorSize.tab,
                                   indicator: BoxDecoration(color: Colors.white),
@@ -154,7 +159,8 @@ class _MovementIntroState extends State<MovementIntro>
                               case 0:
                                 return _firstTab();
                               case 1:
-                                return _secondTab();
+                                return _firstTab();
+                              //_secondTab();
                               case 2:
                                 return _firstTab();
                               case 3:
@@ -268,7 +274,7 @@ class _MovementIntroState extends State<MovementIntro>
       child: Column(children: [
         Container(
             height: 200,
-            child: Stack(children: _videoPlayer(this.movement.video, 0))),
+            child: Stack(children: _videoPlayer(widget.movement.video, 0))),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -276,7 +282,7 @@ class _MovementIntroState extends State<MovementIntro>
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: Text(
-                  movement.description,
+                  widget.movement.description,
                   style: OlukoFonts.olukoMediumFont(),
                 ),
               ),
@@ -336,7 +342,7 @@ class _MovementIntroState extends State<MovementIntro>
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: Text(
-                  movement.description,
+                  widget.movement.description,
                   style: OlukoFonts.olukoMediumFont(),
                 ),
               ),
@@ -383,7 +389,7 @@ class _MovementIntroState extends State<MovementIntro>
     );
   }
 
-  Tab _tabItem(String name, int index) {
+  Tab _tabItem(String name, int index, {bool disabled = false}) {
     return Tab(
       child: Container(
         decoration: BoxDecoration(),
@@ -392,8 +398,11 @@ class _MovementIntroState extends State<MovementIntro>
           child: Text(
             name.toUpperCase(),
             style: OlukoFonts.olukoMediumFont(
-                customColor:
-                    tabController.index == index ? Colors.black : Colors.white),
+                customColor: disabled != null && disabled == true
+                    ? Colors.grey.shade700
+                    : tabController.index == index
+                        ? Colors.black
+                        : Colors.white),
           ),
         ),
       ),
@@ -403,7 +412,7 @@ class _MovementIntroState extends State<MovementIntro>
   List<Tab> _getTabs() {
     List<Tab> tabItems = [];
     for (var i = 0; i < tabs.length; i++) {
-      tabItems.add(_tabItem(tabs[i], i));
+      tabItems.add(_tabItem(tabs[i], i, disabled: i > 0));
     }
     return tabItems;
   }
