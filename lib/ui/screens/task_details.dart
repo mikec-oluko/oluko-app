@@ -313,8 +313,8 @@ class _TaskDetailsState extends State<TaskDetails> {
             height: 150,
             child: ListView(scrollDirection: Axis.horizontal, children: [
               taskResponse(
-                  TimeConverter.fromMillisecondsToSecondsStringFormat(
-                      taskSubmission.video.duration),
+                  TimeConverter.durationToString(
+                      Duration(milliseconds: taskSubmission.video.duration)),
                   taskSubmission.video.thumbUrl),
             ]),
           ),
