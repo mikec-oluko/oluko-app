@@ -30,11 +30,20 @@ class _State extends State<StoriesHeader> {
     'Romina',
     'Mark'
   ];
+  List<double> sampleProgress = [
+    0,
+    0.5,
+    0,
+    0.35,
+    0,
+    0.7,
+    0,
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 120,
+      height: 110,
       child: ListView.builder(
           shrinkWrap: true,
           scrollDirection: Axis.horizontal,
@@ -45,6 +54,7 @@ class _State extends State<StoriesHeader> {
               child: StoriesItem(
                 name: sampleNames[index],
                 imageUrl: widget.stories[index],
+                progressValue: sampleProgress[index],
               ),
             );
           }),
