@@ -63,7 +63,7 @@
     "upgrade": "Mejorar",
     "fromGallery": "Seleccionar desde Galeria",
     "camera": "Camara",
-    "uploadingWithDots":  "Subiendo...",
+    "uploadingWithDots": "Subiendo...",
     "errorOcurred": "Ocurrio un error.",
     "errorOcurredOn": "Ocurrio un error en: ",
     "classes": "Clases",
@@ -84,5 +84,11 @@
     "enrollWarning": "Debes estar inscripto en este curso para comenzar el segmento",
     "workouts": "Ejercicios",
     "description": "Descripción",
-    "sets": "Sets"
+    "sets": "Sets",
+    "recordAgain": "Volver a grabar",
+    "recordAgainWarning": "¿Esta seguro de que quiere actualizar su video? Al hacer esto borrara su grabacion previa.",
+    "no": "No",
+    "yes": "Si",
+    "recordAgainQuestion": "¿Volver a grabar?",
+    "next": "Siguiente"
 }

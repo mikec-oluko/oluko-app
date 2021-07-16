@@ -8,6 +8,7 @@ import 'package:oluko_app/blocs/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/models/task.dart';
+import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/progress_bar.dart';
@@ -16,13 +17,19 @@ import 'package:oluko_app/ui/screens/task_details.dart';
 
 class SelfRecordingPreview extends StatefulWidget {
   SelfRecordingPreview(
-      {this.task, this.filePath, this.assessmentAssignment, this.user, Key key})
+      {this.task,
+      this.filePath,
+      this.assessmentAssignment,
+      this.user,
+      this.recordedTaskSubmission,
+      Key key})
       : super(key: key);
 
   Task task;
   String filePath;
   AssessmentAssignment assessmentAssignment;
   User user;
+  TaskSubmission recordedTaskSubmission;
 
   @override
   _SelfRecordingPreviewState createState() => _SelfRecordingPreviewState();
@@ -89,10 +96,23 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                                 title: 'Done',
                                 onPressed: () async {
                                   _controller.pause();
-                                  _taskSubmissionBloc
-                                    ..createTaskSubmission(
-                                        widget.assessmentAssignment,
-                                        widget.task);
+                                  if (widget.recordedTaskSubmission == null) {
+                                    _taskSubmissionBloc
+                                      ..createTaskSubmission(
+                                          widget.assessmentAssignment,
+                                          widget.task);
+                                  } else {
+                                    setState(() {
+                                      taskSubmissionId =
+                                          widget.recordedTaskSubmission.id;
+                                    });
+                                    _videoBloc
+                                      ..createVideo(
+                                          context,
+                                          File(widget.filePath),
+                                          3.0 / 4.0,
+                                          taskSubmissionId);
+                                  }
                                 },
                               )),
                           BlocConsumer<VideoBloc, VideoState>(
@@ -107,7 +127,8 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => TaskDetails(
-                                          task: widget.task, user: widget.user)));
+                                          task: widget.task,
+                                          user: widget.user)));
                             }
                           }, builder: (context, state) {
                             if (state is VideoProcessing) {

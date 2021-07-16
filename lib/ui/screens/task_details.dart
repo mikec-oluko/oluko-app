@@ -11,20 +11,25 @@ import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
+import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/screens/self_recording.dart';
 import 'package:oluko_app/ui/screens/task_submission_recorded_video.dart';
+import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 
 class TaskDetails extends StatefulWidget {
-  TaskDetails({this.task, this.user, Key key}) : super(key: key);
+  TaskDetails({this.task, this.user, this.tasks, this.index, Key key})
+      : super(key: key);
 
   final Task task;
   User user;
+  List<Task> tasks;
+  int index;
 
   @override
   _TaskDetailsState createState() => _TaskDetailsState();
@@ -122,60 +127,116 @@ class _TaskDetailsState extends State<TaskDetails> {
 
   Widget formSection() {
     return Container(
-        height: MediaQuery.of(context).size.height / 1.75,
+        //height: MediaQuery.of(context).size.height / 1.75,
         child: Column(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              formFields(),
-              BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
-                  builder: (context, state) {
-                if (state is GetSuccess && state.taskSubmission != null) {
-                  return SizedBox() /*Row(
+          formFields(),
+          BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
+              builder: (context, state) {
+            if (state is GetSuccess && state.taskSubmission != null) {
+              return Padding(
+                  padding: const EdgeInsets.only(top: 20.0),
+                  child: Row(
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                      OlukoPrimaryButton(
-                        title: 'Send Feedback',
+                      OlukoOutlinedButton(
+                        thinPadding: true,
+                        title:
+                            OlukoLocalizations.of(context).find('recordAgain'),
                         onPressed: () {
-                          if (_controller != null) {
-                            _controller.pause();
+                          MovementUtils.movementDialog(context,
+                              _confirmDialogContent(state.taskSubmission),
+                              showExitButton: false);
+                        },
+                      ),
+                      SizedBox(width: 20),
+                      OlukoPrimaryButton(
+                        title: OlukoLocalizations.of(context).find('next'),
+                        onPressed: () {
+                          if (widget.index < widget.tasks.length - 1) {
+                            return Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return TaskDetails(
+                                  tasks: widget.tasks,
+                                  index: widget.index + 1,
+                                  user: widget.user,
+                                  task: widget.tasks[widget.index + 1]);
+                            }));
                           }
-                          return Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => TaskSubmissionReview(
-                                      taskSubmission: state.taskSubmission)));
                         },
                       ),
                     ],
-                  )*/
-                      ;
-                } else {
-                  return Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      OlukoPrimaryButton(
-                        title: OlukoLocalizations.of(context)
-                            .find('startRecording'),
-                        onPressed: () {
-                          if (_controller != null) {
-                            _controller.pause();
-                          }
-                          return Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => SelfRecording(
-                                      task: widget.task,
-                                      assessmentAssignment:
-                                          assessmentAssignment,
-                                      user: widget.user)));
-                        },
-                      ),
-                    ],
-                  );
-                }
-              }),
-            ]));
+                  ));
+            } else {
+              return Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  OlukoPrimaryButton(
+                    title:
+                        OlukoLocalizations.of(context).find('startRecording'),
+                    onPressed: () {
+                      if (_controller != null) {
+                        _controller.pause();
+                      }
+                      return Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SelfRecording(
+                                  task: widget.task,
+                                  assessmentAssignment: assessmentAssignment,
+                                  user: widget.user)));
+                    },
+                  ),
+                ],
+              );
+            }
+          }),
+        ]));
+  }
+
+  List<Widget> _confirmDialogContent(TaskSubmission taskSubmission) {
+    return [
+      Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(children: [
+            Padding(
+                padding: const EdgeInsets.only(bottom: 15.0),
+                child: TitleBody(
+                    OlukoLocalizations.of(context).find('recordAgainQuestion'),
+                    bold: true)),
+            Text(OlukoLocalizations.of(context).find('recordAgainWarning'),
+                textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont()),
+            Padding(
+                padding: const EdgeInsets.only(top: 25.0),
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    OlukoPrimaryButton(
+                      title: OlukoLocalizations.of(context).find('no'),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                    SizedBox(width: 20),
+                    OlukoOutlinedButton(
+                      title: OlukoLocalizations.of(context).find('yes'),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => SelfRecording(
+                                    recordedTaskSubmission: taskSubmission,
+                                    task: widget.task,
+                                    assessmentAssignment: assessmentAssignment,
+                                    user: widget.user)));
+                      },
+                    ),
+                  ],
+                ))
+          ]))
+    ];
   }
 
   Widget formFields() {

@@ -4,17 +4,19 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/models/task.dart';
+import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/screens/self_recording_preview.dart';
 
 class SelfRecording extends StatefulWidget {
-  SelfRecording({this.task, this.assessmentAssignment, this.user, Key key})
+  SelfRecording({this.task, this.assessmentAssignment, this.user, this.recordedTaskSubmission, Key key})
       : super(key: key);
 
   final Task task;
   final AssessmentAssignment assessmentAssignment;
   User user;
+  TaskSubmission recordedTaskSubmission;
 
   @override
   _State createState() => _State();
@@ -81,6 +83,7 @@ class _State extends State<SelfRecording> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => SelfRecordingPreview(
+                                    recordedTaskSubmission: widget.recordedTaskSubmission,
                                       user: widget.user,
                                       task: widget.task,
                                       filePath: path,

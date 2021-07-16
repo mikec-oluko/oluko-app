@@ -169,7 +169,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                                                   return Navigator.push(context,
                                                       MaterialPageRoute(
                                                           builder: (context) {
-                                                    return TaskDetails(
+                                                    return TaskDetails(tasks: state.values, index: index,
                                                         user: user, task: task);
                                                   })).then((value) =>
                                                       this.setState(() {
