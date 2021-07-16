@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:image/image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:image_picker/image_picker.dart';
@@ -58,7 +58,14 @@ class TransformationJourneyRepository {
         .doc(username)
         .collection('transformationJourneyUploads');
 
-    //TODO: get thumbnail here and upload with https://pub.dev/packages/thumbnailer
+    //TODO: Image to thumbnail
+    // final imageUpdated = decodeImage(File(file.path).readAsBytesSync());
+    // final thumbnail = copyResize(imageUpdated, width: 120);
+    // final thumbnailFile = File.fromRawPath(thumbnail.getBytes());
+
+    //TODO: Upload thumbnail need to be File
+    // final thumbNaildownloadUrl = await _uploadFile(
+    //     thumbnail, transformationJourneyUploadsReference.path);
 
     final downloadUrl = await _uploadFile(
         file.path, transformationJourneyUploadsReference.path);
