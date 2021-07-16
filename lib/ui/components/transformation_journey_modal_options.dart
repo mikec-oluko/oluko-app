@@ -9,6 +9,8 @@ import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/repositories/transformation_journey_repository.dart';
 import 'package:oluko_app/ui/components/uploading_modal_loader.dart';
+import 'package:oluko_app/ui/components/uploading_modal_success.dart';
+import 'package:oluko_app/ui/screens/profile/profile_routes.dart';
 import 'package:oluko_app/utils/app_modal.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
@@ -63,7 +65,7 @@ class _TransformationJourneyOptionsState
               getImage();
               Navigator.pop(context);
               AppModal.dialogContent(
-                  context: context, content: [UploadingModalLoader()]);
+                  context: context, content: [UploadingModalSuccess()]);
             },
             leading: Icon(
               Icons.camera_alt_outlined,
@@ -78,7 +80,7 @@ class _TransformationJourneyOptionsState
               getImageFromGallery();
               Navigator.pop(context);
               AppModal.dialogContent(
-                  context: context, content: [UploadingModalLoader()]);
+                  context: context, content: [UploadingModalSuccess()]);
             },
             leading: Icon(
               Icons.image,

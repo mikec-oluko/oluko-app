@@ -88,11 +88,15 @@ class _ProfileTransformationJourneyPageState
                                     child: OlukoOutlinedButton(
                                         title: OlukoLocalizations.of(context)
                                             .find('tapToUpload'),
-                                        onPressed: () => AppModal.dialogContent(
-                                                context: context,
-                                                content: [
-                                                  TransformationJourneyOptions()
-                                                ])),
+                                        onPressed: () {
+                                          AppModal.dialogContent(
+                                              context: context,
+                                              content: [
+                                                TransformationJourneyOptions()
+                                              ]);
+                                          _requestTransformationJourneyData(
+                                              context, profileInfo);
+                                        }),
                                   )))),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(10, 100, 10, 0),

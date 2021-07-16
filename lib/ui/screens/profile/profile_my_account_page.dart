@@ -7,8 +7,10 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/plan_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_helper.dart';
+import 'package:oluko_app/helpers/s3_provider.dart';
 import 'package:oluko_app/models/plan.dart';
 import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/repositories/user_repository.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_user_info.dart';
 import 'package:oluko_app/ui/components/subscription_card.dart';
@@ -17,6 +19,7 @@ import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/app_modal.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:path/path.dart' as p;
 
 class ProfileMyAccountPage extends StatefulWidget {
   final File image;
@@ -32,8 +35,23 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
   File _imageFromGallery;
   final imagePicker = ImagePicker();
 
+  static Future<String> _uploadFile(filePath, folderName) async {
+    final file = new File(filePath);
+    final basename = p.basename(filePath);
+
+    final S3Provider s3Provider = S3Provider();
+    String downloadUrl =
+        await s3Provider.putFile(file.readAsBytesSync(), folderName, basename);
+
+    return downloadUrl;
+  }
+
   Future getImage() async {
     final image = await imagePicker.getImage(source: ImageSource.camera);
+    if (image == null) return;
+
+    UserRepository().updateUserAvatar(profileInfo, image);
+
     setState(() {
       _image = File(image.path);
     });
@@ -95,9 +113,9 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Center(
-              child: _image != null
+              child: profileInfo.avatar != null
                   ? CircleAvatar(
-                      backgroundImage: Image.file(_image).image,
+                      backgroundImage: NetworkImage(profileInfo.avatar),
                       backgroundColor: OlukoColors.primary,
                       radius: 50.0,
                       child: IconButton(
