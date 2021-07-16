@@ -123,18 +123,20 @@ class CourseEnrollmentRepository {
         await getUserCourseEnrollments(userId);
 
     List<Course> coursesList = [];
-    listOfCoruseEnrollment.forEach((courseEnrollment) async {
-      final Course course =
-          await getCourseByCourseEnrollmentId(courseEnrollment.courseId);
-      coursesList.add(course);
-    });
+    if (listOfCoruseEnrollment != null) {
+      listOfCoruseEnrollment.forEach((courseEnrollment) async {
+        final Course course =
+            await getCourseByCourseEnrollmentId(courseEnrollment.courseId);
+        coursesList.add(course);
+      });
+    }
     return coursesList;
   }
 
   Future<List<Challenge>> getUserChallengesuserId(String userId) async {
     List<CourseEnrollment> courseEnrollmentId =
         await getUserCourseEnrollments(userId);
-
+    if (courseEnrollmentId == null) return [];
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"))

@@ -44,7 +44,7 @@ class TransformationJourneyUpload extends Base {
       'from': from,
       'description': description,
       'index': index,
-      'type': type,
+      'type': type.toString(),
       'file': file,
       'isPublic': isPublic,
       'thumbnail': thumbnail,
