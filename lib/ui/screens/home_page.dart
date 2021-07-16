@@ -194,7 +194,10 @@ class _MyHomePageState extends State<MyHomePage> {
                           ))
                       .toList(),
                 );
-              })
+              }),
+          SizedBox(
+            height: 200,
+          )
         ],
       ),
     );
