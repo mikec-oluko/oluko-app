@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/utils/image_utils.dart';
 
 import 'image_and_video_preview_card.dart';
 
@@ -33,6 +34,11 @@ class _ImageAndVideoContainerState extends State<ImageAndVideoContainer> {
                 imageCover: Image.network(
                   widget.assetImage,
                   fit: BoxFit.fill,
+                  frameBuilder: (BuildContext context, Widget child, int frame,
+                          bool wasSynchronouslyLoaded) =>
+                      ImageUtils.frameBuilder(
+                          context, child, frame, wasSynchronouslyLoaded,
+                          height: 120, width: 120),
                   height: 120,
                   width: 120,
                 ),
