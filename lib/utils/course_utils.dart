@@ -123,7 +123,7 @@ class CourseUtils {
           builder: (context) => new AlertDialog(
             backgroundColor: Colors.grey.shade900,
             content: Container(
-              height: 100,
+              height: 150,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,

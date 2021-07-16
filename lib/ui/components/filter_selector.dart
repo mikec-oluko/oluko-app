@@ -39,11 +39,16 @@ class _State<T extends Base> extends State<FilterSelector> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: 80.0),
+          child: _getFilterSelectorContent(),
+        ),
         Positioned(
             bottom: 15,
             left: 0,
             right: 0,
             child: Container(
+                color: Colors.black,
                 width: ScreenUtils.width(context),
                 child: Row(
                   children: [
@@ -58,20 +63,20 @@ class _State<T extends Base> extends State<FilterSelector> {
                         title: 'Close', onPressed: () => widget.onClosed())
                   ],
                 ))),
-        _getFilterSelectorContent()
       ],
     );
   }
 
   Widget _getFilterSelectorContent() {
-    return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: widget.itemList.entries
-            .map((entry) => Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: _getFilterCategory(entry),
-                ))
-            .toList());
+    return Container(
+      child: ListView(
+          children: widget.itemList.entries
+              .map((entry) => Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: _getFilterCategory(entry),
+                  ))
+              .toList()),
+    );
   }
 
   List<Widget> _getFilterCategory(

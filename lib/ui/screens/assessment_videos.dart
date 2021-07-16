@@ -108,7 +108,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 10),
                                     child: Text(
-                                      'Skip',
+                                      '', // REMOVE FOR MVT 'Skip',
                                       style: TextStyle(
                                           color: Colors.white, fontSize: 18),
                                     ),

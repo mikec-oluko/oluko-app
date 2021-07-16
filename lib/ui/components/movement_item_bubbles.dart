@@ -17,9 +17,12 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
   final String imageItemUrl =
       "https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/Airsquats.jpg?alt=media&token=641c2dff-ac0e-4b22-8a8d-aee9adbca3a1";
   final String itemName = 'Airsquats';
-  final Function(BuildContext) onPressedMovement = (context) {
+  final Function(BuildContext, Movement) onPressedMovement =
+      (context, movement) {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => MovementIntro()));
+        context,
+        MaterialPageRoute(
+            builder: (context) => MovementIntro(movement: movement)));
   };
 
   @override
@@ -44,8 +47,10 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: widget.content
                         .map((movement) => _imageItem(
-                            context, movement.iconImage, movement.name,
-                            onPressed: onPressedMovement))
+                                context, movement.iconImage, movement.name,
+                                onPressed: (context) {
+                              onPressedMovement(context, movement);
+                            }))
                         .toList()
                           //Prevent the last item to be overlayed by the carousel gradient
                           ..add(SizedBox(

@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvt_fitness/blocs/auth_bloc.dart';
 import 'package:mvt_fitness/constants/theme.dart';
+import 'package:mvt_fitness/utils/screen_utils.dart';
 
 class SignUpPage extends StatefulWidget {
   SignUpPage({Key key}) : super(key: key);
@@ -38,78 +39,87 @@ class MainSignUpPage extends StatelessWidget {
       child: BlocProvider(
           create: (context) => AuthBloc(),
           child: BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
-            return Stack(alignment: Alignment.bottomCenter, children: [
-              Image.asset(
-                'assets/login/sign_up_splash_screen.png',
-                fit: BoxFit.cover,
-                colorBlendMode: BlendMode.colorBurn,
-                height: MediaQuery.of(context).size.height,
-              ),
-              Image.asset(
-                'assets/login/sign_up_splash_gradient.png',
-                fit: BoxFit.fitHeight,
-                colorBlendMode: BlendMode.colorBurn,
-                height: MediaQuery.of(context).size.height,
-              ),
-              Positioned(
-                  bottom: 0,
-                  child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 15),
-                      child: Container(
-                          child: Column(children: [
-                        SizedBox(height: 20),
-                        Container(
-                            width: MediaQuery.of(context).size.width,
-                            height: 150,
-                            child: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 15),
-                                child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    SizedBox(
-                                        width: double.infinity,
-                                        height: 50,
-                                        child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                                primary: OlukoColors.primary),
-                                            onPressed: () =>
-                                                Navigator.pushNamed(
-                                                    context, '/log-in'),
-                                            child: Stack(children: [
-                                              Align(
-                                                  alignment:
-                                                      Alignment.centerRight,
-                                                  child: Icon(
-                                                      Icons.navigate_next)),
-                                              Align(
-                                                child: Text('LOGIN'),
-                                              )
-                                            ]))),
-                                    // TODO Enable Signup
-                                    // SizedBox(
-                                    //     width: double.infinity,
-                                    //     height: 50,
-                                    //     child: ElevatedButton(
-                                    //         style: ElevatedButton.styleFrom(
-                                    //             primary: OlukoColors.primary),
-                                    //         onPressed: () => Navigator.pushNamed(
-                                    //             context, '/sign-up-with-email'),
-                                    //         child: Stack(children: [
-                                    //           Align(
-                                    //               alignment:
-                                    //                   Alignment.centerRight,
-                                    //               child:
-                                    //                   Icon(Icons.navigate_next)),
-                                    //           Align(
-                                    //             child: Text('SIGN UP'),
-                                    //           )
-                                    //         ]))),
-                                    SizedBox(height: 10),
-                                  ],
-                                )))
-                      ]))))
-            ]);
+            return Container(
+              width: ScreenUtils.width(context),
+              child: Stack(
+                  fit: StackFit.expand,
+                  alignment: Alignment.bottomCenter,
+                  children: [
+                    Image.asset(
+                      'assets/login/sign_up_splash_screen.png',
+                      fit: BoxFit.cover,
+                      colorBlendMode: BlendMode.colorBurn,
+                      height: MediaQuery.of(context).size.height,
+                    ),
+                    Image.asset(
+                      'assets/login/sign_up_splash_gradient.png',
+                      fit: BoxFit.cover,
+                      colorBlendMode: BlendMode.colorBurn,
+                      height: MediaQuery.of(context).size.height,
+                    ),
+                    Positioned(
+                        bottom: 0,
+                        child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 15),
+                            child: Container(
+                                child: Column(children: [
+                              SizedBox(height: 20),
+                              Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  height: 150,
+                                  child: Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 15),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          SizedBox(
+                                              width: double.infinity,
+                                              height: 50,
+                                              child: ElevatedButton(
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                          primary: OlukoColors
+                                                              .primary),
+                                                  onPressed: () =>
+                                                      Navigator.pushNamed(
+                                                          context, '/log-in'),
+                                                  child: Stack(children: [
+                                                    Align(
+                                                        alignment: Alignment
+                                                            .centerRight,
+                                                        child: Icon(Icons
+                                                            .navigate_next)),
+                                                    Align(
+                                                      child: Text('LOGIN'),
+                                                    )
+                                                  ]))),
+                                          // TODO Enable Signup
+                                          // SizedBox(
+                                          //     width: double.infinity,
+                                          //     height: 50,
+                                          //     child: ElevatedButton(
+                                          //         style: ElevatedButton.styleFrom(
+                                          //             primary: OlukoColors.primary),
+                                          //         onPressed: () => Navigator.pushNamed(
+                                          //             context, '/sign-up-with-email'),
+                                          //         child: Stack(children: [
+                                          //           Align(
+                                          //               alignment:
+                                          //                   Alignment.centerRight,
+                                          //               child:
+                                          //                   Icon(Icons.navigate_next)),
+                                          //           Align(
+                                          //             child: Text('SIGN UP'),
+                                          //           )
+                                          //         ]))),
+                                          SizedBox(height: 10),
+                                        ],
+                                      )))
+                            ]))))
+                  ]),
+            );
           })),
     );
   }
