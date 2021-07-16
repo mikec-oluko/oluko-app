@@ -52,6 +52,7 @@ class _State extends State<StoriesHeader> {
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: StoriesItem(
+                maxRadius: 30,
                 name: sampleNames[index],
                 imageUrl: widget.stories[index],
                 progressValue: sampleProgress[index],

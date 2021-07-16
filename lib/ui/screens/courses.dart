@@ -54,7 +54,7 @@ class _State extends State<Courses> {
   @override
   Widget build(BuildContext context) {
     carouselSectionHeight =
-        ((ScreenUtils.width(context) / _cardsToShow()) / cardsAspectRatio) + 60;
+        ((ScreenUtils.width(context) / _cardsToShow()) / cardsAspectRatio) + 75;
     return BlocBuilder<CourseBloc, CourseState>(
         bloc: BlocProvider.of<CourseBloc>(context)..getByCategories(),
         builder: (context, courseState) {
