@@ -29,10 +29,12 @@ class _MovementIntroState extends State<MovementIntro>
 
   //TODO Make Dynamic
   Movement movement = Movement(
+      iconImage:
+          'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/Airsquats.jpg?alt=media&token=641c2dff-ac0e-4b22-8a8d-aee9adbca3a1',
       video:
           'https://oluko-mvt.s3.us-west-1.amazonaws.com/assessments/85b2f81c1fe74f9cb5e804c57db30137/85b2f81c1fe74f9cb5e804c57db30137_2.mp4',
       description:
-          'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. ',
+          'Learn practical exercises to gain confidence in yourself, improve your core and focus on strengthening and toning your midsection. You wont regret after these 6 weeks and everybody will notice your effort and your selflove. ',
       name: "Airsquats");
   String backgroundImageUrl =
       'https://c0.wallpaperflare.com/preview/26/779/700/fitness-men-sports-gym.jpg';
@@ -90,7 +92,7 @@ class _MovementIntroState extends State<MovementIntro>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: OlukoImageBar(actions: []),
+      appBar: OlukoImageBar(actions: [], movements: [movement]),
       backgroundColor: Colors.black,
       body: Container(
         decoration: BoxDecoration(
