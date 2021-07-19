@@ -16,6 +16,7 @@ import 'package:oluko_app/ui/screens/segment_recording.dart';
 import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'movement_intro.dart';
 
 class SegmentDetail extends StatefulWidget {
   SegmentDetail(
@@ -74,7 +75,15 @@ class _SegmentDetailState extends State<SegmentDetail> {
 
   Widget form(List<Movement> movements) {
     return Scaffold(
-      appBar: OlukoImageBar(actions: [], movements: movements),
+      appBar: OlukoImageBar(
+        actions: [],
+        movements: movements,
+        onPressedMovement: (BuildContext context, Movement movement) =>
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => MovementIntro(movement: movement))),
+      ),
       backgroundColor: Colors.black,
       body: Container(
         decoration: BoxDecoration(

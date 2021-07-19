@@ -94,7 +94,10 @@ class _MovementIntroState extends State<MovementIntro>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: OlukoImageBar(actions: [], movements: [widget.movement]),
+      appBar: OlukoImageBar(
+          actions: [],
+          movements: [widget.movement],
+          onPressedMovement: (context, movement) => {}),
       backgroundColor: Colors.black,
       body: Container(
         decoration: BoxDecoration(

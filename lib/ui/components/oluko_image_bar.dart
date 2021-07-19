@@ -17,17 +17,15 @@ class OlukoImageBar<T> extends StatelessWidget implements PreferredSizeWidget {
   final String imageItemUrl =
       "https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/Airsquats.jpg?alt=media&token=641c2dff-ac0e-4b22-8a8d-aee9adbca3a1";
   final String itemName = 'Airsquats';
-  final Function(BuildContext) onPressedMovement = (context) {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => MovementIntro()));
-  };
+  final Function(BuildContext, Movement) onPressedMovement;
 
   OlukoImageBar(
       {this.title,
       this.onPressed,
       this.actions,
       this.movements,
-      this.toolbarHeight = kToolbarHeight * 1.75});
+      this.toolbarHeight = kToolbarHeight * 1.75,
+      this.onPressedMovement});
   @override
   Widget build(BuildContext context) {
     return PreferredSize(
@@ -75,6 +73,7 @@ class OlukoImageBar<T> extends StatelessWidget implements PreferredSizeWidget {
                           SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
                               child: MovementItemBubbles(
+                                  onPressed: onPressedMovement,
                                   content: movements,
                                   width: ScreenUtils.width(context) / 1)),
                         ],

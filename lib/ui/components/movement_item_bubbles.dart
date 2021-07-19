@@ -7,7 +7,8 @@ import 'package:oluko_app/ui/screens/movement_intro.dart';
 class MovementItemBubbles extends StatefulWidget {
   final List<Movement> content;
   final double width;
-  MovementItemBubbles({this.content, this.width});
+  final Function(BuildContext, Movement) onPressed;
+  MovementItemBubbles({this.content, this.width, this.onPressed});
   @override
   _MovementItemBubblesState createState() => _MovementItemBubblesState();
 }
@@ -17,13 +18,6 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
   final String imageItemUrl =
       "https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/Airsquats.jpg?alt=media&token=641c2dff-ac0e-4b22-8a8d-aee9adbca3a1";
   final String itemName = 'Airsquats';
-  final Function(BuildContext, Movement) onPressedMovement =
-      (context, movement) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => MovementIntro(movement: movement)));
-  };
 
   @override
   Widget build(BuildContext context) {
@@ -47,10 +41,9 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: widget.content
                         .map((movement) => _imageItem(
-                                context, movement.iconImage, movement.name,
-                                onPressed: (context) {
-                              onPressedMovement(context, movement);
-                            }))
+                            context, movement.iconImage, movement.name,
+                            onPressed: (context) =>
+                                widget.onPressed(context, movement)))
                         .toList()
                           //Prevent the last item to be overlayed by the carousel gradient
                           ..add(SizedBox(
