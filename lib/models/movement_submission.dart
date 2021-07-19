@@ -5,12 +5,16 @@ import 'package:oluko_app/models/submodels/video.dart';
 class MovementSubmission extends Base {
   String userId;
   DocumentReference userReference;
+  String movementId;
+  DocumentReference movementReference;
   Timestamp seenAt;
   Video video;
 
   MovementSubmission(
       {this.userId,
       this.userReference,
+      this.movementId,
+      this.movementReference,
       this.seenAt,
       this.video,
       String id,
@@ -33,6 +37,8 @@ class MovementSubmission extends Base {
     MovementSubmission movementSubmission = MovementSubmission(
         userId: json['user_id'],
         userReference: json['user_reference'],
+        movementId: json['movement_id'],
+        movementReference: json['movement_reference'],
         video:
             json['coach_id'] == null ? null : Video.fromJson(json['coach_id']));
     movementSubmission.setBase(json);
@@ -43,6 +49,8 @@ class MovementSubmission extends Base {
     Map<String, dynamic> movementSubmissionJson = {
       'user_id': userId,
       'user_reference': userReference,
+      'movement_id': movementId,
+      'movement_reference': movementReference,
       'seen_at': seenAt,
       'video': video == null ? null : video.toJson()
     };

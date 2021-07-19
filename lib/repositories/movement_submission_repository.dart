@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/models/movement_submission.dart';
 import 'package:oluko_app/models/segment_submission.dart';
+import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/repositories/segment_submission_repository.dart';
 
 class MovementSubmissionRepository {
@@ -16,10 +17,12 @@ class MovementSubmissionRepository {
   }
 
   static Future<MovementSubmission> create(
-      SegmentSubmission segmentSubmission) async {
+      SegmentSubmission segmentSubmission, MovementSubmodel movement) async {
     MovementSubmission movementSubmission = MovementSubmission(
         userId: segmentSubmission.userId,
-        userReference: segmentSubmission.userReference);
+        userReference: segmentSubmission.userReference,
+        movementId: movement.id,
+        movementReference: movement.reference);
     CollectionReference reference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"))

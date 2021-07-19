@@ -1,10 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/movement_submission.dart';
 import 'package:oluko_app/models/segment_submission.dart';
+import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/repositories/movement_submission_repository.dart';
-import 'package:oluko_app/repositories/segment_submission_repository.dart';
 
 abstract class MovementSubmissionState {}
 
@@ -29,10 +27,10 @@ class Failure extends MovementSubmissionState {
 class MovementSubmissionBloc extends Cubit<MovementSubmissionState> {
   MovementSubmissionBloc() : super(Loading());
 
-  void create(SegmentSubmission segmentSubmission) async {
+  void create(SegmentSubmission segmentSubmission, MovementSubmodel movement) async {
     try {
       MovementSubmission movementSubmission =
-          await MovementSubmissionRepository.create(segmentSubmission);
+          await MovementSubmissionRepository.create(segmentSubmission, movement);
       emit(CreateMovementSubmissionSuccess(
           movementSubmission: movementSubmission));
     } catch (e) {

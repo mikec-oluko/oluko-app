@@ -62,8 +62,6 @@ class _SegmentRecordingState extends State<SegmentRecording> {
 
   //Current task running on Countdown Timer
   num timerTaskIndex = 0;
-  num currentSet = 0;
-  num currentMovementIndex = 0;
   Duration timeLeft;
 
   // ---- End Make Dynamic ----
@@ -86,13 +84,13 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   MovementSubmissionBloc _movementSubmissionBloc;
   VideoBloc _videoBloc;
   SegmentSubmission segmentSubmission;
+  List<MovementSubmission> movementSubmissions = [];
+  int updatedIndex = 0;
   MovementSubmission movementSubmission;
 
-  _startMovement(num movementIndex) {
+  _startMovement() {
     //Reset countdown variables
     timerTaskIndex = 0;
-    currentSet = 0;
-    currentMovementIndex = 0;
     //Merge all movement exercises (Workouts & Rests) into a List iterable by the Timer
     this.timerEntries = _getExercisesList(widget.segment.rounds);
     _playTask(timerTaskIndex);
@@ -101,7 +99,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   @override
   void initState() {
     _setupCameras();
-    _startMovement(currentMovementIndex);
+    _startMovement();
     this.workoutType = widget.workoutType;
     _segmentSubmissionBloc = SegmentSubmissionBloc();
     _movementSubmissionBloc = MovementSubmissionBloc();
@@ -114,8 +112,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     return MultiBlocProvider(
         providers: [
           BlocProvider<SegmentSubmissionBloc>(
-            create: (context) => _segmentSubmissionBloc
-              ..create(widget.user, widget.courseEnrollment),
+            create: (context) => _segmentSubmissionBloc,
           ),
           BlocProvider<MovementSubmissionBloc>(
             create: (context) => _movementSubmissionBloc,
@@ -124,29 +121,33 @@ class _SegmentRecordingState extends State<SegmentRecording> {
             create: (context) => _videoBloc,
           )
         ],
-        child: BlocBuilder<SegmentSubmissionBloc, SegmentSubmissionState>(
-            builder: (context, state) {
-          if (state is CreateSuccess) {
-            segmentSubmission = state.segmentSubmission;
-            if (movementSubmission == null) {
-              _movementSubmissionBloc.create(segmentSubmission);
-            }
-            return BlocBuilder<MovementSubmissionBloc, MovementSubmissionState>(
-                builder: (context, movementState) {
+        child: BlocListener<MovementSubmissionBloc, MovementSubmissionState>(
+            listener: (context, movementState) {
               if (movementState is CreateMovementSubmissionSuccess) {
+                movementSubmissions.add(movementState.movementSubmission);
                 movementSubmission = movementState.movementSubmission;
-                return form();
-              } else {
-                return SizedBox();
               }
-            });
-          } else {
-            return SizedBox();
-          }
-        }));
+            },
+            child: BlocListener<SegmentSubmissionBloc, SegmentSubmissionState>(
+                listener: (context, segmentState) {
+                  if (segmentState is CreateSuccess) {
+                    segmentSubmission = segmentState.segmentSubmission;
+                    if (movementSubmissions.isEmpty) {
+                      _movementSubmissionBloc
+                        ..create(segmentSubmission,
+                            timerEntries[timerTaskIndex].movement);
+                    }
+                  }
+                },
+                child: form())));
   }
 
   form() {
+    if (widget.workoutType == WorkoutType.segmentWithRecording &&
+        segmentSubmission == null) {
+      _segmentSubmissionBloc
+        ..create(widget.user, widget.courseEnrollment, widget.segment);
+    }
     return Scaffold(
       appBar: OlukoAppBar(
         title: ' ',
@@ -325,8 +326,14 @@ class _SegmentRecordingState extends State<SegmentRecording> {
                 BlocListener<VideoBloc, VideoState>(
                     listener: (context, state) {
                       if (state is VideoSuccess) {
-                        movementSubmission.video = state.video;
-                        _movementSubmissionBloc..update(movementSubmission);
+                        setState(() {
+                          movementSubmissions[updatedIndex].video = state.video;
+                        });
+                        _movementSubmissionBloc
+                          ..update(movementSubmissions[updatedIndex]);
+                        setState(() {
+                          updatedIndex++;
+                        });
                       }
                     },
                     child: Align(
@@ -350,6 +357,17 @@ class _SegmentRecordingState extends State<SegmentRecording> {
                             isCameraFront = !isCameraFront;
                           });
                           _setupCameras();
+                        }))),
+                Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Padding(
+                        padding: const EdgeInsets.only(
+                            right: 200.0, top: 20.0, bottom: 20.0),
+                        child: _flipCameraButton(Icons.fast_forward,
+                            onPressed: () {
+                          setState(() {
+                            _goToNextStep();
+                          });
                         }))),
               ],
             ),
@@ -668,19 +686,12 @@ class _SegmentRecordingState extends State<SegmentRecording> {
 
   //Timer Functions
   _saveLastStep(TimerEntry timerEntry) async {
-    if (timerEntry.workState == WorkState.exercising) {
+    if (widget.workoutType == WorkoutType.segmentWithRecording &&
+        timerEntry.workState == WorkState.exercising) {
       XFile videopath = await cameraController.stopVideoRecording();
       File file = File(videopath.path);
       print(file.toString());
-      BlocListener<MovementSubmissionBloc, MovementSubmissionState>(
-          listener: (context, state) {
-        if (state is CreateMovementSubmissionSuccess) {
-          movementSubmission = state.movementSubmission;
-          _videoBloc
-            ..createVideo(
-                context, file, 3.0 / 4.0, state.movementSubmission.id);
-        }
-      });
+      _videoBloc..createVideo(context, file, 3.0 / 4.0, movementSubmission.id);
     }
   }
 
@@ -698,13 +709,15 @@ class _SegmentRecordingState extends State<SegmentRecording> {
 
   _playTask(num timerTaskIndex) async {
     workState = timerEntries[timerTaskIndex].workState;
-    if (timerEntries[timerTaskIndex].time != null) {
-      if (timerEntries[timerTaskIndex].workState == WorkState.exercising) {
-        if (timerTaskIndex > 0) {
-          _movementSubmissionBloc.create(segmentSubmission);
-          await cameraController.startVideoRecording();
-        }
+    if (widget.workoutType == WorkoutType.segmentWithRecording &&
+        timerEntries[timerTaskIndex].workState == WorkState.exercising) {
+      if (timerTaskIndex > 0) {
+        _movementSubmissionBloc
+          ..create(segmentSubmission, timerEntries[timerTaskIndex].movement);
+        await cameraController.startVideoRecording();
       }
+    }
+    if (timerEntries[timerTaskIndex].time != null) {
       _playCountdown();
       timeLeft = Duration(seconds: timerEntries[timerTaskIndex].time);
     }
