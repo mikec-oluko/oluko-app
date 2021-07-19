@@ -67,7 +67,7 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
     return GestureDetector(
       onTap: () => onPressed(context),
       child: Container(
-        width: 90,
+        width: 75,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [

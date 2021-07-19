@@ -59,7 +59,7 @@ class OlukoImageBar<T> extends StatelessWidget implements PreferredSizeWidget {
                   ),
                   Container(
                     decoration: BoxDecoration(),
-                    width: ScreenUtils.width(context) / 1.8,
+                    width: ScreenUtils.width(context) / 1.4,
                     child: ShaderMask(
                       shaderCallback: (rect) {
                         return LinearGradient(
@@ -76,7 +76,7 @@ class OlukoImageBar<T> extends StatelessWidget implements PreferredSizeWidget {
                               scrollDirection: Axis.horizontal,
                               child: MovementItemBubbles(
                                   content: movements,
-                                  width: ScreenUtils.width(context) / 1.2)),
+                                  width: ScreenUtils.width(context) / 1)),
                         ],
                       ),
                     ),
