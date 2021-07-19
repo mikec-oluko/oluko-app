@@ -244,7 +244,10 @@ class _ClassesState extends State<Classes> {
                                                   }),
                                             ],
                                           )
-                                        ])))
+                                        ]))),
+                            SizedBox(
+                              height: 150,
+                            )
                           ]),
                           Positioned(
                               bottom: 0,
