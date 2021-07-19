@@ -106,143 +106,161 @@ class _ClassesState extends State<Classes> {
                       title: OlukoLocalizations.of(context).find('course')),
                   body: Container(
                       color: Colors.black,
-                      child: ListView(children: [
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 3),
-                          child: OrientationBuilder(
-                            builder: (context, orientation) {
-                              if (existsEnrollment) {
-                                return showVideoPlayer(
-                                    classState.classes[0].video);
-                              } else {
-                                return showVideoPlayer(course.video);
-                              }
-                            },
-                          ),
-                        ),
-                        existsEnrollment
-                            ? CourseProgressBar(
-                                value:
-                                    enrollmentState.courseEnrollment.completion)
-                            : SizedBox(),
-                        Padding(
-                            padding:
-                                EdgeInsets.only(right: 15, left: 15, top: 25),
-                            child: Container(
-                                width: MediaQuery.of(context).size.width,
-                                child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        course.name,
-                                        style: OlukoFonts.olukoTitleFont(
-                                            custoFontWeight: FontWeight.bold),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: 10.0, right: 10),
-                                        child: Text(
-                                          //TODO: change weeks number
-                                          TimeConverter.toCourseDuration(6,
-                                              course.classes.length, context),
-                                          style: OlukoFonts.olukoBigFont(
-                                              custoFontWeight:
-                                                  FontWeight.normal,
-                                              customColor:
-                                                  OlukoColors.grayColor),
-                                        ),
-                                      ),
-                                      BlocBuilder<StatisticsBloc,
-                                              StatisticsState>(
-                                          builder: (context, state) {
-                                        if (state is StatisticsSuccess) {
-                                          return Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  vertical: 15),
-                                              child: StatisticChart(
-                                                  courseStatistics:
-                                                      state.courseStatistics));
-                                        } else {
-                                          return Padding(
-                                            padding: const EdgeInsets.all(50.0),
-                                            child: Center(
-                                              child: Text(
-                                                  OlukoLocalizations.of(context)
-                                                      .find('loadingWhithDots'),
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                  )),
-                                            ),
-                                          );
-                                        }
-                                      }),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: 10.0, right: 10),
-                                        child: Text(
-                                          course.description,
-                                          style: OlukoFonts.olukoBigFont(
-                                              custoFontWeight:
-                                                  FontWeight.normal,
-                                              customColor:
-                                                  OlukoColors.grayColor),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(top: 25.0),
-                                        child: TitleBody(
-                                            OlukoLocalizations.of(context)
-                                                .find('classes'),
-                                            bold: true),
-                                      ),
-                                      Column(
+                      child: Stack(
+                        children: [
+                          ListView(children: [
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 3),
+                              child: OrientationBuilder(
+                                builder: (context, orientation) {
+                                  if (existsEnrollment) {
+                                    return showVideoPlayer(
+                                        classState.classes[0].video);
+                                  } else {
+                                    return showVideoPlayer(course.video);
+                                  }
+                                },
+                              ),
+                            ),
+                            existsEnrollment
+                                ? CourseProgressBar(
+                                    value: enrollmentState
+                                        .courseEnrollment.completion)
+                                : SizedBox(),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    right: 15, left: 15, top: 25),
+                                child: Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
-                                          ListView.builder(
-                                              physics:
-                                                  const NeverScrollableScrollPhysics(),
-                                              itemCount:
-                                                  classState.classes.length,
-                                              shrinkWrap: true,
-                                              itemBuilder:
-                                                  (context, num index) {
-                                                Class classObj =
-                                                    classState.classes[index];
-                                                double classProgress =
-                                                    CourseEnrollmentService
-                                                        .getClassProgress(
-                                                            enrollmentState
-                                                                .courseEnrollment,
-                                                            index);
-                                                return Padding(
-                                                    padding: const EdgeInsets
-                                                            .symmetric(
-                                                        vertical: 5.0),
-                                                    child: ClassSection(
-                                                      classProgresss:
-                                                          classProgress,
-                                                      classObj: classObj,
-                                                      onPressed: () {
-                                                        if (!existsEnrollment) {
-                                                          MovementUtils
-                                                              .movementDialog(
-                                                                  context,
-                                                                  _confirmDialogContent());
-                                                        }
-                                                      },
-                                                    ));
-                                              }),
-                                          showButton(
-                                              enrollmentState.courseEnrollment,
-                                              context,
-                                              user,
-                                              course,
-                                              classState.classes)
-                                        ],
-                                      )
-                                    ])))
-                      ]))));
+                                          Text(
+                                            course.name,
+                                            style: OlukoFonts.olukoTitleFont(
+                                                custoFontWeight:
+                                                    FontWeight.bold),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 10.0, right: 10),
+                                            child: Text(
+                                              //TODO: change weeks number
+                                              TimeConverter.toCourseDuration(
+                                                  6,
+                                                  course.classes.length,
+                                                  context),
+                                              style: OlukoFonts.olukoBigFont(
+                                                  custoFontWeight:
+                                                      FontWeight.normal,
+                                                  customColor:
+                                                      OlukoColors.grayColor),
+                                            ),
+                                          ),
+                                          BlocBuilder<StatisticsBloc,
+                                                  StatisticsState>(
+                                              builder: (context, state) {
+                                            if (state is StatisticsSuccess) {
+                                              return Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: 15),
+                                                  child: StatisticChart(
+                                                      courseStatistics: state
+                                                          .courseStatistics));
+                                            } else {
+                                              return Padding(
+                                                padding:
+                                                    const EdgeInsets.all(50.0),
+                                                child: Center(
+                                                  child: Text(
+                                                      OlukoLocalizations.of(
+                                                              context)
+                                                          .find(
+                                                              'loadingWhithDots'),
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                      )),
+                                                ),
+                                              );
+                                            }
+                                          }),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 10.0, right: 10),
+                                            child: Text(
+                                              course.description,
+                                              style: OlukoFonts.olukoBigFont(
+                                                  custoFontWeight:
+                                                      FontWeight.normal,
+                                                  customColor:
+                                                      OlukoColors.grayColor),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 25.0),
+                                            child: TitleBody(
+                                                OlukoLocalizations.of(context)
+                                                    .find('classes'),
+                                                bold: true),
+                                          ),
+                                          Column(
+                                            children: [
+                                              ListView.builder(
+                                                  physics:
+                                                      const NeverScrollableScrollPhysics(),
+                                                  itemCount:
+                                                      classState.classes.length,
+                                                  shrinkWrap: true,
+                                                  itemBuilder:
+                                                      (context, num index) {
+                                                    Class classObj = classState
+                                                        .classes[index];
+                                                    double classProgress =
+                                                        CourseEnrollmentService
+                                                            .getClassProgress(
+                                                                enrollmentState
+                                                                    .courseEnrollment,
+                                                                index);
+                                                    return Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .symmetric(
+                                                                vertical: 5.0),
+                                                        child: ClassSection(
+                                                          classProgresss:
+                                                              classProgress,
+                                                          classObj: classObj,
+                                                          onPressed: () {
+                                                            if (!existsEnrollment) {
+                                                              MovementUtils
+                                                                  .movementDialog(
+                                                                      context,
+                                                                      _confirmDialogContent());
+                                                            }
+                                                          },
+                                                        ));
+                                                  }),
+                                            ],
+                                          )
+                                        ])))
+                          ]),
+                          Positioned(
+                              bottom: 0,
+                              left: 0,
+                              right: 0,
+                              child: Container(
+                                color: Colors.black,
+                                child: showButton(
+                                    enrollmentState.courseEnrollment,
+                                    context,
+                                    user,
+                                    course,
+                                    classState.classes),
+                              )),
+                        ],
+                      ))));
         } else {
           return SizedBox();
         }
@@ -259,7 +277,7 @@ class _ClassesState extends State<Classes> {
       buttonText = OlukoLocalizations.of(context).find('enroll');
     }
     return Padding(
-        padding: EdgeInsets.symmetric(vertical: 20),
+        padding: EdgeInsets.symmetric(vertical: 20, horizontal: 15),
         child: Row(
           mainAxisSize: MainAxisSize.max,
           children: [
