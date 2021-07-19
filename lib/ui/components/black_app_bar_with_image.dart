@@ -74,9 +74,9 @@ class OlukoImageBar<T> extends StatelessWidget implements PreferredSizeWidget {
                         children: [
                           SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
-                              child:MovementItemBubbles(
-                        content: movements,
-                        width: ScreenUtils.width(context) / 1.2)),
+                              child: MovementItemBubbles(
+                                  content: movements,
+                                  width: ScreenUtils.width(context) / 1.2)),
                         ],
                       ),
                     ),
@@ -90,7 +90,7 @@ class OlukoImageBar<T> extends StatelessWidget implements PreferredSizeWidget {
                     child: IconButton(
                         icon: Icon(
                           Icons.more_vert,
-                          color: Colors.white,
+                          color: Colors.black,
                           size: 25,
                         ),
                         onPressed: () =>
@@ -126,5 +126,4 @@ class OlukoImageBar<T> extends StatelessWidget implements PreferredSizeWidget {
   Size get preferredSize => new Size.fromHeight(toolbarHeight);
 }
 
-class Segement {
-}
+class Segement {}
