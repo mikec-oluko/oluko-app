@@ -6,23 +6,21 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class OlukoBottomNavigationBar extends StatefulWidget {
-  final Function() onPressed;
+  final Function(num) onPressed;
   final List<Widget> actions;
+  final num selectedIndex;
 
-  OlukoBottomNavigationBar({this.onPressed, this.actions});
+  OlukoBottomNavigationBar({this.onPressed, this.actions, this.selectedIndex});
 
   @override
   State<StatefulWidget> createState() => _State();
 }
 
 class _State extends State<OlukoBottomNavigationBar> {
-  num selectedIndex = 0;
-
   @override
   Widget build(BuildContext context) {
-    selectedIndex = getIndexFromRoute();
     return BottomNavigationBar(
-        currentIndex: selectedIndex,
+        currentIndex: widget.selectedIndex,
         showUnselectedLabels: true,
         unselectedItemColor: Colors.white,
         selectedItemColor: Colors.black,
@@ -34,11 +32,10 @@ class _State extends State<OlukoBottomNavigationBar> {
               final OlukoBottomNavigationBarItem selectedItem =
                   getBottomNavigationBarItems()[index];
               if (selectedItem.disabled == false) {
-                Navigator.popAndPushNamed(context, selectedItem.route);
-                selectedIndex = index;
+                widget.onPressed(index);
               }
             }),
-        items: getNavigationBarWidgets(selectedIndex: selectedIndex));
+        items: getNavigationBarWidgets(selectedIndex: widget.selectedIndex));
   }
 
   BottomNavigationBarItem getBottomNavigationBarWidget(

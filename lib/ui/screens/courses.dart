@@ -64,7 +64,6 @@ class _State extends State<Courses> {
                 return Scaffold(
                     backgroundColor: Colors.black,
                     appBar: _appBar(courseState),
-                    bottomNavigationBar: OlukoBottomNavigationBar(),
                     body: courseState is CourseSuccess && tagState is TagSuccess
                         ? WillPopScope(
                             onWillPop: () => AppNavigator.onWillPop(context),

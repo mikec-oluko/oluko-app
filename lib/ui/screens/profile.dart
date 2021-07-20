@@ -46,22 +46,22 @@ class _ProfilePageState extends State<ProfilePage> {
     return Form(
         key: _formKey,
         child: Scaffold(
-            appBar: OlukoAppBar(
-                showBackButton: false,
-                title: ProfileViewConstants.profileTitle,
-                showSearchBar: false),
-            body: WillPopScope(
-              onWillPop: () => AppNavigator.onWillPop(context),
-              child: Container(
-                  color: OlukoColors.black,
-                  child: Stack(
-                    children: [
-                      userInformationSection(),
-                      buildOptionsList(),
-                    ],
-                  )),
-            ),
-            bottomNavigationBar: OlukoBottomNavigationBar()));
+          appBar: OlukoAppBar(
+              showBackButton: false,
+              title: ProfileViewConstants.profileTitle,
+              showSearchBar: false),
+          body: WillPopScope(
+            onWillPop: () => AppNavigator.onWillPop(context),
+            child: Container(
+                color: OlukoColors.black,
+                child: Stack(
+                  children: [
+                    userInformationSection(),
+                    buildOptionsList(),
+                  ],
+                )),
+          ),
+        ));
   }
 
   Widget userInformationSection() {
