@@ -11,6 +11,8 @@ class MovementSubmission extends Base {
   Timestamp seenAt;
   Video video;
   VideoState videoState;
+  String segmentSubmissionId;
+  DocumentReference segmentSubmissionReference;
 
   MovementSubmission(
       {this.userId,
@@ -20,6 +22,8 @@ class MovementSubmission extends Base {
       this.seenAt,
       this.video,
       this.videoState,
+      this.segmentSubmissionId,
+      this.segmentSubmissionReference,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -40,6 +44,8 @@ class MovementSubmission extends Base {
     MovementSubmission movementSubmission = MovementSubmission(
         userId: json['user_id'],
         userReference: json['user_reference'],
+        segmentSubmissionId: json['segment_submission_id'],
+        segmentSubmissionReference: json['segment_submission_reference'],
         movementId: json['movement_id'],
         movementReference: json['movement_reference'],
         video: json['video'] == null ? null : Video.fromJson(json['video']),
@@ -54,6 +60,8 @@ class MovementSubmission extends Base {
     Map<String, dynamic> movementSubmissionJson = {
       'user_id': userId,
       'user_reference': userReference,
+      'segment_submission_id': segmentSubmissionId,
+      'segment_submission_reference': segmentSubmissionReference,
       'movement_id': movementId,
       'movement_reference': movementReference,
       'seen_at': seenAt,

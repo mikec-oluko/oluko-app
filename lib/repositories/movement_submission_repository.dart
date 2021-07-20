@@ -22,16 +22,23 @@ class MovementSubmissionRepository {
 
   static Future<MovementSubmission> create(SegmentSubmission segmentSubmission,
       MovementSubmodel movement, String videoPath) async {
+    DocumentReference projectReference = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue("projectId"));
+    DocumentReference segmentSubmissionReference = projectReference
+        .collection('segmentSubmissions')
+        .doc(segmentSubmission.id);
     MovementSubmission movementSubmission = MovementSubmission(
         userId: segmentSubmission.userId,
         userReference: segmentSubmission.userReference,
         movementId: movement.id,
         movementReference: movement.reference,
-        videoState: VideoState(state: SubmissionStateEnum.recorded, stateInfo: videoPath));
-    CollectionReference reference = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
-        .collection('movementSubmissions');
+        segmentSubmissionId: segmentSubmission.id,
+        segmentSubmissionReference: segmentSubmissionReference,
+        videoState: VideoState(
+            state: SubmissionStateEnum.recorded, stateInfo: videoPath));
+    CollectionReference reference =
+        projectReference.collection('movementSubmissions');
     final DocumentReference docRef = reference.doc();
     movementSubmission.id = docRef.id;
     docRef.set(movementSubmission.toJson());
