@@ -82,10 +82,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
 
   SegmentSubmissionBloc _segmentSubmissionBloc;
   MovementSubmissionBloc _movementSubmissionBloc;
-  VideoBloc _videoBloc;
   SegmentSubmission segmentSubmission;
-  List<MovementSubmission> movementSubmissions = [];
-  int updatedIndex = 0;
   MovementSubmission movementSubmission;
 
   _startMovement() {
@@ -103,7 +100,6 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     this.workoutType = widget.workoutType;
     _segmentSubmissionBloc = SegmentSubmissionBloc();
     _movementSubmissionBloc = MovementSubmissionBloc();
-    _videoBloc = VideoBloc();
     super.initState();
   }
 
@@ -116,15 +112,11 @@ class _SegmentRecordingState extends State<SegmentRecording> {
           ),
           BlocProvider<MovementSubmissionBloc>(
             create: (context) => _movementSubmissionBloc,
-          ),
-          BlocProvider<VideoBloc>(
-            create: (context) => _videoBloc,
           )
         ],
         child: BlocListener<MovementSubmissionBloc, MovementSubmissionState>(
             listener: (context, movementState) {
               if (movementState is CreateMovementSubmissionSuccess) {
-                movementSubmissions.add(movementState.movementSubmission);
                 movementSubmission = movementState.movementSubmission;
               }
             },
@@ -132,11 +124,6 @@ class _SegmentRecordingState extends State<SegmentRecording> {
                 listener: (context, segmentState) {
                   if (segmentState is CreateSuccess) {
                     segmentSubmission = segmentState.segmentSubmission;
-                    if (movementSubmissions.isEmpty) {
-                      _movementSubmissionBloc
-                        ..create(segmentSubmission,
-                            timerEntries[timerTaskIndex].movement);
-                    }
                   }
                 },
                 child: form())));
@@ -323,29 +310,16 @@ class _SegmentRecordingState extends State<SegmentRecording> {
                         child: AspectRatio(
                             aspectRatio: 3.0 / 4.0,
                             child: CameraPreview(cameraController))),
-                BlocListener<VideoBloc, VideoState>(
-                    listener: (context, state) {
-                      if (state is VideoSuccess) {
-                        setState(() {
-                          movementSubmissions[updatedIndex].video = state.video;
-                        });
-                        _movementSubmissionBloc
-                          ..update(movementSubmissions[updatedIndex]);
-                        setState(() {
-                          updatedIndex++;
-                        });
-                      }
-                    },
-                    child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: _feedbackButton(Icons.stop,
-                                onPressed:
-                                    () async {} /*=> this.setState(() {
+                Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: _feedbackButton(Icons.stop,
+                            onPressed:
+                                () async {} /*=> this.setState(() {
                                   this.workoutType = WorkoutType.segment;
                                 })*/
-                                )))),
+                            ))),
                 Align(
                     alignment: Alignment.bottomLeft,
                     child: Padding(
@@ -689,9 +663,9 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     if (widget.workoutType == WorkoutType.segmentWithRecording &&
         timerEntry.workState == WorkState.exercising) {
       XFile videopath = await cameraController.stopVideoRecording();
-      File file = File(videopath.path);
-      print(file.toString());
-      _videoBloc..createVideo(context, file, 3.0 / 4.0, movementSubmission.id);
+      _movementSubmissionBloc
+        ..create(segmentSubmission, timerEntries[timerTaskIndex].movement,
+            videopath.path);
     }
   }
 
@@ -712,8 +686,6 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     if (widget.workoutType == WorkoutType.segmentWithRecording &&
         timerEntries[timerTaskIndex].workState == WorkState.exercising) {
       if (timerTaskIndex > 0) {
-        _movementSubmissionBloc
-          ..create(segmentSubmission, timerEntries[timerTaskIndex].movement);
         await cameraController.startVideoRecording();
       }
     }

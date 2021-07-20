@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/movement_submission.dart';
 import 'package:oluko_app/models/segment_submission.dart';
@@ -27,10 +29,12 @@ class Failure extends MovementSubmissionState {
 class MovementSubmissionBloc extends Cubit<MovementSubmissionState> {
   MovementSubmissionBloc() : super(Loading());
 
-  void create(SegmentSubmission segmentSubmission, MovementSubmodel movement) async {
+  void create(SegmentSubmission segmentSubmission, MovementSubmodel movement,
+      String videoPath) async {
     try {
       MovementSubmission movementSubmission =
-          await MovementSubmissionRepository.create(segmentSubmission, movement);
+          await MovementSubmissionRepository.create(
+              segmentSubmission, movement, videoPath);
       emit(CreateMovementSubmissionSuccess(
           movementSubmission: movementSubmission));
     } catch (e) {

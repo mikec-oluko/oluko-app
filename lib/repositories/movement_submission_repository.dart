@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:oluko_app/models/enums/submission_state_enum.dart';
 import 'package:oluko_app/models/movement_submission.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
+import 'package:oluko_app/models/submodels/video_state.dart';
 import 'package:oluko_app/repositories/segment_submission_repository.dart';
 
 class MovementSubmissionRepository {
@@ -16,13 +20,14 @@ class MovementSubmissionRepository {
     this.firestoreInstance = firestoreInstance;
   }
 
-  static Future<MovementSubmission> create(
-      SegmentSubmission segmentSubmission, MovementSubmodel movement) async {
+  static Future<MovementSubmission> create(SegmentSubmission segmentSubmission,
+      MovementSubmodel movement, String videoPath) async {
     MovementSubmission movementSubmission = MovementSubmission(
         userId: segmentSubmission.userId,
         userReference: segmentSubmission.userReference,
         movementId: movement.id,
-        movementReference: movement.reference);
+        movementReference: movement.reference,
+        videoState: VideoState(state: SubmissionStateEnum.recorded, stateInfo: videoPath));
     CollectionReference reference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"))
