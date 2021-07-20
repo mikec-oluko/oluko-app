@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oluko_app/models/base.dart';
 import 'package:oluko_app/models/submodels/video.dart';
+import 'package:oluko_app/models/submodels/video_state.dart';
 
 class MovementSubmission extends Base {
   String userId;
@@ -9,6 +10,7 @@ class MovementSubmission extends Base {
   DocumentReference movementReference;
   Timestamp seenAt;
   Video video;
+  VideoState videoState;
 
   MovementSubmission(
       {this.userId,
@@ -17,6 +19,7 @@ class MovementSubmission extends Base {
       this.movementReference,
       this.seenAt,
       this.video,
+      this.videoState,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -39,8 +42,10 @@ class MovementSubmission extends Base {
         userReference: json['user_reference'],
         movementId: json['movement_id'],
         movementReference: json['movement_reference'],
-        video:
-            json['coach_id'] == null ? null : Video.fromJson(json['coach_id']));
+        video: json['video'] == null ? null : Video.fromJson(json['video']),
+        videoState: json['video_state'] == null
+            ? null
+            : VideoState.fromJson(json['video_state']));
     movementSubmission.setBase(json);
     return movementSubmission;
   }
@@ -52,7 +57,8 @@ class MovementSubmission extends Base {
       'movement_id': movementId,
       'movement_reference': movementReference,
       'seen_at': seenAt,
-      'video': video == null ? null : video.toJson()
+      'video': video == null ? null : video.toJson(),
+      'video_state': videoState == null ? null : videoState.toJson()
     };
     movementSubmissionJson.addEntries(super.toJson().entries);
     return movementSubmissionJson;
