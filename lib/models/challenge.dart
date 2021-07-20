@@ -61,9 +61,9 @@ class Challenge extends Base {
         requiredClasses: json['required_classes'],
         requiredSegments: json['required_segments'],
         index: json['index'],
-        challengeType: json['challenge_type'],
-        challengeImage: json['challenge_image'],
-        challengeName: json['challenge_name']);
+        challengeType: json['type'],
+        challengeImage: json['image'],
+        challengeName: json['name']);
 
     challengeObject.setBase(json);
     return challengeObject;
@@ -82,9 +82,9 @@ class Challenge extends Base {
       'required_classes': requiredClasses,
       'required_segments': requiredSegments,
       'index': index,
-      'challenge_type': challengeType,
-      'challenge_image': challengeImage,
-      'challenge_name': challengeName,
+      'type': challengeType,
+      'image': challengeImage,
+      'name': challengeName,
     };
     challengeJson.addEntries(super.toJson().entries);
     return challengeJson;

@@ -39,14 +39,20 @@ class ProfileViewConstants {
   static const profileSelectFromGalleryTitle = "Select from Gallery";
 
   //List of options for Profile settings.
-  static const List<String> profileOptions = [
-    profileOptionsMyAccount,
-    profileOptionsAssessmentVideos,
-    profileOptionsTransformationJourney,
-    profileOptionsSubscription,
-    profileOptionsSettings,
-    profileOptionsHelpAndSupport,
+  static List<ProfileOptions> profileOptions = [
+    ProfileOptions(option: profileOptionsMyAccount),
+    ProfileOptions(option: profileOptionsAssessmentVideos),
+    ProfileOptions(option: profileOptionsTransformationJourney),
+    ProfileOptions(option: profileOptionsSubscription, enable: false),
+    ProfileOptions(option: profileOptionsSettings),
+    ProfileOptions(option: profileOptionsHelpAndSupport),
   ];
+}
+
+class ProfileOptions {
+  final String option;
+  final bool enable;
+  ProfileOptions({this.option, this.enable = true});
 }
 
 //Options to update on settings

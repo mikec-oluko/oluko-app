@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ChallengesCard extends StatefulWidget {
-  final ChallengeStatic challenge;
+  final Challenge challenge;
   final String routeToGo;
   final bool needHeader;
 
@@ -18,7 +19,7 @@ class ChallengesCard extends StatefulWidget {
 class _State extends State<ChallengesCard> {
   @override
   Widget build(BuildContext context) {
-    return widget.challenge.isLocked
+    return widget.challenge.completedAt == null
         ? lockedCard(context)
         : unlockedCard(context);
   }
@@ -45,7 +46,7 @@ class _State extends State<ChallengesCard> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(5)),
                     image: DecorationImage(
-                      image: AssetImage(widget.challenge.imageCover),
+                      image: NetworkImage(widget.challenge.challengeImage),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -66,12 +67,14 @@ class _State extends State<ChallengesCard> {
                       children: [
                         Padding(
                           padding: const EdgeInsets.all(10.0),
-                          child: TitleBody(widget.challenge.title),
+                          child: TitleBody(widget.challenge.challengeName),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 10),
                           child: Text(
-                            widget.challenge.type,
+                            widget.challenge.challengeType != null
+                                ? widget.challenge.challengeType
+                                : "class",
                             style: TextStyle(
                                 fontSize: 14, color: OlukoColors.grayColor),
                           ),
@@ -80,7 +83,8 @@ class _State extends State<ChallengesCard> {
                           padding:
                               const EdgeInsets.only(left: 10).copyWith(top: 5),
                           child: Text(
-                            widget.challenge.subtitle,
+                            //get title of class
+                            widget.challenge.courseEnrollmentId,
                             style: TextStyle(
                                 fontSize: 18, color: OlukoColors.grayColor),
                           ),
@@ -128,7 +132,7 @@ class _State extends State<ChallengesCard> {
                     image: DecorationImage(
                       colorFilter: ColorFilter.mode(
                           Colors.black.withOpacity(0.7), BlendMode.srcOver),
-                      image: AssetImage(widget.challenge.imageCover),
+                      image: NetworkImage(widget.challenge.challengeImage),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -149,12 +153,14 @@ class _State extends State<ChallengesCard> {
                       children: [
                         Padding(
                           padding: const EdgeInsets.all(10.0),
-                          child: TitleBody(widget.challenge.title),
+                          child: TitleBody(widget.challenge.challengeName),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 10),
                           child: Text(
-                            widget.challenge.type,
+                            widget.challenge.challengeType != null
+                                ? widget.challenge.challengeType
+                                : "class",
                             style: TextStyle(
                                 fontSize: 14, color: OlukoColors.grayColor),
                           ),
@@ -163,7 +169,7 @@ class _State extends State<ChallengesCard> {
                           padding:
                               const EdgeInsets.only(left: 10).copyWith(top: 5),
                           child: Text(
-                            widget.challenge.subtitle,
+                            widget.challenge.classId != null? widget.challenge.classId : "content",
                             style: TextStyle(
                                 fontSize: 18, color: OlukoColors.grayColor),
                           ),

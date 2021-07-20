@@ -94,74 +94,50 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget profileOptions(String pageTitle) {
-    Widget widgetToReturn;
-    if (pageTitle == ProfileViewConstants.profileOptionsSubscription) {
-      widgetToReturn = Container(
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-            border: Border(
-                bottom: BorderSide(width: 1.0, color: OlukoColors.grayColor))),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            InkWell(
-              onTap: () {},
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 25.0),
-                    child: Text(pageTitle,
-                        style: OlukoFonts.olukoMediumFont(
-                            customColor: OlukoColors.grayColor)),
-                  ),
-                  IconButton(
-                      icon: Icon(Icons.arrow_forward_ios,
-                          color: OlukoColors.grayColor),
-                      onPressed: () {})
-                ],
-              ),
-            ),
-          ],
-        ),
-      );
-    } else {
-      widgetToReturn = Container(
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-            border: Border(
-                bottom: BorderSide(width: 1.0, color: OlukoColors.grayColor))),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            InkWell(
-              onTap: () => Navigator.pushNamed(
-                  context, ProfileRoutes.returnRouteName(pageTitle)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 25.0),
-                    child: Text(pageTitle, style: OlukoFonts.olukoMediumFont()),
-                  ),
-                  IconButton(
-                      icon: Icon(Icons.arrow_forward_ios,
-                          color: OlukoColors.grayColor),
-                      onPressed: () => Navigator.pushNamed(
-                              context, ProfileRoutes.returnRouteName(pageTitle))
-                          .then((value) => onGoBack()))
-                ],
-              ),
-            ),
-          ],
-        ),
-      );
-    }
+  Widget profileOptions(ProfileOptions option) {
+    return currentOption(option);
+  }
 
-    return widgetToReturn;
+  Container currentOption(ProfileOptions option) {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      decoration: BoxDecoration(
+          border: Border(
+              bottom: BorderSide(width: 1.0, color: OlukoColors.grayColor))),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          InkWell(
+            onTap: option.enable
+                ? () => Navigator.pushNamed(
+                    context, ProfileRoutes.returnRouteName(option.option))
+                : () {},
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 25.0),
+                  child: Text(option.option,
+                      style: option.enable
+                          ? OlukoFonts.olukoMediumFont()
+                          : OlukoFonts.olukoMediumFont(
+                              customColor: OlukoColors.grayColor)),
+                ),
+                IconButton(
+                    icon: Icon(Icons.arrow_forward_ios,
+                        color: OlukoColors.grayColor),
+                    onPressed: option.enable
+                        ? () => Navigator.pushNamed(context,
+                                ProfileRoutes.returnRouteName(option.option))
+                            .then((value) => onGoBack())
+                        : () {})
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   onGoBack() {
