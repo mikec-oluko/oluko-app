@@ -71,34 +71,38 @@ class _FriendsPageState extends State<FriendsPage>
                           borderRadius: BorderRadius.circular(5),
                           color: OlukoColors.grayColor,
                         ),
-                        child: Expanded(
-                          child: TabBar(
-                            onTap: (int value) {
-                              _setActiveTabIndex(value: value);
-                            },
-                            labelPadding: EdgeInsets.all(0),
-                            indicatorColor: OlukoColors.grayColor,
-                            indicator: BoxDecoration(
-                                borderRadius: _activeTabIndex == 0
-                                    ? BorderRadius.only(
-                                        topLeft: Radius.circular(5),
-                                        bottomLeft: Radius.circular(5))
-                                    : BorderRadius.only(
-                                        topRight: Radius.circular(5),
-                                        bottomRight: Radius.circular(5)),
-                                color: OlukoColors.primary),
-                            unselectedLabelColor: OlukoColors.white,
-                            labelColor: OlukoColors.black,
-                            controller: _tabController,
-                            tabs: [
-                              Tab(
-                                text: _pages[0].title,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: TabBar(
+                                onTap: (int value) {
+                                  _setActiveTabIndex(value: value);
+                                },
+                                labelPadding: EdgeInsets.all(0),
+                                indicatorColor: OlukoColors.grayColor,
+                                indicator: BoxDecoration(
+                                    borderRadius: _activeTabIndex == 0
+                                        ? BorderRadius.only(
+                                            topLeft: Radius.circular(5),
+                                            bottomLeft: Radius.circular(5))
+                                        : BorderRadius.only(
+                                            topRight: Radius.circular(5),
+                                            bottomRight: Radius.circular(5)),
+                                    color: OlukoColors.primary),
+                                unselectedLabelColor: OlukoColors.white,
+                                labelColor: OlukoColors.black,
+                                controller: _tabController,
+                                tabs: [
+                                  Tab(
+                                    text: _pages[0].title,
+                                  ),
+                                  Tab(
+                                    text: _pages[1].title,
+                                  )
+                                ],
                               ),
-                              Tab(
-                                text: _pages[1].title,
-                              )
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
