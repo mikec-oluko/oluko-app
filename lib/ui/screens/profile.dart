@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';
+import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_error_message_view.dart';
 import 'package:oluko_app/ui/components/user_profile_information.dart';
 import 'package:oluko_app/ui/components/user_profile_progress.dart';
@@ -27,19 +29,18 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: getProfileInfo(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return profileHomeView();
-          } else {
-            return Container(
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              color: Colors.red,
-            );
-          }
-        });
+    return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
+      if (state is AuthSuccess) {
+        this.profileInfo = state.user;
+        return profileHomeView();
+      } else {
+        return Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: OlukoCircularProgressIndicator(),
+        );
+      }
+    });
   }
 
   Widget profileHomeView() {
