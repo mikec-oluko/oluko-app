@@ -80,24 +80,33 @@ class _ProfileTransformationJourneyPageState
                     child: Stack(children: [
                       Align(
                           alignment: Alignment.topCenter,
-                          child: Expanded(
-                              child: Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(15.0),
-                                    child: OlukoOutlinedButton(
-                                        title: OlukoLocalizations.of(context)
-                                            .find('tapToUpload'),
-                                        onPressed: () {
-                                          AppModal.dialogContent(
-                                              context: context,
-                                              content: [
-                                                TransformationJourneyOptions()
-                                              ]);
-                                          _requestTransformationJourneyData(
-                                              context, profileInfo);
-                                        }),
-                                  )))),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                  child: Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(15.0),
+                                        child: Row(
+                                          children: [
+                                            OlukoOutlinedButton(
+                                                title: OlukoLocalizations.of(
+                                                        context)
+                                                    .find('tapToUpload'),
+                                                onPressed: () {
+                                                  AppModal.dialogContent(
+                                                      context: context,
+                                                      content: [
+                                                        TransformationJourneyOptions()
+                                                      ]);
+                                                  _requestTransformationJourneyData(
+                                                      context, profileInfo);
+                                                }),
+                                          ],
+                                        ),
+                                      ))),
+                            ],
+                          )),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(10, 100, 10, 0),
                         child: Align(

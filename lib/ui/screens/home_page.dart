@@ -68,7 +68,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       appBar: OlukoAppBar(
                           title: OlukoLocalizations.of(context).find('home'),
                           showBackButton: false),
-                      bottomNavigationBar: OlukoBottomNavigationBar(),
                       body: courseState is CourseSuccess &&
                               tagState is TagSuccess
                           ? WillPopScope(
