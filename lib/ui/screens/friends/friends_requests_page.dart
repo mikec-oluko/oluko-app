@@ -98,9 +98,13 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
       padding: const EdgeInsets.only(top: 20),
       child: Container(
           width: MediaQuery.of(context).size.width,
-          child: OlukoOutlinedButton(
-            title: "See All Requests",
-            onPressed: () {},
+          child: Row(
+            children: [
+              OlukoOutlinedButton(
+                title: "See All Requests",
+                onPressed: () {},
+              ),
+            ],
           )),
     );
   }

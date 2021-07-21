@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
@@ -12,19 +11,15 @@ import 'package:oluko_app/blocs/friend_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/blocs/task_submission_bloc.dart';
 import 'package:oluko_app/config/s3_settings.dart';
-import 'package:oluko_app/models/assessment_assignment.dart';
-import 'package:oluko_app/models/segment_submission.dart';
-import 'package:oluko_app/repositories/auth_repository.dart';
-import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/screens/app_plans.dart';
 import 'package:oluko_app/ui/screens/assessment_videos.dart';
 import 'package:oluko_app/ui/screens/choose_plan_payment.dart';
 import 'package:oluko_app/ui/screens/classes.dart';
 import 'package:oluko_app/ui/screens/courses.dart';
 import 'package:oluko_app/ui/screens/friends_page.dart';
-import 'package:oluko_app/ui/screens/home_page.dart';
 import 'package:oluko_app/ui/screens/Login.dart';
 import 'package:oluko_app/ui/screens/Profile.dart';
+import 'package:oluko_app/ui/screens/main_page.dart';
 import 'package:oluko_app/ui/screens/movement_intro.dart';
 import 'package:oluko_app/ui/screens/segment_detail.dart';
 import 'package:oluko_app/ui/screens/profile/profile_challenges_page.dart';
@@ -42,7 +37,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:oluko_app/ui/screens/task_details.dart';
 import 'package:oluko_app/ui/screens/videos/home.dart';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:oluko_app/ui/segment_progress.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'blocs/transformation_journey_bloc.dart';
 import 'config/project_settings.dart';
@@ -88,7 +82,7 @@ class _MyAppState extends State<MyApp> {
               BlocProvider.value(value: _authBloc),
               BlocProvider(create: (context) => CourseBloc()),
               BlocProvider(create: (context) => TagBloc())
-            ], child: MyHomePage()),
+            ], child: MainPage()),
         '/sign-up': (context) =>
             BlocProvider.value(value: _authBloc, child: SignUpPage()),
         '/sign-up-with-email': (context) =>
