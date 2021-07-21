@@ -136,7 +136,7 @@ class CourseEnrollmentRepository {
     return coursesList;
   }
 
-  Future<List<Challenge>> getUserChallengesuserId(String userId) async {
+  Future<List<Challenge>> getUserChallengesByUserId(String userId) async {
     List<Challenge> challengeList = [];
     List<CourseEnrollment> courseEnrollments =
         await getUserCourseEnrollments(userId);
@@ -145,60 +145,29 @@ class CourseEnrollmentRepository {
       return [];
     }
     try {
-      courseEnrollments.forEach((courseEnrollment) async {
-        QuerySnapshot docRef = await FirebaseFirestore.instance
-            .collection('projects')
-            .doc(GlobalConfiguration().getValue("projectId"))
-            .collection('challenges')
-            .where('course_enrollment_id', isEqualTo: courseEnrollment.id)
-            .get();
-
-        docRef.docs.forEach((doc) async {
-          final Map<String, dynamic> challenge = doc.data();
-          challengeList.add(Challenge.fromJson(challenge));
-        });
-      });
+      var futures = <Future>[];
+      for (var courseEnrollment in courseEnrollments) {
+        futures.add(await getChallengesFromCourseEnrollment(
+            courseEnrollment, challengeList));
+      }
+      Future.wait(futures);
     } catch (e) {
       return [];
     }
     return challengeList;
   }
 
-  // Future<List<Challenge>> getUserChallengesuserId(String userId) async {
-  //   List<Challenge> challengeList = [];
-  //   List<CourseEnrollment> courseEnrollments =
-  //       await getUserCourseEnrollments(userId);
-
-  //   if (courseEnrollments == null) {
-  //     return [];
-  //   }
-
-  //   try {
-
-  //     List<Future<List<QueryDocumentSnapshot<Object>>>> futures =  courseEnrollments.map((courseEnrollment) async {
-  //       QuerySnapshot docRef = await FirebaseFirestore.instance
-  //           .collection('projects')
-  //           .doc(GlobalConfiguration().getValue("projectId"))
-  //           .collection('challenges')
-  //           .where('course_enrollment_id', isEqualTo: courseEnrollment.id)
-  //           .get();
-
-  //       return docRef.docs;
-
-  //       // docRef.docs.forEach((doc){
-  //       //   final Map<String, dynamic> challenge = doc.data();
-  //       //   challengeList.add(Challenge.fromJson(challenge));
-  //       // });
-  //     });
-
-  //     futures.map((future) {
-  //          final Map<String, dynamic> challenge = future.data();
-  //         return Challenge.fromJson(challenge);
-  //     })
-
-  //   } catch (e) {
-  //     return [];
-  //   }
-  //   return challengeList;
-  // }
+  Future getChallengesFromCourseEnrollment(
+      CourseEnrollment courseEnrollment, List<Challenge> challenges) async {
+    QuerySnapshot query = await FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue("projectId"))
+        .collection('challenges')
+        .where('course_enrollment_id', isEqualTo: courseEnrollment.id)
+        .get();
+    for (var challengeDoc in query.docs) {
+      Map<String, dynamic> challenge = challengeDoc.data();
+      challenges.add(Challenge.fromJson(challenge));
+    }
+  }
 }
