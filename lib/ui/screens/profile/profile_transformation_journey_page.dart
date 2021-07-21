@@ -92,7 +92,9 @@ class _ProfileTransformationJourneyPageState
                                           AppModal.dialogContent(
                                               context: context,
                                               content: [
-                                                TransformationJourneyOptions()
+                                                TransformationJourneyOptions(
+                                                    UploadFrom
+                                                        .transformationJourney)
                                               ]);
                                           _requestTransformationJourneyData(
                                               context, profileInfo);

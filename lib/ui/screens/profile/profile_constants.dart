@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/dialog.dart';
 
 class ProfileViewConstants {
@@ -57,6 +59,9 @@ class ProfileOptions {
 
 //Options to update on settings
 enum SettingsOptions { notification, public, restricted, anonymous }
+
+//Enum for modal, to update images
+enum UploadFrom { profileImage, transformationJourney }
 
 //Basic model for Tile (Help and Support)
 class BasicTile {
@@ -162,3 +167,5 @@ final List<Content> uploadListContent = [
   Content(imgUrl: 'assets/courses/course_sample_7.png', isVideo: false),
   Content(imgUrl: 'assets/courses/course_sample_8.png', isVideo: false),
 ];
+
+
