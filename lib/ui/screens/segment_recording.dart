@@ -18,6 +18,7 @@ import 'package:oluko_app/models/timer_entry.dart';
 import 'package:oluko_app/models/timer_model.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
+import 'package:oluko_app/ui/segment_progress.dart';
 import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -298,53 +299,64 @@ class _SegmentRecordingState extends State<SegmentRecording> {
 
   ///Camera recording section. Shows camera Input and start/stop buttons.
   Widget _cameraSection() {
+    TimerEntry currentTimerEntry = timerEntries[timerTaskIndex];
+    bool showCamera = currentTimerEntry.workState == WorkState.exercising;
+    bool showNextButton = currentTimerEntry.reps != null &&
+        currentTimerEntry.workState == WorkState.exercising;
     return Column(
       children: [
         Expanded(
           child: Container(
-            child: Stack(
-              children: [
-                (!_isReady)
-                    ? Container()
-                    : Center(
-                        child: AspectRatio(
-                            aspectRatio: 3.0 / 4.0,
-                            child: CameraPreview(cameraController))),
-                Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: _feedbackButton(Icons.stop,
-                            onPressed:
-                                () async {} /*=> this.setState(() {
+            child: showCamera
+                ? Stack(
+                    children: [
+                      (!_isReady)
+                          ? Container()
+                          : Center(
+                              child: AspectRatio(
+                                  aspectRatio: 3.0 / 4.0,
+                                  child: CameraPreview(cameraController))),
+                      Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Padding(
+                              padding: const EdgeInsets.all(20.0),
+                              child: _feedbackButton(Icons.stop,
+                                  onPressed:
+                                      () async {} /*=> this.setState(() {
                                   this.workoutType = WorkoutType.segment;
                                 })*/
-                            ))),
-                Align(
-                    alignment: Alignment.bottomLeft,
-                    child: Padding(
-                        padding: const EdgeInsets.only(
-                            right: 20.0, left: 80.0, top: 20.0, bottom: 20.0),
-                        child: _flipCameraButton(Icons.flip_camera_android,
-                            onPressed: () {
-                          setState(() {
-                            isCameraFront = !isCameraFront;
-                          });
-                          _setupCameras();
-                        }))),
-                Align(
-                    alignment: Alignment.bottomLeft,
-                    child: Padding(
-                        padding: const EdgeInsets.only(
-                            right: 200.0, top: 20.0, bottom: 20.0),
-                        child: _flipCameraButton(Icons.fast_forward,
-                            onPressed: () {
-                          setState(() {
-                            _goToNextStep();
-                          });
-                        }))),
-              ],
-            ),
+                                  ))),
+                      Align(
+                          alignment: Alignment.bottomLeft,
+                          child: Padding(
+                              padding: const EdgeInsets.only(
+                                  right: 20.0,
+                                  left: 80.0,
+                                  top: 20.0,
+                                  bottom: 20.0),
+                              child: _cameraButton(Icons.flip_camera_android,
+                                  onPressed: () {
+                                setState(() {
+                                  isCameraFront = !isCameraFront;
+                                });
+                                _setupCameras();
+                              }))),
+                      showNextButton
+                          ? Align(
+                              alignment: Alignment.bottomLeft,
+                              child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      right: 200.0, top: 20.0, bottom: 20.0),
+                                  child: _cameraButton(Icons.fast_forward,
+                                      onPressed: () {
+                                    setState(() {
+                                      _goToNextStep();
+                                    });
+                                  })))
+                          : SizedBox(),
+                    ],
+                  )
+                : SizedBox(),
           ),
         ),
       ],
@@ -555,7 +567,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     );
   }
 
-  Widget _flipCameraButton(IconData iconData, {Function() onPressed}) {
+  Widget _cameraButton(IconData iconData, {Function() onPressed}) {
     return OutlinedButton(
       onPressed: onPressed,
       child: Icon(
@@ -698,6 +710,11 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   void _finishWorkout() {
     workState = WorkState.finished;
     print('Workout finished');
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                SegmentProgress(segmentSubmission: segmentSubmission)));
   }
 
   void _playCountdown() {

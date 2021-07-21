@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/models/enums/submission_state_enum.dart';
 import 'package:oluko_app/models/movement_submission.dart';
@@ -47,13 +48,50 @@ class MovementSubmissionRepository {
     return movementSubmission;
   }
 
-  static Future<MovementSubmission> update(
-      MovementSubmission movementSubmission) async {
+  static Future<void> updateVideo(MovementSubmission movementSubmission) async {
     DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"))
         .collection('movementSubmissions')
         .doc(movementSubmission.id);
-    reference.update({'video': movementSubmission.video.toJson()});
+    reference.update({
+      'video': movementSubmission.video.toJson(),
+      'video_state.state':
+          EnumToString.convertToString(SubmissionStateEnum.uploaded),
+      'video_state.state_info': "",
+    });
+  }
+
+  static Future<void> updateStateToEncoded(
+      MovementSubmission movementSubmission, String dir) async {
+    DocumentReference reference = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue("projectId"))
+        .collection('movementSubmissions')
+        .doc(movementSubmission.id);
+    reference.update({
+      'video_state.state':
+          EnumToString.convertToString(SubmissionStateEnum.encoded),
+      'video_state.state_info': dir,
+    });
+  }
+
+  static Future<List<MovementSubmission>> get(
+      SegmentSubmission segmentSubmission) async {
+    QuerySnapshot qs = await FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue("projectId"))
+        .collection('movementSubmissions')
+        .where("segment_submission_id", isEqualTo: segmentSubmission.id)
+        .get();
+    return mapQueryToMovementSubmission(qs);
+  }
+
+  static List<MovementSubmission> mapQueryToMovementSubmission(
+      QuerySnapshot qs) {
+    return qs.docs.map((DocumentSnapshot ds) {
+      dynamic movementSubmissionData = ds.data();
+      return MovementSubmission.fromJson(movementSubmissionData);
+    }).toList();
   }
 }

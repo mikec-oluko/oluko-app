@@ -13,6 +13,7 @@ import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/blocs/task_submission_bloc.dart';
 import 'package:oluko_app/config/s3_settings.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
+import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/screens/app_plans.dart';
@@ -41,6 +42,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:oluko_app/ui/screens/task_details.dart';
 import 'package:oluko_app/ui/screens/videos/home.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:oluko_app/ui/segment_progress.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'blocs/transformation_journey_bloc.dart';
 import 'config/project_settings.dart';
@@ -91,7 +93,6 @@ class _MyAppState extends State<MyApp> {
             BlocProvider.value(value: _authBloc, child: SignUpPage()),
         '/sign-up-with-email': (context) =>
             BlocProvider.value(value: _authBloc, child: SignUpWithMailPage()),
-
         '/friends': (context) => MultiBlocProvider(providers: [
               BlocProvider.value(
                 value: _authBloc,

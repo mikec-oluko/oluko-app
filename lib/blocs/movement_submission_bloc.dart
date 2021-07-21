@@ -1,6 +1,5 @@
-import 'dart:io';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/models/enums/submission_state_enum.dart';
 import 'package:oluko_app/models/movement_submission.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
@@ -15,10 +14,14 @@ class CreateMovementSubmissionSuccess extends MovementSubmissionState {
   CreateMovementSubmissionSuccess({this.movementSubmission});
 }
 
-class UpdateMovementSubmissionSuccess extends MovementSubmissionState {
-  MovementSubmission movementSubmission;
-  UpdateMovementSubmissionSuccess({this.movementSubmission});
+class GetMovementSubmissionSuccess extends MovementSubmissionState {
+  List<MovementSubmission> movementSubmissions;
+  GetMovementSubmissionSuccess({this.movementSubmissions});
 }
+
+class UpdateMovementSubmissionSuccess extends MovementSubmissionState {}
+
+class EncodedMovementSubmissionSuccess extends MovementSubmissionState {}
 
 class Failure extends MovementSubmissionState {
   final Exception exception;
@@ -43,12 +46,32 @@ class MovementSubmissionBloc extends Cubit<MovementSubmissionState> {
     }
   }
 
-  void update(MovementSubmission movementSubmission) async {
+  void updateVideo(MovementSubmission movementSubmission) async {
     try {
-      MovementSubmission updatedMovement =
-          await MovementSubmissionRepository.update(movementSubmission);
-      emit(
-          CreateMovementSubmissionSuccess(movementSubmission: updatedMovement));
+      await MovementSubmissionRepository.updateVideo(movementSubmission);
+      emit(UpdateMovementSubmissionSuccess());
+    } catch (e) {
+      print(e.toString());
+      emit(Failure(exception: e));
+    }
+  }
+
+    void updateStateToEncoded(MovementSubmission movementSubmission, String dir) async {
+    try {
+      await MovementSubmissionRepository.updateStateToEncoded(movementSubmission, dir);
+      emit(EncodedMovementSubmissionSuccess());
+    } catch (e) {
+      print(e.toString());
+      emit(Failure(exception: e));
+    }
+  }
+
+  void get(SegmentSubmission segmentSubmission) async {
+    try {
+      List<MovementSubmission> movementSubmissions =
+          await MovementSubmissionRepository.get(segmentSubmission);
+      emit(GetMovementSubmissionSuccess(
+          movementSubmissions: movementSubmissions));
     } catch (e) {
       emit(Failure(exception: e));
     }
