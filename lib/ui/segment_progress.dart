@@ -60,6 +60,7 @@ class _SegmentProgressState extends State<SegmentProgress> {
                       movementSubmissions[current - 1], state.encodedFilesDir);
               } else if (state is VideoSuccess) {
                 setState(() {
+                  //TODO: translate this
                   processPhase = "Completed";
                   progress = 1.0;
                   movementSubmissions[current - 1].video = state.video;
