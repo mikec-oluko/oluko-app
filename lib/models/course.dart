@@ -56,6 +56,9 @@ class Course extends Base {
             isHidden: isHidden);
 
   factory Course.fromJson(Map<String, dynamic> json) {
+    if (json == null) {
+      return null;
+    }
     Course course = Course(
         name: json['name'],
         statisticsReference: json['statistics_reference'],
@@ -65,7 +68,8 @@ class Course extends Base {
         equipment: json['equipment'] == null ? null : json['equipment'],
         intensity: json['intensity'] == null ? null : json['intensity'],
         categories: json['categories'] == null ? null : json['categories'],
-        workoutDuration: json['workout_duration'] == null ? null : json['workout_duration'],
+        workoutDuration:
+            json['workout_duration'] == null ? null : json['workout_duration'],
         recommendedEngagement: json['recommended_engagement'],
         recommendedEngagementGap: json['recommended_engagementGap'],
         engagementGapTime: json['engagement_gap_time'],

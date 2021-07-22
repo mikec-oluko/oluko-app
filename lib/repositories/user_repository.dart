@@ -5,9 +5,10 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/helpers/s3_provider.dart';
 import 'package:oluko_app/models/sign_up_request.dart';
-import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:path/path.dart' as p;
+
+import 'auth_repository.dart';
 
 class UserRepository {
   FirebaseFirestore firestoreInstance;
@@ -81,6 +82,7 @@ class UserRepository {
     user.avatar = downloadUrl;
     try {
       await userReference.update(user.toJson());
+      AuthRepository().storeLoginData(user);
       return user;
     } on Exception catch (e) {
       return null;

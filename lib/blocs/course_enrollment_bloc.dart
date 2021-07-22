@@ -71,7 +71,7 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
   void getChallengesForUser(String userId) async {
     try {
       List<Challenge> courseEnrollmentsChallenges =
-          await CourseEnrollmentRepository().getUserChallengesuserId(userId);
+          await CourseEnrollmentRepository().getUserChallengesByUserId(userId);
 
       emit(GetCourseEnrollmentChallenge(
           challenges: courseEnrollmentsChallenges));
@@ -96,6 +96,7 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
       List<Course> coursesFromEnrollments =
           await CourseEnrollmentRepository.getUserCourseEnrollmentsCourse(
               userId);
+
       emit(CourseEnrollmentCourses(
           courseEnrollmentCourses: coursesFromEnrollments));
     } catch (e) {
