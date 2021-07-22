@@ -9,6 +9,7 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/friend_bloc.dart';
+import 'package:oluko_app/blocs/profile_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/blocs/task_submission_bloc.dart';
 import 'package:oluko_app/config/s3_settings.dart';
@@ -100,8 +101,10 @@ class _MyAppState extends State<MyApp> {
             BlocProvider.value(value: _authBloc, child: ProfilePage()),
         '/profile-settings': (context) =>
             BlocProvider.value(value: _authBloc, child: ProfileSettingsPage()),
-        '/profile-my-account': (context) =>
-            BlocProvider.value(value: _authBloc, child: ProfileMyAccountPage()),
+        '/profile-my-account': (context) => MultiBlocProvider(providers: [
+              BlocProvider.value(value: _authBloc),
+              BlocProvider(create: (context) => ProfileBloc()),
+            ], child: ProfileMyAccountPage()),
         '/profile-subscription': (context) => BlocProvider.value(
             value: _authBloc, child: ProfileSubscriptionPage()),
         '/profile-help-and-support': (context) => BlocProvider.value(

@@ -1,7 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/profile_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/enums/file_type_enum.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
@@ -15,19 +18,19 @@ import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/app_modal.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
-class TransformationJourneyOptions extends StatefulWidget {
+import 'modal_manager.dart';
+
+class ModalUploadOptions extends StatefulWidget {
   final UploadFrom toUpload;
-  TransformationJourneyOptions(this.toUpload);
+  ModalUploadOptions(this.toUpload);
   @override
-  _TransformationJourneyOptionsState createState() =>
-      _TransformationJourneyOptionsState();
+  _ModalUploadOptionsState createState() => _ModalUploadOptionsState();
 }
 
-class _TransformationJourneyOptionsState
-    extends State<TransformationJourneyOptions> {
+class _ModalUploadOptionsState extends State<ModalUploadOptions> {
   final imagePicker = ImagePicker();
 
-  Future getImage() async {
+  Future getImage(BuildContext context) async {
     final image = await imagePicker.getImage(source: ImageSource.camera);
     if (image == null) return;
 
@@ -35,11 +38,11 @@ class _TransformationJourneyOptionsState
       await updateTransformationJourneyGallery(image);
     }
     if (widget.toUpload == UploadFrom.profileImage) {
-      await updateUserProfileAvatar(image);
+      await updateUserProfileAvatar(image, context);
     }
   }
 
-  Future getImageFromGallery() async {
+  Future getImageFromGallery(BuildContext context) async {
     final image = await imagePicker.getImage(source: ImageSource.gallery);
     if (image == null) return;
 
@@ -47,13 +50,12 @@ class _TransformationJourneyOptionsState
       await updateTransformationJourneyGallery(image);
     }
     if (widget.toUpload == UploadFrom.profileImage) {
-      await updateUserProfileAvatar(image);
+      await updateUserProfileAvatar(image, context);
     }
   }
 
-  Future updateUserProfileAvatar(PickedFile image) async {
-    UserResponse user = await AuthRepository().retrieveLoginData();
-    UserRepository().updateUserAvatar(user, image);
+  Future updateUserProfileAvatar(PickedFile image, BuildContext context) async {
+    BlocProvider.of<ProfileBloc>(context)..updateUserProfileAvatar();
   }
 
   Future updateTransformationJourneyGallery(PickedFile image) async {
@@ -66,7 +68,10 @@ class _TransformationJourneyOptionsState
 
   @override
   Widget build(BuildContext context) {
-    return returnList(context);
+    return BlocProvider(
+      create: (context) => ProfileBloc(),
+      child: returnList(context),
+    );
   }
 
   Container returnList(BuildContext context) {
@@ -77,11 +82,14 @@ class _TransformationJourneyOptionsState
         children: [
           ListTile(
             onTap: () {
-              getImage();
+              getImage(context);
               Navigator.pop(context);
-              AppModal.dialogContent(
-                  context: context,
-                  content: [UploadingModalSuccess(widget.toUpload)]);
+              AppModal.dialogContent(context: context, content: [
+                BlocProvider(
+                  create: (context) => ProfileBloc(),
+                  child: ModalMananger(widget.toUpload),
+                )
+              ]);
             },
             leading: Icon(
               Icons.camera_alt_outlined,
@@ -93,11 +101,13 @@ class _TransformationJourneyOptionsState
           ),
           ListTile(
             onTap: () {
-              getImageFromGallery();
-              Navigator.pop(context);
-              AppModal.dialogContent(
-                  context: context,
-                  content: [UploadingModalSuccess(widget.toUpload)]);
+              BlocProvider.of<ProfileBloc>(context)..updateUserProfileAvatar();
+              AppModal.dialogContent(context: context, content: [
+                BlocProvider(
+                  create: (context) => ProfileBloc(),
+                  child: ModalMananger(widget.toUpload),
+                )
+              ]);
             },
             leading: Icon(
               Icons.image,

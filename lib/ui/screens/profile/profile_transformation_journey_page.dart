@@ -10,7 +10,7 @@ import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/image_and_video_container.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
-import 'package:oluko_app/ui/components/transformation_journey_modal_options.dart';
+import 'package:oluko_app/ui/components/modal_upload_options.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/app_modal.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -92,9 +92,8 @@ class _ProfileTransformationJourneyPageState
                                           AppModal.dialogContent(
                                               context: context,
                                               content: [
-                                                TransformationJourneyOptions(
-                                                    UploadFrom
-                                                        .transformationJourney)
+                                                ModalUploadOptions(UploadFrom
+                                                    .transformationJourney)
                                               ]);
                                           _requestTransformationJourneyData(
                                               context, profileInfo);
