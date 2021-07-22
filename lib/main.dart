@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
@@ -88,7 +87,6 @@ class _MyAppState extends State<MyApp> {
             BlocProvider.value(value: _authBloc, child: SignUpPage()),
         '/sign-up-with-email': (context) =>
             BlocProvider.value(value: _authBloc, child: SignUpWithMailPage()),
-
         '/friends': (context) => MultiBlocProvider(providers: [
               BlocProvider.value(
                 value: _authBloc,

@@ -46,7 +46,7 @@ class MovementUtils {
               style: OlukoFonts.olukoSuperBigFont(
                   custoFontWeight: FontWeight.bold),
             )),
-        segment.rounds != null
+        segment.rounds != null && segment.rounds > 1
             ? Text(
                 segment.rounds.toString() +
                     " " +
