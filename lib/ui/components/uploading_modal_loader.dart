@@ -29,9 +29,10 @@ class UploadingModalLoader extends StatelessWidget {
             padding: const EdgeInsets.all(20.0).copyWith(top: 50),
             child: GestureDetector(
               onDoubleTap: () {
-                Navigator.pop(context);
                 AppModal.dialogContent(
-                    context: context, content: [UploadingModalSuccess()]);
+                    //TODO: pass the widget goToPage
+                    context: context,
+                    content: [UploadingModalSuccess(null)]);
               },
               child: Text(
                 OlukoLocalizations.of(context).find('uploadingWithDots'),
