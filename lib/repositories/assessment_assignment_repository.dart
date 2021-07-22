@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:mvt_fitness/models/assessment_assignment.dart';
+import 'package:oluko_app/models/assessment_assignment.dart';
 
 class AssessmentAssignmentRepository {
   FirebaseFirestore firestoreInstance;

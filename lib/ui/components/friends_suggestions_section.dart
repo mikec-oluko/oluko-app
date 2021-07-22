@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mvt_fitness/constants/Theme.dart';
+import 'package:oluko_app/constants/Theme.dart';
 
 class FriendSuggestionSection extends StatefulWidget {
   final String name;

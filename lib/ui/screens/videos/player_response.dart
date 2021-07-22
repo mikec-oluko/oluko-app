@@ -3,14 +3,14 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mvt_fitness/blocs/video_info_bloc.dart';
-import 'package:mvt_fitness/models/submodels/draw_point.dart';
-import 'package:mvt_fitness/models/submodels/video_info.dart';
-import 'package:mvt_fitness/ui/screens/videos/aspect_ratio.dart';
-import 'package:mvt_fitness/ui/screens/videos/loading.dart';
-import 'package:mvt_fitness/ui/screens/videos/player_life_cycle.dart';
+import 'package:oluko_app/blocs/video_info_bloc.dart';
+import 'package:oluko_app/models/submodels/draw_point.dart';
+import 'package:oluko_app/models/submodels/video_info.dart';
+import 'package:oluko_app/ui/screens/videos/aspect_ratio.dart';
+import 'package:oluko_app/ui/screens/videos/loading.dart';
+import 'package:oluko_app/ui/screens/videos/player_life_cycle.dart';
 import 'package:video_player/video_player.dart';
-import 'package:mvt_fitness/ui/screens/videos/draw.dart';
+import 'package:oluko_app/ui/screens/videos/draw.dart';
 
 typedef OnCameraCallBack = void Function();
 

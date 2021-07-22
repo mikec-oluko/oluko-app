@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mvt_fitness/models/course_enrollment.dart';
-import 'package:mvt_fitness/models/movement_submission.dart';
-import 'package:mvt_fitness/models/segment_submission.dart';
-import 'package:mvt_fitness/repositories/movement_submission_repository.dart';
-import 'package:mvt_fitness/repositories/segment_submission_repository.dart';
+import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/movement_submission.dart';
+import 'package:oluko_app/models/segment_submission.dart';
+import 'package:oluko_app/repositories/movement_submission_repository.dart';
+import 'package:oluko_app/repositories/segment_submission_repository.dart';
 
 abstract class MovementSubmissionState {}
 

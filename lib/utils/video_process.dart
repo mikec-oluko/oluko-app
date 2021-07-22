@@ -1,4 +1,4 @@
-import 'package:mvt_fitness/helpers/s3_provider.dart';
+import 'package:oluko_app/helpers/s3_provider.dart';
 import 'package:path/path.dart' as p;
 import 'dart:io';
 

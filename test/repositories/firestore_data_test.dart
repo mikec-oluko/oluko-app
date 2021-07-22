@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mockito/mockito.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mvt_fitness/models/submodels/video.dart';
+import 'package:oluko_app/models/submodels/video.dart';
 
 class MockDocumentReference extends Mock implements DocumentReference {}
 

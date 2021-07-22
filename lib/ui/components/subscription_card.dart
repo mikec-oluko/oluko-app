@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:mvt_fitness/constants/theme.dart';
-import 'package:mvt_fitness/helpers/enum_helper.dart';
-import 'package:mvt_fitness/models/plan.dart';
+import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/enum_helper.dart';
+import 'package:oluko_app/models/plan.dart';
 
 class SubscriptionCard extends StatefulWidget {
   Function(bool) onPressed;

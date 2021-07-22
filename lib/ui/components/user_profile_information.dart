@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mvt_fitness/constants/theme.dart';
-import 'package:mvt_fitness/models/sign_up_response.dart';
-import 'package:mvt_fitness/models/user_response.dart';
-import 'package:mvt_fitness/ui/screens/profile/profile_constants.dart';
+import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/sign_up_response.dart';
+import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 
 class UserProfileInformation extends StatelessWidget {
   final UserResponse userInformation;

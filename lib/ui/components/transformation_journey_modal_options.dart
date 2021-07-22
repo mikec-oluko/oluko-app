@@ -2,17 +2,17 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mvt_fitness/constants/theme.dart';
-import 'package:mvt_fitness/models/enums/file_type_enum.dart';
-import 'package:mvt_fitness/models/transformation_journey_uploads.dart';
-import 'package:mvt_fitness/models/user_response.dart';
-import 'package:mvt_fitness/repositories/auth_repository.dart';
-import 'package:mvt_fitness/repositories/transformation_journey_repository.dart';
-import 'package:mvt_fitness/ui/components/uploading_modal_loader.dart';
-import 'package:mvt_fitness/ui/components/uploading_modal_success.dart';
-import 'package:mvt_fitness/ui/screens/profile/profile_routes.dart';
-import 'package:mvt_fitness/utils/app_modal.dart';
-import 'package:mvt_fitness/utils/oluko_localizations.dart';
+import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/enums/file_type_enum.dart';
+import 'package:oluko_app/models/transformation_journey_uploads.dart';
+import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/repositories/auth_repository.dart';
+import 'package:oluko_app/repositories/transformation_journey_repository.dart';
+import 'package:oluko_app/ui/components/uploading_modal_loader.dart';
+import 'package:oluko_app/ui/components/uploading_modal_success.dart';
+import 'package:oluko_app/ui/screens/profile/profile_routes.dart';
+import 'package:oluko_app/utils/app_modal.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class TransformationJourneyOptions extends StatefulWidget {
   @override

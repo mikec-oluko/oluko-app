@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mvt_fitness/blocs/friend_bloc.dart';
-import 'package:mvt_fitness/constants/Theme.dart';
-import 'package:mvt_fitness/helpers/page_content.dart';
-import 'package:mvt_fitness/ui/components/black_app_bar.dart';
-import 'package:mvt_fitness/ui/components/bottom_navigation_bar.dart';
-import 'package:mvt_fitness/ui/screens/friends/friends_list_page.dart';
-import 'package:mvt_fitness/ui/screens/friends/friends_requests_page.dart';
-import 'package:mvt_fitness/utils/app_navigator.dart';
+import 'package:oluko_app/blocs/friend_bloc.dart';
+import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/helpers/page_content.dart';
+import 'package:oluko_app/ui/components/black_app_bar.dart';
+import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';
+import 'package:oluko_app/ui/screens/friends/friends_list_page.dart';
+import 'package:oluko_app/ui/screens/friends/friends_requests_page.dart';
+import 'package:oluko_app/utils/app_navigator.dart';
 
 class FriendsPage extends StatefulWidget {
   @override

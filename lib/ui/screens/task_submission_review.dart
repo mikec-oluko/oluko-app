@@ -1,10 +1,10 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:mvt_fitness/models/submodels/event.dart';
-import 'package:mvt_fitness/models/task_submission.dart';
-import 'package:mvt_fitness/ui/components/black_app_bar.dart';
-import 'package:mvt_fitness/ui/screens/task_submission_review_preview.dart';
+import 'package:oluko_app/models/submodels/event.dart';
+import 'package:oluko_app/models/task_submission.dart';
+import 'package:oluko_app/ui/components/black_app_bar.dart';
+import 'package:oluko_app/ui/screens/task_submission_review_preview.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:video_player/video_player.dart';
 

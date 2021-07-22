@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mvt_fitness/constants/theme.dart';
-import 'package:mvt_fitness/ui/components/black_app_bar.dart';
-import 'package:mvt_fitness/ui/components/challenges_card.dart';
-import 'package:mvt_fitness/ui/screens/profile/profile_constants.dart';
+import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/ui/components/black_app_bar.dart';
+import 'package:oluko_app/ui/components/challenges_card.dart';
+import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 
 class ProfileChallengesPage extends StatefulWidget {
   @override
@@ -29,10 +29,11 @@ class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
     );
   }
 
-  List<Widget> buildListOfChallenges(List<ChallengeStatic> challenges) => challenges
-      .map((challenge) => ChallengesCard(
-            challenge: challenge,
-            needHeader: false,
-          ))
-      .toList();
+  List<Widget> buildListOfChallenges(List<ChallengeStatic> challenges) =>
+      challenges
+          .map((challenge) => ChallengesCard(
+                challenge: challenge,
+                needHeader: false,
+              ))
+          .toList();
 }

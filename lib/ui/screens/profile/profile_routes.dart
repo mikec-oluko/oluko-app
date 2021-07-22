@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mvt_fitness/ui/screens/profile/profile_constants.dart';
+import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 
 class ProfileRoutes {
   static const String userInformationRoute = '/profile-view-own-profile';

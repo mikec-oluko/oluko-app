@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mvt_fitness/models/plan.dart';
-import 'package:mvt_fitness/repositories/plan_repository.dart';
+import 'package:oluko_app/models/plan.dart';
+import 'package:oluko_app/repositories/plan_repository.dart';
 
 abstract class PlanState {}
 

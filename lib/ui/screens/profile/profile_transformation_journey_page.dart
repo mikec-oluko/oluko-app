@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mvt_fitness/blocs/auth_bloc.dart';
-import 'package:mvt_fitness/blocs/transformation_journey_bloc.dart';
-import 'package:mvt_fitness/constants/theme.dart';
-import 'package:mvt_fitness/models/enums/file_type_enum.dart';
-import 'package:mvt_fitness/models/transformation_journey_uploads.dart';
-import 'package:mvt_fitness/models/user_response.dart';
-import 'package:mvt_fitness/ui/components/black_app_bar.dart';
-import 'package:mvt_fitness/ui/components/image_and_video_container.dart';
-import 'package:mvt_fitness/ui/components/oluko_circular_progress_indicator.dart';
-import 'package:mvt_fitness/ui/components/oluko_outlined_button.dart';
-import 'package:mvt_fitness/ui/components/transformation_journey_modal_options.dart';
-import 'package:mvt_fitness/ui/screens/profile/profile_constants.dart';
-import 'package:mvt_fitness/utils/app_modal.dart';
-import 'package:mvt_fitness/utils/oluko_localizations.dart';
+import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
+import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/enums/file_type_enum.dart';
+import 'package:oluko_app/models/transformation_journey_uploads.dart';
+import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/ui/components/black_app_bar.dart';
+import 'package:oluko_app/ui/components/image_and_video_container.dart';
+import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
+import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
+import 'package:oluko_app/ui/components/transformation_journey_modal_options.dart';
+import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
+import 'package:oluko_app/utils/app_modal.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ProfileTransformationJourneyPage extends StatefulWidget {
   @override

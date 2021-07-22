@@ -1,7 +1,7 @@
 import 'dart:async';
 // import 'package:sound_mode/sound_mode.dart';
 // import 'package:audioplayers/audio_cache.dart';
-import 'package:mvt_fitness/main.dart';
+import 'package:oluko_app/main.dart';
 import './sound_list.dart';
 
 // AudioCache player = AudioCache();

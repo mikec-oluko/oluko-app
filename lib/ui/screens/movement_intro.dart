@@ -2,17 +2,17 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:mvt_fitness/constants/theme.dart';
-import 'package:mvt_fitness/models/course.dart';
-import 'package:mvt_fitness/models/movement.dart';
-import 'package:mvt_fitness/models/segment.dart';
-import 'package:mvt_fitness/ui/components/black_app_bar_with_image.dart';
-import 'package:mvt_fitness/ui/components/movement_item_bubbles.dart';
-import 'package:mvt_fitness/ui/components/title_body.dart';
-import 'package:mvt_fitness/ui/components/video_player.dart';
-import 'package:mvt_fitness/utils/movement_utils.dart';
-import 'package:mvt_fitness/utils/oluko_localizations.dart';
-import 'package:mvt_fitness/utils/screen_utils.dart';
+import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/course.dart';
+import 'package:oluko_app/models/movement.dart';
+import 'package:oluko_app/models/segment.dart';
+import 'package:oluko_app/ui/components/black_app_bar_with_image.dart';
+import 'package:oluko_app/ui/components/movement_item_bubbles.dart';
+import 'package:oluko_app/ui/components/title_body.dart';
+import 'package:oluko_app/ui/components/video_player.dart';
+import 'package:oluko_app/utils/movement_utils.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 class MovementIntro extends StatefulWidget {
   Movement movement;

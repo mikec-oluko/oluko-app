@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mvt_fitness/blocs/auth_bloc.dart';
-import 'package:mvt_fitness/blocs/sign_up_bloc.dart';
-import 'package:mvt_fitness/constants/theme.dart';
-import 'package:mvt_fitness/models/sign_up_request.dart';
-import 'package:mvt_fitness/utils/app_loader.dart';
+import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/sign_up_bloc.dart';
+import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/sign_up_request.dart';
+import 'package:oluko_app/utils/app_loader.dart';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:mvt_fitness/utils/app_validators.dart';
+import 'package:oluko_app/utils/app_validators.dart';
 
 import '../peek_password.dart';
 

@@ -1,14 +1,14 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mvt_fitness/models/dto/api_response.dart';
-import 'package:mvt_fitness/models/sign_up_request.dart';
-import 'package:mvt_fitness/models/sign_up_response.dart';
-import 'package:mvt_fitness/repositories/auth_repository.dart';
-import 'package:mvt_fitness/utils/oluko_localizations.dart';
-import 'package:mvt_fitness/utils/app_loader.dart';
-import 'package:mvt_fitness/utils/app_messages.dart';
-import 'package:mvt_fitness/utils/app_navigator.dart';
+import 'package:oluko_app/models/dto/api_response.dart';
+import 'package:oluko_app/models/sign_up_request.dart';
+import 'package:oluko_app/models/sign_up_response.dart';
+import 'package:oluko_app/repositories/auth_repository.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/app_loader.dart';
+import 'package:oluko_app/utils/app_messages.dart';
+import 'package:oluko_app/utils/app_navigator.dart';
 
 abstract class UserState {}
 

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:mvt_fitness/utils/oluko_localizations.dart';
-import 'package:mvt_fitness/utils/screen_utils.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 class CountdownOverlay extends StatefulWidget {
   final num seconds;

@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mvt_fitness/constants/theme.dart';
-import 'package:mvt_fitness/ui/components/black_app_bar.dart';
-import 'package:mvt_fitness/ui/screens/profile/profile_constants.dart';
+import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/ui/components/black_app_bar.dart';
+import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 
 class ProfileSettingsPage extends StatefulWidget {
   @override

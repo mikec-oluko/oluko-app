@@ -1,10 +1,10 @@
 import 'package:chewie/chewie.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:mvt_fitness/constants/theme.dart';
-import 'package:mvt_fitness/ui/components/video_player.dart';
-import 'package:mvt_fitness/utils/app_modal.dart';
-import 'package:mvt_fitness/utils/screen_utils.dart';
+import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/ui/components/video_player.dart';
+import 'package:oluko_app/utils/app_modal.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 class ImageAndVideoPreviewCard extends StatefulWidget {
   final Image imageCover;

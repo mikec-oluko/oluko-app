@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mvt_fitness/constants/theme.dart';
-import 'package:mvt_fitness/ui/components/oluko_outlined_button.dart';
-import 'package:mvt_fitness/ui/components/oluko_primary_button.dart';
+import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
+import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 
 class UploadingModalSuccess extends StatelessWidget {
   @override

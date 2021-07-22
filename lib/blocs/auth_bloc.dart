@@ -5,15 +5,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:mvt_fitness/models/dto/api_response.dart';
-import 'package:mvt_fitness/models/dto/login_request.dart';
-import 'package:mvt_fitness/models/sign_up_request.dart';
-import 'package:mvt_fitness/models/user_response.dart';
-import 'package:mvt_fitness/repositories/auth_repository.dart';
-import 'package:mvt_fitness/repositories/user_repository.dart';
-import 'package:mvt_fitness/utils/app_loader.dart';
-import 'package:mvt_fitness/utils/app_messages.dart';
-import 'package:mvt_fitness/utils/app_navigator.dart';
+import 'package:oluko_app/models/dto/api_response.dart';
+import 'package:oluko_app/models/dto/login_request.dart';
+import 'package:oluko_app/models/sign_up_request.dart';
+import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/repositories/auth_repository.dart';
+import 'package:oluko_app/repositories/user_repository.dart';
+import 'package:oluko_app/utils/app_loader.dart';
+import 'package:oluko_app/utils/app_messages.dart';
+import 'package:oluko_app/utils/app_navigator.dart';
 
 abstract class AuthState {}
 

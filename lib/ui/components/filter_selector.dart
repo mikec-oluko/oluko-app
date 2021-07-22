@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mvt_fitness/models/base.dart';
-import 'package:mvt_fitness/ui/components/search_filters.dart';
-import 'package:mvt_fitness/ui/components/title_body.dart';
-import 'package:mvt_fitness/utils/screen_utils.dart';
+import 'package:oluko_app/models/base.dart';
+import 'package:oluko_app/ui/components/search_filters.dart';
+import 'package:oluko_app/ui/components/title_body.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 import 'oluko_outlined_button.dart';
 import 'oluko_primary_button.dart';
 

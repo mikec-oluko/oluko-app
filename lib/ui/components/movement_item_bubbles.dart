@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mvt_fitness/constants/theme.dart';
-import 'package:mvt_fitness/models/movement.dart';
-import 'package:mvt_fitness/ui/components/stories_item.dart';
-import 'package:mvt_fitness/ui/screens/movement_intro.dart';
+import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/movement.dart';
+import 'package:oluko_app/ui/components/stories_item.dart';
+import 'package:oluko_app/ui/screens/movement_intro.dart';
 
 class MovementItemBubbles extends StatefulWidget {
   final List<Movement> content;

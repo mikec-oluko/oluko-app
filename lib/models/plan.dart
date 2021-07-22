@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:mvt_fitness/helpers/enum_helper.dart';
-import 'package:mvt_fitness/utils/info_dialog.dart';
+import 'package:oluko_app/helpers/enum_helper.dart';
+import 'package:oluko_app/utils/info_dialog.dart';
 
 import 'base.dart';
 

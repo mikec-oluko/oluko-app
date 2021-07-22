@@ -1,14 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:mvt_fitness/models/challenge.dart';
-import 'package:mvt_fitness/models/class.dart';
-import 'package:mvt_fitness/models/course.dart';
-import 'package:mvt_fitness/models/course_enrollment.dart';
-import 'package:mvt_fitness/models/submodels/enrollment_class.dart';
-import 'package:mvt_fitness/models/submodels/enrollment_segment.dart';
-import 'package:mvt_fitness/models/submodels/object_submodel.dart';
-import 'package:mvt_fitness/repositories/course_repository.dart';
+import 'package:oluko_app/models/challenge.dart';
+import 'package:oluko_app/models/class.dart';
+import 'package:oluko_app/models/course.dart';
+import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/submodels/enrollment_class.dart';
+import 'package:oluko_app/models/submodels/enrollment_segment.dart';
+import 'package:oluko_app/models/submodels/object_submodel.dart';
+import 'package:oluko_app/repositories/course_repository.dart';
 
 class CourseEnrollmentRepository {
   FirebaseFirestore firestoreInstance;

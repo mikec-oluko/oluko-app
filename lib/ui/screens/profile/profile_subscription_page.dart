@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mvt_fitness/blocs/plan_bloc.dart';
-import 'package:mvt_fitness/constants/theme.dart';
-import 'package:mvt_fitness/helpers/enum_helper.dart';
-import 'package:mvt_fitness/models/plan.dart';
-import 'package:mvt_fitness/ui/components/black_app_bar.dart';
-import 'package:mvt_fitness/ui/components/subscription_card.dart';
-import 'package:mvt_fitness/ui/components/subscription_modal_options.dart';
-import 'package:mvt_fitness/ui/components/title_body.dart';
-import 'package:mvt_fitness/ui/screens/profile/profile_constants.dart';
-import 'package:mvt_fitness/utils/app_modal.dart';
-import 'package:mvt_fitness/utils/oluko_localizations.dart';
+import 'package:oluko_app/blocs/plan_bloc.dart';
+import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/enum_helper.dart';
+import 'package:oluko_app/models/plan.dart';
+import 'package:oluko_app/ui/components/black_app_bar.dart';
+import 'package:oluko_app/ui/components/subscription_card.dart';
+import 'package:oluko_app/ui/components/subscription_modal_options.dart';
+import 'package:oluko_app/ui/components/title_body.dart';
+import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
+import 'package:oluko_app/utils/app_modal.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ProfileSubscriptionPage extends StatefulWidget {
   @override

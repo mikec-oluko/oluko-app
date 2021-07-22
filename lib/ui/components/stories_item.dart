@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mvt_fitness/constants/theme.dart';
-import 'package:mvt_fitness/ui/components/oluko_circular_progress_indicator.dart';
+import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 
 class StoriesItem extends StatefulWidget {
   final String imageUrl;

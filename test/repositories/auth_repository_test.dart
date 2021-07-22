@@ -5,13 +5,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:mockito/mockito.dart';
-import 'package:mvt_fitness/models/dto/api_response.dart';
-import 'package:mvt_fitness/models/dto/login_request.dart';
-import 'package:mvt_fitness/models/sign_up_request.dart';
+import 'package:oluko_app/models/dto/api_response.dart';
+import 'package:oluko_app/models/dto/login_request.dart';
+import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mvt_fitness/models/user_response.dart';
-import 'package:mvt_fitness/models/dto/verify_token_request.dart';
-import 'package:mvt_fitness/repositories/auth_repository.dart';
+import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/models/dto/verify_token_request.dart';
+import 'package:oluko_app/repositories/auth_repository.dart';
 
 class MockClient extends Mock implements http.Client {}
 

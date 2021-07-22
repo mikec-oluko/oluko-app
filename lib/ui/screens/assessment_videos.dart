@@ -3,17 +3,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mvt_fitness/blocs/assessment_bloc.dart';
-import 'package:mvt_fitness/blocs/auth_bloc.dart';
-import 'package:mvt_fitness/blocs/task_bloc.dart';
-import 'package:mvt_fitness/models/assessment.dart';
-import 'package:mvt_fitness/models/task.dart';
-import 'package:mvt_fitness/ui/components/task_card.dart';
-import 'package:mvt_fitness/ui/components/title_body.dart';
-import 'package:mvt_fitness/ui/components/title_header.dart';
-import 'package:mvt_fitness/ui/components/video_player.dart';
-import 'package:mvt_fitness/ui/screens/task_details.dart';
-import 'package:mvt_fitness/utils/screen_utils.dart';
+import 'package:oluko_app/blocs/assessment_bloc.dart';
+import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/task_bloc.dart';
+import 'package:oluko_app/models/assessment.dart';
+import 'package:oluko_app/models/task.dart';
+import 'package:oluko_app/ui/components/task_card.dart';
+import 'package:oluko_app/ui/components/title_body.dart';
+import 'package:oluko_app/ui/components/title_header.dart';
+import 'package:oluko_app/ui/components/video_player.dart';
+import 'package:oluko_app/ui/screens/task_details.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 class AssessmentVideos extends StatefulWidget {
   AssessmentVideos({Key key}) : super(key: key);

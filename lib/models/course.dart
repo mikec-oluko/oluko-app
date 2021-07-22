@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:mvt_fitness/models/submodels/object_submodel.dart';
+import 'package:oluko_app/models/submodels/object_submodel.dart';
 import 'base.dart';
 
 class Course extends Base {
@@ -65,7 +65,8 @@ class Course extends Base {
         equipment: json['equipment'] == null ? null : json['equipment'],
         intensity: json['intensity'] == null ? null : json['intensity'],
         categories: json['categories'] == null ? null : json['categories'],
-        workoutDuration: json['workout_duration'] == null ? null : json['workout_duration'],
+        workoutDuration:
+            json['workout_duration'] == null ? null : json['workout_duration'],
         recommendedEngagement: json['recommended_engagement'],
         recommendedEngagementGap: json['recommended_engagementGap'],
         engagementGapTime: json['engagement_gap_time'],

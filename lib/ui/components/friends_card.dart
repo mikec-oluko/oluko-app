@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:mvt_fitness/constants/Theme.dart';
-import 'package:mvt_fitness/models/user_response.dart';
+import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/models/user_response.dart';
 
 class FriendCard extends StatefulWidget {
   // final UserResponse userToDisplay;

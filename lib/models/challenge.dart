@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:mvt_fitness/models/base.dart';
+import 'package:oluko_app/models/base.dart';
 
 class Challenge extends Base {
   String segmentId;

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mvt_fitness/constants/theme.dart';
-import 'package:mvt_fitness/ui/components/uploading_modal_success.dart';
-import 'package:mvt_fitness/utils/app_modal.dart';
-import 'package:mvt_fitness/utils/oluko_localizations.dart';
+import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/ui/components/uploading_modal_success.dart';
+import 'package:oluko_app/utils/app_modal.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class UploadingModalLoader extends StatelessWidget {
   @override

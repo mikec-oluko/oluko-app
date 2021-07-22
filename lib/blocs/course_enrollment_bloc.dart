@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mvt_fitness/models/challenge.dart';
-import 'package:mvt_fitness/models/course.dart';
-import 'package:mvt_fitness/models/course_enrollment.dart';
-import 'package:mvt_fitness/models/submodels/enrollment_class.dart';
-import 'package:mvt_fitness/repositories/course_enrollment_repository.dart';
+import 'package:oluko_app/models/challenge.dart';
+import 'package:oluko_app/models/course.dart';
+import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/submodels/enrollment_class.dart';
+import 'package:oluko_app/repositories/course_enrollment_repository.dart';
 
 abstract class CourseEnrollmentState {}
 

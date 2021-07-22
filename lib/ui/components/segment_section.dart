@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:mvt_fitness/constants/theme.dart';
-import 'package:mvt_fitness/models/segment.dart';
+import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/segment.dart';
 import 'oluko_primary_button.dart';
 
 class SegmentSection extends StatefulWidget {

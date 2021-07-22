@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:mvt_fitness/models/course.dart';
-import 'package:mvt_fitness/models/course_enrollment.dart';
-import 'package:mvt_fitness/models/movement_submission.dart';
-import 'package:mvt_fitness/models/segment_submission.dart';
-import 'package:mvt_fitness/models/submodels/object_submodel.dart';
-import 'package:mvt_fitness/repositories/movement_submission_repository.dart';
+import 'package:oluko_app/models/course.dart';
+import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/movement_submission.dart';
+import 'package:oluko_app/models/segment_submission.dart';
+import 'package:oluko_app/models/submodels/object_submodel.dart';
+import 'package:oluko_app/repositories/movement_submission_repository.dart';
 
 class SegmentSubmissionRepository {
   FirebaseFirestore firestoreInstance;

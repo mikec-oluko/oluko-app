@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mvt_fitness/blocs/friend_bloc.dart';
-import 'package:mvt_fitness/constants/Theme.dart';
-import 'package:mvt_fitness/ui/components/friends_card.dart';
+import 'package:oluko_app/blocs/friend_bloc.dart';
+import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/ui/components/friends_card.dart';
 
 class FriendsListPage extends StatefulWidget {
   // final List<User> friends;

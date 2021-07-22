@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mvt_fitness/models/assessment.dart';
-import 'package:mvt_fitness/models/task.dart';
-import 'package:mvt_fitness/repositories/task_repository.dart';
+import 'package:oluko_app/models/assessment.dart';
+import 'package:oluko_app/models/task.dart';
+import 'package:oluko_app/repositories/task_repository.dart';
 
 abstract class TaskState {}
 

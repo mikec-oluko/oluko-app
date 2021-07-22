@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mvt_fitness/constants/Theme.dart';
-import 'package:mvt_fitness/utils/oluko_localizations.dart';
+import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class OlukoErrorMessage extends StatelessWidget {
   final String section;

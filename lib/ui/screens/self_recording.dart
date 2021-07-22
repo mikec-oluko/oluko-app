@@ -2,12 +2,12 @@ import 'package:camera/camera.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:mvt_fitness/models/assessment_assignment.dart';
-import 'package:mvt_fitness/models/task.dart';
-import 'package:mvt_fitness/models/task_submission.dart';
-import 'package:mvt_fitness/ui/components/black_app_bar.dart';
-import 'package:mvt_fitness/ui/components/title_body.dart';
-import 'package:mvt_fitness/ui/screens/self_recording_preview.dart';
+import 'package:oluko_app/models/assessment_assignment.dart';
+import 'package:oluko_app/models/task.dart';
+import 'package:oluko_app/models/task_submission.dart';
+import 'package:oluko_app/ui/components/black_app_bar.dart';
+import 'package:oluko_app/ui/components/title_body.dart';
+import 'package:oluko_app/ui/screens/self_recording_preview.dart';
 
 class SelfRecording extends StatefulWidget {
   SelfRecording(

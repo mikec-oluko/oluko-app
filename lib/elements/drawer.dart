@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:mvt_fitness/constants/theme.dart';
+import 'package:oluko_app/constants/theme.dart';
 
-import 'package:mvt_fitness/elements/drawer_tile.dart';
+import 'package:oluko_app/elements/drawer_tile.dart';
 
 class OlukoDrawer extends StatelessWidget {
   final String currentPage;

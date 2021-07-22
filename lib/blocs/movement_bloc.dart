@@ -1,9 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mvt_fitness/models/class.dart';
-import 'package:mvt_fitness/models/movement.dart';
-import 'package:mvt_fitness/models/segment.dart';
-import 'package:mvt_fitness/repositories/movement_repository.dart';
-import 'package:mvt_fitness/repositories/segment_repository.dart';
+import 'package:oluko_app/models/class.dart';
+import 'package:oluko_app/models/movement.dart';
+import 'package:oluko_app/models/segment.dart';
+import 'package:oluko_app/repositories/movement_repository.dart';
+import 'package:oluko_app/repositories/segment_repository.dart';
 
 abstract class MovementState {}
 

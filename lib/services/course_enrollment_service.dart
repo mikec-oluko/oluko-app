@@ -1,6 +1,6 @@
-import 'package:mvt_fitness/models/course_enrollment.dart';
-import 'package:mvt_fitness/models/submodels/enrollment_class.dart';
-import 'package:mvt_fitness/models/submodels/enrollment_segment.dart';
+import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/submodels/enrollment_class.dart';
+import 'package:oluko_app/models/submodels/enrollment_segment.dart';
 
 class CourseEnrollmentService {
   static int getFirstUncompletedClassIndex(CourseEnrollment courseEnrollment) {

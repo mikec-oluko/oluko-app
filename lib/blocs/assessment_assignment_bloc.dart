@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mvt_fitness/models/assessment_assignment.dart';
-import 'package:mvt_fitness/repositories/assessment_assignment_repository.dart';
+import 'package:oluko_app/models/assessment_assignment.dart';
+import 'package:oluko_app/repositories/assessment_assignment_repository.dart';
 
 abstract class AssessmentAssignmentState {}
 

@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
-import 'package:mvt_fitness/constants/theme.dart';
+import 'package:oluko_app/constants/theme.dart';
 
 class ProductCarousel extends StatefulWidget {
   final List<Map<String, String>> imgArray;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mvt_fitness/constants/theme.dart';
+import 'package:oluko_app/constants/theme.dart';
 
 class DialogWidget extends StatefulWidget {
   final List<Widget> content;

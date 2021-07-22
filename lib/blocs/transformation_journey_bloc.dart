@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mvt_fitness/models/enums/file_type_enum.dart';
-import 'package:mvt_fitness/models/transformation_journey_uploads.dart';
-import 'package:mvt_fitness/repositories/transformation_journey_repository.dart';
+import 'package:oluko_app/models/enums/file_type_enum.dart';
+import 'package:oluko_app/models/transformation_journey_uploads.dart';
+import 'package:oluko_app/repositories/transformation_journey_repository.dart';
 
 abstract class TransformationJourneyState {}
 

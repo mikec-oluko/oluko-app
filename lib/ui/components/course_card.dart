@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mvt_fitness/ui/components/course_progress_bar.dart';
-import 'package:mvt_fitness/utils/screen_utils.dart';
+import 'package:oluko_app/ui/components/course_progress_bar.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 class CourseCard extends StatefulWidget {
   final Image imageCover;

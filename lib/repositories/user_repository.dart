@@ -3,10 +3,10 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mvt_fitness/helpers/s3_provider.dart';
-import 'package:mvt_fitness/models/sign_up_request.dart';
-import 'package:mvt_fitness/models/sign_up_response.dart';
-import 'package:mvt_fitness/models/user_response.dart';
+import 'package:oluko_app/helpers/s3_provider.dart';
+import 'package:oluko_app/models/sign_up_request.dart';
+import 'package:oluko_app/models/sign_up_response.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:path/path.dart' as p;
 
 class UserRepository {

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:mvt_fitness/constants/Theme.dart';
-import 'package:mvt_fitness/models/movement.dart';
-import 'package:mvt_fitness/ui/components/stories_item.dart';
-import 'package:mvt_fitness/ui/screens/movement_intro.dart';
-import 'package:mvt_fitness/utils/screen_utils.dart';
+import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/models/movement.dart';
+import 'package:oluko_app/ui/components/stories_item.dart';
+import 'package:oluko_app/ui/screens/movement_intro.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 import 'movement_item_bubbles.dart';
 

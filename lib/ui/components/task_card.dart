@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:mvt_fitness/constants/theme.dart';
-import 'package:mvt_fitness/models/task.dart';
-import 'package:mvt_fitness/ui/components/oluko_outlined_button.dart';
+import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/task.dart';
+import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 
 class TaskCard extends StatefulWidget {
   final Task task;

@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:mvt_fitness/models/tag.dart';
+import 'package:oluko_app/models/tag.dart';
 
 class TagRepository {
   FirebaseFirestore firestoreInstance;

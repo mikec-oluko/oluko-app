@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:mvt_fitness/models/submodels/video_info.dart';
-import 'package:mvt_fitness/models/task_review.dart';
+import 'package:oluko_app/models/submodels/video_info.dart';
+import 'package:oluko_app/models/task_review.dart';
 
 class TaskReviewRepository {
   FirebaseFirestore firestoreInstance;

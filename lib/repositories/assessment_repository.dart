@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:mvt_fitness/models/assessment.dart';
+import 'package:oluko_app/models/assessment.dart';
 
 class AssessmentRepository {
   FirebaseFirestore firestoreInstance;
@@ -34,9 +34,9 @@ class AssessmentRepository {
         .collection('assessments')
         .where('id', isEqualTo: id)
         .get();
-    if (docRef.docs.length>0){
+    if (docRef.docs.length > 0) {
       return Assessment.fromJson(docRef.docs[0].data());
-    }else{
+    } else {
       return null;
     }
   }

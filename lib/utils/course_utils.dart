@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:mvt_fitness/blocs/tag_bloc.dart';
-import 'package:mvt_fitness/constants/Theme.dart';
-import 'package:mvt_fitness/models/base.dart';
-import 'package:mvt_fitness/models/course.dart';
-import 'package:mvt_fitness/models/course_category.dart';
-import 'package:mvt_fitness/models/course_category_item.dart';
-import 'package:mvt_fitness/models/search_results.dart';
-import 'package:mvt_fitness/models/tag.dart';
-import 'package:mvt_fitness/ui/components/filter_selector.dart';
-import 'package:mvt_fitness/ui/components/oluko_outlined_button.dart';
-import 'package:mvt_fitness/ui/components/oluko_primary_button.dart';
-import 'package:mvt_fitness/ui/components/search_bar.dart';
-import 'package:mvt_fitness/ui/components/search_results_grid.dart';
-import 'package:mvt_fitness/ui/components/search_suggestions.dart';
-import 'package:mvt_fitness/utils/screen_utils.dart';
+import 'package:oluko_app/blocs/tag_bloc.dart';
+import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/models/base.dart';
+import 'package:oluko_app/models/course.dart';
+import 'package:oluko_app/models/course_category.dart';
+import 'package:oluko_app/models/course_category_item.dart';
+import 'package:oluko_app/models/search_results.dart';
+import 'package:oluko_app/models/tag.dart';
+import 'package:oluko_app/ui/components/filter_selector.dart';
+import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
+import 'package:oluko_app/ui/components/oluko_primary_button.dart';
+import 'package:oluko_app/ui/components/search_bar.dart';
+import 'package:oluko_app/ui/components/search_results_grid.dart';
+import 'package:oluko_app/ui/components/search_suggestions.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 class CourseUtils {
   static List<Course> filterByCategories(

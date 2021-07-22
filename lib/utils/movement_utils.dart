@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mvt_fitness/constants/Theme.dart';
-import 'package:mvt_fitness/models/segment.dart';
-import 'package:mvt_fitness/models/submodels/movement_submodel.dart';
+import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/models/segment.dart';
+import 'package:oluko_app/models/submodels/movement_submodel.dart';
 
 import 'oluko_localizations.dart';
 

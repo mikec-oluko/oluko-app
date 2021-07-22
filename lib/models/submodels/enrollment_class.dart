@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:mvt_fitness/models/submodels/enrollment_segment.dart';
+import 'package:oluko_app/models/submodels/enrollment_segment.dart';
 
 class EnrollmentClass {
   String id;

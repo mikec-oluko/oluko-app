@@ -3,19 +3,19 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mvt_fitness/blocs/movement_bloc.dart';
-import 'package:mvt_fitness/constants/theme.dart';
-import 'package:mvt_fitness/models/course_enrollment.dart';
-import 'package:mvt_fitness/models/movement.dart';
-import 'package:mvt_fitness/models/segment.dart';
-import 'package:mvt_fitness/ui/components/black_app_bar_with_image.dart';
-import 'package:mvt_fitness/ui/components/countdown_overlay.dart';
-import 'package:mvt_fitness/ui/components/oluko_primary_button.dart';
-import 'package:mvt_fitness/ui/components/segment_step_section.dart';
-import 'package:mvt_fitness/ui/screens/segment_recording.dart';
-import 'package:mvt_fitness/utils/movement_utils.dart';
-import 'package:mvt_fitness/utils/oluko_localizations.dart';
-import 'package:mvt_fitness/utils/screen_utils.dart';
+import 'package:oluko_app/blocs/movement_bloc.dart';
+import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/movement.dart';
+import 'package:oluko_app/models/segment.dart';
+import 'package:oluko_app/ui/components/black_app_bar_with_image.dart';
+import 'package:oluko_app/ui/components/countdown_overlay.dart';
+import 'package:oluko_app/ui/components/oluko_primary_button.dart';
+import 'package:oluko_app/ui/components/segment_step_section.dart';
+import 'package:oluko_app/ui/screens/segment_recording.dart';
+import 'package:oluko_app/utils/movement_utils.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 class SegmentDetail extends StatefulWidget {
   SegmentDetail(

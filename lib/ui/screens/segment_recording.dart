@@ -6,22 +6,22 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mvt_fitness/blocs/movement_submission_bloc.dart';
-import 'package:mvt_fitness/blocs/segment_submission_bloc.dart';
-import 'package:mvt_fitness/blocs/video_bloc.dart';
-import 'package:mvt_fitness/constants/Theme.dart';
-import 'package:mvt_fitness/models/course_enrollment.dart';
-import 'package:mvt_fitness/models/movement_submission.dart';
-import 'package:mvt_fitness/models/segment_submission.dart';
-import 'package:mvt_fitness/models/segment.dart';
-import 'package:mvt_fitness/models/timer_entry.dart';
-import 'package:mvt_fitness/models/timer_model.dart';
-import 'package:mvt_fitness/ui/components/black_app_bar.dart';
-import 'package:mvt_fitness/ui/components/oluko_primary_button.dart';
-import 'package:mvt_fitness/utils/movement_utils.dart';
-import 'package:mvt_fitness/utils/oluko_localizations.dart';
-import 'package:mvt_fitness/utils/screen_utils.dart';
-import 'package:mvt_fitness/utils/time_converter.dart';
+import 'package:oluko_app/blocs/movement_submission_bloc.dart';
+import 'package:oluko_app/blocs/segment_submission_bloc.dart';
+import 'package:oluko_app/blocs/video_bloc.dart';
+import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/movement_submission.dart';
+import 'package:oluko_app/models/segment_submission.dart';
+import 'package:oluko_app/models/segment.dart';
+import 'package:oluko_app/models/timer_entry.dart';
+import 'package:oluko_app/models/timer_model.dart';
+import 'package:oluko_app/ui/components/black_app_bar.dart';
+import 'package:oluko_app/ui/components/oluko_primary_button.dart';
+import 'package:oluko_app/utils/movement_utils.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/time_converter.dart';
 
 enum WorkoutType { segment, segmentWithRecording }
 

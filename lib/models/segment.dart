@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:mvt_fitness/models/base.dart';
-import 'package:mvt_fitness/models/submodels/movement_submodel.dart';
+import 'package:oluko_app/models/base.dart';
+import 'package:oluko_app/models/submodels/movement_submodel.dart';
 
 class Segment extends Base {
   String name;

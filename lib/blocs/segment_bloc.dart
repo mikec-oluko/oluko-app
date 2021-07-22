@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mvt_fitness/models/class.dart';
-import 'package:mvt_fitness/models/segment.dart';
-import 'package:mvt_fitness/repositories/segment_repository.dart';
+import 'package:oluko_app/models/class.dart';
+import 'package:oluko_app/models/segment.dart';
+import 'package:oluko_app/repositories/segment_repository.dart';
 
 abstract class SegmentState {}
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:mvt_fitness/constants/theme.dart';
+import 'package:oluko_app/constants/theme.dart';
 
 class OlukoPrimaryButton extends StatefulWidget {
   final Function() onPressed;

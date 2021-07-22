@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mvt_fitness/constants/Theme.dart';
-import 'package:mvt_fitness/ui/components/title_body.dart';
+import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/ui/components/title_body.dart';
 
 class AppNavigator {
   Future<void> returnToHome(context) async {

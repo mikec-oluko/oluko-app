@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:mvt_fitness/constants/theme.dart';
-import 'package:mvt_fitness/models/class.dart';
-import 'package:mvt_fitness/ui/components/course_progress_bar.dart';
+import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/class.dart';
+import 'package:oluko_app/ui/components/course_progress_bar.dart';
 import 'oluko_primary_button.dart';
 
 class ClassSection extends StatefulWidget {

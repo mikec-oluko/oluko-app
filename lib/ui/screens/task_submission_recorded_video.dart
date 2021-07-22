@@ -1,10 +1,10 @@
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
-import 'package:mvt_fitness/models/sign_up_response.dart';
-import 'package:mvt_fitness/models/submodels/video.dart';
-import 'package:mvt_fitness/models/task.dart';
-import 'package:mvt_fitness/ui/components/black_app_bar.dart';
-import 'package:mvt_fitness/ui/components/video_player.dart';
+import 'package:oluko_app/models/sign_up_response.dart';
+import 'package:oluko_app/models/submodels/video.dart';
+import 'package:oluko_app/models/task.dart';
+import 'package:oluko_app/ui/components/black_app_bar.dart';
+import 'package:oluko_app/ui/components/video_player.dart';
 
 class TaskSubmissionRecordedVideo extends StatefulWidget {
   TaskSubmissionRecordedVideo({this.videoUrl, this.task, key})

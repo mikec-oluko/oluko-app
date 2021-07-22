@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mvt_fitness/ui/components/stories_item.dart';
+import 'package:oluko_app/ui/components/stories_item.dart';
 
 class StoriesHeader extends StatefulWidget {
   final List<String> stories;

@@ -1,14 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mvt_fitness/blocs/plan_bloc.dart';
-import 'package:mvt_fitness/constants/theme.dart';
-import 'package:mvt_fitness/helpers/enum_helper.dart';
-import 'package:mvt_fitness/utils/info_dialog.dart';
-import 'package:mvt_fitness/models/plan.dart';
-import 'package:mvt_fitness/models/sign_up_response.dart';
-import 'package:mvt_fitness/ui/components/subscription_card.dart';
-import 'package:mvt_fitness/utils/oluko_localizations.dart';
+import 'package:oluko_app/blocs/plan_bloc.dart';
+import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/enum_helper.dart';
+import 'package:oluko_app/utils/info_dialog.dart';
+import 'package:oluko_app/models/plan.dart';
+import 'package:oluko_app/models/sign_up_response.dart';
+import 'package:oluko_app/ui/components/subscription_card.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ChoosePlayPayments extends StatefulWidget {
   ChoosePlayPayments({Key key}) : super(key: key);

@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:mvt_fitness/models/challenge.dart';
-import 'package:mvt_fitness/models/submodels/enrollment_class.dart';
+import 'package:oluko_app/models/challenge.dart';
+import 'package:oluko_app/models/submodels/enrollment_class.dart';
 import 'base.dart';
 
 class CourseEnrollment extends Base {

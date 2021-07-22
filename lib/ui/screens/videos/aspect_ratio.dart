@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mvt_fitness/ui/screens/videos/video_play_pause.dart';
+import 'package:oluko_app/ui/screens/videos/video_play_pause.dart';
 import 'package:video_player/video_player.dart';
 
 class AspectRatioVideo extends StatefulWidget {
