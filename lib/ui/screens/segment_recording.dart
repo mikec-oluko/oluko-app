@@ -1,14 +1,13 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/movement_submission_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
-import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/movement_submission.dart';
@@ -31,11 +30,15 @@ class SegmentRecording extends StatefulWidget {
   final User user;
   final CourseEnrollment courseEnrollment;
   final Segment segment;
+  final int classIndex;
+  final int segmentIndex;
 
   SegmentRecording(
       {Key key,
       this.workoutType,
       this.user,
+      this.classIndex,
+      this.segmentIndex,
       this.courseEnrollment,
       this.segment})
       : super(key: key);
@@ -85,6 +88,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   MovementSubmissionBloc _movementSubmissionBloc;
   SegmentSubmission segmentSubmission;
   MovementSubmission movementSubmission;
+  CourseEnrollmentBloc _courseEnrollmentBloc;
 
   _startMovement() {
     //Reset countdown variables
@@ -101,6 +105,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     this.workoutType = widget.workoutType;
     _segmentSubmissionBloc = SegmentSubmissionBloc();
     _movementSubmissionBloc = MovementSubmissionBloc();
+    _courseEnrollmentBloc = CourseEnrollmentBloc();
     super.initState();
   }
 
@@ -113,6 +118,9 @@ class _SegmentRecordingState extends State<SegmentRecording> {
           ),
           BlocProvider<MovementSubmissionBloc>(
             create: (context) => _movementSubmissionBloc,
+          ),
+          BlocProvider<CourseEnrollmentBloc>(
+            create: (context) => _courseEnrollmentBloc,
           )
         ],
         child: BlocListener<MovementSubmissionBloc, MovementSubmissionState>(
@@ -710,6 +718,9 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   void _finishWorkout() {
     workState = WorkState.finished;
     print('Workout finished');
+    _courseEnrollmentBloc
+      ..markSegmentAsCompleated(
+          widget.courseEnrollment, widget.segmentIndex, widget.classIndex);
     Navigator.push(
         context,
         MaterialPageRoute(

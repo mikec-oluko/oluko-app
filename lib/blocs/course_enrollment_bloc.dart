@@ -10,6 +10,8 @@ abstract class CourseEnrollmentState {}
 
 class Loading extends CourseEnrollmentState {}
 
+class MarkSegmentSuccess extends CourseEnrollmentState {}
+
 class UncompletedClassSuccess extends CourseEnrollmentState {
   EnrollmentClass enrollmentClass;
   UncompletedClassSuccess({this.enrollmentClass});
@@ -62,6 +64,18 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
       CourseEnrollment courseEnrollment =
           await CourseEnrollmentRepository.get(course, user);
       emit(GetEnrollmentSuccess(courseEnrollment: courseEnrollment));
+    } catch (e) {
+      print(e.toString());
+      emit(Failure(exception: e));
+    }
+  }
+
+  void markSegmentAsCompleated(CourseEnrollment courseEnrollment,
+      int segmentIndex, int classIndex) async {
+    try {
+      await CourseEnrollmentRepository.markSegmentAsCompleted(
+          courseEnrollment, segmentIndex, classIndex);
+      emit(MarkSegmentSuccess());
     } catch (e) {
       print(e.toString());
       emit(Failure(exception: e));

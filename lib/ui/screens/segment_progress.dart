@@ -1,19 +1,35 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/movement_submission_bloc.dart';
 import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/movement_submission.dart';
+import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/progress_bar.dart';
 
 class SegmentProgress extends StatefulWidget {
-  SegmentProgress({this.segmentSubmission, Key key}) : super(key: key);
+  SegmentProgress(
+      {this.segmentSubmission,
+      this.user,
+      this.classIndex,
+      this.segmentIndex,
+      this.courseEnrollment,
+      this.segment,
+      Key key})
+      : super(key: key);
 
   final SegmentSubmission segmentSubmission;
+  final User user;
+  final CourseEnrollment courseEnrollment;
+  final Segment segment;
+  final int classIndex;
+  final int segmentIndex;
 
   @override
   _SegmentProgressState createState() => _SegmentProgressState();
@@ -125,7 +141,7 @@ class _SegmentProgressState extends State<SegmentProgress> {
               Padding(
                   padding: const EdgeInsets.only(top: 30.0, right: 10),
                   child: ProgressBar(
-                      processPhase: processPhase, progress: progress))
+                      processPhase: processPhase, progress: progress)),
             ])));
   }
 
