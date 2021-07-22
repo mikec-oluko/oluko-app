@@ -28,6 +28,11 @@ class VideoProcessing extends VideoState {
   VideoProcessing({this.processPhase, this.progress});
 }
 
+class VideoEncoded extends VideoState {
+  final String encodedFilesDir;
+  VideoEncoded({this.encodedFilesDir});
+}
+
 class Failure extends VideoState {
   final Exception exception;
 
@@ -52,6 +57,7 @@ class VideoBloc extends Cubit<VideoState> {
 
   Future<Video> _processVideo(BuildContext context, File videoFile,
       double aspectRatio, String id) async {
+    _processPhase = "";
     _progress = 0.0;
     emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
 
@@ -79,6 +85,7 @@ class VideoBloc extends Cubit<VideoState> {
 
     final encodedFilesDir =
         await EncodingProvider.encodeHLS(videoPath, outDirPath);
+    emit(VideoEncoded(encodedFilesDir: encodedFilesDir));
 
     _processPhase = OlukoLocalizations.of(context).find('uploadingThumbnail');
     _progress += _unitOfProgress;

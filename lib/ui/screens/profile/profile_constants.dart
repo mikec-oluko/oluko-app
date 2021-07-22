@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/dialog.dart';
 
 class ProfileViewConstants {
@@ -39,18 +41,27 @@ class ProfileViewConstants {
   static const profileSelectFromGalleryTitle = "Select from Gallery";
 
   //List of options for Profile settings.
-  static const List<String> profileOptions = [
-    profileOptionsMyAccount,
-    profileOptionsAssessmentVideos,
-    profileOptionsTransformationJourney,
-    profileOptionsSubscription,
-    profileOptionsSettings,
-    profileOptionsHelpAndSupport,
+  static List<ProfileOptions> profileOptions = [
+    ProfileOptions(option: profileOptionsMyAccount),
+    ProfileOptions(option: profileOptionsAssessmentVideos),
+    ProfileOptions(option: profileOptionsTransformationJourney),
+    ProfileOptions(option: profileOptionsSubscription, enable: false),
+    ProfileOptions(option: profileOptionsSettings),
+    ProfileOptions(option: profileOptionsHelpAndSupport),
   ];
+}
+
+class ProfileOptions {
+  final String option;
+  final bool enable;
+  ProfileOptions({this.option, this.enable = true});
 }
 
 //Options to update on settings
 enum SettingsOptions { notification, public, restricted, anonymous }
+
+//Enum for modal, to update images
+enum UploadFrom { profileImage, transformationJourney }
 
 //Basic model for Tile (Help and Support)
 class BasicTile {
@@ -156,3 +167,5 @@ final List<Content> uploadListContent = [
   Content(imgUrl: 'assets/courses/course_sample_7.png', isVideo: false),
   Content(imgUrl: 'assets/courses/course_sample_8.png', isVideo: false),
 ];
+
+

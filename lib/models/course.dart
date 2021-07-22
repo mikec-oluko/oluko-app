@@ -56,6 +56,9 @@ class Course extends Base {
             isHidden: isHidden);
 
   factory Course.fromJson(Map<String, dynamic> json) {
+    if (json == null) {
+      return null;
+    }
     Course course = Course(
         name: json['name'],
         statisticsReference: json['statistics_reference'],
