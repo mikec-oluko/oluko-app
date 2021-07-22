@@ -76,6 +76,16 @@ class MovementSubmissionRepository {
     });
   }
 
+  static Future<void> updateStateToError(
+      MovementSubmission movementSubmission, String errorMessage) async {
+    DocumentReference reference = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue("projectId"))
+        .collection('movementSubmissions')
+        .doc(movementSubmission.id);
+    reference.update({'video_state.error': errorMessage});
+  }
+
   static Future<List<MovementSubmission>> get(
       SegmentSubmission segmentSubmission) async {
     QuerySnapshot qs = await FirebaseFirestore.instance

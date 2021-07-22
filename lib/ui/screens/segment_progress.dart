@@ -73,6 +73,16 @@ class _SegmentProgressState extends State<SegmentProgress> {
                   });
                   processMovementSubmission();
                 }
+              } else if (state is VideoFailure) {
+                _movementSubmissionBloc
+                  ..updateStateToError(
+                      movementSubmissions[current - 1], state.exceptionMessage);
+                if (current < total) {
+                  setState(() {
+                    current++;
+                  });
+                  processMovementSubmission();
+                }
               }
             },
             child:
@@ -92,7 +102,11 @@ class _SegmentProgressState extends State<SegmentProgress> {
   Widget form() {
     return Scaffold(
         //TODO: translate this
-        appBar: OlukoAppBar(title: "Segment progress"),
+        appBar: OlukoAppBar(
+          title: "Progress",
+          showBackButton: false,
+          actions: [_homeWidget()],
+        ),
         body: Container(
             color: OlukoColors.black,
             child: Column(children: [
@@ -120,5 +134,21 @@ class _SegmentProgressState extends State<SegmentProgress> {
     _videoBloc
       ..createVideo(context, File(movementSubmission.videoState.stateInfo),
           3.0 / 4.0, movementSubmission.id);
+  }
+
+  Widget _homeWidget() {
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, '/');
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(right: 20.0, top: 5),
+        child: Icon(
+          Icons.home,
+          color: OlukoColors.appBarIcon,
+          size: 25,
+        ),
+      ),
+    );
   }
 }

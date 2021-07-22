@@ -33,10 +33,10 @@ class VideoEncoded extends VideoState {
   VideoEncoded({this.encodedFilesDir});
 }
 
-class Failure extends VideoState {
-  final Exception exception;
+class VideoFailure extends VideoState {
+  final String exceptionMessage;
 
-  Failure({this.exception});
+  VideoFailure({this.exceptionMessage});
 }
 
 class VideoBloc extends Cubit<VideoState> {
@@ -48,11 +48,12 @@ class VideoBloc extends Cubit<VideoState> {
 
   Future<void> createVideo(BuildContext context, File videoFile,
       double aspectRatio, String id) async {
-    Video video;
-
-    video = await _processVideo(context, videoFile, aspectRatio, id);
-
-    emit(VideoSuccess(video: video));
+    try {
+      Video video = await _processVideo(context, videoFile, aspectRatio, id);
+      emit(VideoSuccess(video: video));
+    } catch (e) {
+      emit(VideoFailure(exceptionMessage: e.toString()));
+    }
   }
 
   Future<Video> _processVideo(BuildContext context, File videoFile,

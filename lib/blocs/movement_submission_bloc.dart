@@ -23,6 +23,8 @@ class UpdateMovementSubmissionSuccess extends MovementSubmissionState {}
 
 class EncodedMovementSubmissionSuccess extends MovementSubmissionState {}
 
+class ErrorMovementSubmissionSuccess extends MovementSubmissionState {}
+
 class Failure extends MovementSubmissionState {
   final Exception exception;
 
@@ -56,10 +58,24 @@ class MovementSubmissionBloc extends Cubit<MovementSubmissionState> {
     }
   }
 
-    void updateStateToEncoded(MovementSubmission movementSubmission, String dir) async {
+  void updateStateToEncoded(
+      MovementSubmission movementSubmission, String dir) async {
     try {
-      await MovementSubmissionRepository.updateStateToEncoded(movementSubmission, dir);
+      await MovementSubmissionRepository.updateStateToEncoded(
+          movementSubmission, dir);
       emit(EncodedMovementSubmissionSuccess());
+    } catch (e) {
+      print(e.toString());
+      emit(Failure(exception: e));
+    }
+  }
+
+  void updateStateToError(
+      MovementSubmission movementSubmission, String errorMessage) async {
+    try {
+      await MovementSubmissionRepository.updateStateToError(
+          movementSubmission, errorMessage);
+      emit(ErrorMovementSubmissionSuccess());
     } catch (e) {
       print(e.toString());
       emit(Failure(exception: e));
