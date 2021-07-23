@@ -89,4 +89,18 @@ class EncodingProvider {
   static void enableLogCallback(void Function(Log log) logCallback) {
     _config.enableLogCallback(logCallback);
   }
+
+  static Future<String> getImageThumb(imagePath, width, height) async {
+    assert(File(imagePath).existsSync());
+
+    final String outPath = '$imagePath-thumbnail';
+    final arguments =
+        '-y -i $imagePath -vframes 1 -an -s ${width}x${height} $outPath';
+
+    final int rc = await _encoder.execute(arguments);
+    assert(rc == 0);
+    assert(File(outPath).existsSync());
+
+    return outPath;
+  }
 }
