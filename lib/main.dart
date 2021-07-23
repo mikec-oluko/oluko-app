@@ -45,7 +45,7 @@ class _MyAppState extends State<MyApp> {
       ),
       initialRoute: widget.initialRoute,
       onGenerateRoute: (RouteSettings settings) =>
-          routes.getRouteView(settings.name),
+          routes.getRouteView(settings.name, settings.arguments),
       localizationsDelegates: [
         const OlukoLocalizationsDelegate(),
         GlobalMaterialLocalizations.delegate,

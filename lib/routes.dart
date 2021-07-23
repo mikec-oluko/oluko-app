@@ -47,7 +47,7 @@ class Routes {
   final TransformationJourneyBloc _transformationJourneyBloc =
       TransformationJourneyBloc();
 
-  getRouteView(String route) {
+  getRouteView(String route, Object arguments) {
     //View for the new route.
     Widget newRouteView;
     //Providers used for the new route.
