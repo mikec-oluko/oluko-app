@@ -1,3 +1,7 @@
+import 'package:flutter_ffmpeg/media_information.dart';
+import 'package:flutter_ffmpeg/stream_information.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:oluko_app/helpers/encoding_provider.dart';
 import 'package:oluko_app/helpers/s3_provider.dart';
 import 'package:path/path.dart' as p;
 import 'dart:io';
@@ -32,5 +36,26 @@ class VideoProcess {
         updatedLines.reduce((value, element) => value + '\n' + element);
 
     file.writeAsStringSync(updatedContents);
+  }
+
+  ///Generate a thumbnail for a Video with the specified width & height.
+  static Future<String> getThumbnailForVideo(PickedFile video, int width,
+      {int height}) async {
+    MediaInformation videoInfo =
+        await EncodingProvider.getMediaInformation(video.path);
+
+    if (height == null) {
+      StreamInformation videoProperties = videoInfo
+          .getStreams()
+          .where((element) => element.getAllProperties()['width'] != null)
+          .toList()[0];
+      double aspectRatio = videoProperties.getAllProperties()['width'] /
+          videoProperties.getAllProperties()['height'];
+      //The operator '~/' get the closest int to the operation
+      height = (width ~/ aspectRatio);
+    }
+    String thumbnailPath =
+        await EncodingProvider.getThumb(video.path, width, height);
+    return thumbnailPath;
   }
 }

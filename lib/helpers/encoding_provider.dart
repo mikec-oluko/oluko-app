@@ -93,9 +93,9 @@ class EncodingProvider {
   static Future<String> getImageThumb(imagePath, width, height) async {
     assert(File(imagePath).existsSync());
 
-    final String outPath = '$imagePath-thumbnail';
+    final String outPath = '$imagePath';
     final arguments =
-        '-y -i $imagePath -vframes 1 -an -s ${width}x${height} $outPath';
+        '-y -i $imagePath -vframes 1 -an -s ${width}x$height $outPath';
 
     final int rc = await _encoder.execute(arguments);
     assert(rc == 0);

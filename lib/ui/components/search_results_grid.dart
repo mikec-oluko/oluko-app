@@ -43,7 +43,9 @@ class _State extends State<SearchResultsGrid> {
                                       BlocProvider.of<AuthBloc>(context),
                                   child: Classes(
                                       courseId:
-                                          'OYyjeSBYcumpcg2VbMXO' /*course.id*/),
+                                          // 'OYyjeSBYcumpcg2VbMXO' ),
+                                          // course.id),
+                                          e.id),
                                 ))),
                     child: _getCourseCard(
                       Image.network(
