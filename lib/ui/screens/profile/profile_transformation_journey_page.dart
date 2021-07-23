@@ -40,12 +40,6 @@ class _ProfileTransformationJourneyPageState
     });
   }
 
-  Future<void> _getProfileInfo() async {
-    _profileInfo =
-        UserResponse.fromJson((await AuthBloc().retrieveLoginData()).toJson());
-    return _profileInfo;
-  }
-
   Scaffold page(BuildContext context, UserResponse profileInfo) {
     if (_contentGallery == null || _contentGallery.length == 0) {
       WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {
