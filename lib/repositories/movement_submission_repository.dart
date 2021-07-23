@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:global_configuration/global_configuration.dart';
@@ -59,11 +57,12 @@ class MovementSubmissionRepository {
       'video_state.state':
           EnumToString.convertToString(SubmissionStateEnum.uploaded),
       'video_state.state_info': "",
+      'video_state.state_extra_info': ""
     });
   }
 
   static Future<void> updateStateToEncoded(
-      MovementSubmission movementSubmission, String dir) async {
+      MovementSubmission movementSubmission) async {
     DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"))
@@ -71,19 +70,23 @@ class MovementSubmissionRepository {
         .doc(movementSubmission.id);
     reference.update({
       'video_state.state':
-          EnumToString.convertToString(SubmissionStateEnum.encoded),
-      'video_state.state_info': dir,
+          EnumToString.convertToString(movementSubmission.videoState.state),
+      'video_state.state_info': movementSubmission.videoState.stateInfo,
+      'video_state.state_extra_info':
+          movementSubmission.videoState.stateExtraInfo,
+      'video': movementSubmission.video.toJson(),
     });
   }
 
   static Future<void> updateStateToError(
-      MovementSubmission movementSubmission, String errorMessage) async {
+      MovementSubmission movementSubmission) async {
     DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"))
         .collection('movementSubmissions')
         .doc(movementSubmission.id);
-    reference.update({'video_state.error': errorMessage});
+    reference
+        .update({'video_state.error': movementSubmission.videoState.error});
   }
 
   static Future<List<MovementSubmission>> get(

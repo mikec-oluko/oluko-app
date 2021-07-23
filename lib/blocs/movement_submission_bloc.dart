@@ -59,10 +59,10 @@ class MovementSubmissionBloc extends Cubit<MovementSubmissionState> {
   }
 
   void updateStateToEncoded(
-      MovementSubmission movementSubmission, String dir) async {
+      MovementSubmission movementSubmission) async {
     try {
       await MovementSubmissionRepository.updateStateToEncoded(
-          movementSubmission, dir);
+          movementSubmission);
       emit(EncodedMovementSubmissionSuccess());
     } catch (e) {
       print(e.toString());
@@ -71,10 +71,10 @@ class MovementSubmissionBloc extends Cubit<MovementSubmissionState> {
   }
 
   void updateStateToError(
-      MovementSubmission movementSubmission, String errorMessage) async {
+      MovementSubmission movementSubmission) async {
     try {
       await MovementSubmissionRepository.updateStateToError(
-          movementSubmission, errorMessage);
+          movementSubmission);
       emit(ErrorMovementSubmissionSuccess());
     } catch (e) {
       print(e.toString());

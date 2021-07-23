@@ -6,12 +6,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/movement_submission_bloc.dart';
 import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/enums/submission_state_enum.dart';
 import 'package:oluko_app/models/movement_submission.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/progress_bar.dart';
+import 'package:oluko_app/utils/app_messages.dart';
 
 class SegmentProgress extends StatefulWidget {
   SegmentProgress(
@@ -43,6 +45,7 @@ class _SegmentProgressState extends State<SegmentProgress> {
   List<MovementSubmission> movementSubmissions;
   String processPhase = "";
   double progress = 0.0;
+  bool isThereError = false;
 
   @override
   void initState() {
@@ -65,41 +68,7 @@ class _SegmentProgressState extends State<SegmentProgress> {
         ],
         child: BlocListener<VideoBloc, VideoState>(
             listener: (context, state) {
-              if (state is VideoProcessing) {
-                setState(() {
-                  processPhase = state.processPhase;
-                  progress = state.progress;
-                });
-              } else if (state is VideoEncoded) {
-                _movementSubmissionBloc
-                  ..updateStateToEncoded(
-                      movementSubmissions[current - 1], state.encodedFilesDir);
-              } else if (state is VideoSuccess) {
-                setState(() {
-                  //TODO: translate this
-                  processPhase = "Completed";
-                  progress = 1.0;
-                  movementSubmissions[current - 1].video = state.video;
-                });
-                _movementSubmissionBloc
-                  ..updateVideo(movementSubmissions[current - 1]);
-                if (current < total) {
-                  setState(() {
-                    current++;
-                  });
-                  processMovementSubmission();
-                }
-              } else if (state is VideoFailure) {
-                _movementSubmissionBloc
-                  ..updateStateToError(
-                      movementSubmissions[current - 1], state.exceptionMessage);
-                if (current < total) {
-                  setState(() {
-                    current++;
-                  });
-                  processMovementSubmission();
-                }
-              }
+              saveMovement(state);
             },
             child:
                 BlocListener<MovementSubmissionBloc, MovementSubmissionState>(
@@ -166,5 +135,74 @@ class _SegmentProgressState extends State<SegmentProgress> {
         ),
       ),
     );
+  }
+
+  void saveMovement(VideoState state) {
+    MovementSubmission ms = movementSubmissions[current - 1];
+    if (state is VideoProcessing) {
+      updateProgress(state);
+    } else if (state is VideoEncoded) {
+      saveEncodedState(state, ms);
+    } else if (state is VideoSuccess || state is VideoFailure) {
+      if (state is VideoSuccess) {
+        saveUploadedState(state, ms);
+      } else if (state is VideoFailure) {
+        saveErrorState(state, ms);
+      }
+      if (current < total) {
+        setState(() {
+          current++;
+        });
+        processMovementSubmission();
+      } else {
+        showSegmentMessage();
+      }
+    }
+  }
+
+  void saveEncodedState(VideoEncoded state, MovementSubmission ms) {
+    setState(() {
+      ms.videoState.state = SubmissionStateEnum.encoded;
+      ms.videoState.stateInfo = state.encodedFilesDir;
+      ms.video = state.video;
+      ms.videoState.stateExtraInfo = state.thumbFilePath;
+    });
+    _movementSubmissionBloc..updateStateToEncoded(ms);
+  }
+
+  void saveUploadedState(VideoSuccess state, MovementSubmission ms) {
+    setState(() {
+      //TODO: translate this
+      processPhase = "Completed";
+      progress = 1.0;
+      ms.video = state.video;
+    });
+    _movementSubmissionBloc..updateVideo(ms);
+  }
+
+  void saveErrorState(VideoFailure state, MovementSubmission ms) {
+    setState(() {
+      isThereError = true;
+      ms.videoState.error = state.exceptionMessage;
+    });
+    _movementSubmissionBloc..updateStateToError(ms);
+  }
+
+  void showSegmentMessage() {
+    String message;
+    //TODO: translate this
+    if (isThereError) {
+      message = "The segment was uploaded with errors";
+    } else {
+      message = "The segment was uploaded successfully";
+    }
+    AppMessages.showSnackbar(context, message);
+  }
+
+  void updateProgress(VideoProcessing state) {
+    setState(() {
+      processPhase = state.processPhase;
+      progress = state.progress;
+    });
   }
 }
