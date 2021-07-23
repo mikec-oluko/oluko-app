@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/helpers/s3_provider.dart';
 import 'package:oluko_app/models/enums/file_type_enum.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
+import 'package:oluko_app/utils/image_utils.dart';
 import 'package:path/path.dart' as p;
 
 class TransformationJourneyRepository {
@@ -33,6 +34,7 @@ class TransformationJourneyRepository {
           .collection('users')
           .doc(userName)
           .collection('transformationJourneyUploads')
+          .where('is_deleted', isNotEqualTo: true)
           .get();
 
       // var first = docRef.docs[0].data();
@@ -58,14 +60,11 @@ class TransformationJourneyRepository {
         .doc(username)
         .collection('transformationJourneyUploads');
 
-    //TODO: Image to thumbnail
-    // final imageUpdated = decodeImage(File(file.path).readAsBytesSync());
-    // final thumbnail = copyResize(imageUpdated, width: 120);
-    // final thumbnailFile = File.fromRawPath(thumbnail.getBytes());
+    var imageThumbnail = await ImageUtils().getThumbnailForImage(file, 250);
 
     //TODO: Upload thumbnail need to be File
-    // final thumbNaildownloadUrl = await _uploadFile(
-    //     thumbnail, transformationJourneyUploadsReference.path);
+    final thumbNaildownloadUrl = await _uploadFile(imageThumbnail,
+        '${transformationJourneyUploadsReference.path}/thumbnails');
 
     final downloadUrl = await _uploadFile(
         file.path, transformationJourneyUploadsReference.path);
@@ -79,7 +78,8 @@ class TransformationJourneyRepository {
             type: type,
             file: downloadUrl,
             isPublic: true,
-            thumbnail: downloadUrl);
+            isDeleted: false,
+            thumbnail: thumbNaildownloadUrl);
 //TODO: update thumbnail with thumbnailer https://pub.dev/packages/thumbnailer
     final DocumentReference docRef =
         transformationJourneyUploadsReference.doc();
