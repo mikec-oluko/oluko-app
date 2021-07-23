@@ -124,7 +124,8 @@ class _TransformationJourneyOptionsState
               getVideoFromGallery();
               Navigator.pop(context);
               AppModal.dialogContent(
-                  context: context, content: [UploadingModalSuccess()]);
+                  context: context,
+                  content: [UploadingModalSuccess(widget.toUpload)]);
             },
             leading: Icon(
               Icons.video_collection,
