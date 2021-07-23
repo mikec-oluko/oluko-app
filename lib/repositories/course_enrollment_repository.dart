@@ -56,10 +56,15 @@ class CourseEnrollmentRepository {
                 classes[classIndex]) ==
             -1;
     if (isClassCompleted) {
+      double courseProgress =
+          1 / courseEnrollment.classes.length * (classIndex + 1);
       classes[classIndex].compleatedAt = Timestamp.now();
+      courseEnrollment.completion = courseProgress;
     }
-    reference.update(
-        {'classes': List<dynamic>.from(classes.map((c) => c.toJson()))});
+    reference.update({
+      'classes': List<dynamic>.from(classes.map((c) => c.toJson())),
+      'completion': courseEnrollment.completion
+    });
   }
 
   static Future<CourseEnrollment> create(User user, Course course) async {

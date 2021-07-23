@@ -274,44 +274,49 @@ class _ClassesState extends State<Classes> {
   Widget showButton(CourseEnrollment courseEnrollment, BuildContext context,
       User user, Course course, List<Class> classes) {
     String buttonText;
+    int index;
+    double classProgress;
+
     if (courseEnrollment != null) {
       buttonText = OlukoLocalizations.of(context).find('start');
+      index = CourseEnrollmentService.getFirstUncompletedClassIndex(
+          courseEnrollment);
+      if (index != -1) {
+        classProgress =
+            CourseEnrollmentService.getClassProgress(courseEnrollment, index);
+      }
     } else {
       buttonText = OlukoLocalizations.of(context).find('enroll');
     }
-    return Padding(
-        padding: EdgeInsets.symmetric(vertical: 20, horizontal: 15),
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            OlukoPrimaryButton(
-              title: buttonText,
-              onPressed: () {
-                if (courseEnrollment != null) {
-                  int index =
-                      CourseEnrollmentService.getFirstUncompletedClassIndex(
-                          courseEnrollment);
-                  double classProgress =
-                      CourseEnrollmentService.getClassProgress(
-                          courseEnrollment, index);
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => InsideClasses(
-                                user: user,
-                                courseEnrollment: courseEnrollment,
-                                classIndex: index,
-                                classProgress: classProgress,
-                                actualClass: classes[index],
-                                courseName: course.name,
-                              )));
-                } else {
-                  _courseEnrollmentBloc..create(user, course);
-                }
-              },
-            ),
-          ],
-        ));
+    return index == -1
+        ? SizedBox()
+        : Padding(
+            padding: EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                OlukoPrimaryButton(
+                  title: buttonText,
+                  onPressed: () {
+                    if (courseEnrollment != null) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => InsideClasses(
+                                    user: user,
+                                    courseEnrollment: courseEnrollment,
+                                    classIndex: index,
+                                    classProgress: classProgress,
+                                    actualClass: classes[index],
+                                    courseName: course.name,
+                                  )));
+                    } else {
+                      _courseEnrollmentBloc..create(user, course);
+                    }
+                  },
+                ),
+              ],
+            ));
   }
 
   Widget showVideoPlayer(String videoUrl) {

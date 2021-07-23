@@ -14,6 +14,7 @@ import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/progress_bar.dart';
 import 'package:oluko_app/utils/app_messages.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class SegmentProgress extends StatefulWidget {
   SegmentProgress(
@@ -86,9 +87,8 @@ class _SegmentProgressState extends State<SegmentProgress> {
 
   Widget form() {
     return Scaffold(
-        //TODO: translate this
         appBar: OlukoAppBar(
-          title: "Progress",
+          title: OlukoLocalizations.of(context).find('progress'),
           showBackButton: false,
           actions: [_homeWidget()],
         ),
@@ -97,10 +97,15 @@ class _SegmentProgressState extends State<SegmentProgress> {
             child: Column(children: [
               Padding(
                 padding: const EdgeInsets.only(top: 50.0, right: 10),
-                //TODO: translate this
                 child: total != null
                     ? Text(
-                        "Processing video ${current} out of ${total}",
+                        OlukoLocalizations.of(context).find('processingVideo') +
+                            " " +
+                            current.toString() +
+                            " " +
+                            OlukoLocalizations.of(context).find('outOf') +
+                            " " +
+                            total.toString(),
                         style: OlukoFonts.olukoBigFont(
                             custoFontWeight: FontWeight.bold,
                             customColor: OlukoColors.white),
@@ -172,8 +177,7 @@ class _SegmentProgressState extends State<SegmentProgress> {
 
   void saveUploadedState(VideoSuccess state, MovementSubmission ms) {
     setState(() {
-      //TODO: translate this
-      processPhase = "Completed";
+      processPhase = OlukoLocalizations.of(context).find('completed');
       progress = 1.0;
       ms.video = state.video;
     });
@@ -190,11 +194,10 @@ class _SegmentProgressState extends State<SegmentProgress> {
 
   void showSegmentMessage() {
     String message;
-    //TODO: translate this
     if (isThereError) {
-      message = "The segment was uploaded with errors";
+      message = OlukoLocalizations.of(context).find('uploadedWithErrors');
     } else {
-      message = "The segment was uploaded successfully";
+      message = OlukoLocalizations.of(context).find('uploadedSuccessfully');
     }
     AppMessages.showSnackbar(context, message);
   }
