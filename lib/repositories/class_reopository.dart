@@ -18,6 +18,9 @@ class ClassRepository {
 
   static Future<List<Class>> getAll(Course course) async {
     List<Class> classes = [];
+    if (course.classes == null) {
+      return classes;
+    }
     for (ObjectSubmodel classObj in course.classes) {
       DocumentSnapshot ds = await classObj.reference.get();
       Class retrievedClass = Class.fromJson(ds.data());

@@ -149,7 +149,9 @@ class _ClassesState extends State<Classes> {
                                               //TODO: change weeks number
                                               TimeConverter.toCourseDuration(
                                                   6,
-                                                  course.classes.length,
+                                                  course.classes != null
+                                                      ? course.classes.length
+                                                      : 0,
                                                   context),
                                               style: OlukoFonts.olukoBigFont(
                                                   custoFontWeight:
@@ -211,7 +213,10 @@ class _ClassesState extends State<Classes> {
                                                   physics:
                                                       const NeverScrollableScrollPhysics(),
                                                   itemCount:
-                                                      classState.classes.length,
+                                                      classState.classes != null
+                                                          ? classState
+                                                              .classes.length
+                                                          : 0,
                                                   shrinkWrap: true,
                                                   itemBuilder:
                                                       (context, num index) {
