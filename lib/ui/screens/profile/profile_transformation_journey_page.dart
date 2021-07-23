@@ -58,15 +58,14 @@ class _ProfileTransformationJourneyPageState
     }
     _requestTransformationJourneyData(context, profileInfo);
 
-    return _contentGallery == null
-        ? OlukoCircularProgressIndicator()
-        : Scaffold(
-            appBar: OlukoAppBar(
-              title: ProfileViewConstants.profileOptionsTransformationJourney,
-              showSearchBar: false,
-            ),
-            body: BlocConsumer<TransformationJourneyBloc,
-                TransformationJourneyState>(
+    return Scaffold(
+      appBar: OlukoAppBar(
+        title: ProfileViewConstants.profileOptionsTransformationJourney,
+        showSearchBar: false,
+      ),
+      body: _contentGallery == null
+          ? OlukoCircularProgressIndicator()
+          : BlocConsumer<TransformationJourneyBloc, TransformationJourneyState>(
               listener: (context, state) {
                 if (state is TransformationJourneySuccess) {
                   _transformationJourneyContent = state.contentFromUser;
@@ -119,7 +118,7 @@ class _ProfileTransformationJourneyPageState
                 );
               },
             ),
-          );
+    );
   }
 
   Widget _getImageAndVideoCard(
