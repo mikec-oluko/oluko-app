@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
-import 'package:oluko_app/ui/components/oluko_primary_button.dart';
+import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
+import 'package:oluko_app/ui/screens/profile/profile_routes.dart';
 
-class UploadingModalSuccess extends StatelessWidget {
+class UploadingModalSuccess extends StatefulWidget {
+  final UploadFrom goToPage;
+  UploadingModalSuccess(this.goToPage);
+
+  @override
+  _UploadingModalSuccessState createState() => _UploadingModalSuccessState();
+}
+
+class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -53,5 +62,16 @@ class UploadingModalSuccess extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String returnRouteToGo(UploadFrom cameFrom) {
+    String routeToGo = '/';
+    if (cameFrom == UploadFrom.transformationJourney) {
+      routeToGo = ProfileRoutes.profileTransformationJourneyRoute;
+    }
+    if (cameFrom == UploadFrom.profileImage) {
+      routeToGo = ProfileRoutes.profileMyAccountRoute;
+    }
+    return routeToGo;
   }
 }

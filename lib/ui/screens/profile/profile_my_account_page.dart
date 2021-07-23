@@ -16,6 +16,7 @@ import 'package:oluko_app/ui/components/oluko_user_info.dart';
 import 'package:oluko_app/ui/components/subscription_card.dart';
 import 'package:oluko_app/ui/components/transformation_journey_modal_options.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
+import 'package:oluko_app/ui/screens/profile/profile_routes.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/app_modal.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -30,39 +31,6 @@ class ProfileMyAccountPage extends StatefulWidget {
 
 class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
   UserResponse profileInfo;
-
-  File _image;
-  File _imageFromGallery;
-  final imagePicker = ImagePicker();
-
-  static Future<String> _uploadFile(filePath, folderName) async {
-    final file = new File(filePath);
-    final basename = p.basename(filePath);
-
-    final S3Provider s3Provider = S3Provider();
-    String downloadUrl =
-        await s3Provider.putFile(file.readAsBytesSync(), folderName, basename);
-
-    return downloadUrl;
-  }
-
-  Future getImage() async {
-    final image = await imagePicker.getImage(source: ImageSource.camera);
-    if (image == null) return;
-
-    UserRepository().updateUserAvatar(profileInfo, image);
-
-    setState(() {
-      _image = File(image.path);
-    });
-  }
-
-  Future getImageFromGallery() async {
-    final image = await imagePicker.getImage(source: ImageSource.gallery);
-    setState(() {
-      _imageFromGallery = File(image.path);
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,6 +52,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
     return Scaffold(
       appBar: OlukoAppBar(
         title: ProfileViewConstants.profileMyAccountTitle,
+        routeToGoBack: ProfileRoutes.profileMainRoute,
         showSearchBar: false,
       ),
       body: SingleChildScrollView(
@@ -122,8 +91,10 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
                           icon: Icon(Icons.linked_camera_outlined,
                               color: OlukoColors.white),
                           onPressed: () {
-                            getImage();
-                            //TODO: Change profile picture
+                            AppModal.dialogContent(context: context, content: [
+                              TransformationJourneyOptions(
+                                  UploadFrom.profileImage)
+                            ]);
                           }),
                     )
                   : CircleAvatar(
@@ -133,8 +104,10 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
                           icon: Icon(Icons.linked_camera_outlined,
                               color: OlukoColors.white),
                           onPressed: () {
-                            getImage();
-                            //TODO: Change profile picture
+                            AppModal.dialogContent(context: context, content: [
+                              TransformationJourneyOptions(
+                                  UploadFrom.profileImage)
+                            ]);
                           }),
                     ),
             )

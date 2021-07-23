@@ -173,7 +173,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                                     mainContext),
                                             child: Classes(
                                                 courseId:
-                                                    'OYyjeSBYcumpcg2VbMXO' /*course.id*/),
+                                                    // 'OYyjeSBYcumpcg2VbMXO' ),
+                                                    // course.id),
+                                                    course.id),
                                           ))),
                               child: _getCourseCard(
                                   Image.network(

@@ -8,14 +8,17 @@ import 'package:oluko_app/models/transformation_journey_uploads.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/repositories/transformation_journey_repository.dart';
+import 'package:oluko_app/repositories/user_repository.dart';
 import 'package:oluko_app/ui/components/uploading_modal_loader.dart';
 import 'package:oluko_app/ui/components/uploading_modal_success.dart';
-import 'package:oluko_app/ui/screens/profile/profile_routes.dart';
+import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/app_modal.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class TransformationJourneyOptions extends StatefulWidget {
+  final UploadFrom toUpload;
+  TransformationJourneyOptions(this.toUpload);
   @override
   _TransformationJourneyOptionsState createState() =>
       _TransformationJourneyOptionsState();
@@ -23,26 +26,38 @@ class TransformationJourneyOptions extends StatefulWidget {
 
 class _TransformationJourneyOptionsState
     extends State<TransformationJourneyOptions> {
-  File _image;
-  File _imageFromGallery;
   final imagePicker = ImagePicker();
 
   Future getImage() async {
     final image = await imagePicker.getImage(source: ImageSource.camera);
     if (image == null) return;
-    UserResponse user = await AuthRepository().retrieveLoginData();
-    TransformationJourneyUpload upload =
-        await TransformationJourneyRepository.createTransformationJourneyUpload(
-            FileTypeEnum.image, image, user.username);
-    print(upload);
+
+    if (widget.toUpload == UploadFrom.transformationJourney) {
+      await updateTransformationJourneyGallery(image);
+    }
+    if (widget.toUpload == UploadFrom.profileImage) {
+      await updateUserProfileAvatar(image);
+    }
   }
 
   Future getImageFromGallery() async {
     final image = await imagePicker.getImage(source: ImageSource.gallery);
-    // setState(() {
-    //   _imageFromGallery = File(image.path);
-    // });
     if (image == null) return;
+
+    if (widget.toUpload == UploadFrom.transformationJourney) {
+      await updateTransformationJourneyGallery(image);
+    }
+    if (widget.toUpload == UploadFrom.profileImage) {
+      await updateUserProfileAvatar(image);
+    }
+  }
+
+  Future updateUserProfileAvatar(PickedFile image) async {
+    UserResponse user = await AuthRepository().retrieveLoginData();
+    UserRepository().updateUserAvatar(user, image);
+  }
+
+  Future updateTransformationJourneyGallery(PickedFile image) async {
     UserResponse user = await AuthRepository().retrieveLoginData();
     TransformationJourneyUpload upload =
         await TransformationJourneyRepository.createTransformationJourneyUpload(
@@ -77,7 +92,8 @@ class _TransformationJourneyOptionsState
               getImage();
               Navigator.pop(context);
               AppModal.dialogContent(
-                  context: context, content: [UploadingModalSuccess()]);
+                  context: context,
+                  content: [UploadingModalSuccess(widget.toUpload)]);
             },
             leading: Icon(
               Icons.camera_alt_outlined,
@@ -92,7 +108,8 @@ class _TransformationJourneyOptionsState
               getImageFromGallery();
               Navigator.pop(context);
               AppModal.dialogContent(
-                  context: context, content: [UploadingModalSuccess()]);
+                  context: context,
+                  content: [UploadingModalSuccess(widget.toUpload)]);
             },
             leading: Icon(
               Icons.image,

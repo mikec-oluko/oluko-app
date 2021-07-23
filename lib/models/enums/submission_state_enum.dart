@@ -1,0 +1,1 @@
+enum SubmissionStateEnum { recorded, encoded, uploaded }

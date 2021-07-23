@@ -175,7 +175,9 @@ class _State extends State<Courses> {
                                                     mainContext),
                                             child: Classes(
                                                 courseId:
-                                                    'OYyjeSBYcumpcg2VbMXO' /*course.id*/),
+                                                    // 'OYyjeSBYcumpcg2VbMXO' ),
+                                                    // course.id),
+                                                    course.id),
                                           ))),
                               child: _getCourseCard(
                                   Image.network(

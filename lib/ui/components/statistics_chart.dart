@@ -39,7 +39,10 @@ class _State extends State<StatisticChart> {
                         children: [
                           Row(
                             children: [
-                              Text(widget.courseStatistics.doing.toString(),
+                              Text(
+                                  (widget.courseStatistics != null
+                                      ? widget.courseStatistics.doing.toString()
+                                      : '0'),
                                   style: OlukoFonts.olukoSuperBigFont(
                                       custoFontWeight: FontWeight.bold)),
                               Text(
@@ -79,7 +82,10 @@ class _State extends State<StatisticChart> {
                     child: Column(children: [
                       Row(
                         children: [
-                          Text(widget.courseStatistics.takingUp.toString(),
+                          Text(
+                              (widget.courseStatistics != null
+                                  ? widget.courseStatistics.takingUp.toString()
+                                  : '0'),
                               style: OlukoFonts.olukoSuperBigFont(
                                   custoFontWeight: FontWeight.bold)),
                           Text(
@@ -122,7 +128,11 @@ class _State extends State<StatisticChart> {
                         children: [
                           Row(
                             children: [
-                              Text(widget.courseStatistics.completed.toString(),
+                              Text(
+                                  (widget.courseStatistics != null
+                                      ? widget.courseStatistics.completed
+                                          .toString()
+                                      : '0'),
                                   style: OlukoFonts.olukoSuperBigFont(
                                       custoFontWeight: FontWeight.bold)),
                               Text(
@@ -149,8 +159,10 @@ class _State extends State<StatisticChart> {
                       Row(
                         children: [
                           Text(
-                              widget.courseStatistics.completionRate
-                                      .toString() +
+                              (widget.courseStatistics != null
+                                      ? widget.courseStatistics.completionRate
+                                          .toString()
+                                      : '0') +
                                   '%',
                               style: OlukoFonts.olukoSuperBigFont(
                                   custoFontWeight: FontWeight.bold)),
