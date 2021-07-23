@@ -68,8 +68,16 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final AuthBloc _authBloc = AuthBloc();
+  final CourseBloc _courseBloc = CourseBloc();
+  final TagBloc _tagBloc = TagBloc();
+  final FriendBloc _friendBloc = FriendBloc();
+  final AssessmentBloc _assessmentBloc = AssessmentBloc();
+  final TaskSubmissionBloc _taskSubmissionBloc = TaskSubmissionBloc();
+  final CourseEnrollmentBloc _courseEnrollmentBloc = CourseEnrollmentBloc();
+  final TransformationJourneyBloc _transformationJourneyBloc =
+      TransformationJourneyBloc();
 
-  Widget build(BuildContext context) {
+  Widget build(BuildContext mainContext) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: '${OLUKO}',
@@ -78,104 +86,121 @@ class _MyAppState extends State<MyApp> {
       ),
       initialRoute: widget.initialRoute,
       onGenerateRoute: (RouteSettings settings) {
-        Widget newRoute;
+        //View for the new route.
+        Widget newRouteView;
+        //Providers used for the new route.
+        List<BlocProvider> providers = [];
+        //Providers used across the whole app.
+        List<BlocProvider> commonProviders = [
+          BlocProvider<AuthBloc>.value(value: _authBloc)
+        ];
+
         switch (settings.name) {
           case '/':
-            newRoute = MultiBlocProvider(providers: [
-              BlocProvider(create: (context) => CourseBloc()),
-              BlocProvider(create: (context) => TagBloc())
-            ], child: MainPage());
+            providers = [
+              BlocProvider<CourseBloc>.value(value: _courseBloc),
+              BlocProvider<TagBloc>.value(value: _tagBloc)
+            ];
+            newRouteView = MainPage();
             break;
           case '/sign-up':
-            newRoute = SignUpPage();
+            newRouteView = SignUpPage();
             break;
           case '/sign-up-with-email':
-            newRoute = SignUpWithMailPage();
+            newRouteView = SignUpWithMailPage();
             break;
           case '/friends':
-            newRoute = MultiBlocProvider(providers: [
-              BlocProvider(create: (context) => FriendBloc()),
-            ], child: FriendsPage());
+            providers = [BlocProvider<FriendBloc>.value(value: _friendBloc)];
+            newRouteView = FriendsPage();
             break;
           case '/profile':
-            newRoute = ProfilePage();
+            newRouteView = ProfilePage();
             break;
           case '/profile-settings':
-            newRoute = ProfileSettingsPage();
+            newRouteView = ProfileSettingsPage();
             break;
           case '/profile-my-account':
-            newRoute = ProfileMyAccountPage();
+            newRouteView = ProfileMyAccountPage();
             break;
           case '/profile-subscription':
-            newRoute = ProfileSubscriptionPage();
+            newRouteView = ProfileSubscriptionPage();
             break;
           case '/profile-help-and-support':
-            newRoute = ProfileHelpAndSupportPage();
+            newRouteView = ProfileHelpAndSupportPage();
             break;
           case '/profile-view-own-profile':
-            newRoute = MultiBlocProvider(providers: [
-              BlocProvider(create: (context) => CourseBloc()),
-              BlocProvider(create: (context) => AssessmentBloc()),
-              BlocProvider(create: (context) => TaskSubmissionBloc()),
-              BlocProvider(create: (context) => CourseEnrollmentBloc()),
-              BlocProvider(create: (context) => TransformationJourneyBloc())
-            ], child: ProfileOwnProfilePage());
+            providers = [
+              BlocProvider<CourseBloc>.value(value: _courseBloc),
+              BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
+              BlocProvider<TaskSubmissionBloc>.value(
+                  value: _taskSubmissionBloc),
+              BlocProvider<CourseEnrollmentBloc>.value(
+                  value: _courseEnrollmentBloc),
+              BlocProvider<TransformationJourneyBloc>.value(
+                  value: _transformationJourneyBloc),
+            ];
+            newRouteView = ProfileOwnProfilePage();
             break;
           case '/profile-challenges':
-            newRoute = ProfileChallengesPage();
+            newRouteView = ProfileChallengesPage();
             break;
           case '/profile-transformation-journey':
-            newRoute = MultiBlocProvider(providers: [
-              BlocProvider(create: (context) => CourseBloc()),
-              BlocProvider(create: (context) => AssessmentBloc()),
-              BlocProvider(create: (context) => TaskSubmissionBloc()),
-              BlocProvider(create: (context) => CourseEnrollmentBloc()),
-              BlocProvider(create: (context) => TransformationJourneyBloc())
-            ], child: ProfileTransformationJourneyPage());
+            providers = [
+              BlocProvider<CourseBloc>.value(value: _courseBloc),
+              BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
+              BlocProvider<TaskSubmissionBloc>.value(
+                  value: _taskSubmissionBloc),
+              BlocProvider<CourseEnrollmentBloc>.value(
+                  value: _courseEnrollmentBloc),
+              BlocProvider<TransformationJourneyBloc>.value(
+                  value: _transformationJourneyBloc),
+            ];
+            newRouteView = ProfileTransformationJourneyPage();
             break;
           case '/transformation-journey-post':
-            newRoute = TransformationJourneyPostPage();
+            newRouteView = TransformationJourneyPostPage();
             break;
           case '/transformation-journey-post-view':
-            newRoute = TransformationJourneyPostPage();
+            newRouteView = TransformationJourneyPostPage();
             break;
           case '/log-in':
-            newRoute = LoginPage();
+            newRouteView = LoginPage();
             break;
           case '/app-plans':
-            newRoute = AppPlans();
+            newRouteView = AppPlans();
             break;
           case '/segment-detail':
-            newRoute = SegmentDetail();
+            newRouteView = SegmentDetail();
             break;
           case '/movement-intro':
-            newRoute = MovementIntro();
+            newRouteView = MovementIntro();
             break;
           case '/segment-recording':
-            newRoute = SegmentRecording();
+            newRouteView = SegmentRecording();
             break;
           case '/classes':
-            newRoute = Classes();
+            newRouteView = Classes();
             break;
           case '/assessment-videos':
-            newRoute = AssessmentVideos();
+            newRouteView = AssessmentVideos();
             break;
           case '/task-details':
-            newRoute = TaskDetails(
+            newRouteView = TaskDetails(
               task: Task(description: 'Task Description'),
             );
             break;
           case '/choose-plan-payment':
-            newRoute = ChoosePlayPayments();
+            newRouteView = ChoosePlayPayments();
             break;
           case '/courses':
-            newRoute = MultiBlocProvider(providers: [
-              BlocProvider(create: (context) => CourseBloc()),
-              BlocProvider(create: (context) => TagBloc())
-            ], child: Courses());
+            providers = [
+              BlocProvider<CourseBloc>.value(value: _courseBloc),
+              BlocProvider<TagBloc>.value(value: _tagBloc),
+            ];
+            newRouteView = Courses();
             break;
           case '/videos':
-            newRoute = Home(
+            newRouteView = Home(
               title: "Videos",
               parentVideoInfo: null,
               parentVideoReference:
@@ -183,13 +208,25 @@ class _MyAppState extends State<MyApp> {
             );
             break;
           default:
+            providers = [
+              BlocProvider<CourseBloc>.value(value: _courseBloc),
+              BlocProvider<TagBloc>.value(value: _tagBloc),
+            ];
+            newRouteView = MainPage();
             break;
         }
 
+        //Merge common providers & route-specific ones into one List
+        List<BlocProvider> selectedProviders = providers
+          ..addAll(commonProviders);
+
+        //Generate route with selected BLoCs
         return MaterialPageRoute(
-            builder: (context) => MultiBlocProvider(
-                providers: [BlocProvider.value(value: _authBloc)],
-                child: newRoute));
+            builder: (c) => MultiBlocProvider(
+                providers: selectedProviders,
+                child: Builder(builder: (context) {
+                  return newRouteView;
+                })));
       },
       localizationsDelegates: [
         const OlukoLocalizationsDelegate(),
