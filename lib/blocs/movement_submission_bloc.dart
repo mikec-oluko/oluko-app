@@ -89,6 +89,7 @@ class MovementSubmissionBloc extends Cubit<MovementSubmissionState> {
       emit(GetMovementSubmissionSuccess(
           movementSubmissions: movementSubmissions));
     } catch (e) {
+      print(e.toString());
       emit(Failure(exception: e));
     }
   }

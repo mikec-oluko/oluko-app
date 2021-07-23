@@ -610,7 +610,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
             color: Colors.white,
             title: OlukoLocalizations.of(context).find('pause').toUpperCase(),
             onPressed: () => this.setState(() {
-              _pauseCountdown();
+              //_pauseCountdown();
             }),
             icon: Icon(Icons.pause),
           )
@@ -625,16 +625,6 @@ class _SegmentRecordingState extends State<SegmentRecording> {
 
     return [
       mainButton,
-      SizedBox(
-        width: 25,
-      ),
-      OlukoPrimaryButton(
-          color: Colors.white,
-          onPressed: () => this.setState(() {
-                this.workoutType = WorkoutType.segmentWithRecording;
-              }),
-          title: OlukoLocalizations.of(context).find('camera').toUpperCase(),
-          icon: Icon(Icons.adjust))
     ];
   }
 
@@ -721,11 +711,13 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     _courseEnrollmentBloc
       ..markSegmentAsCompleated(
           widget.courseEnrollment, widget.segmentIndex, widget.classIndex);
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                SegmentProgress(segmentSubmission: segmentSubmission)));
+    if (widget.workoutType == WorkoutType.segmentWithRecording) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  SegmentProgress(segmentSubmission: segmentSubmission)));
+    }
   }
 
   void _playCountdown() {
