@@ -27,9 +27,14 @@ class _ProfilePageState extends State<ProfilePage> {
   UserResponse profileInfo;
   final String profileTitle = ProfileViewConstants.profileTitle;
   @override
+  void initState() {
+    BlocProvider.of<AuthBloc>(context).checkCurrentUser();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
-      BlocProvider.of<AuthBloc>(context).checkCurrentUser();
       if (state is AuthSuccess) {
         this.profileInfo = state.user;
         return profileHomeView();
@@ -142,7 +147,9 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   onGoBack() {
-    setState(() {});
+    setState(() {
+      BlocProvider.of<AuthBloc>(context).checkCurrentUser();
+    });
   }
 
   handleError(AsyncSnapshot snapshot) {}

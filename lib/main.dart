@@ -70,6 +70,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final AuthBloc _authBloc = AuthBloc();
+  final ProfileBloc _profileBloc = ProfileBloc();
 
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -103,7 +104,7 @@ class _MyAppState extends State<MyApp> {
             BlocProvider.value(value: _authBloc, child: ProfileSettingsPage()),
         '/profile-my-account': (context) => MultiBlocProvider(providers: [
               BlocProvider.value(value: _authBloc),
-              BlocProvider(create: (context) => ProfileBloc()),
+              BlocProvider.value(value: _profileBloc),
             ], child: ProfileMyAccountPage()),
         '/profile-subscription': (context) => BlocProvider.value(
             value: _authBloc, child: ProfileSubscriptionPage()),

@@ -2,6 +2,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/models/enums/file_type_enum.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
+import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/repositories/transformation_journey_repository.dart';
 
 abstract class TransformationJourneyState {}
@@ -23,9 +25,6 @@ class TransformationJourneyBloc extends Cubit<TransformationJourneyState> {
   TransformationJourneyBloc() : super(TransformationJourneyLoading());
 
   void getContentByUserName(String userName) async {
-    // if (!(state is TransformationJourneySuccess)) {
-    //   emit(TransformationJourneyLoading());
-    // }
     try {
       List<TransformationJourneyUpload> contentUploaded =
           await TransformationJourneyRepository()
@@ -45,6 +44,28 @@ class TransformationJourneyBloc extends Cubit<TransformationJourneyState> {
       //emit(CreateSuccess(taskSubmissionId: newTaskSubmission.id));
     } catch (e) {
       //emit(Failure(exception: e));
+    }
+  }
+
+  void uploadTransformationJourneyContent() async {
+    try {
+      final imagePicker = ImagePicker();
+      final image = await imagePicker.getImage(source: ImageSource.gallery);
+      if (image == null) return;
+
+      UserResponse user = await AuthRepository().retrieveLoginData();
+
+      TransformationJourneyUpload upload = await TransformationJourneyRepository
+          .createTransformationJourneyUpload(
+              FileTypeEnum.image, image, user.username);
+
+      List<TransformationJourneyUpload> contentUploaded =
+          await TransformationJourneyRepository()
+              .getUploadedContentByUserName(user.username);
+
+      emit(TransformationJourneySuccess(contentFromUser: contentUploaded));
+    } catch (e) {
+      emit(TransformationJourneyFailure(exception: e));
     }
   }
 }

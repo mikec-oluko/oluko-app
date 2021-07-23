@@ -27,8 +27,6 @@ class AppModal {
           }
 
           return DialogWidget(content: content);
-        }).whenComplete(() {
-      return valueToReturn;
-    });
+        });
   }
 }

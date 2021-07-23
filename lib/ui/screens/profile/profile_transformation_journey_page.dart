@@ -34,6 +34,7 @@ class _ProfileTransformationJourneyPageState
         future: _getProfileInfo(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
+            _requestTransformationJourneyData(context, _profileInfo);
             return page(context, _profileInfo);
           } else {
             return SizedBox();
@@ -56,7 +57,6 @@ class _ProfileTransformationJourneyPageState
                 uploadListContent: _transformationJourneyContent);
           }));
     }
-    _requestTransformationJourneyData(context, profileInfo);
 
     return _contentGallery == null
         ? OlukoCircularProgressIndicator()

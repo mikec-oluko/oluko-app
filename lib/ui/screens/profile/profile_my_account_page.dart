@@ -1,30 +1,22 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/plan_bloc.dart';
 import 'package:oluko_app/blocs/profile_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_helper.dart';
-import 'package:oluko_app/helpers/s3_provider.dart';
 import 'package:oluko_app/models/plan.dart';
 import 'package:oluko_app/models/user_response.dart';
-import 'package:oluko_app/repositories/user_repository.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_user_info.dart';
 import 'package:oluko_app/ui/components/subscription_card.dart';
 import 'package:oluko_app/ui/components/modal_upload_options.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
-import 'package:oluko_app/ui/screens/profile/profile_routes.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/app_modal.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
-import 'package:path/path.dart' as p;
 
 class ProfileMyAccountPage extends StatefulWidget {
-  // final File image; {this.image}
   ProfileMyAccountPage();
   @override
   _ProfileMyAccountPageState createState() => _ProfileMyAccountPageState();
@@ -32,11 +24,9 @@ class ProfileMyAccountPage extends StatefulWidget {
 
 class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
   UserResponse profileInfo;
-  ProfileBloc _profileBloc;
   PlanBloc _planBloc;
   @override
   void initState() {
-    _profileBloc = ProfileBloc();
     _planBloc = PlanBloc();
     super.initState();
   }
@@ -50,7 +40,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
             return MultiBlocProvider(
               providers: [
                 BlocProvider.value(
-                  value: _profileBloc,
+                  value: BlocProvider.of<ProfileBloc>(context),
                 ),
                 BlocProvider<PlanBloc>(
                   create: (context) => _planBloc..getPlans(),
