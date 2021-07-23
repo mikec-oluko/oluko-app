@@ -33,7 +33,7 @@ class _ImageAndVideoContainerState extends State<ImageAndVideoContainer> {
             ? ImageAndVideoPreviewCard(
                 imageCover: Image.network(
                   widget.assetImage,
-                  fit: BoxFit.fill,
+                  fit: BoxFit.contain,
                   frameBuilder: (BuildContext context, Widget child, int frame,
                           bool wasSynchronouslyLoaded) =>
                       ImageUtils.frameBuilder(
@@ -48,7 +48,7 @@ class _ImageAndVideoContainerState extends State<ImageAndVideoContainer> {
             : ImageAndVideoPreviewCard(
                 imageCover: Image.asset(
                   widget.assetImage,
-                  fit: BoxFit.fill,
+                  fit: BoxFit.contain,
                   height: 120,
                   width: 120,
                 ),
