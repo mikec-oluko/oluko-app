@@ -204,15 +204,15 @@ class _SegmentDetailState extends State<SegmentDetail> {
                     .toUpperCase(),
                 color: Colors.white,
                 onPressed: () {
-                  // startRecordingAndWorkoutTogether
-                  //     ? _startCountdown(WorkoutType.segmentWithRecording)
-                  //     : MovementUtils.movementDialog(
-                  //             context, _confirmDialogContent())
-                  //         .then((value) => value != null
-                  //             ? _startCountdown(value == true
-                  //                 ? WorkoutType.segmentWithRecording
-                  //                 : WorkoutType.segment)
-                  //             : null);
+                  startRecordingAndWorkoutTogether
+                      ? _startCountdown(WorkoutType.segmentWithRecording)
+                      : MovementUtils.movementDialog(
+                              context, _confirmDialogContent())
+                          .then((value) => value != null
+                              ? _startCountdown(value == true
+                                  ? WorkoutType.segmentWithRecording
+                                  : WorkoutType.segment)
+                              : null);
                 })
           ]),
         )
@@ -238,6 +238,8 @@ class _SegmentDetailState extends State<SegmentDetail> {
                     user: widget.user,
                     workoutType: workoutType,
                     courseEnrollment: widget.courseEnrollment,
+                    segmentIndex: widget.segmentIndex,
+                    classIndex: widget.classIndex,
                     segment: widget.segment))));
   }
 

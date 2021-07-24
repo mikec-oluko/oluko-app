@@ -1,10 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/enums/submission_state_enum.dart';
 import 'package:oluko_app/models/movement_submission.dart';
 import 'package:oluko_app/models/segment_submission.dart';
+import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/repositories/movement_submission_repository.dart';
-import 'package:oluko_app/repositories/segment_submission_repository.dart';
 
 abstract class MovementSubmissionState {}
 
@@ -15,10 +14,16 @@ class CreateMovementSubmissionSuccess extends MovementSubmissionState {
   CreateMovementSubmissionSuccess({this.movementSubmission});
 }
 
-class UpdateMovementSubmissionSuccess extends MovementSubmissionState {
-  MovementSubmission movementSubmission;
-  UpdateMovementSubmissionSuccess({this.movementSubmission});
+class GetMovementSubmissionSuccess extends MovementSubmissionState {
+  List<MovementSubmission> movementSubmissions;
+  GetMovementSubmissionSuccess({this.movementSubmissions});
 }
+
+class UpdateMovementSubmissionSuccess extends MovementSubmissionState {}
+
+class EncodedMovementSubmissionSuccess extends MovementSubmissionState {}
+
+class ErrorMovementSubmissionSuccess extends MovementSubmissionState {}
 
 class Failure extends MovementSubmissionState {
   final Exception exception;
@@ -29,10 +34,12 @@ class Failure extends MovementSubmissionState {
 class MovementSubmissionBloc extends Cubit<MovementSubmissionState> {
   MovementSubmissionBloc() : super(Loading());
 
-  void create(SegmentSubmission segmentSubmission) async {
+  void create(SegmentSubmission segmentSubmission, MovementSubmodel movement,
+      String videoPath) async {
     try {
       MovementSubmission movementSubmission =
-          await MovementSubmissionRepository.create(segmentSubmission);
+          await MovementSubmissionRepository.create(
+              segmentSubmission, movement, videoPath);
       emit(CreateMovementSubmissionSuccess(
           movementSubmission: movementSubmission));
     } catch (e) {
@@ -41,13 +48,48 @@ class MovementSubmissionBloc extends Cubit<MovementSubmissionState> {
     }
   }
 
-  void update(MovementSubmission movementSubmission) async {
+  void updateVideo(MovementSubmission movementSubmission) async {
     try {
-      MovementSubmission updatedMovement =
-          await MovementSubmissionRepository.update(movementSubmission);
-      emit(
-          CreateMovementSubmissionSuccess(movementSubmission: updatedMovement));
+      await MovementSubmissionRepository.updateVideo(movementSubmission);
+      emit(UpdateMovementSubmissionSuccess());
     } catch (e) {
+      print(e.toString());
+      emit(Failure(exception: e));
+    }
+  }
+
+  void updateStateToEncoded(
+      MovementSubmission movementSubmission) async {
+    try {
+      await MovementSubmissionRepository.updateStateToEncoded(
+          movementSubmission);
+      emit(EncodedMovementSubmissionSuccess());
+    } catch (e) {
+      print(e.toString());
+      emit(Failure(exception: e));
+    }
+  }
+
+  void updateStateToError(
+      MovementSubmission movementSubmission) async {
+    try {
+      await MovementSubmissionRepository.updateStateToError(
+          movementSubmission);
+      emit(ErrorMovementSubmissionSuccess());
+    } catch (e) {
+      print(e.toString());
+      emit(Failure(exception: e));
+    }
+  }
+
+  void get(SegmentSubmission segmentSubmission) async {
+    try {
+      List<MovementSubmission> movementSubmissions =
+          await MovementSubmissionRepository.get(segmentSubmission);
+      emit(GetMovementSubmissionSuccess(
+          movementSubmissions: movementSubmissions));
+    } catch (e) {
+      print(e.toString());
       emit(Failure(exception: e));
     }
   }

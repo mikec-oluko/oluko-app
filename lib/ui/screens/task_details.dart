@@ -200,6 +200,8 @@ class _TaskDetailsState extends State<TaskDetails> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => SelfRecording(
+                          tasks:widget.tasks,
+                          index: widget.index,
                             task: widget.task,
                             assessmentAssignment: assessmentAssignment,
                             user: widget.user)));

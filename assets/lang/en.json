@@ -29,6 +29,7 @@
     "logout": "Log out",
     "filters": "Filters",
     "courses": "Courses",
+    "videoFromGallery": "Video from Gallery",
     "viewAll": "View All",
     "clearAll": "Clear All",
     "activeCourses": "Active Courses",
@@ -63,7 +64,7 @@
     "upgrade": "upgrade",
     "fromGallery": "Select from Gallery",
     "camera": "Camera",
-    "uploadingWithDots":  "Uploading...",
+    "uploadingWithDots": "Uploading...",
     "errorOcurred": "An error ocurred.",
     "errorOcurredOn": "An error ocurred on: ",
     "classes": "Classes",
@@ -90,5 +91,10 @@
     "no": "No",
     "yes": "Yes",
     "recordAgainQuestion": "Record Again?",
-    "next": "Next"
+    "next": "Next",
+    "progress": "Progress",
+    "processingVideo": "Processing video",
+    "completed": "Completed",
+    "uploadedWithErrors": "The segment was uploaded with errors",
+    "uploadedSuccessfully": "The segment was uploaded successfully"
 }

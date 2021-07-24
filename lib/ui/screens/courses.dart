@@ -11,14 +11,10 @@ import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/search_results.dart';
 import 'package:oluko_app/models/tag.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
-import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';
 import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/course_card.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/search_bar.dart';
-import 'package:oluko_app/ui/components/search_results_grid.dart';
-import 'package:oluko_app/ui/components/search_suggestions.dart';
-import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/screens/classes.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/course_utils.dart';
@@ -175,7 +171,9 @@ class _State extends State<Courses> {
                                                     mainContext),
                                             child: Classes(
                                                 courseId:
-                                                    'OYyjeSBYcumpcg2VbMXO' /*course.id*/),
+                                                    // 'OYyjeSBYcumpcg2VbMXO' ),
+                                                    // course.id),
+                                                    course.id),
                                           ))),
                               child: _getCourseCard(
                                   Image.network(
