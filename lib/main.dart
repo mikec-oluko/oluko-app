@@ -1,47 +1,13 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
-import 'package:oluko_app/blocs/course_bloc.dart';
-import 'package:oluko_app/blocs/course_enrollment_bloc.dart';
-import 'package:oluko_app/blocs/friend_bloc.dart';
-import 'package:oluko_app/blocs/profile_bloc.dart';
-import 'package:oluko_app/blocs/tag_bloc.dart';
-import 'package:oluko_app/blocs/task_submission_bloc.dart';
 import 'package:oluko_app/config/s3_settings.dart';
-import 'package:oluko_app/ui/screens/app_plans.dart';
-import 'package:oluko_app/ui/screens/assessment_videos.dart';
-import 'package:oluko_app/ui/screens/choose_plan_payment.dart';
-import 'package:oluko_app/ui/screens/classes.dart';
-import 'package:oluko_app/ui/screens/courses.dart';
-import 'package:oluko_app/ui/screens/friends_page.dart';
-import 'package:oluko_app/ui/screens/Login.dart';
-import 'package:oluko_app/ui/screens/Profile.dart';
-import 'package:oluko_app/ui/screens/main_page.dart';
-import 'package:oluko_app/ui/screens/movement_intro.dart';
-import 'package:oluko_app/ui/screens/segment_detail.dart';
-import 'package:oluko_app/ui/screens/profile/profile_challenges_page.dart';
-import 'package:oluko_app/ui/screens/profile/profile_help_and_support_page.dart';
-import 'package:oluko_app/ui/screens/profile/profile_my_account_page.dart';
-import 'package:oluko_app/ui/screens/profile/profile_own_profile_page.dart';
-import 'package:oluko_app/ui/screens/profile/profile_settings_page.dart';
-import 'package:oluko_app/ui/screens/profile/profile_subscription_page.dart';
-import 'package:oluko_app/ui/screens/profile/profile_transformation_journey_page.dart';
-import 'package:oluko_app/ui/screens/profile/transformation_journey_post.dart';
-import 'package:oluko_app/ui/screens/segment_recording.dart';
-import 'package:oluko_app/ui/screens/sign_up_with_email.dart';
-import 'package:oluko_app/ui/screens/sign_up.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:oluko_app/ui/screens/task_details.dart';
-import 'package:oluko_app/ui/screens/videos/home.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
-import 'blocs/transformation_journey_bloc.dart';
 import 'config/project_settings.dart';
-import 'models/task.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -68,12 +34,9 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final AuthBloc _authBloc = AuthBloc();
-  final ProfileBloc _profileBloc = ProfileBloc();
-  final TransformationJourneyBloc _transformationJourneyBloc =
-      TransformationJourneyBloc();
+  Routes routes = Routes();
 
-  Widget build(BuildContext context) {
+  Widget build(BuildContext mainContext) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: '${OLUKO}',
@@ -81,239 +44,8 @@ class _MyAppState extends State<MyApp> {
         primarySwatch: Colors.grey,
       ),
       initialRoute: widget.initialRoute,
-      onGenerateRoute: (RouteSettings settings) {
-        Widget newRoute;
-        switch (settings.name) {
-          case '/':
-            newRoute = MultiBlocProvider(providers: [
-              BlocProvider.value(value: _authBloc),
-              BlocProvider(create: (context) => CourseBloc()),
-              BlocProvider(create: (context) => TagBloc())
-            ], child: MainPage());
-            break;
-          case '/sign-up':
-            newRoute =
-                BlocProvider.value(value: _authBloc, child: SignUpPage());
-            break;
-          case '/sign-up-with-email':
-            newRoute = BlocProvider.value(
-                value: _authBloc, child: SignUpWithMailPage());
-            break;
-          case '/friends':
-            newRoute = MultiBlocProvider(providers: [
-              BlocProvider.value(
-                value: _authBloc,
-              ),
-              BlocProvider(create: (context) => FriendBloc()),
-            ], child: FriendsPage());
-            break;
-          case '/profile':
-            newRoute =
-                BlocProvider.value(value: _authBloc, child: ProfilePage());
-            break;
-          case '/profile-settings':
-            newRoute = BlocProvider.value(
-                value: _authBloc, child: ProfileSettingsPage());
-            break;
-          case '/profile-my-account':
-            newRoute = MultiBlocProvider(providers: [
-              BlocProvider.value(value: _authBloc),
-              BlocProvider.value(value: _profileBloc),
-              BlocProvider.value(value: _transformationJourneyBloc),
-            ], child: ProfileMyAccountPage());
-            break;
-          case '/profile-subscription':
-            newRoute = BlocProvider.value(
-                value: _authBloc, child: ProfileSubscriptionPage());
-            break;
-          case '/profile-help-and-support':
-            newRoute = BlocProvider.value(
-                value: _authBloc, child: ProfileHelpAndSupportPage());
-            break;
-          case '/profile-view-own-profile':
-            newRoute = MultiBlocProvider(providers: [
-              BlocProvider.value(value: _authBloc),
-              BlocProvider.value(value: _transformationJourneyBloc),
-              BlocProvider(create: (context) => CourseBloc()),
-              BlocProvider(create: (context) => AssessmentBloc()),
-              BlocProvider(create: (context) => TaskSubmissionBloc()),
-              BlocProvider(create: (context) => CourseEnrollmentBloc()),
-            ], child: ProfileOwnProfilePage());
-            break;
-          case '/profile-challenges':
-            newRoute = BlocProvider.value(
-                value: _authBloc, child: ProfileChallengesPage());
-            break;
-          case '/profile-transformation-journey':
-            newRoute = MultiBlocProvider(providers: [
-              BlocProvider.value(value: _authBloc),
-              BlocProvider.value(value: _transformationJourneyBloc),
-              BlocProvider.value(value: _profileBloc),
-              BlocProvider(create: (context) => CourseBloc()),
-              BlocProvider(create: (context) => AssessmentBloc()),
-              BlocProvider(create: (context) => TaskSubmissionBloc()),
-              BlocProvider(create: (context) => CourseEnrollmentBloc()),
-            ], child: ProfileTransformationJourneyPage());
-            break;
-          case '/transformation-journey-post':
-            newRoute = MultiBlocProvider(providers: [
-              BlocProvider.value(value: _authBloc),
-              BlocProvider.value(value: _transformationJourneyBloc),
-            ], child: TransformationJourneyPostPage());
-            break;
-          case '/transformation-journey-post-view':
-            newRoute = MultiBlocProvider(providers: [
-              BlocProvider.value(value: _authBloc),
-              BlocProvider.value(value: _transformationJourneyBloc),
-            ], child: TransformationJourneyPostPage());
-            break;
-          case '/log-in':
-            newRoute = BlocProvider.value(value: _authBloc, child: LoginPage());
-            break;
-          case '/app-plans':
-            newRoute = BlocProvider.value(value: _authBloc, child: AppPlans());
-            break;
-          case '/segment-detail':
-            newRoute =
-                BlocProvider.value(value: _authBloc, child: SegmentDetail());
-            break;
-          case '/movement-intro':
-            newRoute =
-                BlocProvider.value(value: _authBloc, child: MovementIntro());
-            break;
-          case '/segment-recording':
-            newRoute =
-                BlocProvider.value(value: _authBloc, child: SegmentRecording());
-            break;
-          case '/classes':
-            newRoute = BlocProvider.value(value: _authBloc, child: Classes());
-            break;
-          case '/assessment-videos':
-            newRoute =
-                BlocProvider.value(value: _authBloc, child: AssessmentVideos());
-            break;
-          case '/task-details':
-            newRoute = BlocProvider.value(
-                value: _authBloc,
-                child: TaskDetails(
-                  task: Task(description: 'Task Description'),
-                ));
-            break;
-          case '/choose-plan-payment':
-            newRoute = BlocProvider.value(
-                value: _authBloc, child: ChoosePlayPayments());
-            break;
-          case '/courses':
-            newRoute = MultiBlocProvider(providers: [
-              BlocProvider.value(value: _authBloc),
-              BlocProvider(create: (context) => CourseBloc()),
-              BlocProvider(create: (context) => TagBloc())
-            ], child: Courses());
-            break;
-          case '/videos':
-            newRoute = BlocProvider.value(
-                value: _authBloc,
-                child: Home(
-                  title: "Videos",
-                  parentVideoInfo: null,
-                  parentVideoReference:
-                      FirebaseFirestore.instance.collection("videosInfo"),
-                ));
-            break;
-          default:
-            break;
-        }
-
-        return MaterialPageRoute(builder: (context) => newRoute);
-      },
-      // routes: {
-      //   '/': (context) => MultiBlocProvider(providers: [
-      //         BlocProvider.value(value: _authBloc),
-      //         BlocProvider(create: (context) => CourseBloc()),
-      //         BlocProvider(create: (context) => TagBloc())
-      //       ], child: MainPage()),
-      //   '/sign-up': (context) =>
-      //       BlocProvider.value(value: _authBloc, child: SignUpPage()),
-      //   '/sign-up-with-email': (context) =>
-      //       BlocProvider.value(value: _authBloc, child: SignUpWithMailPage()),
-      //   '/friends': (context) => MultiBlocProvider(providers: [
-      //         BlocProvider.value(
-      //           value: _authBloc,
-      //         ),
-      //         BlocProvider(create: (context) => FriendBloc()),
-      //       ], child: FriendsPage()),
-
-      //   '/profile': (context) =>
-      //       BlocProvider.value(value: _authBloc, child: ProfilePage()),
-      //   '/profile-settings': (context) =>
-      //       BlocProvider.value(value: _authBloc, child: ProfileSettingsPage()),
-      //   '/profile-my-account': (context) =>
-      //       BlocProvider.value(value: _authBloc, child: ProfileMyAccountPage()),
-      //   '/profile-subscription': (context) => BlocProvider.value(
-      //       value: _authBloc, child: ProfileSubscriptionPage()),
-      //   '/profile-help-and-support': (context) => BlocProvider.value(
-      //       value: _authBloc, child: ProfileHelpAndSupportPage()),
-
-      //   '/profile-view-own-profile': (context) => MultiBlocProvider(providers: [
-      //         BlocProvider.value(value: _authBloc),
-      //         BlocProvider(create: (context) => CourseBloc()),
-      //         BlocProvider(create: (context) => AssessmentBloc()),
-      //         BlocProvider(create: (context) => TaskSubmissionBloc()),
-      //         BlocProvider(create: (context) => CourseEnrollmentBloc()),
-      //         BlocProvider(create: (context) => TransformationJourneyBloc())
-      //       ], child: ProfileOwnProfilePage()),
-
-      //   '/profile-challenges': (context) => BlocProvider.value(
-      //       value: _authBloc, child: ProfileChallengesPage()),
-      //   '/profile-transformation-journey': (context) =>
-      //       MultiBlocProvider(providers: [
-      //         BlocProvider.value(value: _authBloc),
-      //         BlocProvider(create: (context) => CourseBloc()),
-      //         BlocProvider(create: (context) => AssessmentBloc()),
-      //         BlocProvider(create: (context) => TaskSubmissionBloc()),
-      //         BlocProvider(create: (context) => CourseEnrollmentBloc()),
-      //         BlocProvider(create: (context) => TransformationJourneyBloc())
-      //       ], child: ProfileTransformationJourneyPage()),
-      //   '/transformation-journey-post': (context) => BlocProvider.value(
-      //       value: _authBloc, child: TransformationJourneyPostPage()),
-      //   '/transformation-journey-post-view': (context) => BlocProvider.value(
-      //       value: _authBloc, child: TransformationJourneyPostPage()),
-      //   '/log-in': (context) =>
-      //       BlocProvider.value(value: _authBloc, child: LoginPage()),
-      //   '/app-plans': (context) =>
-      //       BlocProvider.value(value: _authBloc, child: AppPlans()),
-      //   //TODO: Remove this when take it to the correct place inside courses
-      //   '/segment-detail': (context) =>
-      //       BlocProvider.value(value: _authBloc, child: SegmentDetail()),
-      //   '/movement-intro': (context) =>
-      //       BlocProvider.value(value: _authBloc, child: MovementIntro()),
-      //   '/segment-recording': (context) =>
-      //       BlocProvider.value(value: _authBloc, child: SegmentRecording()),
-      //   '/classes': (context) =>
-      //       BlocProvider.value(value: _authBloc, child: Classes()),
-      //   '/assessment-videos': (context) =>
-      //       BlocProvider.value(value: _authBloc, child: AssessmentVideos()),
-      //   '/task-details': (context) => BlocProvider.value(
-      //       value: _authBloc,
-      //       child: TaskDetails(
-      //         task: Task(description: 'Task Description'),
-      //       )),
-      //   '/choose-plan-payment': (context) =>
-      //       BlocProvider.value(value: _authBloc, child: ChoosePlayPayments()),
-      //   '/courses': (context) => MultiBlocProvider(providers: [
-      //         BlocProvider.value(value: _authBloc),
-      //         BlocProvider(create: (context) => CourseBloc()),
-      //         BlocProvider(create: (context) => TagBloc())
-      //       ], child: Courses()),
-      //   '/videos': (context) => BlocProvider.value(
-      //       value: _authBloc,
-      //       child: Home(
-      //         title: "Videos",
-      //         parentVideoInfo: null,
-      //         parentVideoReference:
-      //             FirebaseFirestore.instance.collection("videosInfo"),
-      //       ))
-      // },
+      onGenerateRoute: (RouteSettings settings) =>
+          routes.getRouteView(settings.name, settings.arguments),
       localizationsDelegates: [
         const OlukoLocalizationsDelegate(),
         GlobalMaterialLocalizations.delegate,
@@ -329,7 +61,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void dispose() {
-    _authBloc.close();
     super.dispose();
   }
 }

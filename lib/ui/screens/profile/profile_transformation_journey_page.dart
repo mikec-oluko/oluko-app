@@ -102,23 +102,27 @@ class _ProfileTransformationJourneyPageState
                               width: MediaQuery.of(context).size.width,
                               child: Padding(
                                 padding: const EdgeInsets.all(15.0),
-                                child: OlukoOutlinedButton(
-                                    title: OlukoLocalizations.of(context)
-                                        .find('tapToUpload'),
-                                    onPressed: () {
-                                      AppModal.dialogContent(
-                                          context: context,
-                                          content: [
-                                            BlocProvider.value(
-                                              value: BlocProvider.of<
-                                                      TransformationJourneyBloc>(
-                                                  context),
-                                              child: ModalUploadOptions(
-                                                  UploadFrom
-                                                      .transformationJourney),
-                                            )
-                                          ]);
-                                    }),
+                                child: Row(
+                                  children: [
+                                    OlukoOutlinedButton(
+                                        title: OlukoLocalizations.of(context)
+                                            .find('tapToUpload'),
+                                        onPressed: () {
+                                          AppModal.dialogContent(
+                                              context: context,
+                                              content: [
+                                                BlocProvider.value(
+                                                  value: BlocProvider.of<
+                                                          TransformationJourneyBloc>(
+                                                      context),
+                                                  child: ModalUploadOptions(
+                                                      UploadFrom
+                                                          .transformationJourney),
+                                                )
+                                              ]);
+                                        }),
+                                  ],
+                                ),
                               ))),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(10, 100, 10, 0),
