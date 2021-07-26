@@ -7,6 +7,7 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/friend_bloc.dart';
+import 'package:oluko_app/blocs/profile_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/blocs/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
@@ -99,6 +100,7 @@ RouteEnum getEnumFromRouteString(String route) {
 
 class Routes {
   final AuthBloc _authBloc = AuthBloc();
+  final ProfileBloc _profileBloc = ProfileBloc();
   final CourseBloc _courseBloc = CourseBloc();
   final TagBloc _tagBloc = TagBloc();
   final FriendBloc _friendBloc = FriendBloc();
@@ -144,6 +146,11 @@ class Routes {
         newRouteView = ProfileSettingsPage();
         break;
       case RouteEnum.profileMyAccount:
+        providers = [
+          BlocProvider<ProfileBloc>.value(value: _profileBloc),
+          BlocProvider<TransformationJourneyBloc>.value(
+              value: _transformationJourneyBloc)
+        ];
         newRouteView = ProfileMyAccountPage();
         break;
       case RouteEnum.profileSubscription:
@@ -169,6 +176,7 @@ class Routes {
         break;
       case RouteEnum.profileTransformationJourney:
         providers = [
+          BlocProvider<ProfileBloc>.value(value: _profileBloc),
           BlocProvider<CourseBloc>.value(value: _courseBloc),
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
@@ -180,9 +188,17 @@ class Routes {
         newRouteView = ProfileTransformationJourneyPage();
         break;
       case RouteEnum.transformationJourneyPost:
+        providers = [
+          BlocProvider<TransformationJourneyBloc>.value(
+              value: _transformationJourneyBloc),
+        ];
         newRouteView = TransformationJourneyPostPage();
         break;
       case RouteEnum.transformationJourneyPostView:
+        providers = [
+          BlocProvider<TransformationJourneyBloc>.value(
+              value: _transformationJourneyBloc),
+        ];
         newRouteView = TransformationJourneyPostPage();
         break;
       case RouteEnum.logIn:
