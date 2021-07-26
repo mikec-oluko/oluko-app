@@ -36,6 +36,62 @@ import 'package:oluko_app/ui/screens/task_details.dart';
 import 'package:oluko_app/ui/screens/videos/home.dart';
 import 'models/task.dart';
 
+enum RouteEnum {
+  root,
+  signUp,
+  signUpWithEmail,
+  friends,
+  profile,
+  profileSettings,
+  profileMyAccount,
+  profileSubscription,
+  profileHelpAndSupport,
+  profileViewOwnProfile,
+  profileChallenges,
+  profileTransformationJourney,
+  transformationJourneyPost,
+  transformationJourneyPostView,
+  logIn,
+  appPlans,
+  segmentDetails,
+  movementIntro,
+  segmentRecording,
+  classes,
+  assessmentVideos,
+  taskDetails,
+  choosePlanPayment,
+  courses,
+  videos
+}
+
+Map<RouteEnum, String> routeLabels = {
+  RouteEnum.root: '/',
+  RouteEnum.signUp: '/sign-up',
+  RouteEnum.signUpWithEmail: '/sign-up-with-email',
+  RouteEnum.friends: '/friends',
+  RouteEnum.profile: '/profile',
+  RouteEnum.profileSettings: '/profile-settings',
+  RouteEnum.profileMyAccount: '/profile-my-account',
+  RouteEnum.profileSubscription: '/profile-subscription',
+  RouteEnum.profileHelpAndSupport: '/profile-help-and-support',
+  RouteEnum.profileViewOwnProfile: '/profile-view-own-profile',
+  RouteEnum.profileChallenges: '/profile-challenges',
+  RouteEnum.profileTransformationJourney: '/profile-transformation-journey',
+  RouteEnum.transformationJourneyPost: '/transformation-journey-post',
+  RouteEnum.transformationJourneyPostView: '/transformation-journey-post-view',
+  RouteEnum.logIn: '/log-in',
+  RouteEnum.appPlans: '/app-plans',
+  RouteEnum.segmentDetails: '/segment-detail',
+  RouteEnum.movementIntro: '/movement-intro',
+  RouteEnum.segmentRecording: '/segment-recording',
+  RouteEnum.classes: '/classes',
+  RouteEnum.assessmentVideos: '/assessment-videos',
+  RouteEnum.taskDetails: '/task-details',
+  RouteEnum.choosePlanPayment: '/choose-plan-payment',
+  RouteEnum.courses: '/courses',
+  RouteEnum.videos: '/videos',
+};
+
 class Routes {
   final AuthBloc _authBloc = AuthBloc();
   final CourseBloc _courseBloc = CourseBloc();
