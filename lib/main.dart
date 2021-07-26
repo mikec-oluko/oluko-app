@@ -70,6 +70,8 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final AuthBloc _authBloc = AuthBloc();
   final ProfileBloc _profileBloc = ProfileBloc();
+  final TransformationJourneyBloc _transformationJourneyBloc =
+      TransformationJourneyBloc();
 
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -114,8 +116,10 @@ class _MyAppState extends State<MyApp> {
                 value: _authBloc, child: ProfileSettingsPage());
             break;
           case '/profile-my-account':
-            newRoute = BlocProvider.value(
-                value: _authBloc, child: ProfileMyAccountPage());
+            newRoute = MultiBlocProvider(providers: [
+              BlocProvider.value(value: _authBloc),
+              BlocProvider.value(value: _profileBloc),
+            ], child: ProfileMyAccountPage());
             break;
           case '/profile-subscription':
             newRoute = BlocProvider.value(
@@ -128,11 +132,11 @@ class _MyAppState extends State<MyApp> {
           case '/profile-view-own-profile':
             newRoute = MultiBlocProvider(providers: [
               BlocProvider.value(value: _authBloc),
+              BlocProvider.value(value: _transformationJourneyBloc),
               BlocProvider(create: (context) => CourseBloc()),
               BlocProvider(create: (context) => AssessmentBloc()),
               BlocProvider(create: (context) => TaskSubmissionBloc()),
               BlocProvider(create: (context) => CourseEnrollmentBloc()),
-              BlocProvider(create: (context) => TransformationJourneyBloc())
             ], child: ProfileOwnProfilePage());
             break;
           case '/profile-challenges':
@@ -142,20 +146,24 @@ class _MyAppState extends State<MyApp> {
           case '/profile-transformation-journey':
             newRoute = MultiBlocProvider(providers: [
               BlocProvider.value(value: _authBloc),
+              BlocProvider.value(value: _transformationJourneyBloc),
               BlocProvider(create: (context) => CourseBloc()),
               BlocProvider(create: (context) => AssessmentBloc()),
               BlocProvider(create: (context) => TaskSubmissionBloc()),
               BlocProvider(create: (context) => CourseEnrollmentBloc()),
-              BlocProvider(create: (context) => TransformationJourneyBloc())
             ], child: ProfileTransformationJourneyPage());
             break;
           case '/transformation-journey-post':
-            newRoute = BlocProvider.value(
-                value: _authBloc, child: TransformationJourneyPostPage());
+            newRoute = MultiBlocProvider(providers: [
+              BlocProvider.value(value: _authBloc),
+              BlocProvider.value(value: _transformationJourneyBloc),
+            ], child: TransformationJourneyPostPage());
             break;
           case '/transformation-journey-post-view':
-            newRoute = BlocProvider.value(
-                value: _authBloc, child: TransformationJourneyPostPage());
+            newRoute = MultiBlocProvider(providers: [
+              BlocProvider.value(value: _authBloc),
+              BlocProvider.value(value: _transformationJourneyBloc),
+            ], child: TransformationJourneyPostPage());
             break;
           case '/log-in':
             newRoute = BlocProvider.value(value: _authBloc, child: LoginPage());

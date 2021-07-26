@@ -8,6 +8,7 @@ import 'package:oluko_app/helpers/enum_helper.dart';
 import 'package:oluko_app/models/plan.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
+import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_user_info.dart';
 import 'package:oluko_app/ui/components/subscription_card.dart';
 import 'package:oluko_app/ui/components/modal_upload_options.dart';
@@ -23,7 +24,7 @@ class ProfileMyAccountPage extends StatefulWidget {
 }
 
 class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
-  UserResponse profileInfo;
+  UserResponse _profileInfo;
   PlanBloc _planBloc;
   @override
   void initState() {
@@ -31,27 +32,32 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
     super.initState();
   }
 
-  @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: getProfileInfo(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return MultiBlocProvider(
-              providers: [
-                BlocProvider.value(
-                  value: BlocProvider.of<ProfileBloc>(context),
-                ),
-                BlocProvider<PlanBloc>(
-                  create: (context) => _planBloc..getPlans(),
-                )
-              ],
-              child: buildScaffoldPage(context),
-            );
-          } else {
-            return SizedBox();
-          }
-        });
+    return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
+      if (state is AuthSuccess) {
+        this._profileInfo = state.user;
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider.value(
+              value: BlocProvider.of<ProfileBloc>(context),
+            ),
+            BlocProvider.value(
+              value: BlocProvider.of<AuthBloc>(context),
+            ),
+            BlocProvider<PlanBloc>(
+              create: (context) => _planBloc..getPlans(),
+            )
+          ],
+          child: buildScaffoldPage(context),
+        );
+      } else {
+        return Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: OlukoCircularProgressIndicator(),
+        );
+      }
+    });
   }
 
   Scaffold buildScaffoldPage(BuildContext context) {
@@ -87,9 +93,9 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Center(
-              child: profileInfo.avatar != null
+              child: _profileInfo.avatar != null
                   ? CircleAvatar(
-                      backgroundImage: NetworkImage(profileInfo.avatar),
+                      backgroundImage: NetworkImage(_profileInfo.avatar),
                       backgroundColor: OlukoColors.primary,
                       radius: 50.0,
                       child: IconButton(
@@ -113,7 +119,11 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
                               color: OlukoColors.white),
                           onPressed: () {
                             AppModal.dialogContent(context: context, content: [
-                              ModalUploadOptions(UploadFrom.profileImage)
+                              BlocProvider.value(
+                                value: BlocProvider.of<ProfileBloc>(context),
+                                child:
+                                    ModalUploadOptions(UploadFrom.profileImage),
+                              )
                             ]);
                           }),
                     ),
@@ -127,15 +137,15 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
       children: [
         userInformationFields(
             OlukoLocalizations.of(context).find('userName'),
-            profileInfo.username != null
-                ? profileInfo.username
+            _profileInfo.username != null
+                ? _profileInfo.username
                 : ProfileViewConstants.profileUserNameContent),
         userInformationFields(OlukoLocalizations.of(context).find('firstName'),
-            profileInfo.firstName),
+            _profileInfo.firstName),
         userInformationFields(OlukoLocalizations.of(context).find('lastName'),
-            profileInfo.lastName),
+            _profileInfo.lastName),
         userInformationFields(
-            OlukoLocalizations.of(context).find('email'), profileInfo.email),
+            OlukoLocalizations.of(context).find('email'), _profileInfo.email),
       ],
     );
   }
@@ -209,14 +219,5 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
         ),
       ),
     );
-  }
-
-  Future<void> getProfileInfo() async {
-    UserResponse loginData = (await AuthBloc().retrieveLoginData());
-    if (loginData != null) {
-      profileInfo = UserResponse.fromJson(loginData.toJson());
-      return profileInfo;
-    }
-    return null;
   }
 }

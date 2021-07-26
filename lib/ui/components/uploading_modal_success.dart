@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/profile_bloc.dart';
+import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
@@ -13,6 +17,8 @@ class UploadingModalSuccess extends StatefulWidget {
 }
 
 class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
+  final _successText = "Uploaded Successfully";
+  final _doneButtonText = "Done";
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -38,7 +44,7 @@ class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
                 Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: Text(
-                    "Uploaded Successfully",
+                    _successText,
                     style: OlukoFonts.olukoTitleFont(
                         custoFontWeight: FontWeight.w400),
                   ),
@@ -50,9 +56,38 @@ class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
                       child: Row(
                         children: [
                           OlukoOutlinedButton(
-                            title: "Done",
-                            onPressed: () => Navigator.pop(context),
-                          ),
+                              title: _doneButtonText,
+                              onPressed: () {
+                                //Cambiar navigator
+                                //add methods to restart state
+                                //get route from
+                                if (widget.goToPage ==
+                                    UploadFrom.profileImage) {
+                                  BlocProvider.of<ProfileBloc>(context)
+                                    ..resetUploadStatus();
+                                  //TODO: Check provider
+                                  BlocProvider.of<AuthBloc>(context)
+                                    ..checkCurrentUser();
+                                  // Navigator.pop(context);
+
+                                  Navigator.popUntil(
+                                      context,
+                                      ModalRoute.withName(
+                                          returnRouteToGo(widget.goToPage)));
+                                }
+                                if (widget.goToPage ==
+                                    UploadFrom.transformationJourney) {
+                                  BlocProvider.of<TransformationJourneyBloc>(
+                                      context)
+                                    ..resetUploadStatus();
+
+                                  //TODO: Check Navigator.pop(context);  and if navigation is T.Y. Gallery updated.
+                                  Navigator.popUntil(
+                                      context,
+                                      ModalRoute.withName(
+                                          returnRouteToGo(widget.goToPage)));
+                                }
+                              }),
                         ],
                       )),
                 )
