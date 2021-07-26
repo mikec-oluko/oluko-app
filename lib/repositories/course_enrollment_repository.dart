@@ -9,6 +9,7 @@ import 'package:oluko_app/models/submodels/enrollment_class.dart';
 import 'package:oluko_app/models/submodels/enrollment_segment.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
 import 'package:oluko_app/repositories/course_repository.dart';
+import 'package:oluko_app/services/course_enrollment_service.dart';
 
 class CourseEnrollmentRepository {
   FirebaseFirestore firestoreInstance;
@@ -36,6 +37,34 @@ class CourseEnrollmentRepository {
       return CourseEnrollment.fromJson(qs.docs[0].data());
     }
     return null;
+  }
+
+  static Future<CourseEnrollment> markSegmentAsCompleted(
+      CourseEnrollment courseEnrollment,
+      int segmentIndex,
+      int classIndex) async {
+    DocumentReference reference = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue("projectId"))
+        .collection('courseEnrollments')
+        .doc(courseEnrollment.id);
+    List<EnrollmentClass> classes = courseEnrollment.classes;
+    classes[classIndex].segments[segmentIndex].compleatedAt = Timestamp.now();
+
+    bool isClassCompleted =
+        CourseEnrollmentService.getFirstUncompletedSegmentIndex(
+                classes[classIndex]) ==
+            -1;
+    if (isClassCompleted) {
+      double courseProgress =
+          1 / courseEnrollment.classes.length * (classIndex + 1);
+      classes[classIndex].compleatedAt = Timestamp.now();
+      courseEnrollment.completion = courseProgress;
+    }
+    reference.update({
+      'classes': List<dynamic>.from(classes.map((c) => c.toJson())),
+      'completion': courseEnrollment.completion
+    });
   }
 
   static Future<CourseEnrollment> create(User user, Course course) async {

@@ -30,21 +30,14 @@ class _ProfileTransformationJourneyPageState
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: _getProfileInfo(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return page(context, _profileInfo);
-          } else {
-            return SizedBox();
-          }
-        });
-  }
-
-  Future<void> _getProfileInfo() async {
-    _profileInfo =
-        UserResponse.fromJson((await AuthBloc().retrieveLoginData()).toJson());
-    return _profileInfo;
+    return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
+      if (state is AuthSuccess) {
+        _profileInfo = state.user;
+        return page(context, _profileInfo);
+      } else {
+        return SizedBox();
+      }
+    });
   }
 
   Scaffold page(BuildContext context, UserResponse profileInfo) {

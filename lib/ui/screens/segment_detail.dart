@@ -238,6 +238,8 @@ class _SegmentDetailState extends State<SegmentDetail> {
                     user: widget.user,
                     workoutType: workoutType,
                     courseEnrollment: widget.courseEnrollment,
+                    segmentIndex: widget.segmentIndex,
+                    classIndex: widget.classIndex,
                     segment: widget.segment))));
   }
 
