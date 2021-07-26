@@ -92,6 +92,11 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.videos: '/videos',
 };
 
+RouteEnum getEnumFromRouteString(String route) {
+  final routeIndex = routeLabels.values.toList().indexOf(route);
+  return routeIndex != -1 ? routeLabels.keys.toList()[routeIndex] : null;
+}
+
 class Routes {
   final AuthBloc _authBloc = AuthBloc();
   final CourseBloc _courseBloc = CourseBloc();
@@ -113,40 +118,41 @@ class Routes {
       BlocProvider<AuthBloc>.value(value: _authBloc)
     ];
 
-    switch (route) {
-      case '/':
+    final RouteEnum routeEnum = getEnumFromRouteString(route);
+    switch (routeEnum) {
+      case RouteEnum.root:
         providers = [
           BlocProvider<CourseBloc>.value(value: _courseBloc),
           BlocProvider<TagBloc>.value(value: _tagBloc)
         ];
         newRouteView = MainPage();
         break;
-      case '/sign-up':
+      case RouteEnum.signUp:
         newRouteView = SignUpPage();
         break;
-      case '/sign-up-with-email':
+      case RouteEnum.signUpWithEmail:
         newRouteView = SignUpWithMailPage();
         break;
-      case '/friends':
+      case RouteEnum.friends:
         providers = [BlocProvider<FriendBloc>.value(value: _friendBloc)];
         newRouteView = FriendsPage();
         break;
-      case '/profile':
+      case RouteEnum.profile:
         newRouteView = ProfilePage();
         break;
-      case '/profile-settings':
+      case RouteEnum.profileSettings:
         newRouteView = ProfileSettingsPage();
         break;
-      case '/profile-my-account':
+      case RouteEnum.profileMyAccount:
         newRouteView = ProfileMyAccountPage();
         break;
-      case '/profile-subscription':
+      case RouteEnum.profileSubscription:
         newRouteView = ProfileSubscriptionPage();
         break;
-      case '/profile-help-and-support':
+      case RouteEnum.profileHelpAndSupport:
         newRouteView = ProfileHelpAndSupportPage();
         break;
-      case '/profile-view-own-profile':
+      case RouteEnum.profileViewOwnProfile:
         providers = [
           BlocProvider<CourseBloc>.value(value: _courseBloc),
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
@@ -158,10 +164,10 @@ class Routes {
         ];
         newRouteView = ProfileOwnProfilePage();
         break;
-      case '/profile-challenges':
+      case RouteEnum.profileChallenges:
         newRouteView = ProfileChallengesPage();
         break;
-      case '/profile-transformation-journey':
+      case RouteEnum.profileTransformationJourney:
         providers = [
           BlocProvider<CourseBloc>.value(value: _courseBloc),
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
@@ -173,49 +179,49 @@ class Routes {
         ];
         newRouteView = ProfileTransformationJourneyPage();
         break;
-      case '/transformation-journey-post':
+      case RouteEnum.transformationJourneyPost:
         newRouteView = TransformationJourneyPostPage();
         break;
-      case '/transformation-journey-post-view':
+      case RouteEnum.transformationJourneyPostView:
         newRouteView = TransformationJourneyPostPage();
         break;
-      case '/log-in':
+      case RouteEnum.logIn:
         newRouteView = LoginPage();
         break;
-      case '/app-plans':
+      case RouteEnum.appPlans:
         newRouteView = AppPlans();
         break;
-      case '/segment-detail':
+      case RouteEnum.segmentDetails:
         newRouteView = SegmentDetail();
         break;
-      case '/movement-intro':
+      case RouteEnum.movementIntro:
         newRouteView = MovementIntro();
         break;
-      case '/segment-recording':
+      case RouteEnum.segmentRecording:
         newRouteView = SegmentRecording();
         break;
-      case '/classes':
+      case RouteEnum.classes:
         newRouteView = Classes();
         break;
-      case '/assessment-videos':
+      case RouteEnum.assessmentVideos:
         newRouteView = AssessmentVideos();
         break;
-      case '/task-details':
+      case RouteEnum.taskDetails:
         newRouteView = TaskDetails(
           task: Task(description: 'Task Description'),
         );
         break;
-      case '/choose-plan-payment':
+      case RouteEnum.choosePlanPayment:
         newRouteView = ChoosePlayPayments();
         break;
-      case '/courses':
+      case RouteEnum.courses:
         providers = [
           BlocProvider<CourseBloc>.value(value: _courseBloc),
           BlocProvider<TagBloc>.value(value: _tagBloc),
         ];
         newRouteView = Courses();
         break;
-      case '/videos':
+      case RouteEnum.videos:
         newRouteView = Home(
           title: "Videos",
           parentVideoInfo: null,
