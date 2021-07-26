@@ -27,17 +27,18 @@ class ProfileBloc extends Cubit<ProfileState> {
   ProfileRepository _profileRepository = ProfileRepository();
 
   void updateUserProfileAvatar({DeviceContentFrom uploadedFrom}) async {
+    PickedFile _image;
+
     if (!(state is ProfileUploadSuccess)) {
       emit(Loading());
     }
-    PickedFile _image;
     try {
       final imagePicker = ImagePicker();
       if (uploadedFrom == DeviceContentFrom.gallery) {
         _image = await imagePicker.getImage(source: ImageSource.gallery);
       }
       if (uploadedFrom == DeviceContentFrom.camera) {
-        _image = await imagePicker.getImage(source: ImageSource.gallery);
+        _image = await imagePicker.getImage(source: ImageSource.camera);
       }
 
       if (_image == null) return;

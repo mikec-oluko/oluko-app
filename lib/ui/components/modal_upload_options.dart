@@ -44,9 +44,11 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
                     content: [UploadingModalLoader(widget.contentFrom)]);
               }
               if (widget.contentFrom == UploadFrom.transformationJourney) {
+                Navigator.pop(context);
                 BlocProvider.of<TransformationJourneyBloc>(context)
                   ..uploadTransformationJourneyContent(
                       uploadedFrom: DeviceContentFrom.camera);
+                Navigator.pop(context);
                 AppModal.dialogContent(
                     context: context,
                     content: [UploadingModalLoader(widget.contentFrom)]);
@@ -66,15 +68,17 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
                 BlocProvider.of<ProfileBloc>(context)
                   ..updateUserProfileAvatar(
                       uploadedFrom: DeviceContentFrom.gallery);
-                //TODO: Check Navigator.pop();
+                Navigator.pop(context);
                 AppModal.dialogContent(
                     context: context,
                     content: [UploadingModalLoader(widget.contentFrom)]);
               }
               if (widget.contentFrom == UploadFrom.transformationJourney) {
+                Navigator.pop(context);
                 BlocProvider.of<TransformationJourneyBloc>(context)
                   ..uploadTransformationJourneyContent(
                       uploadedFrom: DeviceContentFrom.gallery);
+                Navigator.pop(context);
                 AppModal.dialogContent(
                     context: context,
                     content: [UploadingModalLoader(widget.contentFrom)]);

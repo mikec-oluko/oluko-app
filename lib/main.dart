@@ -119,6 +119,7 @@ class _MyAppState extends State<MyApp> {
             newRoute = MultiBlocProvider(providers: [
               BlocProvider.value(value: _authBloc),
               BlocProvider.value(value: _profileBloc),
+              BlocProvider.value(value: _transformationJourneyBloc),
             ], child: ProfileMyAccountPage());
             break;
           case '/profile-subscription':
@@ -147,6 +148,7 @@ class _MyAppState extends State<MyApp> {
             newRoute = MultiBlocProvider(providers: [
               BlocProvider.value(value: _authBloc),
               BlocProvider.value(value: _transformationJourneyBloc),
+              BlocProvider.value(value: _profileBloc),
               BlocProvider(create: (context) => CourseBloc()),
               BlocProvider(create: (context) => AssessmentBloc()),
               BlocProvider(create: (context) => TaskSubmissionBloc()),

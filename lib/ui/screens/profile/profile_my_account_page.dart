@@ -118,6 +118,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
                           icon: Icon(Icons.linked_camera_outlined,
                               color: OlukoColors.white),
                           onPressed: () {
+                            Navigator.pop(context);
                             AppModal.dialogContent(context: context, content: [
                               BlocProvider.value(
                                 value: BlocProvider.of<ProfileBloc>(context),

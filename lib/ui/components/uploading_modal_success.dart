@@ -65,27 +65,20 @@ class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
                                     UploadFrom.profileImage) {
                                   BlocProvider.of<ProfileBloc>(context)
                                     ..resetUploadStatus();
-                                  //TODO: Check provider
                                   BlocProvider.of<AuthBloc>(context)
                                     ..checkCurrentUser();
-                                  // Navigator.pop(context);
+                                  Navigator.pop(context);
 
-                                  Navigator.popUntil(
-                                      context,
-                                      ModalRoute.withName(
-                                          returnRouteToGo(widget.goToPage)));
+                                  Navigator.popAndPushNamed(context,
+                                      returnRouteToGo(widget.goToPage));
                                 }
                                 if (widget.goToPage ==
                                     UploadFrom.transformationJourney) {
                                   BlocProvider.of<TransformationJourneyBloc>(
                                       context)
                                     ..resetUploadStatus();
-
-                                  //TODO: Check Navigator.pop(context);  and if navigation is T.Y. Gallery updated.
-                                  Navigator.popUntil(
-                                      context,
-                                      ModalRoute.withName(
-                                          returnRouteToGo(widget.goToPage)));
+                                  Navigator.popAndPushNamed(context,
+                                      returnRouteToGo(widget.goToPage));
                                 }
                               }),
                         ],
