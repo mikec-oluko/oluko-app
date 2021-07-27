@@ -20,7 +20,7 @@ import 'movement_intro.dart';
 
 class SegmentDetail extends StatefulWidget {
   SegmentDetail(
-      {this.segment,
+      {this.segments,
       this.courseEnrollment,
       this.segmentIndex,
       this.classIndex,
@@ -28,7 +28,7 @@ class SegmentDetail extends StatefulWidget {
       Key key})
       : super(key: key);
 
-  Segment segment;
+  List<Segment> segments;
   CourseEnrollment courseEnrollment;
   int segmentIndex;
   int classIndex;
@@ -60,7 +60,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
     return MultiBlocProvider(
         providers: [
           BlocProvider<MovementBloc>(
-            create: (context) => _movementBloc..getAll(widget.segment),
+            create: (context) => _movementBloc..getAll(widget.segments[widget.segmentIndex]),
           )
         ],
         child:
@@ -91,7 +91,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
                 colorFilter: ColorFilter.mode(
                     Colors.black.withOpacity(0.85), BlendMode.darken),
                 fit: BoxFit.cover,
-                image: NetworkImage(widget.segment.image))),
+                image: NetworkImage(widget.segments[widget.segmentIndex].image))),
         width: ScreenUtils.width(context),
         height: ScreenUtils.height(context) - toolbarHeight,
         child: _viewBody(),
@@ -114,12 +114,12 @@ class _SegmentDetailState extends State<SegmentDetail> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        MovementUtils.movementTitle(widget.segment.name),
+                        MovementUtils.movementTitle(widget.segments[widget.segmentIndex].name),
                         SizedBox(height: 25),
                         MovementUtils.description(
-                            widget.segment.description, context),
+                            widget.segments[widget.segmentIndex].description, context),
                         SizedBox(height: 25),
-                        MovementUtils.workout(widget.segment, context),
+                        MovementUtils.workout(widget.segments[widget.segmentIndex], context),
                       ],
                     ),
                   )
@@ -240,7 +240,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
                     courseEnrollment: widget.courseEnrollment,
                     segmentIndex: widget.segmentIndex,
                     classIndex: widget.classIndex,
-                    segment: widget.segment))));
+                    segments: widget.segments))));
   }
 
   List<Widget> _confirmDialogContent() {

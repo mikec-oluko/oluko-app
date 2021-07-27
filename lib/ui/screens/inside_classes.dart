@@ -204,7 +204,7 @@ class _InsideClassesState extends State<InsideClasses> {
                     MaterialPageRoute(
                         builder: (context) => SegmentDetail(
                             user: widget.user,
-                            segment: segments[segmentIndex],
+                            segments: segments,
                             segmentIndex: segmentIndex,
                             classIndex: widget.classIndex,
                             courseEnrollment: widget.courseEnrollment)));
