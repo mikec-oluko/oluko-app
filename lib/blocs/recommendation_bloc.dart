@@ -44,4 +44,34 @@ class RecommendationBloc extends Cubit<RecommendationState> {
       emit(Failure(exception: e));
     }
   }
+
+  void getRecommendedCoursesByUser(String userId) async {
+    try {
+      List<Recommendation> recommendations =
+          await RecommendationRepository().getByDestinationUser(userId);
+
+      List<Recommendation> courseRecommendations = recommendations
+          .where((Recommendation element) =>
+              element.typeId == RecommendationEntityType.course.index)
+          .toList();
+
+      Map<String, List<String>> coursesRecommendedByUsers = {};
+
+      courseRecommendations.forEach((Recommendation recommendation) {
+        if (coursesRecommendedByUsers[recommendation.entityId] == null) {
+          coursesRecommendedByUsers[recommendation.entityId] = [
+            recommendation.originUserId
+          ];
+        } else {
+          coursesRecommendedByUsers[recommendation.entityId]
+              .add(recommendation.originUserId);
+        }
+      });
+
+      emit(RecommendationSuccess(recommendations: recommendations));
+    } catch (e) {
+      print(e.toString());
+      emit(Failure(exception: e));
+    }
+  }
 }
