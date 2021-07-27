@@ -25,10 +25,18 @@ class ImageUtils {
   }
 
   ///Generate a thumbnail for an Image with the specified width & height.
-  Future<Image> getThumbnailForImage(
-      PickedFile image, int width, int height) async {
+  Future<String> getThumbnailForImage(PickedFile image, int width,
+      {int height}) async {
+    Image.file(File(image.path));
+    if (height == null) {
+      var decodedImage =
+          await decodeImageFromList(File(image.path).readAsBytesSync());
+      double aspectRatio = decodedImage.width / decodedImage.height;
+      //The operator '~/' get the closest int to the operation
+      height = (width ~/ aspectRatio);
+    }
     String thumbnailPath =
         await EncodingProvider.getImageThumb(image.path, width, height);
-    return Image.file(File(thumbnailPath));
+    return thumbnailPath;
   }
 }

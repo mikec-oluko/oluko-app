@@ -41,6 +41,9 @@ class CourseRepository {
 
   static Future<CourseStatistics> getStatistics(
       DocumentReference reference) async {
+    if (reference == null) {
+      return null;
+    }
     DocumentSnapshot docRef = await reference.get();
     return CourseStatistics.fromJson(docRef.data());
   }
