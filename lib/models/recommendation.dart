@@ -12,7 +12,7 @@ class Recommendation {
   String originUserId;
   String destinationUserId;
   String entityId;
-  RecommendationEntityType typeId;
+  num typeId;
 
   Recommendation.fromJson(Map json)
       : id = json['id'],
