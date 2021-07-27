@@ -96,5 +96,8 @@
     "processingVideo": "Procesando video",
     "completed": "Completo",
     "uploadedWithErrors": "El segmento fue subido con errores",
-    "uploadedSuccessfully": "El segmento fue subido con éxito"
+    "uploadedSuccessfully": "El segmento fue subido con éxito",
+    "challengesCompleted": "Desafios Completados",
+    "coursesCompleted": "Cursos Completados",
+    "ClassesCompleted": "Clases Completadas"
 }

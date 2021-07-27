@@ -41,7 +41,7 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
         future: _getProfileInfo(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            _requestViewData(context, _profileInfo);
+            // _requestViewData(context, _profileInfo);
             return _buildOwnProfileView(context, _profileInfo);
           } else {
             return SizedBox();
@@ -50,8 +50,6 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
   }
 
   void _requestViewData(BuildContext context, UserResponse profileInfo) {
-    //TODO: Call once to get courseEnrollments List
-
     // BlocProvider.of<CourseEnrollmentBloc>(context)
     // .getCourseEnrollmentsByUserId(profileInfo.id);
 
@@ -64,46 +62,58 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
     BlocProvider.of<TransformationJourneyBloc>(context)
         .getContentByUserName(profileInfo.username);
 
-    //TODO: Get content when save is ok
     // BlocProvider.of<TaskSubmissionBloc>(context)
     //     .getTaskSubmissionByUserId(profileInfo.id);
   }
 
   _buildOwnProfileView(BuildContext context, UserResponse profileInfo) {
     return Scaffold(
-      body: Container(
-        color: OlukoColors.black,
-        child: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(children: [
-              ListTile(
-                leading: Transform.translate(
-                  offset: Offset(-20, 0),
-                  child: IconButton(
-                    icon: Icon(
-                      Icons.chevron_left,
-                      size: 35,
-                      color: OlukoColors.white,
-                    ),
-                    //TODO: PUSHNAMED
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ),
-                title: Transform.translate(
-                    offset: Offset(-40, 0),
-                    child:
-                        UserProfileInformation(userInformation: profileInfo)),
-              ),
-              _challengesAndFriendsSection(
-                  ProfileViewConstants.profileChallengesContent,
-                  ProfileViewConstants.profileFriendsContent),
-              _buildAssessmentVideosSection(),
-              _buildTransformationJourneySection(),
-              _buildCourseSectionView(),
-              _buildChallengeSection()
-            ]),
+      backgroundColor: Colors.black,
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        elevation: 0.0,
+        backgroundColor: Colors.transparent,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.white,
           ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
+      ),
+      body: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height / 3,
+            child: Image.asset(
+              'assets/login/sign_up_splash_screen.png',
+              fit: BoxFit.cover,
+              colorBlendMode: BlendMode.colorBurn,
+              height: MediaQuery.of(context).size.height,
+            ),
+          ),
+          Positioned(
+            top: MediaQuery.of(context).size.height / 4,
+            child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height / 3.5,
+                child: UserProfileInformation(userInformation: profileInfo)),
+          ),
+          Container(
+            child: ListView(
+              children: [
+                _buildAssessmentVideosSection(),
+                _buildTransformationJourneySection(),
+                _buildCourseSectionView(),
+                _buildChallengeSection()
+              ],
+            ),
+          )
+        ],
       ),
     );
   }
@@ -111,7 +121,7 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
   UserProfileProgress _challengesAndFriendsSection(
       String userChallenges, String userFriends) {
     return UserProfileProgress(
-        userChallenges: userChallenges, userFriends: userFriends);
+        challengesCompleted: userChallenges, coursesCompleted: userFriends);
   }
 
   _buildAssessmentVideosSection() {

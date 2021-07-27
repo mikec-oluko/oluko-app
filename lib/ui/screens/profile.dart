@@ -80,9 +80,6 @@ class _ProfilePageState extends State<ProfilePage> {
                           context, ProfileRoutes.userInformationRoute)
                       .then((value) => onGoBack()),
                   child: UserProfileInformation(userInformation: profileInfo)),
-              // UserProfileProgress(
-              //     userChallenges: ProfileViewConstants.profileChallengesContent,
-              //     userFriends: ProfileViewConstants.profileFriendsContent)
             ],
           )
         : returnWidget = Center(child: OlukoErrorMessage());
@@ -92,7 +89,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Padding buildOptionsList() {
     return Padding(
-      padding: const EdgeInsets.only(top: 150),
+      padding: const EdgeInsets.only(top: 175),
       child: ListView.builder(
           itemCount: ProfileViewConstants.profileOptions.length,
           itemBuilder: (_, index) =>
