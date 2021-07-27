@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/models/user_response.dart';
-import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 
 class UserProfileInformation extends StatelessWidget {
   final UserResponse userInformation;
@@ -20,10 +18,11 @@ class UserProfileInformation extends StatelessWidget {
           children: [
             Padding(
                 padding: const EdgeInsets.fromLTRB(5, 5, 10, 5),
-                child: userInformation.avatar != null
+                child: userInformation.avatarThumbnail != null
                     ? CircleAvatar(
                         backgroundColor: OlukoColors.white,
-                        backgroundImage: NetworkImage(userInformation.avatar),
+                        backgroundImage:
+                            NetworkImage(userInformation.avatarThumbnail),
                         radius: 30.0,
                       )
                     : CircleAvatar(

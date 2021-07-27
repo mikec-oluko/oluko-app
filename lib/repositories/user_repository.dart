@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/helpers/s3_provider.dart';
 import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/utils/image_utils.dart';
 import 'package:path/path.dart' as p;
 
 import 'auth_repository.dart';
@@ -78,8 +79,13 @@ class UserRepository {
         .collection('users')
         .doc(user.username);
 
+    final thumbnail = await ImageUtils().getThumbnailForImage(file, 250);
+    final thumbNailUrl =
+        await _uploadFile(thumbnail, '${userReference.path}/thumbnails');
+
     final downloadUrl = await _uploadFile(file.path, userReference.path);
     user.avatar = downloadUrl;
+    user.avatarThumbnail = thumbNailUrl;
     try {
       await userReference.update(user.toJson());
       AuthRepository().storeLoginData(user);

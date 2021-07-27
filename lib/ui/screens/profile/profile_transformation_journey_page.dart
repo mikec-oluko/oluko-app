@@ -27,7 +27,6 @@ class ProfileTransformationJourneyPage extends StatefulWidget {
 class _ProfileTransformationJourneyPageState
     extends State<ProfileTransformationJourneyPage> {
   List<Widget> _contentGallery;
-  String _titleForContent = "Uploaded 0 Images & 0 Videos";
   List<TransformationJourneyUpload> _transformationJourneyContent = [];
   UserResponse _profileInfo;
 
@@ -57,8 +56,6 @@ class _ProfileTransformationJourneyPageState
                   _transformationJourneyContent = state.contentFromUser;
                   _contentGallery = buildContentGallery(
                       uploadListContent: _transformationJourneyContent);
-                  _titleForContent = getTitleForContent(
-                      uploadListContent: _transformationJourneyContent);
                 }
               },
               builder: (context, state) {
@@ -85,8 +82,6 @@ class _ProfileTransformationJourneyPageState
                 if (state is TransformationJourneySuccess) {
                   _transformationJourneyContent = state.contentFromUser;
                   _contentGallery = buildContentGallery(
-                      uploadListContent: _transformationJourneyContent);
-                  _titleForContent = getTitleForContent(
                       uploadListContent: _transformationJourneyContent);
                 }
               },
@@ -124,13 +119,6 @@ class _ProfileTransformationJourneyPageState
                                   ],
                                 ),
                               ))),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(10, 100, 10, 0),
-                        child: Align(
-                            alignment: Alignment.topLeft,
-                            child: Text(_titleForContent,
-                                style: OlukoFonts.olukoBigFont())),
-                      ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(10, 150, 10, 0),
                         child: _contentGallery.length != 0
@@ -174,15 +162,6 @@ class _ProfileTransformationJourneyPageState
               .add(_getImageAndVideoCard(transformationJourneyContent: content))
         });
     return widgetListOfContentTempt;
-  }
-
-  String getTitleForContent(
-      {List<TransformationJourneyUpload> uploadListContent}) {
-    int _videos = 0;
-    int _images = 0;
-    uploadListContent.forEach((content) =>
-        content.type == FileTypeEnum.video ? _videos += 1 : _images += 1);
-    return "Uploaded $_images Images & $_videos Videos";
   }
 
   Future<void> _requestTransformationJourneyData(
