@@ -5,13 +5,13 @@ import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'movement_item_bubbles.dart';
 
-class ClassSection extends StatefulWidget {
+class CourseSegmentSection extends StatefulWidget {
   final Function() onPressed;
   final String segmentName;
   final List<Movement> movements;
   final Function(BuildContext, Movement) onPressedMovement;
 
-  ClassSection(
+  CourseSegmentSection(
       {this.onPressed,
       this.movements,
       this.onPressedMovement,
@@ -21,7 +21,7 @@ class ClassSection extends StatefulWidget {
   _State createState() => _State();
 }
 
-class _State extends State<ClassSection> {
+class _State extends State<CourseSegmentSection> {
   @override
   Widget build(BuildContext context) {
     return Container(
