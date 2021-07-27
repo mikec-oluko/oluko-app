@@ -60,31 +60,34 @@ class _State extends State<CourseCard> {
         ? userRecommendationImageUrls
         : userRecommendationImageUrls.sublist(0, 3);
 
-    return Stack(
-        alignment: Alignment.bottomRight,
-        children: userImageList
-            .asMap()
-            .map((index, userUrl) => MapEntry(
-                Positioned(
-                  //Expression to overlap user avatars to a max of 3 items.
-                  right: (index +
-                          (userRecommendationImageUrls.length <= 3 ? 0 : 1)) *
-                      (userRadius / 1.5),
-                  child: CircleAvatar(
-                    minRadius: userRadius,
-                    backgroundImage: NetworkImage(userUrl),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 1.0),
+      child: Stack(
+          alignment: Alignment.bottomRight,
+          children: userImageList
+              .asMap()
+              .map((index, userUrl) => MapEntry(
+                  Positioned(
+                    //Expression to overlap user avatars to a max of 3 items.
+                    right: (index +
+                            (userRecommendationImageUrls.length <= 3 ? 0 : 1)) *
+                        (userRadius / 1.5),
+                    child: CircleAvatar(
+                      minRadius: userRadius,
+                      backgroundImage: NetworkImage(userUrl),
+                    ),
                   ),
-                ),
-                index))
-            .keys
-            .toList()
-              ..add(Positioned(
-                right: 0,
-                child: Text(
-                  //Show ellipsis if there are more than 3 user avatars
-                  userRecommendationImageUrls.length > 3 ? '...' : '',
-                  style: TextStyle(color: Colors.white),
-                ),
-              )));
+                  index))
+              .keys
+              .toList()
+                ..add(Positioned(
+                  right: 0,
+                  child: Text(
+                    //Show ellipsis if there are more than 3 user avatars
+                    userRecommendationImageUrls.length > 3 ? '...' : '',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ))),
+    );
   }
 }
