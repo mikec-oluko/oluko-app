@@ -80,9 +80,9 @@ class _ProfilePageState extends State<ProfilePage> {
                           context, ProfileRoutes.userInformationRoute)
                       .then((value) => onGoBack()),
                   child: UserProfileInformation(userInformation: profileInfo)),
-              UserProfileProgress(
-                  userChallenges: ProfileViewConstants.profileChallengesContent,
-                  userFriends: ProfileViewConstants.profileFriendsContent)
+              // UserProfileProgress(
+              //     userChallenges: ProfileViewConstants.profileChallengesContent,
+              //     userFriends: ProfileViewConstants.profileFriendsContent)
             ],
           )
         : returnWidget = Center(child: OlukoErrorMessage());

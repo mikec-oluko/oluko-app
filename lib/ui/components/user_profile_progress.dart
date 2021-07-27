@@ -16,17 +16,20 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 10.0),
-      child: IntrinsicHeight(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            profileAccomplishments(ProfileViewConstants.profileChallengesTitle,
-                widget.userChallenges),
-            VerticalDivider(color: OlukoColors.grayColor),
-            profileAccomplishments(
-                ProfileViewConstants.profileFriendsTitle, widget.userFriends),
-          ],
+      child: Container(
+        child: IntrinsicHeight(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              profileAccomplishments(
+                  ProfileViewConstants.profileChallengesTitle,
+                  widget.userChallenges),
+              VerticalDivider(color: OlukoColors.grayColor),
+              profileAccomplishments(
+                  ProfileViewConstants.profileFriendsTitle, widget.userFriends),
+            ],
+          ),
         ),
       ),
     );
