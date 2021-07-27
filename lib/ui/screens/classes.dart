@@ -9,7 +9,8 @@ import 'package:oluko_app/blocs/class_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/statistics_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
-import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/constants/Theme.dart';
+
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
@@ -19,7 +20,6 @@ import 'package:oluko_app/ui/components/class_section.dart';
 import 'package:oluko_app/ui/components/course_progress_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/statistics_chart.dart';
-import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/screens/inside_classes.dart';
 import 'package:oluko_app/utils/movement_utils.dart';
@@ -127,9 +127,11 @@ class _ClassesState extends State<Classes> {
                                     value: enrollmentState
                                         .courseEnrollment.completion)
                                 : SizedBox(),
+                            showButton(enrollmentState.courseEnrollment,
+                                context, user, course, classState.classes),
                             Padding(
                                 padding: EdgeInsets.only(
-                                    right: 15, left: 15, top: 25),
+                                    right: 15, left: 15, top: 0),
                                 child: Container(
                                     width: MediaQuery.of(context).size.width,
                                     child: Column(
@@ -202,10 +204,14 @@ class _ClassesState extends State<Classes> {
                                           Padding(
                                             padding: const EdgeInsets.only(
                                                 top: 25.0),
-                                            child: TitleBody(
-                                                OlukoLocalizations.of(context)
-                                                    .find('classes'),
-                                                bold: true),
+                                            child: Text(
+                                              OlukoLocalizations.of(context)
+                                                  .find('classes'),
+                                              style:
+                                                  OlukoFonts.olukoSubtitleFont(
+                                                      custoFontWeight:
+                                                          FontWeight.bold),
+                                            ),
                                           ),
                                           Column(
                                             children: [
@@ -254,19 +260,6 @@ class _ClassesState extends State<Classes> {
                               height: 150,
                             )
                           ]),
-                          Positioned(
-                              bottom: 0,
-                              left: 0,
-                              right: 0,
-                              child: Container(
-                                color: Colors.black,
-                                child: showButton(
-                                    enrollmentState.courseEnrollment,
-                                    context,
-                                    user,
-                                    course,
-                                    classState.classes),
-                              )),
                         ],
                       ))));
         } else {

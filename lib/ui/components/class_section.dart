@@ -55,17 +55,16 @@ class _State extends State<ClassSection> {
                             padding: const EdgeInsets.all(15.0),
                             child: Text(
                               widget.classObj.name,
-                              style: TextStyle(
-                                  fontSize: 22,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold),
+                              style: OlukoFonts.olukoSuperBigFont(
+                                  custoFontWeight: FontWeight.bold),
                             ),
                           ),
                           widget.classProgresss > 0
                               ? Padding(
                                   padding: const EdgeInsets.only(
                                       left: 15.0, right: 160.0),
-                                  child: CourseProgressBar(value: widget.classProgresss))
+                                  child: CourseProgressBar(
+                                      value: widget.classProgresss))
                               : SizedBox()
                         ],
                       ),
