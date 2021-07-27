@@ -26,6 +26,11 @@ class _ProfilePageState extends State<ProfilePage> {
   bool _isTesting = false;
   UserResponse profileInfo;
   final String profileTitle = ProfileViewConstants.profileTitle;
+  @override
+  void initState() {
+    BlocProvider.of<AuthBloc>(context).checkCurrentUser();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -142,7 +147,9 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   onGoBack() {
-    setState(() {});
+    setState(() {
+      BlocProvider.of<AuthBloc>(context).checkCurrentUser();
+    });
   }
 
   handleError(AsyncSnapshot snapshot) {}
@@ -151,14 +158,5 @@ class _ProfilePageState extends State<ProfilePage> {
     SchedulerBinding.instance.addPostFrameCallback((_) {
       ProfileRoutes.returnToHome(context: context);
     });
-  }
-
-  Future<void> getProfileInfo() async {
-    UserResponse user = (await AuthBloc().retrieveLoginData());
-    if (user != null) {
-      profileInfo = UserResponse.fromJson(user.toJson());
-      return profileInfo;
-    }
-    return null;
   }
 }
