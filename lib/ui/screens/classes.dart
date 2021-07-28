@@ -14,10 +14,13 @@ import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/services/course_enrollment_service.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
+import 'package:oluko_app/ui/components/class_expansion_panel.dart';
 import 'package:oluko_app/ui/components/class_section.dart';
 import 'package:oluko_app/ui/components/course_progress_bar.dart';
+import 'package:oluko_app/ui/components/course_segment_section.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/statistics_chart.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
@@ -122,11 +125,11 @@ class _ClassesState extends State<Classes> {
                                 },
                               ),
                             ),
-                            existsEnrollment
+                            /*existsEnrollment
                                 ? CourseProgressBar(
                                     value: enrollmentState
                                         .courseEnrollment.completion)
-                                : SizedBox(),
+                                : SizedBox(),*/
                             showButton(enrollmentState.courseEnrollment,
                                 context, user, course, classState.classes),
                             Padding(
@@ -213,7 +216,9 @@ class _ClassesState extends State<Classes> {
                                                           FontWeight.bold),
                                             ),
                                           ),
-                                          Column(
+                                          ClassExpansionPanel(
+                                              classes: classState.classes),
+                                          /*Column(
                                             children: [
                                               ListView.builder(
                                                   physics:
@@ -242,6 +247,9 @@ class _ClassesState extends State<Classes> {
                                                         child: ClassSection(
                                                           classProgresss:
                                                               classProgress,
+                                                          index: index,
+                                                          total: classState
+                                                              .classes.length,
                                                           classObj: classObj,
                                                           onPressed: () {
                                                             if (!existsEnrollment) {
@@ -254,7 +262,7 @@ class _ClassesState extends State<Classes> {
                                                         ));
                                                   }),
                                             ],
-                                          )
+                                          )*/
                                         ]))),
                             SizedBox(
                               height: 150,
@@ -271,7 +279,27 @@ class _ClassesState extends State<Classes> {
 
   Widget showButton(CourseEnrollment courseEnrollment, BuildContext context,
       User user, Course course, List<Class> classes) {
-    String buttonText;
+    return courseEnrollment == null
+        ? Padding(
+            padding: EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                OlukoPrimaryButton(
+                  title: OlukoLocalizations.of(context).find('enroll'),
+                  onPressed: () {
+                    _courseEnrollmentBloc..create(user, course);
+
+                    Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
+                  },
+                ),
+              ],
+            ))
+        : SizedBox(
+            height: 15,
+          );
+
+    /*String buttonText;
     int index;
     double classProgress;
 
@@ -314,7 +342,7 @@ class _ClassesState extends State<Classes> {
                   },
                 ),
               ],
-            ));
+            ));*/
   }
 
   Widget showVideoPlayer(String videoUrl) {
