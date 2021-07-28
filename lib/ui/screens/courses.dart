@@ -4,12 +4,14 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
+import 'package:oluko_app/blocs/recommendation_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/base.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/search_results.dart';
 import 'package:oluko_app/models/tag.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/course_card.dart';
@@ -252,35 +254,37 @@ class _State extends State<Courses> {
   }
 
   _friendsRecommendedSection(courseState) {
-    return CarouselSection(
-      title: 'Friends Recommended',
-      height: carouselSectionHeight + 10,
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: _getCourseCard(
-              _generateImageCourse(courseState.values[0].imageUrl),
-              width: ScreenUtils.width(context) / (0.2 + _cardsToShow()),
-              userRecommendationsAvatarUrls: userRecommendationsAvatarUrls),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: _getCourseCard(
-              _generateImageCourse(courseState.values[1].imageUrl),
-              width: ScreenUtils.width(context) / (0.2 + _cardsToShow()),
-              userRecommendationsAvatarUrls:
-                  userRecommendationsAvatarUrls.sublist(1)),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: _getCourseCard(
-              _generateImageCourse(courseState.values[2].imageUrl),
-              width: ScreenUtils.width(context) / (0.2 + _cardsToShow()),
-              userRecommendationsAvatarUrls:
-                  userRecommendationsAvatarUrls.sublist(2)),
-        ),
-      ],
-    );
+    return BlocBuilder<RecommendationBloc, RecommendationState>(
+        bloc: RecommendationBloc()
+          ..getRecommendedCoursesByUser('F8qfbo1lNWQtoEkZuso6zWeG4f23'),
+        builder: (context, recommendationState) {
+          return recommendationState is RecommendationSuccess &&
+                  courseState is CourseSuccess
+              ? CarouselSection(
+                  title: 'Friends Recommended',
+                  height: carouselSectionHeight + 10,
+                  children: recommendationState.recommendationsByUsers.entries
+                      .map((MapEntry<String, List<UserResponse>> courseEntry) {
+                    final course = courseState.values
+                        .where((element) => element.id == courseEntry.key)
+                        .toList()[0];
+
+                    final List<String> userRecommendationAvatars =
+                        courseEntry.value.map((user) => user.avatar).toList();
+
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: _getCourseCard(
+                          _generateImageCourse(course.imageUrl),
+                          width: ScreenUtils.width(context) /
+                              (0.2 + _cardsToShow()),
+                          userRecommendationsAvatarUrls:
+                              userRecommendationAvatars),
+                    );
+                  }).toList(),
+                )
+              : SizedBox();
+        });
   }
 
   _generateImageCourse(String imageUrl) {
