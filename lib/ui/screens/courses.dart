@@ -257,14 +257,14 @@ class _State extends State<Courses> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: _getCourseCard(
-              _generateImageCourse(courseState.values[0].imageUrl),
+              _generateImageCourse(courseState.values[0].image),
               width: ScreenUtils.width(context) / (0.2 + _cardsToShow()),
               userRecommendationsAvatarUrls: userRecommendationsAvatarUrls),
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: _getCourseCard(
-              _generateImageCourse(courseState.values[1].imageUrl),
+              _generateImageCourse(courseState.values[1].image),
               width: ScreenUtils.width(context) / (0.2 + _cardsToShow()),
               userRecommendationsAvatarUrls:
                   userRecommendationsAvatarUrls.sublist(1)),
@@ -272,7 +272,7 @@ class _State extends State<Courses> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: _getCourseCard(
-              _generateImageCourse(courseState.values[2].imageUrl),
+              _generateImageCourse(courseState.values[2].image),
               width: ScreenUtils.width(context) / (0.2 + _cardsToShow()),
               userRecommendationsAvatarUrls:
                   userRecommendationsAvatarUrls.sublist(2)),
@@ -281,9 +281,9 @@ class _State extends State<Courses> {
     );
   }
 
-  _generateImageCourse(String imageUrl) {
+  _generateImageCourse(String image) {
     return Image.network(
-      imageUrl,
+      image,
       fit: BoxFit.cover,
       frameBuilder: (BuildContext context, Widget child, int frame,
               bool wasSynchronouslyLoaded) =>
