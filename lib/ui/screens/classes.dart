@@ -43,16 +43,10 @@ class Classes extends StatefulWidget {
 class _ClassesState extends State<Classes> {
   final _formKey = GlobalKey<FormState>();
   ChewieController _controller;
-  ClassBloc _classBloc;
-  StatisticsBloc _statisticsBloc;
-  CourseEnrollmentBloc _courseEnrollmentBloc;
 
   @override
   void initState() {
     super.initState();
-    _classBloc = ClassBloc();
-    _statisticsBloc = StatisticsBloc();
-    _courseEnrollmentBloc = CourseEnrollmentBloc();
   }
 
   @override
@@ -61,19 +55,20 @@ class _ClassesState extends State<Classes> {
       if (authState is AuthSuccess) {
         return MultiBlocProvider(providers: [
           BlocProvider<ClassBloc>(
-            create: (context) => _classBloc..getAll(widget.course),
+            create: (context) =>
+                BlocProvider.of<ClassBloc>(context)..getAll(widget.course),
           ),
           BlocProvider<StatisticsBloc>(
-            create: (context) =>
-                _statisticsBloc..get(widget.course.statisticsReference),
+            create: (context) => BlocProvider.of<StatisticsBloc>(context)
+              ..get(widget.course.statisticsReference),
           ),
           BlocProvider<CourseEnrollmentBloc>(
-            create: (context) => _courseEnrollmentBloc
+            create: (context) => BlocProvider.of<CourseEnrollmentBloc>(context)
               ..get(authState.firebaseUser, widget.course),
           ),
         ], child: form(authState.firebaseUser));
       } else {
-        return Text("Not logged user.");
+        return SizedBox();
       }
     });
   }
@@ -276,8 +271,8 @@ class _ClassesState extends State<Classes> {
                 OlukoPrimaryButton(
                   title: OlukoLocalizations.of(context).find('enroll'),
                   onPressed: () {
-                    _courseEnrollmentBloc..create(user, course);
-
+                    BlocProvider.of<CourseEnrollmentBloc>(context)
+                      ..create(user, course);
                     Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
                   },
                 ),

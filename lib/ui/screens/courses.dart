@@ -22,6 +22,8 @@ import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
+import '../../routes.dart';
+
 class Courses extends StatefulWidget {
   Courses({Key key}) : super(key: key);
 
@@ -170,18 +172,9 @@ class _State extends State<Courses> {
                       .map((course) => Padding(
                             padding: const EdgeInsets.only(right: 8.0),
                             child: GestureDetector(
-                              onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          BlocProvider<AuthBloc>(
-                                            create: (context) =>
-                                                BlocProvider.of<AuthBloc>(
-                                                    mainContext),
-                                            child: Classes(
-                                                course:
-                                                    course),
-                                          ))),
+                              onTap: () => Navigator.pushNamed(
+                                  context, routeLabels[RouteEnum.classes],
+                                  arguments: {'course': course}),
                               child: _getCourseCard(
                                   _generateImageCourse(course.image),
                                   width: ScreenUtils.width(context) /

@@ -4,10 +4,12 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/class_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/friend_bloc.dart';
 import 'package:oluko_app/blocs/profile_bloc.dart';
+import 'package:oluko_app/blocs/statistics_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/blocs/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
@@ -35,6 +37,7 @@ import 'package:oluko_app/ui/screens/sign_up.dart';
 import 'package:oluko_app/ui/screens/sign_up_with_email.dart';
 import 'package:oluko_app/ui/screens/task_details.dart';
 import 'package:oluko_app/ui/screens/videos/home.dart';
+import 'models/course.dart';
 import 'models/task.dart';
 
 enum RouteEnum {
@@ -109,6 +112,8 @@ class Routes {
   final CourseEnrollmentBloc _courseEnrollmentBloc = CourseEnrollmentBloc();
   final TransformationJourneyBloc _transformationJourneyBloc =
       TransformationJourneyBloc();
+  final ClassBloc _classBloc = ClassBloc();
+  final StatisticsBloc _statisticsBloc = StatisticsBloc();
 
   getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -217,7 +222,14 @@ class Routes {
         newRouteView = SegmentRecording();
         break;
       case RouteEnum.classes:
-        newRouteView = Classes();
+        providers = [
+          BlocProvider<ClassBloc>.value(value: _classBloc),
+          BlocProvider<StatisticsBloc>.value(value: _statisticsBloc),
+          BlocProvider<CourseEnrollmentBloc>.value(
+              value: _courseEnrollmentBloc),
+        ];
+        final Map<String, Course> argumentsToAdd = arguments;
+        newRouteView = Classes(course: argumentsToAdd['course']);
         break;
       case RouteEnum.assessmentVideos:
         newRouteView = AssessmentVideos();
