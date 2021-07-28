@@ -1,14 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/profile_bloc.dart';
 import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/user_profile_progress.dart';
+import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
+import 'package:oluko_app/utils/app_modal.dart';
 import 'package:oluko_app/utils/container_grediant.dart';
 
-class UserProfileInformation extends StatelessWidget {
+import 'modal_upload_options.dart';
+
+class UserProfileInformation extends StatefulWidget {
   final UserResponse userInformation;
+  final Function() onPressed;
 
-  const UserProfileInformation({this.userInformation}) : super();
+  const UserProfileInformation({this.userInformation, this.onPressed})
+      : super();
 
+  @override
+  _UserProfileInformationState createState() => _UserProfileInformationState();
+}
+
+class _UserProfileInformationState extends State<UserProfileInformation> {
   @override
   Widget build(BuildContext context) {
     final String _locationDemo = "San Francisco, CA USA";
@@ -29,6 +42,8 @@ class UserProfileInformation extends StatelessWidget {
 
   Widget _profileUserInformation(
       String location, List<String> valuesForArchivements) {
+    final bool _isOwnProfile = true;
+
     return Column(
       children: [
         //PROFILE IMAGE AND INFO
@@ -39,15 +54,45 @@ class UserProfileInformation extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                userInformation.avatarThumbnail != null
+                widget.userInformation.avatarThumbnail != null
                     ? Padding(
                         padding: const EdgeInsets.all(5.0),
-                        child: CircleAvatar(
-                          backgroundColor: OlukoColors.white,
-                          backgroundImage:
-                              NetworkImage(userInformation.avatarThumbnail),
-                          radius: 30.0,
-                        ),
+                        child: Stack(clipBehavior: Clip.none, children: [
+                          CircleAvatar(
+                            backgroundColor: OlukoColors.white,
+                            backgroundImage: NetworkImage(
+                                widget.userInformation.avatarThumbnail),
+                            radius: 30.0,
+                          ),
+                          Visibility(
+                            visible: _isOwnProfile,
+                            child: Positioned(
+                              top: 25,
+                              right: -12,
+                              child: Container(
+                                clipBehavior: Clip.none,
+                                width: 40,
+                                height: 40,
+                                child: TextButton(
+                                    onPressed: () {
+                                      AppModal.dialogContent(
+                                          context: context,
+                                          content: [
+                                            BlocProvider.value(
+                                              value:
+                                                  BlocProvider.of<ProfileBloc>(
+                                                      context),
+                                              child: ModalUploadOptions(
+                                                  UploadFrom.profileImage),
+                                            )
+                                          ]);
+                                    },
+                                    child: Image.asset(
+                                        'assets/profile/uploadImage.png')),
+                              ),
+                            ),
+                          )
+                        ]),
                       )
                     : Padding(
                         padding: const EdgeInsets.all(5.0),
@@ -70,7 +115,7 @@ class UserProfileInformation extends StatelessWidget {
                               child: Row(
                                 children: [
                                   Text(
-                                    this.userInformation.firstName,
+                                    this.widget.userInformation.firstName,
                                     style: OlukoFonts.olukoBigFont(
                                         customColor: OlukoColors.primary,
                                         custoFontWeight: FontWeight.w500),
@@ -79,7 +124,7 @@ class UserProfileInformation extends StatelessWidget {
                                     width: 5.0,
                                   ),
                                   Text(
-                                    this.userInformation.lastName,
+                                    this.widget.userInformation.lastName,
                                     style: OlukoFonts.olukoBigFont(
                                         customColor: OlukoColors.primary,
                                         custoFontWeight: FontWeight.w500),
@@ -96,8 +141,9 @@ class UserProfileInformation extends StatelessWidget {
                                 child: Row(
                                   children: [
                                     Text(
-                                      this.userInformation.username,
+                                      this.widget.userInformation.username,
                                       style: OlukoFonts.olukoMediumFont(
+                                          customColor: OlukoColors.grayColor,
                                           custoFontWeight: FontWeight.w300),
                                     ),
                                     VerticalDivider(
@@ -105,6 +151,7 @@ class UserProfileInformation extends StatelessWidget {
                                     Text(
                                       location,
                                       style: OlukoFonts.olukoMediumFont(
+                                          customColor: OlukoColors.grayColor,
                                           custoFontWeight: FontWeight.w300),
                                     ),
                                   ],

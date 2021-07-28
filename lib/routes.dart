@@ -24,7 +24,7 @@ import 'package:oluko_app/ui/screens/profile.dart';
 import 'package:oluko_app/ui/screens/profile/profile_challenges_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_help_and_support_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_my_account_page.dart';
-import 'package:oluko_app/ui/screens/profile/profile_own_profile_page.dart';
+import 'package:oluko_app/ui/screens/profile/user_profile_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_settings_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_subscription_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_transformation_journey_page.dart';
@@ -162,6 +162,7 @@ class Routes {
       case RouteEnum.profileViewOwnProfile:
         providers = [
           BlocProvider<CourseBloc>.value(value: _courseBloc),
+          BlocProvider<ProfileBloc>.value(value: _profileBloc),
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
           BlocProvider<CourseEnrollmentBloc>.value(
@@ -169,7 +170,7 @@ class Routes {
           BlocProvider<TransformationJourneyBloc>.value(
               value: _transformationJourneyBloc),
         ];
-        newRouteView = ProfileOwnProfilePage();
+        newRouteView = UserProfilePage();
         break;
       case RouteEnum.profileChallenges:
         newRouteView = ProfileChallengesPage();

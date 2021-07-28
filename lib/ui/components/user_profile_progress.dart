@@ -82,6 +82,7 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
               child: Text(
                 achievementTitle,
                 style: OlukoFonts.olukoMediumFont(
+                    customColor: OlukoColors.grayColor,
                     custoFontWeight: FontWeight.w300),
               ),
             ),
