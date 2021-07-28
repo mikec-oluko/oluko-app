@@ -185,7 +185,7 @@ class _State extends State<Courses> {
                                                     course.id),
                                           ))),
                               child: _getCourseCard(
-                                  _generateImageCourse(course.imageUrl),
+                                  _generateImageCourse(course.image),
                                   width: ScreenUtils.width(context) /
                                       (0.2 + _cardsToShow())),
                             ),

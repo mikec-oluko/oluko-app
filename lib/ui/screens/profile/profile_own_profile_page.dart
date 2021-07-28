@@ -236,7 +236,7 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
         width: 120,
         height: 120,
         imageCover: Image.network(
-          courseInfo.imageUrl,
+          courseInfo.image,
           frameBuilder: (BuildContext context, Widget child, int frame,
                   bool wasSynchronouslyLoaded) =>
               ImageUtils.frameBuilder(

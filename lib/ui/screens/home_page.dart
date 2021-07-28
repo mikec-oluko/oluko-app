@@ -179,7 +179,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                           ))),
                               child: _getCourseCard(
                                   Image.network(
-                                    course.imageUrl,
+                                    course.image,
                                     fit: BoxFit.cover,
                                     frameBuilder: (BuildContext context,
                                             Widget child,
