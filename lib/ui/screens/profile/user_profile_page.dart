@@ -47,15 +47,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
     super.initState();
   }
 
-  bool _isOwnerProfile(
-      {@required UserResponse authUser, @required UserResponse userRequested}) {
-    if (userRequested == null) {
-      _isCurrentUser = false;
-      return false;
-    }
-    return authUser.id == userRequested.id;
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
@@ -85,6 +76,15 @@ class _UserProfilePageState extends State<UserProfilePage> {
         );
       }
     });
+  }
+
+  bool _isOwnerProfile(
+      {@required UserResponse authUser, @required UserResponse userRequested}) {
+    if (userRequested == null) {
+      _isCurrentUser = false;
+      return false;
+    }
+    return authUser.id == userRequested.id;
   }
 
   _buildUserProfileView(
@@ -271,6 +271,14 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   ]));
   }
 
+  List<Widget> returnCoursesWidget({List<Course> listOfCourses}) {
+    List<Widget> contentForCourseSection = [];
+    listOfCourses.forEach((course) {
+      contentForCourseSection.add(_getCourseCard(courseInfo: course));
+    });
+    return contentForCourseSection.toList();
+  }
+
   Widget _getCourseCard({Course courseInfo}) {
     return Padding(
       padding: const EdgeInsets.only(right: 15.0),
@@ -288,6 +296,26 @@ class _UserProfilePageState extends State<UserProfilePage> {
         progress: 0.4,
       ),
     );
+  }
+
+  List<Widget> mapContentToWidget(
+      {List<TransformationJourneyUpload> tansformationJourneyData,
+      List<TaskSubmission> assessmentVideoData}) {
+    List<Widget> contentForSection = [];
+
+    if (tansformationJourneyData != null && (assessmentVideoData == null)) {
+      tansformationJourneyData.forEach((content) {
+        contentForSection
+            .add(_getImageAndVideoCard(transformationJourneyContent: content));
+      });
+    }
+    if (assessmentVideoData != null && (tansformationJourneyData == null)) {
+      assessmentVideoData.forEach((content) {
+        contentForSection
+            .add(_getImageAndVideoCard(taskSubmissionContent: content));
+      });
+    }
+    return contentForSection.toList();
   }
 
   Widget _getImageAndVideoCard(
@@ -312,34 +340,5 @@ class _UserProfilePageState extends State<UserProfilePage> {
     }
 
     return contentForReturn;
-  }
-
-  List<Widget> returnCoursesWidget({List<Course> listOfCourses}) {
-    List<Widget> contentForCourseSection = [];
-    listOfCourses.forEach((course) {
-      contentForCourseSection.add(_getCourseCard(courseInfo: course));
-    });
-    return contentForCourseSection.toList();
-  }
-
-  List<Widget> mapContentToWidget(
-      {List<TransformationJourneyUpload> tansformationJourneyData,
-      List<TaskSubmission> assessmentVideoData}) {
-    List<Widget> contentForSection = [];
-
-    if (tansformationJourneyData != null && (assessmentVideoData == null)) {
-      tansformationJourneyData.forEach((content) {
-        contentForSection
-            .add(_getImageAndVideoCard(transformationJourneyContent: content));
-      });
-    }
-    if (assessmentVideoData != null && (tansformationJourneyData == null)) {
-      assessmentVideoData.forEach((content) {
-        contentForSection
-            .add(_getImageAndVideoCard(taskSubmissionContent: content));
-      });
-    }
-
-    return contentForSection.toList();
   }
 }
