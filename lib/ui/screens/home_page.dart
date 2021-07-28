@@ -171,11 +171,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                             create: (context) =>
                                                 BlocProvider.of<AuthBloc>(
                                                     mainContext),
-                                            child: Classes(
-                                                courseId:
-                                                    // 'OYyjeSBYcumpcg2VbMXO' ),
-                                                    // course.id),
-                                                    course.id),
+                                            child: Classes(course: course),
                                           ))),
                               child: _getCourseCard(
                                   Image.network(

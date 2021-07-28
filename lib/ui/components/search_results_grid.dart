@@ -42,10 +42,8 @@ class _State extends State<SearchResultsGrid> {
                                   create: (context2) =>
                                       BlocProvider.of<AuthBloc>(context),
                                   child: Classes(
-                                      courseId:
-                                          // 'OYyjeSBYcumpcg2VbMXO' ),
-                                          // course.id),
-                                          e.id),
+                                      course:
+                                          e),
                                 ))),
                     child: _getCourseCard(
                       Image.network(

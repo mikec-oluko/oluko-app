@@ -179,10 +179,8 @@ class _State extends State<Courses> {
                                                 BlocProvider.of<AuthBloc>(
                                                     mainContext),
                                             child: Classes(
-                                                courseId:
-                                                    // 'OYyjeSBYcumpcg2VbMXO' ),
-                                                    // course.id),
-                                                    course.id),
+                                                course:
+                                                    course),
                                           ))),
                               child: _getCourseCard(
                                   _generateImageCourse(course.image),

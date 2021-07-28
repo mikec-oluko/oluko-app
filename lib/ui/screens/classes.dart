@@ -10,7 +10,6 @@ import 'package:oluko_app/blocs/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/statistics_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
 import 'package:oluko_app/constants/Theme.dart';
-
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
@@ -31,9 +30,9 @@ import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 
 class Classes extends StatefulWidget {
-  final String courseId;
+  final Course course;
 
-  Classes({Key key, this.courseId}) : super(key: key);
+  Classes({Key key, this.course}) : super(key: key);
 
   get progress => null;
 
@@ -44,7 +43,6 @@ class Classes extends StatefulWidget {
 class _ClassesState extends State<Classes> {
   final _formKey = GlobalKey<FormState>();
   ChewieController _controller;
-  CourseBloc _courseBloc;
   ClassBloc _classBloc;
   StatisticsBloc _statisticsBloc;
   CourseEnrollmentBloc _courseEnrollmentBloc;
@@ -52,7 +50,6 @@ class _ClassesState extends State<Classes> {
   @override
   void initState() {
     super.initState();
-    _courseBloc = CourseBloc();
     _classBloc = ClassBloc();
     _statisticsBloc = StatisticsBloc();
     _courseEnrollmentBloc = CourseEnrollmentBloc();
@@ -62,40 +59,26 @@ class _ClassesState extends State<Classes> {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
-        return MultiBlocProvider(
-            providers: [
-              BlocProvider<CourseBloc>(
-                create: (context) => _courseBloc..getById(widget.courseId),
-              ),
-              BlocProvider<ClassBloc>(
-                create: (context) => _classBloc,
-              ),
-              BlocProvider<StatisticsBloc>(
-                create: (context) => _statisticsBloc,
-              ),
-              BlocProvider<CourseEnrollmentBloc>(
-                create: (context) => _courseEnrollmentBloc,
-              ),
-            ],
-            child:
-                BlocBuilder<CourseBloc, CourseState>(builder: (context, state) {
-              if (state is GetCourseSuccess) {
-                _classBloc..getAll(state.course);
-                _statisticsBloc..get(state.course.statisticsReference);
-                _courseEnrollmentBloc
-                  ..get(authState.firebaseUser, state.course);
-                return form(state.course, authState.firebaseUser);
-              } else {
-                return SizedBox();
-              }
-            }));
+        return MultiBlocProvider(providers: [
+          BlocProvider<ClassBloc>(
+            create: (context) => _classBloc..getAll(widget.course),
+          ),
+          BlocProvider<StatisticsBloc>(
+            create: (context) =>
+                _statisticsBloc..get(widget.course.statisticsReference),
+          ),
+          BlocProvider<CourseEnrollmentBloc>(
+            create: (context) => _courseEnrollmentBloc
+              ..get(authState.firebaseUser, widget.course),
+          ),
+        ], child: form(authState.firebaseUser));
       } else {
         return Text("Not logged user.");
       }
     });
   }
 
-  Widget form(Course course, User user) {
+  Widget form(User user) {
     return BlocBuilder<CourseEnrollmentBloc, CourseEnrollmentState>(
         builder: (context, enrollmentState) {
       return BlocBuilder<ClassBloc, ClassState>(builder: (context, classState) {
@@ -120,7 +103,7 @@ class _ClassesState extends State<Classes> {
                                     return showVideoPlayer(
                                         classState.classes[0].video);
                                   } else {
-                                    return showVideoPlayer(course.video);
+                                    return showVideoPlayer(widget.course.video);
                                   }
                                 },
                               ),
@@ -130,8 +113,12 @@ class _ClassesState extends State<Classes> {
                                     value: enrollmentState
                                         .courseEnrollment.completion)
                                 : SizedBox(),*/
-                            showButton(enrollmentState.courseEnrollment,
-                                context, user, course, classState.classes),
+                            showButton(
+                                enrollmentState.courseEnrollment,
+                                context,
+                                user,
+                                widget.course,
+                                classState.classes),
                             Padding(
                                 padding: EdgeInsets.only(
                                     right: 15, left: 15, top: 0),
@@ -142,7 +129,7 @@ class _ClassesState extends State<Classes> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            course.name,
+                                            widget.course.name,
                                             style: OlukoFonts.olukoTitleFont(
                                                 custoFontWeight:
                                                     FontWeight.bold),
@@ -154,8 +141,9 @@ class _ClassesState extends State<Classes> {
                                               //TODO: change weeks number
                                               TimeConverter.toCourseDuration(
                                                   6,
-                                                  course.classes != null
-                                                      ? course.classes.length
+                                                  widget.course.classes != null
+                                                      ? widget
+                                                          .course.classes.length
                                                       : 0,
                                                   context),
                                               style: OlukoFonts.olukoBigFont(
@@ -196,7 +184,7 @@ class _ClassesState extends State<Classes> {
                                             padding: const EdgeInsets.only(
                                                 top: 10.0, right: 10),
                                             child: Text(
-                                              course.description,
+                                              widget.course.description,
                                               style: OlukoFonts.olukoBigFont(
                                                   custoFontWeight:
                                                       FontWeight.normal,
