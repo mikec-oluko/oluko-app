@@ -29,6 +29,7 @@
     "logout": "Cerrar sesión",
     "filters": "Filtros",
     "courses": "Cursos",
+    "videoFromGallery": "Video de la Galería",
     "activeCourses": "Cursos Activos",
     "videos": "Videos",
     "viewAll": "Ver Todo",
@@ -90,5 +91,10 @@
     "no": "No",
     "yes": "Si",
     "recordAgainQuestion": "¿Volver a grabar?",
-    "next": "Siguiente"
+    "next": "Siguiente",
+    "progress": "Progreso",
+    "processingVideo": "Procesando video",
+    "completed": "Completo",
+    "uploadedWithErrors": "El segmento fue subido con errores",
+    "uploadedSuccessfully": "El segmento fue subido con éxito"
 }

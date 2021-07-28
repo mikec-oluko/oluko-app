@@ -9,6 +9,7 @@ import 'package:oluko_app/models/submodels/enrollment_class.dart';
 import 'package:oluko_app/models/submodels/enrollment_segment.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
 import 'package:oluko_app/repositories/course_repository.dart';
+import 'package:oluko_app/services/course_enrollment_service.dart';
 
 class CourseEnrollmentRepository {
   FirebaseFirestore firestoreInstance;
@@ -36,6 +37,34 @@ class CourseEnrollmentRepository {
       return CourseEnrollment.fromJson(qs.docs[0].data());
     }
     return null;
+  }
+
+  static Future<CourseEnrollment> markSegmentAsCompleted(
+      CourseEnrollment courseEnrollment,
+      int segmentIndex,
+      int classIndex) async {
+    DocumentReference reference = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue("projectId"))
+        .collection('courseEnrollments')
+        .doc(courseEnrollment.id);
+    List<EnrollmentClass> classes = courseEnrollment.classes;
+    classes[classIndex].segments[segmentIndex].compleatedAt = Timestamp.now();
+
+    bool isClassCompleted =
+        CourseEnrollmentService.getFirstUncompletedSegmentIndex(
+                classes[classIndex]) ==
+            -1;
+    if (isClassCompleted) {
+      double courseProgress =
+          1 / courseEnrollment.classes.length * (classIndex + 1);
+      classes[classIndex].compleatedAt = Timestamp.now();
+      courseEnrollment.completion = courseProgress;
+    }
+    reference.update({
+      'classes': List<dynamic>.from(classes.map((c) => c.toJson())),
+      'completion': courseEnrollment.completion
+    });
   }
 
   static Future<CourseEnrollment> create(User user, Course course) async {
@@ -90,25 +119,26 @@ class CourseEnrollmentRepository {
 
   static Future<List<CourseEnrollment>> getUserCourseEnrollments(
       String userId) async {
-    QuerySnapshot docRef = await FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
-        .collection('courseEnrollments')
-        .where('user_id', isEqualTo: userId)
-        .get();
-
-    //TODO: Use courseEnrollment.courseReference to get Course
-    if (docRef.docs.isEmpty) {
-      return null;
-    }
-    // var result = docRef.docs[0].data();
-    // final courseEnroll = CourseEnrollment.fromJson(result);
-
     List<CourseEnrollment> courseEnrollmentList = [];
-    docRef.docs.forEach((doc) {
-      final Map<String, dynamic> course = doc.data();
-      courseEnrollmentList.add(CourseEnrollment.fromJson(course));
-    });
+    try {
+      QuerySnapshot docRef = await FirebaseFirestore.instance
+          .collection('projects')
+          .doc(GlobalConfiguration().getValue("projectId"))
+          .collection('courseEnrollments')
+          .where('user_id', isEqualTo: userId)
+          .get();
+
+      if (docRef.docs.isEmpty) {
+        return [];
+      }
+
+      docRef.docs.forEach((doc) {
+        final Map<String, dynamic> course = doc.data();
+        courseEnrollmentList.add(CourseEnrollment.fromJson(course));
+      });
+    } catch (e) {
+      throw e;
+    }
     return courseEnrollmentList;
   }
 
@@ -119,39 +149,54 @@ class CourseEnrollmentRepository {
 
   static Future<List<Course>> getUserCourseEnrollmentsCourse(
       String userId) async {
-    List<CourseEnrollment> listOfCoruseEnrollment =
-        await getUserCourseEnrollments(userId);
-
     List<Course> coursesList = [];
-    if (listOfCoruseEnrollment != null) {
+    try {
+      List<CourseEnrollment> listOfCoruseEnrollment =
+          await getUserCourseEnrollments(userId);
+
       listOfCoruseEnrollment.forEach((courseEnrollment) async {
         final Course course =
             await getCourseByCourseEnrollmentId(courseEnrollment.courseId);
         coursesList.add(course);
       });
+    } catch (e) {
+      throw e;
     }
     return coursesList;
   }
 
-  Future<List<Challenge>> getUserChallengesuserId(String userId) async {
-    List<CourseEnrollment> courseEnrollmentId =
+  Future<List<Challenge>> getUserChallengesByUserId(String userId) async {
+    List<Challenge> challengeList = [];
+    List<CourseEnrollment> courseEnrollments =
         await getUserCourseEnrollments(userId);
-    if (courseEnrollmentId == null) return [];
-    QuerySnapshot docRef = await FirebaseFirestore.instance
+
+    if (courseEnrollments == null) {
+      return [];
+    }
+    try {
+      var futures = <Future>[];
+      for (var courseEnrollment in courseEnrollments) {
+        futures.add(await getChallengesFromCourseEnrollment(
+            courseEnrollment, challengeList));
+      }
+      Future.wait(futures);
+    } catch (e) {
+      return [];
+    }
+    return challengeList;
+  }
+
+  Future getChallengesFromCourseEnrollment(
+      CourseEnrollment courseEnrollment, List<Challenge> challenges) async {
+    QuerySnapshot query = await FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"))
         .collection('challenges')
-        .where('course_enrollment_id', isEqualTo: courseEnrollmentId[0].id)
+        .where('course_enrollment_id', isEqualTo: courseEnrollment.id)
         .get();
-
-    // List<Challenge> listOfChallenges = docRef.docs[0].data();
-    // return listOfChallenges;
-
-    List<Challenge> challengeList = [];
-    docRef.docs.forEach((doc) {
-      final Map<String, dynamic> challenge = doc.data();
-      challengeList.add(Challenge.fromJson(challenge));
-    });
-    return challengeList;
+    for (var challengeDoc in query.docs) {
+      Map<String, dynamic> challenge = challengeDoc.data();
+      challenges.add(Challenge.fromJson(challenge));
+    }
   }
 }

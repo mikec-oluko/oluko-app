@@ -8,7 +8,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
-import 'package:oluko_app/ui/components/black_app_bar_with_image.dart';
+import 'package:oluko_app/ui/components/oluko_image_bar.dart';
 import 'package:oluko_app/ui/components/countdown_overlay.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/segment_step_section.dart';
@@ -16,6 +16,7 @@ import 'package:oluko_app/ui/screens/segment_recording.dart';
 import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'movement_intro.dart';
 
 class SegmentDetail extends StatefulWidget {
   SegmentDetail(
@@ -74,7 +75,15 @@ class _SegmentDetailState extends State<SegmentDetail> {
 
   Widget form(List<Movement> movements) {
     return Scaffold(
-      appBar: OlukoImageBar(actions: [], movements: movements),
+      appBar: OlukoImageBar(
+        actions: [],
+        movements: movements,
+        onPressedMovement: (BuildContext context, Movement movement) =>
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => MovementIntro(movement: movement))),
+      ),
       backgroundColor: Colors.black,
       body: Container(
         decoration: BoxDecoration(
@@ -195,15 +204,15 @@ class _SegmentDetailState extends State<SegmentDetail> {
                     .toUpperCase(),
                 color: Colors.white,
                 onPressed: () {
-                  // startRecordingAndWorkoutTogether
-                  //     ? _startCountdown(WorkoutType.segmentWithRecording)
-                  //     : MovementUtils.movementDialog(
-                  //             context, _confirmDialogContent())
-                  //         .then((value) => value != null
-                  //             ? _startCountdown(value == true
-                  //                 ? WorkoutType.segmentWithRecording
-                  //                 : WorkoutType.segment)
-                  //             : null);
+                  startRecordingAndWorkoutTogether
+                      ? _startCountdown(WorkoutType.segmentWithRecording)
+                      : MovementUtils.movementDialog(
+                              context, _confirmDialogContent())
+                          .then((value) => value != null
+                              ? _startCountdown(value == true
+                                  ? WorkoutType.segmentWithRecording
+                                  : WorkoutType.segment)
+                              : null);
                 })
           ]),
         )
@@ -229,6 +238,8 @@ class _SegmentDetailState extends State<SegmentDetail> {
                     user: widget.user,
                     workoutType: workoutType,
                     courseEnrollment: widget.courseEnrollment,
+                    segmentIndex: widget.segmentIndex,
+                    classIndex: widget.classIndex,
                     segment: widget.segment))));
   }
 

@@ -13,7 +13,7 @@ class OlukoVideoPlayer extends StatefulWidget {
 
   OlukoVideoPlayer(
       {this.videoUrl =
-          //TODO: update me harcoded
+          //TODO: update me harcoded test
           'https://oluko-mvt.s3.us-west-1.amazonaws.com/assessments/85b2f81c1fe74f9cb5e804c57db30137/85b2f81c1fe74f9cb5e804c57db30137_2.mp4',
       this.showControls = true,
       this.autoPlay = true,
@@ -35,25 +35,31 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
     if (widget.filePath != null) {
       _controller = VideoPlayerController.file(File(widget.filePath));
     } else {
-      _controller = VideoPlayerController.network(widget.videoUrl);
+      if (widget.videoUrl != null) {
+        _controller = VideoPlayerController.network(widget.videoUrl);
+      } else {
+        _controller = null;
+      }
     }
-    _controller
-      ..initialize().then((value) {
-        chewieController = ChewieController(
-            videoPlayerController: _controller,
-            autoPlay: widget.autoPlay,
-            showControls: widget.showControls,
-            placeholder: Center(child: CircularProgressIndicator()),
-            materialProgressColors: ChewieProgressColors(
-                handleColor: Colors.black,
-                backgroundColor: Colors.black,
-                bufferedColor: Colors.black,
-                playedColor: Colors.black));
-        if (widget.whenInitialized != null) {
-          widget.whenInitialized(chewieController);
-        }
-        setState(() {});
-      });
+    if (_controller != null) {
+      _controller
+        ..initialize().then((value) {
+          chewieController = ChewieController(
+              videoPlayerController: _controller,
+              autoPlay: widget.autoPlay,
+              showControls: widget.showControls,
+              placeholder: Center(child: CircularProgressIndicator()),
+              materialProgressColors: ChewieProgressColors(
+                  handleColor: Colors.black,
+                  backgroundColor: Colors.black,
+                  bufferedColor: Colors.black,
+                  playedColor: Colors.black));
+          if (widget.whenInitialized != null) {
+            widget.whenInitialized(chewieController);
+          }
+          setState(() {});
+        });
+    }
   }
 
   @override

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/dialog.dart';
 
 class ProfileViewConstants {
@@ -39,18 +41,30 @@ class ProfileViewConstants {
   static const profileSelectFromGalleryTitle = "Select from Gallery";
 
   //List of options for Profile settings.
-  static const List<String> profileOptions = [
-    profileOptionsMyAccount,
-    profileOptionsAssessmentVideos,
-    profileOptionsTransformationJourney,
-    profileOptionsSubscription,
-    profileOptionsSettings,
-    profileOptionsHelpAndSupport,
+  static List<ProfileOptions> profileOptions = [
+    ProfileOptions(option: profileOptionsMyAccount),
+    ProfileOptions(option: profileOptionsAssessmentVideos),
+    ProfileOptions(option: profileOptionsTransformationJourney),
+    ProfileOptions(option: profileOptionsSubscription, enable: false),
+    ProfileOptions(option: profileOptionsSettings),
+    ProfileOptions(option: profileOptionsHelpAndSupport),
   ];
+}
+
+class ProfileOptions {
+  final String option;
+  final bool enable;
+  ProfileOptions({this.option, this.enable = true});
 }
 
 //Options to update on settings
 enum SettingsOptions { notification, public, restricted, anonymous }
+
+//Enum for modal, to update images
+enum UploadFrom { profileImage, transformationJourney }
+
+//Enum of options for upload content
+enum DeviceContentFrom { camera, gallery }
 
 //Basic model for Tile (Help and Support)
 class BasicTile {
@@ -98,61 +112,4 @@ final basicTiles = <BasicTile>[
       ]),
     ]),
   ])
-];
-
-//Basic model of Challenge, used on profile/Challenges
-class ChallengeStatic {
-  String title;
-  String subtitle;
-  String type;
-  bool isLocked;
-  String imageCover;
-  ChallengeStatic(
-      {this.title, this.subtitle, this.type, this.isLocked, this.imageCover});
-}
-
-//Basic model for Content uploade for user, image/video
-class Content {
-  String imgUrl;
-  bool isVideo;
-  Content({this.imgUrl, this.isVideo});
-}
-
-//Challenges examples
-final challengeDefault = ChallengeStatic(
-    title: "20min EMOM challenge",
-    subtitle: "Innterval traiinning",
-    type: "Class",
-    isLocked: false,
-    imageCover: 'assets/courses/course_sample_1.png');
-
-final _secondChallenge = ChallengeStatic(
-    title: "Fish Arms",
-    subtitle: "Abdominal Crunches",
-    type: "Class",
-    isLocked: false,
-    imageCover: 'assets/courses/course_sample_2.png');
-
-final _lockedChallenge = ChallengeStatic(
-    title: "Screaming Squat Challenge",
-    subtitle: "Drop and give me 20!",
-    type: "Class",
-    isLocked: true,
-    imageCover: 'assets/courses/course_sample_3.png');
-
-//List of challenges, (Challenges)
-final List<ChallengeStatic> challengeCollection = [
-  challengeDefault,
-  _secondChallenge,
-  _lockedChallenge
-];
-
-//List of content (Displayed on Transformation Journey)
-final List<Content> uploadListContent = [
-  Content(imgUrl: 'assets/courses/course_sample_3.png', isVideo: true),
-  Content(imgUrl: 'assets/courses/course_sample_5.png', isVideo: true),
-  Content(imgUrl: 'assets/courses/course_sample_4.png', isVideo: true),
-  Content(imgUrl: 'assets/courses/course_sample_6.png', isVideo: false),
-  Content(imgUrl: 'assets/courses/course_sample_7.png', isVideo: false),
-  Content(imgUrl: 'assets/courses/course_sample_8.png', isVideo: false),
 ];

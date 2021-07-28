@@ -3,9 +3,12 @@ import 'package:image/image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:oluko_app/helpers/encoding_provider.dart';
 import 'package:oluko_app/helpers/s3_provider.dart';
 import 'package:oluko_app/models/enums/file_type_enum.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
+import 'package:oluko_app/utils/image_utils.dart';
+import 'package:oluko_app/utils/video_process.dart';
 import 'package:path/path.dart' as p;
 
 class TransformationJourneyRepository {
@@ -33,6 +36,7 @@ class TransformationJourneyRepository {
           .collection('users')
           .doc(userName)
           .collection('transformationJourneyUploads')
+          // .where('is_deleted', isNotEqualTo: true)
           .get();
 
       // var first = docRef.docs[0].data();
@@ -53,39 +57,54 @@ class TransformationJourneyRepository {
   //TODO: UPDATE PHOTO FOR TRANSFORMATION JOURNEY GALLERY
   static Future<TransformationJourneyUpload> createTransformationJourneyUpload(
       FileTypeEnum type, PickedFile file, String username) async {
-    CollectionReference transformationJourneyUploadsReference = projectReference
-        .collection('users')
-        .doc(username)
-        .collection('transformationJourneyUploads');
+    try {
+      CollectionReference transformationJourneyUploadsReference =
+          projectReference
+              .collection('users')
+              .doc(username)
+              .collection('transformationJourneyUploads');
 
-    //TODO: Image to thumbnail
-    // final imageUpdated = decodeImage(File(file.path).readAsBytesSync());
-    // final thumbnail = copyResize(imageUpdated, width: 120);
-    // final thumbnailFile = File.fromRawPath(thumbnail.getBytes());
+      var thumbnail;
 
-    //TODO: Upload thumbnail need to be File
-    // final thumbNaildownloadUrl = await _uploadFile(
-    //     thumbnail, transformationJourneyUploadsReference.path);
+      switch (type) {
+        case FileTypeEnum.image:
+          thumbnail = await ImageUtils().getThumbnailForImage(file, 250);
+          break;
+        case FileTypeEnum.video:
+          thumbnail = await VideoProcess.getThumbnailForVideo(file, 250);
+          break;
+        default:
+          //TODO Handle PDF Uploads
+          break;
+      }
+      if (type == FileTypeEnum.image) {
+        final thumbNaildownloadUrl = await _uploadFile(thumbnail,
+            '${transformationJourneyUploadsReference.path}/thumbnails');
 
-    final downloadUrl = await _uploadFile(
-        file.path, transformationJourneyUploadsReference.path);
+        final downloadUrl = await _uploadFile(
+            file.path, transformationJourneyUploadsReference.path);
 
-    TransformationJourneyUpload transformationJourneyUpload =
-        TransformationJourneyUpload(
-            name: '',
-            from: Timestamp.now(),
-            description: '',
-            index: 0,
-            type: type,
-            file: downloadUrl,
-            isPublic: true,
-            thumbnail: downloadUrl);
+        TransformationJourneyUpload transformationJourneyUpload =
+            TransformationJourneyUpload(
+                name: '',
+                from: Timestamp.now(),
+                description: '',
+                index: 0,
+                type: type,
+                file: downloadUrl,
+                isPublic: true,
+                isDeleted: false,
+                thumbnail: thumbNaildownloadUrl);
 //TODO: update thumbnail with thumbnailer https://pub.dev/packages/thumbnailer
-    final DocumentReference docRef =
-        transformationJourneyUploadsReference.doc();
-    transformationJourneyUpload.id = docRef.id;
-    docRef.set(transformationJourneyUpload.toJson());
-    return transformationJourneyUpload;
+        final DocumentReference docRef =
+            transformationJourneyUploadsReference.doc();
+        transformationJourneyUpload.id = docRef.id;
+        docRef.set(transformationJourneyUpload.toJson());
+        return transformationJourneyUpload;
+      } else {}
+    } catch (e) {
+      throw e;
+    }
   }
 
   static Future<String> _uploadFile(filePath, folderName) async {

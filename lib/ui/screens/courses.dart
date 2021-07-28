@@ -11,14 +11,10 @@ import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/search_results.dart';
 import 'package:oluko_app/models/tag.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
-import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';
 import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/course_card.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/search_bar.dart';
-import 'package:oluko_app/ui/components/search_results_grid.dart';
-import 'package:oluko_app/ui/components/search_suggestions.dart';
-import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/screens/classes.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/course_utils.dart';
@@ -51,6 +47,14 @@ class _State extends State<Courses> {
   final int searchResultsPortrait = 2;
   final int searchResultsLandscape = 5;
 
+  //TODO Make Dynamic
+  List<String> userRecommendationsAvatarUrls = [
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEMWzdlSputkYso9dJb4VY5VEWQunXGBJMgGys7BLC4MzPQp6yfLURe-9nEdGrcK6Jasc&usqp=CAU',
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTF-rBV5pmJhYA8QbjpPcx6s9SywnXGbvsaxWyFi47oDf9JuL4GruKBY5zl2tM4tdgYdQ0&usqp=CAU',
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRF1L_s4YJh7RHSIag8CxT0LTuJQo-XQnTJkVApDXar4b0A57U_TnAMrK_l4Fd_Nzp65Bg&usqp=CAU',
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRF1L_s4YJh7RHSIag8CxT0LTuJQo-XQnTJkVApDXar4b0A57U_TnAMrK_l4Fd_Nzp65Bg&usqp=CAU'
+  ];
+
   @override
   Widget build(BuildContext context) {
     carouselSectionHeight =
@@ -64,7 +68,6 @@ class _State extends State<Courses> {
                 return Scaffold(
                     backgroundColor: Colors.black,
                     appBar: _appBar(courseState),
-                    bottomNavigationBar: OlukoBottomNavigationBar(),
                     body: courseState is CourseSuccess && tagState is TagSuccess
                         ? WillPopScope(
                             onWillPop: () => AppNavigator.onWillPop(context),
@@ -149,6 +152,7 @@ class _State extends State<Courses> {
       padding: const EdgeInsets.only(top: 15.0, left: 8, right: 8),
       child: ListView(
         children: [
+          _friendsRecommendedSection(courseState),
           ListView.builder(
               physics: NeverScrollableScrollPhysics(),
               itemCount: courseState.coursesByCategories.length,
@@ -176,20 +180,12 @@ class _State extends State<Courses> {
                                                     mainContext),
                                             child: Classes(
                                                 courseId:
-                                                    'OYyjeSBYcumpcg2VbMXO' /*course.id*/),
+                                                    // 'OYyjeSBYcumpcg2VbMXO' ),
+                                                    // course.id),
+                                                    course.id),
                                           ))),
                               child: _getCourseCard(
-                                  Image.network(
-                                    course.imageUrl,
-                                    fit: BoxFit.cover,
-                                    frameBuilder: (BuildContext context,
-                                            Widget child,
-                                            int frame,
-                                            bool wasSynchronouslyLoaded) =>
-                                        ImageUtils.frameBuilder(context, child,
-                                            frame, wasSynchronouslyLoaded,
-                                            height: 120),
-                                  ),
+                                  _generateImageCourse(course.imageUrl),
                                   width: ScreenUtils.width(context) /
                                       (0.2 + _cardsToShow())),
                             ),
@@ -203,13 +199,16 @@ class _State extends State<Courses> {
   }
 
   CourseCard _getCourseCard(Image image,
-      {double progress, double width, double height}) {
+      {double progress,
+      double width,
+      double height,
+      List<String> userRecommendationsAvatarUrls}) {
     return CourseCard(
-      width: width,
-      height: height,
-      imageCover: image,
-      progress: progress,
-    );
+        width: width,
+        height: height,
+        imageCover: image,
+        progress: progress,
+        userRecommendationsAvatarUrls: userRecommendationsAvatarUrls);
   }
 
   Widget _filterWidget() {
@@ -249,6 +248,49 @@ class _State extends State<Courses> {
                 size: 25,
               ),
       ),
+    );
+  }
+
+  _friendsRecommendedSection(courseState) {
+    return CarouselSection(
+      title: 'Friends Recommended',
+      height: carouselSectionHeight + 10,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: _getCourseCard(
+              _generateImageCourse(courseState.values[0].imageUrl),
+              width: ScreenUtils.width(context) / (0.2 + _cardsToShow()),
+              userRecommendationsAvatarUrls: userRecommendationsAvatarUrls),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: _getCourseCard(
+              _generateImageCourse(courseState.values[1].imageUrl),
+              width: ScreenUtils.width(context) / (0.2 + _cardsToShow()),
+              userRecommendationsAvatarUrls:
+                  userRecommendationsAvatarUrls.sublist(1)),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: _getCourseCard(
+              _generateImageCourse(courseState.values[2].imageUrl),
+              width: ScreenUtils.width(context) / (0.2 + _cardsToShow()),
+              userRecommendationsAvatarUrls:
+                  userRecommendationsAvatarUrls.sublist(2)),
+        ),
+      ],
+    );
+  }
+
+  _generateImageCourse(String imageUrl) {
+    return Image.network(
+      imageUrl,
+      fit: BoxFit.cover,
+      frameBuilder: (BuildContext context, Widget child, int frame,
+              bool wasSynchronouslyLoaded) =>
+          ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded,
+              height: 120),
     );
   }
 }

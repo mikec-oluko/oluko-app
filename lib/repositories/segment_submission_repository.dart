@@ -4,6 +4,7 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/movement_submission.dart';
+import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
 import 'package:oluko_app/repositories/movement_submission_repository.dart';
@@ -20,7 +21,7 @@ class SegmentSubmissionRepository {
   }
 
   static Future<SegmentSubmission> create(
-      User user, CourseEnrollment courseEnrollment) async {
+      User user, CourseEnrollment courseEnrollment, Segment segment) async {
     DocumentReference projectReference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"));
@@ -35,11 +36,16 @@ class SegmentSubmissionRepository {
     CollectionReference segmentSubmissionReference =
         projectReference.collection("segmentSubmissions");
 
+    DocumentReference segmentReference =
+        projectReference.collection("segments").doc(segment.id);
+
     final DocumentReference docRef = segmentSubmissionReference.doc();
 
     SegmentSubmission segmentSubmission = SegmentSubmission(
         userId: user.uid,
         userReference: userReference,
+        segmentId: segment.id,
+        segmentReference: segmentReference,
         courseEnrollmentId: courseEnrollment.id,
         courseEnrollmentReference: courseEnrollmentReference,
         movementSubmissions: []);
@@ -52,13 +58,13 @@ class SegmentSubmissionRepository {
   static Future<SegmentSubmission> updateSegmentSubmission(
       SegmentSubmission segmentSubmission,
       MovementSubmission movementSubmission) async {
-
     DocumentReference projectReference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"));
 
-    DocumentReference movementReference =
-        projectReference.collection('movementsSubmissions').doc(movementSubmission.id);
+    DocumentReference movementReference = projectReference
+        .collection('movementsSubmissions')
+        .doc(movementSubmission.id);
 
     ObjectSubmodel movementSubmodel =
         ObjectSubmodel(id: movementSubmission.id, reference: movementReference);
@@ -72,7 +78,7 @@ class SegmentSubmissionRepository {
     }
     segmentSubmission.movementSubmissions.add(movementSubmodel);
     segmentReference.update({
-      'movementSubmissions': List<dynamic>.from(
+      'movement_submissions': List<dynamic>.from(
           segmentSubmission.movementSubmissions.map((m) => m.toJson()))
     });
   }

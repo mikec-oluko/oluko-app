@@ -45,8 +45,7 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
                     size: 35,
                     color: Colors.white,
                   ),
-                  onPressed: () => Navigator.pop(context),
-                )
+                  onPressed: () => Navigator.pop(context))
               : null,
           title: FittedBox(
               fit: BoxFit.fitWidth,
