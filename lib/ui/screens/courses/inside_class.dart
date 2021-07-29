@@ -4,9 +4,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/class_bloc.dart';
+import 'package:oluko_app/blocs/course_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/class.dart';
+import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/services/course_enrollment_service.dart';
@@ -20,22 +25,10 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class InsideClass extends StatefulWidget {
-  InsideClass(
-      {this.actualClass,
-      this.classProgress,
-      this.courseName,
-      this.courseEnrollment,
-      this.classIndex,
-      this.user,
-      Key key})
-      : super(key: key);
+  InsideClass({this.course, this.classIndex, Key key}) : super(key: key);
 
-  double classProgress;
-  Class actualClass;
-  String courseName;
-  CourseEnrollment courseEnrollment;
-  int classIndex;
-  User user;
+  final Course course;
+  final int classIndex;
 
   @override
   _InsideClassesState createState() => _InsideClassesState();
@@ -46,17 +39,47 @@ class FirebaseUser {}
 class _InsideClassesState extends State<InsideClass> {
   final _formKey = GlobalKey<FormState>();
   ChewieController _controller;
-  SegmentBloc _segmentBloc;
+  List<Class> _classes;
+  CourseEnrollment _courseEnrollment;
+  User _user;
+  List<Segment> _segments;
 
   @override
   void initState() {
     super.initState();
-    _segmentBloc = SegmentBloc();
   }
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
+    return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
+      return BlocBuilder<ClassBloc, ClassState>(builder: (context, classState) {
+        return BlocBuilder<CourseEnrollmentBloc, CourseEnrollmentState>(
+            builder: (context, courseEnrollmentState) {
+          if (authState is AuthSuccess &&
+              classState is GetSuccess &&
+              courseEnrollmentState is GetEnrollmentSuccess) {
+            _user = authState.firebaseUser;
+            _classes = classState.classes;
+            _courseEnrollment = courseEnrollmentState.courseEnrollment;
+            BlocProvider.of<SegmentBloc>(context)
+              ..getAll(_classes[widget.classIndex]);
+            return BlocBuilder<SegmentBloc, SegmentState>(
+                builder: (context, segmentState) {
+              if (segmentState is GetSegmentsSuccess) {
+                _segments = segmentState.segments;
+                return form();
+              } else {
+                return SizedBox();
+              }
+            });
+          } else {
+            return SizedBox();
+          }
+        });
+      });
+    });
+
+    /*return MultiBlocProvider(
         providers: [
           BlocProvider<SegmentBloc>(
             create: (context) => _segmentBloc..getAll(widget.actualClass),
@@ -69,10 +92,10 @@ class _InsideClassesState extends State<InsideClass> {
           } else {
             return SizedBox();
           }
-        }));
+        }));*/
   }
 
-  Widget form(List<Segment> segments) {
+  Widget form() {
     return Form(
         key: _formKey,
         child: Scaffold(
@@ -87,13 +110,15 @@ class _InsideClassesState extends State<InsideClass> {
                         padding: const EdgeInsets.only(bottom: 3),
                         child: OrientationBuilder(
                           builder: (context, orientation) {
-                            return showVideoPlayer(widget.actualClass.video);
+                            return showVideoPlayer(
+                                _classes[widget.classIndex].video);
                           },
                         ),
                       ),
-                      widget.classProgress > 0
+                      //TODO: Calculate progress here, take it from classes view
+                      /*widget.classProgress > 0
                           ? CourseProgressBar(value: widget.classProgress)
-                          : SizedBox(),
+                          : SizedBox(),*/
                       Padding(
                           padding:
                               EdgeInsets.only(right: 15, left: 15, top: 25),
@@ -103,7 +128,7 @@ class _InsideClassesState extends State<InsideClass> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      widget.actualClass.name,
+                                      _classes[widget.classIndex].name,
                                       style: OlukoFonts.olukoTitleFont(
                                           custoFontWeight: FontWeight.bold),
                                     ),
@@ -111,7 +136,7 @@ class _InsideClassesState extends State<InsideClass> {
                                       padding: const EdgeInsets.only(
                                           top: 10.0, right: 10),
                                       child: Text(
-                                        widget.courseName,
+                                        widget.course.name,
                                         style: OlukoFonts.olukoSuperBigFont(
                                             custoFontWeight: FontWeight.bold,
                                             customColor: OlukoColors.primary),
@@ -121,7 +146,7 @@ class _InsideClassesState extends State<InsideClass> {
                                       padding: const EdgeInsets.only(
                                           top: 10.0, right: 10),
                                       child: Text(
-                                        widget.actualClass.description,
+                                        _classes[widget.classIndex].description,
                                         style: OlukoFonts.olukoBigFont(
                                             custoFontWeight: FontWeight.normal,
                                             customColor: OlukoColors.grayColor),
@@ -132,10 +157,11 @@ class _InsideClassesState extends State<InsideClass> {
                                         ListView.builder(
                                             physics:
                                                 const NeverScrollableScrollPhysics(),
-                                            itemCount: segments.length,
+                                            itemCount: _segments.length,
                                             shrinkWrap: true,
                                             itemBuilder: (context, num index) {
-                                              Segment segment = segments[index];
+                                              Segment segment =
+                                                  _segments[index];
                                               return Padding(
                                                   padding: const EdgeInsets
                                                       .symmetric(vertical: 5.0),
@@ -156,7 +182,8 @@ class _InsideClassesState extends State<InsideClass> {
                         left: 0,
                         right: 0,
                         child: Container(
-                            color: Colors.black, child: _startButton(segments)))
+                            color: Colors.black,
+                            child: _startButton(_segments)))
                   ],
                 ))));
   }
@@ -198,16 +225,16 @@ class _InsideClassesState extends State<InsideClass> {
               onPressed: () {
                 int segmentIndex =
                     CourseEnrollmentService.getFirstUncompletedSegmentIndex(
-                        widget.courseEnrollment.classes[widget.classIndex]);
+                        _courseEnrollment.classes[widget.classIndex]);
                 Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) => SegmentDetail(
-                            user: widget.user,
+                            user: _user,
                             segments: segments,
                             segmentIndex: segmentIndex,
                             classIndex: widget.classIndex,
-                            courseEnrollment: widget.courseEnrollment)));
+                            courseEnrollment: _courseEnrollment)));
               },
             ),
           ],
