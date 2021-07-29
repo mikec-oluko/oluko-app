@@ -7,12 +7,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/class_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment_bloc.dart';
+import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/statistics_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
 import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/services/course_enrollment_service.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
@@ -24,6 +26,7 @@ import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/statistics_chart.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/screens/courses/inside_classes.dart';
+import 'package:oluko_app/ui/screens/courses/movement_intro.dart';
 import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -61,6 +64,10 @@ class _ClassesState extends State<Classes> {
           BlocProvider<StatisticsBloc>(
             create: (context) => BlocProvider.of<StatisticsBloc>(context)
               ..get(widget.course.statisticsReference),
+          ),
+          BlocProvider<MovementBloc>(
+            create: (context) =>
+                BlocProvider.of<MovementBloc>(context)..getAll(),
           ),
           BlocProvider<CourseEnrollmentBloc>(
             create: (context) => BlocProvider.of<CourseEnrollmentBloc>(context)
@@ -199,8 +206,31 @@ class _ClassesState extends State<Classes> {
                                                           FontWeight.bold),
                                             ),
                                           ),
-                                          ClassExpansionPanel(
-                                              classes: classState.classes),
+                                          BlocBuilder<MovementBloc,
+                                                  MovementState>(
+                                              builder:
+                                                  (context, movementState) {
+                                            if (movementState
+                                                is GetAllSuccess) {
+                                              return ClassExpansionPanel(
+                                                classes: classState.classes,
+                                                movements:
+                                                    movementState.movements,
+                                                onPressedMovement: (BuildContext
+                                                            context,
+                                                        Movement movement) =>
+                                                    Navigator.pushNamed(
+                                                        context,
+                                                        routeLabels[RouteEnum
+                                                            .movementIntro],
+                                                        arguments: {
+                                                      'movement': movement
+                                                    }),
+                                              );
+                                            } else {
+                                              return SizedBox();
+                                            }
+                                          }),
                                           /*Column(
                                             children: [
                                               ListView.builder(

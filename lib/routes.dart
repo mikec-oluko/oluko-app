@@ -8,11 +8,13 @@ import 'package:oluko_app/blocs/class_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/friend_bloc.dart';
+import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/profile_bloc.dart';
 import 'package:oluko_app/blocs/statistics_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/blocs/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
+import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/ui/screens/app_plans.dart';
 import 'package:oluko_app/ui/screens/assessments/assessment_videos.dart';
 import 'package:oluko_app/ui/screens/choose_plan_payment.dart';
@@ -114,6 +116,7 @@ class Routes {
       TransformationJourneyBloc();
   final ClassBloc _classBloc = ClassBloc();
   final StatisticsBloc _statisticsBloc = StatisticsBloc();
+  final MovementBloc _movementBloc = MovementBloc();
 
   getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -216,7 +219,10 @@ class Routes {
         newRouteView = SegmentDetail();
         break;
       case RouteEnum.movementIntro:
-        newRouteView = MovementIntro();
+        final Map<String, Movement> argumentsToAdd = arguments;
+        newRouteView = MovementIntro(
+          movement: argumentsToAdd['movement'],
+        );
         break;
       case RouteEnum.segmentRecording:
         newRouteView = SegmentRecording();
@@ -227,6 +233,7 @@ class Routes {
           BlocProvider<StatisticsBloc>.value(value: _statisticsBloc),
           BlocProvider<CourseEnrollmentBloc>.value(
               value: _courseEnrollmentBloc),
+          BlocProvider<MovementBloc>.value(value: _movementBloc),
         ];
         final Map<String, Course> argumentsToAdd = arguments;
         newRouteView = Classes(course: argumentsToAdd['course']);

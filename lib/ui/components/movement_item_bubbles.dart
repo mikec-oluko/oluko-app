@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/movement.dart';
-import 'package:oluko_app/models/submodels/object_submodel.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
-import 'package:oluko_app/ui/screens/courses/movement_intro.dart';
 
 class MovementItemBubbles extends StatefulWidget {
   final List<Movement> content;
@@ -15,10 +13,6 @@ class MovementItemBubbles extends StatefulWidget {
 }
 
 class _MovementItemBubblesState extends State<MovementItemBubbles> {
-  //TODO Make Dynamic
-  final String imageItemUrl =
-      "https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/Airsquats.jpg?alt=media&token=641c2dff-ac0e-4b22-8a8d-aee9adbca3a1";
-  final String itemName = 'Airsquats';
 
   @override
   Widget build(BuildContext context) {

@@ -60,7 +60,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
     return MultiBlocProvider(
         providers: [
           BlocProvider<MovementBloc>(
-            create: (context) => _movementBloc..getAll(widget.segments[widget.segmentIndex]),
+            create: (context) => _movementBloc..getBySegment(widget.segments[widget.segmentIndex]),
           )
         ],
         child:
