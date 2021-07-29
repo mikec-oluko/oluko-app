@@ -51,6 +51,25 @@ class ProfileBloc extends Cubit<ProfileState> {
     }
   }
 
+  void uploadProfileCoverImage() async {
+    PickedFile _image;
+    final imagePicker = ImagePicker();
+
+    if (!(state is ProfileUploadSuccess)) {
+      emit(Loading());
+    }
+    try {
+      _image = await imagePicker.getImage(source: ImageSource.gallery);
+      if (_image == null) return;
+
+      UserResponse userUpdatedCoverImage =
+          await _profileRepository.uploadProfileCoverImage(_image);
+      emit(ProfileUploadSuccess(userUpdated: userUpdatedCoverImage));
+    } catch (e) {
+      emit(Failure(exception: e));
+    }
+  }
+
   void resetUploadStatus() {
     try {
       emit(NoUploads());

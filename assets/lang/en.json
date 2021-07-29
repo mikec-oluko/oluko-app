@@ -99,6 +99,9 @@
     "uploadedSuccessfully": "The segment was uploaded successfully",
     "challengesCompleted": "Challenges Completed",
     "coursesCompleted": "Courses Completed",
-    "ClassesCompleted": "Classes Completed"
+    "ClassesCompleted": "Classes Completed",
+    "assessmentVideos": "Assessment Videos",
+    "transformationJourney": "Transformation Journey",
+    "upcomingChallenges": "Upcoming Challenges"
 
 }

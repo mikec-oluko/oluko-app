@@ -73,11 +73,7 @@ class UserRepository {
 
   Future<UserResponse> updateUserAvatar(
       UserResponse user, PickedFile file) async {
-    DocumentReference userReference = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
-        .collection('users')
-        .doc(user.username);
+    DocumentReference<Object> userReference = getUserReference(user);
 
     final thumbnail = await ImageUtils().getThumbnailForImage(file, 250);
     final thumbNailUrl =
@@ -93,6 +89,31 @@ class UserRepository {
     } on Exception catch (e) {
       return null;
     }
+  }
+
+  Future<UserResponse> updateUserCoverImage(
+      {UserResponse user, PickedFile coverImage}) async {
+    DocumentReference<Object> userReference = getUserReference(user);
+
+    final coverDownloadImage =
+        await _uploadFile(coverImage.path, userReference.path);
+    user.coverImage = coverDownloadImage;
+    try {
+      await userReference.update(user.toJson());
+      AuthRepository().storeLoginData(user);
+      return user;
+    } on Exception catch (e) {
+      return null;
+    }
+  }
+
+  DocumentReference<Object> getUserReference(UserResponse user) {
+    DocumentReference userReference = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue("projectId"))
+        .collection('users')
+        .doc(user.username);
+    return userReference;
   }
 
   static Future<String> _uploadFile(filePath, folderName) async {

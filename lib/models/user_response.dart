@@ -13,6 +13,7 @@ class UserResponse extends Base {
       this.hubspotContactId,
       this.avatar,
       this.avatarThumbnail,
+      this.coverImage,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -29,13 +30,15 @@ class UserResponse extends Base {
             isDeleted: isDeleted,
             isHidden: isHidden);
 
-  String firstName;
-  String lastName;
-  String email;
-  String username;
-  String firebaseId;
-  String avatar;
-  String avatarThumbnail;
+  String firstName,
+      lastName,
+      email,
+      username,
+      firebaseId,
+      avatar,
+      avatarThumbnail,
+      coverImage;
+
   num hubspotCompanyId;
   num hubspotContactId;
 
@@ -47,6 +50,7 @@ class UserResponse extends Base {
       username: json['username'],
       avatar: json['avatar'],
       avatarThumbnail: json['avatar_thumbnail'],
+      coverImage: json['cover_image'],
       firebaseId: json['firebase_id'],
       hubspotCompanyId: json['hubspot_company_id'],
       hubspotContactId: json['hubspot_contact_id'],
@@ -67,6 +71,7 @@ class UserResponse extends Base {
       'username': username,
       'avatar': avatar,
       'avatar_thumbnail': avatarThumbnail,
+      'cover_image': coverImage,
       'firebase_id': firebaseId,
       'hubspot_company_id': hubspotCompanyId,
       'hubspot_contact_id': hubspotContactId,

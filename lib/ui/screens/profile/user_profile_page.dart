@@ -22,6 +22,7 @@ import 'package:oluko_app/ui/components/user_profile_information.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/ui/screens/profile/profile_routes.dart';
 import 'package:oluko_app/utils/image_utils.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class UserProfilePage extends StatefulWidget {
   final UserResponse userRequested;
@@ -58,8 +59,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
             authUser: this._currentAuthUser,
             userRequested: widget.userRequested)) {
           _userProfileToDisplay = this._currentAuthUser;
+          _isCurrentUser = true;
         }
-        _requestViewData(
+        _requestContentForUser(
             context: context, userRequested: _userProfileToDisplay);
 
         return _buildUserProfileView(
@@ -126,12 +128,14 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.height / 3,
                     //TODO: LOAD USER COVERIMAGE
-                    child: Image.asset(
-                      'assets/login/sign_up_splash_screen.png',
-                      fit: BoxFit.cover,
-                      colorBlendMode: BlendMode.colorBurn,
-                      height: MediaQuery.of(context).size.height,
-                    ),
+                    child: userRequested.coverImage != null
+                        ? Image.network(
+                            userRequested.coverImage,
+                            fit: BoxFit.cover,
+                            colorBlendMode: BlendMode.colorBurn,
+                            height: MediaQuery.of(context).size.height,
+                          )
+                        : SizedBox(),
                   ),
                   Positioned(
                     top: MediaQuery.of(context).size.height / 4,
@@ -154,11 +158,11 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         _assessmentVideosContent = state.taskSubmissions;
                       }
                     },
-                    child: buildUserContentSection(
-                        titleForSection:
-                            ProfileViewConstants.profileOptionsAssessmentVideos,
+                    child: _buildCarouselSection(
+                        titleForSection: OlukoLocalizations.of(context)
+                            .find('assessmentVideos'),
                         routeForSection: ProfileRoutes.goToAssessmentVideos(),
-                        contentForSection: mapContentToWidget(
+                        contentForSection: _getWidgetListFromContent(
                             assessmentVideoData: _assessmentVideosContent))),
                 BlocBuilder<TransformationJourneyBloc,
                     TransformationJourneyState>(
@@ -166,12 +170,12 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     if (state is TransformationJourneySuccess) {
                       _transformationJourneyContent = state.contentFromUser;
                     }
-                    return buildUserContentSection(
-                        titleForSection: ProfileViewConstants
-                            .profileOptionsTransformationJourney,
+                    return _buildCarouselSection(
+                        titleForSection: OlukoLocalizations.of(context)
+                            .find('transformationJourney'),
                         routeForSection:
                             ProfileRoutes.goToTransformationJourney(),
-                        contentForSection: mapContentToWidget(
+                        contentForSection: _getWidgetListFromContent(
                             tansformationJourneyData:
                                 _transformationJourneyContent));
                   },
@@ -191,21 +195,17 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 ),
                 BlocBuilder<CourseEnrollmentBloc, CourseEnrollmentState>(
                   builder: (context, state) {
-                    Widget returnWidget = OlukoCircularProgressIndicator();
                     if (state is GetCourseEnrollmentChallenge) {
                       if (_activeChallenges.length == 0) {
                         _activeChallenges = state.challenges;
                       }
                     }
-                    if (_activeChallenges.length != 0) {
-                      returnWidget = Padding(
-                          padding: const EdgeInsets.all(10.0).copyWith(top: 0),
-                          child: ChallengesCard(
-                            challenge: _activeChallenges[0],
-                            routeToGo: ProfileRoutes.goToChallenges(),
-                          ));
-                    }
-                    return returnWidget;
+                    return _buildCarouselSection(
+                        titleForSection: OlukoLocalizations.of(context)
+                            .find('upcomingChallenges'),
+                        routeForSection: ProfileRoutes.goToChallenges(),
+                        contentForSection: _getWidgetListFromContent(
+                            upcomingChallenges: _activeChallenges));
                   },
                 ),
               ],
@@ -216,7 +216,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
     );
   }
 
-  void _requestViewData({BuildContext context, UserResponse userRequested}) {
+  void _requestContentForUser(
+      {BuildContext context, UserResponse userRequested}) {
     // BlocProvider.of<CourseEnrollmentBloc>(context)
     // .getCourseEnrollmentsByUserId(profileInfo.id);
 
@@ -252,7 +253,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
     );
   }
 
-  Padding buildUserContentSection(
+  Padding _buildCarouselSection(
       {String routeForSection,
       String titleForSection,
       List<Widget> contentForSection}) {
@@ -298,21 +299,31 @@ class _UserProfilePageState extends State<UserProfilePage> {
     );
   }
 
-  List<Widget> mapContentToWidget(
+  List<Widget> _getWidgetListFromContent(
       {List<TransformationJourneyUpload> tansformationJourneyData,
-      List<TaskSubmission> assessmentVideoData}) {
+      List<TaskSubmission> assessmentVideoData,
+      List<Challenge> upcomingChallenges}) {
     List<Widget> contentForSection = [];
 
-    if (tansformationJourneyData != null && (assessmentVideoData == null)) {
-      tansformationJourneyData.forEach((content) {
-        contentForSection
-            .add(_getImageAndVideoCard(transformationJourneyContent: content));
+    if (tansformationJourneyData != null &&
+        (assessmentVideoData == null && upcomingChallenges == null)) {
+      tansformationJourneyData.forEach((contentUploaded) {
+        contentForSection.add(_getImageAndVideoCard(
+            transformationJourneyContent: contentUploaded));
       });
     }
-    if (assessmentVideoData != null && (tansformationJourneyData == null)) {
-      assessmentVideoData.forEach((content) {
+    if (assessmentVideoData != null &&
+        (tansformationJourneyData == null && upcomingChallenges == null)) {
+      assessmentVideoData.forEach((assessmentVideo) {
         contentForSection
-            .add(_getImageAndVideoCard(taskSubmissionContent: content));
+            .add(_getImageAndVideoCard(taskSubmissionContent: assessmentVideo));
+      });
+    }
+    if (upcomingChallenges != null &&
+        (tansformationJourneyData == null && assessmentVideoData == null)) {
+      upcomingChallenges.forEach((challenge) {
+        contentForSection
+            .add(_getImageAndVideoCard(upcomingChallengesContent: challenge));
       });
     }
     return contentForSection.toList();
@@ -320,7 +331,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   Widget _getImageAndVideoCard(
       {TransformationJourneyUpload transformationJourneyContent,
-      TaskSubmission taskSubmissionContent}) {
+      TaskSubmission taskSubmissionContent,
+      Challenge upcomingChallengesContent}) {
     Widget contentForReturn;
     if (transformationJourneyContent != null) {
       contentForReturn = ImageAndVideoContainer(
@@ -336,6 +348,12 @@ class _UserProfilePageState extends State<UserProfilePage> {
         assetImage: taskSubmissionContent.video.thumbUrl,
         isVideo: taskSubmissionContent.video != null,
         videoUrl: taskSubmissionContent.video.url,
+      );
+    }
+    if (upcomingChallengesContent != null) {
+      contentForReturn = ImageAndVideoContainer(
+        assetImage: upcomingChallengesContent.challengeImage,
+        isVideo: false,
       );
     }
 

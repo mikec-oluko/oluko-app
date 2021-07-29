@@ -30,7 +30,7 @@ class _State extends State<ImageAndVideoPreviewCard> {
       color: OlukoColors.black,
       child: Stack(children: [
         widget.imageCover,
-        widget.isVideo == true
+        widget.isVideo
             ? Align(
                 alignment: Alignment.center,
                 child: TextButton(
