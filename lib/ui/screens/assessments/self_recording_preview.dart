@@ -13,7 +13,7 @@ import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/progress_bar.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
-import 'package:oluko_app/ui/screens/task_details.dart';
+import 'package:oluko_app/ui/screens/assessments/task_details.dart';
 
 class SelfRecordingPreview extends StatefulWidget {
   SelfRecordingPreview(

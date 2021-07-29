@@ -15,14 +15,13 @@ import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/course_card.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/search_bar.dart';
-import 'package:oluko_app/ui/screens/classes.dart';
+import 'package:oluko_app/ui/screens/courses/classes.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/course_utils.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
-
-import '../../routes.dart';
+import '../../../routes.dart';
 
 class Courses extends StatefulWidget {
   Courses({Key key}) : super(key: key);

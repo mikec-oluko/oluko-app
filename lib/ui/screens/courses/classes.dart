@@ -23,7 +23,7 @@ import 'package:oluko_app/ui/components/course_segment_section.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/statistics_chart.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
-import 'package:oluko_app/ui/screens/inside_classes.dart';
+import 'package:oluko_app/ui/screens/courses/inside_classes.dart';
 import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -260,6 +260,7 @@ class _ClassesState extends State<Classes> {
     });
   }
 
+  //TODO: Adapt when home view is ready
   Widget showButton(CourseEnrollment courseEnrollment, BuildContext context,
       User user, Course course, List<Class> classes) {
     return courseEnrollment == null

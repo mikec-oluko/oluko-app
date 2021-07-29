@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';
-import 'package:oluko_app/ui/screens/courses.dart';
-import 'package:oluko_app/ui/screens/friends_page.dart';
+import 'package:oluko_app/ui/screens/courses/courses.dart';
+import 'package:oluko_app/ui/screens/friends/friends_page.dart';
 import 'package:oluko_app/ui/screens/home_page.dart';
-import 'package:oluko_app/ui/screens/profile.dart';
+import 'package:oluko_app/ui/screens/profile/profile.dart';
 
 class MainPage extends StatefulWidget {
   MainPage({Key key}) : super(key: key);

@@ -7,7 +7,7 @@ import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
-import 'package:oluko_app/ui/screens/self_recording_preview.dart';
+import 'package:oluko_app/ui/screens/assessments/self_recording_preview.dart';
 
 class SelfRecording extends StatefulWidget {
   SelfRecording(
