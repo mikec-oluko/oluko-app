@@ -254,38 +254,43 @@ class _State extends State<Courses> {
   }
 
   _friendsRecommendedSection(courseState) {
-    return BlocBuilder<RecommendationBloc, RecommendationState>(
-        bloc: RecommendationBloc()
-          ..getRecommendedCoursesByUser('F8qfbo1lNWQtoEkZuso6zWeG4f23'),
-        builder: (context, recommendationState) {
-          return recommendationState is RecommendationSuccess &&
-                  courseState is CourseSuccess &&
-                  recommendationState.recommendationsByUsers.entries.length > 0
-              ? CarouselSection(
-                  title: 'Friends Recommended',
-                  height: carouselSectionHeight + 10,
-                  children: recommendationState.recommendationsByUsers.entries
-                      .map((MapEntry<String, List<UserResponse>> courseEntry) {
-                    final course = courseState.values
-                        .where((element) => element.id == courseEntry.key)
-                        .toList()[0];
+    return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
+      AuthSuccess authSuccess = authState;
+      return BlocBuilder<RecommendationBloc, RecommendationState>(
+          bloc: RecommendationBloc()
+            ..getRecommendedCoursesByUser(authSuccess.user.id),
+          builder: (context, recommendationState) {
+            return recommendationState is RecommendationSuccess &&
+                    courseState is CourseSuccess &&
+                    recommendationState.recommendationsByUsers.entries.length >
+                        0
+                ? CarouselSection(
+                    title: 'Friends Recommended',
+                    height: carouselSectionHeight + 10,
+                    children: recommendationState.recommendationsByUsers.entries
+                        .map(
+                            (MapEntry<String, List<UserResponse>> courseEntry) {
+                      final course = courseState.values
+                          .where((element) => element.id == courseEntry.key)
+                          .toList()[0];
 
-                    final List<String> userRecommendationAvatars =
-                        courseEntry.value.map((user) => user.avatar).toList();
+                      final List<String> userRecommendationAvatars =
+                          courseEntry.value.map((user) => user.avatar).toList();
 
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: _getCourseCard(
-                          _generateImageCourse(course.imageUrl),
-                          width: ScreenUtils.width(context) /
-                              (0.2 + _cardsToShow()),
-                          userRecommendationsAvatarUrls:
-                              userRecommendationAvatars),
-                    );
-                  }).toList(),
-                )
-              : SizedBox();
-        });
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: _getCourseCard(
+                            _generateImageCourse(course.imageUrl),
+                            width: ScreenUtils.width(context) /
+                                (0.2 + _cardsToShow()),
+                            userRecommendationsAvatarUrls:
+                                userRecommendationAvatars),
+                      );
+                    }).toList(),
+                  )
+                : SizedBox();
+          });
+    });
   }
 
   _generateImageCourse(String imageUrl) {
