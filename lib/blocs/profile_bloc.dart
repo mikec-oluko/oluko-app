@@ -26,7 +26,8 @@ class ProfileBloc extends Cubit<ProfileState> {
 
   ProfileRepository _profileRepository = ProfileRepository();
 
-  void updateUserProfileAvatar({DeviceContentFrom uploadedFrom}) async {
+  void uploadImageForProfile(
+      {DeviceContentFrom uploadedFrom, UploadFrom contentFor}) async {
     PickedFile _image;
 
     if (!(state is ProfileUploadSuccess)) {
@@ -43,28 +44,16 @@ class ProfileBloc extends Cubit<ProfileState> {
 
       if (_image == null) return;
 
-      UserResponse userUpdated =
-          await _profileRepository.updateProfileAvatar(_image);
-      emit(ProfileUploadSuccess(userUpdated: userUpdated));
-    } catch (e) {
-      emit(Failure(exception: e));
-    }
-  }
-
-  void uploadProfileCoverImage() async {
-    PickedFile _image;
-    final imagePicker = ImagePicker();
-
-    if (!(state is ProfileUploadSuccess)) {
-      emit(Loading());
-    }
-    try {
-      _image = await imagePicker.getImage(source: ImageSource.gallery);
-      if (_image == null) return;
-
-      UserResponse userUpdatedCoverImage =
-          await _profileRepository.uploadProfileCoverImage(_image);
-      emit(ProfileUploadSuccess(userUpdated: userUpdatedCoverImage));
+      if (contentFor == UploadFrom.profileCoverImage) {
+        UserResponse userUpdatedCoverImage =
+            await _profileRepository.uploadProfileCoverImage(_image);
+        emit(ProfileUploadSuccess(userUpdated: userUpdatedCoverImage));
+      }
+      if (contentFor == UploadFrom.profileImage) {
+        UserResponse userUpdated =
+            await _profileRepository.updateProfileAvatar(_image);
+        emit(ProfileUploadSuccess(userUpdated: userUpdated));
+      }
     } catch (e) {
       emit(Failure(exception: e));
     }

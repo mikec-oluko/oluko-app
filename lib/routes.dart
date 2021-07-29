@@ -75,7 +75,7 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.profileMyAccount: '/profile-my-account',
   RouteEnum.profileSubscription: '/profile-subscription',
   RouteEnum.profileHelpAndSupport: '/profile-help-and-support',
-  RouteEnum.profileViewOwnProfile: '/profile-view-own-profile',
+  RouteEnum.profileViewOwnProfile: '/profile-view-user-profile',
   RouteEnum.profileChallenges: '/profile-challenges',
   RouteEnum.profileTransformationJourney: '/profile-transformation-journey',
   RouteEnum.transformationJourneyPost: '/transformation-journey-post',

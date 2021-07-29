@@ -17,10 +17,12 @@ import 'package:oluko_app/ui/components/carousel_small_section.dart';
 import 'package:oluko_app/ui/components/challenges_card.dart';
 import 'package:oluko_app/ui/components/course_card.dart';
 import 'package:oluko_app/ui/components/image_and_video_container.dart';
+import 'package:oluko_app/ui/components/modal_upload_options.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/user_profile_information.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/ui/screens/profile/profile_routes.dart';
+import 'package:oluko_app/utils/app_modal.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
@@ -55,14 +57,15 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
       if (state is AuthSuccess) {
         this._currentAuthUser = state.user;
+
         if (!_isOwnerProfile(
             authUser: this._currentAuthUser,
             userRequested: widget.userRequested)) {
           _userProfileToDisplay = this._currentAuthUser;
           _isCurrentUser = true;
+          _requestContentForUser(
+              context: context, userRequested: _userProfileToDisplay);
         }
-        _requestContentForUser(
-            context: context, userRequested: _userProfileToDisplay);
 
         return _buildUserProfileView(
             context: context,
@@ -128,14 +131,14 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.height / 3,
                     //TODO: LOAD USER COVERIMAGE
-                    child: userRequested.coverImage != null
-                        ? Image.network(
-                            userRequested.coverImage,
+                    child: _userProfileToDisplay.coverImage == null
+                        ? SizedBox()
+                        : Image.network(
+                            _userProfileToDisplay.coverImage,
                             fit: BoxFit.cover,
                             colorBlendMode: BlendMode.colorBurn,
                             height: MediaQuery.of(context).size.height,
-                          )
-                        : SizedBox(),
+                          ),
                   ),
                   Positioned(
                     top: MediaQuery.of(context).size.height / 4,
@@ -145,7 +148,36 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         child: BlocProvider.value(
                             value: BlocProvider.of<ProfileBloc>(context),
                             child: UserProfileInformation(
-                                userInformation: _userProfileToDisplay))),
+                                userInformation: _userProfileToDisplay,
+                                actualRoute: ActualProfileRoute.userProfile,
+                                userIsOwnerProfile: _isCurrentUser))),
+                  ),
+                  Positioned(
+                    top: MediaQuery.of(context).size.height / 5,
+                    right: 10,
+                    child: Visibility(
+                      visible: _isCurrentUser,
+                      child: Container(
+                        clipBehavior: Clip.none,
+                        width: 40,
+                        height: 40,
+                        child: TextButton(
+                            onPressed: () {
+                              AppModal.dialogContent(
+                                  context: context,
+                                  content: [
+                                    BlocProvider.value(
+                                      value:
+                                          BlocProvider.of<ProfileBloc>(context),
+                                      child: ModalUploadOptions(
+                                          UploadFrom.profileCoverImage),
+                                    )
+                                  ]);
+                            },
+                            child:
+                                Image.asset('assets/profile/uploadImage.png')),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -220,9 +252,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
       {BuildContext context, UserResponse userRequested}) {
     // BlocProvider.of<CourseEnrollmentBloc>(context)
     // .getCourseEnrollmentsByUserId(profileInfo.id);
-
-    BlocProvider.of<CourseEnrollmentBloc>(context)
-        .getChallengesForUser(userRequested.id);
+    BlocProvider.of<TaskSubmissionBloc>(context)
+        .getTaskSubmissionByUserId(userRequested.id);
 
     BlocProvider.of<CourseEnrollmentBloc>(context)
         .getCourseEnrollmentsCoursesByUserId(userRequested.id);
@@ -230,8 +261,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
     BlocProvider.of<TransformationJourneyBloc>(context)
         .getContentByUserName(userRequested.username);
 
-    BlocProvider.of<TaskSubmissionBloc>(context)
-        .getTaskSubmissionByUserId(userRequested.id);
+    // BlocProvider.of<CourseEnrollmentBloc>(context)
+    //     .getChallengesForUser(userRequested.id);
   }
 
   Padding buildCourseSection(
@@ -333,7 +364,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
       {TransformationJourneyUpload transformationJourneyContent,
       TaskSubmission taskSubmissionContent,
       Challenge upcomingChallengesContent}) {
-    Widget contentForReturn;
+    Widget contentForReturn = SizedBox();
     if (transformationJourneyContent != null) {
       contentForReturn = ImageAndVideoContainer(
         assetImage: transformationJourneyContent.thumbnail,
@@ -343,14 +374,21 @@ class _UserProfilePageState extends State<UserProfilePage> {
         videoUrl: transformationJourneyContent.file,
       );
     }
-    if (taskSubmissionContent != null) {
+    if (taskSubmissionContent != null && taskSubmissionContent.video != null) {
       contentForReturn = ImageAndVideoContainer(
-        assetImage: taskSubmissionContent.video.thumbUrl,
+        assetImage: taskSubmissionContent.video != null &&
+                taskSubmissionContent.video.thumbUrl != null
+            ? taskSubmissionContent.video.thumbUrl
+            : '',
         isVideo: taskSubmissionContent.video != null,
-        videoUrl: taskSubmissionContent.video.url,
+        videoUrl: taskSubmissionContent.video != null &&
+                taskSubmissionContent.video.url != null
+            ? taskSubmissionContent.video.url
+            : '',
       );
     }
     if (upcomingChallengesContent != null) {
+      //TODO: Crear container con locker icon and w/ also style
       contentForReturn = ImageAndVideoContainer(
         assetImage: upcomingChallengesContent.challengeImage,
         isVideo: false,

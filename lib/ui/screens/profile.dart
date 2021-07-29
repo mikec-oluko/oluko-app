@@ -79,7 +79,10 @@ class _ProfilePageState extends State<ProfilePage> {
                   onTap: () => Navigator.pushNamed(
                           context, ProfileRoutes.userInformationRoute)
                       .then((value) => onGoBack()),
-                  child: UserProfileInformation(userInformation: profileInfo)),
+                  child: UserProfileInformation(
+                      userInformation: profileInfo,
+                      actualRoute: ActualProfileRoute.rootProfile,
+                      userIsOwnerProfile: true)),
             ],
           )
         : returnWidget = Center(child: OlukoErrorMessage());

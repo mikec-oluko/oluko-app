@@ -65,20 +65,29 @@ class TaskSubmissionRepository {
 
   static Future<List<TaskSubmission>> getTaskSubmissionsByUserId(
       String userId) async {
+    //TODO: Get all TaskSubmissions by assessmentsAssignments id
+    List<String> _assessmentsId = [];
     List<TaskSubmission> response = [];
     QuerySnapshot docRef = await FirebaseFirestore.instance
-        .collection("projects")
+        .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"))
-        .collection("taskSubmissions")
-        // .where('user_id', isEqualTo: userId)
+        .collection('assessmentAssignments')
+        .where('user_id', isEqualTo: userId)
         .get();
-    try {
-      docRef.docs.forEach((doc) {
-        final Map<String, dynamic> element = doc.data();
-        response.add(TaskSubmission.fromJson(element));
+
+    if (docRef.docs.length > 0) {
+      docRef.docs.forEach((element) {
+        String assessmentId = element.id;
+        _assessmentsId.add(assessmentId);
       });
-    } catch (e) {
-      print(e);
+    }
+    CollectionReference reference = projectReference
+        .collection("assessmentAssignments")
+        .doc(_assessmentsId[0])
+        .collection('taskSubmissions');
+    final querySnapshot = await reference.get();
+    if (querySnapshot.docs.length > 0) {
+      response.add(TaskSubmission.fromJson(querySnapshot.docs[0].data()));
     }
     return response;
   }

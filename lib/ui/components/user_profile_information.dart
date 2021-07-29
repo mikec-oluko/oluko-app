@@ -7,14 +7,16 @@ import 'package:oluko_app/ui/components/user_profile_progress.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/app_modal.dart';
 import 'package:oluko_app/utils/container_grediant.dart';
+import 'package:oluko_app/utils/image_utils.dart';
 
 import 'modal_upload_options.dart';
 
 class UserProfileInformation extends StatefulWidget {
   final UserResponse userInformation;
-  final Function() onPressed;
-
-  const UserProfileInformation({this.userInformation, this.onPressed})
+  final ActualProfileRoute actualRoute;
+  final bool userIsOwnerProfile;
+  const UserProfileInformation(
+      {this.userInformation, this.actualRoute, this.userIsOwnerProfile})
       : super();
 
   @override
@@ -42,8 +44,6 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
 
   Widget _profileUserInformation(
       String location, List<String> valuesForArchivements) {
-    final bool _isOwnProfile = true;
-
     return Column(
       children: [
         //PROFILE IMAGE AND INFO
@@ -59,13 +59,24 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                         padding: const EdgeInsets.all(5.0),
                         child: Stack(clipBehavior: Clip.none, children: [
                           CircleAvatar(
-                            backgroundColor: OlukoColors.white,
-                            backgroundImage: NetworkImage(
-                                widget.userInformation.avatarThumbnail),
+                            backgroundColor: OlukoColors.black,
+                            backgroundImage: Image.network(
+                              widget.userInformation.avatarThumbnail,
+                              fit: BoxFit.contain,
+                              frameBuilder: (BuildContext context, Widget child,
+                                      int frame, bool wasSynchronouslyLoaded) =>
+                                  ImageUtils.frameBuilder(context, child, frame,
+                                      wasSynchronouslyLoaded,
+                                      height: 30, width: 30),
+                              height: 30,
+                              width: 30,
+                            ).image,
                             radius: 30.0,
                           ),
                           Visibility(
-                            visible: _isOwnProfile,
+                            visible: widget.actualRoute ==
+                                    ActualProfileRoute.userProfile &&
+                                widget.userIsOwnerProfile,
                             child: Positioned(
                               top: 25,
                               right: -12,
@@ -91,13 +102,13 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                                         'assets/profile/uploadImage.png')),
                               ),
                             ),
-                          )
+                          ),
                         ]),
                       )
                     : Padding(
                         padding: const EdgeInsets.all(5.0),
                         child: CircleAvatar(
-                          backgroundColor: OlukoColors.white,
+                          backgroundColor: OlukoColors.black,
                           radius: 30.0,
                         ),
                       ),

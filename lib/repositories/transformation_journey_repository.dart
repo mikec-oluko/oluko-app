@@ -38,7 +38,6 @@ class TransformationJourneyRepository {
           .collection('transformationJourneyUploads')
           .where('is_deleted', isNotEqualTo: true)
           .get();
-
       List<TransformationJourneyUpload> contentUploaded = [];
       docRef.docs.forEach((doc) {
         final Map<String, dynamic> content = doc.data();
