@@ -10,6 +10,7 @@ import 'package:oluko_app/blocs/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/friend_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/profile_bloc.dart';
+import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/blocs/statistics_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/blocs/task_submission_bloc.dart';
@@ -20,6 +21,7 @@ import 'package:oluko_app/ui/screens/assessments/assessment_videos.dart';
 import 'package:oluko_app/ui/screens/choose_plan_payment.dart';
 import 'package:oluko_app/ui/screens/courses/classes.dart';
 import 'package:oluko_app/ui/screens/courses/courses.dart';
+import 'package:oluko_app/ui/screens/courses/inside_class.dart';
 import 'package:oluko_app/ui/screens/friends/friends_page.dart';
 import 'package:oluko_app/ui/screens/authentication/login.dart';
 import 'package:oluko_app/ui/screens/main_page.dart';
@@ -67,7 +69,8 @@ enum RouteEnum {
   taskDetails,
   choosePlanPayment,
   courses,
-  videos
+  videos,
+  insideClass
 }
 
 Map<RouteEnum, String> routeLabels = {
@@ -96,6 +99,7 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.choosePlanPayment: '/choose-plan-payment',
   RouteEnum.courses: '/courses',
   RouteEnum.videos: '/videos',
+  RouteEnum.insideClass: '/inside-class'
 };
 
 RouteEnum getEnumFromRouteString(String route) {
@@ -117,6 +121,7 @@ class Routes {
   final ClassBloc _classBloc = ClassBloc();
   final StatisticsBloc _statisticsBloc = StatisticsBloc();
   final MovementBloc _movementBloc = MovementBloc();
+  final SegmentBloc _segmentBloc = SegmentBloc();
 
   getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -237,6 +242,17 @@ class Routes {
         ];
         final Map<String, Course> argumentsToAdd = arguments;
         newRouteView = Classes(course: argumentsToAdd['course']);
+        break;
+      case RouteEnum.insideClass:
+        providers = [
+          BlocProvider<ClassBloc>.value(value: _classBloc),
+          BlocProvider<CourseEnrollmentBloc>.value(
+              value: _courseEnrollmentBloc),
+          BlocProvider<SegmentBloc>.value(value: _segmentBloc),
+          BlocProvider<MovementBloc>.value(value: _movementBloc),
+        ];
+        final Map<String, Course> argumentsToAdd = arguments;
+        newRouteView = InsideClass(/*course: argumentsToAdd['course']*/);
         break;
       case RouteEnum.assessmentVideos:
         newRouteView = AssessmentVideos();

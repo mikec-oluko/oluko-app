@@ -25,7 +25,7 @@ import 'package:oluko_app/ui/components/course_segment_section.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/statistics_chart.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
-import 'package:oluko_app/ui/screens/courses/inside_classes.dart';
+import 'package:oluko_app/ui/screens/courses/inside_class.dart';
 import 'package:oluko_app/ui/screens/courses/movement_intro.dart';
 import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -56,24 +56,13 @@ class _ClassesState extends State<Classes> {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
-        return MultiBlocProvider(providers: [
-          BlocProvider<ClassBloc>(
-            create: (context) =>
-                BlocProvider.of<ClassBloc>(context)..getAll(widget.course),
-          ),
-          BlocProvider<StatisticsBloc>(
-            create: (context) => BlocProvider.of<StatisticsBloc>(context)
-              ..get(widget.course.statisticsReference),
-          ),
-          BlocProvider<MovementBloc>(
-            create: (context) =>
-                BlocProvider.of<MovementBloc>(context)..getAll(),
-          ),
-          BlocProvider<CourseEnrollmentBloc>(
-            create: (context) => BlocProvider.of<CourseEnrollmentBloc>(context)
-              ..get(authState.firebaseUser, widget.course),
-          ),
-        ], child: form(authState.firebaseUser));
+        BlocProvider.of<ClassBloc>(context)..getAll(widget.course);
+        BlocProvider.of<StatisticsBloc>(context)
+          ..get(widget.course.statisticsReference);
+        BlocProvider.of<MovementBloc>(context)..getAll();
+        BlocProvider.of<CourseEnrollmentBloc>(context)
+          ..get(authState.firebaseUser, widget.course);
+        return form(authState.firebaseUser);
       } else {
         return SizedBox();
       }

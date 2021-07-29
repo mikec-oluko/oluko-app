@@ -19,8 +19,8 @@ import 'package:oluko_app/ui/screens/courses/segment_detail.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
-class InsideClasses extends StatefulWidget {
-  InsideClasses(
+class InsideClass extends StatefulWidget {
+  InsideClass(
       {this.actualClass,
       this.classProgress,
       this.courseName,
@@ -43,7 +43,7 @@ class InsideClasses extends StatefulWidget {
 
 class FirebaseUser {}
 
-class _InsideClassesState extends State<InsideClasses> {
+class _InsideClassesState extends State<InsideClass> {
   final _formKey = GlobalKey<FormState>();
   ChewieController _controller;
   SegmentBloc _segmentBloc;

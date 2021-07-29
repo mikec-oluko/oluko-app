@@ -37,7 +37,6 @@ class _ProfileTransformationJourneyPageState
       if (state is AuthSuccess) {
         _profileInfo = state.user;
         _requestTransformationJourneyData(context, _profileInfo);
-
         return MultiBlocProvider(
             providers: [
               BlocProvider.value(
