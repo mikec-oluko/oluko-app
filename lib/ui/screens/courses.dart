@@ -259,7 +259,8 @@ class _State extends State<Courses> {
           ..getRecommendedCoursesByUser('F8qfbo1lNWQtoEkZuso6zWeG4f23'),
         builder: (context, recommendationState) {
           return recommendationState is RecommendationSuccess &&
-                  courseState is CourseSuccess
+                  courseState is CourseSuccess &&
+                  recommendationState.recommendationsByUsers.entries.length > 0
               ? CarouselSection(
                   title: 'Friends Recommended',
                   height: carouselSectionHeight + 10,
