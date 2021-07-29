@@ -12,6 +12,7 @@ import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/search_results.dart';
 import 'package:oluko_app/models/tag.dart';
 import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/course_card.dart';
@@ -279,12 +280,17 @@ class _State extends State<Courses> {
 
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: _getCourseCard(
-                            _generateImageCourse(course.imageUrl),
-                            width: ScreenUtils.width(context) /
-                                (0.2 + _cardsToShow()),
-                            userRecommendationsAvatarUrls:
-                                userRecommendationAvatars),
+                        child: GestureDetector(
+                          onTap: () => Navigator.pushNamed(
+                              context, routeLabels[RouteEnum.classes],
+                              arguments: {'courseId': course.id}),
+                          child: _getCourseCard(
+                              _generateImageCourse(course.imageUrl),
+                              width: ScreenUtils.width(context) /
+                                  (0.2 + _cardsToShow()),
+                              userRecommendationsAvatarUrls:
+                                  userRecommendationAvatars),
+                        ),
                       );
                     }).toList(),
                   )
