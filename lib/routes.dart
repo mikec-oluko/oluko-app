@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/class_bloc.dart';
@@ -13,11 +14,15 @@ import 'package:oluko_app/blocs/profile_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/blocs/statistics_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
+import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
+import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/ui/screens/app_plans.dart';
 import 'package:oluko_app/ui/screens/assessments/assessment_videos.dart';
+import 'package:oluko_app/ui/screens/assessments/self_recording.dart';
+import 'package:oluko_app/ui/screens/assessments/self_recording_preview.dart';
 import 'package:oluko_app/ui/screens/choose_plan_payment.dart';
 import 'package:oluko_app/ui/screens/courses/classes.dart';
 import 'package:oluko_app/ui/screens/courses/courses.dart';
@@ -70,7 +75,9 @@ enum RouteEnum {
   choosePlanPayment,
   courses,
   videos,
-  insideClass
+  insideClass,
+  selfRecording,
+  selfRecordingPreview
 }
 
 Map<RouteEnum, String> routeLabels = {
@@ -99,7 +106,9 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.choosePlanPayment: '/choose-plan-payment',
   RouteEnum.courses: '/courses',
   RouteEnum.videos: '/videos',
-  RouteEnum.insideClass: '/inside-class'
+  RouteEnum.insideClass: '/inside-class',
+  RouteEnum.selfRecording: '/self-recording',
+  RouteEnum.selfRecordingPreview: '/self-recording-preview'
 };
 
 RouteEnum getEnumFromRouteString(String route) {
@@ -114,6 +123,8 @@ class Routes {
   final TagBloc _tagBloc = TagBloc();
   final FriendBloc _friendBloc = FriendBloc();
   final AssessmentBloc _assessmentBloc = AssessmentBloc();
+  final AssessmentAssignmentBloc _assessmentAssignmentBloc =
+      AssessmentAssignmentBloc();
   final TaskSubmissionBloc _taskSubmissionBloc = TaskSubmissionBloc();
   final CourseEnrollmentBloc _courseEnrollmentBloc = CourseEnrollmentBloc();
   final TransformationJourneyBloc _transformationJourneyBloc =
@@ -122,6 +133,8 @@ class Routes {
   final StatisticsBloc _statisticsBloc = StatisticsBloc();
   final MovementBloc _movementBloc = MovementBloc();
   final SegmentBloc _segmentBloc = SegmentBloc();
+  final TaskBloc _taskBloc = TaskBloc();
+  final VideoBloc _videoBloc = VideoBloc();
 
   getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -255,11 +268,44 @@ class Routes {
         newRouteView = InsideClass(/*course: argumentsToAdd['course']*/);
         break;
       case RouteEnum.assessmentVideos:
+        providers = [
+          BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
+          BlocProvider<TaskBloc>.value(value: _taskBloc),
+        ];
         newRouteView = AssessmentVideos();
         break;
       case RouteEnum.taskDetails:
+        providers = [
+          BlocProvider<AssessmentAssignmentBloc>.value(
+              value: _assessmentAssignmentBloc),
+          BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
+        ];
+        final Map<String, int> argumentsToAdd = arguments;
         newRouteView = TaskDetails(
-          task: Task(description: 'Task Description'),
+          taskIndex: argumentsToAdd['taskIndex'],
+        );
+        break;
+      case RouteEnum.selfRecording:
+        providers = [
+          BlocProvider<TaskBloc>.value(value: _taskBloc),
+        ];
+        final Map<String, int> argumentsToAdd = arguments;
+        newRouteView = SelfRecording(
+          taskIndex: argumentsToAdd['taskIndex'],
+        );
+        break;
+      case RouteEnum.selfRecordingPreview:
+        providers = [
+          BlocProvider<AssessmentAssignmentBloc>.value(
+              value: _assessmentAssignmentBloc),
+          BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
+          BlocProvider<TaskBloc>.value(value: _taskBloc),
+          BlocProvider<VideoBloc>.value(value: _videoBloc),
+        ];
+        final Map<String, dynamic> argumentsToAdd = arguments;
+        newRouteView = SelfRecordingPreview(
+          filePath: argumentsToAdd['filePath'],
+          taskIndex: argumentsToAdd['taskIndex'],
         );
         break;
       case RouteEnum.choosePlanPayment:

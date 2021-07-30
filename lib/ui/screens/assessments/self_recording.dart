@@ -1,31 +1,21 @@
 import 'package:camera/camera.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
+import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/models/task.dart';
-import 'package:oluko_app/models/task_submission.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/screens/assessments/self_recording_preview.dart';
 
 class SelfRecording extends StatefulWidget {
-  SelfRecording(
-      {this.task,
-      this.tasks,
-      this.index,
-      this.assessmentAssignment,
-      this.user,
-      this.recordedTaskSubmission,
-      Key key})
-      : super(key: key);
+  SelfRecording({this.taskIndex, Key key}) : super(key: key);
 
-  final Task task;
-  final List<Task> tasks;
-  final AssessmentAssignment assessmentAssignment;
-  User user;
-  TaskSubmission recordedTaskSubmission;
-  int index;
+  final int taskIndex;
 
   @override
   _State createState() => _State();
@@ -41,6 +31,9 @@ class _State extends State<SelfRecording> {
   bool _recording = false;
   bool isCameraFront = true;
 
+  Task _task;
+  List<Task> _tasks;
+
   @override
   void initState() {
     super.initState();
@@ -55,14 +48,30 @@ class _State extends State<SelfRecording> {
 
   @override
   Widget build(BuildContext context) {
-    return form();
+    return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
+      if (authState is AuthSuccess) {
+        return BlocBuilder<TaskBloc, TaskState>(
+          builder: (context, taskState) {
+            if (taskState is TaskSuccess) {
+              _tasks = taskState.values;
+              _task = _tasks[widget.taskIndex];
+              return form();
+            } else {
+              return SizedBox();
+            }
+          },
+        );
+      } else {
+        return SizedBox();
+      }
+    });
   }
 
   Widget form() {
     return Form(
         key: _formKey,
         child: Scaffold(
-            appBar: OlukoAppBar(title: widget.task.name),
+            appBar: OlukoAppBar(title: _task.name),
             bottomNavigationBar: BottomAppBar(
               color: Colors.black,
               child: Padding(
@@ -88,19 +97,12 @@ class _State extends State<SelfRecording> {
                           XFile videopath =
                               await cameraController.stopVideoRecording();
                           String path = videopath.path;
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => SelfRecordingPreview(
-                                      recordedTaskSubmission:
-                                          widget.recordedTaskSubmission,
-                                      index: widget.index,
-                                      tasks: widget.tasks,
-                                      user: widget.user,
-                                      task: widget.task,
-                                      filePath: path,
-                                      assessmentAssignment:
-                                          widget.assessmentAssignment)));
+                          Navigator.pushNamed(context,
+                              routeLabels[RouteEnum.selfRecordingPreview],
+                              arguments: {
+                                'taskIndex': widget.taskIndex,
+                                'filePath': path
+                              });
                         } else {
                           await cameraController.startVideoRecording();
                         }
@@ -158,8 +160,8 @@ class _State extends State<SelfRecording> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              widget.task.stepsTitle != null
-                  ? TitleBody(widget.task.stepsTitle)
+              _task.stepsTitle != null
+                  ? TitleBody(_task.stepsTitle)
                   : SizedBox()
             ],
           ),
@@ -172,9 +174,9 @@ class _State extends State<SelfRecording> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  widget.task.stepsDescription != null
+                  _task.stepsDescription != null
                       ? Text(
-                          '${widget.task.stepsDescription.replaceAll('\\n', '\n')} ',
+                          '${_task.stepsDescription.replaceAll('\\n', '\n')} ',
                           style: TextStyle(fontSize: 20, color: Colors.white60),
                         )
                       : SizedBox(),
