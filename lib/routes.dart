@@ -128,6 +128,7 @@ class Routes {
         providers = [
           BlocProvider<CourseBloc>.value(value: _courseBloc),
           BlocProvider<TagBloc>.value(value: _tagBloc),
+          BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
           BlocProvider<FavoriteBloc>.value(value: _favoriteBloc),
         ];
         newRouteView = MainPage();
