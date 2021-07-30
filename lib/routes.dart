@@ -125,7 +125,8 @@ class Routes {
       case RouteEnum.root:
         providers = [
           BlocProvider<CourseBloc>.value(value: _courseBloc),
-          BlocProvider<TagBloc>.value(value: _tagBloc)
+          BlocProvider<TagBloc>.value(value: _tagBloc),
+          BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc)
         ];
         newRouteView = MainPage();
         break;
