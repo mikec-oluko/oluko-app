@@ -220,7 +220,10 @@ class Routes {
         newRouteView = SegmentRecording();
         break;
       case RouteEnum.classes:
-        newRouteView = Classes();
+        Map<String, String> parsedArguments = arguments;
+        newRouteView = Classes(
+          courseId: parsedArguments['courseId'],
+        );
         break;
       case RouteEnum.assessmentVideos:
         newRouteView = AssessmentVideos();
