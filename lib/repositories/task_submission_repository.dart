@@ -66,29 +66,50 @@ class TaskSubmissionRepository {
   static Future<List<TaskSubmission>> getTaskSubmissionsByUserId(
       String userId) async {
     //TODO: Get all TaskSubmissions by assessmentsAssignments id
-    List<String> _assessmentsId = [];
+    List<String> _assessmentsIdList = [];
     List<TaskSubmission> response = [];
+    QuerySnapshot<Object> docRef =
+        await getAssessmentAssignmentsForUserId(userId);
+
+    if (docRef.docs.length > 0) {
+      docRef.docs.forEach((element) {
+        String _assessmentId = element.id;
+        _assessmentsIdList.add(_assessmentId);
+      });
+    }
+    try {
+      var futures = <Future>[];
+      for (var asessmentId in _assessmentsIdList) {
+        futures
+            .add(await getTaskSubmissionsByAssessmentId(asessmentId, response));
+      }
+      Future.wait(futures);
+    } catch (e) {
+      return [];
+    }
+    return response;
+  }
+
+  static Future<QuerySnapshot<Object>> getAssessmentAssignmentsForUserId(
+      String userId) async {
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"))
         .collection('assessmentAssignments')
         .where('user_id', isEqualTo: userId)
         .get();
+    return docRef;
+  }
 
-    if (docRef.docs.length > 0) {
-      docRef.docs.forEach((element) {
-        String assessmentId = element.id;
-        _assessmentsId.add(assessmentId);
-      });
-    }
+  static Future getTaskSubmissionsByAssessmentId(
+      String assessmentsId, List<TaskSubmission> response) async {
     CollectionReference reference = projectReference
         .collection("assessmentAssignments")
-        .doc(_assessmentsId[0])
+        .doc(assessmentsId)
         .collection('taskSubmissions');
     final querySnapshot = await reference.get();
     if (querySnapshot.docs.length > 0) {
       response.add(TaskSubmission.fromJson(querySnapshot.docs[0].data()));
     }
-    return response;
   }
 }

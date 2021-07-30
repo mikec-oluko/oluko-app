@@ -107,10 +107,42 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                       )
                     : Padding(
                         padding: const EdgeInsets.all(5.0),
-                        child: CircleAvatar(
-                          backgroundColor: OlukoColors.black,
-                          radius: 30.0,
-                        ),
+                        child: Stack(children: [
+                          CircleAvatar(
+                            backgroundColor: OlukoColors.black,
+                            radius: 30.0,
+                          ),
+                          Visibility(
+                            visible: widget.actualRoute ==
+                                    ActualProfileRoute.userProfile &&
+                                widget.userIsOwnerProfile,
+                            child: Positioned(
+                              top: 25,
+                              right: -12,
+                              child: Container(
+                                clipBehavior: Clip.none,
+                                width: 40,
+                                height: 40,
+                                child: TextButton(
+                                    onPressed: () {
+                                      AppModal.dialogContent(
+                                          context: context,
+                                          content: [
+                                            BlocProvider.value(
+                                              value:
+                                                  BlocProvider.of<ProfileBloc>(
+                                                      context),
+                                              child: ModalUploadOptions(
+                                                  UploadFrom.profileImage),
+                                            )
+                                          ]);
+                                    },
+                                    child: Image.asset(
+                                        'assets/profile/uploadImage.png')),
+                              ),
+                            ),
+                          ),
+                        ]),
                       ),
                 Padding(
                   padding: const EdgeInsets.only(left: 10.0),

@@ -112,7 +112,7 @@ class UserRepository {
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"))
         .collection('users')
-        .doc(user.username);
+        .doc(user.id);
     return userReference;
   }
 
