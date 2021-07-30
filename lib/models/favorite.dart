@@ -30,10 +30,7 @@ class Favorite extends Base {
         userId: json['user_id'],
         course: json['course'] == null
             ? null
-            : json['course']
-                .map<ObjectSubmodel>(
-                    (course) => ObjectSubmodel.fromJson(course))
-                .toList());
+            : ObjectSubmodel.fromJson(json['course']));
     favorite.setBase(json);
     return favorite;
   }
