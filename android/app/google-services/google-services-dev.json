@@ -1,0 +1,84 @@
+{
+  "project_info": {
+    "project_number": "320403124104",
+    "project_id": "oluko-development",
+    "storage_bucket": "oluko-development.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:320403124104:android:5b056a2b86a008c768943d",
+        "android_client_info": {
+          "package_name": "com.app.oluko_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "320403124104-0rf0l2k1g5knknr0ih6d12vhsvh88eho.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDef0ftTemS0XU14A7LPNnph1C8W2tyQMk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "320403124104-0rf0l2k1g5knknr0ih6d12vhsvh88eho.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "320403124104-ppl0rb8eq0e12rpean64ulsoe9c0dqfc.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.app.olukoApp",
+                "app_store_id": "1566271606"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:320403124104:android:1590ae6c4b2d9c3068943d",
+        "android_client_info": {
+          "package_name": "com.app.oluko_app.development"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "320403124104-0rf0l2k1g5knknr0ih6d12vhsvh88eho.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDef0ftTemS0XU14A7LPNnph1C8W2tyQMk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "320403124104-0rf0l2k1g5knknr0ih6d12vhsvh88eho.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "320403124104-ppl0rb8eq0e12rpean64ulsoe9c0dqfc.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.app.olukoApp",
+                "app_store_id": "1566271606"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
