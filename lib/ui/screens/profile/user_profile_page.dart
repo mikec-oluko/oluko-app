@@ -63,10 +63,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
             userRequested: widget.userRequested)) {
           _userProfileToDisplay = this._currentAuthUser;
           _isCurrentUser = true;
-          _requestContentForUser(
-              context: context, userRequested: _userProfileToDisplay);
         }
-
+        _requestContentForUser(
+            context: context, userRequested: _userProfileToDisplay);
         return _buildUserProfileView(
             context: context,
             authUser: _currentAuthUser,
@@ -184,18 +183,19 @@ class _UserProfilePageState extends State<UserProfilePage> {
             ),
             Column(
               children: [
-                BlocListener<TaskSubmissionBloc, TaskSubmissionState>(
-                    listener: (context, state) {
-                      if (state is GetUserTaskSubmissionSuccess) {
-                        _assessmentVideosContent = state.taskSubmissions;
-                      }
-                    },
-                    child: _buildCarouselSection(
-                        titleForSection: OlukoLocalizations.of(context)
-                            .find('assessmentVideos'),
-                        routeForSection: ProfileRoutes.goToAssessmentVideos(),
-                        contentForSection: _getWidgetListFromContent(
-                            assessmentVideoData: _assessmentVideosContent))),
+                BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
+                    builder: (context, state) {
+                  if (state is GetUserTaskSubmissionSuccess) {
+                    _assessmentVideosContent = state.taskSubmissions;
+                  }
+
+                  return _buildCarouselSection(
+                      titleForSection: OlukoLocalizations.of(context)
+                          .find('assessmentVideos'),
+                      routeForSection: ProfileRoutes.goToAssessmentVideos(),
+                      contentForSection: _getWidgetListFromContent(
+                          assessmentVideoData: _assessmentVideosContent));
+                }),
                 BlocBuilder<TransformationJourneyBloc,
                     TransformationJourneyState>(
                   builder: (context, state) {
@@ -335,23 +335,23 @@ class _UserProfilePageState extends State<UserProfilePage> {
       List<TaskSubmission> assessmentVideoData,
       List<Challenge> upcomingChallenges}) {
     List<Widget> contentForSection = [];
-
-    if (tansformationJourneyData != null &&
-        (assessmentVideoData == null && upcomingChallenges == null)) {
+    //&& (assessmentVideoData == null && upcomingChallenges == null)
+    if (tansformationJourneyData != null) {
       tansformationJourneyData.forEach((contentUploaded) {
         contentForSection.add(_getImageAndVideoCard(
             transformationJourneyContent: contentUploaded));
       });
     }
-    if (assessmentVideoData != null &&
-        (tansformationJourneyData == null && upcomingChallenges == null)) {
+
+//&&(tansformationJourneyData == null && upcomingChallenges == null)
+    if (assessmentVideoData != null) {
       assessmentVideoData.forEach((assessmentVideo) {
         contentForSection
             .add(_getImageAndVideoCard(taskSubmissionContent: assessmentVideo));
       });
     }
-    if (upcomingChallenges != null &&
-        (tansformationJourneyData == null && assessmentVideoData == null)) {
+//&&(tansformationJourneyData == null && assessmentVideoData == null)
+    if (upcomingChallenges != null) {
       upcomingChallenges.forEach((challenge) {
         contentForSection
             .add(_getImageAndVideoCard(upcomingChallengesContent: challenge));
@@ -376,13 +376,11 @@ class _UserProfilePageState extends State<UserProfilePage> {
     }
     if (taskSubmissionContent != null && taskSubmissionContent.video != null) {
       contentForReturn = ImageAndVideoContainer(
-        assetImage: taskSubmissionContent.video != null &&
-                taskSubmissionContent.video.thumbUrl != null
+        assetImage: taskSubmissionContent.video.thumbUrl != null
             ? taskSubmissionContent.video.thumbUrl
             : '',
         isVideo: taskSubmissionContent.video != null,
-        videoUrl: taskSubmissionContent.video != null &&
-                taskSubmissionContent.video.url != null
+        videoUrl: taskSubmissionContent.video.url != null
             ? taskSubmissionContent.video.url
             : '',
       );
