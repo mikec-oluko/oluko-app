@@ -6,6 +6,7 @@ import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment_bloc.dart';
+import 'package:oluko_app/blocs/favorite_bloc.dart';
 import 'package:oluko_app/blocs/friend_bloc.dart';
 import 'package:oluko_app/blocs/profile_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
@@ -109,6 +110,7 @@ class Routes {
   final CourseEnrollmentBloc _courseEnrollmentBloc = CourseEnrollmentBloc();
   final TransformationJourneyBloc _transformationJourneyBloc =
       TransformationJourneyBloc();
+  final FavoriteBloc _favoriteBloc = FavoriteBloc();
 
   getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -125,7 +127,8 @@ class Routes {
       case RouteEnum.root:
         providers = [
           BlocProvider<CourseBloc>.value(value: _courseBloc),
-          BlocProvider<TagBloc>.value(value: _tagBloc)
+          BlocProvider<TagBloc>.value(value: _tagBloc),
+          BlocProvider<FavoriteBloc>.value(value: _favoriteBloc),
         ];
         newRouteView = MainPage();
         break;
@@ -232,6 +235,7 @@ class Routes {
         break;
       case RouteEnum.courses:
         providers = [
+          BlocProvider<FavoriteBloc>.value(value: _favoriteBloc),
           BlocProvider<CourseBloc>.value(value: _courseBloc),
           BlocProvider<TagBloc>.value(value: _tagBloc),
         ];
