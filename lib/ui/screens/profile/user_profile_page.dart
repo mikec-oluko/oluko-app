@@ -129,7 +129,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   Container(
                     width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.height / 3,
-                    //TODO: LOAD USER COVERIMAGE
                     child: _userProfileToDisplay.coverImage == null
                         ? SizedBox()
                         : Image.network(
@@ -252,6 +251,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
       {BuildContext context, UserResponse userRequested}) {
     // BlocProvider.of<CourseEnrollmentBloc>(context)
     // .getCourseEnrollmentsByUserId(profileInfo.id);
+
     BlocProvider.of<TaskSubmissionBloc>(context)
         .getTaskSubmissionByUserId(userRequested.id);
 
@@ -335,23 +335,25 @@ class _UserProfilePageState extends State<UserProfilePage> {
       List<TaskSubmission> assessmentVideoData,
       List<Challenge> upcomingChallenges}) {
     List<Widget> contentForSection = [];
-    //&& (assessmentVideoData == null && upcomingChallenges == null)
-    if (tansformationJourneyData != null) {
+
+    if (tansformationJourneyData != null &&
+        (assessmentVideoData == null && upcomingChallenges == null)) {
       tansformationJourneyData.forEach((contentUploaded) {
         contentForSection.add(_getImageAndVideoCard(
             transformationJourneyContent: contentUploaded));
       });
     }
 
-//&&(tansformationJourneyData == null && upcomingChallenges == null)
-    if (assessmentVideoData != null) {
+    if (assessmentVideoData != null &&
+        (tansformationJourneyData == null && upcomingChallenges == null)) {
       assessmentVideoData.forEach((assessmentVideo) {
         contentForSection
             .add(_getImageAndVideoCard(taskSubmissionContent: assessmentVideo));
       });
     }
-//&&(tansformationJourneyData == null && assessmentVideoData == null)
-    if (upcomingChallenges != null) {
+
+    if (upcomingChallenges != null &&
+        (tansformationJourneyData == null && assessmentVideoData == null)) {
       upcomingChallenges.forEach((challenge) {
         contentForSection
             .add(_getImageAndVideoCard(upcomingChallengesContent: challenge));
