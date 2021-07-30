@@ -298,7 +298,7 @@ class _State extends State<Courses> {
                           courseState is CourseSuccess &&
                           favoriteState.favorites.length > 0
                       ? CarouselSection(
-                          title: 'My List',
+                          title: OlukoLocalizations.of(context).find('myList'),
                           height: carouselSectionHeight,
                           children:
                               favoriteState.favorites.map((Favorite favorite) {
