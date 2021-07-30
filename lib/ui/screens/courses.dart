@@ -4,10 +4,12 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
+import 'package:oluko_app/blocs/favorite_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/base.dart';
 import 'package:oluko_app/models/course.dart';
+import 'package:oluko_app/models/favorite.dart';
 import 'package:oluko_app/models/search_results.dart';
 import 'package:oluko_app/models/tag.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
@@ -152,6 +154,7 @@ class _State extends State<Courses> {
       padding: const EdgeInsets.only(top: 15.0, left: 8, right: 8),
       child: ListView(
         children: [
+          _myListSection(courseState),
           _friendsRecommendedSection(courseState),
           ListView.builder(
               physics: NeverScrollableScrollPhysics(),
@@ -280,6 +283,49 @@ class _State extends State<Courses> {
                   userRecommendationsAvatarUrls.sublist(2)),
         ),
       ],
+    );
+  }
+
+  _myListSection(courseState) {
+    return Container(
+      child: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
+        return authState is AuthSuccess
+            ? BlocBuilder<FavoriteBloc, FavoriteState>(
+                bloc: BlocProvider.of<FavoriteBloc>(context)
+                  ..getByUser(authState.user.id),
+                builder: (context, favoriteState) {
+                  return favoriteState is FavoriteSuccess &&
+                          courseState is CourseSuccess &&
+                          favoriteState.favorites.length > 0
+                      ? CarouselSection(
+                          title: 'My List',
+                          height: carouselSectionHeight + 10,
+                          children:
+                              favoriteState.favorites.map((Favorite favorite) {
+                            Course favoriteCourse = courseState.values
+                                .where(
+                                    (course) => course.id == favorite.course.id)
+                                .toList()[0];
+                            return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: GestureDetector(
+                                  onTap: () => Navigator.pushNamed(
+                                      context, 'classes', arguments: {
+                                    'courseId': favoriteCourse.id
+                                  }),
+                                  child: _getCourseCard(
+                                    _generateImageCourse(
+                                        favoriteCourse.imageUrl),
+                                    width: ScreenUtils.width(context) /
+                                        (0.2 + _cardsToShow()),
+                                  ),
+                                ));
+                          }).toList(),
+                        )
+                      : SizedBox();
+                })
+            : SizedBox();
+      }),
     );
   }
 
