@@ -266,7 +266,8 @@ class _State extends State<Courses> {
                     recommendationState.recommendationsByUsers.entries.length >
                         0
                 ? CarouselSection(
-                    title: 'Friends Recommended',
+                    title: OlukoLocalizations.of(context)
+                        .find('friendsRecommended'),
                     height: carouselSectionHeight + 10,
                     children: recommendationState.recommendationsByUsers.entries
                         .map(
