@@ -279,8 +279,9 @@ class Routes {
           BlocProvider<AssessmentAssignmentBloc>.value(
               value: _assessmentAssignmentBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
+          BlocProvider<TaskBloc>.value(value: _taskBloc),
         ];
-        final Map<String, int> argumentsToAdd = arguments;
+        final Map<String, num> argumentsToAdd = arguments;
         newRouteView = TaskDetails(
           taskIndex: argumentsToAdd['taskIndex'],
         );

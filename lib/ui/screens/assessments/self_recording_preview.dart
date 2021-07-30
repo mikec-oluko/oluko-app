@@ -33,8 +33,6 @@ class SelfRecordingPreview extends StatefulWidget {
 class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
   final _formKey = GlobalKey<FormState>();
   ChewieController _controller;
-  VideoBloc _videoBloc;
-  TaskSubmissionBloc _taskSubmissionBloc;
 
   Task _task;
   List<Task> _tasks;
@@ -43,8 +41,6 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
 
   @override
   void initState() {
-    _videoBloc = VideoBloc();
-    _taskSubmissionBloc = TaskSubmissionBloc();
     super.initState();
   }
 
@@ -60,19 +56,22 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                   builder: (context, taskSubmissionState) {
                 if (assessmentAssignmentState is AssessmentAssignmentSuccess &&
                     taskState is TaskSuccess &&
-                    taskSubmissionState is GetSuccess) {
+                    (taskSubmissionState is GetSuccess ||
+                        taskSubmissionState is CreateSuccess)) {
                   _assessmentAssignment =
                       assessmentAssignmentState.assessmentAssignment;
                   _tasks = taskState.values;
                   _task = _tasks[widget.taskIndex];
-                  _taskSubmission = taskSubmissionState.taskSubmission;
+                  if (taskSubmissionState is GetSuccess) {
+                    _taskSubmission = taskSubmissionState.taskSubmission;
+                  }
                   return BlocListener<TaskSubmissionBloc, TaskSubmissionState>(
                       listener: (context, state) {
                         if (state is CreateSuccess) {
-                          _taskSubmission.id = state.taskSubmissionId;
-                          _videoBloc
+                          _taskSubmission = state.taskSubmission;
+                          BlocProvider.of<VideoBloc>(context)
                             ..createVideo(context, File(widget.filePath),
-                                3.0 / 4.0, state.taskSubmissionId);
+                                3.0 / 4.0, state.taskSubmission.id);
                         }
                       },
                       child: form());
@@ -115,7 +114,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                                       ..createTaskSubmission(
                                           _assessmentAssignment, _task);
                                   } else {
-                                    _videoBloc
+                                    BlocProvider.of<VideoBloc>(context)
                                       ..createVideo(
                                           context,
                                           File(widget.filePath),
@@ -127,7 +126,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                           BlocConsumer<VideoBloc, VideoState>(
                               listener: (context, state) {
                             if (state is VideoSuccess) {
-                              _taskSubmissionBloc
+                              BlocProvider.of<TaskSubmissionBloc>(context)
                                 ..updateTaskSubmissionVideo(
                                     _assessmentAssignment,
                                     _taskSubmission.id,
