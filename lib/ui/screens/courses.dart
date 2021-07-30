@@ -299,7 +299,7 @@ class _State extends State<Courses> {
                           favoriteState.favorites.length > 0
                       ? CarouselSection(
                           title: 'My List',
-                          height: carouselSectionHeight + 10,
+                          height: carouselSectionHeight,
                           children:
                               favoriteState.favorites.map((Favorite favorite) {
                             Course favoriteCourse = courseState.values
@@ -307,7 +307,7 @@ class _State extends State<Courses> {
                                     (course) => course.id == favorite.course.id)
                                 .toList()[0];
                             return Padding(
-                                padding: const EdgeInsets.all(8.0),
+                                padding: const EdgeInsets.only(right: 8.0),
                                 child: GestureDetector(
                                   onTap: () => Navigator.pushNamed(
                                       context, 'classes', arguments: {
