@@ -31,7 +31,7 @@ class FavoriteRepository {
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"))
-        .collection('recommendations')
+        .collection('favorites')
         .where('user_id', isEqualTo: userId)
         .get();
     List<Favorite> response = [];
