@@ -56,6 +56,10 @@ class OlukoColors {
 
   static const Color listGrayColor = Color.fromRGBO(57, 57, 57, 1);
 
+  static const Color grayColorFadeTop = Color.fromRGBO(53, 58, 64, 1.0);
+
+  static const Color grayColorFadeBottom = Color.fromRGBO(22, 23, 27, 1);
+
   static const Color challengesGreyBackground = Color(0xFF303030);
 
   static const Color grayColorSemiTransparent =

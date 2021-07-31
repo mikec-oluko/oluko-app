@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:oluko_app/blocs/auth_bloc.dart';
-import 'package:oluko_app/models/user_response.dart';
-import 'package:oluko_app/ui/components/dialog.dart';
 
 class ProfileViewConstants {
   //Constants used on Profile Feature
@@ -61,7 +58,9 @@ class ProfileOptions {
 enum SettingsOptions { notification, public, restricted, anonymous }
 
 //Enum for modal, to update images
-enum UploadFrom { profileImage, transformationJourney }
+enum UploadFrom { profileImage, transformationJourney, profileCoverImage }
+
+enum ActualProfileRoute { rootProfile, userProfile }
 
 //Enum of options for upload content
 enum DeviceContentFrom { camera, gallery }

@@ -93,9 +93,10 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Center(
-              child: _profileInfo.avatar != null
+              child: _profileInfo.avatarThumbnail != null
                   ? CircleAvatar(
-                      backgroundImage: NetworkImage(_profileInfo.avatar),
+                      backgroundImage:
+                          NetworkImage(_profileInfo.avatarThumbnail),
                       backgroundColor: OlukoColors.primary,
                       radius: 50.0,
                       child: IconButton(

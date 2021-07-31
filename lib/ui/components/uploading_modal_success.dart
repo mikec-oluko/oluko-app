@@ -62,7 +62,9 @@ class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
                                 //add methods to restart state
                                 //get route from
                                 if (widget.goToPage ==
-                                    UploadFrom.profileImage) {
+                                        UploadFrom.profileImage ||
+                                    widget.goToPage ==
+                                        UploadFrom.profileCoverImage) {
                                   BlocProvider.of<ProfileBloc>(context)
                                     ..resetUploadStatus();
                                   BlocProvider.of<AuthBloc>(context)
@@ -98,7 +100,10 @@ class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
       routeToGo = ProfileRoutes.profileTransformationJourneyRoute;
     }
     if (cameFrom == UploadFrom.profileImage) {
-      routeToGo = ProfileRoutes.profileMyAccountRoute;
+      routeToGo = ProfileRoutes.userInformationRoute;
+    }
+    if (cameFrom == UploadFrom.profileCoverImage) {
+      routeToGo = ProfileRoutes.userInformationRoute;
     }
     return routeToGo;
   }
