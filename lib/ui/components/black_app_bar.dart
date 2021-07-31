@@ -14,7 +14,6 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
   final List<T> Function(String, List<T>) searchMethod;
   final bool showBackButton;
   final String title;
-  final String routeToGoBack;
   final List<Widget> actions;
   final List<T> searchResultItems;
   final bool showSearchBar;
@@ -22,7 +21,6 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
 
   OlukoAppBar(
       {this.title,
-      this.routeToGoBack,
       this.onPressed,
       this.actions,
       this.onSearchResults,
@@ -47,10 +45,7 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
                     size: 35,
                     color: Colors.white,
                   ),
-                  onPressed: routeToGoBack == null
-                      ? () => Navigator.pop(context)
-                      : () => Navigator.pushNamed(context, routeToGoBack),
-                )
+                  onPressed: () => Navigator.pop(context))
               : null,
           title: FittedBox(
               fit: BoxFit.fitWidth,
