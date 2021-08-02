@@ -62,6 +62,9 @@ class _State extends State<Courses> {
     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRF1L_s4YJh7RHSIag8CxT0LTuJQo-XQnTJkVApDXar4b0A57U_TnAMrK_l4Fd_Nzp65Bg&usqp=CAU'
   ];
 
+  String defaultAvatar =
+      'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/default-avatar.png?alt=media&token=d293c16b-1d61-4123-8cbe-6ed6c7601783';
+
   @override
   Widget build(BuildContext context) {
     carouselSectionHeight =
@@ -291,8 +294,11 @@ class _State extends State<Courses> {
                           .where((element) => element.id == courseEntry.key)
                           .toList()[0];
 
-                      final List<String> userRecommendationAvatars =
-                          courseEntry.value.map((user) => user.avatar).toList();
+                      final List<String> userRecommendationAvatars = courseEntry
+                          .value
+                          .map((user) =>
+                              user.avatar != null ? user.avatar : defaultAvatar)
+                          .toList();
 
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
