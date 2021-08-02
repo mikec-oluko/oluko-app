@@ -35,10 +35,12 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
         children: [
           ListTile(
             onTap: () {
-              if (widget.contentFrom == UploadFrom.profileImage) {
+              if (widget.contentFrom == UploadFrom.profileImage ||
+                  widget.contentFrom == UploadFrom.profileCoverImage) {
                 BlocProvider.of<ProfileBloc>(context)
-                  ..updateUserProfileAvatar(
-                      uploadedFrom: DeviceContentFrom.camera);
+                  ..uploadImageForProfile(
+                      uploadedFrom: DeviceContentFrom.camera,
+                      contentFor: widget.contentFrom);
                 AppModal.dialogContent(
                     context: context,
                     content: [UploadingModalLoader(widget.contentFrom)]);
@@ -64,10 +66,12 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
           ),
           ListTile(
             onTap: () {
-              if (widget.contentFrom == UploadFrom.profileImage) {
+              if (widget.contentFrom == UploadFrom.profileImage ||
+                  widget.contentFrom == UploadFrom.profileCoverImage) {
                 BlocProvider.of<ProfileBloc>(context)
-                  ..updateUserProfileAvatar(
-                      uploadedFrom: DeviceContentFrom.gallery);
+                  ..uploadImageForProfile(
+                      uploadedFrom: DeviceContentFrom.gallery,
+                      contentFor: widget.contentFrom);
                 Navigator.pop(context);
                 AppModal.dialogContent(
                     context: context,

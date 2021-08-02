@@ -83,7 +83,7 @@ class Course extends Base {
             ? List<ObjectSubmodel>.from(
                 json['tags'].map((c) => ObjectSubmodel.fromJson(c)))
             : null,
-        imageUrl: json['image_url']);
+        imageUrl: json['image']);
     course.setBase(json);
     return course;
   }
@@ -108,7 +108,7 @@ class Course extends Base {
       'classes': classes == null
           ? null
           : List<dynamic>.from(classes.map((c) => c.toJson())),
-      'image_url': imageUrl,
+      'image': imageUrl,
     };
     courseJson.addEntries(super.toJson().entries);
     return courseJson;

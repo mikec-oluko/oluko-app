@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class UserProfileProgress extends StatefulWidget {
-  final String userChallenges;
-  final String userFriends;
-  const UserProfileProgress({this.userChallenges, this.userFriends}) : super();
+  final String challengesCompleted;
+  final String coursesCompleted;
+  final String classesCompleted;
+
+  const UserProfileProgress(
+      {this.challengesCompleted, this.coursesCompleted, this.classesCompleted})
+      : super();
 
   @override
   _UserProfileProgressState createState() => _UserProfileProgressState();
@@ -14,43 +18,77 @@ class UserProfileProgress extends StatefulWidget {
 class _UserProfileProgressState extends State<UserProfileProgress> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 10.0),
-      child: IntrinsicHeight(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            profileAccomplishments(ProfileViewConstants.profileChallengesTitle,
-                widget.userChallenges),
-            VerticalDivider(color: OlukoColors.grayColor),
-            profileAccomplishments(
-                ProfileViewConstants.profileFriendsTitle, widget.userFriends),
-          ],
-        ),
-      ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        IntrinsicHeight(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              //CHALLENGES COMPLETED
+              profileAccomplishments(
+                  achievementTitle: OlukoLocalizations.of(context)
+                      .find('challengesCompleted'),
+                  achievementValue: widget.challengesCompleted),
+              //SEPARATOR
+              VerticalDivider(color: OlukoColors.grayColor),
+              //COURSES COMPLETED
+              profileAccomplishments(
+                  achievementTitle:
+                      OlukoLocalizations.of(context).find('coursesCompleted'),
+                  achievementValue: widget.coursesCompleted),
+              //SEPARATOR
+              VerticalDivider(color: OlukoColors.grayColor),
+              //CLASSES COMPLETED
+              profileAccomplishments(
+                  achievementTitle:
+                      OlukoLocalizations.of(context).find('ClassesCompleted'),
+                  achievementValue: widget.classesCompleted),
+            ],
+          ),
+        )
+      ],
     );
   }
 
-  Widget profileAccomplishments(String title, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 15),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title,
-              style: OlukoFonts.olukoMediumFont(
-                  customColor: OlukoColors.grayColor)),
-          SizedBox(height: 5.0),
-          Text(
-            value,
-            style: OlukoFonts.olukoBigFont(
-              custoFontWeight: FontWeight.w500,
+  Widget profileAccomplishments(
+      {String achievementTitle, String achievementValue}) {
+    final double _textContainerWidth = 80;
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        //VALUE
+        Column(
+          children: [
+            Text(
+              achievementValue,
+              style: OlukoFonts.olukoBigFont(
+                  customColor: OlukoColors.primary,
+                  custoFontWeight: FontWeight.w500),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
+        SizedBox(
+          height: 5,
+        ),
+        //SUBTITLE
+        Column(
+          children: [
+            Container(
+              width: _textContainerWidth,
+              child: Text(
+                achievementTitle,
+                style: OlukoFonts.olukoMediumFont(
+                    customColor: OlukoColors.grayColor,
+                    custoFontWeight: FontWeight.w300),
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

@@ -28,7 +28,9 @@
     "friends": "Friends",
     "logout": "Log out",
     "filters": "Filters",
+    "myList": "My List",
     "courses": "Courses",
+    "friendsRecommended": "Friends Recommended",
     "videoFromGallery": "Video from Gallery",
     "viewAll": "View All",
     "clearAll": "Clear All",
@@ -96,5 +98,12 @@
     "processingVideo": "Processing video",
     "completed": "Completed",
     "uploadedWithErrors": "The segment was uploaded with errors",
-    "uploadedSuccessfully": "The segment was uploaded successfully"
+    "uploadedSuccessfully": "The segment was uploaded successfully",
+    "challengesCompleted": "Challenges Completed",
+    "coursesCompleted": "Courses Completed",
+    "ClassesCompleted": "Classes Completed",
+    "assessmentVideos": "Assessment Videos",
+    "transformationJourney": "Transformation Journey",
+    "upcomingChallenges": "Upcoming Challenges"
+
 }

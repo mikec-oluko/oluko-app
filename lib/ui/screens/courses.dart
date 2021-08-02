@@ -4,12 +4,19 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment_bloc.dart';
+import 'package:oluko_app/blocs/favorite_bloc.dart';
+import 'package:oluko_app/blocs/recommendation_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/base.dart';
 import 'package:oluko_app/models/course.dart';
+import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/favorite.dart';
 import 'package:oluko_app/models/search_results.dart';
 import 'package:oluko_app/models/tag.dart';
+import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/course_card.dart';
@@ -152,6 +159,8 @@ class _State extends State<Courses> {
       padding: const EdgeInsets.only(top: 15.0, left: 8, right: 8),
       child: ListView(
         children: [
+          _activeCoursesSection(courseState),
+          _myListSection(courseState),
           _friendsRecommendedSection(courseState),
           ListView.builder(
               physics: NeverScrollableScrollPhysics(),
@@ -252,34 +261,133 @@ class _State extends State<Courses> {
   }
 
   _friendsRecommendedSection(courseState) {
-    return CarouselSection(
-      title: 'Friends Recommended',
-      height: carouselSectionHeight + 10,
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: _getCourseCard(
-              _generateImageCourse(courseState.values[0].imageUrl),
-              width: ScreenUtils.width(context) / (0.2 + _cardsToShow()),
-              userRecommendationsAvatarUrls: userRecommendationsAvatarUrls),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: _getCourseCard(
-              _generateImageCourse(courseState.values[1].imageUrl),
-              width: ScreenUtils.width(context) / (0.2 + _cardsToShow()),
-              userRecommendationsAvatarUrls:
-                  userRecommendationsAvatarUrls.sublist(1)),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: _getCourseCard(
-              _generateImageCourse(courseState.values[2].imageUrl),
-              width: ScreenUtils.width(context) / (0.2 + _cardsToShow()),
-              userRecommendationsAvatarUrls:
-                  userRecommendationsAvatarUrls.sublist(2)),
-        ),
-      ],
+    return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
+      AuthSuccess authSuccess = authState;
+      return BlocBuilder<RecommendationBloc, RecommendationState>(
+          bloc: RecommendationBloc()
+            ..getRecommendedCoursesByUser(authSuccess.user.id),
+          builder: (context, recommendationState) {
+            return recommendationState is RecommendationSuccess &&
+                    courseState is CourseSuccess &&
+                    recommendationState.recommendations.length > 0 &&
+                    recommendationState.recommendationsByUsers.entries.length >
+                        0
+                ? CarouselSection(
+                    title: OlukoLocalizations.of(context)
+                        .find('friendsRecommended'),
+                    height: carouselSectionHeight + 10,
+                    children: recommendationState.recommendationsByUsers.entries
+                        .map(
+                            (MapEntry<String, List<UserResponse>> courseEntry) {
+                      final course = courseState.values
+                          .where((element) => element.id == courseEntry.key)
+                          .toList()[0];
+
+                      final List<String> userRecommendationAvatars =
+                          courseEntry.value.map((user) => user.avatar).toList();
+
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: GestureDetector(
+                          onTap: () => Navigator.pushNamed(
+                              context, routeLabels[RouteEnum.classes],
+                              arguments: {'courseId': course.id}),
+                          child: _getCourseCard(
+                              _generateImageCourse(course.imageUrl),
+                              width: ScreenUtils.width(context) /
+                                  (0.2 + _cardsToShow()),
+                              userRecommendationsAvatarUrls:
+                                  userRecommendationAvatars),
+                        ),
+                      );
+                    }).toList(),
+                  )
+                : SizedBox();
+          });
+    });
+  }
+
+  _activeCoursesSection(courseState) {
+    return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
+      AuthSuccess authSuccess = authState;
+      return BlocBuilder<CourseEnrollmentBloc, CourseEnrollmentState>(
+          bloc: BlocProvider.of<CourseEnrollmentBloc>(context)
+            ..getCourseEnrollmentsByUserId(authSuccess.user.id),
+          builder: (context, courseEnrollmentState) {
+            return courseEnrollmentState is CourseEnrollmentListSuccess &&
+                    courseState is CourseSuccess &&
+                    courseEnrollmentState.courseEnrollmentList.length > 0
+                ? CarouselSection(
+                    title: OlukoLocalizations.of(context).find('activeCourses'),
+                    height: carouselSectionHeight + 10,
+                    children: courseEnrollmentState.courseEnrollmentList
+                        .map((CourseEnrollment courseEnrollment) {
+                      final course = courseState.values
+                          .where((element) =>
+                              element.id == courseEnrollment.courseId)
+                          .toList()[0];
+
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: GestureDetector(
+                          onTap: () => Navigator.pushNamed(
+                              context, routeLabels[RouteEnum.classes],
+                              arguments: {'courseId': course.id}),
+                          child: _getCourseCard(
+                            _generateImageCourse(course.imageUrl),
+                            progress: courseEnrollment.completion,
+                            width: ScreenUtils.width(context) /
+                                (0.2 + _cardsToShow()),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  )
+                : SizedBox();
+          });
+    });
+  }
+    
+  _myListSection(courseState) {
+    return Container(
+      child: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
+        return authState is AuthSuccess
+            ? BlocBuilder<FavoriteBloc, FavoriteState>(
+                bloc: BlocProvider.of<FavoriteBloc>(context)
+                  ..getByUser(authState.user.id),
+                builder: (context, favoriteState) {
+                  return favoriteState is FavoriteSuccess &&
+                          courseState is CourseSuccess &&
+                          favoriteState.favorites.length > 0
+                      ? CarouselSection(
+                          title: OlukoLocalizations.of(context).find('myList'),
+                          height: carouselSectionHeight,
+                          children:
+                              favoriteState.favorites.map((Favorite favorite) {
+                            Course favoriteCourse = courseState.values
+                                .where(
+                                    (course) => course.id == favorite.course.id)
+                                .toList()[0];
+                            return Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: GestureDetector(
+                                  onTap: () => Navigator.pushNamed(
+                                      context, 'classes', arguments: {
+                                    'courseId': favoriteCourse.id
+                                  }),
+                                  child: _getCourseCard(
+                                    _generateImageCourse(
+                                        favoriteCourse.imageUrl),
+                                    width: ScreenUtils.width(context) /
+                                        (0.2 + _cardsToShow()),
+                                  ),
+                                ));
+                          }).toList(),
+                        )
+                      : SizedBox();
+                })
+            : SizedBox();
+      }),
     );
   }
 

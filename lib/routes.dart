@@ -6,6 +6,7 @@ import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment_bloc.dart';
+import 'package:oluko_app/blocs/favorite_bloc.dart';
 import 'package:oluko_app/blocs/friend_bloc.dart';
 import 'package:oluko_app/blocs/profile_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
@@ -24,7 +25,7 @@ import 'package:oluko_app/ui/screens/profile.dart';
 import 'package:oluko_app/ui/screens/profile/profile_challenges_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_help_and_support_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_my_account_page.dart';
-import 'package:oluko_app/ui/screens/profile/profile_own_profile_page.dart';
+import 'package:oluko_app/ui/screens/profile/user_profile_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_settings_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_subscription_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_transformation_journey_page.dart';
@@ -75,7 +76,7 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.profileMyAccount: '/profile-my-account',
   RouteEnum.profileSubscription: '/profile-subscription',
   RouteEnum.profileHelpAndSupport: '/profile-help-and-support',
-  RouteEnum.profileViewOwnProfile: '/profile-view-own-profile',
+  RouteEnum.profileViewOwnProfile: '/profile-view-user-profile',
   RouteEnum.profileChallenges: '/profile-challenges',
   RouteEnum.profileTransformationJourney: '/profile-transformation-journey',
   RouteEnum.transformationJourneyPost: '/transformation-journey-post',
@@ -109,6 +110,7 @@ class Routes {
   final CourseEnrollmentBloc _courseEnrollmentBloc = CourseEnrollmentBloc();
   final TransformationJourneyBloc _transformationJourneyBloc =
       TransformationJourneyBloc();
+  final FavoriteBloc _favoriteBloc = FavoriteBloc();
 
   getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -125,7 +127,9 @@ class Routes {
       case RouteEnum.root:
         providers = [
           BlocProvider<CourseBloc>.value(value: _courseBloc),
-          BlocProvider<TagBloc>.value(value: _tagBloc)
+          BlocProvider<TagBloc>.value(value: _tagBloc),
+          BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
+          BlocProvider<FavoriteBloc>.value(value: _favoriteBloc),
         ];
         newRouteView = MainPage();
         break;
@@ -162,6 +166,7 @@ class Routes {
       case RouteEnum.profileViewOwnProfile:
         providers = [
           BlocProvider<CourseBloc>.value(value: _courseBloc),
+          BlocProvider<ProfileBloc>.value(value: _profileBloc),
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
           BlocProvider<CourseEnrollmentBloc>.value(
@@ -169,7 +174,7 @@ class Routes {
           BlocProvider<TransformationJourneyBloc>.value(
               value: _transformationJourneyBloc),
         ];
-        newRouteView = ProfileOwnProfilePage();
+        newRouteView = UserProfilePage();
         break;
       case RouteEnum.profileChallenges:
         newRouteView = ProfileChallengesPage();
@@ -217,7 +222,10 @@ class Routes {
         newRouteView = SegmentRecording();
         break;
       case RouteEnum.classes:
-        newRouteView = Classes();
+        Map<String, String> parsedArguments = arguments;
+        newRouteView = Classes(
+          courseId: parsedArguments['courseId'],
+        );
         break;
       case RouteEnum.assessmentVideos:
         newRouteView = AssessmentVideos();
@@ -232,6 +240,7 @@ class Routes {
         break;
       case RouteEnum.courses:
         providers = [
+          BlocProvider<FavoriteBloc>.value(value: _favoriteBloc),
           BlocProvider<CourseBloc>.value(value: _courseBloc),
           BlocProvider<TagBloc>.value(value: _tagBloc),
         ];
