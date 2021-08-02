@@ -5,13 +5,13 @@ class SegmentSubmodel {
   String id;
   DocumentReference reference;
   String name;
-  String challangeImage;
+  String challengeImage;
   List<ObjectSubmodel> movements;
 
   SegmentSubmodel(
       {this.id,
       this.reference,
-      this.challangeImage,
+      this.challengeImage,
       this.name,
       this.movements});
 
@@ -20,7 +20,7 @@ class SegmentSubmodel {
         id: json['id'],
         reference: json['reference'],
         name: json['name'],
-        challangeImage: json['challange_image'],
+        challengeImage: json['challenge_image'],
         movements: json['movements'] == null
             ? null
             : List<ObjectSubmodel>.from(json['movements']
@@ -31,7 +31,7 @@ class SegmentSubmodel {
         'id': id,
         'reference': reference,
         'name': name,
-        'challange_image': challangeImage,
+        'challenge_image': challengeImage,
         'movements': movements == null
             ? null
             : List<dynamic>.from(

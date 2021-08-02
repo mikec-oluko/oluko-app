@@ -6,7 +6,7 @@ import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/submodels/class_item.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
 import 'package:oluko_app/models/submodels/segment_submodel.dart';
-import 'package:oluko_app/ui/components/challange_section.dart';
+import 'package:oluko_app/ui/components/challenge_section.dart';
 import 'package:oluko_app/ui/components/class_section.dart';
 import 'package:oluko_app/ui/components/course_segment_section.dart';
 
@@ -82,7 +82,7 @@ class _State extends State<ClassExpansionPanel> {
             segmentName: segment.name,
             movements: movements,
             onPressedMovement: widget.onPressedMovement),
-            subtitle: segment.challangeImage != null ? ChallangeSection(challanges: [segment]) : SizedBox(),
+            subtitle: segment.challengeImage != null ? ChallengeSection(challenges: [segment]) : SizedBox(),
       ));
     });
     return widgets;
