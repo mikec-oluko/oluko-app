@@ -11,10 +11,7 @@ class CourseSegmentSection extends StatefulWidget {
   final Function(BuildContext, Movement) onPressedMovement;
 
   CourseSegmentSection(
-      {
-      this.movements,
-      this.onPressedMovement,
-      this.segmentName});
+      {this.movements, this.onPressedMovement, this.segmentName});
 
   @override
   _State createState() => _State();
@@ -25,9 +22,7 @@ class _State extends State<CourseSegmentSection> {
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
-      child: Padding(
-        padding: const EdgeInsets.all(0.0),
-        child: Container(
+      child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(10)),
           ),
@@ -38,11 +33,12 @@ class _State extends State<CourseSegmentSection> {
                 height: 50,
               ),
               Padding(
-                padding: const EdgeInsets.all(15.0),
+                padding: const EdgeInsets.only(bottom:15.0),
                 child: Text(
                   widget.segmentName,
-                  style: OlukoFonts.olukoSuperBigFont(
-                      custoFontWeight: FontWeight.bold),
+                  style: OlukoFonts.olukoBigFont(
+                      custoFontWeight: FontWeight.normal,
+                      customColor: OlukoColors.grayColor),
                 ),
               ),
               Stack(
@@ -58,7 +54,7 @@ class _State extends State<CourseSegmentSection> {
             ],
           ),
         ),
-      ),
+  
     );
   }
 }

@@ -56,20 +56,7 @@ class _State extends State<ClassExpansionPanel> {
               ),
             );
           },
-          body: ListTile(
-            title: Text(
-              "TODO: To be completed.",
-              style: OlukoFonts.olukoBigFont(
-                  custoFontWeight: FontWeight.normal,
-                  customColor: OlukoColors.white),
-            ),
-            subtitle: Text(
-              "TODO: To be completed.",
-              style: OlukoFonts.olukoMediumFont(
-                  custoFontWeight: FontWeight.normal,
-                  customColor: OlukoColors.grayColor),
-            ),
-          ),
+          body: Column(children: getClassWidgets(_classItems.indexOf(item))),
           isExpanded: item.expanded,
         );
       }).toList(),
@@ -85,19 +72,20 @@ class _State extends State<ClassExpansionPanel> {
     return classItems;
   }
 
-  Widget getClassWidgets(int classIndex) {
+  List<Widget> getClassWidgets(int classIndex) {
     List<Widget> widgets = [];
     Class classObj = widget.classes[classIndex];
     classObj.segments.forEach((segment) {
       List<Movement> movements = getClassSegmentMovements(segment);
-      widgets.add(CourseSegmentSection(
-          segmentName: segment.name,
-          movements: movements,
-          onPressedMovement: widget.onPressedMovement));
-      if (segment.challangeImage != null) {
-        widgets.add(ChallangeSection(challanges: [segment]));
-      }
+      widgets.add(ListTile(
+        title: CourseSegmentSection(
+            segmentName: segment.name,
+            movements: movements,
+            onPressedMovement: widget.onPressedMovement),
+            subtitle: segment.challangeImage != null ? ChallangeSection(challanges: [segment]) : SizedBox(),
+      ));
     });
+    return widgets;
   }
 
   List<Movement> getClassSegmentMovements(SegmentSubmodel segment) {

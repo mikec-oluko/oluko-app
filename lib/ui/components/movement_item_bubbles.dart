@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
 
@@ -66,7 +66,7 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
               child: Text(
                 name,
                 textAlign: TextAlign.center,
-                style: OlukoFonts.olukoMediumFont(),
+                style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor),
               ),
             )
           ],
