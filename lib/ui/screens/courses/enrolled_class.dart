@@ -57,8 +57,6 @@ class _EnrolledClassState extends State<EnrolledClass> {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
         BlocProvider.of<ClassBloc>(context)..getAll(widget.course);
-        BlocProvider.of<StatisticsBloc>(context)
-          ..get(widget.course.statisticsReference);
         BlocProvider.of<MovementBloc>(context)..getAll();
         BlocProvider.of<CourseEnrollmentBloc>(context)
           ..get(authState.firebaseUser, widget.course);
@@ -80,7 +78,7 @@ class _EnrolledClassState extends State<EnrolledClass> {
               key: _formKey,
               child: Scaffold(
                   appBar: OlukoAppBar(
-                      title: OlukoLocalizations.of(context).find('course')),
+                      title: OlukoLocalizations.of(context).find('class')),
                   body: Container(
                       color: Colors.black,
                       child: Stack(
@@ -143,34 +141,7 @@ class _EnrolledClassState extends State<EnrolledClass> {
                                                   customColor:
                                                       OlukoColors.grayColor),
                                             ),
-                                          ),
-                                          BlocBuilder<StatisticsBloc,
-                                                  StatisticsState>(
-                                              builder: (context, state) {
-                                            if (state is StatisticsSuccess) {
-                                              return Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                      vertical: 15),
-                                                  child: StatisticChart(
-                                                      courseStatistics: state
-                                                          .courseStatistics));
-                                            } else {
-                                              return Padding(
-                                                padding:
-                                                    const EdgeInsets.all(50.0),
-                                                child: Center(
-                                                  child: Text(
-                                                      OlukoLocalizations.of(
-                                                              context)
-                                                          .find(
-                                                              'loadingWhithDots'),
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                      )),
-                                                ),
-                                              );
-                                            }
-                                          }),
+                                          ),                                     
                                           Padding(
                                             padding: const EdgeInsets.only(
                                                 top: 10.0, right: 10),
@@ -289,7 +260,7 @@ class _EnrolledClassState extends State<EnrolledClass> {
               mainAxisSize: MainAxisSize.max,
               children: [
                 OlukoPrimaryButton(
-                  title: OlukoLocalizations.of(context).find('enroll'),
+                  title: OlukoLocalizations.of(context).find('start'),
                   onPressed: () {
                     BlocProvider.of<CourseEnrollmentBloc>(context)
                       ..create(user, course);

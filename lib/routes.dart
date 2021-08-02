@@ -27,6 +27,7 @@ import 'package:oluko_app/ui/screens/assessments/self_recording_preview.dart';
 import 'package:oluko_app/ui/screens/choose_plan_payment.dart';
 import 'package:oluko_app/ui/screens/courses/course_marketing.dart';
 import 'package:oluko_app/ui/screens/courses/courses.dart';
+import 'package:oluko_app/ui/screens/courses/enrolled_class.dart';
 import 'package:oluko_app/ui/screens/courses/inside_class.dart';
 import 'package:oluko_app/ui/screens/friends/friends_page.dart';
 import 'package:oluko_app/ui/screens/authentication/login.dart';
@@ -78,7 +79,8 @@ enum RouteEnum {
   videos,
   insideClass,
   selfRecording,
-  selfRecordingPreview
+  selfRecordingPreview,
+  enrolledClass
 }
 
 Map<RouteEnum, String> routeLabels = {
@@ -109,7 +111,8 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.videos: '/videos',
   RouteEnum.insideClass: '/inside-class',
   RouteEnum.selfRecording: '/self-recording',
-  RouteEnum.selfRecordingPreview: '/self-recording-preview'
+  RouteEnum.selfRecordingPreview: '/self-recording-preview',
+  RouteEnum.enrolledClass: '/enrolled-class'
 };
 
 RouteEnum getEnumFromRouteString(String route) {
@@ -138,7 +141,6 @@ class Routes {
   final VideoBloc _videoBloc = VideoBloc();
   final FavoriteBloc _favoriteBloc = FavoriteBloc();
 
-
   getRouteView(String route, Object arguments) {
     //View for the new route.
     Widget newRouteView;
@@ -155,7 +157,8 @@ class Routes {
         providers = [
           BlocProvider<CourseBloc>.value(value: _courseBloc),
           BlocProvider<TagBloc>.value(value: _tagBloc),
-          BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
+          BlocProvider<CourseEnrollmentBloc>.value(
+              value: _courseEnrollmentBloc),
           BlocProvider<FavoriteBloc>.value(value: _favoriteBloc),
         ];
         newRouteView = MainPage();
@@ -261,6 +264,16 @@ class Routes {
         ];
         final Map<String, Course> argumentsToAdd = arguments;
         newRouteView = CourseMarketing(course: argumentsToAdd['course']);
+        break;
+      case RouteEnum.enrolledClass:
+        providers = [
+          BlocProvider<ClassBloc>.value(value: _classBloc),
+          BlocProvider<CourseEnrollmentBloc>.value(
+              value: _courseEnrollmentBloc),
+          BlocProvider<MovementBloc>.value(value: _movementBloc),
+        ];
+        final Map<String, Course> argumentsToAdd = arguments;
+        newRouteView = EnrolledClass(course: argumentsToAdd['course']);
         break;
       case RouteEnum.insideClass:
         providers = [
