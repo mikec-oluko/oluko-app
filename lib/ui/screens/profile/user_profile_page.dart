@@ -19,6 +19,7 @@ import 'package:oluko_app/ui/components/course_card.dart';
 import 'package:oluko_app/ui/components/image_and_video_container.dart';
 import 'package:oluko_app/ui/components/modal_upload_options.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
+import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/user_profile_information.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/ui/screens/profile/profile_routes.dart';
@@ -37,6 +38,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   UserResponse _currentAuthUser;
   UserResponse _userProfileToDisplay;
   bool _isCurrentUser = false;
+  String _connectButtonDefaultText = "Connect";
   List<TransformationJourneyUpload> _transformationJourneyContent = [];
   List<TaskSubmission> _assessmentVideosContent = [];
   List<Challenge> _activeChallenges = [];
@@ -182,6 +184,19 @@ class _UserProfilePageState extends State<UserProfilePage> {
             ),
             Column(
               children: [
+                Row(
+                  children: [
+                    TextButton(
+                      onPressed: () {},
+                      child: Icon(Icons.favorite_border,
+                          color: OlukoColors.primary),
+                    ),
+                    Container(
+                      child: OlukoOutlinedButton(
+                          onPressed: () {}, title: _connectButtonDefaultText),
+                    ),
+                  ],
+                ),
                 BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
                     builder: (context, state) {
                   if (state is GetUserTaskSubmissionSuccess) {
