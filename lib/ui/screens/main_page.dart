@@ -17,7 +17,9 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage>
     with SingleTickerProviderStateMixin {
   List<Widget> tabs = [
-    Home(),
+    MyHomePage(),
+    //TODO:Change to Home() when finished
+    //Home(),
     //Reserved for Coach Section
     Container(
       color: Colors.black,
