@@ -164,7 +164,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             padding: const EdgeInsets.only(right: 8.0),
                             child: GestureDetector(
                               onTap: () => Navigator.pushNamed(
-                                  context, routeLabels[RouteEnum.classes],
+                                  context, routeLabels[RouteEnum.courseMarketing],
                                   arguments: {'course': course}),
                               child: _getCourseCard(
                                   Image.network(

@@ -25,7 +25,7 @@ import 'package:oluko_app/ui/screens/assessments/assessment_videos.dart';
 import 'package:oluko_app/ui/screens/assessments/self_recording.dart';
 import 'package:oluko_app/ui/screens/assessments/self_recording_preview.dart';
 import 'package:oluko_app/ui/screens/choose_plan_payment.dart';
-import 'package:oluko_app/ui/screens/courses/classes.dart';
+import 'package:oluko_app/ui/screens/courses/course_marketing.dart';
 import 'package:oluko_app/ui/screens/courses/courses.dart';
 import 'package:oluko_app/ui/screens/courses/inside_class.dart';
 import 'package:oluko_app/ui/screens/friends/friends_page.dart';
@@ -70,7 +70,7 @@ enum RouteEnum {
   segmentDetails,
   movementIntro,
   segmentRecording,
-  classes,
+  courseMarketing,
   assessmentVideos,
   taskDetails,
   choosePlanPayment,
@@ -101,7 +101,7 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.segmentDetails: '/segment-detail',
   RouteEnum.movementIntro: '/movement-intro',
   RouteEnum.segmentRecording: '/segment-recording',
-  RouteEnum.classes: '/classes',
+  RouteEnum.courseMarketing: '/course-marketing',
   RouteEnum.assessmentVideos: '/assessment-videos',
   RouteEnum.taskDetails: '/task-details',
   RouteEnum.choosePlanPayment: '/choose-plan-payment',
@@ -251,7 +251,7 @@ class Routes {
       case RouteEnum.segmentRecording:
         newRouteView = SegmentRecording();
         break;
-      case RouteEnum.classes:
+      case RouteEnum.courseMarketing:
         providers = [
           BlocProvider<ClassBloc>.value(value: _classBloc),
           BlocProvider<StatisticsBloc>.value(value: _statisticsBloc),
@@ -260,7 +260,7 @@ class Routes {
           BlocProvider<MovementBloc>.value(value: _movementBloc),
         ];
         final Map<String, Course> argumentsToAdd = arguments;
-        newRouteView = Classes(course: argumentsToAdd['course']);
+        newRouteView = CourseMarketing(course: argumentsToAdd['course']);
         break;
       case RouteEnum.insideClass:
         providers = [

@@ -32,18 +32,18 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 
-class Classes extends StatefulWidget {
+class CourseMarketing extends StatefulWidget {
   final Course course;
 
-  Classes({Key key, this.course}) : super(key: key);
+  CourseMarketing({Key key, this.course}) : super(key: key);
 
   get progress => null;
 
   @override
-  _ClassesState createState() => _ClassesState();
+  _CourseMarketingState createState() => _CourseMarketingState();
 }
 
-class _ClassesState extends State<Classes> {
+class _CourseMarketingState extends State<CourseMarketing> {
   final _formKey = GlobalKey<FormState>();
   ChewieController _controller;
 

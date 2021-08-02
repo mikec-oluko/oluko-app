@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
-import 'package:oluko_app/ui/screens/courses/classes.dart';
+import 'package:oluko_app/ui/screens/courses/course_marketing.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 
 import 'course_card.dart';
@@ -41,7 +41,7 @@ class _State extends State<SearchResultsGrid> {
                             builder: (context2) => BlocProvider<AuthBloc>(
                                   create: (context2) =>
                                       BlocProvider.of<AuthBloc>(context),
-                                  child: Classes(
+                                  child: CourseMarketing(
                                       course:
                                           e),
                                 ))),
