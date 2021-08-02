@@ -14,6 +14,9 @@ class UserResponse extends Base {
       this.avatar,
       this.avatarThumbnail,
       this.coverImage,
+      this.city,
+      this.state,
+      this.country,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -37,7 +40,10 @@ class UserResponse extends Base {
       firebaseId,
       avatar,
       avatarThumbnail,
-      coverImage;
+      coverImage,
+      city,
+      state,
+      country;
 
   num hubspotCompanyId;
   num hubspotContactId;
@@ -51,6 +57,9 @@ class UserResponse extends Base {
       avatar: json['avatar'],
       avatarThumbnail: json['avatar_thumbnail'],
       coverImage: json['cover_image'],
+      city: json['city'],
+      state: json['state'],
+      country: json['country'],
       firebaseId: json['firebase_id'],
       hubspotCompanyId: json['hubspot_company_id'],
       hubspotContactId: json['hubspot_contact_id'],
@@ -72,6 +81,9 @@ class UserResponse extends Base {
       'avatar': avatar,
       'avatar_thumbnail': avatarThumbnail,
       'cover_image': coverImage,
+      'city': city,
+      'state': state,
+      'country': country,
       'firebase_id': firebaseId,
       'hubspot_company_id': hubspotCompanyId,
       'hubspot_contact_id': hubspotContactId,

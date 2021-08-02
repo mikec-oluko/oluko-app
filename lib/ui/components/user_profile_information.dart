@@ -36,10 +36,18 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
         width: MediaQuery.of(context).size.width,
         child: Padding(
             padding: const EdgeInsets.all(10.0),
-            //BIG COLUMN
             child: _profileUserInformation(_locationDemo, _valuesDemo)),
       ),
     );
+  }
+
+  String getUserLocation(UserResponse user) {
+    String userLocationContent;
+    if (user.city.isNotEmpty &&
+        (user.state.isNotEmpty && user.country.isNotEmpty)) {
+      userLocationContent = "${user.city}, ${user.state} ${user.country}";
+    }
+    return userLocationContent;
   }
 
   Widget _profileUserInformation(
