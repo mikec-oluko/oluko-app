@@ -10,12 +10,13 @@ class ImageAndVideoPreviewCard extends StatefulWidget {
   final Image imageCover;
   final bool isVideo;
   final String videoUrl;
+  final bool showTitle;
 
-  ImageAndVideoPreviewCard({
-    this.imageCover,
-    this.videoUrl,
-    this.isVideo = false,
-  });
+  ImageAndVideoPreviewCard(
+      {this.imageCover,
+      this.videoUrl,
+      this.isVideo = false,
+      this.showTitle = false});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -50,6 +51,24 @@ class _State extends State<ImageAndVideoPreviewCard> {
                       scale: 5,
                     )))
             : Container(),
+        Align(
+            alignment: Alignment.center,
+            child: TextButton(
+                onPressed: () {
+                  AppModal.dialogContent(
+                      closeButton: true,
+                      context: context,
+                      content: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 30),
+                          child: showVideoPlayer(widget.videoUrl),
+                        )
+                      ]);
+                },
+                child: Image.asset(
+                  'assets/assessment/play.png',
+                  scale: 5,
+                )))
       ]),
     );
   }

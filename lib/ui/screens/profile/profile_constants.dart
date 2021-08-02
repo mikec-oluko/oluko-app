@@ -60,7 +60,7 @@ enum SettingsOptions { notification, public, restricted, anonymous }
 //Enum for modal, to update images
 enum UploadFrom { profileImage, transformationJourney, profileCoverImage }
 
-enum ActualProfileRoute { rootProfile, userProfile }
+enum ActualProfileRoute { rootProfile, userProfile, userAssessmentVideos }
 
 //Enum of options for upload content
 enum DeviceContentFrom { camera, gallery }

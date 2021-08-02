@@ -8,6 +8,7 @@ import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/app_modal.dart';
 import 'package:oluko_app/utils/container_grediant.dart';
 import 'package:oluko_app/utils/image_utils.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 import 'modal_upload_options.dart';
 
@@ -24,6 +25,16 @@ class UserProfileInformation extends StatefulWidget {
 }
 
 class _UserProfileInformationState extends State<UserProfileInformation> {
+  String _userLocation;
+  bool _isPrivateDemo = false;
+  String _archivementsDefaultValue = "0";
+
+  @override
+  void initState() {
+    _userLocation = getUserLocation(widget.userInformation);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final String _locationDemo = "San Francisco, CA USA";
@@ -157,59 +168,89 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                   child: Row(
                     children: [
                       //PROFILE NAME AND LASTNAME
-                      Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 10.0),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    this.widget.userInformation.firstName,
-                                    style: OlukoFonts.olukoBigFont(
-                                        customColor: OlukoColors.primary,
-                                        custoFontWeight: FontWeight.w500),
+                      _isPrivateDemo
+                          ? Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 10.0),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          this.widget.userInformation.firstName,
+                                          style: OlukoFonts.olukoBigFont(
+                                              customColor: OlukoColors.primary,
+                                              custoFontWeight: FontWeight.w500),
+                                        ),
+                                        SizedBox(
+                                          width: 5.0,
+                                        ),
+                                        Text(
+                                          this.widget.userInformation.lastName,
+                                          style: OlukoFonts.olukoBigFont(
+                                              customColor: OlukoColors.primary,
+                                              custoFontWeight: FontWeight.w500),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                   SizedBox(
-                                    width: 5.0,
+                                    height: 5.0,
                                   ),
-                                  Text(
-                                    this.widget.userInformation.lastName,
-                                    style: OlukoFonts.olukoBigFont(
-                                        customColor: OlukoColors.primary,
-                                        custoFontWeight: FontWeight.w500),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(
-                              height: 5.0,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 10.0),
-                              child: IntrinsicHeight(
-                                child: Row(
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 10.0),
+                                    child: IntrinsicHeight(
+                                      child: Row(
+                                        children: [
+                                          Text(
+                                            this
+                                                .widget
+                                                .userInformation
+                                                .username,
+                                            style: OlukoFonts.olukoMediumFont(
+                                                customColor:
+                                                    OlukoColors.grayColor,
+                                                custoFontWeight:
+                                                    FontWeight.w300),
+                                          ),
+                                          VerticalDivider(
+                                              color: OlukoColors.grayColor),
+                                          _userLocation != null
+                                              ? Text(
+                                                  location,
+                                                  style: OlukoFonts
+                                                      .olukoMediumFont(
+                                                          customColor:
+                                                              OlukoColors
+                                                                  .grayColor,
+                                                          custoFontWeight:
+                                                              FontWeight.w300),
+                                                )
+                                              : SizedBox(),
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                ])
+                          : Column(
+                              children: [
+                                Row(
                                   children: [
+                                    TextButton(
+                                        onPressed: () {},
+                                        child: Icon(Icons.lock_outline_rounded,
+                                            color: OlukoColors.primary)),
                                     Text(
-                                      this.widget.userInformation.username,
-                                      style: OlukoFonts.olukoMediumFont(
-                                          customColor: OlukoColors.grayColor,
-                                          custoFontWeight: FontWeight.w300),
-                                    ),
-                                    VerticalDivider(
-                                        color: OlukoColors.grayColor),
-                                    Text(
-                                      location,
-                                      style: OlukoFonts.olukoMediumFont(
-                                          customColor: OlukoColors.grayColor,
-                                          custoFontWeight: FontWeight.w300),
-                                    ),
+                                        OlukoLocalizations.of(context)
+                                            .find('privateProfile'),
+                                        style: OlukoFonts.olukoMediumFont(
+                                            customColor: OlukoColors.grayColor,
+                                            custoFontWeight: FontWeight.w300))
                                   ],
-                                ),
-                              ),
-                            )
-                          ]),
+                                )
+                              ],
+                            ),
                     ],
                   ),
                 ),
@@ -220,11 +261,17 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
         //PROFILE ARCHIVEMENTS
         Padding(
           padding: const EdgeInsets.only(top: 20.0),
-          child: UserProfileProgress(
-            challengesCompleted: valuesForArchivements[0],
-            coursesCompleted: valuesForArchivements[1],
-            classesCompleted: valuesForArchivements[2],
-          ),
+          child: !widget.userIsOwnerProfile && _isPrivateDemo
+              ? UserProfileProgress(
+                  challengesCompleted: _archivementsDefaultValue,
+                  coursesCompleted: _archivementsDefaultValue,
+                  classesCompleted: _archivementsDefaultValue,
+                )
+              : UserProfileProgress(
+                  challengesCompleted: valuesForArchivements[0],
+                  coursesCompleted: valuesForArchivements[1],
+                  classesCompleted: valuesForArchivements[2],
+                ),
         )
       ],
     );

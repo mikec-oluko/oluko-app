@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 
 import 'image_and_video_preview_card.dart';
@@ -8,10 +9,10 @@ class ImageAndVideoContainer extends StatefulWidget {
   final String assetImage;
   final bool isVideo;
   final String videoUrl;
-  final bool local;
+  final ActualProfileRoute displayOn;
 
   ImageAndVideoContainer(
-      {this.assetImage, this.isVideo, this.videoUrl, this.local = false});
+      {this.assetImage, this.isVideo, this.videoUrl, this.displayOn});
 
   @override
   _ImageAndVideoContainerState createState() => _ImageAndVideoContainerState();
@@ -29,32 +30,18 @@ class _ImageAndVideoContainerState extends State<ImageAndVideoContainer> {
           borderRadius: BorderRadius.all(Radius.circular(10)),
           color: OlukoColors.black,
         ),
-        child: widget.local == false
-            ? ImageAndVideoPreviewCard(
-                imageCover: Image.network(
-                  widget.assetImage,
-                  fit: BoxFit.contain,
-                  frameBuilder: (BuildContext context, Widget child, int frame,
-                          bool wasSynchronouslyLoaded) =>
-                      ImageUtils.frameBuilder(
-                          context, child, frame, wasSynchronouslyLoaded,
-                          height: 120, width: 120),
-                  height: 120,
-                  width: 120,
-                ),
-                videoUrl: widget.videoUrl,
-                isVideo: widget.isVideo,
-              )
-            : ImageAndVideoPreviewCard(
-                imageCover: Image.asset(
-                  widget.assetImage,
-                  fit: BoxFit.contain,
-                  height: 120,
-                  width: 120,
-                ),
-                videoUrl: widget.videoUrl,
-                isVideo: widget.isVideo,
-              ),
+        child: ImageAndVideoPreviewCard(
+          imageCover: Image.asset(
+            widget.assetImage,
+            fit: BoxFit.contain,
+            height: 120,
+            width: 120,
+          ),
+          videoUrl: widget.videoUrl,
+          isVideo: widget.isVideo,
+          showTitle:
+              widget.displayOn == ActualProfileRoute.userAssessmentVideos,
+        ),
       ),
     );
   }
