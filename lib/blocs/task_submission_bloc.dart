@@ -37,11 +37,11 @@ class Failure extends TaskSubmissionState {
 class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
   TaskSubmissionBloc() : super(Loading());
 
-  void createTaskSubmission(
-      AssessmentAssignment assessmentAssignment, Task task) {
+  Future<void> createTaskSubmission(
+      AssessmentAssignment assessmentAssignment, Task task) async {
     try {
       TaskSubmission newTaskSubmission =
-          TaskSubmissionRepository.createTaskSubmission(
+          await TaskSubmissionRepository.createTaskSubmission(
               assessmentAssignment, task);
       emit(CreateSuccess(taskSubmission: newTaskSubmission));
     } catch (e) {
@@ -83,7 +83,9 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
       List<TaskSubmission> taskSubmissions =
           await TaskSubmissionRepository.getTaskSubmissionsByUserId(userId);
 
-      emit(GetUserTaskSubmissionSuccess(taskSubmissions: taskSubmissions));
+      if (taskSubmissions.length != 0) {
+        emit(GetUserTaskSubmissionSuccess(taskSubmissions: taskSubmissions));
+      }
     } catch (e) {
       emit(Failure(exception: e));
     }

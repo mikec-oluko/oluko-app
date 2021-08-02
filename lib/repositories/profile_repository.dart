@@ -21,4 +21,11 @@ class ProfileRepository {
         await UserRepository().updateUserAvatar(user, image);
     return userUpdated;
   }
+
+  Future<UserResponse> uploadProfileCoverImage(PickedFile image) async {
+    UserResponse user = await AuthRepository().retrieveLoginData();
+    UserResponse userUpdated = await UserRepository()
+        .updateUserCoverImage(user: user, coverImage: image);
+    return userUpdated;
+  }
 }

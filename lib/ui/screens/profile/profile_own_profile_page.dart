@@ -94,9 +94,9 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
                     child:
                         UserProfileInformation(userInformation: profileInfo)),
               ),
-              _challengesAndFriendsSection(
+              /*_challengesAndFriendsSection(
                   ProfileViewConstants.profileChallengesContent,
-                  ProfileViewConstants.profileFriendsContent),
+                  ProfileViewConstants.profileFriendsContent),*/
               _buildAssessmentVideosSection(),
               _buildTransformationJourneySection(),
               _buildCourseSectionView(),
@@ -108,11 +108,11 @@ class _ProfileOwnProfilePageState extends State<ProfileOwnProfilePage> {
     );
   }
 
-  UserProfileProgress _challengesAndFriendsSection(
+  /*UserProfileProgress _challengesAndFriendsSection(
       String userChallenges, String userFriends) {
     return UserProfileProgress(
         userChallenges: userChallenges, userFriends: userFriends);
-  }
+  }*/
 
   _buildAssessmentVideosSection() {
     return BlocListener<TaskSubmissionBloc, TaskSubmissionState>(

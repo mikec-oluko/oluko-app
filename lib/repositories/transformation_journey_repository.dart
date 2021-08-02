@@ -36,12 +36,8 @@ class TransformationJourneyRepository {
           .collection('users')
           .doc(userName)
           .collection('transformationJourneyUploads')
-          // .where('is_deleted', isNotEqualTo: true)
+          .where('is_deleted', isNotEqualTo: true)
           .get();
-
-      // var first = docRef.docs[0].data();
-      // final content = TransformationJourneyUpload.fromJson(first);
-      // return [content];
       List<TransformationJourneyUpload> contentUploaded = [];
       docRef.docs.forEach((doc) {
         final Map<String, dynamic> content = doc.data();
@@ -54,7 +50,6 @@ class TransformationJourneyRepository {
     }
   }
 
-  //TODO: UPDATE PHOTO FOR TRANSFORMATION JOURNEY GALLERY
   static Future<TransformationJourneyUpload> createTransformationJourneyUpload(
       FileTypeEnum type, PickedFile file, String username) async {
     try {

@@ -4,11 +4,15 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment_bloc.dart';
+import 'package:oluko_app/blocs/favorite_bloc.dart';
 import 'package:oluko_app/blocs/recommendation_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/base.dart';
 import 'package:oluko_app/models/course.dart';
+import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/favorite.dart';
 import 'package:oluko_app/models/search_results.dart';
 import 'package:oluko_app/models/tag.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -155,6 +159,8 @@ class _State extends State<Courses> {
       padding: const EdgeInsets.only(top: 15.0, left: 8, right: 8),
       child: ListView(
         children: [
+          _activeCoursesSection(courseState),
+          _myListSection(courseState),
           _friendsRecommendedSection(courseState),
           ListView.builder(
               physics: NeverScrollableScrollPhysics(),
@@ -252,6 +258,7 @@ class _State extends State<Courses> {
           builder: (context, recommendationState) {
             return recommendationState is RecommendationSuccess &&
                     courseState is CourseSuccess &&
+                    recommendationState.recommendations.length > 0 &&
                     recommendationState.recommendationsByUsers.entries.length >
                         0
                 ? CarouselSection(
@@ -289,9 +296,93 @@ class _State extends State<Courses> {
     });
   }
 
-  _generateImageCourse(String image) {
+  _activeCoursesSection(courseState) {
+    return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
+      AuthSuccess authSuccess = authState;
+      return BlocBuilder<CourseEnrollmentBloc, CourseEnrollmentState>(
+          bloc: BlocProvider.of<CourseEnrollmentBloc>(context)
+            ..getCourseEnrollmentsByUserId(authSuccess.user.id),
+          builder: (context, courseEnrollmentState) {
+            return courseEnrollmentState is CourseEnrollmentListSuccess &&
+                    courseState is CourseSuccess &&
+                    courseEnrollmentState.courseEnrollmentList.length > 0
+                ? CarouselSection(
+                    title: OlukoLocalizations.of(context).find('activeCourses'),
+                    height: carouselSectionHeight + 10,
+                    children: courseEnrollmentState.courseEnrollmentList
+                        .map((CourseEnrollment courseEnrollment) {
+                      final course = courseState.values
+                          .where((element) =>
+                              element.id == courseEnrollment.courseId)
+                          .toList()[0];
+
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: GestureDetector(
+                          onTap: () => Navigator.pushNamed(
+                              context, routeLabels[RouteEnum.classes],
+                              arguments: {'courseId': course.id}),
+                          child: _getCourseCard(
+                            _generateImageCourse(course.image),
+                            progress: courseEnrollment.completion,
+                            width: ScreenUtils.width(context) /
+                                (0.2 + _cardsToShow()),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  )
+                : SizedBox();
+          });
+    });
+  }
+    
+  _myListSection(courseState) {
+    return Container(
+      child: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
+        return authState is AuthSuccess
+            ? BlocBuilder<FavoriteBloc, FavoriteState>(
+                bloc: BlocProvider.of<FavoriteBloc>(context)
+                  ..getByUser(authState.user.id),
+                builder: (context, favoriteState) {
+                  return favoriteState is FavoriteSuccess &&
+                          courseState is CourseSuccess &&
+                          favoriteState.favorites.length > 0
+                      ? CarouselSection(
+                          title: OlukoLocalizations.of(context).find('myList'),
+                          height: carouselSectionHeight,
+                          children:
+                              favoriteState.favorites.map((Favorite favorite) {
+                            Course favoriteCourse = courseState.values
+                                .where(
+                                    (course) => course.id == favorite.course.id)
+                                .toList()[0];
+                            return Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: GestureDetector(
+                                  onTap: () => Navigator.pushNamed(
+                                      context, 'classes', arguments: {
+                                    'courseId': favoriteCourse.id
+                                  }),
+                                  child: _getCourseCard(
+                                    _generateImageCourse(
+                                        favoriteCourse.image),
+                                    width: ScreenUtils.width(context) /
+                                        (0.2 + _cardsToShow()),
+                                  ),
+                                ));
+                          }).toList(),
+                        )
+                      : SizedBox();
+                })
+            : SizedBox();
+      }),
+    );
+  }
+
+  _generateImageCourse(String imageUrl) {
     return Image.network(
-      image,
+      imageUrl,
       fit: BoxFit.cover,
       frameBuilder: (BuildContext context, Widget child, int frame,
               bool wasSynchronouslyLoaded) =>

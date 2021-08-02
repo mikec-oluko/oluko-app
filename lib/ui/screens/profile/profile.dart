@@ -79,10 +79,10 @@ class _ProfilePageState extends State<ProfilePage> {
                   onTap: () => Navigator.pushNamed(
                           context, ProfileRoutes.userInformationRoute)
                       .then((value) => onGoBack()),
-                  child: UserProfileInformation(userInformation: profileInfo)),
-              UserProfileProgress(
-                  userChallenges: ProfileViewConstants.profileChallengesContent,
-                  userFriends: ProfileViewConstants.profileFriendsContent)
+                  child: UserProfileInformation(
+                      userInformation: profileInfo,
+                      actualRoute: ActualProfileRoute.rootProfile,
+                      userIsOwnerProfile: true)),
             ],
           )
         : returnWidget = Center(child: OlukoErrorMessage());
@@ -92,7 +92,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Padding buildOptionsList() {
     return Padding(
-      padding: const EdgeInsets.only(top: 150),
+      padding: const EdgeInsets.only(top: 175),
       child: ListView.builder(
           itemCount: ProfileViewConstants.profileOptions.length,
           itemBuilder: (_, index) =>

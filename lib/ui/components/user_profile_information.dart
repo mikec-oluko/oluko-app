@@ -1,71 +1,224 @@
 import 'package:flutter/material.dart';
-import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/models/sign_up_response.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/profile_bloc.dart';
+import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/ui/components/user_profile_progress.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
+import 'package:oluko_app/utils/app_modal.dart';
+import 'package:oluko_app/utils/container_grediant.dart';
+import 'package:oluko_app/utils/image_utils.dart';
 
-class UserProfileInformation extends StatelessWidget {
+import 'modal_upload_options.dart';
+
+class UserProfileInformation extends StatefulWidget {
   final UserResponse userInformation;
-
-  const UserProfileInformation({this.userInformation}) : super();
+  final ActualProfileRoute actualRoute;
+  final bool userIsOwnerProfile;
+  const UserProfileInformation(
+      {this.userInformation, this.actualRoute, this.userIsOwnerProfile})
+      : super();
 
   @override
+  _UserProfileInformationState createState() => _UserProfileInformationState();
+}
+
+class _UserProfileInformationState extends State<UserProfileInformation> {
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      color: OlukoColors.black,
-      width: MediaQuery.of(context).size.width,
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Row(
+    final String _locationDemo = "San Francisco, CA USA";
+    final List<String> _valuesDemo = ["07", "10", "50"];
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      child: Container(
+        decoration: ContainerGradient.getContainerGradientDecoration(),
+        width: MediaQuery.of(context).size.width,
+        child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            //BIG COLUMN
+            child: _profileUserInformation(_locationDemo, _valuesDemo)),
+      ),
+    );
+  }
+
+  Widget _profileUserInformation(
+      String location, List<String> valuesForArchivements) {
+    return Column(
+      children: [
+        //PROFILE IMAGE AND INFO
+        Column(
           children: [
-            Padding(
-                padding: const EdgeInsets.fromLTRB(5, 5, 10, 5),
-                child: userInformation.avatar != null
-                    ? CircleAvatar(
-                        backgroundColor: OlukoColors.white,
-                        backgroundImage: NetworkImage(userInformation.avatar),
-                        radius: 30.0,
+            //USER CIRCLEAVATAR
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                widget.userInformation.avatarThumbnail != null
+                    ? Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: Stack(clipBehavior: Clip.none, children: [
+                          CircleAvatar(
+                            backgroundColor: OlukoColors.black,
+                            backgroundImage: Image.network(
+                              widget.userInformation.avatarThumbnail,
+                              fit: BoxFit.contain,
+                              frameBuilder: (BuildContext context, Widget child,
+                                      int frame, bool wasSynchronouslyLoaded) =>
+                                  ImageUtils.frameBuilder(context, child, frame,
+                                      wasSynchronouslyLoaded,
+                                      height: 30, width: 30),
+                              height: 30,
+                              width: 30,
+                            ).image,
+                            radius: 30.0,
+                          ),
+                          Visibility(
+                            visible: widget.actualRoute ==
+                                    ActualProfileRoute.userProfile &&
+                                widget.userIsOwnerProfile,
+                            child: Positioned(
+                              top: 25,
+                              right: -12,
+                              child: Container(
+                                clipBehavior: Clip.none,
+                                width: 40,
+                                height: 40,
+                                child: TextButton(
+                                    onPressed: () {
+                                      AppModal.dialogContent(
+                                          context: context,
+                                          content: [
+                                            BlocProvider.value(
+                                              value:
+                                                  BlocProvider.of<ProfileBloc>(
+                                                      context),
+                                              child: ModalUploadOptions(
+                                                  UploadFrom.profileImage),
+                                            )
+                                          ]);
+                                    },
+                                    child: Image.asset(
+                                        'assets/profile/uploadImage.png')),
+                              ),
+                            ),
+                          ),
+                        ]),
                       )
-                    : CircleAvatar(
-                        backgroundColor: OlukoColors.white,
-                        radius: 30.0,
-                      )),
-            Padding(
-              padding: const EdgeInsets.only(left: 5.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+                    : Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: Stack(children: [
+                          CircleAvatar(
+                            backgroundColor: OlukoColors.black,
+                            radius: 30.0,
+                          ),
+                          Visibility(
+                            visible: widget.actualRoute ==
+                                    ActualProfileRoute.userProfile &&
+                                widget.userIsOwnerProfile,
+                            child: Positioned(
+                              top: 25,
+                              right: -12,
+                              child: Container(
+                                clipBehavior: Clip.none,
+                                width: 40,
+                                height: 40,
+                                child: TextButton(
+                                    onPressed: () {
+                                      AppModal.dialogContent(
+                                          context: context,
+                                          content: [
+                                            BlocProvider.value(
+                                              value:
+                                                  BlocProvider.of<ProfileBloc>(
+                                                      context),
+                                              child: ModalUploadOptions(
+                                                  UploadFrom.profileImage),
+                                            )
+                                          ]);
+                                    },
+                                    child: Image.asset(
+                                        'assets/profile/uploadImage.png')),
+                              ),
+                            ),
+                          ),
+                        ]),
+                      ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10.0),
+                  child: Row(
                     children: [
-                      Text(
-                        this.userInformation.firstName,
-                        style: OlukoFonts.olukoBigFont(
-                            custoFontWeight: FontWeight.w500),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 5.0),
-                        child: Text(
-                          this.userInformation.lastName,
-                          style: OlukoFonts.olukoBigFont(
-                              custoFontWeight: FontWeight.w500),
-                        ),
-                      ),
+                      //PROFILE NAME AND LASTNAME
+                      Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 10.0),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    this.widget.userInformation.firstName,
+                                    style: OlukoFonts.olukoBigFont(
+                                        customColor: OlukoColors.primary,
+                                        custoFontWeight: FontWeight.w500),
+                                  ),
+                                  SizedBox(
+                                    width: 5.0,
+                                  ),
+                                  Text(
+                                    this.widget.userInformation.lastName,
+                                    style: OlukoFonts.olukoBigFont(
+                                        customColor: OlukoColors.primary,
+                                        custoFontWeight: FontWeight.w500),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              height: 5.0,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 10.0),
+                              child: IntrinsicHeight(
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      this.widget.userInformation.username,
+                                      style: OlukoFonts.olukoMediumFont(
+                                          customColor: OlukoColors.grayColor,
+                                          custoFontWeight: FontWeight.w300),
+                                    ),
+                                    VerticalDivider(
+                                        color: OlukoColors.grayColor),
+                                    Text(
+                                      location,
+                                      style: OlukoFonts.olukoMediumFont(
+                                          customColor: OlukoColors.grayColor,
+                                          custoFontWeight: FontWeight.w300),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )
+                          ]),
                     ],
                   ),
-                  //TODO: Use username instead profilLevel
-                  Text(
-                      this.userInformation.username != null
-                          ? this.userInformation.username
-                          : '-',
-                      style: OlukoFonts.olukoMediumFont(
-                          customColor: OlukoColors.grayColor))
-                ],
-              ),
-            )
+                ),
+              ],
+            ),
           ],
         ),
-      ),
+        //PROFILE ARCHIVEMENTS
+        Padding(
+          padding: const EdgeInsets.only(top: 20.0),
+          child: UserProfileProgress(
+            challengesCompleted: valuesForArchivements[0],
+            coursesCompleted: valuesForArchivements[1],
+            classesCompleted: valuesForArchivements[2],
+          ),
+        )
+      ],
     );
   }
 }

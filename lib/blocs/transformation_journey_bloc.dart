@@ -44,9 +44,8 @@ class TransformationJourneyBloc extends Cubit<TransformationJourneyState> {
       TransformationJourneyUpload transformationJourneyUpload =
           await TransformationJourneyRepository
               .createTransformationJourneyUpload(type, file, username);
-      //emit(CreateSuccess(taskSubmissionId: newTaskSubmission.id));
     } catch (e) {
-      //emit(Failure(exception: e));
+      emit(TransformationJourneyFailure(exception: e));
     }
   }
 
@@ -64,9 +63,7 @@ class TransformationJourneyBloc extends Cubit<TransformationJourneyState> {
       if (uploadedFrom == DeviceContentFrom.camera) {
         _image = await imagePicker.getImage(source: ImageSource.camera);
       }
-
       if (_image == null) return;
-
       UserResponse user = await AuthRepository().retrieveLoginData();
 
       TransformationJourneyUpload upload = await TransformationJourneyRepository

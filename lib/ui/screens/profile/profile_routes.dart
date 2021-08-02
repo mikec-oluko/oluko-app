@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 
 class ProfileRoutes {
-  static const String userInformationRoute = '/profile-view-own-profile';
+  static const String userInformationRoute = '/profile-view-user-profile';
   static const String profileSettingsRoute = '/profile-settings';
   static const String profileMainRoute = '/profile';
   static const String profileSubscriptionRoute = '/';
