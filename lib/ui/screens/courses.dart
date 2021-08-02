@@ -275,7 +275,7 @@ class _State extends State<Courses> {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       AuthSuccess authSuccess = authState;
       return BlocBuilder<RecommendationBloc, RecommendationState>(
-          bloc: RecommendationBloc()
+          bloc: BlocProvider.of<RecommendationBloc>(context)
             ..getRecommendedCoursesByUser(authSuccess.user.id),
           builder: (context, recommendationState) {
             return recommendationState is RecommendationSuccess &&

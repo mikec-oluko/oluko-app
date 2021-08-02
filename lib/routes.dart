@@ -9,6 +9,7 @@ import 'package:oluko_app/blocs/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/favorite_bloc.dart';
 import 'package:oluko_app/blocs/friend_bloc.dart';
 import 'package:oluko_app/blocs/profile_bloc.dart';
+import 'package:oluko_app/blocs/recommendation_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/blocs/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
@@ -115,6 +116,7 @@ class Routes {
   final TransformationJourneyBloc _transformationJourneyBloc =
       TransformationJourneyBloc();
   final FavoriteBloc _favoriteBloc = FavoriteBloc();
+  final RecommendationBloc _recommendationBloc = RecommendationBloc();
 
   getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -135,6 +137,7 @@ class Routes {
           BlocProvider<CourseEnrollmentBloc>.value(
               value: _courseEnrollmentBloc),
           BlocProvider<FavoriteBloc>.value(value: _favoriteBloc),
+          BlocProvider<RecommendationBloc>.value(value: _recommendationBloc),
         ];
         newRouteView = MainPage();
         break;
