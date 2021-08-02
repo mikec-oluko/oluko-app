@@ -12,6 +12,7 @@ import 'package:oluko_app/blocs/profile_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/blocs/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
+import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/ui/screens/app_plans.dart';
 import 'package:oluko_app/ui/screens/assessment_videos.dart';
 import 'package:oluko_app/ui/screens/choose_plan_payment.dart';
@@ -36,6 +37,7 @@ import 'package:oluko_app/ui/screens/sign_up.dart';
 import 'package:oluko_app/ui/screens/sign_up_with_email.dart';
 import 'package:oluko_app/ui/screens/task_details.dart';
 import 'package:oluko_app/ui/screens/videos/home.dart';
+import 'package:oluko_app/ui/screens/view_all.dart';
 import 'models/task.dart';
 
 enum RouteEnum {
@@ -63,7 +65,8 @@ enum RouteEnum {
   taskDetails,
   choosePlanPayment,
   courses,
-  videos
+  videos,
+  viewAll
 }
 
 Map<RouteEnum, String> routeLabels = {
@@ -92,6 +95,7 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.choosePlanPayment: '/choose-plan-payment',
   RouteEnum.courses: '/courses',
   RouteEnum.videos: '/videos',
+  RouteEnum.viewAll: '/view-all',
 };
 
 RouteEnum getEnumFromRouteString(String route) {
@@ -128,7 +132,8 @@ class Routes {
         providers = [
           BlocProvider<CourseBloc>.value(value: _courseBloc),
           BlocProvider<TagBloc>.value(value: _tagBloc),
-          BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
+          BlocProvider<CourseEnrollmentBloc>.value(
+              value: _courseEnrollmentBloc),
           BlocProvider<FavoriteBloc>.value(value: _favoriteBloc),
         ];
         newRouteView = MainPage();
@@ -245,6 +250,18 @@ class Routes {
           BlocProvider<TagBloc>.value(value: _tagBloc),
         ];
         newRouteView = Courses();
+        break;
+      case RouteEnum.viewAll:
+        Map<String, dynamic> args = arguments;
+        List<Course> courses = args['courses'];
+        providers = [
+          BlocProvider<FavoriteBloc>.value(value: _favoriteBloc),
+          BlocProvider<CourseBloc>.value(value: _courseBloc),
+          BlocProvider<TagBloc>.value(value: _tagBloc),
+        ];
+        newRouteView = ViewAll(
+          courses: courses,
+        );
         break;
       case RouteEnum.videos:
         newRouteView = Home(
