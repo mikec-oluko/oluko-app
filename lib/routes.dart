@@ -254,6 +254,7 @@ class Routes {
       case RouteEnum.viewAll:
         Map<String, dynamic> args = arguments;
         List<Course> courses = args['courses'];
+        String title = args['title'];
         providers = [
           BlocProvider<FavoriteBloc>.value(value: _favoriteBloc),
           BlocProvider<CourseBloc>.value(value: _courseBloc),
@@ -261,6 +262,7 @@ class Routes {
         ];
         newRouteView = ViewAll(
           courses: courses,
+          title: title,
         );
         break;
       case RouteEnum.videos:

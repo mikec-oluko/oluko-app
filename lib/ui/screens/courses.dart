@@ -172,7 +172,12 @@ class _State extends State<Courses> {
                 return CarouselSection(
                   onOptionTap: () => Navigator.pushNamed(
                       context, routeLabels[RouteEnum.viewAll],
-                      arguments: {'courses': coursesList}),
+                      arguments: {
+                        'courses': coursesList,
+                        'title': courseState.coursesByCategories.keys
+                            .elementAt(index)
+                            .name
+                      }),
                   height: carouselSectionHeight,
                   title: courseState.coursesByCategories.keys
                       .elementAt(index)
