@@ -28,8 +28,7 @@ class _State extends State<SearchResultsGrid> {
     return GridView.count(
         childAspectRatio: widget.childAspectRatio,
         shrinkWrap: true,
-        crossAxisCount:
-            MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 5,
+        crossAxisCount: widget.crossAxisCount,
         children: widget.itemList
             .map((e) => Padding(
                   padding: const EdgeInsets.all(8.0),
