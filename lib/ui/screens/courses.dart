@@ -51,7 +51,7 @@ class _State extends State<Courses> {
   final double cardsAspectRatio = 0.69333;
   final int cardsToShowOnPortrait = 4;
   final int cardsToShowOnLandscape = 5;
-  final int searchResultsPortrait = 2;
+  final int searchResultsPortrait = 3;
   final int searchResultsLandscape = 5;
 
   //TODO Make Dynamic
@@ -170,6 +170,9 @@ class _State extends State<Courses> {
                 final List<Course> coursesList =
                     courseState.coursesByCategories.values.elementAt(index);
                 return CarouselSection(
+                  onOptionTap: () => Navigator.pushNamed(
+                      context, routeLabels[RouteEnum.viewAll],
+                      arguments: {'courses': coursesList}),
                   height: carouselSectionHeight,
                   title: courseState.coursesByCategories.keys
                       .elementAt(index)
@@ -347,7 +350,7 @@ class _State extends State<Courses> {
           });
     });
   }
-    
+
   _myListSection(courseState) {
     return Container(
       child: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
