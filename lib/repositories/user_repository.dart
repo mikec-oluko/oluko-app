@@ -37,6 +37,21 @@ class UserRepository {
     return loginResponseBody;
   }
 
+  Future<UserResponse> getById(String id) async {
+    QuerySnapshot docRef = await FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue("projectId"))
+        .collection('users')
+        .where('id', isEqualTo: id)
+        .get();
+    if (docRef.docs == null || docRef.docs.length == 0) {
+      return null;
+    }
+    var response = docRef.docs[0].data();
+    var loginResponseBody = UserResponse.fromJson(response);
+    return loginResponseBody;
+  }
+
   Future<UserResponse> createSSO(SignUpRequest signUpRequest) async {
     CollectionReference reference = FirebaseFirestore.instance
         .collection('projects')
