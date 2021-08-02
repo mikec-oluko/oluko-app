@@ -74,16 +74,19 @@ class UserRepository {
   }
 
   Future<UserResponse> getByUsername(String username) async {
-    DocumentSnapshot<Map<String, dynamic>> docRef = await FirebaseFirestore
+    QuerySnapshot<Map<String, dynamic>> docsRef = await FirebaseFirestore
         .instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"))
         .collection('users')
-        .doc(username)
+        .where('username', isEqualTo: username)
         .get();
-    var response = docRef.data();
-    var loginResponseBody = UserResponse.fromJson(response);
-    return loginResponseBody;
+    if (docsRef.size > 0) {
+      var response = docsRef.docs[0].data();
+      var loginResponseBody = UserResponse.fromJson(response);
+      return loginResponseBody;
+    }
+    return null;
   }
 
   Future<UserResponse> updateUserAvatar(
