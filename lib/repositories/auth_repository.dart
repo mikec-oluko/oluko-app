@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:global_configuration/global_configuration.dart';
 import 'package:http/http.dart';
 import 'package:oluko_app/models/dto/api_response.dart';
 import 'package:oluko_app/models/dto/login_request.dart';
@@ -53,10 +54,13 @@ class AuthRepository {
     await firebaseAuthInstance.signOut();
   }
 
-  Future<ApiResponse> verifyToken(VerifyTokenRequest verifyTokenRequest) async {
+  Future<ApiResponse> externalAuth(
+      VerifyTokenRequest verifyTokenRequest) async {
     Map<String, dynamic> body = verifyTokenRequest.toJson();
+    body['projectId'] = GlobalConfiguration().getValue("projectId");
+    body['signup'] = false;
     Response response =
-        await http.post(Uri.parse("$url/token/verify"), body: body);
+        await http.post(Uri.parse("$url/externalAuth"), body: body);
     var responseBody = jsonDecode(response.body);
     if (responseBody['message'] != null &&
         responseBody['message'].length == null) {
