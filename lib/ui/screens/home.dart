@@ -5,6 +5,7 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/course_step_section.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
@@ -67,7 +68,9 @@ class _HomeState extends State<Home> {
                                                 scale: 2,
                                               ),
                                               SizedBox(height: 70),
-                                              Text(OlukoLocalizations.of(context).find('enroll'),
+                                              Text(
+                                                  OlukoLocalizations.of(context)
+                                                      .find('enroll'),
                                                   style: OlukoFonts
                                                       .olukoSuperBigFont(
                                                           custoFontWeight:
@@ -75,7 +78,9 @@ class _HomeState extends State<Home> {
                                                           customColor:
                                                               OlukoColors
                                                                   .white)),
-                                              Text(OlukoLocalizations.of(context).find('toACourse'),
+                                              Text(
+                                                  OlukoLocalizations.of(context)
+                                                      .find('toACourse'),
                                                   style: OlukoFonts
                                                       .olukoSuperBigFont(
                                                           custoFontWeight:
@@ -88,18 +93,24 @@ class _HomeState extends State<Home> {
                                                   totalCourseSteps: 4,
                                                   currentCourseStep: 4),
                                               SizedBox(height: 15),
-                                              Stack(
-                                                  alignment: Alignment.center,
-                                                  children: [
-                                                    Image.asset(
-                                                      'assets/home/ellipse.png',
-                                                      scale: 4,
-                                                    ),
-                                                    Image.asset(
-                                                      'assets/home/+.png',
-                                                      scale: 4,
-                                                    )
-                                                  ]),
+                                              GestureDetector(
+                                                  onTap: () => Navigator.pushNamed(
+                                                      context,
+                                                      routeLabels[RouteEnum
+                                                          .courses]),
+                                                  child: Stack(
+                                                      alignment:
+                                                          Alignment.center,
+                                                      children: [
+                                                        Image.asset(
+                                                          'assets/home/ellipse.png',
+                                                          scale: 4,
+                                                        ),
+                                                        Image.asset(
+                                                          'assets/home/+.png',
+                                                          scale: 4,
+                                                        )
+                                                      ])),
                                             ],
                                           ))
                                     ],

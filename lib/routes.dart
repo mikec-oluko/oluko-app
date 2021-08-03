@@ -49,7 +49,6 @@ import 'package:oluko_app/ui/screens/authentication/sign_up_with_email.dart';
 import 'package:oluko_app/ui/screens/assessments/task_details.dart';
 import 'package:oluko_app/ui/screens/videos/home.dart';
 import 'models/course.dart';
-import 'models/task.dart';
 
 enum RouteEnum {
   root,
@@ -335,6 +334,8 @@ class Routes {
         providers = [
           BlocProvider<FavoriteBloc>.value(value: _favoriteBloc),
           BlocProvider<CourseBloc>.value(value: _courseBloc),
+          BlocProvider<CourseEnrollmentBloc>.value(
+              value: _courseEnrollmentBloc),
           BlocProvider<TagBloc>.value(value: _tagBloc),
         ];
         newRouteView = Courses();
