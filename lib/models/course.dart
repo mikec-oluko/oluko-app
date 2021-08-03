@@ -18,7 +18,7 @@ class Course extends Base {
   bool mandatoryGapTime;
   List<ObjectSubmodel> classes;
   List<ObjectSubmodel> tags;
-  String imageUrl;
+  String image;
   DocumentReference statisticsReference;
 
   Course(
@@ -36,7 +36,7 @@ class Course extends Base {
       this.mandatoryGapTime,
       this.classes,
       this.tags,
-      this.imageUrl,
+      this.image,
       this.video,
       this.description,
       String id,
@@ -83,7 +83,7 @@ class Course extends Base {
             ? List<ObjectSubmodel>.from(
                 json['tags'].map((c) => ObjectSubmodel.fromJson(c)))
             : null,
-        imageUrl: json['image']);
+        image: json['image']);
     course.setBase(json);
     return course;
   }
@@ -108,7 +108,7 @@ class Course extends Base {
       'classes': classes == null
           ? null
           : List<dynamic>.from(classes.map((c) => c.toJson())),
-      'image': imageUrl,
+      'image': image,
     };
     courseJson.addEntries(super.toJson().entries);
     return courseJson;

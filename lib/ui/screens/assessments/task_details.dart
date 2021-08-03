@@ -1,35 +1,33 @@
 import 'package:chewie/chewie.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
+import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_submission_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
-import 'package:oluko_app/ui/screens/self_recording.dart';
-import 'package:oluko_app/ui/screens/task_submission_recorded_video.dart';
+import 'package:oluko_app/ui/screens/assessments/self_recording.dart';
+import 'package:oluko_app/ui/screens/assessments/task_submission_recorded_video.dart';
 import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 
 class TaskDetails extends StatefulWidget {
-  TaskDetails({this.task, this.user, this.tasks, this.index, Key key})
-      : super(key: key);
+  TaskDetails({this.taskIndex, Key key}) : super(key: key);
 
-  final Task task;
-  User user;
-  List<Task> tasks;
-  int index;
+  final int taskIndex;
 
   @override
   _TaskDetailsState createState() => _TaskDetailsState();
@@ -39,50 +37,51 @@ class _TaskDetailsState extends State<TaskDetails> {
   final _formKey = GlobalKey<FormState>();
   ChewieController _controller;
   bool _makePublic = false;
-
-  TaskSubmissionBloc _taskSubmissionBloc;
-  AssessmentAssignmentBloc _assessmentAssignmentBloc;
-
-  AssessmentAssignment assessmentAssignment;
+  AssessmentAssignment _assessmentAssignment;
+  Task _task;
+  List<Task> _tasks;
 
   @override
   void initState() {
-    _taskSubmissionBloc = TaskSubmissionBloc();
-    _assessmentAssignmentBloc = AssessmentAssignmentBloc();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<AssessmentAssignmentBloc>(
-          create: (context) =>
-              _assessmentAssignmentBloc..getOrCreate(widget.user),
-        ),
-        BlocProvider<TaskSubmissionBloc>(
-          create: (context) => _taskSubmissionBloc,
-        ),
-      ],
-      child: BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(
-          builder: (context, state) {
-        if (state is AssessmentAssignmentSuccess) {
-          assessmentAssignment = state.assessmentAssignment;
-          _taskSubmissionBloc
-            ..getTaskSubmissionOfTask(assessmentAssignment, widget.task);
-          return form();
-        } else {
-          return SizedBox();
-        }
-      }),
-    );
+    return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
+      if (authState is AuthSuccess) {
+        BlocProvider.of<AssessmentAssignmentBloc>(context)
+          ..getOrCreate(authState.firebaseUser);
+        return BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(
+          builder: (context, assessmentAssignmentState) {
+            return BlocBuilder<TaskBloc, TaskState>(
+                builder: (context, taskState) {
+              if (assessmentAssignmentState is AssessmentAssignmentSuccess &&
+                  taskState is TaskSuccess) {
+                _assessmentAssignment =
+                    assessmentAssignmentState.assessmentAssignment;
+                _tasks = taskState.values;
+                _task = _tasks[widget.taskIndex];
+                BlocProvider.of<TaskSubmissionBloc>(context)
+                  ..getTaskSubmissionOfTask(_assessmentAssignment, _task);
+                return form();
+              } else {
+                return SizedBox();
+              }
+            });
+          },
+        );
+      } else {
+        return SizedBox();
+      }
+    });
   }
 
   Widget form() {
     return Form(
         key: _formKey,
         child: Scaffold(
-            appBar: OlukoAppBar(title: widget.task.name),
+            appBar: OlukoAppBar(title: _task.name),
             body: Container(
                 color: Colors.black,
                 child: Padding(
@@ -125,7 +124,7 @@ class _TaskDetailsState extends State<TaskDetails> {
     List<Widget> widgets = [];
     widgets.add(OlukoVideoPlayer(
         autoPlay: false,
-        videoUrl: widget.task.video,
+        videoUrl: _task.video,
         whenInitialized: (ChewieController chewieController) =>
             this.setState(() {
               _controller = chewieController;
@@ -169,18 +168,13 @@ class _TaskDetailsState extends State<TaskDetails> {
                 OlukoPrimaryButton(
                   title: OlukoLocalizations.of(context).find('next'),
                   onPressed: () {
-                    if (widget.index < widget.tasks.length - 1) {
+                    if (widget.taskIndex < _tasks.length - 1) {
                       if (_controller != null) {
                         _controller.pause();
                       }
-                      return Navigator.push(context,
-                          MaterialPageRoute(builder: (context) {
-                        return TaskDetails(
-                            tasks: widget.tasks,
-                            index: widget.index + 1,
-                            user: widget.user,
-                            task: widget.tasks[widget.index + 1]);
-                      }));
+                      return Navigator.pushNamed(
+                          context, routeLabels[RouteEnum.taskDetails],
+                          arguments: {'taskIndex': widget.taskIndex + 1});
                     }
                   },
                 ),
@@ -196,15 +190,9 @@ class _TaskDetailsState extends State<TaskDetails> {
                 if (_controller != null) {
                   _controller.pause();
                 }
-                return Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => SelfRecording(
-                          tasks:widget.tasks,
-                          index: widget.index,
-                            task: widget.task,
-                            assessmentAssignment: assessmentAssignment,
-                            user: widget.user)));
+                return Navigator.pushNamed(
+                    context, routeLabels[RouteEnum.selfRecording],
+                    arguments: {'taskIndex': widget.taskIndex});
               },
             ),
           ],
@@ -243,14 +231,9 @@ class _TaskDetailsState extends State<TaskDetails> {
                         if (_controller != null) {
                           _controller.pause();
                         }
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SelfRecording(
-                                    recordedTaskSubmission: taskSubmission,
-                                    task: widget.task,
-                                    assessmentAssignment: assessmentAssignment,
-                                    user: widget.user)));
+                        return Navigator.pushNamed(
+                            context, routeLabels[RouteEnum.selfRecording],
+                            arguments: {'taskIndex': widget.taskIndex});
                       },
                     ),
                   ],
@@ -283,7 +266,7 @@ class _TaskDetailsState extends State<TaskDetails> {
           ),
         ),
         Text(
-          widget.task.description,
+          _task.description,
           style: OlukoFonts.olukoMediumFont(),
         ),
         BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
@@ -314,7 +297,7 @@ class _TaskDetailsState extends State<TaskDetails> {
             context,
             MaterialPageRoute(
                 builder: (context) => TaskSubmissionRecordedVideo(
-                    task: widget.task, videoUrl: taskSubmission.video.url))),
+                    task: _task, videoUrl: taskSubmission.video.url))),
         child: Align(
           alignment: Alignment.centerLeft,
           child: Container(

@@ -17,7 +17,7 @@ class MovementRepository {
     this.firestoreInstance = firestoreInstance;
   }
 
-  static Future<List<Movement>> getAll(Segment segment) async {
+  static Future<List<Movement>> getBySegment(Segment segment) async {
     List<String> segmentMovementsIds = [];
     segment.movements.forEach((MovementSubmodel movement) {
       segmentMovementsIds.add(movement.id);
@@ -27,6 +27,15 @@ class MovementRepository {
         .doc(GlobalConfiguration().getValue("projectId"))
         .collection('movements')
         .where("id", whereIn: segmentMovementsIds)
+        .get();
+    return mapQueryToMovement(querySnapshot);
+  }
+
+  static Future<List<Movement>> getAll() async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue("projectId"))
+        .collection('movements')
         .get();
     return mapQueryToMovement(querySnapshot);
   }

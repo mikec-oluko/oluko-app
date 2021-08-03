@@ -14,7 +14,6 @@ import 'package:oluko_app/models/transformation_journey_uploads.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/carousel_small_section.dart';
-import 'package:oluko_app/ui/components/challenges_card.dart';
 import 'package:oluko_app/ui/components/course_card.dart';
 import 'package:oluko_app/ui/components/image_and_video_container.dart';
 import 'package:oluko_app/ui/components/modal_upload_options.dart';
@@ -333,7 +332,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
         width: 120,
         height: 120,
         imageCover: Image.network(
-          courseInfo.imageUrl,
+          courseInfo.image,
           frameBuilder: (BuildContext context, Widget child, int frame,
                   bool wasSynchronouslyLoaded) =>
               ImageUtils.frameBuilder(

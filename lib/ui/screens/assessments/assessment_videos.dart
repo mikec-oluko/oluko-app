@@ -8,11 +8,12 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/task.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/task_card.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/components/title_header.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
-import 'package:oluko_app/ui/screens/task_details.dart';
+import 'package:oluko_app/ui/screens/assessments/task_details.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class AssessmentVideos extends StatefulWidget {
@@ -25,15 +26,11 @@ class AssessmentVideos extends StatefulWidget {
 class _AssessmentVideosState extends State<AssessmentVideos> {
   final _formKey = GlobalKey<FormState>();
   ChewieController _controller;
-  AssessmentBloc _assessmentBloc;
-  TaskBloc _taskBloc;
-  Assessment assessment;
-  User user;
+  Assessment _assessment;
+  User _user;
 
   @override
   void initState() {
-    _assessmentBloc = AssessmentBloc();
-    _taskBloc = TaskBloc();
     super.initState();
   }
 
@@ -41,30 +38,22 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
-        user = authState.firebaseUser;
-        return MultiBlocProvider(
-            providers: [
-              BlocProvider<AssessmentBloc>(
-                //TODO: Change this when we have multiple assessments
-                create: (context) =>
-                    _assessmentBloc..getById('emnsmBgZ13UBRqTS26Qd'),
-              ),
-              BlocProvider<TaskBloc>(
-                create: (context) => _taskBloc,
-              ),
-            ],
-            child: BlocBuilder<AssessmentBloc, AssessmentState>(
-                builder: (context, state) {
-              if (state is AssessmentSuccess) {
-                assessment = state.assessment;
-                _taskBloc..get(assessment);
-                return form();
-              } else {
-                return SizedBox();
-              }
-            }));
+        _user = authState.firebaseUser;
+        //TODO: Change this when we have multiple assessments
+        BlocProvider.of<AssessmentBloc>(context)
+          ..getById('emnsmBgZ13UBRqTS26Qd');
+        return BlocBuilder<AssessmentBloc, AssessmentState>(
+            builder: (context, assessmentState) {
+          if (assessmentState is AssessmentSuccess) {
+            _assessment = assessmentState.assessment;
+            BlocProvider.of<TaskBloc>(context)..get(_assessment);
+            return form();
+          } else {
+            return SizedBox();
+          }
+        });
       } else {
-        return Text("Not logged user");
+        return SizedBox();
       }
     });
   }
@@ -136,26 +125,26 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                                           height: 400,
                                           child: Stack(
                                               children: showVideoPlayer(
-                                                  assessment.video))));
+                                                  _assessment.video))));
                                 },
                               ),
                             ),
                             TitleBody(
-                              assessment.description,
+                              _assessment.description,
                               bold: true,
                             ),
                             Column(
                               children: [
                                 BlocBuilder<TaskBloc, TaskState>(
-                                    builder: (context, state) {
-                                  if (state is TaskSuccess) {
+                                    builder: (context, taskState) {
+                                  if (taskState is TaskSuccess) {
                                     return ListView.builder(
                                         physics:
                                             const NeverScrollableScrollPhysics(),
-                                        itemCount: state.values.length,
+                                        itemCount: taskState.values.length,
                                         shrinkWrap: true,
                                         itemBuilder: (context, num index) {
-                                          Task task = state.values[index];
+                                          Task task = taskState.values[index];
                                           return Padding(
                                               padding:
                                                   const EdgeInsets.symmetric(
@@ -166,18 +155,13 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                                                   if (_controller != null) {
                                                     _controller.pause();
                                                   }
-                                                  return Navigator.push(context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) {
-                                                    return TaskDetails(
-                                                        tasks: state.values,
-                                                        index: index,
-                                                        user: user,
-                                                        task: task);
-                                                  })).then((value) =>
-                                                      this.setState(() {
-                                                        _controller = null;
-                                                      }));
+                                                  return Navigator.pushNamed(
+                                                      context,
+                                                      routeLabels[RouteEnum
+                                                          .taskDetails],
+                                                      arguments: {
+                                                        'taskIndex': index
+                                                      });
                                                 },
                                               ));
                                         });
@@ -208,7 +192,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
       widgets.add(Center(child: CircularProgressIndicator()));
     }
     widgets.add(OlukoVideoPlayer(
-        videoUrl: assessment.video,
+        videoUrl: _assessment.video,
         autoPlay: false,
         whenInitialized: (ChewieController chewieController) =>
             this.setState(() {
