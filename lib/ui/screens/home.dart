@@ -67,7 +67,7 @@ class _HomeState extends State<Home> {
                                                 scale: 2,
                                               ),
                                               SizedBox(height: 70),
-                                              Text('Enroll',
+                                              Text(OlukoLocalizations.of(context).find('enroll'),
                                                   style: OlukoFonts
                                                       .olukoSuperBigFont(
                                                           custoFontWeight:
@@ -75,7 +75,7 @@ class _HomeState extends State<Home> {
                                                           customColor:
                                                               OlukoColors
                                                                   .white)),
-                                              Text('to a course',
+                                              Text(OlukoLocalizations.of(context).find('toACourse'),
                                                   style: OlukoFonts
                                                       .olukoSuperBigFont(
                                                           custoFontWeight:
