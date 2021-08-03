@@ -11,6 +11,7 @@ import 'package:oluko_app/blocs/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/favorite_bloc.dart';
 import 'package:oluko_app/blocs/friend_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
+import 'package:oluko_app/blocs/plan_bloc.dart';
 import 'package:oluko_app/blocs/profile_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/blocs/statistics_bloc.dart';
@@ -37,6 +38,7 @@ import 'package:oluko_app/ui/screens/profile/profile.dart';
 import 'package:oluko_app/ui/screens/profile/profile_challenges_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_help_and_support_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_my_account_page.dart';
+import 'package:oluko_app/ui/screens/profile/transformation_journey_content_detail.dart';
 import 'package:oluko_app/ui/screens/profile/user_profile_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_settings_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_subscription_page.dart';
@@ -50,6 +52,7 @@ import 'package:oluko_app/ui/screens/assessments/task_details.dart';
 import 'package:oluko_app/ui/screens/videos/home.dart';
 import 'models/course.dart';
 import 'models/task.dart';
+import 'models/transformation_journey_uploads.dart';
 
 enum RouteEnum {
   root,
@@ -65,6 +68,7 @@ enum RouteEnum {
   profileChallenges,
   profileTransformationJourney,
   transformationJourneyPost,
+  transformationJournetContentDetails,
   transformationJourneyPostView,
   logIn,
   appPlans,
@@ -97,6 +101,8 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.profileChallenges: '/profile-challenges',
   RouteEnum.profileTransformationJourney: '/profile-transformation-journey',
   RouteEnum.transformationJourneyPost: '/transformation-journey-post',
+  RouteEnum.transformationJournetContentDetails:
+      '/transformation-journey-content-details',
   RouteEnum.transformationJourneyPostView: '/transformation-journey-post-view',
   RouteEnum.logIn: '/log-in',
   RouteEnum.appPlans: '/app-plans',
@@ -140,6 +146,7 @@ class Routes {
   final TaskBloc _taskBloc = TaskBloc();
   final VideoBloc _videoBloc = VideoBloc();
   final FavoriteBloc _favoriteBloc = FavoriteBloc();
+  final PlanBloc _planBloc = PlanBloc();
 
   getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -182,6 +189,7 @@ class Routes {
       case RouteEnum.profileMyAccount:
         providers = [
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
+          BlocProvider<PlanBloc>.value(value: _planBloc),
           BlocProvider<TransformationJourneyBloc>.value(
               value: _transformationJourneyBloc)
         ];
@@ -235,6 +243,12 @@ class Routes {
               value: _transformationJourneyBloc),
         ];
         newRouteView = TransformationJourneyPostPage();
+        break;
+      case RouteEnum.transformationJournetContentDetails:
+        final Map<String, TransformationJourneyUpload> argumentsToAdd =
+            arguments;
+        newRouteView = TransformationJourneyContentDetail(
+            contentToShow: argumentsToAdd['TransformationJourneyUpload']);
         break;
       case RouteEnum.logIn:
         newRouteView = LoginPage();

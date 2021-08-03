@@ -183,31 +183,43 @@ class _UserProfilePageState extends State<UserProfilePage> {
             ),
             Column(
               children: [
-                Row(
-                  children: [
-                    TextButton(
-                      onPressed: () {},
-                      child: Icon(Icons.favorite_border,
-                          color: OlukoColors.primary),
-                    ),
-                    Container(
-                      child: OlukoOutlinedButton(
-                          onPressed: () {}, title: _connectButtonDefaultText),
-                    ),
-                  ],
-                ),
+                !_isCurrentUser
+                    ? Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 30, 10, 0),
+                        child: Row(
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                //TODO: Send Like from _currentAuthUser to UserToDisplay
+                              },
+                              child: Icon(Icons.favorite_border,
+                                  color: OlukoColors.primary),
+                            ),
+                            Container(
+                              child: OlukoOutlinedButton(
+                                  onPressed: () {
+                                    //TODO: Connect _currentAuthUser with UserToDisplay
+                                  },
+                                  title: _connectButtonDefaultText),
+                            ),
+                          ],
+                        ),
+                      )
+                    : SizedBox(),
                 BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
                     builder: (context, state) {
                   if (state is GetUserTaskSubmissionSuccess) {
                     _assessmentVideosContent = state.taskSubmissions;
                   }
 
-                  return _buildCarouselSection(
-                      titleForSection: OlukoLocalizations.of(context)
-                          .find('assessmentVideos'),
-                      routeForSection: ProfileRoutes.goToAssessmentVideos(),
-                      contentForSection: _getWidgetListFromContent(
-                          assessmentVideoData: _assessmentVideosContent));
+                  return _assessmentVideosContent.length != 0
+                      ? _buildCarouselSection(
+                          titleForSection: OlukoLocalizations.of(context)
+                              .find('assessmentVideos'),
+                          routeForSection: ProfileRoutes.goToAssessmentVideos(),
+                          contentForSection: _getWidgetListFromContent(
+                              assessmentVideoData: _assessmentVideosContent))
+                      : SizedBox();
                 }),
                 BlocBuilder<TransformationJourneyBloc,
                     TransformationJourneyState>(
@@ -215,14 +227,16 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     if (state is TransformationJourneySuccess) {
                       _transformationJourneyContent = state.contentFromUser;
                     }
-                    return _buildCarouselSection(
-                        titleForSection: OlukoLocalizations.of(context)
-                            .find('transformationJourney'),
-                        routeForSection:
-                            ProfileRoutes.goToTransformationJourney(),
-                        contentForSection: _getWidgetListFromContent(
-                            tansformationJourneyData:
-                                _transformationJourneyContent));
+                    return _transformationJourneyContent.length != 0
+                        ? _buildCarouselSection(
+                            titleForSection: OlukoLocalizations.of(context)
+                                .find('transformationJourney'),
+                            routeForSection:
+                                ProfileRoutes.goToTransformationJourney(),
+                            contentForSection: _getWidgetListFromContent(
+                                tansformationJourneyData:
+                                    _transformationJourneyContent))
+                        : SizedBox();
                   },
                 ),
                 BlocBuilder<CourseEnrollmentBloc, CourseEnrollmentState>(
@@ -232,10 +246,12 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         _coursesToUse = state.courseEnrollmentCourses;
                       }
                     }
-                    return buildCourseSection(
-                        context: context,
-                        contentForCourse:
-                            returnCoursesWidget(listOfCourses: _coursesToUse));
+                    return _coursesToUse.length != 0
+                        ? buildCourseSection(
+                            context: context,
+                            contentForCourse: returnCoursesWidget(
+                                listOfCourses: _coursesToUse))
+                        : SizedBox();
                   },
                 ),
                 BlocBuilder<CourseEnrollmentBloc, CourseEnrollmentState>(
@@ -245,12 +261,14 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         _activeChallenges = state.challenges;
                       }
                     }
-                    return _buildCarouselSection(
-                        titleForSection: OlukoLocalizations.of(context)
-                            .find('upcomingChallenges'),
-                        routeForSection: ProfileRoutes.goToChallenges(),
-                        contentForSection: _getWidgetListFromContent(
-                            upcomingChallenges: _activeChallenges));
+                    return _activeChallenges.length != 0
+                        ? _buildCarouselSection(
+                            titleForSection: OlukoLocalizations.of(context)
+                                .find('upcomingChallenges'),
+                            routeForSection: ProfileRoutes.goToChallenges(),
+                            contentForSection: _getWidgetListFromContent(
+                                upcomingChallenges: _activeChallenges))
+                        : SizedBox();
                   },
                 ),
               ],
@@ -376,36 +394,41 @@ class _UserProfilePageState extends State<UserProfilePage> {
     return contentForSection.toList();
   }
 
+  //TODO: Update logic to trigger actions depends on contentType and route
   Widget _getImageAndVideoCard(
       {TransformationJourneyUpload transformationJourneyContent,
       TaskSubmission taskSubmissionContent,
       Challenge upcomingChallengesContent}) {
     Widget contentForReturn = SizedBox();
+
     if (transformationJourneyContent != null) {
       contentForReturn = ImageAndVideoContainer(
-        assetImage: transformationJourneyContent.thumbnail,
-        isVideo: transformationJourneyContent.type == FileTypeEnum.video
+        backgroundImage: transformationJourneyContent.thumbnail,
+        isContentVideo: transformationJourneyContent.type == FileTypeEnum.video
             ? true
             : false,
         videoUrl: transformationJourneyContent.file,
+        originalContent: transformationJourneyContent,
       );
     }
     if (taskSubmissionContent != null && taskSubmissionContent.video != null) {
       contentForReturn = ImageAndVideoContainer(
-        assetImage: taskSubmissionContent.video.thumbUrl != null
+        backgroundImage: taskSubmissionContent.video.thumbUrl != null
             ? taskSubmissionContent.video.thumbUrl
             : '',
-        isVideo: taskSubmissionContent.video != null,
+        isContentVideo: taskSubmissionContent.video != null,
         videoUrl: taskSubmissionContent.video.url != null
             ? taskSubmissionContent.video.url
             : '',
+        originalContent: taskSubmissionContent,
       );
     }
     if (upcomingChallengesContent != null) {
       //TODO: Crear container con locker icon and w/ also style
       contentForReturn = ImageAndVideoContainer(
-        assetImage: upcomingChallengesContent.challengeImage,
-        isVideo: false,
+        backgroundImage: upcomingChallengesContent.challengeImage,
+        isContentVideo: false,
+        originalContent: upcomingChallengesContent,
       );
     }
 

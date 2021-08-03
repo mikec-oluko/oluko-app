@@ -54,8 +54,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
 
   String getUserLocation(UserResponse user) {
     String userLocationContent;
-    if (user.city.isNotEmpty &&
-        (user.state.isNotEmpty && user.country.isNotEmpty)) {
+    if (user.city != null && (user.state != null && user.country != null)) {
       userLocationContent = "${user.city}, ${user.state} ${user.country}";
     }
     return userLocationContent;
@@ -168,7 +167,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                   child: Row(
                     children: [
                       //PROFILE NAME AND LASTNAME
-                      _isPrivateDemo
+                      !_isPrivateDemo
                           ? Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -235,18 +234,56 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                                 ])
                           : Column(
                               children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 10.0),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        this.widget.userInformation.firstName,
+                                        style: OlukoFonts.olukoBigFont(
+                                            customColor: OlukoColors.primary,
+                                            custoFontWeight: FontWeight.w500),
+                                      ),
+                                      SizedBox(
+                                        width: 5.0,
+                                      ),
+                                      Text(
+                                        this.widget.userInformation.lastName,
+                                        style: OlukoFonts.olukoBigFont(
+                                            customColor: OlukoColors.primary,
+                                            custoFontWeight: FontWeight.w500),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                                 Row(
                                   children: [
-                                    TextButton(
-                                        onPressed: () {},
-                                        child: Icon(Icons.lock_outline_rounded,
-                                            color: OlukoColors.primary)),
-                                    Text(
-                                        OlukoLocalizations.of(context)
-                                            .find('privateProfile'),
-                                        style: OlukoFonts.olukoMediumFont(
-                                            customColor: OlukoColors.grayColor,
-                                            custoFontWeight: FontWeight.w300))
+                                    Container(
+                                      height: 20,
+                                      width: 20,
+                                      child: TextButton(
+                                          onPressed: () {},
+                                          child: Icon(
+                                              Icons.lock_outline_rounded,
+                                              color: OlukoColors.primary,
+                                              size: 18)),
+                                    ),
+                                    Container(
+                                      width: 100,
+                                      height: 25,
+                                      child: Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            10, 10, 0, 0),
+                                        child: Text(
+                                            OlukoLocalizations.of(context)
+                                                .find('privateProfile'),
+                                            style: OlukoFonts.olukoMediumFont(
+                                                customColor:
+                                                    OlukoColors.grayColor,
+                                                custoFontWeight:
+                                                    FontWeight.w300)),
+                                      ),
+                                    )
                                   ],
                                 )
                               ],
@@ -261,7 +298,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
         //PROFILE ARCHIVEMENTS
         Padding(
           padding: const EdgeInsets.only(top: 20.0),
-          child: !widget.userIsOwnerProfile && _isPrivateDemo
+          child: !widget.userIsOwnerProfile && !_isPrivateDemo
               ? UserProfileProgress(
                   challengesCompleted: _archivementsDefaultValue,
                   coursesCompleted: _archivementsDefaultValue,

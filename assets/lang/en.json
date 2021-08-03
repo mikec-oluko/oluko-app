@@ -105,7 +105,10 @@
     "assessmentVideos": "Assessment Videos",
     "transformationJourney": "Transformation Journey",
     "upcomingChallenges": "Upcoming Challenges",
-    "privateProfile": "Private Profile"
+    "privateProfile": "Private Profile",
+    "city": "City",
+    "state": "State",
+    "country": "Country"
 
 
 }
