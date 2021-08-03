@@ -13,6 +13,7 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
   final List<T> Function(String, List<T>) suggestionMethod;
   final List<T> Function(String, List<T>) searchMethod;
   final bool showBackButton;
+  final bool showLogo;
   final String title;
   final List<Widget> actions;
   final List<T> searchResultItems;
@@ -23,6 +24,7 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
       {this.title,
       this.onPressed,
       this.actions,
+      this.showLogo = false,
       this.onSearchResults,
       this.searchResultItems,
       this.showSearchBar = false,
@@ -38,21 +40,15 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
       preferredSize: Size.fromHeight(kToolbarHeight),
       child: AppBar(
           backgroundColor: Colors.black,
-          leading: showBackButton
-              ? IconButton(
-                  icon: Icon(
-                    Icons.chevron_left,
-                    size: 35,
-                    color: Colors.white,
-                  ),
-                  onPressed: () => Navigator.pop(context))
-              : null,
-          title: FittedBox(
-              fit: BoxFit.fitWidth,
-              child: TitleHeader(
-                title,
-                bold: true,
-              )),
+          leading: showLeftIcon(context),
+          title: showLogo
+              ? SizedBox()
+              : FittedBox(
+                  fit: BoxFit.fitWidth,
+                  child: TitleHeader(
+                    title,
+                    bold: true,
+                  )),
           actions: actions,
           bottom: showSearchBar == true
               ? PreferredSize(
@@ -92,6 +88,22 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
                   ))
               : null),
     );
+  }
+
+  Widget showLeftIcon(BuildContext context) {
+    if (showLogo) {
+      return Padding(
+          padding: EdgeInsets.only(left: 5),
+          child: Image.asset(
+            'assets/home/mvt.png',
+          ));
+    } else if (showBackButton) {
+      return IconButton(
+          icon: Icon(Icons.chevron_left, size: 35, color: Colors.white),
+          onPressed: () => Navigator.pop(context));
+    } else {
+      return Padding(padding: EdgeInsets.only(left: 5), child: SizedBox());
+    }
   }
 
   @override

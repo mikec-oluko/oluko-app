@@ -68,12 +68,12 @@ class _MovementIntroState extends State<MovementIntro>
     Course(
         id: '1',
         name: 'Builder Booty',
-        imageUrl:
+        image:
             'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_10.png?alt=media&token=e48354c6-6670-472a-9789-516287543cb4'),
     Course(
         id: '2',
         name: 'Marathon Prep',
-        imageUrl:
+        image:
             'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_16.png?alt=media&token=2528a228-cabf-49f1-a606-433b83508f42'),
   ];
   // ---------
@@ -193,7 +193,7 @@ class _MovementIntroState extends State<MovementIntro>
           children: [
             Column(
               children: [
-                Container(height: 100, child: Image.network(course.imageUrl))
+                Container(height: 100, child: Image.network(course.image))
               ],
             ),
             Padding(

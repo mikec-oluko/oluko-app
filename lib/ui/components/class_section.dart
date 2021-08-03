@@ -1,16 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/ui/components/course_progress_bar.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'oluko_primary_button.dart';
 
 class ClassSection extends StatefulWidget {
   final Class classObj;
+  final int index;
+  final int total;
   final double classProgresss;
   final Function() onPressed;
 
-  ClassSection({this.classObj, this.classProgresss, this.onPressed});
+  ClassSection(
+      {this.classObj,
+      this.index,
+      this.total,
+      this.classProgresss,
+      this.onPressed});
 
   @override
   _State createState() => _State();
@@ -22,25 +30,25 @@ class _State extends State<ClassSection> {
     return Container(
       width: MediaQuery.of(context).size.width,
       child: Padding(
-        padding: const EdgeInsets.all(0.0),
+        padding: const EdgeInsets.only(top: 15, bottom: 15),
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(10)),
           ),
           child: Column(
             children: [
-              Divider(
+              /*Divider(
                 color: OlukoColors.grayColor,
                 height: 50,
-              ),
+              ),*/
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   ClipRRect(
                     child: Image.network(
                       widget.classObj.image,
-                      height: 100,
-                      width: 100,
+                      height: 90,
+                      width: 90,
                       fit: BoxFit.cover,
                     ),
                     borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -52,22 +60,36 @@ class _State extends State<ClassSection> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Padding(
-                            padding: const EdgeInsets.all(15.0),
+                            padding: const EdgeInsets.only(
+                                left: 15.0, top: 0, bottom: 10),
                             child: Text(
                               widget.classObj.name,
-                              style: TextStyle(
-                                  fontSize: 22,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold),
+                              style: OlukoFonts.olukoBigFont(
+                                  custoFontWeight: FontWeight.normal,
+                                  customColor: OlukoColors.grayColor),
                             ),
                           ),
-                          widget.classProgresss > 0
+                          Padding(
+                              padding: const EdgeInsets.only(left: 15.0),
+                              child: Text(
+                                OlukoLocalizations.of(context)
+                                        .find('class')
+                                        .toUpperCase() +
+                                    " " +
+                                    (widget.index + 1).toString() +
+                                    "/" +
+                                    widget.total.toString(),
+                                style: OlukoFonts.olukoSmallFont(
+                                    custoFontWeight: FontWeight.bold,
+                                    customColor: OlukoColors.white),
+                              )),
+                          /*widget.classProgresss > 0
                               ? Padding(
                                   padding: const EdgeInsets.only(
                                       left: 15.0, right: 160.0),
                                   child: CourseProgressBar(
                                       value: widget.classProgresss))
-                              : SizedBox()
+                              : SizedBox()*/
                         ],
                       ),
                     ),
@@ -82,11 +104,12 @@ class _State extends State<ClassSection> {
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(
-                              top: 16.0, bottom: 16, right: 10),
+                              top: 16.0, bottom: 0, right: 10),
                           child: Text(
                             widget.classObj.description,
-                            style:
-                                TextStyle(fontSize: 17, color: Colors.white60),
+                            style: OlukoFonts.olukoMediumFont(
+                                custoFontWeight: FontWeight.normal,
+                                customColor: OlukoColors.grayColor),
                           ),
                         ),
                       ],
@@ -94,7 +117,7 @@ class _State extends State<ClassSection> {
                   ),
                 ),
               ]),
-              for (var segment in widget.classObj.segments)
+              /*for (var segment in widget.classObj.segments)
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 5),
                   child: Row(
@@ -108,7 +131,7 @@ class _State extends State<ClassSection> {
                       ),
                     ],
                   ),
-                ),
+                ),*/
             ],
           ),
         ),

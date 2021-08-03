@@ -11,7 +11,7 @@ class Segment extends Base {
   int initialTimer;
   int rounds;
   int roundBreakDuration;
-  bool isChallange;
+  bool isChallenge;
   bool isPublished;
 
   Segment(
@@ -23,7 +23,7 @@ class Segment extends Base {
       this.duration,
       this.initialTimer,
       this.roundBreakDuration,
-      this.isChallange,
+      this.isChallenge,
       this.isPublished,
       String id,
       Timestamp createdAt,
@@ -50,7 +50,7 @@ class Segment extends Base {
         duration: json['duration'],
         initialTimer: json['initial_timer'],
         roundBreakDuration: json['round_break_duration'],
-        isChallange: json['is_challange'],
+        isChallenge: json['is_challenge'],
         isPublished: json['is_published'],
         movements: json['movements'] == null
             ? null
@@ -69,7 +69,7 @@ class Segment extends Base {
       'description': description,
       'initial_timer': initialTimer,
       'round_break_duration': roundBreakDuration,
-      'is_challange': isChallange,
+      'is_challenge': isChallenge,
       'is_published': isPublished,
       'movements': movements == null
           ? null

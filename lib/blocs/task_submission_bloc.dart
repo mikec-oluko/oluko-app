@@ -12,8 +12,8 @@ abstract class TaskSubmissionState {}
 class Loading extends TaskSubmissionState {}
 
 class CreateSuccess extends TaskSubmissionState {
-  String taskSubmissionId;
-  CreateSuccess({this.taskSubmissionId});
+  TaskSubmission taskSubmission;
+  CreateSuccess({this.taskSubmission});
 }
 
 class GetSuccess extends TaskSubmissionState {
@@ -43,7 +43,7 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
       TaskSubmission newTaskSubmission =
           await TaskSubmissionRepository.createTaskSubmission(
               assessmentAssignment, task);
-      emit(CreateSuccess(taskSubmissionId: newTaskSubmission.id));
+      emit(CreateSuccess(taskSubmission: newTaskSubmission));
     } catch (e) {
       emit(Failure(exception: e));
     }

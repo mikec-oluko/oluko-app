@@ -22,12 +22,12 @@ import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/course_card.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/search_bar.dart';
-import 'package:oluko_app/ui/screens/classes.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/course_utils.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import '../../../routes.dart';
 
 class Courses extends StatefulWidget {
   Courses({Key key}) : super(key: key);
@@ -179,22 +179,11 @@ class _State extends State<Courses> {
                       .map((course) => Padding(
                             padding: const EdgeInsets.only(right: 8.0),
                             child: GestureDetector(
-                              onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          BlocProvider<AuthBloc>(
-                                            create: (context) =>
-                                                BlocProvider.of<AuthBloc>(
-                                                    mainContext),
-                                            child: Classes(
-                                                courseId:
-                                                    // 'OYyjeSBYcumpcg2VbMXO' ),
-                                                    // course.id),
-                                                    course.id),
-                                          ))),
+                              onTap: () => Navigator.pushNamed(
+                                  context, routeLabels[RouteEnum.courseMarketing],
+                                  arguments: {'course': course}),
                               child: _getCourseCard(
-                                  _generateImageCourse(course.imageUrl),
+                                  _generateImageCourse(course.image),
                                   width: ScreenUtils.width(context) /
                                       (0.2 + _cardsToShow())),
                             ),
@@ -290,10 +279,10 @@ class _State extends State<Courses> {
                         padding: const EdgeInsets.all(8.0),
                         child: GestureDetector(
                           onTap: () => Navigator.pushNamed(
-                              context, routeLabels[RouteEnum.classes],
+                              context, routeLabels[RouteEnum.courseMarketing],
                               arguments: {'courseId': course.id}),
                           child: _getCourseCard(
-                              _generateImageCourse(course.imageUrl),
+                              _generateImageCourse(course.image),
                               width: ScreenUtils.width(context) /
                                   (0.2 + _cardsToShow()),
                               userRecommendationsAvatarUrls:
@@ -331,10 +320,10 @@ class _State extends State<Courses> {
                         padding: const EdgeInsets.all(8.0),
                         child: GestureDetector(
                           onTap: () => Navigator.pushNamed(
-                              context, routeLabels[RouteEnum.classes],
+                              context, routeLabels[RouteEnum.courseMarketing],
                               arguments: {'courseId': course.id}),
                           child: _getCourseCard(
-                            _generateImageCourse(course.imageUrl),
+                            _generateImageCourse(course.image),
                             progress: courseEnrollment.completion,
                             width: ScreenUtils.width(context) /
                                 (0.2 + _cardsToShow()),
@@ -377,7 +366,7 @@ class _State extends State<Courses> {
                                   }),
                                   child: _getCourseCard(
                                     _generateImageCourse(
-                                        favoriteCourse.imageUrl),
+                                        favoriteCourse.image),
                                     width: ScreenUtils.width(context) /
                                         (0.2 + _cardsToShow()),
                                   ),

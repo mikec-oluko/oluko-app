@@ -1,13 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oluko_app/models/base.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
+import 'package:oluko_app/models/submodels/segment_submodel.dart';
 
 class Class extends Base {
   String video;
   String image;
   String name;
   String description;
-  List<ObjectSubmodel> segments;
+  List<SegmentSubmodel> segments;
 
   Class(
       {this.video,
@@ -39,8 +40,8 @@ class Class extends Base {
         description: json['description'],
         segments: json['segments'] == null
             ? null
-            : List<ObjectSubmodel>.from(json['segments']
-                .map((segment) => ObjectSubmodel.fromJson(segment))));
+            : List<SegmentSubmodel>.from(json['segments']
+                .map((segment) => SegmentSubmodel.fromJson(segment))));
     classObject.setBase(json);
     return classObject;
   }

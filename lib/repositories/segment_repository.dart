@@ -4,6 +4,7 @@ import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
+import 'package:oluko_app/models/submodels/segment_submodel.dart';
 import 'package:oluko_app/repositories/class_reopository.dart';
 
 class SegmentRepository {
@@ -19,7 +20,7 @@ class SegmentRepository {
 
   static Future<List<Segment>> getAll(Class classObj) async {
     List<Segment> segments = [];
-    for (ObjectSubmodel segment in classObj.segments) {
+    for (SegmentSubmodel segment in classObj.segments) {
       DocumentSnapshot ds = await segment.reference.get();
       Segment retrievedSegment = Segment.fromJson(ds.data());
       segments.add(retrievedSegment);
@@ -36,7 +37,7 @@ class SegmentRepository {
     final DocumentReference docRef = reference.doc();
     segment.id = docRef.id;
     docRef.set(segment.toJson());
-    ObjectSubmodel segmentObj = ObjectSubmodel(
+    SegmentSubmodel segmentObj = SegmentSubmodel(
         id: segment.id,
         reference: reference.doc(segment.id),
         name: segment.name);
