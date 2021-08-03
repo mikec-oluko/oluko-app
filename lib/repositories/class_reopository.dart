@@ -3,6 +3,7 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
+import 'package:oluko_app/models/submodels/segment_submodel.dart';
 import 'package:oluko_app/repositories/course_repository.dart';
 
 class ClassRepository {
@@ -47,10 +48,10 @@ class ClassRepository {
   }
 
   static Future<void> updateSegments(
-      ObjectSubmodel segment, DocumentReference reference) async {
+      SegmentSubmodel segment, DocumentReference reference) async {
     DocumentSnapshot ds = await reference.get();
     Class classObj = Class.fromJson(ds.data());
-    List<ObjectSubmodel> segments;
+    List<SegmentSubmodel> segments;
     if (classObj.segments == null) {
       segments = [];
     } else {

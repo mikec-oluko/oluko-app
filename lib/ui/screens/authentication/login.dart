@@ -4,7 +4,7 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/form_helper.dart';
 import 'package:oluko_app/models/dto/login_request.dart';
-import 'package:oluko_app/ui/peek_password.dart';
+import 'package:oluko_app/ui/screens/authentication/peek_password.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/app_loader.dart';
 import 'package:global_configuration/global_configuration.dart';

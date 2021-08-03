@@ -2,26 +2,38 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/class_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/favorite_bloc.dart';
 import 'package:oluko_app/blocs/friend_bloc.dart';
+import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/profile_bloc.dart';
+import 'package:oluko_app/blocs/segment_bloc.dart';
+import 'package:oluko_app/blocs/statistics_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
+import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
+import 'package:oluko_app/blocs/video_bloc.dart';
+import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/ui/screens/app_plans.dart';
-import 'package:oluko_app/ui/screens/assessment_videos.dart';
+import 'package:oluko_app/ui/screens/assessments/assessment_videos.dart';
+import 'package:oluko_app/ui/screens/assessments/self_recording.dart';
+import 'package:oluko_app/ui/screens/assessments/self_recording_preview.dart';
 import 'package:oluko_app/ui/screens/choose_plan_payment.dart';
-import 'package:oluko_app/ui/screens/classes.dart';
-import 'package:oluko_app/ui/screens/courses.dart';
-import 'package:oluko_app/ui/screens/friends_page.dart';
-import 'package:oluko_app/ui/screens/login.dart';
+import 'package:oluko_app/ui/screens/courses/course_marketing.dart';
+import 'package:oluko_app/ui/screens/courses/courses.dart';
+import 'package:oluko_app/ui/screens/courses/enrolled_class.dart';
+import 'package:oluko_app/ui/screens/courses/inside_class.dart';
+import 'package:oluko_app/ui/screens/friends/friends_page.dart';
+import 'package:oluko_app/ui/screens/authentication/login.dart';
 import 'package:oluko_app/ui/screens/main_page.dart';
-import 'package:oluko_app/ui/screens/movement_intro.dart';
-import 'package:oluko_app/ui/screens/profile.dart';
+import 'package:oluko_app/ui/screens/courses/movement_intro.dart';
+import 'package:oluko_app/ui/screens/profile/profile.dart';
 import 'package:oluko_app/ui/screens/profile/profile_challenges_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_help_and_support_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_my_account_page.dart';
@@ -30,12 +42,13 @@ import 'package:oluko_app/ui/screens/profile/profile_settings_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_subscription_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_transformation_journey_page.dart';
 import 'package:oluko_app/ui/screens/profile/transformation_journey_post.dart';
-import 'package:oluko_app/ui/screens/segment_detail.dart';
-import 'package:oluko_app/ui/screens/segment_recording.dart';
-import 'package:oluko_app/ui/screens/sign_up.dart';
-import 'package:oluko_app/ui/screens/sign_up_with_email.dart';
-import 'package:oluko_app/ui/screens/task_details.dart';
+import 'package:oluko_app/ui/screens/courses/segment_detail.dart';
+import 'package:oluko_app/ui/screens/courses/segment_recording.dart';
+import 'package:oluko_app/ui/screens/authentication/sign_up.dart';
+import 'package:oluko_app/ui/screens/authentication/sign_up_with_email.dart';
+import 'package:oluko_app/ui/screens/assessments/task_details.dart';
 import 'package:oluko_app/ui/screens/videos/home.dart';
+import 'models/course.dart';
 import 'models/task.dart';
 
 enum RouteEnum {
@@ -58,12 +71,16 @@ enum RouteEnum {
   segmentDetails,
   movementIntro,
   segmentRecording,
-  classes,
+  courseMarketing,
   assessmentVideos,
   taskDetails,
   choosePlanPayment,
   courses,
-  videos
+  videos,
+  insideClass,
+  selfRecording,
+  selfRecordingPreview,
+  enrolledClass
 }
 
 Map<RouteEnum, String> routeLabels = {
@@ -86,12 +103,16 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.segmentDetails: '/segment-detail',
   RouteEnum.movementIntro: '/movement-intro',
   RouteEnum.segmentRecording: '/segment-recording',
-  RouteEnum.classes: '/classes',
+  RouteEnum.courseMarketing: '/course-marketing',
   RouteEnum.assessmentVideos: '/assessment-videos',
   RouteEnum.taskDetails: '/task-details',
   RouteEnum.choosePlanPayment: '/choose-plan-payment',
   RouteEnum.courses: '/courses',
   RouteEnum.videos: '/videos',
+  RouteEnum.insideClass: '/inside-class',
+  RouteEnum.selfRecording: '/self-recording',
+  RouteEnum.selfRecordingPreview: '/self-recording-preview',
+  RouteEnum.enrolledClass: '/enrolled-class'
 };
 
 RouteEnum getEnumFromRouteString(String route) {
@@ -106,10 +127,18 @@ class Routes {
   final TagBloc _tagBloc = TagBloc();
   final FriendBloc _friendBloc = FriendBloc();
   final AssessmentBloc _assessmentBloc = AssessmentBloc();
+  final AssessmentAssignmentBloc _assessmentAssignmentBloc =
+      AssessmentAssignmentBloc();
   final TaskSubmissionBloc _taskSubmissionBloc = TaskSubmissionBloc();
   final CourseEnrollmentBloc _courseEnrollmentBloc = CourseEnrollmentBloc();
   final TransformationJourneyBloc _transformationJourneyBloc =
       TransformationJourneyBloc();
+  final ClassBloc _classBloc = ClassBloc();
+  final StatisticsBloc _statisticsBloc = StatisticsBloc();
+  final MovementBloc _movementBloc = MovementBloc();
+  final SegmentBloc _segmentBloc = SegmentBloc();
+  final TaskBloc _taskBloc = TaskBloc();
+  final VideoBloc _videoBloc = VideoBloc();
   final FavoriteBloc _favoriteBloc = FavoriteBloc();
 
   getRouteView(String route, Object arguments) {
@@ -128,7 +157,8 @@ class Routes {
         providers = [
           BlocProvider<CourseBloc>.value(value: _courseBloc),
           BlocProvider<TagBloc>.value(value: _tagBloc),
-          BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
+          BlocProvider<CourseEnrollmentBloc>.value(
+              value: _courseEnrollmentBloc),
           BlocProvider<FavoriteBloc>.value(value: _favoriteBloc),
         ];
         newRouteView = MainPage();
@@ -216,23 +246,86 @@ class Routes {
         newRouteView = SegmentDetail();
         break;
       case RouteEnum.movementIntro:
-        newRouteView = MovementIntro();
+        final Map<String, Movement> argumentsToAdd = arguments;
+        newRouteView = MovementIntro(
+          movement: argumentsToAdd['movement'],
+        );
         break;
       case RouteEnum.segmentRecording:
         newRouteView = SegmentRecording();
         break;
-      case RouteEnum.classes:
-        Map<String, String> parsedArguments = arguments;
-        newRouteView = Classes(
-          courseId: parsedArguments['courseId'],
-        );
+      case RouteEnum.courseMarketing:
+        providers = [
+          BlocProvider<ClassBloc>.value(value: _classBloc),
+          BlocProvider<StatisticsBloc>.value(value: _statisticsBloc),
+          BlocProvider<CourseEnrollmentBloc>.value(
+              value: _courseEnrollmentBloc),
+          BlocProvider<MovementBloc>.value(value: _movementBloc),
+        ];
+        final Map<String, Course> argumentsToAdd = arguments;
+        newRouteView = CourseMarketing(course: argumentsToAdd['course']);
+        break;
+      case RouteEnum.enrolledClass:
+        providers = [
+          BlocProvider<ClassBloc>.value(value: _classBloc),
+          BlocProvider<CourseEnrollmentBloc>.value(
+              value: _courseEnrollmentBloc),
+          BlocProvider<MovementBloc>.value(value: _movementBloc),
+        ];
+        final Map<String, Course> argumentsToAdd = arguments;
+        newRouteView = EnrolledClass(course: argumentsToAdd['course']);
+        break;
+      case RouteEnum.insideClass:
+        providers = [
+          BlocProvider<ClassBloc>.value(value: _classBloc),
+          BlocProvider<CourseEnrollmentBloc>.value(
+              value: _courseEnrollmentBloc),
+          BlocProvider<SegmentBloc>.value(value: _segmentBloc),
+          BlocProvider<MovementBloc>.value(value: _movementBloc),
+        ];
+        final Map<String, Course> argumentsToAdd = arguments;
+        newRouteView = InsideClass(/*course: argumentsToAdd['course']*/);
         break;
       case RouteEnum.assessmentVideos:
+        providers = [
+          BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
+          BlocProvider<TaskBloc>.value(value: _taskBloc),
+        ];
         newRouteView = AssessmentVideos();
         break;
       case RouteEnum.taskDetails:
+        providers = [
+          BlocProvider<AssessmentAssignmentBloc>.value(
+              value: _assessmentAssignmentBloc),
+          BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
+          BlocProvider<TaskBloc>.value(value: _taskBloc),
+        ];
+        final Map<String, num> argumentsToAdd = arguments;
         newRouteView = TaskDetails(
-          task: Task(description: 'Task Description'),
+          taskIndex: argumentsToAdd['taskIndex'],
+        );
+        break;
+      case RouteEnum.selfRecording:
+        providers = [
+          BlocProvider<TaskBloc>.value(value: _taskBloc),
+        ];
+        final Map<String, int> argumentsToAdd = arguments;
+        newRouteView = SelfRecording(
+          taskIndex: argumentsToAdd['taskIndex'],
+        );
+        break;
+      case RouteEnum.selfRecordingPreview:
+        providers = [
+          BlocProvider<AssessmentAssignmentBloc>.value(
+              value: _assessmentAssignmentBloc),
+          BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
+          BlocProvider<TaskBloc>.value(value: _taskBloc),
+          BlocProvider<VideoBloc>.value(value: _videoBloc),
+        ];
+        final Map<String, dynamic> argumentsToAdd = arguments;
+        newRouteView = SelfRecordingPreview(
+          filePath: argumentsToAdd['filePath'],
+          taskIndex: argumentsToAdd['taskIndex'],
         );
         break;
       case RouteEnum.choosePlanPayment:

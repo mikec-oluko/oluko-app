@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image_test_utils/image_test_utils.dart';
-import 'package:oluko_app/ui/screens/sign_up.dart';
+import 'package:oluko_app/ui/screens/authentication/sign_up.dart';
 
 void main() {
   // Define a test. The TestWidgets function also provides a WidgetTester

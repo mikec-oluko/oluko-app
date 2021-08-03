@@ -24,7 +24,7 @@ import 'package:oluko_app/utils/course_utils.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
-import 'classes.dart';
+import '../../routes.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key}) : super(key: key);
@@ -163,23 +163,14 @@ class _MyHomePageState extends State<MyHomePage> {
                       .map((course) => Padding(
                             padding: const EdgeInsets.only(right: 8.0),
                             child: GestureDetector(
-                              onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          BlocProvider<AuthBloc>(
-                                            create: (context) =>
-                                                BlocProvider.of<AuthBloc>(
-                                                    mainContext),
-                                            child: Classes(
-                                                courseId:
-                                                    // 'OYyjeSBYcumpcg2VbMXO' ),
-                                                    // course.id),
-                                                    course.id),
-                                          ))),
+                              //TODO: Change to RouteEnum.courseMarketing 
+                              //when finish with enrolledClass
+                              onTap: () => Navigator.pushNamed(
+                                  context, routeLabels[RouteEnum.enrolledClass],
+                                  arguments: {'course': course}),
                               child: _getCourseCard(
                                   Image.network(
-                                    course.imageUrl,
+                                    course.image,
                                     fit: BoxFit.cover,
                                     frameBuilder: (BuildContext context,
                                             Widget child,

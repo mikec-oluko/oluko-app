@@ -67,7 +67,8 @@ class OlukoColors {
 }
 
 class OlukoFonts {
-  static const double olukoTitleFontSize = 30.0;
+  static const double olukoTitleFontSize = 28.0;
+  static const double olukoSubtitleFontSize = 25.0;
   static const double olukoBigFontSize = 18.0;
   static const double olukoSuperBigFontSize = 21.0;
   static const double olukoMediumFontSize = 14.0;
@@ -88,6 +89,14 @@ class OlukoFonts {
       {FontWeight custoFontWeight, Color customColor}) {
     return TextStyle(
         fontSize: olukoTitleFontSize,
+        fontWeight: custoFontWeight != null ? custoFontWeight : FontWeight.w500,
+        color: customColor != null ? customColor : OlukoColors.white);
+  }
+
+  static TextStyle olukoSubtitleFont(
+      {FontWeight custoFontWeight, Color customColor}) {
+    return TextStyle(
+        fontSize: olukoSubtitleFontSize,
         fontWeight: custoFontWeight != null ? custoFontWeight : FontWeight.w500,
         color: customColor != null ? customColor : OlukoColors.white);
   }

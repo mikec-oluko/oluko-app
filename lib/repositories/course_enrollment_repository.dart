@@ -8,6 +8,7 @@ import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/submodels/enrollment_class.dart';
 import 'package:oluko_app/models/submodels/enrollment_segment.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
+import 'package:oluko_app/models/submodels/segment_submodel.dart';
 import 'package:oluko_app/repositories/course_repository.dart';
 import 'package:oluko_app/services/course_enrollment_service.dart';
 
@@ -110,7 +111,7 @@ class CourseEnrollmentRepository {
       EnrollmentClass enrollmentClass) async {
     DocumentSnapshot qs = await enrollmentClass.reference.get();
     Class classObj = Class.fromJson(qs.data());
-    classObj.segments.forEach((ObjectSubmodel segment) {
+    classObj.segments.forEach((SegmentSubmodel segment) {
       enrollmentClass.segments.add(EnrollmentSegment(
           id: segment.id, name: segment.name, reference: segment.reference));
     });
