@@ -98,7 +98,7 @@ void main() {
           Future.value(http.Response(jsonEncode(httpMockResponse), 200)));
 
       final response =
-          await AuthRepository.test(http: mockClient).verifyToken(request);
+          await AuthRepository.test(http: mockClient).externalAuth(request);
       expect(response, isNotNull);
       expect(response.data, isNotNull);
       expect(response.data['accessToken'], isA<String>());
