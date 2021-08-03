@@ -27,7 +27,7 @@ class _TransformationJourneyContentDetailState
         ),
       ),
       body: Container(
-        child: Column(
+        child: Stack(
           children: [],
         ),
       ),
