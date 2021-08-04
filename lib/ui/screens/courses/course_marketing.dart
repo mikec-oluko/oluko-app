@@ -74,8 +74,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
         builder: (context, enrollmentState) {
       return BlocBuilder<ClassBloc, ClassState>(builder: (context, classState) {
         if ((enrollmentState is GetEnrollmentSuccess) &&
-            classState is GetSuccess &&
-            classState.classes.length > 0) {
+            classState is GetSuccess) {
           bool existsEnrollment = enrollmentState.courseEnrollment != null;
           return Form(
               key: _formKey,
@@ -89,16 +88,19 @@ class _CourseMarketingState extends State<CourseMarketing> {
                           ListView(children: [
                             Padding(
                               padding: const EdgeInsets.only(bottom: 3),
-                              child: OrientationBuilder(
-                                builder: (context, orientation) {
-                                  if (existsEnrollment) {
-                                    return showVideoPlayer(
-                                        classState.classes[0].video);
-                                  } else {
-                                    return showVideoPlayer(widget.course.video);
-                                  }
-                                },
-                              ),
+                              child: classState.classes.length > 0
+                                  ? OrientationBuilder(
+                                      builder: (context, orientation) {
+                                        if (existsEnrollment) {
+                                          return showVideoPlayer(
+                                              classState.classes[0].video);
+                                        } else {
+                                          return showVideoPlayer(
+                                              widget.course.video);
+                                        }
+                                      },
+                                    )
+                                  : SizedBox(),
                             ),
                             /*existsEnrollment
                                 ? CourseProgressBar(
