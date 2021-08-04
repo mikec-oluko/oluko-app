@@ -190,8 +190,8 @@ class _State extends State<Courses> {
                       .map((course) => Padding(
                             padding: const EdgeInsets.only(right: 8.0),
                             child: GestureDetector(
-                              onTap: () => Navigator.pushNamed(
-                                  context, routeLabels[RouteEnum.courseMarketing],
+                              onTap: () => Navigator.pushNamed(context,
+                                  routeLabels[RouteEnum.courseMarketing],
                                   arguments: {'course': course}),
                               child: _getCourseCard(
                                   _generateImageCourse(course.image),
@@ -294,7 +294,7 @@ class _State extends State<Courses> {
                         child: GestureDetector(
                           onTap: () => Navigator.pushNamed(
                               context, routeLabels[RouteEnum.courseMarketing],
-                              arguments: {'courseId': course.id}),
+                              arguments: {'course': course}),
                           child: _getCourseCard(
                               _generateImageCourse(course.image),
                               width: ScreenUtils.width(context) /
@@ -379,8 +379,7 @@ class _State extends State<Courses> {
                                     'courseId': favoriteCourse.id
                                   }),
                                   child: _getCourseCard(
-                                    _generateImageCourse(
-                                        favoriteCourse.image),
+                                    _generateImageCourse(favoriteCourse.image),
                                     width: ScreenUtils.width(context) /
                                         (0.2 + _cardsToShow()),
                                   ),
