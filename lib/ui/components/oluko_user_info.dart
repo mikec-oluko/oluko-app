@@ -35,7 +35,7 @@ class _OlukoUserInfoWidgetState extends State<OlukoUserInfoWidget> {
                     child: Text(
                       widget.title,
                       style: OlukoFonts.olukoMediumFont(
-                          customColor: OlukoColors.grayColor),
+                          customColor: OlukoColors.primary),
                     ),
                   ),
                   Padding(

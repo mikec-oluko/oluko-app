@@ -59,6 +59,8 @@ class _ProfilePageState extends State<ProfilePage> {
           body: WillPopScope(
             onWillPop: () => AppNavigator.onWillPop(context),
             child: Container(
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
                 color: OlukoColors.black,
                 child: Stack(
                   children: [

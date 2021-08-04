@@ -25,31 +25,13 @@ class ProfileMyAccountPage extends StatefulWidget {
 
 class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
   UserResponse _profileInfo;
-  PlanBloc _planBloc;
-  @override
-  void initState() {
-    _planBloc = PlanBloc();
-    super.initState();
-  }
 
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
       if (state is AuthSuccess) {
+        BlocProvider.of<PlanBloc>(context).getPlans();
         this._profileInfo = state.user;
-        return MultiBlocProvider(
-          providers: [
-            BlocProvider.value(
-              value: BlocProvider.of<ProfileBloc>(context),
-            ),
-            BlocProvider.value(
-              value: BlocProvider.of<AuthBloc>(context),
-            ),
-            BlocProvider<PlanBloc>(
-              create: (context) => _planBloc..getPlans(),
-            )
-          ],
-          child: buildScaffoldPage(context),
-        );
+        return buildScaffoldPage(context);
       } else {
         return Container(
           height: MediaQuery.of(context).size.height,
@@ -72,7 +54,6 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
           color: OlukoColors.black,
           child: Column(
             children: [
-              userImageSection(),
               buildUserInformationFields(),
               subscriptionSection(),
               logoutButton()
@@ -81,57 +62,6 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
         ),
       ),
     );
-  }
-
-  Widget userImageSection() {
-    return Container(
-        color: OlukoColors.black,
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height / 4,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Center(
-              child: _profileInfo.avatarThumbnail != null
-                  ? CircleAvatar(
-                      backgroundImage:
-                          NetworkImage(_profileInfo.avatarThumbnail),
-                      backgroundColor: OlukoColors.primary,
-                      radius: 50.0,
-                      child: IconButton(
-                          icon: Icon(Icons.linked_camera_outlined,
-                              color: OlukoColors.white),
-                          onPressed: () {
-                            AppModal.dialogContent(context: context, content: [
-                              BlocProvider.value(
-                                value: BlocProvider.of<ProfileBloc>(context),
-                                child:
-                                    ModalUploadOptions(UploadFrom.profileImage),
-                              )
-                            ]);
-                          }),
-                    )
-                  : CircleAvatar(
-                      backgroundColor: OlukoColors.primary,
-                      radius: 50.0,
-                      child: IconButton(
-                          icon: Icon(Icons.linked_camera_outlined,
-                              color: OlukoColors.white),
-                          onPressed: () {
-                            Navigator.pop(context);
-                            AppModal.dialogContent(context: context, content: [
-                              BlocProvider.value(
-                                value: BlocProvider.of<ProfileBloc>(context),
-                                child:
-                                    ModalUploadOptions(UploadFrom.profileImage),
-                              )
-                            ]);
-                          }),
-                    ),
-            )
-          ],
-        ));
   }
 
   Column buildUserInformationFields() {
@@ -148,6 +78,12 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
             _profileInfo.lastName),
         userInformationFields(
             OlukoLocalizations.of(context).find('email'), _profileInfo.email),
+        userInformationFields(OlukoLocalizations.of(context).find('city'),
+            _profileInfo.city != null ? _profileInfo.city : ""),
+        userInformationFields(OlukoLocalizations.of(context).find('state'),
+            _profileInfo.state != null ? _profileInfo.state : ""),
+        userInformationFields(OlukoLocalizations.of(context).find('country'),
+            _profileInfo.country != null ? _profileInfo.country : ""),
       ],
     );
   }
