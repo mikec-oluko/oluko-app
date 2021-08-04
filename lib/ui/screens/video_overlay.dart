@@ -5,7 +5,7 @@ import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class VideoOverlay extends StatefulWidget {
-  String videoUrl;
+  final String videoUrl;
 
   VideoOverlay({this.videoUrl, Key key}) : super(key: key);
 
@@ -36,11 +36,14 @@ class _VideoOverlayState extends State<VideoOverlay> {
                 bottom: 200,
                 left: 0,
                 right: 0,
-                child: Image.asset(
-                  'assets/courses/video_cross.png',
-                  color: Colors.white,
-                  height: 80,
-                  width: 80,
+                child: GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Image.asset(
+                    'assets/courses/video_cross.png',
+                    color: Colors.white,
+                    height: 80,
+                    width: 80,
+                  ),
                 )),
           ],
         ));
