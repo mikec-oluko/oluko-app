@@ -13,12 +13,14 @@ import 'package:oluko_app/blocs/friend_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/plan_bloc.dart';
 import 'package:oluko_app/blocs/profile_bloc.dart';
+import 'package:oluko_app/blocs/recommendation_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/blocs/statistics_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
+import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/ui/screens/app_plans.dart';
@@ -50,8 +52,8 @@ import 'package:oluko_app/ui/screens/authentication/sign_up.dart';
 import 'package:oluko_app/ui/screens/authentication/sign_up_with_email.dart';
 import 'package:oluko_app/ui/screens/assessments/task_details.dart';
 import 'package:oluko_app/ui/screens/videos/home.dart';
+import 'package:oluko_app/ui/screens/view_all.dart';
 import 'models/course.dart';
-import 'models/task.dart';
 import 'models/transformation_journey_uploads.dart';
 
 enum RouteEnum {
@@ -81,6 +83,7 @@ enum RouteEnum {
   choosePlanPayment,
   courses,
   videos,
+  viewAll,
   insideClass,
   selfRecording,
   selfRecordingPreview,
@@ -115,6 +118,7 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.choosePlanPayment: '/choose-plan-payment',
   RouteEnum.courses: '/courses',
   RouteEnum.videos: '/videos',
+  RouteEnum.viewAll: '/view-all',
   RouteEnum.insideClass: '/inside-class',
   RouteEnum.selfRecording: '/self-recording',
   RouteEnum.selfRecordingPreview: '/self-recording-preview',
@@ -146,6 +150,7 @@ class Routes {
   final TaskBloc _taskBloc = TaskBloc();
   final VideoBloc _videoBloc = VideoBloc();
   final FavoriteBloc _favoriteBloc = FavoriteBloc();
+  final RecommendationBloc _recommendationBloc = RecommendationBloc();
   final PlanBloc _planBloc = PlanBloc();
 
   getRouteView(String route, Object arguments) {
@@ -167,6 +172,7 @@ class Routes {
           BlocProvider<CourseEnrollmentBloc>.value(
               value: _courseEnrollmentBloc),
           BlocProvider<FavoriteBloc>.value(value: _favoriteBloc),
+          BlocProvider<RecommendationBloc>.value(value: _recommendationBloc),
         ];
         newRouteView = MainPage();
         break;
@@ -354,6 +360,20 @@ class Routes {
           BlocProvider<TagBloc>.value(value: _tagBloc),
         ];
         newRouteView = Courses();
+        break;
+      case RouteEnum.viewAll:
+        Map<String, dynamic> args = arguments;
+        List<Course> courses = args['courses'];
+        String title = args['title'];
+        providers = [
+          BlocProvider<FavoriteBloc>.value(value: _favoriteBloc),
+          BlocProvider<CourseBloc>.value(value: _courseBloc),
+          BlocProvider<TagBloc>.value(value: _tagBloc),
+        ];
+        newRouteView = ViewAll(
+          courses: courses,
+          title: title,
+        );
         break;
       case RouteEnum.videos:
         newRouteView = Home(
