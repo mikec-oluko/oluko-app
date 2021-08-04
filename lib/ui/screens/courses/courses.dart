@@ -374,10 +374,9 @@ class _State extends State<Courses> {
                             return Padding(
                                 padding: const EdgeInsets.only(right: 8.0),
                                 child: GestureDetector(
-                                  onTap: () => Navigator.pushNamed(
-                                      context, 'classes', arguments: {
-                                    'courseId': favoriteCourse.id
-                                  }),
+                                  onTap: () => Navigator.pushNamed(context,
+                                      routeLabels[RouteEnum.courseMarketing],
+                                      arguments: {'course': favoriteCourse}),
                                   child: _getCourseCard(
                                     _generateImageCourse(favoriteCourse.image),
                                     width: ScreenUtils.width(context) /
