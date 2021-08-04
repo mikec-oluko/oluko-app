@@ -16,20 +16,15 @@ class CourseStepSection extends StatefulWidget {
 class _State extends State<CourseStepSection> {
   @override
   Widget build(BuildContext context) {
-    int totalSegmentStep = widget.totalCourseSteps;
-    int currentSegmentStep = widget.currentCourseStep;
     return Container(
       child: Padding(
         padding: const EdgeInsets.all(15.0),
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: getStepCircles(),
-              ),
-            )
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: getStepCircles(),
+            ),
           ],
         ),
       ),

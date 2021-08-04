@@ -35,17 +35,20 @@ class _State extends State<CarouselSection> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              TitleBody(widget.title),
+              widget.title != null ? TitleBody(widget.title) : SizedBox(),
               GestureDetector(
                 onTap: () => widget.onOptionTap(),
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 3.0),
-                  child: Text(
-                    '',
-                    // Removed for MVP --------  widget.optionLabel != null ? widget.optionLabel : '',
-                    style: TextStyle(color: OlukoColors.primary, fontSize: 18),
-                  ),
-                ),
+                child: widget.optionLabel != null
+                    ? Padding(
+                        padding: const EdgeInsets.only(top: 3.0),
+                        child: Text(
+                          '',
+                          // Removed for MVP --------  widget.optionLabel != null ? widget.optionLabel : '',
+                          style: TextStyle(
+                              color: OlukoColors.primary, fontSize: 18),
+                        ),
+                      )
+                    : SizedBox(),
               )
             ],
           ),
