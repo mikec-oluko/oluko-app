@@ -74,7 +74,8 @@ class _CourseMarketingState extends State<CourseMarketing> {
         builder: (context, enrollmentState) {
       return BlocBuilder<ClassBloc, ClassState>(builder: (context, classState) {
         if ((enrollmentState is GetEnrollmentSuccess) &&
-            classState is GetSuccess) {
+            classState is GetSuccess &&
+            classState.classes.length > 0) {
           bool existsEnrollment = enrollmentState.courseEnrollment != null;
           return Form(
               key: _formKey,
