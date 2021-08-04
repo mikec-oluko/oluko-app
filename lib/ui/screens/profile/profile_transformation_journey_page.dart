@@ -36,7 +36,6 @@ class _ProfileTransformationJourneyPageState
       if (state is AuthSuccess) {
         _profileInfo = state.user;
         _requestTransformationJourneyData(context, _profileInfo);
-
         return MultiBlocProvider(
             providers: [
               BlocProvider.value(
@@ -142,11 +141,13 @@ class _ProfileTransformationJourneyPageState
 
     if (transformationJourneyContent != null) {
       contentForReturn = ImageAndVideoContainer(
-        assetImage: transformationJourneyContent.thumbnail,
-        isVideo: transformationJourneyContent.type == FileTypeEnum.video
+        backgroundImage: transformationJourneyContent.thumbnail,
+        isContentVideo: transformationJourneyContent.type == FileTypeEnum.video
             ? true
             : false,
         videoUrl: transformationJourneyContent.file,
+        originalContent: transformationJourneyContent,
+        displayOnViewNamed: ActualProfileRoute.transformationJourney,
       );
     }
 

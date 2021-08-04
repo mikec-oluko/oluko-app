@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:oluko_app/models/submodels/event.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
-import 'package:oluko_app/ui/screens/task_submission_review_preview.dart';
+import 'package:oluko_app/ui/screens/assessments/task_submission_review_preview.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:video_player/video_player.dart';
 

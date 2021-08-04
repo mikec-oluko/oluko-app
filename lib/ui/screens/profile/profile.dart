@@ -12,7 +12,7 @@ import 'package:oluko_app/ui/components/user_profile_progress.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/ui/screens/profile/profile_routes.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
-import '../../constants/theme.dart';
+import '../../../constants/theme.dart';
 
 class ProfilePage extends StatefulWidget {
   ProfilePage({Key key}) : super(key: key);
@@ -59,6 +59,8 @@ class _ProfilePageState extends State<ProfilePage> {
           body: WillPopScope(
             onWillPop: () => AppNavigator.onWillPop(context),
             child: Container(
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
                 color: OlukoColors.black,
                 child: Stack(
                   children: [

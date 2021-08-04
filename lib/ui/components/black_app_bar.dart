@@ -13,6 +13,7 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
   final List<T> Function(String, List<T>) suggestionMethod;
   final List<T> Function(String, List<T>) searchMethod;
   final bool showBackButton;
+  final bool showLogo;
   final String title;
   final List<Widget> actions;
   final List<T> searchResultItems;
@@ -23,6 +24,7 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
       {this.title,
       this.onPressed,
       this.actions,
+      this.showLogo = false,
       this.onSearchResults,
       this.searchResultItems,
       this.showSearchBar = false,
@@ -40,19 +42,22 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
           backgroundColor: Colors.black,
           leading: showBackButton
               ? IconButton(
-                  icon: Icon(
-                    Icons.chevron_left,
-                    size: 35,
-                    color: Colors.white,
-                  ),
+                  icon: Icon(Icons.chevron_left, size: 35, color: Colors.white),
                   onPressed: () => Navigator.pop(context))
               : null,
-          title: FittedBox(
-              fit: BoxFit.fitWidth,
-              child: TitleHeader(
-                title,
-                bold: true,
-              )),
+          title: showLogo
+              ? Align(
+                  alignment: Alignment.centerLeft,
+                  child: Image.asset(
+                    'assets/home/mvt.png',
+                    scale: 4,
+                  ))
+              : FittedBox(
+                  fit: BoxFit.fitWidth,
+                  child: TitleHeader(
+                    title,
+                    bold: true,
+                  )),
           actions: actions,
           bottom: showSearchBar == true
               ? PreferredSize(

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/models/course_statistics.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -57,7 +57,8 @@ class _State extends State<StatisticChart> {
                               Text(
                                 OlukoLocalizations.of(context)
                                     .find('areDoingThisCourse'),
-                                style: OlukoFonts.olukoMediumFont(),
+                                style: OlukoFonts.olukoMediumFont(
+                                    customColor: OlukoColors.grayColor),
                               )
                             ],
                           ),
@@ -99,7 +100,8 @@ class _State extends State<StatisticChart> {
                           Text(
                             OlukoLocalizations.of(context)
                                 .find('haveTakingUpThis'),
-                            style: OlukoFonts.olukoMediumFont(),
+                            style: OlukoFonts.olukoMediumFont(
+                                customColor: OlukoColors.grayColor),
                           ),
                         ],
                       ),
@@ -107,7 +109,8 @@ class _State extends State<StatisticChart> {
                         children: [
                           Text(
                             OlukoLocalizations.of(context).find('courseSmall'),
-                            style: OlukoFonts.olukoMediumFont(),
+                            style: OlukoFonts.olukoMediumFont(
+                                customColor: OlukoColors.grayColor),
                           ),
                         ],
                       ),
@@ -116,7 +119,7 @@ class _State extends State<StatisticChart> {
                 ],
               ),
             ),
-            Padding(
+            /*Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -181,7 +184,7 @@ class _State extends State<StatisticChart> {
                   ),
                 ],
               ),
-            ),
+            ),*/
           ],
         ),
       ),
