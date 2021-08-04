@@ -73,6 +73,7 @@ class _State extends State<ImageAndVideoPreviewCard> {
                 alignment: Alignment.center,
                 child: TextButton(
                     onPressed: () {
+                      //TODO: Change Modal VideoPlayer
                       AppModal.dialogContent(
                           closeButton: true,
                           context: context,

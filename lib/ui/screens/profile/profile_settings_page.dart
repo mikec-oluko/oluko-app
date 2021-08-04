@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 
@@ -32,31 +33,31 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
     return Column(
       children: [
         _optionSwitch(context, ProfileViewConstants.profileSettingsNotification,
-            null, SettingsOptions.notification, false),
+            null, SettingsPrivacyAndNotificationOptions.notification, false),
         _optionSwitch(
             context,
             ProfileViewConstants.profileSettingsPublic,
             ProfileViewConstants.profileSettingsPublicSubtitle,
-            SettingsOptions.public,
+            SettingsPrivacyAndNotificationOptions.public,
             true),
         _optionSwitch(
             context,
             ProfileViewConstants.profileSettingsRestricted,
             ProfileViewConstants.profileSettingsRestrictedSubtitle,
-            SettingsOptions.restricted,
+            SettingsPrivacyAndNotificationOptions.restricted,
             true),
         _optionSwitch(
             context,
             ProfileViewConstants.profileSettingsAnonymous,
             ProfileViewConstants.profileSettingsAnonymousSubtitle,
-            SettingsOptions.anonymous,
+            SettingsPrivacyAndNotificationOptions.anonymous,
             true),
       ],
     );
   }
 
   Container _optionSwitch(BuildContext context, String title, String subTitle,
-      SettingsOptions optionToUse, bool subtitleStatus) {
+      SettingsPrivacyAndNotificationOptions optionToUse, bool subtitleStatus) {
     var valueToUse = _returnValue(optionToUse);
     return Container(
       width: MediaQuery.of(context).size.width,
@@ -88,39 +89,39 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
     );
   }
 
-  bool _returnValue(SettingsOptions option) {
+  bool _returnValue(SettingsPrivacyAndNotificationOptions option) {
     switch (option) {
-      case SettingsOptions.notification:
+      case SettingsPrivacyAndNotificationOptions.notification:
         return _notification;
-      case SettingsOptions.public:
+      case SettingsPrivacyAndNotificationOptions.public:
         return _public;
-      case SettingsOptions.restricted:
+      case SettingsPrivacyAndNotificationOptions.restricted:
         return _restricted;
-      case SettingsOptions.anonymous:
+      case SettingsPrivacyAndNotificationOptions.anonymous:
         return _anonymous;
       default:
         return null;
     }
   }
 
-  void _setValue(SettingsOptions option, value) {
+  void _setValue(SettingsPrivacyAndNotificationOptions option, value) {
     switch (option) {
-      case SettingsOptions.notification:
+      case SettingsPrivacyAndNotificationOptions.notification:
         setState(() {
           _notification = value;
         });
         break;
-      case SettingsOptions.public:
+      case SettingsPrivacyAndNotificationOptions.public:
         setState(() {
           _public = value;
         });
         break;
-      case SettingsOptions.restricted:
+      case SettingsPrivacyAndNotificationOptions.restricted:
         setState(() {
           _restricted = value;
         });
         break;
-      case SettingsOptions.anonymous:
+      case SettingsPrivacyAndNotificationOptions.anonymous:
         setState(() {
           _anonymous = value;
         });
