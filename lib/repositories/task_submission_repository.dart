@@ -117,7 +117,7 @@ class TaskSubmissionRepository {
         .collection('taskSubmissions');
     print(assessmentId);
     final querySnapshot = await reference
-        .where('created_by', isEqualTo: userId)
+        // .where('created_by', isEqualTo: userId) Field is null
         .where('video', isNotEqualTo: null)
         .get();
 

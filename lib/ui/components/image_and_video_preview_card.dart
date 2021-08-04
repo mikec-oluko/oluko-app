@@ -6,6 +6,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/utils/app_modal.dart';
+import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 
@@ -50,8 +51,23 @@ class _State extends State<ImageAndVideoPreviewCard> {
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.center,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+          color: OlukoColors.black,
+          image: DecorationImage(
+              fit: BoxFit.cover,
+              alignment: Alignment.center,
+              image: Image(
+                image: widget.backgroundImage.image,
+                frameBuilder: (BuildContext context, Widget child, int frame,
+                        bool wasSynchronouslyLoaded) =>
+                    ImageUtils.frameBuilder(
+                        context, child, frame, wasSynchronouslyLoaded,
+                        height: 120),
+              ).image)),
+      width: 120,
+      height: 120,
       child: Stack(children: [
-        widget.backgroundImage,
         widget.isContentVideo
             ? Align(
                 alignment: Alignment.center,
