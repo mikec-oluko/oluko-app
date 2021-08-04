@@ -41,8 +41,7 @@ class _State extends State<CarouselSection> {
                 child: Padding(
                   padding: const EdgeInsets.only(top: 3.0),
                   child: Text(
-                    '',
-                    // Removed for MVP --------  widget.optionLabel != null ? widget.optionLabel : '',
+                    widget.optionLabel != null ? widget.optionLabel : '',
                     style: TextStyle(color: OlukoColors.primary, fontSize: 18),
                   ),
                 ),

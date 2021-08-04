@@ -51,7 +51,7 @@ class _State extends State<Courses> {
   final double cardsAspectRatio = 0.69333;
   final int cardsToShowOnPortrait = 4;
   final int cardsToShowOnLandscape = 5;
-  final int searchResultsPortrait = 2;
+  final int searchResultsPortrait = 3;
   final int searchResultsLandscape = 5;
 
   //TODO Make Dynamic
@@ -61,6 +61,9 @@ class _State extends State<Courses> {
     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRF1L_s4YJh7RHSIag8CxT0LTuJQo-XQnTJkVApDXar4b0A57U_TnAMrK_l4Fd_Nzp65Bg&usqp=CAU',
     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRF1L_s4YJh7RHSIag8CxT0LTuJQo-XQnTJkVApDXar4b0A57U_TnAMrK_l4Fd_Nzp65Bg&usqp=CAU'
   ];
+
+  String defaultAvatar =
+      'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/default-avatar.png?alt=media&token=d293c16b-1d61-4123-8cbe-6ed6c7601783';
 
   @override
   Widget build(BuildContext context) {
@@ -170,6 +173,14 @@ class _State extends State<Courses> {
                 final List<Course> coursesList =
                     courseState.coursesByCategories.values.elementAt(index);
                 return CarouselSection(
+                  onOptionTap: () => Navigator.pushNamed(
+                      context, routeLabels[RouteEnum.viewAll],
+                      arguments: {
+                        'courses': coursesList,
+                        'title': courseState.coursesByCategories.keys
+                            .elementAt(index)
+                            .name
+                      }),
                   height: carouselSectionHeight,
                   title: courseState.coursesByCategories.keys
                       .elementAt(index)
@@ -253,7 +264,7 @@ class _State extends State<Courses> {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       AuthSuccess authSuccess = authState;
       return BlocBuilder<RecommendationBloc, RecommendationState>(
-          bloc: RecommendationBloc()
+          bloc: BlocProvider.of<RecommendationBloc>(context)
             ..getRecommendedCoursesByUser(authSuccess.user.id),
           builder: (context, recommendationState) {
             return recommendationState is RecommendationSuccess &&
@@ -272,8 +283,11 @@ class _State extends State<Courses> {
                           .where((element) => element.id == courseEntry.key)
                           .toList()[0];
 
-                      final List<String> userRecommendationAvatars =
-                          courseEntry.value.map((user) => user.avatar).toList();
+                      final List<String> userRecommendationAvatars = courseEntry
+                          .value
+                          .map((user) =>
+                              user.avatar != null ? user.avatar : defaultAvatar)
+                          .toList();
 
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -336,7 +350,7 @@ class _State extends State<Courses> {
           });
     });
   }
-    
+
   _myListSection(courseState) {
     return Container(
       child: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
