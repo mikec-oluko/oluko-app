@@ -335,7 +335,7 @@ class _State extends State<Courses> {
                         child: GestureDetector(
                           onTap: () => Navigator.pushNamed(
                               context, routeLabels[RouteEnum.courseMarketing],
-                              arguments: {'courseId': course.id}),
+                              arguments: {'course': course}),
                           child: _getCourseCard(
                             _generateImageCourse(course.image),
                             progress: courseEnrollment.completion,
