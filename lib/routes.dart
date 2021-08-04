@@ -32,6 +32,7 @@ import 'package:oluko_app/ui/screens/courses/enrolled_class.dart';
 import 'package:oluko_app/ui/screens/courses/inside_class.dart';
 import 'package:oluko_app/ui/screens/friends/friends_page.dart';
 import 'package:oluko_app/ui/screens/authentication/login.dart';
+import 'package:oluko_app/ui/screens/home.dart';
 import 'package:oluko_app/ui/screens/main_page.dart';
 import 'package:oluko_app/ui/screens/courses/movement_intro.dart';
 import 'package:oluko_app/ui/screens/profile/profile.dart';
@@ -49,7 +50,7 @@ import 'package:oluko_app/ui/screens/courses/segment_recording.dart';
 import 'package:oluko_app/ui/screens/authentication/sign_up.dart';
 import 'package:oluko_app/ui/screens/authentication/sign_up_with_email.dart';
 import 'package:oluko_app/ui/screens/assessments/task_details.dart';
-import 'package:oluko_app/ui/screens/videos/home.dart';
+import 'package:oluko_app/ui/screens/videos/videos_home.dart';
 import 'models/course.dart';
 import 'models/task.dart';
 import 'models/transformation_journey_uploads.dart';
@@ -163,12 +164,14 @@ class Routes {
       case RouteEnum.root:
         providers = [
           BlocProvider<CourseBloc>.value(value: _courseBloc),
+          BlocProvider<CourseEnrollmentBloc>.value(
+              value: _courseEnrollmentBloc),
           BlocProvider<TagBloc>.value(value: _tagBloc),
           BlocProvider<CourseEnrollmentBloc>.value(
               value: _courseEnrollmentBloc),
           BlocProvider<FavoriteBloc>.value(value: _favoriteBloc),
         ];
-        newRouteView = MainPage();
+        newRouteView = Home();
         break;
       case RouteEnum.signUp:
         newRouteView = SignUpPage();
@@ -356,7 +359,7 @@ class Routes {
         newRouteView = Courses();
         break;
       case RouteEnum.videos:
-        newRouteView = Home(
+        newRouteView = VideosHome(
           title: "Videos",
           parentVideoInfo: null,
           parentVideoReference:
@@ -364,10 +367,6 @@ class Routes {
         );
         break;
       default:
-        providers = [
-          BlocProvider<CourseBloc>.value(value: _courseBloc),
-          BlocProvider<TagBloc>.value(value: _tagBloc),
-        ];
         newRouteView = MainPage();
         break;
     }
