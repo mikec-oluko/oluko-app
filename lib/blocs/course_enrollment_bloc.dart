@@ -110,7 +110,6 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
       List<Course> coursesFromEnrollments =
           await CourseEnrollmentRepository.getUserCourseEnrollmentsCourse(
               userId);
-
       emit(CourseEnrollmentCourses(
           courseEnrollmentCourses: coursesFromEnrollments));
     } catch (e) {
