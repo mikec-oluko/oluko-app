@@ -141,11 +141,13 @@ class _ProfileTransformationJourneyPageState
 
     if (transformationJourneyContent != null) {
       contentForReturn = ImageAndVideoContainer(
-        assetImage: transformationJourneyContent.thumbnail,
-        isVideo: transformationJourneyContent.type == FileTypeEnum.video
+        backgroundImage: transformationJourneyContent.thumbnail,
+        isContentVideo: transformationJourneyContent.type == FileTypeEnum.video
             ? true
             : false,
         videoUrl: transformationJourneyContent.file,
+        originalContent: transformationJourneyContent,
+        displayOnViewNamed: ActualProfileRoute.transformationJourney,
       );
     }
 
