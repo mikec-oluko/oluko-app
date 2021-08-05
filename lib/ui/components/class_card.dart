@@ -28,21 +28,26 @@ class _State extends State<ClassCard> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 5),
-        child: Container(
-          child: Column(
-            children: [
-              Container(width: 110, child: Column(children: card())),
-            ],
-          ),
-        ));
+      padding: EdgeInsets.symmetric(horizontal: 5),
+      child: card(),
+    );
   }
 
-  List<Widget> card() {
+  Widget card() {
     if (widget.selected) {
-      return [classRectangle(), SizedBox(height: 6), classContainer()];
+      return Container(
+          width: 110,
+          child: Column(children: [
+            classRectangle(),
+            SizedBox(height: 6),
+            classContainer(150.0, 110.0)
+          ]));
     } else {
-      return [classContainer()];
+      return Padding(
+          padding: EdgeInsets.only(top: 40),
+          child: Container(
+              width: 95,
+              child: Column(children: [classContainer(122.0, 95.0)])));
     }
   }
 
@@ -67,7 +72,7 @@ class _State extends State<ClassCard> {
         ));
   }
 
-  Widget classContainer() {
+  Widget classContainer(double height, double width) {
     return Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(3)),
@@ -82,8 +87,8 @@ class _State extends State<ClassCard> {
             ClipRRect(
               child: Image.network(
                 widget.classObj.image,
-                height: 150,
-                width: 110,
+                height: height,
+                width: width,
                 fit: BoxFit.cover,
               ),
               borderRadius: BorderRadius.all(Radius.circular(3)),
