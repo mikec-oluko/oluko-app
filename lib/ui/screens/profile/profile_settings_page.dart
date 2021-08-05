@@ -1,133 +1,161 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
+import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 
 class ProfileSettingsPage extends StatefulWidget {
+  final UserResponse profileInfo;
+  ProfileSettingsPage({this.profileInfo});
   @override
   _ProfileSettingsPageState createState() => _ProfileSettingsPageState();
 }
 
 class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
-  bool _notification = false;
-  bool _public = false;
-  bool _restricted = false;
-  bool _anonymous = false;
+  UserResponse authUser;
+  bool notification;
+  bool _notificationNewValue;
+  num userPrivacyValue;
+  num privacyNewValue;
+
+  void initState() {
+    BlocProvider.of<AuthBloc>(context).checkCurrentUser();
+    setValuesFromUserProfile();
+
+    super.initState();
+  }
+
+  void setValuesFromUserProfile() {
+    privacyNewValue = widget.profileInfo.privacy;
+    notification = widget.profileInfo.notification;
+    _notificationNewValue = widget.profileInfo.notification;
+  }
+
   @override
   Widget build(BuildContext context) {
+    return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
+      if (state is AuthSuccess) {
+        return buildSettingsView(context);
+      } else {
+        return Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: OlukoCircularProgressIndicator(),
+        );
+      }
+    });
+  }
+
+  Scaffold buildSettingsView(BuildContext context) {
     return Scaffold(
       appBar: OlukoAppBar(
         title: ProfileViewConstants.profileSettingsTitle,
         showSearchBar: false,
       ),
       body: Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
         color: OlukoColors.black,
-        child: _buildOptions(context),
+        child: _settingsOptionsSection(context),
       ),
     );
   }
 
-  Column _buildOptions(BuildContext context) {
+  Column _settingsOptionsSection(BuildContext context) {
     return Column(
       children: [
-        _optionSwitch(context, ProfileViewConstants.profileSettingsNotification,
-            null, SettingsPrivacyAndNotificationOptions.notification, false),
-        _optionSwitch(
-            context,
-            ProfileViewConstants.profileSettingsPublic,
-            ProfileViewConstants.profileSettingsPublicSubtitle,
-            SettingsPrivacyAndNotificationOptions.public,
-            true),
-        _optionSwitch(
-            context,
-            ProfileViewConstants.profileSettingsRestricted,
-            ProfileViewConstants.profileSettingsRestrictedSubtitle,
-            SettingsPrivacyAndNotificationOptions.restricted,
-            true),
-        _optionSwitch(
-            context,
-            ProfileViewConstants.profileSettingsAnonymous,
-            ProfileViewConstants.profileSettingsAnonymousSubtitle,
-            SettingsPrivacyAndNotificationOptions.anonymous,
-            true),
+        createNotificationSwitch(context),
+        Column(
+          children: ProfileViewConstants.privacyOptionsList
+              .map((option) => _buildOptionTiles(context, option))
+              .toList(),
+        ),
       ],
     );
   }
 
-  Container _optionSwitch(BuildContext context, String title, String subTitle,
-      SettingsPrivacyAndNotificationOptions optionToUse, bool subtitleStatus) {
-    var valueToUse = _returnValue(optionToUse);
+  Container createNotificationSwitch(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
-          border: Border(
-              bottom: BorderSide(width: 1.0, color: OlukoColors.grayColor))),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          MergeSemantics(
-            child: ListTile(
-                title: Text(title, style: OlukoFonts.olukoBigFont()),
-                subtitle: subtitleStatus
-                    ? Text(subTitle,
-                        style: OlukoFonts.olukoMediumFont(
-                            customColor: OlukoColors.grayColor))
-                    : null,
-                trailing: Switch(
-                  value: false,
-                  // onChanged: (bool value) => _setValue(optionToUse, value),
-                  onChanged: (bool value) => {},
-                  trackColor: MaterialStateProperty.all(OlukoColors.grayColor),
-                  activeColor: OlukoColors.primary,
-                )),
-          ),
-        ],
+        border: Border(
+            top: BorderSide(width: 1.0, color: OlukoColors.grayColor),
+            bottom: BorderSide(width: 1.0, color: OlukoColors.grayColor)),
+        color: OlukoColors.black,
+      ),
+      child: MergeSemantics(
+        child: ListTile(
+            contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+            title: Text("Notification",
+                style: OlukoFonts.olukoBigFont(
+                    customColor: OlukoColors.grayColor)),
+            trailing: Switch(
+              value: _notificationNewValue,
+              onChanged: (bool value) => _setValueForNotifications(value),
+              trackColor: MaterialStateProperty.all(OlukoColors.grayColor),
+              activeColor: OlukoColors.primary,
+            )),
       ),
     );
   }
 
-  bool _returnValue(SettingsPrivacyAndNotificationOptions option) {
-    switch (option) {
-      case SettingsPrivacyAndNotificationOptions.notification:
-        return _notification;
-      case SettingsPrivacyAndNotificationOptions.public:
-        return _public;
-      case SettingsPrivacyAndNotificationOptions.restricted:
-        return _restricted;
-      case SettingsPrivacyAndNotificationOptions.anonymous:
-        return _anonymous;
-      default:
-        return null;
+  Container _buildOptionTiles(BuildContext context, PrivacyOptions option) {
+    Widget widgetToReturn = Container();
+    if (option.isSwitch == false) {
+      widgetToReturn = Container(
+          decoration: BoxDecoration(
+            border: Border(
+                bottom: BorderSide(width: 1.0, color: OlukoColors.grayColor)),
+            color: OlukoColors.black,
+          ),
+          child: Theme(
+            data: ThemeData(unselectedWidgetColor: OlukoColors.primary),
+            child: RadioListTile(
+                toggleable: true,
+                activeColor: OlukoColors.primary,
+                selectedTileColor: OlukoColors.black,
+                controlAffinity: ListTileControlAffinity.trailing,
+                selected: userPrivacyValue == option.option.index,
+                title: Text(
+                  option.title,
+                  style: OlukoFonts.olukoBigFont(
+                      customColor: OlukoColors.grayColor),
+                ),
+                subtitle: option.showSubtitle
+                    ? Text(
+                        option.subtitle,
+                        style: OlukoFonts.olukoSmallFont(
+                            customColor: OlukoColors.grayColor),
+                      )
+                    : SizedBox(),
+                value: option.option.index,
+                groupValue: privacyNewValue,
+                onChanged: (value) {
+                  _setValueForPrivacy(index: value);
+                }),
+          ));
     }
+    return widgetToReturn;
   }
 
-  void _setValue(SettingsPrivacyAndNotificationOptions option, value) {
-    switch (option) {
-      case SettingsPrivacyAndNotificationOptions.notification:
-        setState(() {
-          _notification = value;
-        });
-        break;
-      case SettingsPrivacyAndNotificationOptions.public:
-        setState(() {
-          _public = value;
-        });
-        break;
-      case SettingsPrivacyAndNotificationOptions.restricted:
-        setState(() {
-          _restricted = value;
-        });
-        break;
-      case SettingsPrivacyAndNotificationOptions.anonymous:
-        setState(() {
-          _anonymous = value;
-        });
-        break;
-      default:
-        break;
-    }
+  void _setValueForPrivacy({int index}) {
+    setState(() {
+      privacyNewValue = index;
+      var privacyToUse = ProfileViewConstants.privacyOptionsList
+          .elementAt(privacyNewValue)
+          .option;
+      print("privacy to update :  ${privacyToUse}");
+    });
+  }
+
+  void _setValueForNotifications(bool value) {
+    setState(() {
+      _notificationNewValue = value;
+      print("notification new value: ${_notificationNewValue}");
+    });
   }
 }

@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/utils/app_modal.dart';
@@ -34,6 +35,7 @@ class _State extends State<ImageAndVideoPreviewCard> {
   String titleForPreviewImage = '';
   ChewieController _controller;
   TransformationJourneyUpload transformationJourneyContent;
+  TaskSubmission taskSubmissionContent;
 
   @override
   void initState() {
@@ -42,6 +44,9 @@ class _State extends State<ImageAndVideoPreviewCard> {
         transformationJourneyContent = widget.originalContent;
         titleForPreviewImage = TimeConverter.returnDateAndTimeOnStringFormat(
             dateToFormat: transformationJourneyContent.createdAt);
+      }
+      if (widget.originalContent is TaskSubmission) {
+        taskSubmissionContent = widget.originalContent;
       }
     });
     super.initState();

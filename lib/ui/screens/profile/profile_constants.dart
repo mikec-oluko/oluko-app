@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:oluko_app/helpers/enum_collection.dart';
 
 class ProfileViewConstants {
   //Constants used on Profile Feature
@@ -46,12 +47,46 @@ class ProfileViewConstants {
     ProfileOptions(option: profileOptionsSettings),
     ProfileOptions(option: profileOptionsHelpAndSupport),
   ];
+
+  static List<PrivacyOptions> privacyOptionsList = [
+    PrivacyOptions(
+        title: profileSettingsPublic,
+        subtitle: profileSettingsPublicSubtitle,
+        option: SettingsPrivacyOptions.public),
+    PrivacyOptions(
+        title: profileSettingsRestricted,
+        subtitle: profileSettingsRestrictedSubtitle,
+        option: SettingsPrivacyOptions.restricted),
+    PrivacyOptions(
+        title: profileSettingsAnonymous,
+        subtitle: profileSettingsAnonymousSubtitle,
+        option: SettingsPrivacyOptions.anonymous),
+    PrivacyOptions(
+        title: profileSettingsNotification,
+        subtitle: '',
+        showSubtitle: false,
+        isSwitch: true),
+  ];
 }
 
 class ProfileOptions {
   final String option;
   final bool enable;
   ProfileOptions({this.option, this.enable = true});
+}
+
+class PrivacyOptions {
+  String title;
+  String subtitle;
+  SettingsPrivacyOptions option;
+  bool showSubtitle;
+  bool isSwitch;
+  PrivacyOptions(
+      {this.title,
+      this.subtitle,
+      this.option,
+      this.showSubtitle = true,
+      this.isSwitch = false});
 }
 
 //Basic model for Tile (Help and Support)

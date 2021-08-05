@@ -12,6 +12,7 @@ import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/ui/screens/profile/profile_routes.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
 import '../../../constants/theme.dart';
+import '../../../routes.dart';
 
 class ProfilePage extends StatefulWidget {
   ProfilePage({Key key}) : super(key: key);
@@ -117,8 +118,16 @@ class _ProfilePageState extends State<ProfilePage> {
         children: [
           InkWell(
             onTap: option.enable
-                ? () => Navigator.pushNamed(
-                    context, ProfileRoutes.returnRouteName(option.option))
+                ? () {
+                    if (option.option ==
+                        ProfileViewConstants.profileOptionsSettings) {
+                      Navigator.pushNamed(
+                          context, routeLabels[RouteEnum.profileSettings],
+                          arguments: {'profileInfo': profileInfo});
+                    }
+                    Navigator.pushNamed(
+                        context, ProfileRoutes.returnRouteName(option.option));
+                  }
                 : () {},
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

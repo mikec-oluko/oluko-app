@@ -1,10 +1,5 @@
 //Options to update on settings
-enum SettingsPrivacyAndNotificationOptions {
-  notification,
-  public,
-  restricted,
-  anonymous
-}
+enum SettingsPrivacyOptions { public, restricted, anonymous }
 //Enum for modal, to update images
 enum UploadFrom { profileImage, transformationJourney, profileCoverImage }
 //Enum to share route where data for user is Requested on Profile views

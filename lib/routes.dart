@@ -23,6 +23,7 @@ import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/models/movement.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/screens/app_plans.dart';
 import 'package:oluko_app/ui/screens/assessments/assessment_videos.dart';
 import 'package:oluko_app/ui/screens/assessments/self_recording.dart';
@@ -193,7 +194,9 @@ class Routes {
         newRouteView = ProfilePage();
         break;
       case RouteEnum.profileSettings:
-        newRouteView = ProfileSettingsPage();
+        final Map<String, UserResponse> argumentsToAdd = arguments;
+        newRouteView =
+            ProfileSettingsPage(profileInfo: argumentsToAdd['profileInfo']);
         break;
       case RouteEnum.profileMyAccount:
         providers = [

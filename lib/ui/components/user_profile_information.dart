@@ -47,7 +47,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
         width: MediaQuery.of(context).size.width,
         child: Padding(
             padding: const EdgeInsets.all(10.0),
-            child: _profileUserInformation(_locationDemo, _valuesDemo)),
+            child: _profileUserInformation(_userLocation, _valuesDemo)),
       ),
     );
   }
