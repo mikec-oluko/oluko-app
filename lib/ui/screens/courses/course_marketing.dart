@@ -92,7 +92,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                 GestureDetector(
                                   onTap: () => Navigator.of(context).push(
                                     PageRouteBuilder(
-                                      opaque: false, // set to false
+                                      opaque: false,
                                       pageBuilder: (_, __, ___) => VideoOverlay(
                                           videoUrl: widget.course.video),
                                     ),
