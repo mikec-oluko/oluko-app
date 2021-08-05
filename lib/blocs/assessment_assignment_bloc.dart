@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/repositories/assessment_assignment_repository.dart';
 
@@ -21,7 +22,7 @@ class AssessmentAssignmentFailure extends AssessmentAssignmentState {
 class AssessmentAssignmentBloc extends Cubit<AssessmentAssignmentState> {
   AssessmentAssignmentBloc() : super(AssessmentAssignmentLoading());
 
-  void getOrCreate(User user) async {
+  void getOrCreate(User user, Assessment assessment) async {
     if (!(state is AssessmentAssignmentSuccess)) {
       emit(AssessmentAssignmentLoading());
     }
@@ -29,7 +30,7 @@ class AssessmentAssignmentBloc extends Cubit<AssessmentAssignmentState> {
       AssessmentAssignment assessmentA =
           await AssessmentAssignmentRepository.getByUserId(user.uid);
       if (assessmentA == null) {
-        assessmentA = AssessmentAssignmentRepository.create(user);
+        assessmentA = AssessmentAssignmentRepository.create(user, assessment);
       }
       emit(AssessmentAssignmentSuccess(assessmentAssignment: assessmentA));
     } catch (e) {

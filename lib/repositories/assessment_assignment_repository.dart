@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
 
 class AssessmentAssignmentRepository {
@@ -10,7 +11,7 @@ class AssessmentAssignmentRepository {
     this.firestoreInstance = FirebaseFirestore.instance;
   }
 
-  static AssessmentAssignment create(User user) {
+  static AssessmentAssignment create(User user, Assessment assessment) {
     DocumentReference projectReference = FirebaseFirestore.instance
         .collection("projects")
         .doc(GlobalConfiguration().getValue("projectId"));
@@ -18,11 +19,11 @@ class AssessmentAssignmentRepository {
     CollectionReference assessmentAssignmentReference =
         projectReference.collection("assessmentAssignments");
 
-    DocumentReference userReference =
-        projectReference.collection('users').doc(user.uid);
+            DocumentReference assessmentReference =
+        projectReference.collection("assessment").doc(assessment.id);
 
     AssessmentAssignment assessmentAssignment =
-        AssessmentAssignment(userId: user.uid, userReference: userReference);
+        AssessmentAssignment(createdBy: user.uid, assessmentId: assessment.id, assessmentReference: assessmentReference);
 
     final DocumentReference docRef = assessmentAssignmentReference.doc();
     assessmentAssignment.id = docRef.id;
@@ -35,7 +36,7 @@ class AssessmentAssignmentRepository {
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"))
         .collection('assessmentAssignments')
-        .where('user_id', isEqualTo: userId)
+        .where('created_by', isEqualTo: userId)
         .get();
 
     if (docRef.docs.length > 0) {

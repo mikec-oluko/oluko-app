@@ -6,8 +6,6 @@ class AssessmentAssignment extends Base {
   Timestamp seenAt;
   String assessmentId;
   DocumentReference assessmentReference;
-  String userId;
-  DocumentReference userReference;
   String coachId;
   DocumentReference coachReference;
 
@@ -16,8 +14,6 @@ class AssessmentAssignment extends Base {
       this.seenAt,
       this.assessmentId,
       this.assessmentReference,
-      this.userId,
-      this.userReference,
       this.coachId,
       this.coachReference,
       String id,
@@ -42,8 +38,6 @@ class AssessmentAssignment extends Base {
       seenAt: json['seen_at'],
       assessmentId: json['assessment_id'],
       assessmentReference: json['assessment_reference'],
-      userId: json['user_id'],
-      userReference: json['user_reference'],
       coachId: json['coach_id'],
       coachReference: json['coach_reference'],
     );
@@ -57,8 +51,6 @@ class AssessmentAssignment extends Base {
       'seen_at': seenAt,
       'assessment_id': assessmentId,
       'assessment_reference': assessmentReference,
-      'user_id': userId,
-      'user_reference': userReference,
       'coach_id': coachId,
       'coach_reference': coachReference,
     };

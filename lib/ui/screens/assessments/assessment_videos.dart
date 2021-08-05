@@ -1,19 +1,21 @@
 import 'package:chewie/chewie.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
+import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/ui/components/black_app_bar.dart';
+import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
+import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/task_card.dart';
-import 'package:oluko_app/ui/components/title_body.dart';
-import 'package:oluko_app/ui/components/title_header.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
-import 'package:oluko_app/ui/screens/assessments/task_details.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class AssessmentVideos extends StatefulWidget {
@@ -27,7 +29,6 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
   final _formKey = GlobalKey<FormState>();
   ChewieController _controller;
   Assessment _assessment;
-  User _user;
 
   @override
   void initState() {
@@ -38,7 +39,6 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
-        _user = authState.firebaseUser;
         //TODO: Change this when we have multiple assessments
         BlocProvider.of<AssessmentBloc>(context)
           ..getById('emnsmBgZ13UBRqTS26Qd');
@@ -47,6 +47,8 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
           if (assessmentState is AssessmentSuccess) {
             _assessment = assessmentState.assessment;
             BlocProvider.of<TaskBloc>(context)..get(_assessment);
+            BlocProvider.of<AssessmentAssignmentBloc>(context)
+              ..getOrCreate(authState.firebaseUser,_assessment);
             return form();
           } else {
             return SizedBox();
@@ -62,143 +64,138 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
     return Form(
         key: _formKey,
         child: Scaffold(
+            appBar: OlukoAppBar(
+              title: OlukoLocalizations.of(context).find('assessment'),
+              actions: [skipButton()],
+            ),
             body: Container(
                 color: Colors.black,
                 child: ListView(children: [
                   Padding(
                       padding: EdgeInsets.symmetric(horizontal: 15),
-                      child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          child: Column(children: [
-                            SizedBox(height: 20),
-                            SizedBox(height: 20),
-                            Stack(children: [
-                              Row(
-                                children: [
-                                  InkWell(
-                                    onTap: () => Navigator.pop(context),
-                                    child: Icon(
-                                      Icons.chevron_left,
-                                      size: 30,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: TitleHeader(
-                                        'Assessment',
-                                        bold: true,
-                                      )),
-                                ],
-                              ),
-                              Align(
-                                  alignment: Alignment.topRight,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 10),
-                                    child: Text(
-                                      '', // REMOVE FOR MVT 'Skip',
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 18),
-                                    ),
-                                  )),
-                            ]),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 25),
-                              child: OrientationBuilder(
-                                builder: (context, orientation) {
-                                  return ConstrainedBox(
-                                      constraints: BoxConstraints(
-                                          maxHeight: MediaQuery.of(context)
-                                                      .orientation ==
-                                                  Orientation.portrait
-                                              ? ScreenUtils.height(context) / 4
-                                              : ScreenUtils.height(context) /
-                                                  1.5,
-                                          minHeight: MediaQuery.of(context)
-                                                      .orientation ==
-                                                  Orientation.portrait
-                                              ? ScreenUtils.height(context) / 4
-                                              : ScreenUtils.height(context) /
-                                                  1.5),
-                                      child: Container(
-                                          height: 400,
-                                          child: Stack(
-                                              children: showVideoPlayer(
-                                                  _assessment.video))));
-                                },
-                              ),
-                            ),
-                            TitleBody(
+                      child: Column(children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          child: OrientationBuilder(
+                            builder: (context, orientation) {
+                              return showVideoPlayer(_assessment.video);
+                            },
+                          ),
+                        ),
+                        Padding(
+                            padding: EdgeInsets.only(bottom: 8),
+                            child: Text(
                               _assessment.description,
-                              bold: true,
-                            ),
-                            Column(
-                              children: [
-                                BlocBuilder<TaskBloc, TaskState>(
-                                    builder: (context, taskState) {
-                                  if (taskState is TaskSuccess) {
-                                    return ListView.builder(
-                                        physics:
-                                            const NeverScrollableScrollPhysics(),
-                                        itemCount: taskState.values.length,
-                                        shrinkWrap: true,
-                                        itemBuilder: (context, num index) {
-                                          Task task = taskState.values[index];
-                                          return Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 15.0),
-                                              child: TaskCard(
-                                                task: task,
-                                                onPressed: () {
-                                                  if (_controller != null) {
-                                                    _controller.pause();
-                                                  }
-                                                  return Navigator.pushNamed(
-                                                      context,
-                                                      routeLabels[RouteEnum
-                                                          .taskDetails],
-                                                      arguments: {
-                                                        'taskIndex': index
-                                                      });
-                                                },
-                                              ));
-                                        });
-                                  } else {
-                                    return Padding(
-                                      padding: const EdgeInsets.all(50.0),
-                                      child: Center(
-                                        child: Text('Loading...',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                            )),
-                                      ),
-                                    );
-                                  }
-                                }),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 100,
-                            )
-                          ])))
+                              style: OlukoFonts.olukoSuperBigFont(
+                                  customColor: OlukoColors.white),
+                            )),
+                        taskCardsSection(),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        BlocBuilder<AssessmentAssignmentBloc,
+                                AssessmentAssignmentState>(
+                            builder: (context, assessmentAssignmentState) {
+                          if (assessmentAssignmentState
+                                  is AssessmentAssignmentSuccess &&
+                              assessmentAssignmentState
+                                      .assessmentAssignment.completedAt !=
+                                  null) {
+                            return Row(children: [
+                              OlukoPrimaryButton(
+                                title:
+                                    OlukoLocalizations.of(context).find('done'),
+                                onPressed: () {
+                                  Navigator.pushNamed(
+                                      context, routeLabels[RouteEnum.root]);
+                                },
+                              )
+                            ]);
+                          } else {
+                            return SizedBox();
+                          }
+                        }),
+                        SizedBox(
+                          height: 50,
+                        ),
+                      ])),
                 ]))));
   }
 
-  List<Widget> showVideoPlayer(String videoUrl) {
+  Widget showVideoPlayer(String videoUrl) {
     List<Widget> widgets = [];
     if (_controller == null) {
       widgets.add(Center(child: CircularProgressIndicator()));
     }
     widgets.add(OlukoVideoPlayer(
-        videoUrl: _assessment.video,
+        videoUrl: videoUrl,
         autoPlay: false,
         whenInitialized: (ChewieController chewieController) =>
             this.setState(() {
               _controller = chewieController;
             })));
 
-    return widgets;
+    return ConstrainedBox(
+        constraints: BoxConstraints(
+            maxHeight:
+                MediaQuery.of(context).orientation == Orientation.portrait
+                    ? ScreenUtils.height(context) / 4
+                    : ScreenUtils.height(context) / 1.5,
+            minHeight:
+                MediaQuery.of(context).orientation == Orientation.portrait
+                    ? ScreenUtils.height(context) / 4
+                    : ScreenUtils.height(context) / 1.5),
+        child: Container(height: 400, child: Stack(children: widgets)));
+  }
+
+  Widget taskCardsSection() {
+    return Column(
+      children: [
+        BlocBuilder<TaskBloc, TaskState>(builder: (context, taskState) {
+          if (taskState is TaskSuccess) {
+            return ListView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: taskState.values.length,
+                shrinkWrap: true,
+                itemBuilder: (context, num index) {
+                  Task task = taskState.values[index];
+                  return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10.0),
+                      child: TaskCard(
+                        task: task,
+                        onPressed: () {
+                          if (_controller != null) {
+                            _controller.pause();
+                          }
+                          return Navigator.pushNamed(
+                              context, routeLabels[RouteEnum.taskDetails],
+                              arguments: {'taskIndex': index});
+                        },
+                      ));
+                });
+          } else {
+            return Padding(
+                padding: const EdgeInsets.all(50.0),
+                child: OlukoCircularProgressIndicator());
+          }
+        }),
+      ],
+    );
+  }
+
+  Widget skipButton() {
+    return GestureDetector(
+        onTap: () {
+          Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
+        },
+        child: Align(
+            alignment: Alignment.center,
+            child: Padding(
+                padding: EdgeInsets.only(right: 8),
+                child: Text(
+                  OlukoLocalizations.of(context).find('skip'),
+                  style: OlukoFonts.olukoBigFont(
+                      customColor: OlukoColors.grayColor),
+                ))));
   }
 }

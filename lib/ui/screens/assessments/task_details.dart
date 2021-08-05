@@ -50,8 +50,6 @@ class _TaskDetailsState extends State<TaskDetails> {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
-        BlocProvider.of<AssessmentAssignmentBloc>(context)
-          ..getOrCreate(authState.firebaseUser);
         return BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(
           builder: (context, assessmentAssignmentState) {
             return BlocBuilder<TaskBloc, TaskState>(
@@ -81,7 +79,8 @@ class _TaskDetailsState extends State<TaskDetails> {
     return Form(
         key: _formKey,
         child: Scaffold(
-            appBar: OlukoAppBar(title: _task.name),
+            appBar:
+                OlukoAppBar(title: _task.name, actions: [SizedBox(width: 30)]),
             body: Container(
                 color: Colors.black,
                 child: Padding(
@@ -94,19 +93,8 @@ class _TaskDetailsState extends State<TaskDetails> {
                         children: [
                           ListView(
                             children: [
-                              ConstrainedBox(
-                                  constraints: BoxConstraints(
-                                      maxHeight: MediaQuery.of(context)
-                                                  .orientation ==
-                                              Orientation.portrait
-                                          ? ScreenUtils.height(context) / 4
-                                          : ScreenUtils.height(context) / 1.5,
-                                      minHeight: MediaQuery.of(context)
-                                                  .orientation ==
-                                              Orientation.portrait
-                                          ? ScreenUtils.height(context) / 4
-                                          : ScreenUtils.height(context) / 1.5),
-                                  child: Stack(children: showVideoPlayer())),
+                              SizedBox(height: 20),
+                              showVideoPlayer(_task.video),
                               formSection(),
                             ],
                           ),
@@ -120,19 +108,30 @@ class _TaskDetailsState extends State<TaskDetails> {
                     )))));
   }
 
-  List<Widget> showVideoPlayer() {
+  Widget showVideoPlayer(String videoUrl) {
     List<Widget> widgets = [];
+    if (_controller == null) {
+      widgets.add(Center(child: CircularProgressIndicator()));
+    }
     widgets.add(OlukoVideoPlayer(
+        videoUrl: videoUrl,
         autoPlay: false,
-        videoUrl: _task.video,
         whenInitialized: (ChewieController chewieController) =>
             this.setState(() {
               _controller = chewieController;
             })));
-    if (_controller == null) {
-      widgets.add(Center(child: CircularProgressIndicator()));
-    }
-    return widgets;
+
+    return ConstrainedBox(
+        constraints: BoxConstraints(
+            maxHeight:
+                MediaQuery.of(context).orientation == Orientation.portrait
+                    ? ScreenUtils.height(context) / 4
+                    : ScreenUtils.height(context) / 1.5,
+            minHeight:
+                MediaQuery.of(context).orientation == Orientation.portrait
+                    ? ScreenUtils.height(context) / 4
+                    : ScreenUtils.height(context) / 1.5),
+        child: Container(height: 400, child: Stack(children: widgets)));
   }
 
   Widget formSection() {
@@ -250,9 +249,11 @@ class _TaskDetailsState extends State<TaskDetails> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              TitleBody(
-                'Make this public',
-                bold: true,
+              Text(
+                OlukoLocalizations.of(context).find('makeThisPublic'),
+                style: OlukoFonts.olukoSuperBigFont(
+                    customColor: OlukoColors.white,
+                    custoFontWeight: FontWeight.bold),
               ),
               Switch(
                 value: _makePublic,
@@ -267,7 +268,7 @@ class _TaskDetailsState extends State<TaskDetails> {
         ),
         Text(
           _task.description,
-          style: OlukoFonts.olukoMediumFont(),
+          style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
         ),
         BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
             builder: (context, state) {
