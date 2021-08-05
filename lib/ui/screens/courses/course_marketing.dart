@@ -81,31 +81,45 @@ class _CourseMarketingState extends State<CourseMarketing> {
                           ListView(children: [
                             Padding(
                               padding: const EdgeInsets.only(bottom: 3),
-                              child:
-                                  Stack(alignment: Alignment.center, children: [
-                                AspectRatio(
-                                    aspectRatio: 1,
-                                    child: Image.network(
-                                      widget.course.image,
-                                      fit: BoxFit.cover,
-                                    )),
-                                GestureDetector(
-                                  onTap: () => Navigator.of(context).push(
-                                    PageRouteBuilder(
-                                      opaque: false,
-                                      pageBuilder: (_, __, ___) => VideoOverlay(
-                                          videoUrl: widget.course.video),
-                                    ),
-                                  ),
-                                  child: Align(
-                                      alignment: Alignment.center,
-                                      child: Image.asset(
-                                        'assets/assessment/play.png',
-                                        height: 50,
-                                        width: 50,
-                                      )),
-                                )
-                              ]),
+                              child: ShaderMask(
+                                shaderCallback: (rect) {
+                                  return LinearGradient(
+                                    begin: Alignment.center,
+                                    end: Alignment.bottomCenter,
+                                    colors: [Colors.black, Colors.transparent],
+                                  ).createShader(Rect.fromLTRB(
+                                      0, 0, rect.width, rect.height));
+                                },
+                                blendMode: BlendMode.dstIn,
+                                child: Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      AspectRatio(
+                                          aspectRatio: 1,
+                                          child: Image.network(
+                                            widget.course.image,
+                                            fit: BoxFit.cover,
+                                          )),
+                                      GestureDetector(
+                                        onTap: () => Navigator.of(context).push(
+                                          PageRouteBuilder(
+                                            opaque: false,
+                                            pageBuilder: (_, __, ___) =>
+                                                VideoOverlay(
+                                                    videoUrl:
+                                                        widget.course.video),
+                                          ),
+                                        ),
+                                        child: Align(
+                                            alignment: Alignment.center,
+                                            child: Image.asset(
+                                              'assets/assessment/play.png',
+                                              height: 50,
+                                              width: 50,
+                                            )),
+                                      )
+                                    ]),
+                              ),
                             ),
                             /*existsEnrollment
                                 ? CourseProgressBar(
