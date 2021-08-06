@@ -48,6 +48,8 @@ class _State extends State<ClassExpansionPanel> {
           backgroundColor: OlukoColors.black,
           headerBuilder: (BuildContext context, bool isExpanded) {
             return ListTile(
+              horizontalTitleGap: 0,
+              contentPadding: EdgeInsets.all(0),
               title: ClassSection(
                 index: _classItems.indexOf(item),
                 total: _classItems.length,
@@ -56,7 +58,9 @@ class _State extends State<ClassExpansionPanel> {
               ),
             );
           },
-          body: Column(children: getClassWidgets(_classItems.indexOf(item))),
+          body: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: getClassWidgets(_classItems.indexOf(item))),
           isExpanded: item.expanded,
         );
       }).toList(),
@@ -82,7 +86,9 @@ class _State extends State<ClassExpansionPanel> {
             segmentName: segment.name,
             movements: movements,
             onPressedMovement: widget.onPressedMovement),
-            subtitle: segment.challengeImage != null ? ChallengeSection(challenges: [segment]) : SizedBox(),
+        subtitle: segment.challengeImage != null
+            ? ChallengeSection(challenges: [segment])
+            : SizedBox(),
       ));
     });
     return widgets;
