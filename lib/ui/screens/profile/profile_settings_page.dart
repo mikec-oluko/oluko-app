@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/profile_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
@@ -16,11 +17,10 @@ class ProfileSettingsPage extends StatefulWidget {
 }
 
 class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
-  UserResponse authUser;
-  bool notification;
+  UserResponse _authUser;
   bool _notificationNewValue;
-  num userPrivacyValue;
-  num privacyNewValue;
+  num _userPrivacyValue;
+  num _privacyNewValue;
 
   void initState() {
     BlocProvider.of<AuthBloc>(context).checkCurrentUser();
@@ -30,15 +30,16 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
   }
 
   void setValuesFromUserProfile() {
-    privacyNewValue = widget.profileInfo.privacy;
-    notification = widget.profileInfo.notification;
+    _privacyNewValue = widget.profileInfo.privacy;
     _notificationNewValue = widget.profileInfo.notification;
+    _authUser = widget.profileInfo;
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
       if (state is AuthSuccess) {
+        _authUser = state.user;
         return buildSettingsView(context);
       } else {
         return Container(
@@ -90,7 +91,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
       child: MergeSemantics(
         child: ListTile(
             contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-            title: Text("Notification",
+            title: Text(ProfileViewConstants.profileSettingsNotification,
                 style: OlukoFonts.olukoBigFont(
                     customColor: OlukoColors.grayColor)),
             trailing: Switch(
@@ -119,7 +120,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
                 activeColor: OlukoColors.primary,
                 selectedTileColor: OlukoColors.black,
                 controlAffinity: ListTileControlAffinity.trailing,
-                selected: userPrivacyValue == option.option.index,
+                selected: _userPrivacyValue == option.option.index,
                 title: Text(
                   option.title,
                   style: OlukoFonts.olukoBigFont(
@@ -133,7 +134,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
                       )
                     : SizedBox(),
                 value: option.option.index,
-                groupValue: privacyNewValue,
+                groupValue: _privacyNewValue,
                 onChanged: (value) {
                   _setValueForPrivacy(index: value);
                 }),
@@ -143,19 +144,26 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
   }
 
   void _setValueForPrivacy({int index}) {
-    setState(() {
-      privacyNewValue = index;
-      var privacyToUse = ProfileViewConstants.privacyOptionsList
-          .elementAt(privacyNewValue)
-          .option;
-      print("privacy to update :  ${privacyToUse}");
-    });
+    if (index != null) {
+      setState(() {
+        _privacyNewValue = index;
+      });
+      BlocProvider.of<ProfileBloc>(context).updateSettingsPreferences(
+          _authUser, _privacyNewValue, _notificationNewValue);
+    } else if (_notificationNewValue != _authUser.notification) {
+      if (index == null) {
+        index = _privacyNewValue;
+      }
+      BlocProvider.of<ProfileBloc>(context).updateSettingsPreferences(
+          _authUser, _privacyNewValue, _notificationNewValue);
+    }
   }
 
   void _setValueForNotifications(bool value) {
     setState(() {
       _notificationNewValue = value;
-      print("notification new value: ${_notificationNewValue}");
     });
+    BlocProvider.of<ProfileBloc>(context).updateSettingsPreferences(
+        _authUser, _privacyNewValue, _notificationNewValue);
   }
 }

@@ -61,18 +61,10 @@ class ProfileViewConstants {
         title: profileSettingsAnonymous,
         subtitle: profileSettingsAnonymousSubtitle,
         option: SettingsPrivacyOptions.anonymous),
-    PrivacyOptions(
-        title: profileSettingsNotification,
-        subtitle: '',
-        showSubtitle: false,
-        isSwitch: true),
   ];
-}
 
-class ProfileOptions {
-  final String option;
-  final bool enable;
-  ProfileOptions({this.option, this.enable = true});
+  static SettingsPrivacyOptions getPrivacyValue(num optionSelected) =>
+      ProfileViewConstants.privacyOptionsList.elementAt(optionSelected).option;
 }
 
 class PrivacyOptions {
@@ -87,6 +79,12 @@ class PrivacyOptions {
       this.option,
       this.showSubtitle = true,
       this.isSwitch = false});
+}
+
+class ProfileOptions {
+  final String option;
+  final bool enable;
+  ProfileOptions({this.option, this.enable = true});
 }
 
 //Basic model for Tile (Help and Support)

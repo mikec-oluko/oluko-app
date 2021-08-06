@@ -36,7 +36,6 @@ class FriendBloc extends Cubit<FriendState> {
           await FriendRepository.getUserFriendsByUserId(userId);
       emit(GetFriendsSuccess(friendUsers: friends));
     } catch (e) {
-      print(e.toString());
       emit(Failure(exception: e));
     }
   }
@@ -47,7 +46,6 @@ class FriendBloc extends Cubit<FriendState> {
           await FriendRepository.getUserFriendsRequestByUserId(userId);
       emit(GetFriendRequestsSuccess(friendRequestList: friendsRequests));
     } catch (e) {
-      print(e.toString());
       emit(Failure(exception: e));
     }
   }
@@ -59,7 +57,6 @@ class FriendBloc extends Cubit<FriendState> {
       emit(GetFriendSuggestionSuccess(
           friendSuggestionList: friendsSuggestionList));
     } catch (e) {
-      print(e.toString());
       emit(Failure(exception: e));
     }
   }

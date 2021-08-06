@@ -23,7 +23,6 @@ class FriendRepository {
           .where('id', isEqualTo: userId)
           .get();
       List<User> listOfFriends = [];
-      print(docRef.docs[0].data());
       docRef.docs.forEach((doc) {
         final Map<String, dynamic> element = doc.data();
         // listOfFriends.add(userFriendClass.fromJson(element));
@@ -44,7 +43,6 @@ class FriendRepository {
           .where('id', isEqualTo: userId)
           .get();
       List<User> listOfFriendRequests = [];
-      print(docRef.docs[0].data());
       docRef.docs.forEach((doc) {
         final Map<String, dynamic> element = doc.data();
         // listOfFriendRequests.add(userFriendRequestClass.fromJson(element));
@@ -66,7 +64,6 @@ class FriendRepository {
           .where('id', isEqualTo: userId)
           .get();
       List<User> listOfFriendSuggestions = [];
-      print(docRef.docs[0].data());
       docRef.docs.forEach((doc) {
         final Map<String, dynamic> element = doc.data();
         // listOfFriendSuggestions.add(userFriendClass.fromJson(element));

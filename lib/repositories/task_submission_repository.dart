@@ -63,8 +63,6 @@ class TaskSubmissionRepository {
     final querySnapshot =
         await reference.where("task_id", isEqualTo: task.id).get();
     if (querySnapshot.docs.length > 0) {
-      print("--------------------------------------------");
-      print(querySnapshot.docs[0].data());
       return TaskSubmission.fromJson(querySnapshot.docs[0].data());
     }
     return null;
@@ -115,14 +113,15 @@ class TaskSubmissionRepository {
         .collection("assessmentAssignments")
         .doc(assessmentId)
         .collection('taskSubmissions');
-    print(assessmentId);
     final querySnapshot = await reference
-        // .where('created_by', isEqualTo: userId) Field is
+        // .where('created_by', isEqualTo: userId)
         .where('video', isNotEqualTo: null)
         .get();
 
     if (querySnapshot.docs.length > 0) {
-      response.add(TaskSubmission.fromJson(querySnapshot.docs[0].data()));
+      querySnapshot.docs.forEach((taskUploaded) {
+        response.add(TaskSubmission.fromJson(taskUploaded.data()));
+      });
     }
   }
 }

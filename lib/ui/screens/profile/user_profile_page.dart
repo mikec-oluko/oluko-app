@@ -218,11 +218,13 @@ class _UserProfilePageState extends State<UserProfilePage> {
                       ? _buildCarouselSection(
                           titleForSection: OlukoLocalizations.of(context)
                               .find('assessmentVideos'),
-                          routeForSection: ProfileRoutes.goToAssessmentVideos(),
+                          routeForSection: ProfileRoutes.goToAssessmentVideos(
+                              ActualProfileRoute.userProfile),
                           contentForSection: TransformListOfItemsToWidget
                               .getWidgetListFromContent(
-                                  assessmentVideoData:
-                                      _assessmentVideosContent))
+                                  assessmentVideoData: _assessmentVideosContent,
+                                  requestedFromRoute:
+                                      ActualProfileRoute.userProfile))
                       : SizedBox();
                 }),
                 BlocBuilder<TransformationJourneyBloc,
@@ -240,7 +242,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
                             contentForSection: TransformListOfItemsToWidget
                                 .getWidgetListFromContent(
                                     tansformationJourneyData:
-                                        _transformationJourneyContent))
+                                        _transformationJourneyContent,
+                                    requestedFromRoute:
+                                        ActualProfileRoute.userProfile))
                         : SizedBox();
                   },
                 ),
@@ -273,7 +277,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
                             routeForSection: ProfileRoutes.goToChallenges(),
                             contentForSection: TransformListOfItemsToWidget
                                 .getWidgetListFromContent(
-                                    upcomingChallenges: _activeChallenges))
+                                    upcomingChallenges: _activeChallenges,
+                                    requestedFromRoute:
+                                        ActualProfileRoute.userProfile))
                         : SizedBox();
                   },
                 ),

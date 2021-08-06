@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 
 class ProfileRoutes {
@@ -9,7 +10,8 @@ class ProfileRoutes {
   // static const String profileSubscriptionRoute = '/profile-subscription';
   static const String profileMyAccountRoute = '/profile-my-account';
   static const String profileChallengesRoute = '/profile-challenges';
-  static const String profileAssessmentsVideosRoute =
+  static const String profileAssessmentsVideosRoute = '/assessment-videos';
+  static const String profileAssessmentsVideosGalleryRoute =
       '/profile-assessment-videos';
   static const String profileTransformaionJourneyPostRoute =
       '/transformation-journey-post-view';
@@ -47,6 +49,6 @@ class ProfileRoutes {
   static String goToTransformationJourney() =>
       ProfileRoutes.profileTransformationJourneyRoute;
 
-  static String goToAssessmentVideos() =>
-      ProfileRoutes.profileAssessmentsVideosRoute;
+  static String goToAssessmentVideos(ActualProfileRoute requestFromRoute) =>
+      ProfileRoutes.profileAssessmentsVideosGalleryRoute;
 }

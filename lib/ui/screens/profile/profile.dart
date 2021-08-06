@@ -23,7 +23,6 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final _formKey = GlobalKey<FormState>();
-  bool _isTesting = false;
   UserResponse profileInfo;
   final String profileTitle = ProfileViewConstants.profileTitle;
   @override
@@ -36,7 +35,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
       if (state is AuthSuccess) {
-        this.profileInfo = state.user;
+        profileInfo = state.user;
         return profileHomeView();
       } else {
         return Container(
@@ -74,27 +73,24 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget userInformationSection() {
     Widget returnWidget;
-    _isTesting == false
-        ? returnWidget = Column(
-            children: [
-              GestureDetector(
-                  onTap: () => Navigator.pushNamed(
-                          context, ProfileRoutes.userInformationRoute)
-                      .then((value) => onGoBack()),
-                  child: UserProfileInformation(
-                      userInformation: profileInfo,
-                      actualRoute: ActualProfileRoute.rootProfile,
-                      userIsOwnerProfile: true)),
-            ],
-          )
-        : returnWidget = Center(child: OlukoErrorMessage());
-
+    returnWidget = Column(
+      children: [
+        GestureDetector(
+            onTap: () =>
+                Navigator.pushNamed(context, ProfileRoutes.userInformationRoute)
+                    .then((value) => onGoBack()),
+            child: UserProfileInformation(
+                userInformation: profileInfo,
+                actualRoute: ActualProfileRoute.rootProfile,
+                userIsOwnerProfile: true)),
+      ],
+    );
     return returnWidget;
   }
 
   Padding buildOptionsList() {
     return Padding(
-      padding: const EdgeInsets.only(top: 175),
+      padding: const EdgeInsets.only(top: 170),
       child: ListView.builder(
           itemCount: ProfileViewConstants.profileOptions.length,
           itemBuilder: (_, index) =>
@@ -122,11 +118,13 @@ class _ProfilePageState extends State<ProfilePage> {
                     if (option.option ==
                         ProfileViewConstants.profileOptionsSettings) {
                       Navigator.pushNamed(
-                          context, routeLabels[RouteEnum.profileSettings],
-                          arguments: {'profileInfo': profileInfo});
+                              context, routeLabels[RouteEnum.profileSettings],
+                              arguments: {'profileInfo': profileInfo})
+                          .then((value) => onGoBack());
+                    } else {
+                      Navigator.pushNamed(context,
+                          ProfileRoutes.returnRouteName(option.option));
                     }
-                    Navigator.pushNamed(
-                        context, ProfileRoutes.returnRouteName(option.option));
                   }
                 : () {},
             child: Row(
