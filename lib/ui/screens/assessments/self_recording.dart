@@ -2,15 +2,11 @@ import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
-import 'package:oluko_app/models/assessment_assignment.dart';
+import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/routes.dart';
-import 'package:oluko_app/ui/components/black_app_bar.dart';
-import 'package:oluko_app/ui/components/title_body.dart';
-import 'package:oluko_app/ui/screens/assessments/self_recording_preview.dart';
 
 class SelfRecording extends StatefulWidget {
   SelfRecording({this.taskIndex, Key key}) : super(key: key);
@@ -29,7 +25,7 @@ class _State extends State<SelfRecording> {
   CameraController cameraController;
   bool _isReady = false;
   bool _recording = false;
-  bool isCameraFront = true;
+  bool isCameraFront = false;
 
   Task _task;
   List<Task> _tasks;
@@ -71,120 +67,67 @@ class _State extends State<SelfRecording> {
     return Form(
         key: _formKey,
         child: Scaffold(
-            appBar: OlukoAppBar(title: _task.name),
-            bottomNavigationBar: BottomAppBar(
-              color: Colors.black,
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    IconButton(
-                        icon: Icon(
-                          Icons.flip_camera_ios,
-                          color: Colors.white,
-                          size: 45,
-                        ),
-                        onPressed: () async {
-                          setState(() {
-                            isCameraFront = !isCameraFront;
-                          });
-                          _setupCameras();
-                        }),
-                    GestureDetector(
-                      onTap: () async {
-                        if (_recording) {
-                          XFile videopath =
-                              await cameraController.stopVideoRecording();
-                          String path = videopath.path;
-                          Navigator.pushNamed(context,
-                              routeLabels[RouteEnum.selfRecordingPreview],
-                              arguments: {
-                                'taskIndex': widget.taskIndex,
-                                'filePath': path
-                              });
-                        } else {
-                          await cameraController.startVideoRecording();
-                        }
-                        setState(() {
-                          _recording = !_recording;
-                        });
-                      },
-                      child: _recording
-                          ? Image.asset('assets/self_recording/recording.png')
-                          : Image.asset('assets/self_recording/record.png'),
-                    ),
-                    Image.asset('assets/self_recording/gallery.png'),
-                  ],
-                ),
-              ),
-            ),
+            bottomNavigationBar: bottomBar(),
             body: Container(
                 color: Colors.black,
-                child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 15),
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      child: ListView(
-                        children: [
-                          ConstrainedBox(
-                              constraints: BoxConstraints(
-                                  maxHeight:
-                                      MediaQuery.of(context).size.height / 1.6),
-                              child: (!_isReady)
-                                  ? Container()
-                                  : AspectRatio(
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  child: ListView(
+                    children: [
+                      ConstrainedBox(
+                          constraints: BoxConstraints(
+                              maxHeight: MediaQuery.of(context).size.height),
+                          child: (!_isReady)
+                              ? Container()
+                              : Stack(alignment: Alignment.topRight, children: [
+                                  AspectRatio(
                                       aspectRatio: 3.0 / 4.0,
-                                      child: CameraPreview(cameraController))),
-                          formSection(),
-                        ],
-                      ),
-                    )))));
+                                      child: CameraPreview(cameraController)),
+                                  Padding(
+                                      padding: EdgeInsets.all(10),
+                                      child: IconButton(
+                                        icon: Icon(
+                                          Icons.close,
+                                          size: 30,
+                                          color: Colors.white,
+                                        ),
+                                        onPressed: () => Navigator.pop(context),
+                                      )),
+                                ])),
+                      formSection(),
+                    ],
+                  ),
+                ))));
   }
 
   Widget formSection() {
-    return Container(
-        child: Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-          formFields(),
-        ]));
-  }
-
-  Widget formFields() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 15.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              _task.stepsTitle != null
-                  ? TitleBody(_task.stepsTitle)
-                  : SizedBox()
-            ],
-          ),
+          child: _task.stepsTitle != null
+              ? Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: Text(
+                    _task.stepsTitle,
+                    style: OlukoFonts.olukoSuperBigFont(
+                        customColor: OlukoColors.grayColor,
+                        custoFontWeight: FontWeight.normal),
+                  ))
+              : SizedBox(),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _task.stepsDescription != null
-                      ? Text(
-                          '${_task.stepsDescription.replaceAll('\\n', '\n')} ',
-                          style: TextStyle(fontSize: 20, color: Colors.white60),
-                        )
-                      : SizedBox(),
-                ],
-              ),
-            ],
-          ),
-        )
+        _task.stepsDescription != null
+            ? Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: Text(
+                  '${_task.stepsDescription.replaceAll('\\n', '\n')}',
+                  style: OlukoFonts.olukoSuperBigFont(
+                      customColor: OlukoColors.white,
+                      custoFontWeight: FontWeight.normal),
+                ))
+            : SizedBox(),
+        SizedBox(height: 50)
       ],
     );
   }
@@ -201,5 +144,84 @@ class _State extends State<SelfRecording> {
     setState(() {
       _isReady = true;
     });
+  }
+
+  Widget bottomBar() {
+    return BottomAppBar(
+      color: Colors.black,
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            GestureDetector(
+                onTap: () async {
+                  setState(() {
+                    isCameraFront = !isCameraFront;
+                  });
+                  _setupCameras();
+                },
+                child: Stack(alignment: Alignment.center, children: [
+                  Image.asset(
+                    'assets/assessment/camera.png',
+                    scale: 4,
+                  ),
+                  Icon(
+                    Icons.cached,
+                    color: OlukoColors.grayColor,
+                    size: 18,
+                  ),
+                ])),
+            GestureDetector(
+              onTap: () async {
+                if (_recording) {
+                  XFile videopath = await cameraController.stopVideoRecording();
+                  String path = videopath.path;
+                  Navigator.pushNamed(
+                      context, routeLabels[RouteEnum.selfRecordingPreview],
+                      arguments: {
+                        'taskIndex': widget.taskIndex,
+                        'filePath': path
+                      });
+                } else {
+                  await cameraController.startVideoRecording();
+                }
+                setState(() {
+                  _recording = !_recording;
+                });
+              },
+              child: _recording ? recordingIcon() : recordIcon(),
+            ),
+            Image.asset('assets/self_recording/gallery.png', scale: 4),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget recordingIcon() {
+    return Stack(alignment: Alignment.center, children: [
+      Image.asset(
+        'assets/self_recording/red_ellipse.png',
+        scale: 4,
+      ),
+      Image.asset(
+        'assets/self_recording/white_square.png',
+        scale: 4,
+      ),
+    ]);
+  }
+
+  Widget recordIcon() {
+    return Stack(alignment: Alignment.center, children: [
+      Image.asset(
+        'assets/self_recording/white_ellipse.png',
+        scale: 4,
+      ),
+      Image.asset(
+        'assets/self_recording/white_filled_ellipse.png',
+        scale: 4,
+      ),
+    ]);
   }
 }

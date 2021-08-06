@@ -19,8 +19,8 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class Home extends StatefulWidget {
-  Home({Key key, this.title, this.parentVideoInfo, this.parentVideoReference})
+class VideosHome extends StatefulWidget {
+  VideosHome({Key key, this.title, this.parentVideoInfo, this.parentVideoReference})
       : super(key: key);
 
   String title;
@@ -28,10 +28,10 @@ class Home extends StatefulWidget {
   CollectionReference parentVideoReference;
 
   @override
-  _HomeState createState() => _HomeState();
+  _VideosHomeState createState() => _VideosHomeState();
 }
 
-class _HomeState extends State<Home> {
+class _VideosHomeState extends State<VideosHome> {
   VideoInfoBloc _videoInfoBloc;
 
   List<VideoInfo> _videosInfo = <VideoInfo>[];

@@ -15,6 +15,7 @@ import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/progress_bar.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:video_player/video_player.dart';
 
 class TaskSubmissionReviewPreview extends StatefulWidget {
@@ -117,7 +118,7 @@ class _TaskSubmissionReviewPreviewState
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     OlukoPrimaryButton(
-                      title: 'Done',
+                      title: OlukoLocalizations.of(context).find('done'),
                       onPressed: () async {
                         _videoController.pause();
                         _taskReviewBloc

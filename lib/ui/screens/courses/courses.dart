@@ -131,7 +131,7 @@ class _State extends State<Courses> {
   Widget _appBar(CourseState state) {
     return state is CourseSuccess
         ? OlukoAppBar<Course>(
-            showBackButton: false,
+            showBackButton: true,
             searchKey: searchKey,
             title: showFilterSelector
                 ? OlukoLocalizations.of(context).find('filters')
@@ -190,8 +190,8 @@ class _State extends State<Courses> {
                       .map((course) => Padding(
                             padding: const EdgeInsets.only(right: 8.0),
                             child: GestureDetector(
-                              onTap: () => Navigator.pushNamed(
-                                  context, routeLabels[RouteEnum.courseMarketing],
+                              onTap: () => Navigator.pushNamed(context,
+                                  routeLabels[RouteEnum.courseMarketing],
                                   arguments: {'course': course}),
                               child: _getCourseCard(
                                   _generateImageCourse(course.image),
@@ -294,7 +294,7 @@ class _State extends State<Courses> {
                         child: GestureDetector(
                           onTap: () => Navigator.pushNamed(
                               context, routeLabels[RouteEnum.courseMarketing],
-                              arguments: {'courseId': course.id}),
+                              arguments: {'course': course}),
                           child: _getCourseCard(
                               _generateImageCourse(course.image),
                               width: ScreenUtils.width(context) /
@@ -335,7 +335,7 @@ class _State extends State<Courses> {
                         child: GestureDetector(
                           onTap: () => Navigator.pushNamed(
                               context, routeLabels[RouteEnum.courseMarketing],
-                              arguments: {'courseId': course.id}),
+                              arguments: {'course': course}),
                           child: _getCourseCard(
                             _generateImageCourse(course.image),
                             progress: courseEnrollment.completion,
@@ -374,13 +374,11 @@ class _State extends State<Courses> {
                             return Padding(
                                 padding: const EdgeInsets.only(right: 8.0),
                                 child: GestureDetector(
-                                  onTap: () => Navigator.pushNamed(
-                                      context, 'classes', arguments: {
-                                    'courseId': favoriteCourse.id
-                                  }),
+                                  onTap: () => Navigator.pushNamed(context,
+                                      routeLabels[RouteEnum.courseMarketing],
+                                      arguments: {'course': favoriteCourse}),
                                   child: _getCourseCard(
-                                    _generateImageCourse(
-                                        favoriteCourse.image),
+                                    _generateImageCourse(favoriteCourse.image),
                                     width: ScreenUtils.width(context) /
                                         (0.2 + _cardsToShow()),
                                   ),

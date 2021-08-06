@@ -108,5 +108,11 @@
     "city": "City",
     "state": "State",
     "country": "Country",
-    "toACourse": "to a Course"
+    "toACourse": "to a Course",
+    "public": "Public",
+    "assessment": "Assessment",
+    "private": "Private",
+    "done": "Done",
+    "skip": "Skip",
+    "makeThisPublic": "Make this public"
 }

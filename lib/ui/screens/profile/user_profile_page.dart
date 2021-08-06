@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/course_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/profile_bloc.dart';
 import 'package:oluko_app/blocs/task_submission_bloc.dart';
@@ -248,11 +249,11 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         : SizedBox();
                   },
                 ),
-                BlocBuilder<CourseEnrollmentBloc, CourseEnrollmentState>(
+                BlocBuilder<CourseBloc, CourseState>(
                   builder: (context, state) {
-                    if (state is CourseEnrollmentCourses) {
+                    if (state is UserEnrolledCoursesSuccess) {
                       if (_coursesToUse.length == 0) {
-                        _coursesToUse = state.courseEnrollmentCourses;
+                        _coursesToUse = state.courses;
                       }
                     }
                     return _coursesToUse.length != 0
@@ -299,8 +300,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
     BlocProvider.of<TaskSubmissionBloc>(context)
         .getTaskSubmissionByUserId(userRequested.id);
 
-    BlocProvider.of<CourseEnrollmentBloc>(context)
-        .getCourseEnrollmentsCoursesByUserId(userRequested.id);
+    BlocProvider.of<CourseBloc>(context).getUserEnrolled(userRequested.id);
 
     BlocProvider.of<TransformationJourneyBloc>(context)
         .getContentByUserId(userRequested.id);
