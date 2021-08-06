@@ -23,38 +23,38 @@ class _State extends State<CourseSegmentSection> {
     return Container(
       width: MediaQuery.of(context).size.width,
       child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-          ),
-          child: Column(
-            children: [
-              Divider(
-                color: OlukoColors.grayColor,
-                height: 50,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom:15.0),
-                child: Text(
-                  widget.segmentName,
-                  style: OlukoFonts.olukoBigFont(
-                      custoFontWeight: FontWeight.normal,
-                      customColor: OlukoColors.grayColor),
-                ),
-              ),
-              Stack(
-                children: [
-                  SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: MovementItemBubbles(
-                          onPressed: widget.onPressedMovement,
-                          content: widget.movements,
-                          width: ScreenUtils.width(context) / 1)),
-                ],
-              ),
-            ],
-          ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
         ),
-  
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Divider(
+              color: OlukoColors.grayColor,
+              height: 50,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 15.0),
+              child: Text(
+                widget.segmentName,
+                style: OlukoFonts.olukoBigFont(
+                    custoFontWeight: FontWeight.normal,
+                    customColor: OlukoColors.grayColor),
+              ),
+            ),
+            Stack(
+              children: [
+                SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: MovementItemBubbles(
+                        onPressed: widget.onPressedMovement,
+                        content: widget.movements,
+                        width: ScreenUtils.width(context) / 1)),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

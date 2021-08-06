@@ -18,6 +18,7 @@ import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/progress_bar.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/screens/assessments/task_details.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class SelfRecordingPreview extends StatefulWidget {
   SelfRecordingPreview({this.filePath, this.taskIndex, Key key})
@@ -92,7 +93,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
     return Form(
         key: _formKey,
         child: Scaffold(
-            appBar: OlukoAppBar(title: _task.name),
+            appBar: OlukoAppBar(title: _task.name, actions: [SizedBox(width: 30)]),
             body: Container(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
@@ -106,7 +107,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                           Align(
                               alignment: Alignment.bottomCenter,
                               child: OlukoPrimaryButton(
-                                title: 'Done',
+                                title: OlukoLocalizations.of(context).find('done'),
                                 onPressed: () async {
                                   _controller.pause();
                                   if (_taskSubmission == null) {

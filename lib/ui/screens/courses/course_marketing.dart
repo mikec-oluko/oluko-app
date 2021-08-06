@@ -9,25 +9,18 @@ import 'package:oluko_app/blocs/class_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/statistics_bloc.dart';
-import 'package:oluko_app/blocs/course_bloc.dart';
 import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/routes.dart';
-import 'package:oluko_app/services/course_enrollment_service.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/class_expansion_panel.dart';
-import 'package:oluko_app/ui/components/class_section.dart';
-import 'package:oluko_app/ui/components/course_progress_bar.dart';
-import 'package:oluko_app/ui/components/course_segment_section.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/statistics_chart.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
-import 'package:oluko_app/ui/screens/courses/inside_class.dart';
-import 'package:oluko_app/ui/screens/courses/movement_intro.dart';
-import 'package:oluko_app/utils/movement_utils.dart';
+import 'package:oluko_app/ui/screens/video_overlay.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
@@ -88,15 +81,44 @@ class _CourseMarketingState extends State<CourseMarketing> {
                           ListView(children: [
                             Padding(
                               padding: const EdgeInsets.only(bottom: 3),
-                              child: OrientationBuilder(
-                                builder: (context, orientation) {
-                                  if (existsEnrollment) {
-                                    return showVideoPlayer(
-                                        classState.classes[0].video);
-                                  } else {
-                                    return showVideoPlayer(widget.course.video);
-                                  }
+                              child: ShaderMask(
+                                shaderCallback: (rect) {
+                                  return LinearGradient(
+                                    begin: Alignment.center,
+                                    end: Alignment.bottomCenter,
+                                    colors: [Colors.black, Colors.transparent],
+                                  ).createShader(Rect.fromLTRB(
+                                      0, 0, rect.width, rect.height));
                                 },
+                                blendMode: BlendMode.dstIn,
+                                child: Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      AspectRatio(
+                                          aspectRatio: 1,
+                                          child: Image.network(
+                                            widget.course.image,
+                                            fit: BoxFit.cover,
+                                          )),
+                                      GestureDetector(
+                                        onTap: () => Navigator.of(context).push(
+                                          PageRouteBuilder(
+                                            opaque: false,
+                                            pageBuilder: (_, __, ___) =>
+                                                VideoOverlay(
+                                                    videoUrl:
+                                                        widget.course.video),
+                                          ),
+                                        ),
+                                        child: Align(
+                                            alignment: Alignment.center,
+                                            child: Image.asset(
+                                              'assets/assessment/play.png',
+                                              height: 50,
+                                              width: 50,
+                                            )),
+                                      )
+                                    ]),
                               ),
                             ),
                             /*existsEnrollment

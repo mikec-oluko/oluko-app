@@ -104,8 +104,16 @@
     "ClassesCompleted": "Clases Completadas",
     "assessmentVideos": "Videos de Evaluacion",
     "transformationJourney": "Viaje de Transformación",
-    "upcomingChallenges": "Próximos desafíos"
-
-
-
+    "upcomingChallenges": "Próximos desafíos",
+    "privateProfile": "Perfil Privado",
+    "city": "Ciudad",
+    "state": "Estado",
+    "country": "País",
+    "toACourse": "a un Curso",
+    "public": "Público",
+    "assessment": "Evaluación",
+    "private": "Privado",
+    "done": "Hecho",
+    "skip": "Saltar",
+    "makeThisPublic": "Haga esto público"
 }

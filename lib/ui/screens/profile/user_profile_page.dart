@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/course_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/profile_bloc.dart';
 import 'package:oluko_app/blocs/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/helpers/list_of_items_to_widget.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/enums/file_type_enum.dart';
@@ -18,6 +21,7 @@ import 'package:oluko_app/ui/components/course_card.dart';
 import 'package:oluko_app/ui/components/image_and_video_container.dart';
 import 'package:oluko_app/ui/components/modal_upload_options.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
+import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/user_profile_information.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/ui/screens/profile/profile_routes.dart';
@@ -36,6 +40,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   UserResponse _currentAuthUser;
   UserResponse _userProfileToDisplay;
   bool _isCurrentUser = false;
+  String _connectButtonDefaultText = "Connect";
   List<TransformationJourneyUpload> _transformationJourneyContent = [];
   List<TaskSubmission> _assessmentVideosContent = [];
   List<Challenge> _activeChallenges = [];
@@ -181,18 +186,45 @@ class _UserProfilePageState extends State<UserProfilePage> {
             ),
             Column(
               children: [
+                !_isCurrentUser
+                    ? Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 30, 10, 0),
+                        child: Row(
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                //TODO: Send Like from _currentAuthUser to UserToDisplay
+                              },
+                              child: Icon(Icons.favorite_border,
+                                  color: OlukoColors.primary),
+                            ),
+                            Container(
+                              child: OlukoOutlinedButton(
+                                  onPressed: () {
+                                    //TODO: Connect _currentAuthUser with UserToDisplay
+                                  },
+                                  title: _connectButtonDefaultText),
+                            ),
+                          ],
+                        ),
+                      )
+                    : SizedBox(),
                 BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
                     builder: (context, state) {
                   if (state is GetUserTaskSubmissionSuccess) {
                     _assessmentVideosContent = state.taskSubmissions;
                   }
 
-                  return _buildCarouselSection(
-                      titleForSection: OlukoLocalizations.of(context)
-                          .find('assessmentVideos'),
-                      routeForSection: ProfileRoutes.goToAssessmentVideos(),
-                      contentForSection: _getWidgetListFromContent(
-                          assessmentVideoData: _assessmentVideosContent));
+                  return _assessmentVideosContent.length != 0
+                      ? _buildCarouselSection(
+                          titleForSection: OlukoLocalizations.of(context)
+                              .find('assessmentVideos'),
+                          routeForSection: ProfileRoutes.goToAssessmentVideos(),
+                          contentForSection: TransformListOfItemsToWidget
+                              .getWidgetListFromContent(
+                                  assessmentVideoData:
+                                      _assessmentVideosContent))
+                      : SizedBox();
                 }),
                 BlocBuilder<TransformationJourneyBloc,
                     TransformationJourneyState>(
@@ -200,27 +232,32 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     if (state is TransformationJourneySuccess) {
                       _transformationJourneyContent = state.contentFromUser;
                     }
-                    return _buildCarouselSection(
-                        titleForSection: OlukoLocalizations.of(context)
-                            .find('transformationJourney'),
-                        routeForSection:
-                            ProfileRoutes.goToTransformationJourney(),
-                        contentForSection: _getWidgetListFromContent(
-                            tansformationJourneyData:
-                                _transformationJourneyContent));
+                    return _transformationJourneyContent.length != 0
+                        ? _buildCarouselSection(
+                            titleForSection: OlukoLocalizations.of(context)
+                                .find('transformationJourney'),
+                            routeForSection:
+                                ProfileRoutes.goToTransformationJourney(),
+                            contentForSection: TransformListOfItemsToWidget
+                                .getWidgetListFromContent(
+                                    tansformationJourneyData:
+                                        _transformationJourneyContent))
+                        : SizedBox();
                   },
                 ),
-                BlocBuilder<CourseEnrollmentBloc, CourseEnrollmentState>(
+                BlocBuilder<CourseBloc, CourseState>(
                   builder: (context, state) {
-                    if (state is CourseEnrollmentCourses) {
+                    if (state is UserEnrolledCoursesSuccess) {
                       if (_coursesToUse.length == 0) {
-                        _coursesToUse = state.courseEnrollmentCourses;
+                        _coursesToUse = state.courses;
                       }
                     }
-                    return buildCourseSection(
-                        context: context,
-                        contentForCourse:
-                            returnCoursesWidget(listOfCourses: _coursesToUse));
+                    return _coursesToUse.length != 0
+                        ? buildCourseSection(
+                            context: context,
+                            contentForCourse: returnCoursesWidget(
+                                listOfCourses: _coursesToUse))
+                        : SizedBox();
                   },
                 ),
                 BlocBuilder<CourseEnrollmentBloc, CourseEnrollmentState>(
@@ -230,12 +267,15 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         _activeChallenges = state.challenges;
                       }
                     }
-                    return _buildCarouselSection(
-                        titleForSection: OlukoLocalizations.of(context)
-                            .find('upcomingChallenges'),
-                        routeForSection: ProfileRoutes.goToChallenges(),
-                        contentForSection: _getWidgetListFromContent(
-                            upcomingChallenges: _activeChallenges));
+                    return _activeChallenges.length != 0
+                        ? _buildCarouselSection(
+                            titleForSection: OlukoLocalizations.of(context)
+                                .find('upcomingChallenges'),
+                            routeForSection: ProfileRoutes.goToChallenges(),
+                            contentForSection: TransformListOfItemsToWidget
+                                .getWidgetListFromContent(
+                                    upcomingChallenges: _activeChallenges))
+                        : SizedBox();
                   },
                 ),
               ],
@@ -254,11 +294,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
     BlocProvider.of<TaskSubmissionBloc>(context)
         .getTaskSubmissionByUserId(userRequested.id);
 
-    BlocProvider.of<CourseEnrollmentBloc>(context)
-        .getCourseEnrollmentsCoursesByUserId(userRequested.id);
+    BlocProvider.of<CourseBloc>(context).getUserEnrolled(userRequested.id);
 
     BlocProvider.of<TransformationJourneyBloc>(context)
-        .getContentByUserName(userRequested.username);
+        .getContentByUserId(userRequested.id);
 
     // BlocProvider.of<CourseEnrollmentBloc>(context)
     //     .getChallengesForUser(userRequested.id);
@@ -327,73 +366,5 @@ class _UserProfilePageState extends State<UserProfilePage> {
         progress: 0.4,
       ),
     );
-  }
-
-  List<Widget> _getWidgetListFromContent(
-      {List<TransformationJourneyUpload> tansformationJourneyData,
-      List<TaskSubmission> assessmentVideoData,
-      List<Challenge> upcomingChallenges}) {
-    List<Widget> contentForSection = [];
-
-    if (tansformationJourneyData != null &&
-        (assessmentVideoData == null && upcomingChallenges == null)) {
-      tansformationJourneyData.forEach((contentUploaded) {
-        contentForSection.add(_getImageAndVideoCard(
-            transformationJourneyContent: contentUploaded));
-      });
-    }
-
-    if (assessmentVideoData != null &&
-        (tansformationJourneyData == null && upcomingChallenges == null)) {
-      assessmentVideoData.forEach((assessmentVideo) {
-        contentForSection
-            .add(_getImageAndVideoCard(taskSubmissionContent: assessmentVideo));
-      });
-    }
-
-    if (upcomingChallenges != null &&
-        (tansformationJourneyData == null && assessmentVideoData == null)) {
-      upcomingChallenges.forEach((challenge) {
-        contentForSection
-            .add(_getImageAndVideoCard(upcomingChallengesContent: challenge));
-      });
-    }
-    return contentForSection.toList();
-  }
-
-  Widget _getImageAndVideoCard(
-      {TransformationJourneyUpload transformationJourneyContent,
-      TaskSubmission taskSubmissionContent,
-      Challenge upcomingChallengesContent}) {
-    Widget contentForReturn = SizedBox();
-    if (transformationJourneyContent != null) {
-      contentForReturn = ImageAndVideoContainer(
-        assetImage: transformationJourneyContent.thumbnail,
-        isVideo: transformationJourneyContent.type == FileTypeEnum.video
-            ? true
-            : false,
-        videoUrl: transformationJourneyContent.file,
-      );
-    }
-    if (taskSubmissionContent != null && taskSubmissionContent.video != null) {
-      contentForReturn = ImageAndVideoContainer(
-        assetImage: taskSubmissionContent.video.thumbUrl != null
-            ? taskSubmissionContent.video.thumbUrl
-            : '',
-        isVideo: taskSubmissionContent.video != null,
-        videoUrl: taskSubmissionContent.video.url != null
-            ? taskSubmissionContent.video.url
-            : '',
-      );
-    }
-    if (upcomingChallengesContent != null) {
-      //TODO: Crear container con locker icon and w/ also style
-      contentForReturn = ImageAndVideoContainer(
-        assetImage: upcomingChallengesContent.challengeImage,
-        isVideo: false,
-      );
-    }
-
-    return contentForReturn;
   }
 }

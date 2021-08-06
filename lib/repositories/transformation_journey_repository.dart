@@ -27,14 +27,14 @@ class TransformationJourneyRepository {
   }
 
   //TODO: Filter or not, userInfo to return only the List
-  Future<List<TransformationJourneyUpload>> getUploadedContentByUserName(
-      String userName) async {
+  Future<List<TransformationJourneyUpload>> getUploadedContentByUserId(
+      String userId) async {
     try {
       QuerySnapshot docRef = await FirebaseFirestore.instance
           .collection('projects')
           .doc(GlobalConfiguration().getValue("projectId"))
           .collection('users')
-          .doc(userName)
+          .doc(userId)
           .collection('transformationJourneyUploads')
           .where('is_deleted', isNotEqualTo: true)
           .get();
@@ -51,12 +51,12 @@ class TransformationJourneyRepository {
   }
 
   static Future<TransformationJourneyUpload> createTransformationJourneyUpload(
-      FileTypeEnum type, PickedFile file, String username) async {
+      FileTypeEnum type, PickedFile file, String userId) async {
     try {
       CollectionReference transformationJourneyUploadsReference =
           projectReference
               .collection('users')
-              .doc(username)
+              .doc(userId)
               .collection('transformationJourneyUploads');
 
       var thumbnail;
@@ -81,6 +81,7 @@ class TransformationJourneyRepository {
 
         TransformationJourneyUpload transformationJourneyUpload =
             TransformationJourneyUpload(
+                createdBy: userId,
                 name: '',
                 from: Timestamp.now(),
                 description: '',

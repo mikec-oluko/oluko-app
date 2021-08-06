@@ -1,40 +1,84 @@
 import 'package:chewie/chewie.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/task_submission.dart';
+import 'package:oluko_app/models/transformation_journey_uploads.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/utils/app_modal.dart';
+import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/time_converter.dart';
+
+import '../../routes.dart';
 
 class ImageAndVideoPreviewCard extends StatefulWidget {
-  final Image imageCover;
-  final bool isVideo;
+  final Image backgroundImage;
+  final bool isContentVideo;
   final String videoUrl;
+  final bool showTitle;
+  final dynamic originalContent;
 
-  ImageAndVideoPreviewCard({
-    this.imageCover,
-    this.videoUrl,
-    this.isVideo = false,
-  });
+  ImageAndVideoPreviewCard(
+      {this.backgroundImage,
+      this.videoUrl,
+      this.isContentVideo = false,
+      this.showTitle = false,
+      this.originalContent});
 
   @override
   State<StatefulWidget> createState() => _State();
 }
 
 class _State extends State<ImageAndVideoPreviewCard> {
+  String titleForPreviewImage = '';
   ChewieController _controller;
+  TransformationJourneyUpload transformationJourneyContent;
+  TaskSubmission taskSubmissionContent;
+
+  @override
+  void initState() {
+    setState(() {
+      if (widget.originalContent is TransformationJourneyUpload) {
+        transformationJourneyContent = widget.originalContent;
+        titleForPreviewImage = TimeConverter.returnDateAndTimeOnStringFormat(
+            dateToFormat: transformationJourneyContent.createdAt);
+      }
+      if (widget.originalContent is TaskSubmission) {
+        taskSubmissionContent = widget.originalContent;
+      }
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.center,
-      color: OlukoColors.black,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+          color: OlukoColors.black,
+          image: DecorationImage(
+              fit: BoxFit.cover,
+              alignment: Alignment.center,
+              image: Image(
+                image: widget.backgroundImage.image,
+                frameBuilder: (BuildContext context, Widget child, int frame,
+                        bool wasSynchronouslyLoaded) =>
+                    ImageUtils.frameBuilder(
+                        context, child, frame, wasSynchronouslyLoaded,
+                        height: 120),
+              ).image)),
+      width: 120,
+      height: 120,
       child: Stack(children: [
-        widget.imageCover,
-        widget.isVideo
+        widget.isContentVideo
             ? Align(
                 alignment: Alignment.center,
                 child: TextButton(
                     onPressed: () {
+                      //TODO: Change Modal VideoPlayer
                       AppModal.dialogContent(
                           closeButton: true,
                           context: context,
@@ -50,6 +94,35 @@ class _State extends State<ImageAndVideoPreviewCard> {
                       scale: 5,
                     )))
             : Container(),
+        Align(
+            alignment: Alignment.bottomCenter,
+            child: widget.showTitle
+                ? InkWell(
+                    onTap: () {
+                      if (widget.originalContent
+                          is TransformationJourneyUpload) {
+                        Navigator.pushNamed(
+                            context,
+                            routeLabels[
+                                RouteEnum.transformationJournetContentDetails],
+                            arguments: {
+                              'TransformationJourneyUpload':
+                                  transformationJourneyContent
+                            });
+                      }
+                    },
+                    child: Container(
+                      width: 120,
+                      height: 30,
+                      child: Center(
+                        child: Text(
+                          titleForPreviewImage,
+                          style: OlukoFonts.olukoSmallFont(),
+                        ),
+                      ),
+                    ),
+                  )
+                : SizedBox())
       ]),
     );
   }

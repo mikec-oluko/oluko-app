@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
+import 'package:oluko_app/models/submodels/object_submodel.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/submodels/video.dart';
@@ -27,8 +28,10 @@ class TaskSubmissionRepository {
     DocumentReference taskReference =
         projectReference.collection("tasks").doc(task.id);
 
-    TaskSubmission taskSubmission =
-        TaskSubmission(taskId: task.id, taskReference: taskReference);
+    ObjectSubmodel taskSubmodel =
+        ObjectSubmodel(id: task.id, reference: taskReference, name: task.name);
+
+    TaskSubmission taskSubmission = TaskSubmission(task: taskSubmodel);
 
     CollectionReference reference =
         assessmentAReference.collection('taskSubmissions');
@@ -117,7 +120,7 @@ class TaskSubmissionRepository {
         .collection('taskSubmissions');
     print(assessmentId);
     final querySnapshot = await reference
-        .where('created_by', isEqualTo: userId)
+        // .where('created_by', isEqualTo: userId) Field is
         .where('video', isNotEqualTo: null)
         .get();
 

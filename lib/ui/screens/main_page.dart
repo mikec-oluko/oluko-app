@@ -4,7 +4,6 @@ import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';
 import 'package:oluko_app/ui/screens/courses/courses.dart';
 import 'package:oluko_app/ui/screens/friends/friends_page.dart';
 import 'package:oluko_app/ui/screens/home.dart';
-import 'package:oluko_app/ui/screens/home_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile.dart';
 
 class MainPage extends StatefulWidget {
@@ -17,9 +16,9 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage>
     with SingleTickerProviderStateMixin {
   List<Widget> tabs = [
-    MyHomePage(),
+    //MyHomePage(),
     //TODO:Change to Home() when finished
-    //Home(),
+    Home(),
     //Reserved for Coach Section
     Container(
       color: Colors.black,
