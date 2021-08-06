@@ -1,6 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
@@ -38,11 +36,11 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
   TaskSubmissionBloc() : super(Loading());
 
   Future<void> createTaskSubmission(
-      AssessmentAssignment assessmentAssignment, Task task) async {
+      AssessmentAssignment assessmentAssignment, Task task, bool isPublic) async {
     try {
       TaskSubmission newTaskSubmission =
           await TaskSubmissionRepository.createTaskSubmission(
-              assessmentAssignment, task);
+              assessmentAssignment, task, isPublic);
       emit(CreateSuccess(taskSubmission: newTaskSubmission));
     } catch (e) {
       emit(Failure(exception: e));

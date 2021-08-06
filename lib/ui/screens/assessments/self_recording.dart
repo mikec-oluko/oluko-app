@@ -9,9 +9,10 @@ import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/routes.dart';
 
 class SelfRecording extends StatefulWidget {
-  SelfRecording({this.taskIndex, Key key}) : super(key: key);
+  SelfRecording({this.taskIndex, this.isPublic, Key key}) : super(key: key);
 
   final int taskIndex;
+  final bool isPublic;
 
   @override
   _State createState() => _State();
@@ -181,7 +182,8 @@ class _State extends State<SelfRecording> {
                       context, routeLabels[RouteEnum.selfRecordingPreview],
                       arguments: {
                         'taskIndex': widget.taskIndex,
-                        'filePath': path
+                        'filePath': path,
+                        'isPublic': widget.isPublic,
                       });
                 } else {
                   await cameraController.startVideoRecording();

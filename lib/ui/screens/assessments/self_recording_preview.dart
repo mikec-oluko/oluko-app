@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:chewie/chewie.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
@@ -9,6 +8,7 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
+import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
@@ -17,15 +17,15 @@ import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/progress_bar.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
-import 'package:oluko_app/ui/screens/assessments/task_details.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class SelfRecordingPreview extends StatefulWidget {
-  SelfRecordingPreview({this.filePath, this.taskIndex, Key key})
+  SelfRecordingPreview({this.filePath, this.taskIndex, this.isPublic, Key key})
       : super(key: key);
 
   final String filePath;
   final int taskIndex;
+  final bool isPublic;
 
   @override
   _SelfRecordingPreviewState createState() => _SelfRecordingPreviewState();
@@ -92,67 +92,46 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
   Widget form() {
     return Form(
         key: _formKey,
-        child: Scaffold(
-            appBar: OlukoAppBar(title: _task.name, actions: [SizedBox(width: 30)]),
-            body: Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-                color: Colors.black,
-                child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 30, horizontal: 15),
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      child: Stack(
-                        children: [
-                          Align(
-                              alignment: Alignment.bottomCenter,
-                              child: OlukoPrimaryButton(
-                                title: OlukoLocalizations.of(context).find('done'),
-                                onPressed: () async {
-                                  _controller.pause();
-                                  if (_taskSubmission == null) {
-                                    BlocProvider.of<TaskSubmissionBloc>(context)
-                                      ..createTaskSubmission(
-                                          _assessmentAssignment, _task);
-                                  } else {
-                                    BlocProvider.of<VideoBloc>(context)
-                                      ..createVideo(
-                                          context,
-                                          File(widget.filePath),
-                                          3.0 / 4.0,
-                                          _taskSubmission.id);
-                                  }
-                                },
-                              )),
-                          BlocConsumer<VideoBloc, VideoState>(
-                              listener: (context, state) {
-                            if (state is VideoSuccess) {
-                              BlocProvider.of<TaskSubmissionBloc>(context)
-                                ..updateTaskSubmissionVideo(
-                                    _assessmentAssignment,
-                                    _taskSubmission.id,
-                                    state.video);
-                              Navigator.pushNamed(
-                                  context, routeLabels[RouteEnum.taskDetails],
-                                  arguments: {'taskIndex': widget.taskIndex});
-                            }
-                          }, builder: (context, state) {
-                            if (state is VideoProcessing) {
-                              return ProgressBar(
-                                  processPhase: state.processPhase,
-                                  progress: state.progress);
-                            } else {
-                              return ConstrainedBox(
-                                  constraints: BoxConstraints(
-                                      maxHeight:
-                                          MediaQuery.of(context).size.height /
-                                              1.5),
-                                  child: Stack(children: showVideoPlayer()));
-                            }
-                          })
-                        ],
-                      ),
-                    )))));
+        child: BlocConsumer<VideoBloc, VideoState>(listener: (context, state) {
+          if (state is VideoSuccess) {
+            BlocProvider.of<TaskSubmissionBloc>(context)
+              ..updateTaskSubmissionVideo(
+                  _assessmentAssignment, _taskSubmission.id, state.video);
+            Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails],
+                arguments: {'taskIndex': widget.taskIndex});
+          }
+        }, builder: (context, state) {
+          if (state is VideoProcessing) {
+            return progressScaffold(state);
+          } else {
+            return contentScaffold();
+          }
+        }));
+  }
+
+  Widget contentScaffold() {
+    return Scaffold(
+        appBar: OlukoAppBar(title: _task.name, actions: [retakeButton()]),
+        body: Container(
+          color: Colors.black,
+          child: ListView(
+            children: [
+              content(),
+            ],
+          ),
+        ));
+  }
+
+  Widget progressScaffold(VideoProcessing state) {
+    return Scaffold(
+        appBar: OlukoAppBar(title: _task.name, actions: [SizedBox(width: 30)]),
+        body: Container(
+          color: Colors.black,
+          child: Container(
+            child: ProgressBar(
+                processPhase: state.processPhase, progress: state.progress),
+          ),
+        ));
   }
 
   List<Widget> showVideoPlayer() {
@@ -167,5 +146,49 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
       widgets.add(Center(child: CircularProgressIndicator()));
     }
     return widgets;
+  }
+
+  Widget retakeButton() {
+    return GestureDetector(
+        onTap: () {
+          Navigator.pop(context);
+        },
+        child: Align(
+            alignment: Alignment.center,
+            child: Padding(
+                padding: EdgeInsets.only(left: 20, right: 8),
+                child: Text(
+                  OlukoLocalizations.of(context).find('retake'),
+                  style:
+                      OlukoFonts.olukoBigFont(customColor: OlukoColors.primary),
+                ))));
+  }
+
+  Widget content() {
+    return Column(children: [
+      ConstrainedBox(
+          constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height / 1.5),
+          child: Stack(children: showVideoPlayer())),
+      Padding(
+          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+          child: Row(children: [
+            OlukoPrimaryButton(
+              title: OlukoLocalizations.of(context).find('done'),
+              onPressed: () async {
+                _controller.pause();
+                if (_taskSubmission == null) {
+                  BlocProvider.of<TaskSubmissionBloc>(context)
+                    ..createTaskSubmission(
+                        _assessmentAssignment, _task, widget.isPublic);
+                } else {
+                  BlocProvider.of<VideoBloc>(context)
+                    ..createVideo(context, File(widget.filePath), 3.0 / 4.0,
+                        _taskSubmission.id);
+                }
+              },
+            )
+          ]))
+    ]);
   }
 }

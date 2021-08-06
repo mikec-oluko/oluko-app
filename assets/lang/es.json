@@ -115,5 +115,6 @@
     "private": "Privado",
     "done": "Hecho",
     "skip": "Saltar",
-    "makeThisPublic": "Haga esto público"
+    "makeThisPublic": "Haga esto público",
+    "retake": "Repetir"
 }

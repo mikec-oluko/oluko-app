@@ -114,5 +114,6 @@
     "private": "Private",
     "done": "Done",
     "skip": "Skip",
-    "makeThisPublic": "Make this public"
+    "makeThisPublic": "Make this public",
+    "retake": "Retake"
 }

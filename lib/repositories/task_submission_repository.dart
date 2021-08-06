@@ -20,7 +20,9 @@ class TaskSubmissionRepository {
   }
 
   static Future<TaskSubmission> createTaskSubmission(
-      AssessmentAssignment assessmentAssignment, Task task) async {
+      AssessmentAssignment assessmentAssignment,
+      Task task,
+      bool isPublic) async {
     DocumentReference assessmentAReference = projectReference
         .collection('assessmentAssignments')
         .doc(assessmentAssignment.id);
@@ -31,15 +33,15 @@ class TaskSubmissionRepository {
     ObjectSubmodel taskSubmodel =
         ObjectSubmodel(id: task.id, reference: taskReference, name: task.name);
 
-    TaskSubmission taskSubmission = TaskSubmission(task: taskSubmodel);
+    TaskSubmission taskSubmission = TaskSubmission(
+        task: taskSubmodel,
+        isPublic: isPublic,
+        createdBy: assessmentAssignment.createdBy);
 
     CollectionReference reference =
         assessmentAReference.collection('taskSubmissions');
 
     final DocumentReference docRef = reference.doc();
-    //TODO: Add userId as createdBy
-    // UserResponse user = await AuthRepository().retrieveLoginData();
-    // taskSubmission.createdBy = user.id;
 
     taskSubmission.id = docRef.id;
 
@@ -64,10 +66,8 @@ class TaskSubmissionRepository {
         .doc(assessmentAssignment.id)
         .collection('taskSubmissions');
     final querySnapshot =
-        await reference.where("task_id", isEqualTo: task.id).get();
+        await reference.where("task.id", isEqualTo: task.id).get();
     if (querySnapshot.docs.length > 0) {
-      print("--------------------------------------------");
-      print(querySnapshot.docs[0].data());
       return TaskSubmission.fromJson(querySnapshot.docs[0].data());
     }
     return null;
