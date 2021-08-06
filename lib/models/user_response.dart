@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'base.dart';
 
 class UserResponse extends Base {
@@ -11,9 +10,14 @@ class UserResponse extends Base {
       this.firebaseId,
       this.hubspotCompanyId,
       this.hubspotContactId,
+      this.privacy,
+      this.notification,
       this.avatar,
       this.avatarThumbnail,
       this.coverImage,
+      this.city,
+      this.state,
+      this.country,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -37,10 +41,15 @@ class UserResponse extends Base {
       firebaseId,
       avatar,
       avatarThumbnail,
-      coverImage;
+      coverImage,
+      city,
+      state,
+      country;
 
   num hubspotCompanyId;
   num hubspotContactId;
+  int privacy;
+  bool notification;
 
   factory UserResponse.fromJson(Map<String, dynamic> json) {
     UserResponse userResponse = UserResponse(
@@ -51,9 +60,14 @@ class UserResponse extends Base {
       avatar: json['avatar'],
       avatarThumbnail: json['avatar_thumbnail'],
       coverImage: json['cover_image'],
+      city: json['city'],
+      state: json['state'],
+      country: json['country'],
       firebaseId: json['firebase_id'],
       hubspotCompanyId: json['hubspot_company_id'],
       hubspotContactId: json['hubspot_contact_id'],
+      notification: json['notification'],
+      privacy: json['privacy'],
     );
     userResponse.setBase(json);
     return userResponse;
@@ -72,9 +86,14 @@ class UserResponse extends Base {
       'avatar': avatar,
       'avatar_thumbnail': avatarThumbnail,
       'cover_image': coverImage,
+      'city': city,
+      'state': state,
+      'country': country,
       'firebase_id': firebaseId,
       'hubspot_company_id': hubspotCompanyId,
       'hubspot_contact_id': hubspotContactId,
+      'notification': notification,
+      'privacy': privacy,
     };
     userReponseJson.addEntries(super.toJson().entries);
     return userReponseJson;

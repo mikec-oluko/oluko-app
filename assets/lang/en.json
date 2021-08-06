@@ -104,6 +104,9 @@
     "ClassesCompleted": "Classes Completed",
     "assessmentVideos": "Assessment Videos",
     "transformationJourney": "Transformation Journey",
-    "upcomingChallenges": "Upcoming Challenges"
-
+    "upcomingChallenges": "Upcoming Challenges",
+    "city": "City",
+    "state": "State",
+    "country": "Country",
+    "toACourse": "to a Course"
 }

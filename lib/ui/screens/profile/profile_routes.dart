@@ -9,7 +9,8 @@ class ProfileRoutes {
   // static const String profileSubscriptionRoute = '/profile-subscription';
   static const String profileMyAccountRoute = '/profile-my-account';
   static const String profileChallengesRoute = '/profile-challenges';
-  static const String profileAssessmentsVideosRoute = '/assessment-videos';
+  static const String profileAssessmentsVideosRoute =
+      '/profile-assessment-videos';
   static const String profileTransformaionJourneyPostRoute =
       '/transformation-journey-post-view';
   static const String profileTransformationJourneyPostRoute =

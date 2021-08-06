@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
@@ -54,5 +55,15 @@ class TimeConverter {
         classes.toString() +
         " " +
         OlukoLocalizations.of(context).find('classes');
+  }
+
+  static String returnDateAndTimeOnStringFormat({Timestamp dateToFormat}) {
+    String dateToReturnAsString;
+    String date =
+        dateToFormat.toDate().toString().split(" ")[0].replaceAll("-", ".");
+    String hour = dateToFormat.toDate().toString().split(" ")[1].split(".")[0];
+    hour = hour.replaceRange(hour.lastIndexOf(":"), hour.length, "");
+    dateToReturnAsString = date + " | " + hour;
+    return dateToReturnAsString;
   }
 }

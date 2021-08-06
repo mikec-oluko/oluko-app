@@ -40,9 +40,18 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
       preferredSize: Size.fromHeight(kToolbarHeight),
       child: AppBar(
           backgroundColor: Colors.black,
-          leading: showLeftIcon(context),
+          leading: showBackButton
+              ? IconButton(
+                  icon: Icon(Icons.chevron_left, size: 35, color: Colors.white),
+                  onPressed: () => Navigator.pop(context))
+              : null,
           title: showLogo
-              ? SizedBox()
+              ? Align(
+                  alignment: Alignment.centerLeft,
+                  child: Image.asset(
+                    'assets/home/mvt.png',
+                    scale: 4,
+                  ))
               : FittedBox(
                   fit: BoxFit.fitWidth,
                   child: TitleHeader(
@@ -88,22 +97,6 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
                   ))
               : null),
     );
-  }
-
-  Widget showLeftIcon(BuildContext context) {
-    if (showLogo) {
-      return Padding(
-          padding: EdgeInsets.only(left: 5),
-          child: Image.asset(
-            'assets/home/mvt.png',
-          ));
-    } else if (showBackButton) {
-      return IconButton(
-          icon: Icon(Icons.chevron_left, size: 35, color: Colors.white),
-          onPressed: () => Navigator.pop(context));
-    } else {
-      return Padding(padding: EdgeInsets.only(left: 5), child: SizedBox());
-    }
   }
 
   @override

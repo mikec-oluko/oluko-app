@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/profile_repository.dart';
-import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 
 abstract class ProfileState {}
 
