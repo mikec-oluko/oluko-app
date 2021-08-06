@@ -13,7 +13,6 @@ class ChallengeSection extends StatefulWidget {
 }
 
 class _State extends State<ChallengeSection> {
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -21,6 +20,7 @@ class _State extends State<ChallengeSection> {
       child: Padding(
         padding: const EdgeInsets.all(0.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Divider(
               color: OlukoColors.grayColor,
@@ -42,15 +42,26 @@ class _State extends State<ChallengeSection> {
     List<Widget> challengeCards = [];
     widget.challenges.forEach((challenge) {
       challengeCards.add(
-        ClipRRect(
-          child: Image.network(
-            challenge.challengeImage,
-            height: 115,
-            width: 80,
-            fit: BoxFit.cover,
-          ),
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            ClipRRect(
+              child: Image.network(
+                challenge.challengeImage,
+                height: 115,
+                width: 80,
+                fit: BoxFit.cover,
+              ),
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(10),
+                  bottomRight: Radius.circular(10)),
+            ),
+            Image.asset(
+              'assets/courses/locked_challenge.png',
+              width: 60,
+              height: 60,
+            )
+          ],
         ),
       );
       challengeCards.add(SizedBox(width: 15));
