@@ -1,11 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/enums/file_type_enum.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/repositories/transformation_journey_repository.dart';
-import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 
 abstract class TransformationJourneyState {}
 
@@ -27,11 +27,11 @@ class TransformationJourneyFailure extends TransformationJourneyState {
 class TransformationJourneyBloc extends Cubit<TransformationJourneyState> {
   TransformationJourneyBloc() : super(TransformationJourneyLoading());
 
-  void getContentByUserName(String userName) async {
+  void getContentByUserId(String userId) async {
     try {
       List<TransformationJourneyUpload> contentUploaded =
           await TransformationJourneyRepository()
-              .getUploadedContentByUserName(userName);
+              .getUploadedContentByUserId(userId);
       emit(TransformationJourneySuccess(contentFromUser: contentUploaded));
     } catch (e) {
       emit(TransformationJourneyFailure(exception: e));
@@ -39,11 +39,11 @@ class TransformationJourneyBloc extends Cubit<TransformationJourneyState> {
   }
 
   Future<void> createTransformationJourneyUpload(
-      FileTypeEnum type, PickedFile file, String username) async {
+      FileTypeEnum type, PickedFile file, String userId) async {
     try {
       TransformationJourneyUpload transformationJourneyUpload =
           await TransformationJourneyRepository
-              .createTransformationJourneyUpload(type, file, username);
+              .createTransformationJourneyUpload(type, file, userId);
     } catch (e) {
       emit(TransformationJourneyFailure(exception: e));
     }
@@ -68,10 +68,10 @@ class TransformationJourneyBloc extends Cubit<TransformationJourneyState> {
 
       TransformationJourneyUpload upload = await TransformationJourneyRepository
           .createTransformationJourneyUpload(
-              FileTypeEnum.image, _image, user.username);
+              FileTypeEnum.image, _image, user.id);
       List<TransformationJourneyUpload> contentUploaded =
           await TransformationJourneyRepository()
-              .getUploadedContentByUserName(user.username);
+              .getUploadedContentByUserId(user.id);
 
       emit(TransformationJourneySuccess(contentFromUser: contentUploaded));
     } catch (e) {
