@@ -1,0 +1,100 @@
+{
+  "project_info": {
+    "project_number": "14784345427",
+    "project_id": "oluko-2671e",
+    "storage_bucket": "oluko-2671e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:14784345427:android:f745cc798bc6936d131da6",
+        "android_client_info": {
+          "package_name": "app.oluko.mvt"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "14784345427-1j8gk6itg11t5e7i7dmpjgdj7k7dlfa6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0UEGoLlfJiKmnVKbIv-gQCrSnVYYN-Aw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "14784345427-1j8gk6itg11t5e7i7dmpjgdj7k7dlfa6.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "14784345427-18l9mjbgebs3ts9n8tkj27vk7ks2bns7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.app.olukoApp",
+                "app_store_id": "1566271606"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:14784345427:android:50df5c4c952bd40c131da6",
+        "android_client_info": {
+          "package_name": "com.app.oluko_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "14784345427-bi8fgmvikguffc4rvu3006roheodeqna.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.oluko_app",
+            "certificate_hash": "4b374314dfe5005f2e787bcb5cbaceddb3e3151c"
+          }
+        },
+        {
+          "client_id": "14784345427-qprj0m9712q62j9tajdb2csjshadma7a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.oluko_app",
+            "certificate_hash": "daeee9cd9daea51cc77148ceb151b8d745af89ca"
+          }
+        },
+        {
+          "client_id": "14784345427-1j8gk6itg11t5e7i7dmpjgdj7k7dlfa6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0UEGoLlfJiKmnVKbIv-gQCrSnVYYN-Aw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "14784345427-1j8gk6itg11t5e7i7dmpjgdj7k7dlfa6.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "14784345427-18l9mjbgebs3ts9n8tkj27vk7ks2bns7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.app.olukoApp",
+                "app_store_id": "1566271606"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
