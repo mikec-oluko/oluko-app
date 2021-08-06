@@ -52,12 +52,14 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
                     'assets/home/mvt.png',
                     scale: 4,
                   ))
-              : FittedBox(
-                  fit: BoxFit.fitWidth,
-                  child: TitleHeader(
-                    title,
-                    bold: true,
-                  )),
+              : Align(
+                  alignment: Alignment.centerLeft,
+                  child: FittedBox(
+                      fit: BoxFit.fitWidth,
+                      child: TitleHeader(
+                        title,
+                        bold: true,
+                      ))),
           actions: actions,
           bottom: showSearchBar == true
               ? PreferredSize(
@@ -95,7 +97,19 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
                       )
                     ],
                   ))
-              : null),
+              : PreferredSize(
+                  preferredSize: Size.fromHeight(kToolbarHeight),
+                  child: Column(
+                    children: [
+                      Divider(
+                        height: 1,
+                        color: OlukoColors.divider,
+                        thickness: 1.5,
+                        indent: 0,
+                        endIndent: 0,
+                      )
+                    ],
+                  ))),
     );
   }
 

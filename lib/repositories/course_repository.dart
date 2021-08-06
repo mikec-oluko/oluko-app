@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/models/course.dart';
+import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/course_statistics.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
+import 'package:oluko_app/repositories/course_enrollment_repository.dart';
 
 class CourseRepository {
   FirebaseFirestore firestoreInstance;
@@ -72,5 +74,16 @@ class CourseRepository {
     classes.add(classObj);
     reference.update(
         {'classes': List<dynamic>.from(classes.map((c) => c.toJson()))});
+  }
+
+  static Future<List<Course>> getUserEnrolled(String userId) async {
+    List<Course> coursesList = [];
+    List<CourseEnrollment> coruseEnrollments =
+        await CourseEnrollmentRepository.getUserCourseEnrollments(userId);
+    for (CourseEnrollment courseEnrollment in coruseEnrollments) {
+      final DocumentSnapshot ds = await courseEnrollment.courseReference.get();
+      coursesList.add(Course.fromJson(ds.data()));
+    }
+    return coursesList;
   }
 }

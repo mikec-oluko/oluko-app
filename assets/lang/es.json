@@ -109,8 +109,11 @@
     "city": "Ciudad",
     "state": "Estado",
     "country": "País",
-    "toACourse": "a un Curso"
-
-
-
+    "toACourse": "a un Curso",
+    "public": "Público",
+    "assessment": "Evaluación",
+    "private": "Privado",
+    "done": "Hecho",
+    "skip": "Saltar",
+    "makeThisPublic": "Haga esto público"
 }

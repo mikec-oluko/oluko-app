@@ -21,6 +21,11 @@ class GetCourseSuccess extends CourseState {
   GetCourseSuccess({this.course});
 }
 
+class UserEnrolledCoursesSuccess extends CourseState {
+  final List<Course> courses;
+  UserEnrolledCoursesSuccess({this.courses});
+}
+
 class CourseFailure extends CourseState {
   final Exception exception;
 
@@ -66,6 +71,16 @@ class CourseBloc extends Cubit<CourseState> {
     try {
       Course course = await CourseRepository.get(id);
       emit(GetCourseSuccess(course: course));
+    } catch (e) {
+      emit(CourseFailure(exception: e));
+    }
+  }
+
+  void getUserEnrolled(String userId) async {
+    try {
+      List<Course> enrolledCourses =
+          await CourseRepository.getUserEnrolled(userId);
+      emit(UserEnrolledCoursesSuccess(courses: enrolledCourses));
     } catch (e) {
       emit(CourseFailure(exception: e));
     }

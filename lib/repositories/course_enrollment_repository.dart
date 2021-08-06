@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:oluko_app/blocs/course_enrollment_bloc.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course.dart';
@@ -146,24 +147,6 @@ class CourseEnrollmentRepository {
   static getCourseByCourseEnrollmentId(String courseId) async {
     Course curso = await CourseRepository.get(courseId);
     return curso;
-  }
-
-  static Future<List<Course>> getUserCourseEnrollmentsCourse(
-      String userId) async {
-    List<Course> coursesList = [];
-    try {
-      List<CourseEnrollment> listOfCoruseEnrollment =
-          await getUserCourseEnrollments(userId);
-
-      listOfCoruseEnrollment.forEach((courseEnrollment) async {
-        final Course course =
-            await getCourseByCourseEnrollmentId(courseEnrollment.courseId);
-        coursesList.add(course);
-      });
-    } catch (e) {
-      throw e;
-    }
-    return coursesList;
   }
 
   Future<List<Challenge>> getUserChallengesByUserId(String userId) async {
