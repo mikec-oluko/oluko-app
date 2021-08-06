@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/profile_bloc.dart';
 import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/user_profile_progress.dart';
-import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/app_modal.dart';
 import 'package:oluko_app/utils/container_grediant.dart';
 import 'package:oluko_app/utils/image_utils.dart';
@@ -47,7 +47,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
         width: MediaQuery.of(context).size.width,
         child: Padding(
             padding: const EdgeInsets.all(10.0),
-            child: _profileUserInformation(_locationDemo, _valuesDemo)),
+            child: _profileUserInformation(_userLocation, _valuesDemo)),
       ),
     );
   }

@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
-import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_error_message_view.dart';
 import 'package:oluko_app/ui/components/user_profile_information.dart';
-import 'package:oluko_app/ui/components/user_profile_progress.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/ui/screens/profile/profile_routes.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
 import '../../../constants/theme.dart';
+import '../../../routes.dart';
 
 class ProfilePage extends StatefulWidget {
   ProfilePage({Key key}) : super(key: key);
@@ -118,8 +118,16 @@ class _ProfilePageState extends State<ProfilePage> {
         children: [
           InkWell(
             onTap: option.enable
-                ? () => Navigator.pushNamed(
-                    context, ProfileRoutes.returnRouteName(option.option))
+                ? () {
+                    if (option.option ==
+                        ProfileViewConstants.profileOptionsSettings) {
+                      Navigator.pushNamed(
+                          context, routeLabels[RouteEnum.profileSettings],
+                          arguments: {'profileInfo': profileInfo});
+                    }
+                    Navigator.pushNamed(
+                        context, ProfileRoutes.returnRouteName(option.option));
+                  }
                 : () {},
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

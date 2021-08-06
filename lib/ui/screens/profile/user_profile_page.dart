@@ -7,6 +7,8 @@ import 'package:oluko_app/blocs/profile_bloc.dart';
 import 'package:oluko_app/blocs/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/helpers/list_of_items_to_widget.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/enums/file_type_enum.dart';
@@ -218,8 +220,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
                           titleForSection: OlukoLocalizations.of(context)
                               .find('assessmentVideos'),
                           routeForSection: ProfileRoutes.goToAssessmentVideos(),
-                          contentForSection: _getWidgetListFromContent(
-                              assessmentVideoData: _assessmentVideosContent))
+                          contentForSection: TransformListOfItemsToWidget
+                              .getWidgetListFromContent(
+                                  assessmentVideoData:
+                                      _assessmentVideosContent))
                       : SizedBox();
                 }),
                 BlocBuilder<TransformationJourneyBloc,
@@ -234,9 +238,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                 .find('transformationJourney'),
                             routeForSection:
                                 ProfileRoutes.goToTransformationJourney(),
-                            contentForSection: _getWidgetListFromContent(
-                                tansformationJourneyData:
-                                    _transformationJourneyContent))
+                            contentForSection: TransformListOfItemsToWidget
+                                .getWidgetListFromContent(
+                                    tansformationJourneyData:
+                                        _transformationJourneyContent))
                         : SizedBox();
                   },
                 ),
@@ -267,8 +272,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
                             titleForSection: OlukoLocalizations.of(context)
                                 .find('upcomingChallenges'),
                             routeForSection: ProfileRoutes.goToChallenges(),
-                            contentForSection: _getWidgetListFromContent(
-                                upcomingChallenges: _activeChallenges))
+                            contentForSection: TransformListOfItemsToWidget
+                                .getWidgetListFromContent(
+                                    upcomingChallenges: _activeChallenges))
                         : SizedBox();
                   },
                 ),
@@ -291,7 +297,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
     BlocProvider.of<CourseBloc>(context).getUserEnrolled(userRequested.id);
 
     BlocProvider.of<TransformationJourneyBloc>(context)
-        .getContentByUserName(userRequested.username);
+        .getContentByUserId(userRequested.id);
 
     // BlocProvider.of<CourseEnrollmentBloc>(context)
     //     .getChallengesForUser(userRequested.id);
@@ -360,78 +366,5 @@ class _UserProfilePageState extends State<UserProfilePage> {
         progress: 0.4,
       ),
     );
-  }
-
-  List<Widget> _getWidgetListFromContent(
-      {List<TransformationJourneyUpload> tansformationJourneyData,
-      List<TaskSubmission> assessmentVideoData,
-      List<Challenge> upcomingChallenges}) {
-    List<Widget> contentForSection = [];
-
-    if (tansformationJourneyData != null &&
-        (assessmentVideoData == null && upcomingChallenges == null)) {
-      tansformationJourneyData.forEach((contentUploaded) {
-        contentForSection.add(_getImageAndVideoCard(
-            transformationJourneyContent: contentUploaded));
-      });
-    }
-
-    if (assessmentVideoData != null &&
-        (tansformationJourneyData == null && upcomingChallenges == null)) {
-      assessmentVideoData.forEach((assessmentVideo) {
-        contentForSection
-            .add(_getImageAndVideoCard(taskSubmissionContent: assessmentVideo));
-      });
-    }
-
-    if (upcomingChallenges != null &&
-        (tansformationJourneyData == null && assessmentVideoData == null)) {
-      upcomingChallenges.forEach((challenge) {
-        contentForSection
-            .add(_getImageAndVideoCard(upcomingChallengesContent: challenge));
-      });
-    }
-    return contentForSection.toList();
-  }
-
-  //TODO: Update logic to trigger actions depends on contentType and route
-  Widget _getImageAndVideoCard(
-      {TransformationJourneyUpload transformationJourneyContent,
-      TaskSubmission taskSubmissionContent,
-      Challenge upcomingChallengesContent}) {
-    Widget contentForReturn = SizedBox();
-
-    if (transformationJourneyContent != null) {
-      contentForReturn = ImageAndVideoContainer(
-        backgroundImage: transformationJourneyContent.thumbnail,
-        isContentVideo: transformationJourneyContent.type == FileTypeEnum.video
-            ? true
-            : false,
-        videoUrl: transformationJourneyContent.file,
-        originalContent: transformationJourneyContent,
-      );
-    }
-    if (taskSubmissionContent != null && taskSubmissionContent.video != null) {
-      contentForReturn = ImageAndVideoContainer(
-        backgroundImage: taskSubmissionContent.video.thumbUrl != null
-            ? taskSubmissionContent.video.thumbUrl
-            : '',
-        isContentVideo: taskSubmissionContent.video != null,
-        videoUrl: taskSubmissionContent.video.url != null
-            ? taskSubmissionContent.video.url
-            : '',
-        originalContent: taskSubmissionContent,
-      );
-    }
-    if (upcomingChallengesContent != null) {
-      //TODO: Crear container con locker icon and w/ also style
-      contentForReturn = ImageAndVideoContainer(
-        backgroundImage: upcomingChallengesContent.challengeImage,
-        isContentVideo: false,
-        originalContent: upcomingChallengesContent,
-      );
-    }
-
-    return contentForReturn;
   }
 }

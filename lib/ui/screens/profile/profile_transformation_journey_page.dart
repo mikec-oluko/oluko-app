@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
-import 'package:oluko_app/blocs/profile_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/constants/Theme.dart';
-// import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/models/enums/file_type_enum.dart';
+import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/helpers/list_of_items_to_widget.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
-import 'package:oluko_app/ui/components/image_and_video_container.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_error_message_view.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
@@ -36,31 +34,20 @@ class _ProfileTransformationJourneyPageState
       if (state is AuthSuccess) {
         _profileInfo = state.user;
         _requestTransformationJourneyData(context, _profileInfo);
-        return MultiBlocProvider(
-            providers: [
-              BlocProvider.value(
-                value: BlocProvider.of<ProfileBloc>(context),
-              ),
-              BlocProvider.value(
-                value: BlocProvider.of<TransformationJourneyBloc>(context),
-              ),
-              BlocProvider.value(
-                value: BlocProvider.of<AuthBloc>(context),
-              ),
-            ],
-            child: BlocConsumer<TransformationJourneyBloc,
-                TransformationJourneyState>(
-              listener: (context, state) {
-                if (state is TransformationJourneySuccess) {
-                  _transformationJourneyContent = state.contentFromUser;
-                  _contentGallery = buildContentGallery(
-                      uploadListContent: _transformationJourneyContent);
-                }
-              },
-              builder: (context, state) {
-                return page(context, _profileInfo);
-              },
-            ));
+        return BlocConsumer<TransformationJourneyBloc,
+            TransformationJourneyState>(
+          listener: (context, state) {
+            if (state is TransformationJourneySuccess) {
+              _transformationJourneyContent = state.contentFromUser;
+              _contentGallery = _contentGallery =
+                  TransformListOfItemsToWidget.getWidgetListFromContent(
+                      tansformationJourneyData: _transformationJourneyContent);
+            }
+          },
+          builder: (context, state) {
+            return page(context, _profileInfo);
+          },
+        );
       } else {
         return SizedBox();
       }
@@ -80,8 +67,10 @@ class _ProfileTransformationJourneyPageState
               listener: (context, state) {
                 if (state is TransformationJourneySuccess) {
                   _transformationJourneyContent = state.contentFromUser;
-                  _contentGallery = buildContentGallery(
-                      uploadListContent: _transformationJourneyContent);
+                  _contentGallery = _contentGallery =
+                      TransformListOfItemsToWidget.getWidgetListFromContent(
+                          tansformationJourneyData:
+                              _transformationJourneyContent);
                 }
               },
               builder: (context, state) {
@@ -135,41 +124,11 @@ class _ProfileTransformationJourneyPageState
     );
   }
 
-  Widget _getImageAndVideoCard(
-      {TransformationJourneyUpload transformationJourneyContent}) {
-    Widget contentForReturn;
-
-    if (transformationJourneyContent != null) {
-      contentForReturn = ImageAndVideoContainer(
-        backgroundImage: transformationJourneyContent.thumbnail,
-        isContentVideo: transformationJourneyContent.type == FileTypeEnum.video
-            ? true
-            : false,
-        videoUrl: transformationJourneyContent.file,
-        originalContent: transformationJourneyContent,
-        displayOnViewNamed: ActualProfileRoute.transformationJourney,
-      );
-    }
-
-    return contentForReturn;
-  }
-
-  List<Widget> buildContentGallery(
-      {List<TransformationJourneyUpload> uploadListContent}) {
-    List<Widget> widgetListOfContentTempt = [];
-
-    uploadListContent.forEach((content) => {
-          widgetListOfContentTempt
-              .add(_getImageAndVideoCard(transformationJourneyContent: content))
-        });
-    return widgetListOfContentTempt;
-  }
-
   Future<void> _requestTransformationJourneyData(
       BuildContext context, UserResponse profileInfo) async {
     try {
       BlocProvider.of<TransformationJourneyBloc>(context)
-          .getContentByUserName(profileInfo.username);
+          .getContentByUserId(profileInfo.id);
     } catch (e) {
       throw e;
     }

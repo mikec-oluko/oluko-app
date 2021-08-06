@@ -23,6 +23,7 @@ import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/models/movement.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/screens/app_plans.dart';
 import 'package:oluko_app/ui/screens/assessments/assessment_videos.dart';
 import 'package:oluko_app/ui/screens/assessments/self_recording.dart';
@@ -38,6 +39,7 @@ import 'package:oluko_app/ui/screens/authentication/login.dart';
 import 'package:oluko_app/ui/screens/main_page.dart';
 import 'package:oluko_app/ui/screens/courses/movement_intro.dart';
 import 'package:oluko_app/ui/screens/profile/profile.dart';
+import 'package:oluko_app/ui/screens/profile/profile_assessment_videos_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_challenges_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_help_and_support_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_my_account_page.dart';
@@ -70,6 +72,7 @@ enum RouteEnum {
   profileViewOwnProfile,
   profileChallenges,
   profileTransformationJourney,
+  profileAssessmentVideos,
   transformationJourneyPost,
   transformationJournetContentDetails,
   transformationJourneyPostView,
@@ -105,6 +108,7 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.profileViewOwnProfile: '/profile-view-user-profile',
   RouteEnum.profileChallenges: '/profile-challenges',
   RouteEnum.profileTransformationJourney: '/profile-transformation-journey',
+  RouteEnum.profileAssessmentVideos: '/profile-assessment-videos',
   RouteEnum.transformationJourneyPost: '/transformation-journey-post',
   RouteEnum.transformationJournetContentDetails:
       '/transformation-journey-content-details',
@@ -196,7 +200,9 @@ class Routes {
         newRouteView = ProfilePage();
         break;
       case RouteEnum.profileSettings:
-        newRouteView = ProfileSettingsPage();
+        final Map<String, UserResponse> argumentsToAdd = arguments;
+        newRouteView =
+            ProfileSettingsPage(profileInfo: argumentsToAdd['profileInfo']);
         break;
       case RouteEnum.profileMyAccount:
         providers = [
@@ -241,6 +247,15 @@ class Routes {
               value: _transformationJourneyBloc),
         ];
         newRouteView = ProfileTransformationJourneyPage();
+        break;
+      case RouteEnum.profileAssessmentVideos:
+        providers = [
+          BlocProvider<ProfileBloc>.value(value: _profileBloc),
+          BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
+          BlocProvider<TransformationJourneyBloc>.value(
+              value: _transformationJourneyBloc),
+        ];
+        newRouteView = ProfileAssessmentVideosPage();
         break;
       case RouteEnum.transformationJourneyPost:
         providers = [

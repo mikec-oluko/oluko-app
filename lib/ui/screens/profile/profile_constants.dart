@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:oluko_app/helpers/enum_collection.dart';
 
 class ProfileViewConstants {
   //Constants used on Profile Feature
@@ -46,6 +47,26 @@ class ProfileViewConstants {
     ProfileOptions(option: profileOptionsSettings),
     ProfileOptions(option: profileOptionsHelpAndSupport),
   ];
+
+  static List<PrivacyOptions> privacyOptionsList = [
+    PrivacyOptions(
+        title: profileSettingsPublic,
+        subtitle: profileSettingsPublicSubtitle,
+        option: SettingsPrivacyOptions.public),
+    PrivacyOptions(
+        title: profileSettingsRestricted,
+        subtitle: profileSettingsRestrictedSubtitle,
+        option: SettingsPrivacyOptions.restricted),
+    PrivacyOptions(
+        title: profileSettingsAnonymous,
+        subtitle: profileSettingsAnonymousSubtitle,
+        option: SettingsPrivacyOptions.anonymous),
+    PrivacyOptions(
+        title: profileSettingsNotification,
+        subtitle: '',
+        showSubtitle: false,
+        isSwitch: true),
+  ];
 }
 
 class ProfileOptions {
@@ -54,19 +75,19 @@ class ProfileOptions {
   ProfileOptions({this.option, this.enable = true});
 }
 
-//Options to update on settings
-enum SettingsOptions { notification, public, restricted, anonymous }
-//Enum for modal, to update images
-enum UploadFrom { profileImage, transformationJourney, profileCoverImage }
-//Enum to share route where data for user is Requested on Profile views
-enum ActualProfileRoute {
-  rootProfile,
-  userProfile,
-  userAssessmentVideos,
-  transformationJourney
+class PrivacyOptions {
+  String title;
+  String subtitle;
+  SettingsPrivacyOptions option;
+  bool showSubtitle;
+  bool isSwitch;
+  PrivacyOptions(
+      {this.title,
+      this.subtitle,
+      this.option,
+      this.showSubtitle = true,
+      this.isSwitch = false});
 }
-//Enum of options for upload content
-enum DeviceContentFrom { camera, gallery }
 
 //Basic model for Tile (Help and Support)
 class BasicTile {

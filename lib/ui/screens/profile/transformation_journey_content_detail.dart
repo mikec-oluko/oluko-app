@@ -52,10 +52,10 @@ class _TransformationJourneyContentDetailState
                 child: Container(
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.all(Radius.circular(10)),
-                      color: OlukoColors.primary,
+                      color: OlukoColors.black,
                       image: DecorationImage(
                           fit: BoxFit.cover,
-                          alignment: Alignment.centerRight,
+                          alignment: Alignment.center,
                           image: Image.network(
                             widget.contentToShow.file,
                             frameBuilder: (BuildContext context, Widget child,

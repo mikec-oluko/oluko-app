@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
+import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 
 import 'image_and_video_preview_card.dart';
