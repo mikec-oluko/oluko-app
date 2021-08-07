@@ -3,14 +3,15 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/helpers/profile_options.dart';
+import 'package:oluko_app/helpers/profile_routes.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
-import 'package:oluko_app/ui/components/oluko_error_message_view.dart';
 import 'package:oluko_app/ui/components/user_profile_information.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
-import 'package:oluko_app/ui/screens/profile/profile_routes.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import '../../../constants/theme.dart';
 import '../../../routes.dart';
 
@@ -76,9 +77,9 @@ class _ProfilePageState extends State<ProfilePage> {
     returnWidget = Column(
       children: [
         GestureDetector(
-            onTap: () =>
-                Navigator.pushNamed(context, ProfileRoutes.userInformationRoute)
-                    .then((value) => onGoBack()),
+            onTap: () => Navigator.pushNamed(
+                    context, routeLabels[RouteEnum.profileViewOwnProfile])
+                .then((value) => onGoBack()),
             child: UserProfileInformation(
                 userInformation: profileInfo,
                 actualRoute: ActualProfileRoute.rootProfile,
@@ -92,9 +93,9 @@ class _ProfilePageState extends State<ProfilePage> {
     return Padding(
       padding: const EdgeInsets.only(top: 170),
       child: ListView.builder(
-          itemCount: ProfileViewConstants.profileOptions.length,
+          itemCount: ProfileOptions.profileOptions.length,
           itemBuilder: (_, index) =>
-              profileOptions(ProfileViewConstants.profileOptions[index])),
+              profileOptions(ProfileOptions.profileOptions[index])),
     );
   }
 
@@ -115,8 +116,7 @@ class _ProfilePageState extends State<ProfilePage> {
           InkWell(
             onTap: option.enable
                 ? () {
-                    if (option.option ==
-                        ProfileViewConstants.profileOptionsSettings) {
+                    if (option.option == ProfileOptionsTitle.settings) {
                       Navigator.pushNamed(
                               context, routeLabels[RouteEnum.profileSettings],
                               arguments: {'profileInfo': profileInfo})
@@ -132,7 +132,9 @@ class _ProfilePageState extends State<ProfilePage> {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(left: 25.0),
-                  child: Text(option.option,
+                  child: Text(
+                      OlukoLocalizations.of(context)
+                          .find(returnOptionString(option.option)),
                       style: option.enable
                           ? OlukoFonts.olukoMediumFont()
                           : OlukoFonts.olukoMediumFont(
@@ -164,7 +166,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
   handleResult(AsyncSnapshot snapshot) {
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      ProfileRoutes.returnToHome(context: context);
+      Navigator.popUntil(context, ModalRoute.withName('/'));
     });
   }
+
+  String returnOptionString(ProfileOptionsTitle option) =>
+      option.toString().split(".")[1];
 }

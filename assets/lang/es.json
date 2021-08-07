@@ -111,9 +111,18 @@
     "country": "País",
     "toACourse": "a un Curso",
     "public": "Público",
+    "publicSubtitle": "Perfil público",
     "assessment": "Evaluación",
     "private": "Privado",
     "done": "Hecho",
     "skip": "Saltar",
-    "makeThisPublic": "Haga esto público"
+    "makeThisPublic": "Haga esto público",
+    "restricted": "Privado",
+    "restrictedSubtitle": "Perfil privado",
+    "anonymous": "Anónimo",
+    "anonymousSubtitle": "Perfil anónimo",
+    "helpAndSupport": "Ayuda y Soporte",
+    "myAccount": "Mi Perfil",
+    "subscription": "Subscripción"
+
 }

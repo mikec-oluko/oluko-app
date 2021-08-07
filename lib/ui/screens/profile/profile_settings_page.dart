@@ -4,10 +4,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/profile_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/privacy_options.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ProfileSettingsPage extends StatefulWidget {
   final UserResponse profileInfo;
@@ -71,7 +73,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
       children: [
         createNotificationSwitch(context),
         Column(
-          children: ProfileViewConstants.privacyOptionsList
+          children: PrivacyOptions.privacyOptionsList
               .map((option) => _buildOptionTiles(context, option))
               .toList(),
         ),
@@ -122,13 +124,15 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
                 controlAffinity: ListTileControlAffinity.trailing,
                 selected: _userPrivacyValue == option.option.index,
                 title: Text(
-                  option.title,
+                  OlukoLocalizations.of(context)
+                      .find(returnOption(option.title.toString())),
                   style: OlukoFonts.olukoBigFont(
                       customColor: OlukoColors.grayColor),
                 ),
                 subtitle: option.showSubtitle
                     ? Text(
-                        option.subtitle,
+                        OlukoLocalizations.of(context)
+                            .find(returnOption(option.subtitle.toString())),
                         style: OlukoFonts.olukoSmallFont(
                             customColor: OlukoColors.grayColor),
                       )
@@ -166,4 +170,6 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
     BlocProvider.of<ProfileBloc>(context).updateSettingsPreferences(
         _authUser, _privacyNewValue, _notificationNewValue);
   }
+
+  String returnOption(String option) => option.split(".")[1];
 }

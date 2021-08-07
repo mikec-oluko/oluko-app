@@ -5,8 +5,8 @@ import 'package:oluko_app/blocs/profile_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
-import 'package:oluko_app/ui/screens/profile/profile_routes.dart';
 
 class UploadingModalSuccess extends StatefulWidget {
   final UploadFrom goToPage;
@@ -97,13 +97,13 @@ class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
   String returnRouteToGo(UploadFrom cameFrom) {
     String routeToGo = '/';
     if (cameFrom == UploadFrom.transformationJourney) {
-      routeToGo = ProfileRoutes.profileTransformationJourneyRoute;
+      routeToGo = routeLabels[RouteEnum.profileTransformationJourney];
     }
     if (cameFrom == UploadFrom.profileImage) {
-      routeToGo = ProfileRoutes.userInformationRoute;
+      routeToGo = routeLabels[RouteEnum.profileViewOwnProfile];
     }
     if (cameFrom == UploadFrom.profileCoverImage) {
-      routeToGo = ProfileRoutes.userInformationRoute;
+      routeToGo = routeLabels[RouteEnum.profileViewOwnProfile];
     }
     return routeToGo;
   }

@@ -1,19 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:oluko_app/helpers/enum_collection.dart';
-
 class ProfileViewConstants {
   //Constants used on Profile Feature
   static const profileTitle = "Profile";
-  static const profileUserNameContent = "myUserName";
   static const profileSettingsTitle = "Settings";
   static const profileMyAccountTitle = "My Account";
-  static const profileLevel = "Level 29";
-  static const profileTrophiesTitle = "Trophies";
   static const profileChallengesTitle = "Challenges Completed";
   static const profileFriendsTitle = "Friends";
-  static const profileTrophiesContent = "13";
-  static const profileChallengesContent = "07";
-  static const profileFriendsContent = "37";
   static const profileSettingsNotification = "Notification";
   static const profileSettingsPublic = "Public";
   static const profileSettingsRestricted = "Restricted";
@@ -37,100 +28,4 @@ class ProfileViewConstants {
   static const profileChangePaymentMethodTitle = "Change Payment Method";
   static const profileUnsuscribeTitle = "Unsubscribe";
   static const profileSelectFromGalleryTitle = "Select from Gallery";
-
-  //List of options for Profile settings.
-  static List<ProfileOptions> profileOptions = [
-    ProfileOptions(option: profileOptionsMyAccount),
-    ProfileOptions(option: profileOptionsAssessmentVideos),
-    ProfileOptions(option: profileOptionsTransformationJourney),
-    ProfileOptions(option: profileOptionsSubscription, enable: false),
-    ProfileOptions(option: profileOptionsSettings),
-    ProfileOptions(option: profileOptionsHelpAndSupport),
-  ];
-
-  static List<PrivacyOptions> privacyOptionsList = [
-    PrivacyOptions(
-        title: profileSettingsPublic,
-        subtitle: profileSettingsPublicSubtitle,
-        option: SettingsPrivacyOptions.public),
-    PrivacyOptions(
-        title: profileSettingsRestricted,
-        subtitle: profileSettingsRestrictedSubtitle,
-        option: SettingsPrivacyOptions.restricted),
-    PrivacyOptions(
-        title: profileSettingsAnonymous,
-        subtitle: profileSettingsAnonymousSubtitle,
-        option: SettingsPrivacyOptions.anonymous),
-  ];
-
-  static SettingsPrivacyOptions getPrivacyValue(num optionSelected) =>
-      ProfileViewConstants.privacyOptionsList.elementAt(optionSelected).option;
 }
-
-class PrivacyOptions {
-  String title;
-  String subtitle;
-  SettingsPrivacyOptions option;
-  bool showSubtitle;
-  bool isSwitch;
-  PrivacyOptions(
-      {this.title,
-      this.subtitle,
-      this.option,
-      this.showSubtitle = true,
-      this.isSwitch = false});
-}
-
-class ProfileOptions {
-  final String option;
-  final bool enable;
-  ProfileOptions({this.option, this.enable = true});
-}
-
-//Basic model for Tile (Help and Support)
-class BasicTile {
-  final String title;
-  final List<BasicTile> tiles;
-  bool isExpanded;
-
-  BasicTile(
-      {@required this.title, this.tiles = const [], this.isExpanded = false});
-}
-
-//TODO:
-//Collection of help and support Tiles,
-//if contains tiles[] = new tile, if not, title == content.
-//parentTile[childTile []] = new Tile, parentTile[!childTile[]] = Tile with content
-final basicTiles = <BasicTile>[
-  BasicTile(title: "Top Queries", tiles: [
-    BasicTile(title: "What is included in the memebership?", tiles: [
-      BasicTile(
-          title:
-              " No information to display, information will be added as soon as possible, check back later."),
-    ]),
-    BasicTile(title: "How many courses do i get?", tiles: [
-      BasicTile(
-          title:
-              " No information to display, information will be added as soon as possible, check back later. "),
-    ]),
-    BasicTile(title: "Which classes are right for me?", tiles: [
-      BasicTile(
-          title:
-              " No information to display, information will be added as soon as possible, check back later. "),
-    ]),
-  ]),
-  BasicTile(title: "Plans, Pricing and Payments", tiles: [
-    BasicTile(title: "Plans", tiles: [
-      BasicTile(title: "Plan 1", tiles: [
-        BasicTile(
-            title:
-                " No information to display, information will be added as soon as possible, check back later. "),
-      ]),
-      BasicTile(title: "Plan 2", tiles: [
-        BasicTile(
-            title:
-                " No information to display, information will be added as soon as possible, check back later. "),
-      ]),
-    ]),
-  ])
-];
