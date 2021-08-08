@@ -15,9 +15,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthRepository {
   Client http;
   FirebaseAuth firebaseAuthInstance;
-  //final String url = 'https://us-central1-oluko-2671e.cloudfunctions.net/auth';
   final String url =
-      'https://us-central1-oluko-development.cloudfunctions.net/auth';
+      GlobalConfiguration().getValue("firebaseFunctions") + '/auth';
 
   AuthRepository.test({Client http, FirebaseAuth firebaseAuthInstance}) {
     this.http = http;
