@@ -1,8 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
+import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/submodels/video.dart';
+import 'package:oluko_app/repositories/assessment_assignment_repository.dart';
 import 'package:oluko_app/repositories/task_submission_repository.dart';
 
 abstract class TaskSubmissionState {}
@@ -91,9 +94,22 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
     try {
       List<TaskSubmission> taskSubmissions =
           await TaskSubmissionRepository.getTaskSubmissionsByUserId(userId);
-
       if (taskSubmissions.length != 0) {
         emit(GetUserTaskSubmissionSuccess(taskSubmissions: taskSubmissions));
+      }
+    } catch (e) {
+      emit(Failure(exception: e));
+    }
+  }
+
+  void checkCompleted(
+      AssessmentAssignment assessmentAssignment, Assessment assessment) async {
+    try {
+      List<TaskSubmission> taskSubmissions =
+          await TaskSubmissionRepository.getTaskSubmissions(
+              assessmentAssignment);
+      if (taskSubmissions.length == assessment.tasks.length) {
+        AssessmentAssignmentRepository.setAsCompleted(assessmentAssignment.id);
       }
     } catch (e) {
       emit(Failure(exception: e));

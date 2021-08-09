@@ -1,14 +1,17 @@
 import 'dart:io';
 
 import 'package:chewie/chewie.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
+import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
@@ -39,6 +42,8 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
   List<Task> _tasks;
   AssessmentAssignment _assessmentAssignment;
   TaskSubmission _taskSubmission;
+  Assessment _assessment;
+  User _user;
 
   @override
   void initState() {
@@ -49,40 +54,49 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
-        return BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(
-          builder: (context, assessmentAssignmentState) {
-            return BlocBuilder<TaskBloc, TaskState>(
-                builder: (context, taskState) {
-              return BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
-                  builder: (context, taskSubmissionState) {
-                if (assessmentAssignmentState is AssessmentAssignmentSuccess &&
-                    taskState is TaskSuccess &&
-                    (taskSubmissionState is GetSuccess ||
-                        taskSubmissionState is CreateSuccess)) {
-                  _assessmentAssignment =
-                      assessmentAssignmentState.assessmentAssignment;
-                  _tasks = taskState.values;
-                  _task = _tasks[widget.taskIndex];
-                  if (taskSubmissionState is GetSuccess) {
-                    _taskSubmission = taskSubmissionState.taskSubmission;
+        _user = authState.firebaseUser;
+        return BlocBuilder<AssessmentBloc, AssessmentState>(
+            builder: (context, assessmentState) {
+          return BlocBuilder<AssessmentAssignmentBloc,
+              AssessmentAssignmentState>(
+            builder: (context, assessmentAssignmentState) {
+              return BlocBuilder<TaskBloc, TaskState>(
+                  builder: (context, taskState) {
+                return BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
+                    builder: (context, taskSubmissionState) {
+                  if (assessmentState is AssessmentSuccess &&
+                      assessmentAssignmentState
+                          is AssessmentAssignmentSuccess &&
+                      taskState is TaskSuccess &&
+                      (taskSubmissionState is GetSuccess ||
+                          taskSubmissionState is CreateSuccess)) {
+                    _assessment = assessmentState.assessment;
+                    _assessmentAssignment =
+                        assessmentAssignmentState.assessmentAssignment;
+                    _tasks = taskState.values;
+                    _task = _tasks[widget.taskIndex];
+                    if (taskSubmissionState is GetSuccess) {
+                      _taskSubmission = taskSubmissionState.taskSubmission;
+                    }
+                    return BlocListener<TaskSubmissionBloc,
+                            TaskSubmissionState>(
+                        listener: (context, state) {
+                          if (state is CreateSuccess) {
+                            _taskSubmission = state.taskSubmission;
+                            BlocProvider.of<VideoBloc>(context)
+                              ..createVideo(context, File(widget.filePath),
+                                  3.0 / 4.0, state.taskSubmission.id);
+                          }
+                        },
+                        child: form());
+                  } else {
+                    return SizedBox();
                   }
-                  return BlocListener<TaskSubmissionBloc, TaskSubmissionState>(
-                      listener: (context, state) {
-                        if (state is CreateSuccess) {
-                          _taskSubmission = state.taskSubmission;
-                          BlocProvider.of<VideoBloc>(context)
-                            ..createVideo(context, File(widget.filePath),
-                                3.0 / 4.0, state.taskSubmission.id);
-                        }
-                      },
-                      child: form());
-                } else {
-                  return SizedBox();
-                }
+                });
               });
-            });
-          },
-        );
+            },
+          );
+        });
       } else {
         return SizedBox();
       }
@@ -97,6 +111,8 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
             BlocProvider.of<TaskSubmissionBloc>(context)
               ..updateTaskSubmissionVideo(
                   _assessmentAssignment, _taskSubmission.id, state.video);
+            BlocProvider.of<TaskSubmissionBloc>(context)
+              ..checkCompleted(_assessmentAssignment, _assessment);
             Navigator.pop(context);
             Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails],
                 arguments: {'taskIndex': widget.taskIndex});

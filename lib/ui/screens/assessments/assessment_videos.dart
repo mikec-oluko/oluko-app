@@ -5,13 +5,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
-import 'package:oluko_app/blocs/blocs_per_view/task_submission_list.dart';
+import 'package:oluko_app/blocs/blocs_per_view/task_submission_list_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/services/task_submission_service.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
@@ -121,7 +122,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                           if (assessmentAssignmentState
                                   is AssessmentAssignmentSuccess &&
                               assessmentAssignmentState
-                                      .assessmentAssignment.completedAt !=
+                                      .assessmentAssignment.compleatedAt !=
                                   null) {
                             return Row(children: [
                               OlukoPrimaryButton(
@@ -182,7 +183,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                 itemBuilder: (context, num index) {
                   Task task = taskState.values[index];
                   TaskSubmission taskSubmission =
-                      getTaskSubmissionOfTask(task, taskSubmissions);
+                      TaskSubmissionService.getTaskSubmissionOfTask(task, taskSubmissions);
                   return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10.0),
                       child: TaskCard(
@@ -215,16 +216,6 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
     } else {
       return taskSubmission.isPublic;
     }
-  }
-
-  TaskSubmission getTaskSubmissionOfTask(
-      Task task, List<TaskSubmission> taskSubmissions) {
-    for (TaskSubmission taskSubmission in taskSubmissions) {
-      if (taskSubmission.task.id == task.id) {
-        return taskSubmission;
-      }
-    }
-    return null;
   }
 
   Widget skipButton() {
