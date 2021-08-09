@@ -198,6 +198,9 @@ class Routes {
         newRouteView = ProfilePage();
         break;
       case RouteEnum.profileSettings:
+        providers = [
+          BlocProvider<ProfileBloc>.value(value: _profileBloc),
+        ];
         final Map<String, UserResponse> argumentsToAdd = arguments;
         newRouteView =
             ProfileSettingsPage(profileInfo: argumentsToAdd['profileInfo']);

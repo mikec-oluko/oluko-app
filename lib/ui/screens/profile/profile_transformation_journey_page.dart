@@ -33,18 +33,17 @@ class _ProfileTransformationJourneyPageState
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
       if (state is AuthSuccess) {
         _profileInfo = state.user;
-        _requestTransformationJourneyData(context, _profileInfo);
-        return BlocConsumer<TransformationJourneyBloc,
+        return BlocBuilder<TransformationJourneyBloc,
             TransformationJourneyState>(
-          listener: (context, state) {
+          builder: (context, state) {
             if (state is TransformationJourneySuccess) {
               _transformationJourneyContent = state.contentFromUser;
               _contentGallery = _contentGallery =
                   TransformListOfItemsToWidget.getWidgetListFromContent(
-                      tansformationJourneyData: _transformationJourneyContent);
+                      tansformationJourneyData: _transformationJourneyContent,
+                      requestedFromRoute:
+                          ActualProfileRoute.transformationJourney);
             }
-          },
-          builder: (context, state) {
             return page(context, _profileInfo);
           },
         );
@@ -56,81 +55,57 @@ class _ProfileTransformationJourneyPageState
 
   Scaffold page(BuildContext context, UserResponse profileInfo) {
     return Scaffold(
-      appBar: OlukoAppBar(
-        title: ProfileViewConstants.profileOptionsTransformationJourney,
-        showSearchBar: false,
-      ),
-      body: _contentGallery == null
-          ? Container(
-              color: Colors.black, child: OlukoCircularProgressIndicator())
-          : BlocConsumer<TransformationJourneyBloc, TransformationJourneyState>(
-              listener: (context, state) {
-                if (state is TransformationJourneySuccess) {
-                  _transformationJourneyContent = state.contentFromUser;
-                  _contentGallery = _contentGallery =
-                      TransformListOfItemsToWidget.getWidgetListFromContent(
-                          tansformationJourneyData:
-                              _transformationJourneyContent);
-                }
-              },
-              builder: (context, state) {
-                return Container(
-                  constraints: BoxConstraints.expand(),
-                  color: OlukoColors.black,
-                  child: SafeArea(
-                    child: Stack(children: [
-                      Align(
-                          alignment: Alignment.topCenter,
-                          child: Container(
-                              width: MediaQuery.of(context).size.width,
-                              child: Padding(
-                                padding: const EdgeInsets.all(15.0),
-                                child: Row(
-                                  children: [
-                                    OlukoOutlinedButton(
-                                        title: OlukoLocalizations.of(context)
-                                            .find('tapToUpload'),
-                                        onPressed: () {
-                                          AppModal.dialogContent(
-                                              context: context,
-                                              content: [
-                                                BlocProvider.value(
-                                                  value: BlocProvider.of<
-                                                          TransformationJourneyBloc>(
-                                                      context),
-                                                  child: ModalUploadOptions(
-                                                      UploadFrom
-                                                          .transformationJourney),
-                                                )
-                                              ]);
-                                        }),
-                                  ],
-                                ),
-                              ))),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(10, 150, 10, 0),
-                        child: _contentGallery.length != 0
-                            ? GridView.count(
-                                crossAxisCount: 3,
-                                children: _contentGallery,
-                              )
-                            : OlukoErrorMessage(),
-                      ),
-                    ]),
-                  ),
-                );
-              },
-            ),
-    );
-  }
-
-  Future<void> _requestTransformationJourneyData(
-      BuildContext context, UserResponse profileInfo) async {
-    try {
-      BlocProvider.of<TransformationJourneyBloc>(context)
-          .getContentByUserId(profileInfo.id);
-    } catch (e) {
-      throw e;
-    }
+        appBar: OlukoAppBar(
+          title: ProfileViewConstants.profileOptionsTransformationJourney,
+          showSearchBar: false,
+        ),
+        body: _contentGallery == null
+            ? Container(
+                color: Colors.black, child: OlukoCircularProgressIndicator())
+            : Container(
+                constraints: BoxConstraints.expand(),
+                color: OlukoColors.black,
+                child: SafeArea(
+                  child: Stack(children: [
+                    Align(
+                        alignment: Alignment.topCenter,
+                        child: Container(
+                            width: MediaQuery.of(context).size.width,
+                            child: Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Row(
+                                children: [
+                                  OlukoOutlinedButton(
+                                      title: OlukoLocalizations.of(context)
+                                          .find('tapToUpload'),
+                                      onPressed: () {
+                                        AppModal.dialogContent(
+                                            context: context,
+                                            content: [
+                                              BlocProvider.value(
+                                                value: BlocProvider.of<
+                                                        TransformationJourneyBloc>(
+                                                    context),
+                                                child: ModalUploadOptions(
+                                                    UploadFrom
+                                                        .transformationJourney),
+                                              )
+                                            ]);
+                                      }),
+                                ],
+                              ),
+                            ))),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(10, 150, 10, 0),
+                      child: _contentGallery.length != 0
+                          ? GridView.count(
+                              crossAxisCount: 3,
+                              children: _contentGallery,
+                            )
+                          : OlukoErrorMessage(),
+                    ),
+                  ]),
+                ),
+              ));
   }
 }

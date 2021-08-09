@@ -144,4 +144,19 @@ class UserRepository {
 
     return downloadUrl;
   }
+
+  Future<UserResponse> updateUserSettingsPreferences(
+      UserResponse user, num privacyIndex, bool notificationValue) async {
+    DocumentReference<Object> userReference = getUserReference(user);
+
+    user.notification = notificationValue;
+    user.privacy = privacyIndex;
+    try {
+      await userReference.update(user.toJson());
+      AuthRepository().storeLoginData(user);
+      return user;
+    } on Exception catch (e) {
+      return null;
+    }
+  }
 }

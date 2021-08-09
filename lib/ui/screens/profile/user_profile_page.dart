@@ -11,20 +11,18 @@ import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/list_of_items_to_widget.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/course.dart';
-import 'package:oluko_app/models/enums/file_type_enum.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
 import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/carousel_small_section.dart';
 import 'package:oluko_app/ui/components/course_card.dart';
-import 'package:oluko_app/ui/components/image_and_video_container.dart';
 import 'package:oluko_app/ui/components/modal_upload_options.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/user_profile_information.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
-import 'package:oluko_app/ui/screens/profile/profile_routes.dart';
 import 'package:oluko_app/utils/app_modal.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -219,11 +217,13 @@ class _UserProfilePageState extends State<UserProfilePage> {
                       ? _buildCarouselSection(
                           titleForSection: OlukoLocalizations.of(context)
                               .find('assessmentVideos'),
-                          routeForSection: ProfileRoutes.goToAssessmentVideos(),
+                          routeForSection:
+                              routeLabels[RouteEnum.profileAssessmentVideos],
                           contentForSection: TransformListOfItemsToWidget
                               .getWidgetListFromContent(
-                                  assessmentVideoData:
-                                      _assessmentVideosContent))
+                                  assessmentVideoData: _assessmentVideosContent,
+                                  requestedFromRoute:
+                                      ActualProfileRoute.userProfile))
                       : SizedBox();
                 }),
                 BlocBuilder<TransformationJourneyBloc,
@@ -236,12 +236,14 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         ? _buildCarouselSection(
                             titleForSection: OlukoLocalizations.of(context)
                                 .find('transformationJourney'),
-                            routeForSection:
-                                ProfileRoutes.goToTransformationJourney(),
+                            routeForSection: routeLabels[
+                                RouteEnum.profileTransformationJourney],
                             contentForSection: TransformListOfItemsToWidget
                                 .getWidgetListFromContent(
                                     tansformationJourneyData:
-                                        _transformationJourneyContent))
+                                        _transformationJourneyContent,
+                                    requestedFromRoute:
+                                        ActualProfileRoute.userProfile))
                         : SizedBox();
                   },
                 ),
@@ -271,10 +273,13 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         ? _buildCarouselSection(
                             titleForSection: OlukoLocalizations.of(context)
                                 .find('upcomingChallenges'),
-                            routeForSection: ProfileRoutes.goToChallenges(),
+                            routeForSection:
+                                routeLabels[RouteEnum.profileChallenges],
                             contentForSection: TransformListOfItemsToWidget
                                 .getWidgetListFromContent(
-                                    upcomingChallenges: _activeChallenges))
+                                    upcomingChallenges: _activeChallenges,
+                                    requestedFromRoute:
+                                        ActualProfileRoute.userProfile))
                         : SizedBox();
                   },
                 ),
