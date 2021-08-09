@@ -117,14 +117,52 @@ class _TaskDetailsState extends State<TaskDetails> {
         child: Container(height: 400, child: Stack(children: widgets)));
   }
 
-  Widget formSection() {
+  Widget formSection([TaskSubmission taskSubmission]) {
     return Container(
         //height: MediaQuery.of(context).size.height / 1.75,
         child: Column(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-          formFields(),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  OlukoLocalizations.of(context).find('makeThisPublic'),
+                  style: OlukoFonts.olukoSuperBigFont(
+                      customColor: OlukoColors.white,
+                      custoFontWeight: FontWeight.bold),
+                ),
+                Switch(
+                  value: _makePublic,
+                  onChanged: (bool value) => this.setState(() {
+                    _makePublic = value;
+                    if (taskSubmission != null) {
+                      BlocProvider.of<TaskSubmissionBloc>(context)
+                        ..updateTaskSubmissionPrivacity(
+                            _assessmentAssignment, taskSubmission.id, value);
+                    }
+                  }),
+                  trackColor: MaterialStateProperty.all(Colors.grey),
+                  activeColor: OlukoColors.primary,
+                )
+              ],
+            ),
+          ),
+          Text(
+            _task.description,
+            style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
+          ),
+          BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
+              builder: (context, state) {
+            if (state is GetSuccess && state.taskSubmission != null) {
+              return recordedVideos(state.taskSubmission);
+            } else {
+              return SizedBox();
+            }
+          })
         ]));
   }
 
@@ -132,11 +170,12 @@ class _TaskDetailsState extends State<TaskDetails> {
     return BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
         builder: (context, state) {
       if (state is GetSuccess && state.taskSubmission != null) {
+        _makePublic = state.taskSubmission.isPublic;
         return ListView(
           children: [
             SizedBox(height: 20),
             showVideoPlayer(_task.video),
-            formSection(),
+            formSection(state.taskSubmission),
             recordAgainButtons(state.taskSubmission)
           ],
         );
@@ -168,6 +207,7 @@ class _TaskDetailsState extends State<TaskDetails> {
             if (_controller != null) {
               _controller.pause();
             }
+            Navigator.pop(context);
             return Navigator.pushNamed(
                 context, routeLabels[RouteEnum.selfRecording], arguments: {
               'taskIndex': widget.taskIndex,
@@ -255,47 +295,6 @@ class _TaskDetailsState extends State<TaskDetails> {
                 ))
           ]))
     ];
-  }
-
-  Widget formFields() {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                OlukoLocalizations.of(context).find('makeThisPublic'),
-                style: OlukoFonts.olukoSuperBigFont(
-                    customColor: OlukoColors.white,
-                    custoFontWeight: FontWeight.bold),
-              ),
-              Switch(
-                value: _makePublic,
-                onChanged: (bool value) => this.setState(() {
-                  _makePublic = value;
-                }),
-                trackColor: MaterialStateProperty.all(Colors.grey),
-                activeColor: OlukoColors.primary,
-              )
-            ],
-          ),
-        ),
-        Text(
-          _task.description,
-          style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
-        ),
-        BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
-            builder: (context, state) {
-          if (state is GetSuccess && state.taskSubmission != null) {
-            return recordedVideos(state.taskSubmission);
-          } else {
-            return SizedBox();
-          }
-        })
-      ],
-    );
   }
 
   recordedVideos(TaskSubmission taskSubmission) {

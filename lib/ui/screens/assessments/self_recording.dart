@@ -178,6 +178,7 @@ class _State extends State<SelfRecording> {
                 if (_recording) {
                   XFile videopath = await cameraController.stopVideoRecording();
                   String path = videopath.path;
+                  Navigator.pop(context);
                   Navigator.pushNamed(
                       context, routeLabels[RouteEnum.selfRecordingPreview],
                       arguments: {

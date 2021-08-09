@@ -35,8 +35,8 @@ class Failure extends TaskSubmissionState {
 class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
   TaskSubmissionBloc() : super(Loading());
 
-  Future<void> createTaskSubmission(
-      AssessmentAssignment assessmentAssignment, Task task, bool isPublic) async {
+  Future<void> createTaskSubmission(AssessmentAssignment assessmentAssignment,
+      Task task, bool isPublic) async {
     try {
       TaskSubmission newTaskSubmission =
           await TaskSubmissionRepository.createTaskSubmission(
@@ -56,6 +56,17 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
     } catch (e) {
       print(e.toString());
       emit(Failure(exception: e));
+    }
+  }
+
+  void updateTaskSubmissionPrivacity(AssessmentAssignment assessmentA,
+      String taskSubmissionId, bool isPublic) async {
+    try {
+      await TaskSubmissionRepository.updateTaskSubmissionPrivacity(
+          assessmentA, taskSubmissionId, isPublic);
+    } catch (e) {
+      print(e.toString());
+      //emit(Failure(exception: e));
     }
   }
 

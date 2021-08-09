@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/blocs_per_view/task_submission_list.dart';
 import 'package:oluko_app/blocs/class_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment_bloc.dart';
@@ -159,6 +160,8 @@ class Routes {
   final FavoriteBloc _favoriteBloc = FavoriteBloc();
   final RecommendationBloc _recommendationBloc = RecommendationBloc();
   final PlanBloc _planBloc = PlanBloc();
+  final TaskSubmissionListBloc _taskSubmissionListBloc =
+      TaskSubmissionListBloc();
 
   getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -329,6 +332,8 @@ class Routes {
         break;
       case RouteEnum.assessmentVideos:
         providers = [
+          BlocProvider<TaskSubmissionListBloc>.value(
+              value: _taskSubmissionListBloc),
           BlocProvider<AssessmentAssignmentBloc>.value(
               value: _assessmentAssignmentBloc),
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),

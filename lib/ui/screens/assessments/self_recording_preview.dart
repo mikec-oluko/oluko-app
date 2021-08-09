@@ -97,6 +97,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
             BlocProvider.of<TaskSubmissionBloc>(context)
               ..updateTaskSubmissionVideo(
                   _assessmentAssignment, _taskSubmission.id, state.video);
+            Navigator.pop(context);
             Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails],
                 arguments: {'taskIndex': widget.taskIndex});
           }
