@@ -192,9 +192,6 @@ class _HomeState extends State<Home> {
     return GestureDetector(
       onTap: () {
         //TODO: add action here.
-        //TODO: REMOVE THIS AFTER ASSESSMENT IS IN THE RIGHT PLACE
-        return Navigator.pushNamed(
-            context, routeLabels[RouteEnum.assessmentVideos]);
       },
       child: Padding(
         padding: const EdgeInsets.only(right: 20.0, top: 5),
