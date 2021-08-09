@@ -111,6 +111,7 @@
     "country": "País",
     "toACourse": "a un Curso",
     "public": "Público",
+    "publicSubtitle": "Perfil público",
     "assessment": "Evaluación",
     "private": "Privado",
     "done": "Hecho",
@@ -121,5 +122,12 @@
     "assessmentMessagePart1": "Gracias por completar todas las evaluaciones.",
     "assessmentMessagePart2": "Revisaremos y nos pondremos en contacto contigo en breves con la asignación de entrenador adecuada.",
     "goBackToAssessment": "Volver a las evaluaciones",
-    "ok": "Ok"
+    "ok": "Ok",
+    "restricted": "Privado",
+    "restrictedSubtitle": "Perfil privado",
+    "anonymous": "Anónimo",
+    "anonymousSubtitle": "Perfil anónimo",
+    "helpAndSupport": "Ayuda y Soporte",
+    "myAccount": "Mi Perfil",
+    "subscription": "Subscripción"
 }

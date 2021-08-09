@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/models/friend.dart';
 import 'package:oluko_app/repositories/friend_repository.dart';
 
 abstract class FriendState {}
@@ -32,11 +33,9 @@ class FriendBloc extends Cubit<FriendState> {
 
   void getFriendsByUserId(String userId) async {
     try {
-      List<User> friends =
-          await FriendRepository.getUserFriendsByUserId(userId);
-      emit(GetFriendsSuccess(friendUsers: friends));
+      Friend friendData = await FriendRepository.getUserFriendsByUserId(userId);
+      emit(GetFriendsSuccess(friendUsers: []));
     } catch (e) {
-      print(e.toString());
       emit(Failure(exception: e));
     }
   }
@@ -47,7 +46,6 @@ class FriendBloc extends Cubit<FriendState> {
           await FriendRepository.getUserFriendsRequestByUserId(userId);
       emit(GetFriendRequestsSuccess(friendRequestList: friendsRequests));
     } catch (e) {
-      print(e.toString());
       emit(Failure(exception: e));
     }
   }
@@ -59,7 +57,6 @@ class FriendBloc extends Cubit<FriendState> {
       emit(GetFriendSuggestionSuccess(
           friendSuggestionList: friendsSuggestionList));
     } catch (e) {
-      print(e.toString());
       emit(Failure(exception: e));
     }
   }

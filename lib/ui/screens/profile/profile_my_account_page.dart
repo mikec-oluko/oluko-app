@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/plan_bloc.dart';
-import 'package:oluko_app/blocs/profile_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_helper.dart';
 import 'package:oluko_app/models/plan.dart';
@@ -11,10 +10,8 @@ import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_user_info.dart';
 import 'package:oluko_app/ui/components/subscription_card.dart';
-import 'package:oluko_app/ui/components/modal_upload_options.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/app_messages.dart';
-import 'package:oluko_app/utils/app_modal.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ProfileMyAccountPage extends StatefulWidget {
@@ -67,11 +64,8 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
   Column buildUserInformationFields() {
     return Column(
       children: [
-        userInformationFields(
-            OlukoLocalizations.of(context).find('userName'),
-            _profileInfo.username != null
-                ? _profileInfo.username
-                : ProfileViewConstants.profileUserNameContent),
+        userInformationFields(OlukoLocalizations.of(context).find('userName'),
+            _profileInfo.username),
         userInformationFields(OlukoLocalizations.of(context).find('firstName'),
             _profileInfo.firstName),
         userInformationFields(OlukoLocalizations.of(context).find('lastName'),
