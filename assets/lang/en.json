@@ -59,6 +59,7 @@
     "yetToUnlock": "Yet to 'Unlock'",
     "tapToUpload": "Tap to Upload",
     "recordedVideo": "Recorded video",
+    "name": "Name",
     "firstName": "First Name",
     "lastName": "Last Name",
     "userName": "User Name",
@@ -122,6 +123,9 @@
     "anonymousSubtitle": "Anonymous profile",
     "helpAndSupport": "Help and Support",
     "myAccount": "My Account",
-    "subscription": "Subscription"
+    "subscription": "Subscription",
+    "phone": "Phone",
+    "message": "Message",
+    "submit": "Submit"
     
 }

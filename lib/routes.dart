@@ -41,6 +41,7 @@ import 'package:oluko_app/ui/screens/courses/movement_intro.dart';
 import 'package:oluko_app/ui/screens/profile/profile.dart';
 import 'package:oluko_app/ui/screens/profile/profile_assessment_videos_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_challenges_page.dart';
+import 'package:oluko_app/ui/screens/profile/profile_help_and_support_contact_us.dart';
 import 'package:oluko_app/ui/screens/profile/profile_help_and_support_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_my_account_page.dart';
 import 'package:oluko_app/ui/screens/profile/transformation_journey_content_detail.dart';
@@ -69,6 +70,7 @@ enum RouteEnum {
   profileMyAccount,
   profileSubscription,
   profileHelpAndSupport,
+  profileContactUs,
   profileViewOwnProfile,
   profileChallenges,
   profileTransformationJourney,
@@ -104,6 +106,7 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.profileMyAccount: '/profile-my-account',
   RouteEnum.profileSubscription: '/profile-subscription',
   RouteEnum.profileHelpAndSupport: '/profile-help-and-support',
+  RouteEnum.profileContactUs: '/profile-help-and-support-contact-us',
   RouteEnum.profileViewOwnProfile: '/profile-view-user-profile',
   RouteEnum.profileChallenges: '/profile-challenges',
   RouteEnum.profileTransformationJourney: '/profile-transformation-journey',
@@ -219,6 +222,9 @@ class Routes {
         break;
       case RouteEnum.profileHelpAndSupport:
         newRouteView = ProfileHelpAndSupportPage();
+        break;
+      case RouteEnum.profileContactUs:
+        newRouteView = ProfileContacUsPage();
         break;
       case RouteEnum.profileViewOwnProfile:
         providers = [
