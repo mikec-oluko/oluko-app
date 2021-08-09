@@ -278,8 +278,8 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     OlukoPrimaryButton(
-                      title: OlukoLocalizations.of(context)
-                          .find('goBackToAssessment'),
+                      title: OlukoLocalizations.of(context).find('goBack'),
+                      thinPadding: true,
                       onPressed: () {
                         Navigator.pop(context);
                       },

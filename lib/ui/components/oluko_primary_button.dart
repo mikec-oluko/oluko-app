@@ -9,14 +9,17 @@ class OlukoPrimaryButton extends StatefulWidget {
   final Color textColor;
   final TextAlign textAlign;
   final Widget icon;
+  final bool thinPadding;
 
-  OlukoPrimaryButton(
-      {this.title,
-      this.onPressed,
-      this.color,
-      this.textColor = Colors.black,
-      this.textAlign = TextAlign.center,
-      this.icon});
+  OlukoPrimaryButton({
+    this.title,
+    this.onPressed,
+    this.thinPadding = false,
+    this.color,
+    this.textColor = Colors.black,
+    this.textAlign = TextAlign.center,
+    this.icon,
+  });
 
   @override
   _State createState() => _State();
@@ -51,12 +54,22 @@ class _State extends State<OlukoPrimaryButton> {
   }
 
   _textLabel() {
-    return Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Text(
-          widget.title,
-          textAlign: widget.textAlign,
-          style: TextStyle(fontSize: 18, color: widget.textColor),
-        ));
+    if (widget.thinPadding) {
+      return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 15),
+          child: Text(
+            widget.title,
+            textAlign: widget.textAlign,
+            style: TextStyle(fontSize: 18, color: widget.textColor),
+          ));
+    } else {
+      return Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Text(
+            widget.title,
+            textAlign: widget.textAlign,
+            style: TextStyle(fontSize: 18, color: widget.textColor),
+          ));
+    }
   }
 }
