@@ -15,9 +15,12 @@ import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/services/task_submission_service.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
+import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/task_card.dart';
+import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
+import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
@@ -129,8 +132,9 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                                 title:
                                     OlukoLocalizations.of(context).find('done'),
                                 onPressed: () {
-                                  Navigator.pushNamed(
-                                      context, routeLabels[RouteEnum.root]);
+                                  MovementUtils.movementDialog(
+                                      context, _confirmDialogContent(),
+                                      showExitButton: false);
                                 },
                               )
                             ]);
@@ -183,7 +187,8 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                 itemBuilder: (context, num index) {
                   Task task = taskState.values[index];
                   TaskSubmission taskSubmission =
-                      TaskSubmissionService.getTaskSubmissionOfTask(task, taskSubmissions);
+                      TaskSubmissionService.getTaskSubmissionOfTask(
+                          task, taskSubmissions);
                   return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10.0),
                       child: TaskCard(
@@ -232,5 +237,67 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                   style: OlukoFonts.olukoBigFont(
                       customColor: OlukoColors.grayColor),
                 ))));
+  }
+
+  List<Widget> _confirmDialogContent() {
+    return [
+      Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(children: [
+            Stack(alignment: Alignment.center, children: [
+              Image.asset(
+                'assets/assessment/green_ellipse.png',
+                scale: 2,
+              ),
+              Image.asset(
+                'assets/assessment/gray_check.png',
+                scale: 5,
+              )
+            ]),
+            Padding(
+                padding: const EdgeInsets.only(top: 20.0, bottom: 15.0),
+                child: Text(
+                  OlukoLocalizations.of(context).find('done!'),
+                  style: OlukoFonts.olukoSuperBigFont(
+                      customColor: OlukoColors.white,
+                      custoFontWeight: FontWeight.bold),
+                )),
+            Text(
+              OlukoLocalizations.of(context).find('assessmentMessagePart1'),
+              style:
+                  OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
+            ),
+            Text(
+              OlukoLocalizations.of(context).find('assessmentMessagePart2'),
+              style:
+                  OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
+            ),
+            Padding(
+                padding: const EdgeInsets.only(top: 25.0),
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    OlukoPrimaryButton(
+                      title: OlukoLocalizations.of(context)
+                          .find('goBackToAssessment'),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                    SizedBox(width: 20),
+                    OlukoOutlinedButton(
+                      title: OlukoLocalizations.of(context).find('ok'),
+                      onPressed: () {
+                        if (_controller != null) {
+                          _controller.pause();
+                        }
+                        return Navigator.pushNamed(
+                            context, routeLabels[RouteEnum.root]);
+                      },
+                    ),
+                  ],
+                ))
+          ]))
+    ];
   }
 }

@@ -115,5 +115,10 @@
     "done": "Done",
     "skip": "Skip",
     "makeThisPublic": "Make this public",
-    "retake": "Retake"
+    "retake": "Retake",
+    "done!": "Done!",
+    "assessmentMessagePart1": "Thank you for completing all the assessments.",
+    "assessmentMessagePart2": "We will review and get back to you shortly with suitable coach assignement.",
+    "goBackToAssessment": "Go Back To Assessment",
+    "ok": "Ok"
 }
