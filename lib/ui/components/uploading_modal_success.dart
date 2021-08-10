@@ -76,9 +76,7 @@ class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
                                 }
                                 if (widget.goToPage ==
                                     UploadFrom.transformationJourney) {
-                                  BlocProvider.of<TransformationJourneyBloc>(
-                                      context)
-                                    ..resetUploadStatus();
+                                  Navigator.pop(context);
                                   Navigator.popAndPushNamed(context,
                                       returnRouteToGo(widget.goToPage));
                                 }
