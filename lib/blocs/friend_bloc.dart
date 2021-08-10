@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/friend.dart';
 import 'package:oluko_app/repositories/friend_repository.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class FriendState {}
 
@@ -35,8 +36,12 @@ class FriendBloc extends Cubit<FriendState> {
     try {
       Friend friendData = await FriendRepository.getUserFriendsByUserId(userId);
       emit(GetFriendsSuccess(friendUsers: []));
-    } catch (e) {
-      emit(Failure(exception: e));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: exception));
     }
   }
 
@@ -45,8 +50,12 @@ class FriendBloc extends Cubit<FriendState> {
       List<User> friendsRequests =
           await FriendRepository.getUserFriendsRequestByUserId(userId);
       emit(GetFriendRequestsSuccess(friendRequestList: friendsRequests));
-    } catch (e) {
-      emit(Failure(exception: e));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: exception));
     }
   }
 
@@ -56,8 +65,12 @@ class FriendBloc extends Cubit<FriendState> {
           await FriendRepository.getUserFriendsSuggestionsByUserId(userId);
       emit(GetFriendSuggestionSuccess(
           friendSuggestionList: friendsSuggestionList));
-    } catch (e) {
-      emit(Failure(exception: e));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: exception));
     }
   }
 }

@@ -12,6 +12,7 @@ import 'package:oluko_app/utils/time_converter.dart';
 import 'package:oluko_app/utils/video_process.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class VideoState {}
 
@@ -53,7 +54,11 @@ class VideoBloc extends Cubit<VideoState> {
     try {
       Video video = await _processVideo(context, videoFile, aspectRatio, id);
       emit(VideoSuccess(video: video));
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       emit(VideoFailure(exceptionMessage: e.toString()));
     }
   }

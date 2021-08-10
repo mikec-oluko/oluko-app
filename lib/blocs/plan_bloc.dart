@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/plan.dart';
 import 'package:oluko_app/repositories/plan_repository.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class PlanState {}
 
@@ -35,8 +36,12 @@ class PlanBloc extends Cubit<PlanState> {
       List<Plan> plans = await PlanRepository().getAll();
       plans.sort((a, b) => a.title.compareTo(b.title));
       emit(PlansSuccess(plans: plans));
-    } catch (e) {
-      emit(Failure(exception: e));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: exception));
     }
   }
 }

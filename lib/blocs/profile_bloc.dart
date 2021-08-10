@@ -3,6 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/profile_repository.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class ProfileState {}
 
@@ -54,16 +55,24 @@ class ProfileBloc extends Cubit<ProfileState> {
             await _profileRepository.updateProfileAvatar(_image);
         emit(ProfileUploadSuccess(userUpdated: userUpdated));
       }
-    } catch (e) {
-      emit(Failure(exception: e));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: exception));
     }
   }
 
   void resetUploadStatus() {
     try {
       emit(NoUploads());
-    } catch (e) {
-      emit(Failure(exception: e));
+    } catch (exception, stackTrace) {
+      Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: exception));
     }
   }
 
@@ -72,8 +81,12 @@ class ProfileBloc extends Cubit<ProfileState> {
     try {
       await _profileRepository.updateUserPreferences(
           userToUpdate, privacyIndex, notificationValue);
-    } catch (e) {
-      emit(Failure(exception: e));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: exception));
     }
   }
 }

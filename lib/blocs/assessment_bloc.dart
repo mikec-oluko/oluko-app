@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/repositories/assessment_repository.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class AssessmentState {}
 
@@ -32,8 +33,12 @@ class AssessmentBloc extends Cubit<AssessmentState> {
     try {
       List<Assessment> assessments = await AssessmentRepository().getAll();
       emit(AssessmentsSuccess(assessments: assessments));
-    } catch (e) {
-      emit(AssessmentFailure(exception: e));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(AssessmentFailure(exception: exception));
     }
   }
 
@@ -44,8 +49,12 @@ class AssessmentBloc extends Cubit<AssessmentState> {
     try {
       Assessment assessment = await AssessmentRepository().getById(id);
       emit(AssessmentSuccess(assessment: assessment));
-    } catch (e) {
-      emit(AssessmentFailure(exception: e));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(AssessmentFailure(exception: exception));
     }
   }
 }

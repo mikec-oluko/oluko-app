@@ -6,6 +6,7 @@ import 'package:oluko_app/models/transformation_journey_uploads.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/repositories/transformation_journey_repository.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class TransformationJourneyState {}
 
@@ -33,7 +34,11 @@ class TransformationJourneyBloc extends Cubit<TransformationJourneyState> {
           await TransformationJourneyRepository()
               .getUploadedContentByUserId(userId);
       emit(TransformationJourneySuccess(contentFromUser: contentUploaded));
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       emit(TransformationJourneyFailure(exception: e));
     }
   }
@@ -44,7 +49,11 @@ class TransformationJourneyBloc extends Cubit<TransformationJourneyState> {
       TransformationJourneyUpload transformationJourneyUpload =
           await TransformationJourneyRepository
               .createTransformationJourneyUpload(type, file, userId);
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       emit(TransformationJourneyFailure(exception: e));
     }
   }
@@ -74,7 +83,11 @@ class TransformationJourneyBloc extends Cubit<TransformationJourneyState> {
               .getUploadedContentByUserId(user.id);
 
       emit(TransformationJourneySuccess(contentFromUser: contentUploaded));
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       emit(TransformationJourneyFailure(exception: e));
     }
   }
@@ -82,7 +95,11 @@ class TransformationJourneyBloc extends Cubit<TransformationJourneyState> {
   void resetUploadStatus() {
     try {
       emit(TransformationJourneyNoUploads());
-    } catch (e) {
+    } catch (e, stackTrace) {
+      Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       emit(TransformationJourneyFailure(exception: e));
     }
   }
