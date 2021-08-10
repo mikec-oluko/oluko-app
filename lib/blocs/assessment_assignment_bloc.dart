@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/repositories/assessment_assignment_repository.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class AssessmentAssignmentState {}
 
@@ -33,8 +34,12 @@ class AssessmentAssignmentBloc extends Cubit<AssessmentAssignmentState> {
         assessmentA = AssessmentAssignmentRepository.create(user, assessment);
       }
       emit(AssessmentAssignmentSuccess(assessmentAssignment: assessmentA));
-    } catch (e) {
-      emit(AssessmentAssignmentFailure(exception: e));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(AssessmentAssignmentFailure(exception: exception));
     }
   }
 }

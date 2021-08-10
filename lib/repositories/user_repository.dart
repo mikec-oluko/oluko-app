@@ -8,6 +8,7 @@ import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:path/path.dart' as p;
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'auth_repository.dart';
 
@@ -68,7 +69,11 @@ class UserRepository {
     try {
       await docRef.set(user.toJson());
       return user;
-    } on Exception catch (e) {
+    } on Exception catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       return null;
     }
   }
@@ -104,7 +109,11 @@ class UserRepository {
       await userReference.update(user.toJson());
       AuthRepository().storeLoginData(user);
       return user;
-    } on Exception catch (e) {
+    } on Exception catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       return null;
     }
   }
@@ -120,7 +129,11 @@ class UserRepository {
       await userReference.update(user.toJson());
       AuthRepository().storeLoginData(user);
       return user;
-    } on Exception catch (e) {
+    } on Exception catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       return null;
     }
   }
@@ -155,7 +168,11 @@ class UserRepository {
       await userReference.update(user.toJson());
       AuthRepository().storeLoginData(user);
       return user;
-    } on Exception catch (e) {
+    } on Exception catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       return null;
     }
   }

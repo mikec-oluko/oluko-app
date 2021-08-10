@@ -3,6 +3,7 @@ import 'package:oluko_app/models/recommendation.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/recommendation_repository.dart';
 import 'package:oluko_app/repositories/user_repository.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class RecommendationState {}
 
@@ -28,9 +29,12 @@ class RecommendationBloc extends Cubit<RecommendationState> {
       List<Recommendation> recommendations =
           await RecommendationRepository().getAll();
       emit(RecommendationSuccess(recommendations: recommendations));
-    } catch (e) {
-      print(e.toString());
-      emit(Failure(exception: e));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: exception));
     }
   }
 
@@ -39,9 +43,12 @@ class RecommendationBloc extends Cubit<RecommendationState> {
       List<Recommendation> recommendations =
           await RecommendationRepository().getByDestinationUser(userId);
       emit(RecommendationSuccess(recommendations: recommendations));
-    } catch (e) {
-      print(e.toString());
-      emit(Failure(exception: e));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: exception));
     }
   }
 
@@ -91,9 +98,12 @@ class RecommendationBloc extends Cubit<RecommendationState> {
       emit(RecommendationSuccess(
           recommendations: recommendations,
           recommendationsByUsers: coursesRecommendedByUsers));
-    } catch (e) {
-      print(e.toString());
-      emit(Failure(exception: e));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: exception));
     }
   }
 
