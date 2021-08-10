@@ -1,4 +1,4 @@
-app_identifier("com.app.olukoApp") # The bundle identifier of your app
+app_identifier("com.app.oluko.qa") # The bundle identifier of your app
 apple_id("mikec@oluko.com") # Your Apple email address
 
 itc_team_id("122944779") # App Store Connect Team ID
