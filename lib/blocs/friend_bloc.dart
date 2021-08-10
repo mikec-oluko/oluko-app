@@ -11,17 +11,17 @@ abstract class FriendState {}
 class Loading extends FriendState {}
 
 class GetFriendsSuccess extends FriendState {
-  List<User> friendUsers;
+  List<UserResponse> friendUsers;
   GetFriendsSuccess({this.friendUsers});
 }
 
 class GetFriendRequestsSuccess extends FriendState {
-  List<User> friendRequestList;
+  List<UserResponse> friendRequestList;
   GetFriendRequestsSuccess({this.friendRequestList});
 }
 
 class GetFriendSuggestionSuccess extends FriendState {
-  List<User> friendSuggestionList;
+  List<UserResponse> friendSuggestionList;
   GetFriendSuggestionSuccess({this.friendSuggestionList});
 }
 
@@ -57,7 +57,7 @@ class FriendBloc extends Cubit<FriendState> {
               .map((e) => UserRepository().getById(e.id))
               .toList());
 
-      emit(GetFriendRequestsSuccess(friendRequestList: null));
+      emit(GetFriendRequestsSuccess(friendRequestList: friendRequestUsers));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
@@ -71,8 +71,7 @@ class FriendBloc extends Cubit<FriendState> {
     try {
       List<User> friendsSuggestionList =
           await FriendRepository.getUserFriendsSuggestionsByUserId(userId);
-      emit(GetFriendSuggestionSuccess(
-          friendSuggestionList: friendsSuggestionList));
+      emit(GetFriendSuggestionSuccess(friendSuggestionList: null));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
