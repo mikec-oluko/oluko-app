@@ -78,7 +78,6 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
                     content: [UploadingModalLoader(widget.contentFrom)]);
               }
               if (widget.contentFrom == UploadFrom.transformationJourney) {
-                Navigator.pop(context);
                 BlocProvider.of<TransformationJourneyBloc>(context)
                   ..uploadTransformationJourneyContent(
                       uploadedFrom: DeviceContentFrom.gallery);

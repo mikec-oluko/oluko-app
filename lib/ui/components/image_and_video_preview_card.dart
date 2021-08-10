@@ -42,8 +42,10 @@ class _State extends State<ImageAndVideoPreviewCard> {
     setState(() {
       if (widget.originalContent is TransformationJourneyUpload) {
         transformationJourneyContent = widget.originalContent;
-        titleForPreviewImage = TimeConverter.returnDateAndTimeOnStringFormat(
-            dateToFormat: transformationJourneyContent.createdAt);
+        titleForPreviewImage = transformationJourneyContent.createdAt != null
+            ? TimeConverter.returnDateAndTimeOnStringFormat(
+                dateToFormat: transformationJourneyContent.createdAt)
+            : "";
       }
       if (widget.originalContent is TaskSubmission) {
         taskSubmissionContent = widget.originalContent;
@@ -116,7 +118,9 @@ class _State extends State<ImageAndVideoPreviewCard> {
                       height: 30,
                       child: Center(
                         child: Text(
-                          titleForPreviewImage,
+                          titleForPreviewImage != null
+                              ? titleForPreviewImage
+                              : '',
                           style: OlukoFonts.olukoSmallFont(),
                         ),
                       ),

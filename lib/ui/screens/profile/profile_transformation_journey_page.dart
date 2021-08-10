@@ -43,6 +43,12 @@ class _ProfileTransformationJourneyPageState
                       tansformationJourneyData: _transformationJourneyContent,
                       requestedFromRoute:
                           ActualProfileRoute.transformationJourney);
+            } else if (state is TransformationJourneyNoUploads) {
+              BlocProvider.of<TransformationJourneyBloc>(context)
+                ..emitTransformationJourneyFailure();
+            } else if (state is TransformationJourneyFailure) {
+              BlocProvider.of<TransformationJourneyBloc>(context)
+                ..getContentByUserId(_profileInfo.id);
             }
             return page(context, _profileInfo);
           },

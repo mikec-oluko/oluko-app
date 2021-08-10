@@ -72,7 +72,11 @@ class TransformationJourneyBloc extends Cubit<TransformationJourneyState> {
       if (uploadedFrom == DeviceContentFrom.camera) {
         _image = await imagePicker.getImage(source: ImageSource.camera);
       }
-      if (_image == null) return;
+      if (_image == null) {
+        emit(TransformationJourneyNoUploads());
+        return;
+      }
+
       UserResponse user = await AuthRepository().retrieveLoginData();
 
       TransformationJourneyUpload upload = await TransformationJourneyRepository
@@ -92,9 +96,10 @@ class TransformationJourneyBloc extends Cubit<TransformationJourneyState> {
     }
   }
 
-  void resetUploadStatus() {
+  void emitTransformationJourneyFailure() {
     try {
-      emit(TransformationJourneyNoUploads());
+      emit(TransformationJourneyFailure(
+          exception: new Exception("Upload Aborted")));
     } catch (e, stackTrace) {
       Sentry.captureException(
         e,
