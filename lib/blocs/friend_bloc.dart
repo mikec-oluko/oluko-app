@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/friend.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/friend_repository.dart';
+import 'package:oluko_app/repositories/user_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class FriendState {}
@@ -47,9 +49,15 @@ class FriendBloc extends Cubit<FriendState> {
 
   void getUserFriendsRequestByUserId(String userId) async {
     try {
-      List<User> friendsRequests =
+      Friend friendInformation =
           await FriendRepository.getUserFriendsRequestByUserId(userId);
-      emit(GetFriendRequestsSuccess(friendRequestList: friendsRequests));
+
+      List<UserResponse> friendRequestUsers = await Future.wait(
+          friendInformation.friendRequestReceived
+              .map((e) => UserRepository().getById(e.id))
+              .toList());
+
+      emit(GetFriendRequestsSuccess(friendRequestList: null));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
