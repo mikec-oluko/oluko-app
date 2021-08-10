@@ -5,6 +5,7 @@ import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/submodels/enrollment_class.dart';
 import 'package:oluko_app/repositories/course_enrollment_repository.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class CourseEnrollmentState {}
 
@@ -48,8 +49,12 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
       CourseEnrollment courseEnrollment =
           await CourseEnrollmentRepository.create(user, course);
       emit(GetEnrollmentSuccess(courseEnrollment: courseEnrollment));
-    } catch (e) {
-      emit(Failure(exception: e));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: exception));
     }
   }
 
@@ -58,9 +63,12 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
       CourseEnrollment courseEnrollment =
           await CourseEnrollmentRepository.get(course, user);
       emit(GetEnrollmentSuccess(courseEnrollment: courseEnrollment));
-    } catch (e) {
-      print(e.toString());
-      emit(Failure(exception: e));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: exception));
     }
   }
 
@@ -70,9 +78,12 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
       await CourseEnrollmentRepository.markSegmentAsCompleted(
           courseEnrollment, segmentIndex, classIndex);
       emit(MarkSegmentSuccess());
-    } catch (e) {
-      print(e.toString());
-      emit(Failure(exception: e));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: exception));
     }
   }
 
@@ -83,8 +94,12 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
 
       emit(GetCourseEnrollmentChallenge(
           challenges: courseEnrollmentsChallenges));
-    } catch (e) {
-      emit(Failure(exception: e));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: exception));
     }
   }
 
@@ -94,8 +109,12 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
           await CourseEnrollmentRepository.getUserCourseEnrollments(userId);
       emit(
           CourseEnrollmentListSuccess(courseEnrollmentList: courseEnrollments));
-    } catch (e) {
-      emit(Failure(exception: e));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: exception));
     }
   }
 }

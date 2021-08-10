@@ -12,6 +12,7 @@ import 'package:oluko_app/models/submodels/object_submodel.dart';
 import 'package:oluko_app/models/submodels/segment_submodel.dart';
 import 'package:oluko_app/repositories/course_repository.dart';
 import 'package:oluko_app/services/course_enrollment_service.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 class CourseEnrollmentRepository {
   FirebaseFirestore firestoreInstance;
@@ -138,7 +139,11 @@ class CourseEnrollmentRepository {
         final Map<String, dynamic> course = doc.data();
         courseEnrollmentList.add(CourseEnrollment.fromJson(course));
       });
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       throw e;
     }
     return courseEnrollmentList;
@@ -164,7 +169,11 @@ class CourseEnrollmentRepository {
             courseEnrollment, challengeList));
       }
       Future.wait(futures);
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       return [];
     }
     return challengeList;

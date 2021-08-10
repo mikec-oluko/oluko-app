@@ -7,6 +7,7 @@ import 'package:oluko_app/routes.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'config/project_settings.dart';
 
 Future<void> main() async {
@@ -18,7 +19,13 @@ Future<void> main() async {
   final MyApp myApp = MyApp(
     initialRoute: alreadyLoggedUser == null ? '/sign-up' : '/',
   );
-  runApp(myApp);
+  await SentryFlutter.init(
+    (options) {
+      options.dsn = GlobalConfiguration().getValue("sentryDsn");
+      options.environment = GlobalConfiguration().getValue("environment");
+    },
+    appRunner: () => runApp(myApp),
+  );
 }
 
 const OLUKO = 'Oluko';

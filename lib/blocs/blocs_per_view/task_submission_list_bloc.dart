@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/repositories/task_submission_repository.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class TaskSubmissionListState {}
 
@@ -27,7 +28,11 @@ class TaskSubmissionListBloc extends Cubit<TaskSubmissionListState> {
           await TaskSubmissionRepository.getTaskSubmissions(
               assessmentAssignment);
       emit(GetTaskSubmissionSuccess(taskSubmissions: taskSubmissions));
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       emit(Failure(exception: e));
     }
   }

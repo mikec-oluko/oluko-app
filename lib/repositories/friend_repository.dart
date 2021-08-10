@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/models/friend.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 class FriendRepository {
   FirebaseFirestore firestoreInstance;
@@ -28,7 +29,11 @@ class FriendRepository {
       }
       Friend friendData = Friend.fromJson(docRef.docs[0].data());
       return friendData;
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       throw e;
     }
   }
@@ -48,7 +53,11 @@ class FriendRepository {
         // listOfFriendRequests.add(userFriendRequestClass.fromJson(element));
       });
       // return listOfFriendRequests;
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       throw e;
     }
   }
@@ -71,7 +80,11 @@ class FriendRepository {
       // return listOfFriendSuggestions;
 
       // return;
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       throw e;
     }
   }
@@ -89,7 +102,11 @@ class FriendRepository {
           .get();
 
       // return;
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       throw e;
     }
   }
@@ -106,7 +123,11 @@ class FriendRepository {
           .get();
 
       // return;
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       throw e;
     }
   }
@@ -123,7 +144,11 @@ class FriendRepository {
           .get();
 
       // return;
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       throw e;
     }
   }
@@ -140,7 +165,11 @@ class FriendRepository {
           .get();
 
       // return;
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       throw e;
     }
   }
