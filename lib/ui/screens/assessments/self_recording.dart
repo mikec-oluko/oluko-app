@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/blocs_per_view/gallery_video_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/models/task.dart';
@@ -195,7 +196,30 @@ class _State extends State<SelfRecording> {
               },
               child: _recording ? recordingIcon() : recordIcon(),
             ),
-            Image.asset('assets/self_recording/gallery.png', scale: 4),
+            BlocListener<GalleryVideoBloc, GalleryVideoState>(
+                listener: (context, state) {
+                  if (state is Success && state.pickedFile != null) {
+                    Navigator.pop(context);
+                    Navigator.pushNamed(
+                        context, routeLabels[RouteEnum.selfRecordingPreview],
+                        arguments: {
+                          'taskIndex': widget.taskIndex,
+                          'filePath': state.pickedFile.path,
+                          'isPublic': widget.isPublic,
+                        });
+                  }
+                },
+                child: GestureDetector(
+                  onTap: () {
+                    BlocProvider.of<GalleryVideoBloc>(context)
+                      ..getVideoFromGallery();
+                  },
+                  child: Icon(
+                    Icons.file_upload_outlined,
+                    size: 30,
+                    color: OlukoColors.grayColor,
+                  ),
+                )),
           ],
         ),
       ),

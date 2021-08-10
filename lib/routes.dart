@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/blocs_per_view/gallery_video_bloc.dart';
 import 'package:oluko_app/blocs/blocs_per_view/task_submission_list_bloc.dart';
 import 'package:oluko_app/blocs/class_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
@@ -162,6 +163,7 @@ class Routes {
   final PlanBloc _planBloc = PlanBloc();
   final TaskSubmissionListBloc _taskSubmissionListBloc =
       TaskSubmissionListBloc();
+  final GalleryVideoBloc _galleryVideoBloc = GalleryVideoBloc();
 
   getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -359,6 +361,7 @@ class Routes {
       case RouteEnum.selfRecording:
         providers = [
           BlocProvider<TaskBloc>.value(value: _taskBloc),
+          BlocProvider<GalleryVideoBloc>.value(value: _galleryVideoBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments;
         newRouteView = SelfRecording(
