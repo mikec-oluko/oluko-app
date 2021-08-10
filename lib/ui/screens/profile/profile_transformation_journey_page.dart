@@ -1,3 +1,4 @@
+import 'package:drag_and_drop_gridview/devdrag.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
@@ -5,9 +6,11 @@ import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/list_of_items_to_widget.dart';
+import 'package:oluko_app/models/enums/file_type_enum.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
+import 'package:oluko_app/ui/components/image_and_video_container.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_error_message_view.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
@@ -24,6 +27,11 @@ class ProfileTransformationJourneyPage extends StatefulWidget {
 
 class _ProfileTransformationJourneyPageState
     extends State<ProfileTransformationJourneyPage> {
+  int variableSet = 0;
+  double width;
+  double height;
+
+  ScrollController _scrollController;
   List<Widget> _contentGallery;
   List<TransformationJourneyUpload> _transformationJourneyContent = [];
   UserResponse _profileInfo;
@@ -38,7 +46,7 @@ class _ProfileTransformationJourneyPageState
           builder: (context, state) {
             if (state is TransformationJourneySuccess) {
               _transformationJourneyContent = state.contentFromUser;
-              _contentGallery = _contentGallery =
+              _contentGallery =
                   TransformListOfItemsToWidget.getWidgetListFromContent(
                       tansformationJourneyData: _transformationJourneyContent,
                       requestedFromRoute:
@@ -95,15 +103,72 @@ class _ProfileTransformationJourneyPageState
                                 ],
                               ),
                             ))),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(10, 150, 10, 0),
-                      child: _contentGallery.length != 0
-                          ? GridView.count(
-                              crossAxisCount: 3,
-                              children: _contentGallery,
-                            )
-                          : OlukoErrorMessage(),
-                    ),
+                    // Padding(
+                    //   padding: const EdgeInsets.fromLTRB(10, 150, 10, 0),
+                    //   child: _contentGallery.length != 0
+                    //       ? GridView.count(
+                    //           crossAxisCount: 3,
+                    //           children: _contentGallery,
+                    //         )
+                    //       : OlukoErrorMessage(),
+                    // ),
+                    Center(
+                      child: DragAndDropGridView(
+                        feedback: () {},
+                        itemCount: _transformationJourneyContent.length,
+                        controller: _scrollController,
+                        onWillAccept: (oldIndex, newIndex) {
+                          return true;
+                        },
+                        onReorder: (oldIndex, newIndex) {
+                          final tempt = _transformationJourneyContent[oldIndex];
+                          _transformationJourneyContent[oldIndex] =
+                              _transformationJourneyContent[newIndex];
+                          _transformationJourneyContent[newIndex] = tempt;
+                          setState(() {});
+                        },
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          childAspectRatio: 3.3 / 4,
+                        ),
+                        itemBuilder: (context, index) => Card(
+                          color: Colors.transparent,
+                          child: LayoutBuilder(
+                            builder: (context, costrains) {
+                              if (variableSet == 0) {
+                                height = 120;
+                                width = 120;
+                                variableSet++;
+                              }
+                              return ImageAndVideoContainer(
+                                backgroundImage:
+                                    _transformationJourneyContent[index]
+                                        .thumbnail,
+                                isContentVideo:
+                                    _transformationJourneyContent[index].type ==
+                                            FileTypeEnum.video
+                                        ? true
+                                        : false,
+                                videoUrl:
+                                    _transformationJourneyContent[index].file,
+                                originalContent:
+                                    _transformationJourneyContent[index],
+                              );
+                              ;
+                              // return GridTile(
+                              //   child: Image.network(
+                              //     _transformationJourneyContent[index]
+                              //         .thumbnail,
+                              //     fit: BoxFit.cover,
+                              //     height: height,
+                              //     width: width,
+                              //   ),
+                              // );
+                            },
+                          ),
+                        ),
+                      ),
+                    )
                   ]),
                 ),
               ));
