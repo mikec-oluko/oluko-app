@@ -5,34 +5,40 @@ import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
 import 'package:oluko_app/ui/components/image_and_video_container.dart';
 
+import 'enum_collection.dart';
+
 class TransformListOfItemsToWidget {
   static List<Widget> getWidgetListFromContent(
       {List<TransformationJourneyUpload> tansformationJourneyData,
       List<TaskSubmission> assessmentVideoData,
-      List<Challenge> upcomingChallenges}) {
+      List<Challenge> upcomingChallenges,
+      ActualProfileRoute requestedFromRoute}) {
     List<Widget> contentForSection = [];
 
     if (tansformationJourneyData != null &&
         (assessmentVideoData == null && upcomingChallenges == null)) {
       tansformationJourneyData.forEach((contentUploaded) {
         contentForSection.add(getImageAndVideoCard(
-            transformationJourneyContent: contentUploaded));
+            transformationJourneyContent: contentUploaded,
+            routeForContent: requestedFromRoute));
       });
     }
 
     if (assessmentVideoData != null &&
         (tansformationJourneyData == null && upcomingChallenges == null)) {
       assessmentVideoData.forEach((assessmentVideo) {
-        contentForSection
-            .add(getImageAndVideoCard(taskSubmissionContent: assessmentVideo));
+        contentForSection.add(getImageAndVideoCard(
+            taskSubmissionContent: assessmentVideo,
+            routeForContent: requestedFromRoute));
       });
     }
 
     if (upcomingChallenges != null &&
         (tansformationJourneyData == null && assessmentVideoData == null)) {
       upcomingChallenges.forEach((challenge) {
-        contentForSection
-            .add(getImageAndVideoCard(upcomingChallengesContent: challenge));
+        contentForSection.add(getImageAndVideoCard(
+            upcomingChallengesContent: challenge,
+            routeForContent: requestedFromRoute));
       });
     }
     return contentForSection.toList();
@@ -42,7 +48,8 @@ class TransformListOfItemsToWidget {
   static Widget getImageAndVideoCard(
       {TransformationJourneyUpload transformationJourneyContent,
       TaskSubmission taskSubmissionContent,
-      Challenge upcomingChallengesContent}) {
+      Challenge upcomingChallengesContent,
+      ActualProfileRoute routeForContent}) {
     Widget contentForReturn = SizedBox();
 
     if (transformationJourneyContent != null) {
@@ -52,6 +59,7 @@ class TransformListOfItemsToWidget {
             ? true
             : false,
         videoUrl: transformationJourneyContent.file,
+        displayOnViewNamed: routeForContent,
         originalContent: transformationJourneyContent,
       );
     }
@@ -65,6 +73,7 @@ class TransformListOfItemsToWidget {
             ? taskSubmissionContent.video.url
             : '',
         originalContent: taskSubmissionContent,
+        displayOnViewNamed: routeForContent,
       );
     }
     if (upcomingChallengesContent != null) {
@@ -73,6 +82,7 @@ class TransformListOfItemsToWidget {
         backgroundImage: upcomingChallengesContent.challengeImage,
         isContentVideo: false,
         originalContent: upcomingChallengesContent,
+        displayOnViewNamed: routeForContent,
       );
     }
 

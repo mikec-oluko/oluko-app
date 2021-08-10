@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
+import 'package:oluko_app/helpers/basic_tiles.dart';
 
 class ChildTileWidget extends StatefulWidget {
   final BasicTile tile;

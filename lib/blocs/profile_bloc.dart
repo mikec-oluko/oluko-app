@@ -66,4 +66,14 @@ class ProfileBloc extends Cubit<ProfileState> {
       emit(Failure(exception: e));
     }
   }
+
+  void updateSettingsPreferences(UserResponse userToUpdate, int privacyIndex,
+      bool notificationValue) async {
+    try {
+      await _profileRepository.updateUserPreferences(
+          userToUpdate, privacyIndex, notificationValue);
+    } catch (e) {
+      emit(Failure(exception: e));
+    }
+  }
 }

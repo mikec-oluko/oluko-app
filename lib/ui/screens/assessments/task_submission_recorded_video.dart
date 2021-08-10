@@ -1,7 +1,5 @@
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
-import 'package:oluko_app/models/sign_up_response.dart';
-import 'package:oluko_app/models/submodels/video.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
@@ -10,8 +8,8 @@ class TaskSubmissionRecordedVideo extends StatefulWidget {
   TaskSubmissionRecordedVideo({this.videoUrl, this.task, key})
       : super(key: key);
 
-  String videoUrl;
-  Task task;
+  final String videoUrl;
+  final Task task;
 
   @override
   _TaskSubmissionRecordedVideoState createState() =>
@@ -37,7 +35,10 @@ class _TaskSubmissionRecordedVideoState
     return Form(
         key: _formKey,
         child: Scaffold(
-            appBar: OlukoAppBar(title: widget.task.name),
+            appBar: OlukoAppBar(
+              title: widget.task.name,
+              actions: [SizedBox(width: 30)],
+            ),
             body: Container(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,

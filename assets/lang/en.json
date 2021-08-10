@@ -110,9 +110,24 @@
     "country": "Country",
     "toACourse": "to a Course",
     "public": "Public",
+    "publicSubtitle": "Public profile",
     "assessment": "Assessment",
     "private": "Private",
     "done": "Done",
     "skip": "Skip",
-    "makeThisPublic": "Make this public"
+    "makeThisPublic": "Make this public",
+    "retake": "Retake",
+    "done!": "Done!",
+    "assessmentMessagePart1": "Thank you for completing all the assessments.",
+    "assessmentMessagePart2": "We will review and get back to you shortly with suitable coach assignement.",
+    "goBack": "Go Back",
+    "ok": "Ok",
+    "restricted": "Restricted",
+    "restrictedSubtitle": "Restricted profile",
+    "anonymous": "Anonymous",
+    "anonymousSubtitle": "Anonymous profile",
+    "helpAndSupport": "Help and Support",
+    "myAccount": "My Account",
+    "subscription": "Subscription"
+    
 }

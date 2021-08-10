@@ -77,7 +77,7 @@ class CourseEnrollmentRepository {
     DocumentReference courseReference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"))
-        .collection('course')
+        .collection('courses')
         .doc(course.id);
     final DocumentReference docRef = reference.doc();
     DocumentReference userReference =
