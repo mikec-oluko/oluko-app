@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/constants/Theme.dart';
 
 class OlukoOutlinedButton extends StatefulWidget {
   final Function() onPressed;
@@ -27,14 +27,14 @@ class _State extends State<OlukoOutlinedButton> {
                   top: 15.0, bottom: 15.0, left: 5.0, right: 5.0),
               child: Text(
                 widget.title,
-                style: TextStyle(fontSize: 18),
+                style: TextStyle(fontSize: 18, color: OlukoColors.primary),
               ),
             )
           : Padding(
               padding: const EdgeInsets.all(15.0),
               child: Text(
                 widget.title,
-                style: TextStyle(fontSize: 18),
+                style: TextStyle(fontSize: 18, color: OlukoColors.primary),
               ),
             ),
     ));

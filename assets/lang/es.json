@@ -117,6 +117,12 @@
     "done": "Hecho",
     "skip": "Saltar",
     "makeThisPublic": "Haga esto público",
+    "retake": "Repetir",
+    "done!": "¡Hecho!",
+    "assessmentMessagePart1": "Gracias por completar todas las evaluaciones.",
+    "assessmentMessagePart2": "Revisaremos y nos pondremos en contacto contigo en breves con la asignación de entrenador adecuada.",
+    "goBack": "Volver",
+    "ok": "Ok",
     "restricted": "Privado",
     "restrictedSubtitle": "Perfil privado",
     "anonymous": "Anónimo",
@@ -124,5 +130,4 @@
     "helpAndSupport": "Ayuda y Soporte",
     "myAccount": "Mi Perfil",
     "subscription": "Subscripción"
-
 }
