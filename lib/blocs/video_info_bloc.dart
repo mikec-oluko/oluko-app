@@ -14,6 +14,7 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:oluko_app/models/submodels/video_info.dart';
 import 'package:oluko_app/repositories/video_info_repository.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class VideoInfoState {
   final List<VideoInfo> videoInfoList;
@@ -70,7 +71,11 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
           await VideoInfoRepository.addMarkerToVideoInfo(position, reference);
       _markerList.insert(0, newMarker);
       //emit(MarkersSuccess(markers: _markerList));
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       print(e.toString());
       //emit(Failure(exception: e));
     }
@@ -85,7 +90,11 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
       await VideoInfoRepository.addDrawingToVideoInfo(
           canvasPointsRecording, reference);
       //emit(DrawingSuccess());
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       print(e.toString());
       //emit(Failure(exception: e));
     }
@@ -99,7 +108,11 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
       _videoInfoList =
           await VideoInfoRepository.getVideosInfoByUser(user.uid, parent);
       emit(VideoInfoSuccess(videosInfo: _videoInfoList));
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       print(e.toString());
       emit(Failure(exception: e));
     }
@@ -124,7 +137,11 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
         _videoInfoList.insert(0, newVideoInfo);
       }
       emit(VideoInfoSuccess(videosInfo: _videoInfoList));
-    } catch (e) {
+    } catch (e, stackTrace) {
+      Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       emit(Failure(exception: e));
     }
   }
@@ -144,7 +161,11 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
     try {
       File file = File(videoFile.path);
       await processVideo(user, file, reference, addToList);
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       print('${e.toString()}');
     } finally {
       //_processing = false;

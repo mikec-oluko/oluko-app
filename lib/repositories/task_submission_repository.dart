@@ -5,6 +5,7 @@ import 'package:oluko_app/models/submodels/object_submodel.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/submodels/video.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 class TaskSubmissionRepository {
   static DocumentReference projectReference = FirebaseFirestore.instance
@@ -120,7 +121,11 @@ class TaskSubmissionRepository {
             userId, asessmentId, response));
       }
       Future.wait(futures);
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       return [];
     }
     return response;

@@ -7,6 +7,7 @@ import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/submodels/video.dart';
 import 'package:oluko_app/repositories/assessment_assignment_repository.dart';
 import 'package:oluko_app/repositories/task_submission_repository.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class TaskSubmissionState {}
 
@@ -45,7 +46,11 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
           await TaskSubmissionRepository.createTaskSubmission(
               assessmentAssignment, task, isPublic);
       emit(CreateSuccess(taskSubmission: newTaskSubmission));
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       emit(Failure(exception: e));
     }
   }
@@ -56,7 +61,11 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
       await TaskSubmissionRepository.updateTaskSubmissionVideo(
           assessmentA, taskSubmissionId, video);
       emit(UpdateSuccess());
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       print(e.toString());
       emit(Failure(exception: e));
     }
@@ -67,7 +76,11 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
     try {
       await TaskSubmissionRepository.updateTaskSubmissionPrivacity(
           assessmentA, taskSubmissionId, isPublic);
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       print(e.toString());
       //emit(Failure(exception: e));
     }
@@ -85,7 +98,11 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
         taskSubmission = null;
       }
       emit(GetSuccess(taskSubmission: taskSubmission));
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       emit(Failure(exception: e));
     }
   }
@@ -97,7 +114,11 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
       if (taskSubmissions.length != 0) {
         emit(GetUserTaskSubmissionSuccess(taskSubmissions: taskSubmissions));
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       emit(Failure(exception: e));
     }
   }
@@ -111,7 +132,11 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
       if (taskSubmissions.length == assessment.tasks.length) {
         AssessmentAssignmentRepository.setAsCompleted(assessmentAssignment.id);
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       emit(Failure(exception: e));
     }
   }
