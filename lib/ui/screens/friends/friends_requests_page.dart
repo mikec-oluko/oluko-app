@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/friends/confirm_friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -60,10 +61,20 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
                       ? Column(
                           children: friendsRequestState.friendRequestList
                               .map((UserResponse friend) => FriendRequestCard(
-                                    name: friend.firstName,
-                                    lastName: friend.lastName,
-                                    userName: friend.username,
-                                    imageUser: friend.avatar,
+                                    friendUser: friend,
+                                    onFriendConfirmation:
+                                        (UserResponse friend) {
+                                      BlocProvider.of<ConfirmFriendBloc>(
+                                              context)
+                                          .confirmFriend(
+                                              friendsRequestState.friendData,
+                                              friendsRequestState.friendData
+                                                  .friendRequestReceived
+                                                  .where((friendRequest) =>
+                                                      friendRequest.id ==
+                                                      friend.id)
+                                                  .first);
+                                    },
                                   ))
                               .toList(),
                         )
