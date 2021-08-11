@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/ui/components/course_progress_bar.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -105,13 +105,12 @@ class _State extends State<ClassSection> {
                         Padding(
                           padding: const EdgeInsets.only(
                               top: 16.0, bottom: 0, right: 10),
-                          child: 
-                          Text(
-                                widget.classObj.description,
-                                style: OlukoFonts.olukoMediumFont(
-                                    custoFontWeight: FontWeight.normal,
-                                    customColor: OlukoColors.grayColor),
-                              ),
+                          child: Text(
+                            widget.classObj.description,
+                            style: OlukoFonts.olukoMediumFont(
+                                custoFontWeight: FontWeight.normal,
+                                customColor: OlukoColors.grayColor),
+                          ),
                         ),
                       ],
                     ),

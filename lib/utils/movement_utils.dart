@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 
