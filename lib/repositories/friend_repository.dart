@@ -91,24 +91,24 @@ class FriendRepository {
 
   static Future<Friend> confirmFriendRequest(
       Friend friend, FriendRequestModel friendRequest) async {
-    //Generate user reference from friend request
-    var friendUserDocument = await FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('users')
-        .doc(friendRequest.id)
-        .get();
-
-    //Friend model to add as a friend
-    FriendModel friendModel = FriendModel(
-        id: friendRequest.id, reference: friendUserDocument.reference);
-
-    //Remove friend request
-    friend.friendRequestReceived
-        .removeWhere((element) => element.id == friendModel.id);
-    friend.friends.add(friendModel);
-
     try {
+      //Generate user reference from friend request
+      var friendUserDocument = await FirebaseFirestore.instance
+          .collection('projects')
+          .doc(GlobalConfiguration().getValue('projectId'))
+          .collection('users')
+          .doc(friendRequest.id)
+          .get();
+
+      //Friend model to add as a friend
+      FriendModel friendModel = FriendModel(
+          id: friendRequest.id, reference: friendUserDocument.reference);
+
+      //Remove friend request
+      friend.friendRequestReceived
+          .removeWhere((element) => element.id == friendModel.id);
+      friend.friends.add(friendModel);
+
       await FirebaseFirestore.instance
           .collection('projects')
           .doc(GlobalConfiguration().getValue("projectId"))
