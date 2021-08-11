@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
-import 'package:oluko_app/blocs/profile_bloc.dart';
-import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/routes.dart';
@@ -58,15 +56,10 @@ class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
                           OlukoOutlinedButton(
                               title: _doneButtonText,
                               onPressed: () {
-                                //Cambiar navigator
-                                //add methods to restart state
-                                //get route from
                                 if (widget.goToPage ==
                                         UploadFrom.profileImage ||
                                     widget.goToPage ==
                                         UploadFrom.profileCoverImage) {
-                                  BlocProvider.of<ProfileBloc>(context)
-                                    ..resetUploadStatus();
                                   BlocProvider.of<AuthBloc>(context)
                                     ..checkCurrentUser();
                                   Navigator.pop(context);

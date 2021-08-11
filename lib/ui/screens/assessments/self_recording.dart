@@ -215,7 +215,7 @@ class _State extends State<SelfRecording> {
                       ..getVideoFromGallery();
                   },
                   child: Icon(
-                    Icons.file_upload_outlined,
+                    Icons.file_upload,
                     size: 30,
                     color: OlukoColors.grayColor,
                   ),

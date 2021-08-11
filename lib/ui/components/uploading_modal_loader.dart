@@ -45,6 +45,9 @@ class _UploadingModalLoaderState extends State<UploadingModalLoader> {
         builder: (context, state) {
           if (state is Loading) {
             _widgetToReturn = LoaderAndUploadingText();
+          } else if (state is Failure) {
+            _widgetToReturn = Container();
+            Navigator.pop(context);
           } else if (state is ProfileUploadSuccess) {
             _widgetToReturn = MultiBlocProvider(providers: [
               BlocProvider.value(value: BlocProvider.of<ProfileBloc>(context)),
