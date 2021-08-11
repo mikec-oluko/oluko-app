@@ -8,7 +8,7 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/class_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
-import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
@@ -131,7 +131,7 @@ class _EnrolledClassState extends State<EnrolledClass> {
                                                   customColor:
                                                       OlukoColors.grayColor),
                                             ),
-                                          ),                                     
+                                          ),
                                           Padding(
                                             padding: const EdgeInsets.only(
                                                 top: 10.0, right: 10),

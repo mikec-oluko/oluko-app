@@ -6,7 +6,7 @@ import 'package:oluko_app/blocs/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/profile_bloc.dart';
 import 'package:oluko_app/blocs/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
-import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/list_of_items_to_widget.dart';
 import 'package:oluko_app/models/challenge.dart';
@@ -304,8 +304,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
     BlocProvider.of<TransformationJourneyBloc>(context)
         .getContentByUserId(userRequested.id);
 
-    // BlocProvider.of<CourseEnrollmentBloc>(context)
-    //     .getChallengesForUser(userRequested.id);
+    BlocProvider.of<CourseEnrollmentBloc>(context)
+        .getChallengesForUser(userRequested.id);
   }
 
   Padding buildCourseSection(

@@ -46,7 +46,7 @@ class _State extends State<ChallengesCard> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(5)),
                     image: DecorationImage(
-                      image: NetworkImage(widget.challenge.challengeImage),
+                      image: NetworkImage(widget.challenge.image),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -132,7 +132,7 @@ class _State extends State<ChallengesCard> {
                     image: DecorationImage(
                       colorFilter: ColorFilter.mode(
                           Colors.black.withOpacity(0.7), BlendMode.srcOver),
-                      image: NetworkImage(widget.challenge.challengeImage),
+                      image: NetworkImage(widget.challenge.image),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -169,7 +169,9 @@ class _State extends State<ChallengesCard> {
                           padding:
                               const EdgeInsets.only(left: 10).copyWith(top: 5),
                           child: Text(
-                            widget.challenge.classId != null? widget.challenge.classId : "content",
+                            widget.challenge.classId != null
+                                ? widget.challenge.classId
+                                : "content",
                             style: TextStyle(
                                 fontSize: 18, color: OlukoColors.grayColor),
                           ),
