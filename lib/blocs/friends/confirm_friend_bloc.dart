@@ -20,8 +20,8 @@ class ConfirmFriendFailure extends ConfirmFriendState {
   ConfirmFriendFailure({this.exception});
 }
 
-class FriendBloc extends Cubit<ConfirmFriendState> {
-  FriendBloc() : super(Loading());
+class ConfirmFriendBloc extends Cubit<ConfirmFriendState> {
+  ConfirmFriendBloc() : super(Loading());
 
   void confirmFriend(Friend friend, FriendRequestModel friendRequest) async {
     try {

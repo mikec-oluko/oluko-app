@@ -59,6 +59,7 @@ import 'package:oluko_app/ui/screens/authentication/sign_up_with_email.dart';
 import 'package:oluko_app/ui/screens/assessments/task_details.dart';
 import 'package:oluko_app/ui/screens/videos/videos_home.dart';
 import 'package:oluko_app/ui/screens/view_all.dart';
+import 'blocs/friends/confirm_friend_bloc.dart';
 import 'models/course.dart';
 import 'models/transformation_journey_uploads.dart';
 
@@ -148,6 +149,7 @@ class Routes {
   final CourseBloc _courseBloc = CourseBloc();
   final TagBloc _tagBloc = TagBloc();
   final FriendBloc _friendBloc = FriendBloc();
+  final ConfirmFriendBloc _confirmFriendBloc = ConfirmFriendBloc();
   final AssessmentBloc _assessmentBloc = AssessmentBloc();
   final AssessmentAssignmentBloc _assessmentAssignmentBloc =
       AssessmentAssignmentBloc();
@@ -201,7 +203,10 @@ class Routes {
         newRouteView = SignUpWithMailPage();
         break;
       case RouteEnum.friends:
-        providers = [BlocProvider<FriendBloc>.value(value: _friendBloc)];
+        providers = [
+          BlocProvider<FriendBloc>.value(value: _friendBloc),
+          BlocProvider<ConfirmFriendBloc>.value(value: _confirmFriendBloc)
+        ];
         newRouteView = FriendsPage();
         break;
       case RouteEnum.profile:
