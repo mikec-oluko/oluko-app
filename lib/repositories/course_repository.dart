@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:oluko_app/blocs/course_bloc.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/course_statistics.dart';
@@ -85,5 +86,15 @@ class CourseRepository {
       coursesList.add(Course.fromJson(ds.data()));
     }
     return coursesList;
+  }
+
+  static Future<List<Course>> getByCourseEnrollments(
+      List<CourseEnrollment> courseEnrollments) async {
+    List<Course> courses = [];
+    for (CourseEnrollment courseEnrollment in courseEnrollments) {
+      final DocumentSnapshot ds = await courseEnrollment.courseReference.get();
+      courses.add(Course.fromJson(ds.data()));
+    }
+    return courses;
   }
 }
