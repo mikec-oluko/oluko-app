@@ -193,6 +193,8 @@ class Routes {
               value: _courseEnrollmentBloc),
           BlocProvider<FavoriteBloc>.value(value: _favoriteBloc),
           BlocProvider<RecommendationBloc>.value(value: _recommendationBloc),
+          BlocProvider<FriendBloc>.value(value: _friendBloc),
+          BlocProvider<ConfirmFriendBloc>.value(value: _confirmFriendBloc)
         ];
         newRouteView = MainPage();
         break;
