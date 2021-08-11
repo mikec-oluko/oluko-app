@@ -11,7 +11,7 @@ import 'package:oluko_app/blocs/class_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/favorite_bloc.dart';
-import 'package:oluko_app/blocs/friend_bloc.dart';
+import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/plan_bloc.dart';
 import 'package:oluko_app/blocs/profile_bloc.dart';
