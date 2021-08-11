@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/friend.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/friend_repository.dart';
+import 'package:oluko_app/repositories/user_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class FriendState {}
@@ -9,17 +11,17 @@ abstract class FriendState {}
 class Loading extends FriendState {}
 
 class GetFriendsSuccess extends FriendState {
-  List<User> friendUsers;
+  List<UserResponse> friendUsers;
   GetFriendsSuccess({this.friendUsers});
 }
 
 class GetFriendRequestsSuccess extends FriendState {
-  List<User> friendRequestList;
+  List<UserResponse> friendRequestList;
   GetFriendRequestsSuccess({this.friendRequestList});
 }
 
 class GetFriendSuggestionSuccess extends FriendState {
-  List<User> friendSuggestionList;
+  List<UserResponse> friendSuggestionList;
   GetFriendSuggestionSuccess({this.friendSuggestionList});
 }
 
@@ -47,9 +49,15 @@ class FriendBloc extends Cubit<FriendState> {
 
   void getUserFriendsRequestByUserId(String userId) async {
     try {
-      List<User> friendsRequests =
+      Friend friendInformation =
           await FriendRepository.getUserFriendsRequestByUserId(userId);
-      emit(GetFriendRequestsSuccess(friendRequestList: friendsRequests));
+
+      List<UserResponse> friendRequestUsers = await Future.wait(
+          friendInformation.friendRequestReceived
+              .map((e) => UserRepository().getById(e.id))
+              .toList());
+
+      emit(GetFriendRequestsSuccess(friendRequestList: friendRequestUsers));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
@@ -63,8 +71,7 @@ class FriendBloc extends Cubit<FriendState> {
     try {
       List<User> friendsSuggestionList =
           await FriendRepository.getUserFriendsSuggestionsByUserId(userId);
-      emit(GetFriendSuggestionSuccess(
-          friendSuggestionList: friendsSuggestionList));
+      emit(GetFriendSuggestionSuccess(friendSuggestionList: null));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

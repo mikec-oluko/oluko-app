@@ -37,7 +37,6 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
 
   @override
   Widget build(BuildContext context) {
-    final String _locationDemo = "San Francisco, CA USA";
     final List<String> _valuesDemo = ["07", "10", "50"];
 
     return Padding(
@@ -104,6 +103,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                                 height: 40,
                                 child: TextButton(
                                     onPressed: () {
+                                      //UPDATE PROFILE PIC
                                       AppModal.dialogContent(
                                           context: context,
                                           content: [
