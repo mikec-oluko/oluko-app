@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
-import 'package:oluko_app/ui/components/carousel_gallery.dart';
+import 'package:oluko_app/ui/components/class_carousel_gallery.dart';
 import 'package:oluko_app/ui/components/class_card.dart';
 import 'package:oluko_app/ui/components/course_progress_bar.dart';
 import 'package:oluko_app/ui/components/course_step_section.dart';
@@ -28,7 +28,6 @@ class CourseSection extends StatefulWidget {
 }
 
 class _CourseSectionState extends State<CourseSection> {
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -73,19 +72,7 @@ class _CourseSectionState extends State<CourseSection> {
               totalCourseSteps: widget.qtyCourses,
               currentCourseStep: widget.courseIndex + 1),
           SizedBox(height: 10),
-          carousel(),
+          ClassCarouselGallery(courseEnrollment: widget.courseEnrollment),
         ]));
-  }
-
-  Widget carousel() {
-    List<Widget> classCards = [];
-    for (var i = 0; i < widget.courseEnrollment.classes.length; i++) {
-      classCards.add(ClassCard(
-        enrollmentClass: widget.courseEnrollment.classes[i],
-        classIndex: i,
-        courseEnrollment: widget.courseEnrollment,
-      ));
-    }
-    return CarouselGallery(items: classCards);
   }
 }
