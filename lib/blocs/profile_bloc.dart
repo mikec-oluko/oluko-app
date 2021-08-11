@@ -43,7 +43,10 @@ class ProfileBloc extends Cubit<ProfileState> {
         _image = await imagePicker.getImage(source: ImageSource.camera);
       }
 
-      if (_image == null) return;
+      if (_image == null) {
+        emit(Failure(exception: new Exception("Profile upload aborted")));
+        return;
+      }
 
       if (contentFor == UploadFrom.profileCoverImage) {
         UserResponse userUpdatedCoverImage =
@@ -57,18 +60,6 @@ class ProfileBloc extends Cubit<ProfileState> {
       }
     } catch (exception, stackTrace) {
       await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
-      );
-      emit(Failure(exception: exception));
-    }
-  }
-
-  void resetUploadStatus() {
-    try {
-      emit(NoUploads());
-    } catch (exception, stackTrace) {
-      Sentry.captureException(
         exception,
         stackTrace: stackTrace,
       );
