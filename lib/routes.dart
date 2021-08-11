@@ -207,11 +207,6 @@ class Routes {
         newRouteView = FriendsPage();
         break;
       case RouteEnum.profile:
-        providers = [
-          BlocProvider<CourseBloc>.value(value: _courseBloc),
-          BlocProvider<CourseEnrollmentBloc>.value(
-              value: _courseEnrollmentBloc),
-        ];
         newRouteView = ProfilePage();
         break;
       case RouteEnum.profileSettings:
