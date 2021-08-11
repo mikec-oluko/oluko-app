@@ -13,8 +13,8 @@ abstract class ConfirmFriendState {}
 class Loading extends ConfirmFriendState {}
 
 class ConfirmFriendSuccess extends ConfirmFriendState {
-  List<UserResponse> friendUsers;
-  ConfirmFriendSuccess({this.friendUsers});
+  FriendModel friendModel;
+  ConfirmFriendSuccess({this.friendModel});
 }
 
 class ConfirmFriendFailure extends ConfirmFriendState {
@@ -28,9 +28,9 @@ class FriendBloc extends Cubit<ConfirmFriendState> {
 
   void confirmFriend(Friend friend, FriendRequestModel friendRequest) async {
     try {
-      Friend friendsSuggestionList =
+      FriendModel friendModel =
           await FriendRepository.confirmFriendRequest(friend, friendRequest);
-      emit(ConfirmFriendSuccess(friendUsers: null));
+      emit(ConfirmFriendSuccess(friendModel: friendModel));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

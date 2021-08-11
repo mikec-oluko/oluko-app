@@ -89,7 +89,7 @@ class FriendRepository {
     }
   }
 
-  static Future<Friend> confirmFriendRequest(
+  static Future<FriendModel> confirmFriendRequest(
       Friend friend, FriendRequestModel friendRequest) async {
     try {
       //Generate user reference from friend request
@@ -115,7 +115,7 @@ class FriendRepository {
           .collection('friends')
           .doc(friend.id)
           .set(friend.toJson());
-      return friend;
+      return friendModel;
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,
