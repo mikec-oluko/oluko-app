@@ -3,7 +3,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:oluko_app/models/base.dart';
 
 class FriendModel extends Base {
-  Reference reference;
+  DocumentReference reference;
   bool isMuted;
   DateTime isMutedUntil;
   DateTime latestSeenContent;
