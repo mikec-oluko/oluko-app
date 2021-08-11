@@ -46,7 +46,8 @@ class CourseEnrollment extends Base {
         userReference: json['user_reference'],
         courseId: json['course_id'],
         courseReference: json['course_reference'],
-        completion: json['completion'] == null ? 0.0 : json['completion'],
+        completion:
+            json['completion'] == null ? 0.0 : (json['completion']).toDouble(),
         completedAt: json['completed_at'],
         finishedAt: json['finished_at'],
         classes: json['classes'] != null
@@ -67,7 +68,7 @@ class CourseEnrollment extends Base {
       'user_reference': userReference,
       'course_id': courseId,
       'course_reference': courseReference,
-      'completion': completion == null ? 0.0 : completion,
+      'completion': completion == null ? 0.0 : completion.toDouble(),
       'completed_at': completedAt,
       'finished_at': finishedAt,
       'classes': classes == null
