@@ -286,6 +286,8 @@ class _TaskDetailsState extends State<TaskDetails> {
                         if (_controller != null) {
                           _controller.pause();
                         }
+                        Navigator.pop(context);
+                        Navigator.pop(context);
                         return Navigator.pushNamed(
                             context, routeLabels[RouteEnum.selfRecording],
                             arguments: {'taskIndex': widget.taskIndex});

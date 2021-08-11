@@ -304,8 +304,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
     BlocProvider.of<TransformationJourneyBloc>(context)
         .getContentByUserId(userRequested.id);
 
-    // BlocProvider.of<CourseEnrollmentBloc>(context)
-    //     .getChallengesForUser(userRequested.id);
+    BlocProvider.of<CourseEnrollmentBloc>(context)
+        .getChallengesForUser(userRequested.id);
   }
 
   Padding buildCourseSection(

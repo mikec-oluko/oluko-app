@@ -76,7 +76,7 @@ class _State extends State<TaskCard> {
                                     padding: const EdgeInsets.only(
                                         top: 8.0, right: 10),
                                     child: Text(
-                                      widget.task.description,
+                                      widget.task.shortDescription,
                                       style: OlukoFonts.olukoBigFont(
                                           customColor: OlukoColors.grayColor),
                                     ),

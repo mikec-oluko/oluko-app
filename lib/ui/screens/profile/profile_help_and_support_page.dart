@@ -6,6 +6,8 @@ import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 
+import '../../../routes.dart';
+
 class ProfileHelpAndSupportPage extends StatefulWidget {
   const ProfileHelpAndSupportPage() : super();
 
@@ -50,8 +52,15 @@ class _ProfileHelpAndSupportPageState extends State<ProfileHelpAndSupportPage> {
                             child: Padding(
                           padding: const EdgeInsets.fromLTRB(15, 0, 15, 15),
                           child: OlukoPrimaryButton(
-                              title: ProfileViewConstants
-                                  .profileHelpAndSupportButtonText),
+                            title: ProfileViewConstants
+                                .profileHelpAndSupportButtonText,
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                context,
+                                routeLabels[RouteEnum.profileContactUs],
+                              );
+                            },
+                          ),
                         ))
                       ],
                     ),
