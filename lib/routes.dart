@@ -191,6 +191,8 @@ class Routes {
               value: _courseEnrollmentBloc),
           BlocProvider<FavoriteBloc>.value(value: _favoriteBloc),
           BlocProvider<RecommendationBloc>.value(value: _recommendationBloc),
+          BlocProvider<TransformationJourneyBloc>.value(
+              value: _transformationJourneyBloc),
         ];
         newRouteView = MainPage();
         break;
@@ -205,6 +207,11 @@ class Routes {
         newRouteView = FriendsPage();
         break;
       case RouteEnum.profile:
+        providers = [
+          BlocProvider<CourseBloc>.value(value: _courseBloc),
+          BlocProvider<CourseEnrollmentBloc>.value(
+              value: _courseEnrollmentBloc),
+        ];
         newRouteView = ProfilePage();
         break;
       case RouteEnum.profileSettings:
