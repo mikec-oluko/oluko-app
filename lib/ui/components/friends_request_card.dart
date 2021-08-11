@@ -94,7 +94,8 @@ class _FriendRequestCardState extends State<FriendRequestCard> {
                       width: 120,
                       height: 30,
                       child: TextButton(
-                        onPressed: () {},
+                        onPressed: () =>
+                            widget.onFriendConfirmation(widget.friendUser),
                         child: Text(
                           "Confirm",
                           style: OlukoFonts.olukoMediumFont(
