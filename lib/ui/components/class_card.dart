@@ -4,6 +4,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/submodels/enrollment_class.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/services/course_enrollment_service.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
@@ -41,7 +42,14 @@ class _State extends State<ClassCard> {
           child: Column(children: [
             classRectangle(),
             SizedBox(height: 6),
-            classContainer(150.0, 110.0)
+            GestureDetector(
+                onTap: () => Navigator.pushNamed(
+                        context, routeLabels[RouteEnum.insideClass],
+                        arguments: {
+                          'courseEnrollment': widget.courseEnrollment,
+                          'classIndex': widget.classIndex
+                        }),
+                child: classContainer(150.0, 110.0))
           ]));
     } else {
       return Padding(

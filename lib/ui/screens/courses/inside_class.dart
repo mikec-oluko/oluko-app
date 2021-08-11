@@ -6,28 +6,26 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/class_bloc.dart';
-import 'package:oluko_app/blocs/course_bloc.dart';
-import 'package:oluko_app/blocs/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/class.dart';
-import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/services/course_enrollment_service.dart';
-import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/course_progress_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/segment_section.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/screens/courses/segment_detail.dart';
+import 'package:oluko_app/ui/screens/video_overlay.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class InsideClass extends StatefulWidget {
-  InsideClass({this.course, this.classIndex, Key key}) : super(key: key);
+  InsideClass({this.courseEnrollment, this.classIndex, Key key})
+      : super(key: key);
 
-  final Course course;
+  final CourseEnrollment courseEnrollment;
   final int classIndex;
 
   @override
@@ -39,8 +37,7 @@ class FirebaseUser {}
 class _InsideClassesState extends State<InsideClass> {
   final _formKey = GlobalKey<FormState>();
   ChewieController _controller;
-  List<Class> _classes;
-  CourseEnrollment _courseEnrollment;
+  Class _class;
   User _user;
   List<Segment> _segments;
 
@@ -52,17 +49,15 @@ class _InsideClassesState extends State<InsideClass> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
-      return BlocBuilder<ClassBloc, ClassState>(builder: (context, classState) {
-        return BlocBuilder<CourseEnrollmentBloc, CourseEnrollmentState>(
-            builder: (context, courseEnrollmentState) {
-          if (authState is AuthSuccess &&
-              classState is GetSuccess &&
-              courseEnrollmentState is GetEnrollmentSuccess) {
-            _user = authState.firebaseUser;
-            _classes = classState.classes;
-            _courseEnrollment = courseEnrollmentState.courseEnrollment;
-            BlocProvider.of<SegmentBloc>(context)
-              ..getAll(_classes[widget.classIndex]);
+      if (authState is AuthSuccess) {
+        _user = authState.firebaseUser;
+        BlocProvider.of<ClassBloc>(context)
+          ..get(widget.courseEnrollment.classes[widget.classIndex].id);
+        return BlocBuilder<ClassBloc, ClassState>(
+            builder: (context, classState) {
+          if (classState is GetByIdSuccess) {
+            _class = classState.classObj;
+            BlocProvider.of<SegmentBloc>(context)..getAll(_class);
             return BlocBuilder<SegmentBloc, SegmentState>(
                 builder: (context, segmentState) {
               if (segmentState is GetSegmentsSuccess) {
@@ -76,7 +71,9 @@ class _InsideClassesState extends State<InsideClass> {
             return SizedBox();
           }
         });
-      });
+      } else {
+        return SizedBox();
+      }
     });
 
     /*return MultiBlocProvider(
@@ -99,26 +96,71 @@ class _InsideClassesState extends State<InsideClass> {
     return Form(
         key: _formKey,
         child: Scaffold(
-            appBar: OlukoAppBar(
-                title: OlukoLocalizations.of(context).find('class')),
             body: Container(
                 color: Colors.black,
                 child: Stack(
                   children: [
                     ListView(children: [
-                      Padding(
+                      /*Padding(
                         padding: const EdgeInsets.only(bottom: 3),
                         child: OrientationBuilder(
                           builder: (context, orientation) {
-                            return showVideoPlayer(
-                                _classes[widget.classIndex].video);
+                            return showVideoPlayer(_class.video);
                           },
                         ),
+                      ),*/
+
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 3),
+                        child: ShaderMask(
+                          shaderCallback: (rect) {
+                            return LinearGradient(
+                              begin: Alignment.center,
+                              end: Alignment.bottomCenter,
+                              colors: [Colors.black, Colors.transparent],
+                            ).createShader(
+                                Rect.fromLTRB(0, 0, rect.width, rect.height));
+                          },
+                          blendMode: BlendMode.dstIn,
+                          child: Stack(children: [
+                            Stack(alignment: Alignment.center, children: [
+                              AspectRatio(
+                                  aspectRatio: 1,
+                                  child: Image.asset(
+                                    'assets/courses/profile_photos.png',
+                                    fit: BoxFit.cover,
+                                  )),
+                              GestureDetector(
+                                onTap: () => Navigator.of(context).push(
+                                  PageRouteBuilder(
+                                    opaque: false,
+                                    pageBuilder: (_, __, ___) =>
+                                        VideoOverlay(videoUrl: _class.video),
+                                  ),
+                                ),
+                                child: Align(
+                                    alignment: Alignment.center,
+                                    child: Image.asset(
+                                      'assets/assessment/play.png',
+                                      height: 50,
+                                      width: 50,
+                                    )),
+                              )
+                            ]),
+                            Padding(
+                                padding: EdgeInsets.only(top: 15),
+                                child: Row(
+                                  children: [
+                                    IconButton(
+                                        icon: Icon(Icons.chevron_left,
+                                            size: 35, color: Colors.white),
+                                        onPressed: () =>
+                                            Navigator.pop(context)),
+                                  ],
+                                )),
+                          ]),
+                        ),
                       ),
-                      //TODO: Calculate progress here, take it from classes view
-                      /*widget.classProgress > 0
-                          ? CourseProgressBar(value: widget.classProgress)
-                          : SizedBox(),*/
                       Padding(
                           padding:
                               EdgeInsets.only(right: 15, left: 15, top: 25),
@@ -127,26 +169,44 @@ class _InsideClassesState extends State<InsideClass> {
                               child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                      _classes[widget.classIndex].name,
-                                      style: OlukoFonts.olukoTitleFont(
-                                          custoFontWeight: FontWeight.bold),
-                                    ),
+                                    _startButton(),
+                                    Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 15.0),
+                                        child: Text(
+                                          _class.name,
+                                          style: OlukoFonts.olukoTitleFont(
+                                              custoFontWeight: FontWeight.bold),
+                                        )),
                                     Padding(
                                       padding: const EdgeInsets.only(
                                           top: 10.0, right: 10),
                                       child: Text(
-                                        widget.course.name,
-                                        style: OlukoFonts.olukoSuperBigFont(
-                                            custoFontWeight: FontWeight.bold,
+                                        OlukoLocalizations.of(context)
+                                                .find('class') +
+                                            " " +
+                                            (widget.classIndex + 1).toString() +
+                                            " " +
+                                            OlukoLocalizations.of(context)
+                                                .find('of') +
+                                            " " +
+                                            widget
+                                                .courseEnrollment.classes.length
+                                                .toString(),
+                                        style: OlukoFonts.olukoBigFont(
+                                            custoFontWeight: FontWeight.normal,
                                             customColor: OlukoColors.primary),
                                       ),
                                     ),
                                     Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 10.0),
+                                        child: CourseProgressBar(value: 0.5)),
+                                    Padding(
                                       padding: const EdgeInsets.only(
-                                          top: 10.0, right: 10),
+                                          top: 20.0),
                                       child: Text(
-                                        _classes[widget.classIndex].description,
+                                        _class.description,
                                         style: OlukoFonts.olukoBigFont(
                                             custoFontWeight: FontWeight.normal,
                                             customColor: OlukoColors.grayColor),
@@ -177,13 +237,6 @@ class _InsideClassesState extends State<InsideClass> {
                         height: 150,
                       )
                     ]),
-                    Positioned(
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        child: Container(
-                            color: Colors.black,
-                            child: _startButton(_segments)))
                   ],
                 ))));
   }
@@ -214,30 +267,28 @@ class _InsideClassesState extends State<InsideClass> {
         child: Container(height: 400, child: Stack(children: widgets)));
   }
 
-  Widget _startButton(List<Segment> segments) {
-    return Padding(
-        padding: EdgeInsets.symmetric(vertical: 20, horizontal: 15),
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            OlukoPrimaryButton(
-              title: OlukoLocalizations.of(context).find('start'),
-              onPressed: () {
-                int segmentIndex =
-                    CourseEnrollmentService.getFirstUncompletedSegmentIndex(
-                        _courseEnrollment.classes[widget.classIndex]);
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => SegmentDetail(
-                            user: _user,
-                            segments: segments,
-                            segmentIndex: segmentIndex,
-                            classIndex: widget.classIndex,
-                            courseEnrollment: _courseEnrollment)));
-              },
-            ),
-          ],
-        ));
+  Widget _startButton() {
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        OlukoPrimaryButton(
+          title: OlukoLocalizations.of(context).find('start'),
+          onPressed: () {
+            int segmentIndex =
+                CourseEnrollmentService.getFirstUncompletedSegmentIndex(
+                    widget.courseEnrollment.classes[widget.classIndex]);
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => SegmentDetail(
+                        user: _user,
+                        segments: _segments,
+                        segmentIndex: segmentIndex,
+                        classIndex: widget.classIndex,
+                        courseEnrollment: widget.courseEnrollment)));
+          },
+        ),
+      ],
+    );
   }
 }

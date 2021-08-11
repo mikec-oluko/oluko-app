@@ -29,7 +29,7 @@ class _ClassCarouselGalleryState extends State<ClassCarouselGallery> {
     return CarouselSlider(
       items: items,
       options: CarouselOptions(
-          height: 225,
+          height: 185,
           autoPlay: false,
           enlargeCenterPage: false,
           disableCenter: false,
@@ -37,7 +37,6 @@ class _ClassCarouselGalleryState extends State<ClassCarouselGallery> {
           initialPage: 0,
           viewportFraction: 0.32,
           onPageChanged: (index, reason) {
-            print("EL INDEX ES:" + index.toString());
             setState(() {
               items = buildClassCards(index);
             });
