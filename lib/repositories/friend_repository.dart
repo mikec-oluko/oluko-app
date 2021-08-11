@@ -38,21 +38,18 @@ class FriendRepository {
     }
   }
 
-  static Future<List<User>> getUserFriendsRequestByUserId(String userId) async {
+  static Future<Friend> getUserFriendsRequestByUserId(String userId) async {
     //TODO: Get List of friendRequest for the userId
     try {
       QuerySnapshot docRef = await FirebaseFirestore.instance
           .collection('projects')
           .doc(GlobalConfiguration().getValue("projectId"))
-          .collection('users-friend-request')
+          .collection('friends')
           .where('id', isEqualTo: userId)
           .get();
-      List<User> listOfFriendRequests = [];
-      docRef.docs.forEach((doc) {
-        final Map<String, dynamic> element = doc.data();
-        // listOfFriendRequests.add(userFriendRequestClass.fromJson(element));
-      });
-      // return listOfFriendRequests;
+      List<Friend> listOfFriendRequests =
+          docRef.docs.map((doc) => Friend.fromJson(doc.data())).toList();
+      return listOfFriendRequests[0];
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,
