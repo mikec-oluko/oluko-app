@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
 import 'package:oluko_app/utils/screen_utils.dart';

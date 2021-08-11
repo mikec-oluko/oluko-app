@@ -79,7 +79,7 @@ class TransformListOfItemsToWidget {
     if (upcomingChallengesContent != null) {
       //TODO: Crear container con locker icon and w/ also style
       contentForReturn = ImageAndVideoContainer(
-        backgroundImage: upcomingChallengesContent.challengeImage,
+        backgroundImage: upcomingChallengesContent.image,
         isContentVideo: false,
         originalContent: upcomingChallengesContent,
         displayOnViewNamed: routeForContent,

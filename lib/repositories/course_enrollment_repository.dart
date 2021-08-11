@@ -186,7 +186,7 @@ class CourseEnrollmentRepository {
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"))
         .collection('challenges')
-        .where('course_enrollment_id', isEqualTo: courseEnrollment.id)
+        // .where('course_enrollment_id', isEqualTo: courseEnrollment.id)
         .get();
     for (var challengeDoc in query.docs) {
       Map<String, dynamic> challenge = challengeDoc.data();

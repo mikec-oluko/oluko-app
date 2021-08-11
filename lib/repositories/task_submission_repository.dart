@@ -144,19 +144,24 @@ class TaskSubmissionRepository {
 
   static Future getTaskSubmissionsByAssessmentId(
       String userId, String assessmentId, List<TaskSubmission> response) async {
-    CollectionReference reference = projectReference
-        .collection("assessmentAssignments")
-        .doc(assessmentId)
-        .collection('taskSubmissions');
-    final querySnapshot = await reference
-        // .where('created_by', isEqualTo: userId)
-        .where('video', isNotEqualTo: null)
-        .get();
+    try {
+      CollectionReference reference = projectReference
+          .collection("assessmentAssignments")
+          .doc(assessmentId)
+          .collection('taskSubmissions');
+      final querySnapshot = await reference
+          // .where('created_by', isEqualTo: userId)
+          .where('video', isNotEqualTo: null)
+          .get();
 
-    if (querySnapshot.docs.length > 0) {
-      querySnapshot.docs.forEach((taskUploaded) {
-        response.add(TaskSubmission.fromJson(taskUploaded.data()));
-      });
+      if (querySnapshot.docs.length > 0) {
+        querySnapshot.docs.forEach((taskUploaded) {
+          response.add(TaskSubmission.fromJson(taskUploaded.data()));
+        });
+      }
+    } catch (e) {
+      print(e.toString());
+      throw e;
     }
   }
 }
