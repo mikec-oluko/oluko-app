@@ -1,10 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/friend.dart';
 import 'package:oluko_app/models/friend_model.dart';
 import 'package:oluko_app/models/friend_request_model.dart';
-import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/friend_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
