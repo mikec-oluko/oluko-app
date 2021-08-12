@@ -91,6 +91,29 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
                                         .map<Widget>((UserResponse friend) =>
                                             FriendRequestCard(
                                               friendUser: friend,
+                                              onFriendRequestIgnore:
+                                                  (UserResponse friend) {
+                                                FriendRequestModel
+                                                    friendRequestModel =
+                                                    friendsRequestState
+                                                        .friendData
+                                                        .friendRequestReceived
+                                                        .where(
+                                                            (friendRequest) =>
+                                                                friendRequest
+                                                                    .id ==
+                                                                friend.id)
+                                                        .toList()
+                                                        .first;
+                                                BlocProvider.of<
+                                                            IgnoreFriendRequestBloc>(
+                                                        context)
+                                                    .ignoreFriend(
+                                                        context,
+                                                        friendsRequestState
+                                                            .friendData,
+                                                        friendRequestModel);
+                                              },
                                               onFriendConfirmation:
                                                   (UserResponse friend) {
                                                 FriendRequestModel
