@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/blocs/friend_bloc.dart';
+import 'package:oluko_app/blocs/friends/confirm_friend_bloc.dart';
+import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/page_content.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
@@ -14,23 +16,15 @@ class FriendsPage extends StatefulWidget {
   _FriendsPageState createState() => _FriendsPageState();
 }
 
-final FriendBloc friendBloc = FriendBloc();
-
 class _FriendsPageState extends State<FriendsPage>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
   int _activeTabIndex;
-  List<PageContent> _pages = [
-    PageContent("Friends",
-        BlocProvider.value(value: friendBloc, child: FriendsListPage())),
-    PageContent("Requests",
-        BlocProvider.value(value: friendBloc, child: FriendsRequestPage()))
-  ];
+  List<Widget> _pages = [FriendsListPage(), FriendsRequestPage()];
   final String _title = "Friends";
 
   @override
   void initState() {
-    setState(() {});
     _tabController = TabController(length: _pages.length, vsync: this);
     super.initState();
   }
@@ -93,12 +87,8 @@ class _FriendsPageState extends State<FriendsPage>
                                 labelColor: OlukoColors.black,
                                 controller: _tabController,
                                 tabs: [
-                                  Tab(
-                                    text: _pages[0].title,
-                                  ),
-                                  Tab(
-                                    text: _pages[1].title,
-                                  )
+                                  Tab(text: 'Friends'),
+                                  Tab(text: 'Requests')
                                 ],
                               ),
                             ),
@@ -111,13 +101,11 @@ class _FriendsPageState extends State<FriendsPage>
                     child: Container(
                       color: OlukoColors.black,
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: TabBarView(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: TabBarView(
                             controller: _tabController,
-                            children: _pages
-                                .map<Widget>((PageContent page) => page.page)
-                                .toList()),
-                      ),
+                            children: _pages,
+                          )),
                     ),
                   ),
                 ],

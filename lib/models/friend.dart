@@ -50,10 +50,11 @@ class Friend extends Base {
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> friendJson = {
-      'friends': friends,
-      'friend_request_sent': friendRequestSent,
-      'friend_request_received': friendRequestReceived,
-      'blocked': blocked
+      'friends': friends.map((e) => e.toJson()).toList(),
+      'friend_request_sent': friendRequestSent.map((e) => e.toJson()).toList(),
+      'friend_request_received':
+          friendRequestReceived.map((e) => e.toJson()).toList(),
+      'blocked': blocked.map((e) => e.toJson()).toList()
     };
     friendJson.addEntries(super.toJson().entries);
     return friendJson;
