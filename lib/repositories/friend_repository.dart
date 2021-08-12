@@ -125,18 +125,20 @@ class FriendRepository {
     }
   }
 
-  static Future<User> ignoreFriendRequest(
-      String userId, User userRequestedignored) async {
-    // TODO: Remove user from UserFriendRequest
+  static Future<FriendRequestModel> ignoreFriendRequest(
+      Friend friend, FriendRequestModel friendRequest) async {
     try {
-      QuerySnapshot docRef = await FirebaseFirestore.instance
+      //Remove friend request
+      friend.friendRequestReceived
+          .removeWhere((element) => element.id == friendRequest.id);
+
+      await FirebaseFirestore.instance
           .collection('projects')
           .doc(GlobalConfiguration().getValue("projectId"))
-          .collection('users-friend-request')
-          .where('id', isEqualTo: userId)
-          .get();
-
-      // return;
+          .collection('friends')
+          .doc(friend.id)
+          .set(friend.toJson());
+      return friendRequest;
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,

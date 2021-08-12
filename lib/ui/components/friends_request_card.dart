@@ -13,7 +13,9 @@ class FriendRequestCard extends StatefulWidget {
 
   final UserResponse friendUser;
   final Function(UserResponse) onFriendConfirmation;
-  FriendRequestCard({this.friendUser, this.onFriendConfirmation});
+  final Function(UserResponse) onFriendRequestIgnore;
+  FriendRequestCard(
+      {this.friendUser, this.onFriendConfirmation, this.onFriendRequestIgnore});
 
   @override
   _FriendRequestCardState createState() => _FriendRequestCardState();
@@ -115,7 +117,8 @@ class _FriendRequestCardState extends State<FriendRequestCard> {
                         child: OutlinedButton(
                             style: OutlinedButton.styleFrom(
                                 side: BorderSide(color: OlukoColors.grayColor)),
-                            onPressed: () {},
+                            onPressed: () =>
+                                widget.onFriendRequestIgnore(widget.friendUser),
                             child: Text("Ignore",
                                 style: OlukoFonts.olukoMediumFont(
                                     customColor: OlukoColors.grayColor))),

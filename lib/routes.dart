@@ -12,6 +12,7 @@ import 'package:oluko_app/blocs/course_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/favorite_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
+import 'package:oluko_app/blocs/friends/ignore_friend_request_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/plan_bloc.dart';
 import 'package:oluko_app/blocs/profile_bloc.dart';
@@ -150,6 +151,8 @@ class Routes {
   final TagBloc _tagBloc = TagBloc();
   final FriendBloc _friendBloc = FriendBloc();
   final ConfirmFriendBloc _confirmFriendBloc = ConfirmFriendBloc();
+  final IgnoreFriendRequestBloc _ignoreFriendRequestBloc =
+      IgnoreFriendRequestBloc();
   final AssessmentBloc _assessmentBloc = AssessmentBloc();
   final AssessmentAssignmentBloc _assessmentAssignmentBloc =
       AssessmentAssignmentBloc();
@@ -196,7 +199,9 @@ class Routes {
           BlocProvider<TransformationJourneyBloc>.value(
               value: _transformationJourneyBloc),
           BlocProvider<FriendBloc>.value(value: _friendBloc),
-          BlocProvider<ConfirmFriendBloc>.value(value: _confirmFriendBloc)
+          BlocProvider<ConfirmFriendBloc>.value(value: _confirmFriendBloc),
+          BlocProvider<IgnoreFriendRequestBloc>.value(
+              value: _ignoreFriendRequestBloc),
         ];
         newRouteView = MainPage();
         break;
