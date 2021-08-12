@@ -327,7 +327,7 @@ class _State extends State<Courses> {
                         .map((CourseEnrollment courseEnrollment) {
                       final course = courseState.values
                           .where((element) =>
-                              element.id == courseEnrollment.courseId)
+                              element.id == courseEnrollment.course.id)
                           .toList()[0];
 
                       return Padding(

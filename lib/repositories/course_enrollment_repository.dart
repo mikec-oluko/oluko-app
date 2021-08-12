@@ -83,11 +83,15 @@ class CourseEnrollmentRepository {
     final DocumentReference docRef = reference.doc();
     DocumentReference userReference =
         FirebaseFirestore.instance.collection('users').doc(user.uid);
+    ObjectSubmodel courseSubmodel = ObjectSubmodel(
+        id: course.id,
+        reference: courseReference,
+        name: course.name,
+        image: course.image);
     CourseEnrollment courseEnrollment = CourseEnrollment(
         userId: user.uid,
         userReference: userReference,
-        courseId: course.id,
-        courseReference: courseReference,
+        course: courseSubmodel,
         classes: []);
     courseEnrollment.id = docRef.id;
     courseEnrollment = await setEnrollmentClasses(course, courseEnrollment);
@@ -101,6 +105,7 @@ class CourseEnrollmentRepository {
       EnrollmentClass enrollmentClass = EnrollmentClass(
           id: classObj.id,
           name: classObj.name,
+          image: classObj.image,
           reference: classObj.reference,
           segments: []);
       enrollmentClass = await setEnrollmentSegments(enrollmentClass);
