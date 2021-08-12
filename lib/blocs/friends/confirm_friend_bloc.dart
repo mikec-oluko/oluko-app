@@ -1,8 +1,10 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/friend.dart';
 import 'package:oluko_app/models/friend_model.dart';
 import 'package:oluko_app/models/friend_request_model.dart';
 import 'package:oluko_app/repositories/friend_repository.dart';
+import 'package:oluko_app/utils/app_messages.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class ConfirmFriendState {}
@@ -23,7 +25,8 @@ class ConfirmFriendFailure extends ConfirmFriendState {
 class ConfirmFriendBloc extends Cubit<ConfirmFriendState> {
   ConfirmFriendBloc() : super(Loading());
 
-  void confirmFriend(Friend friend, FriendRequestModel friendRequest) async {
+  void confirmFriend(BuildContext context, Friend friend,
+      FriendRequestModel friendRequest) async {
     try {
       FriendModel friendModel =
           await FriendRepository.confirmFriendRequest(friend, friendRequest);
