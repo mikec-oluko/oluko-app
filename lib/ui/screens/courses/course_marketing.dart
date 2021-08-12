@@ -72,8 +72,6 @@ class _CourseMarketingState extends State<CourseMarketing> {
           return Form(
               key: _formKey,
               child: Scaffold(
-                  appBar: OlukoAppBar(
-                      title: OlukoLocalizations.of(context).find('course')),
                   body: Container(
                       color: Colors.black,
                       child: Stack(
@@ -91,34 +89,58 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                       0, 0, rect.width, rect.height));
                                 },
                                 blendMode: BlendMode.dstIn,
-                                child: Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      AspectRatio(
-                                          aspectRatio: 1,
-                                          child: Image.network(
-                                            widget.course.image,
-                                            fit: BoxFit.cover,
-                                          )),
-                                      GestureDetector(
-                                        onTap: () => Navigator.of(context).push(
-                                          PageRouteBuilder(
-                                            opaque: false,
-                                            pageBuilder: (_, __, ___) =>
-                                                VideoOverlay(
-                                                    videoUrl:
-                                                        widget.course.video),
-                                          ),
+                                child: Stack(children: [
+                                  Stack(alignment: Alignment.center, children: [
+                                    AspectRatio(
+                                        aspectRatio: 1,
+                                        child: Image.network(
+                                          widget.course.image,
+                                          fit: BoxFit.cover,
+                                        )),
+                                    GestureDetector(
+                                      onTap: () => Navigator.of(context).push(
+                                        PageRouteBuilder(
+                                          opaque: false,
+                                          pageBuilder: (_, __, ___) =>
+                                              VideoOverlay(
+                                                  videoUrl:
+                                                      widget.course.video),
                                         ),
-                                        child: Align(
-                                            alignment: Alignment.center,
-                                            child: Image.asset(
-                                              'assets/assessment/play.png',
-                                              height: 50,
-                                              width: 50,
-                                            )),
-                                      )
-                                    ]),
+                                      ),
+                                      child: Align(
+                                          alignment: Alignment.center,
+                                          child: Image.asset(
+                                            'assets/assessment/play.png',
+                                            height: 50,
+                                            width: 50,
+                                          )),
+                                    )
+                                  ]),
+                                  Padding(
+                                      padding: EdgeInsets.only(top: 15),
+                                      child: Row(
+                                        children: [
+                                          IconButton(
+                                              icon: Icon(Icons.chevron_left,
+                                                  size: 35,
+                                                  color: Colors.white),
+                                              onPressed: () =>
+                                                  Navigator.pop(context)),
+                                          Expanded(child: SizedBox()),
+                                          IconButton(
+                                            icon: Icon(Icons.share,
+                                                color: OlukoColors.white),
+                                            onPressed: () {
+                                              //TODO: Add share action
+                                            },
+                                          ),
+                                          Image.asset(
+                                            'assets/courses/heart.png',
+                                            scale: 4,
+                                          ),
+                                        ],
+                                      )),
+                                ]),
                               ),
                             ),
                             /*existsEnrollment

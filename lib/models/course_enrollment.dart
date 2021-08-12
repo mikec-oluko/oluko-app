@@ -1,13 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/submodels/enrollment_class.dart';
+import 'package:oluko_app/models/submodels/object_submodel.dart';
 import 'base.dart';
 
 class CourseEnrollment extends Base {
   String userId;
   DocumentReference userReference;
-  String courseId;
-  DocumentReference courseReference;
+  ObjectSubmodel course;
   double completion;
   Timestamp completedAt;
   Timestamp finishedAt;
@@ -17,8 +17,7 @@ class CourseEnrollment extends Base {
   CourseEnrollment(
       {this.userId,
       this.userReference,
-      this.courseId,
-      this.courseReference,
+      this.course,
       this.completion,
       this.completedAt,
       this.finishedAt,
@@ -44,10 +43,8 @@ class CourseEnrollment extends Base {
     CourseEnrollment courseEnrollment = CourseEnrollment(
         userId: json['user_id'],
         userReference: json['user_reference'],
-        courseId: json['course_id'],
-        courseReference: json['course_reference'],
-        completion:
-            json['completion'] == null ? 0.0 : (json['completion']).toDouble(),
+        course: ObjectSubmodel.fromJson(json['course']),
+        completion: json['completion'] == null ? 0.0 : (json['completion']).toDouble(),
         completedAt: json['completed_at'],
         finishedAt: json['finished_at'],
         classes: json['classes'] != null
@@ -66,9 +63,8 @@ class CourseEnrollment extends Base {
     Map<String, dynamic> courseEnrollmentJson = {
       'user_id': userId,
       'user_reference': userReference,
-      'course_id': courseId,
-      'course_reference': courseReference,
       'completion': completion == null ? 0.0 : completion.toDouble(),
+      'course': course.toJson(),
       'completed_at': completedAt,
       'finished_at': finishedAt,
       'classes': classes == null
