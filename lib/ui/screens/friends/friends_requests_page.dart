@@ -20,6 +20,7 @@ class FriendsRequestPage extends StatefulWidget {
 class _FriendsRequestPageState extends State<FriendsRequestPage> {
   //TODO: Use from widget
   String hardcodedUserId = '4HPomzrecweLoCAuCSVvPATtwwr2';
+  num maxRequestsToShow = 5;
 
   @override
   void initState() {
@@ -71,33 +72,38 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
                     return friendsRequestState is GetFriendRequestsSuccess
                         ? Column(
                             children: friendsRequestState.friendRequestList
-                                .map((UserResponse friend) => FriendRequestCard(
-                                      friendUser: friend,
-                                      onFriendConfirmation:
-                                          (UserResponse friend) {
-                                        FriendRequestModel friendRequestModel =
-                                            friendsRequestState.friendData
-                                                .friendRequestReceived
-                                                .where((friendRequest) =>
-                                                    friendRequest.id ==
-                                                    friend.id)
-                                                .toList()
-                                                .first;
-                                        BlocProvider.of<ConfirmFriendBloc>(
-                                                context)
-                                            .confirmFriend(
-                                                context,
-                                                friendsRequestState.friendData,
-                                                friendRequestModel);
-                                      },
-                                    ))
-                                .toList(),
-                          )
+                                    .map<Widget>((UserResponse friend) =>
+                                        FriendRequestCard(
+                                          friendUser: friend,
+                                          onFriendConfirmation:
+                                              (UserResponse friend) {
+                                            FriendRequestModel
+                                                friendRequestModel =
+                                                friendsRequestState.friendData
+                                                    .friendRequestReceived
+                                                    .where((friendRequest) =>
+                                                        friendRequest.id ==
+                                                        friend.id)
+                                                    .toList()
+                                                    .first;
+                                            BlocProvider.of<ConfirmFriendBloc>(
+                                                    context)
+                                                .confirmFriend(
+                                                    context,
+                                                    friendsRequestState
+                                                        .friendData,
+                                                    friendRequestModel);
+                                          },
+                                        ))
+                                    .toList() +
+                                (friendsRequestState.friendRequestList.length >
+                                        maxRequestsToShow
+                                    ? [buildAllRequestButton(context)]
+                                    : []))
                         : SizedBox();
                   })
                 ],
               ),
-              buildAllRequestButton(context),
               Padding(
                 padding: const EdgeInsets.only(top: 20),
                 child: FriendSuggestionSection(
