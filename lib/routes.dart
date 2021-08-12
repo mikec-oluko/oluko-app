@@ -193,6 +193,8 @@ class Routes {
               value: _courseEnrollmentBloc),
           BlocProvider<FavoriteBloc>.value(value: _favoriteBloc),
           BlocProvider<RecommendationBloc>.value(value: _recommendationBloc),
+          BlocProvider<TransformationJourneyBloc>.value(
+              value: _transformationJourneyBloc),
           BlocProvider<FriendBloc>.value(value: _friendBloc),
           BlocProvider<ConfirmFriendBloc>.value(value: _confirmFriendBloc)
         ];
