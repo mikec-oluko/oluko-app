@@ -14,6 +14,7 @@ import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/segment_submodel.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/services/course_enrollment_service.dart';
 import 'package:oluko_app/ui/components/challenge_section.dart';
 import 'package:oluko_app/ui/components/class_movements_section.dart';
@@ -240,6 +241,11 @@ class _InsideClassesState extends State<InsideClass> {
 
   Widget classMovementSection(List<Movement> movements) {
     return ClassMovementSection(
-        movements: movements, classObj: _class);
+      movements: movements,
+      classObj: _class,
+      onPressedMovement: (BuildContext context, Movement movement) =>
+          Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro],
+              arguments: {'movement': movement}),
+    );
   }
 }

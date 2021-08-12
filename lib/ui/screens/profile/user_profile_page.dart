@@ -382,7 +382,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   getCourseProgress({List<CourseEnrollment> courseEnrollments, Course course}) {
     double _completion = 0.0;
     for (CourseEnrollment courseEnrollment in courseEnrollments) {
-      if (courseEnrollment.courseId == course.id) {
+      if (courseEnrollment.course.id == course.id) {
         _completion = courseEnrollment.completion / 100;
       }
     }
