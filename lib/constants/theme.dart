@@ -62,6 +62,9 @@ class OlukoColors {
 
   static const Color challengesGreyBackground = Color(0xFF303030);
 
+  static const Color challengeLockedFilterColor =
+      Color.fromRGBO(218, 5, 5, 0.2);
+
   static const Color grayColorSemiTransparent =
       Color.fromRGBO(148, 148, 148, 0.6);
 }
