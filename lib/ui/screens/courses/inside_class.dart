@@ -6,14 +6,17 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/class_bloc.dart';
+import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/segment_submodel.dart';
 import 'package:oluko_app/services/course_enrollment_service.dart';
 import 'package:oluko_app/ui/components/challenge_section.dart';
+import 'package:oluko_app/ui/components/class_movements_section.dart';
 import 'package:oluko_app/ui/components/course_progress_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/overlay_video_preview.dart';
@@ -53,6 +56,7 @@ class _InsideClassesState extends State<InsideClass> {
         _user = authState.firebaseUser;
         BlocProvider.of<ClassBloc>(context)
           ..get(widget.courseEnrollment.classes[widget.classIndex].id);
+        BlocProvider.of<MovementBloc>(context)..getAll();
         return BlocBuilder<ClassBloc, ClassState>(
             builder: (context, classState) {
           if (classState is GetByIdSuccess) {
@@ -66,21 +70,6 @@ class _InsideClassesState extends State<InsideClass> {
         return SizedBox();
       }
     });
-
-    /*return MultiBlocProvider(
-        providers: [
-          BlocProvider<SegmentBloc>(
-            create: (context) => _segmentBloc..getAll(widget.actualClass),
-          )
-        ],
-        child:
-            BlocBuilder<SegmentBloc, SegmentState>(builder: (context, state) {
-          if (state is GetSegmentsSuccess) {
-            return form(state.segments);
-          } else {
-            return SizedBox();
-          }
-        }));*/
   }
 
   Widget form() {
@@ -92,14 +81,6 @@ class _InsideClassesState extends State<InsideClass> {
                 child: Stack(
                   children: [
                     ListView(children: [
-                      /*Padding(
-                        padding: const EdgeInsets.only(bottom: 3),
-                        child: OrientationBuilder(
-                          builder: (context, orientation) {
-                            return showVideoPlayer(_class.video);
-                          },
-                        ),
-                      ),*/
                       Padding(
                           padding: const EdgeInsets.only(bottom: 3),
                           child: OverlayVideoPreview(
@@ -151,7 +132,11 @@ class _InsideClassesState extends State<InsideClass> {
                                     Padding(
                                         padding:
                                             const EdgeInsets.only(top: 10.0),
-                                        child: CourseProgressBar(value: 0.5)),
+                                        child: CourseProgressBar(
+                                            value: CourseEnrollmentService
+                                                .getClassProgress(
+                                                    widget.courseEnrollment,
+                                                    widget.classIndex))),
                                     Padding(
                                       padding: const EdgeInsets.only(top: 20.0),
                                       child: Text(
@@ -162,6 +147,15 @@ class _InsideClassesState extends State<InsideClass> {
                                       ),
                                     ),
                                     buildChallengeSection(),
+                                    BlocBuilder<MovementBloc, MovementState>(
+                                        builder: (context, movementState) {
+                                      if (movementState is GetAllSuccess) {
+                                        return classMovementSection(
+                                            movementState.movements);
+                                      } else {
+                                        return SizedBox();
+                                      }
+                                    })
                                   ]))),
                       SizedBox(
                         height: 150,
@@ -242,5 +236,10 @@ class _InsideClassesState extends State<InsideClass> {
       }
     });
     return challenges;
+  }
+
+  Widget classMovementSection(List<Movement> movements) {
+    return ClassMovementSection(
+        movements: movements, classObj: _class);
   }
 }

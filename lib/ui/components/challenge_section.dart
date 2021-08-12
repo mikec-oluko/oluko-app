@@ -19,9 +19,7 @@ class _State extends State<ChallengeSection> {
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
-      child: Padding(
-        padding: const EdgeInsets.all(0.0),
-        child: Column(
+      child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Divider(
@@ -45,7 +43,6 @@ class _State extends State<ChallengeSection> {
             )
           ],
         ),
-      ),
     );
   }
 
@@ -71,8 +68,8 @@ class _State extends State<ChallengeSection> {
             ClipRRect(
               child: Image.network(
                 challenge.challengeImage,
-                height: 115,
-                width: 80,
+                height: 140,
+                width: 100,
                 fit: BoxFit.cover,
               ),
               borderRadius: BorderRadius.only(
