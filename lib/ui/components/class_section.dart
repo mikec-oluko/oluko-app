@@ -65,7 +65,7 @@ class _State extends State<ClassSection> {
                             child: Text(
                               widget.classObj.name,
                               style: OlukoFonts.olukoBigFont(
-                                  custoFontWeight: FontWeight.normal,
+                                  custoFontWeight: FontWeight.w500,
                                   customColor: OlukoColors.grayColor),
                             ),
                           ),

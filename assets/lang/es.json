@@ -134,5 +134,8 @@
     "phone": "Teléfono",
     "message": "Mensaje",
     "submit": "Enviar",
-    "of": "de"
+    "of": "de",
+    "inThis": "en este",
+    "challenge": "Desafío",
+    "challenges": "Desafíos"
 }

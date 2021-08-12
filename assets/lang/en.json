@@ -133,5 +133,8 @@
     "phone": "Phone",
     "message": "Message",
     "submit": "Submit",
-    "of": "of"   
+    "of": "of",
+    "inThis": "in this",
+    "challenge": "Challenge",
+    "challenges": "Challenges"
 }

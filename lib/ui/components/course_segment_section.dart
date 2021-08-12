@@ -38,7 +38,7 @@ class _State extends State<CourseSegmentSection> {
               child: Text(
                 widget.segmentName,
                 style: OlukoFonts.olukoBigFont(
-                    custoFontWeight: FontWeight.normal,
+                    custoFontWeight: FontWeight.w500,
                     customColor: OlukoColors.grayColor),
               ),
             ),
