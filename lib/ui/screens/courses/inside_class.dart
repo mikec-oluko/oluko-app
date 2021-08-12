@@ -6,18 +6,24 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/class_bloc.dart';
+import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
+import 'package:oluko_app/models/submodels/segment_submodel.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/services/course_enrollment_service.dart';
+import 'package:oluko_app/ui/components/challenge_section.dart';
+import 'package:oluko_app/ui/components/class_movements_section.dart';
 import 'package:oluko_app/ui/components/course_progress_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
-import 'package:oluko_app/ui/components/segment_section.dart';
+import 'package:oluko_app/ui/components/overlay_video_preview.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
+import 'package:oluko_app/ui/screens/courses/course_info_section.dart';
 import 'package:oluko_app/ui/screens/courses/segment_detail.dart';
-import 'package:oluko_app/ui/screens/video_overlay.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
@@ -39,8 +45,6 @@ class _InsideClassesState extends State<InsideClass> {
   ChewieController _controller;
   Class _class;
   User _user;
-  List<Segment> _segments;
-
   @override
   void initState() {
     super.initState();
@@ -53,20 +57,12 @@ class _InsideClassesState extends State<InsideClass> {
         _user = authState.firebaseUser;
         BlocProvider.of<ClassBloc>(context)
           ..get(widget.courseEnrollment.classes[widget.classIndex].id);
+        BlocProvider.of<MovementBloc>(context)..getAll();
         return BlocBuilder<ClassBloc, ClassState>(
             builder: (context, classState) {
           if (classState is GetByIdSuccess) {
             _class = classState.classObj;
-            BlocProvider.of<SegmentBloc>(context)..getAll(_class);
-            return BlocBuilder<SegmentBloc, SegmentState>(
-                builder: (context, segmentState) {
-              if (segmentState is GetSegmentsSuccess) {
-                _segments = segmentState.segments;
-                return form();
-              } else {
-                return SizedBox();
-              }
-            });
+            return form();
           } else {
             return SizedBox();
           }
@@ -75,21 +71,6 @@ class _InsideClassesState extends State<InsideClass> {
         return SizedBox();
       }
     });
-
-    /*return MultiBlocProvider(
-        providers: [
-          BlocProvider<SegmentBloc>(
-            create: (context) => _segmentBloc..getAll(widget.actualClass),
-          )
-        ],
-        child:
-            BlocBuilder<SegmentBloc, SegmentState>(builder: (context, state) {
-          if (state is GetSegmentsSuccess) {
-            return form(state.segments);
-          } else {
-            return SizedBox();
-          }
-        }));*/
   }
 
   Widget form() {
@@ -101,66 +82,17 @@ class _InsideClassesState extends State<InsideClass> {
                 child: Stack(
                   children: [
                     ListView(children: [
-                      /*Padding(
-                        padding: const EdgeInsets.only(bottom: 3),
-                        child: OrientationBuilder(
-                          builder: (context, orientation) {
-                            return showVideoPlayer(_class.video);
-                          },
-                        ),
-                      ),*/
-
                       Padding(
-                        padding: const EdgeInsets.only(bottom: 3),
-                        child: ShaderMask(
-                          shaderCallback: (rect) {
-                            return LinearGradient(
-                              begin: Alignment.center,
-                              end: Alignment.bottomCenter,
-                              colors: [Colors.black, Colors.transparent],
-                            ).createShader(
-                                Rect.fromLTRB(0, 0, rect.width, rect.height));
-                          },
-                          blendMode: BlendMode.dstIn,
-                          child: Stack(children: [
-                            Stack(alignment: Alignment.center, children: [
-                              AspectRatio(
-                                  aspectRatio: 1,
-                                  child: Image.asset(
-                                    'assets/courses/profile_photos.png',
-                                    fit: BoxFit.cover,
-                                  )),
-                              GestureDetector(
-                                onTap: () => Navigator.of(context).push(
-                                  PageRouteBuilder(
-                                    opaque: false,
-                                    pageBuilder: (_, __, ___) =>
-                                        VideoOverlay(videoUrl: _class.video),
-                                  ),
-                                ),
-                                child: Align(
-                                    alignment: Alignment.center,
-                                    child: Image.asset(
-                                      'assets/assessment/play.png',
-                                      height: 50,
-                                      width: 50,
-                                    )),
-                              )
-                            ]),
-                            Padding(
-                                padding: EdgeInsets.only(top: 15),
-                                child: Row(
-                                  children: [
-                                    IconButton(
-                                        icon: Icon(Icons.chevron_left,
-                                            size: 35, color: Colors.white),
-                                        onPressed: () =>
-                                            Navigator.pop(context)),
-                                  ],
-                                )),
-                          ]),
-                        ),
-                      ),
+                          padding: const EdgeInsets.only(bottom: 3),
+                          child: OverlayVideoPreview(
+                              video: _class.video,
+                              showBackButton: true,
+                              bottomWidgets: [
+                                CourseInfoSection(
+                                    peopleQty: 50,
+                                    audioMessageQty: 1,
+                                    image: widget.courseEnrollment.course.image)
+                              ])),
                       Padding(
                           padding:
                               EdgeInsets.only(right: 15, left: 15, top: 25),
@@ -201,10 +133,13 @@ class _InsideClassesState extends State<InsideClass> {
                                     Padding(
                                         padding:
                                             const EdgeInsets.only(top: 10.0),
-                                        child: CourseProgressBar(value: 0.5)),
+                                        child: CourseProgressBar(
+                                            value: CourseEnrollmentService
+                                                .getClassProgress(
+                                                    widget.courseEnrollment,
+                                                    widget.classIndex))),
                                     Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 20.0),
+                                      padding: const EdgeInsets.only(top: 20.0),
                                       child: Text(
                                         _class.description,
                                         style: OlukoFonts.olukoBigFont(
@@ -212,26 +147,16 @@ class _InsideClassesState extends State<InsideClass> {
                                             customColor: OlukoColors.grayColor),
                                       ),
                                     ),
-                                    Column(
-                                      children: [
-                                        ListView.builder(
-                                            physics:
-                                                const NeverScrollableScrollPhysics(),
-                                            itemCount: _segments.length,
-                                            shrinkWrap: true,
-                                            itemBuilder: (context, num index) {
-                                              Segment segment =
-                                                  _segments[index];
-                                              return Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(vertical: 5.0),
-                                                  child: SegmentSection(
-                                                    segment: segment,
-                                                    onPressed: () {},
-                                                  ));
-                                            }),
-                                      ],
-                                    ),
+                                    buildChallengeSection(),
+                                    BlocBuilder<MovementBloc, MovementState>(
+                                        builder: (context, movementState) {
+                                      if (movementState is GetAllSuccess) {
+                                        return classMovementSection(
+                                            movementState.movements);
+                                      } else {
+                                        return SizedBox();
+                                      }
+                                    })
                                   ]))),
                       SizedBox(
                         height: 150,
@@ -274,7 +199,7 @@ class _InsideClassesState extends State<InsideClass> {
         OlukoPrimaryButton(
           title: OlukoLocalizations.of(context).find('start'),
           onPressed: () {
-            int segmentIndex =
+            /*int segmentIndex =
                 CourseEnrollmentService.getFirstUncompletedSegmentIndex(
                     widget.courseEnrollment.classes[widget.classIndex]);
             Navigator.push(
@@ -285,10 +210,42 @@ class _InsideClassesState extends State<InsideClass> {
                         segments: _segments,
                         segmentIndex: segmentIndex,
                         classIndex: widget.classIndex,
-                        courseEnrollment: widget.courseEnrollment)));
+                        courseEnrollment: widget.courseEnrollment)));*/
           },
         ),
       ],
+    );
+  }
+
+  Widget buildChallengeSection() {
+    List<SegmentSubmodel> challenges = getChallenges();
+    if (challenges.length > 0) {
+      return ChallengeSection(
+        addTitle: true,
+        challenges: challenges,
+      );
+    } else {
+      return SizedBox();
+    }
+  }
+
+  List<SegmentSubmodel> getChallenges() {
+    List<SegmentSubmodel> challenges = [];
+    _class.segments.forEach((SegmentSubmodel segment) {
+      if (segment.challengeImage != null) {
+        challenges.add(segment);
+      }
+    });
+    return challenges;
+  }
+
+  Widget classMovementSection(List<Movement> movements) {
+    return ClassMovementSection(
+      movements: movements,
+      classObj: _class,
+      onPressedMovement: (BuildContext context, Movement movement) =>
+          Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro],
+              arguments: {'movement': movement}),
     );
   }
 }

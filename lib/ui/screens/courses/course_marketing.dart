@@ -15,12 +15,11 @@ import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/routes.dart';
-import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/class_expansion_panel.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
+import 'package:oluko_app/ui/components/overlay_video_preview.dart';
 import 'package:oluko_app/ui/components/statistics_chart.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
-import 'package:oluko_app/ui/screens/video_overlay.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
@@ -79,69 +78,13 @@ class _CourseMarketingState extends State<CourseMarketing> {
                           ListView(children: [
                             Padding(
                               padding: const EdgeInsets.only(bottom: 3),
-                              child: ShaderMask(
-                                shaderCallback: (rect) {
-                                  return LinearGradient(
-                                    begin: Alignment.center,
-                                    end: Alignment.bottomCenter,
-                                    colors: [Colors.black, Colors.transparent],
-                                  ).createShader(Rect.fromLTRB(
-                                      0, 0, rect.width, rect.height));
-                                },
-                                blendMode: BlendMode.dstIn,
-                                child: Stack(children: [
-                                  Stack(alignment: Alignment.center, children: [
-                                    AspectRatio(
-                                        aspectRatio: 1,
-                                        child: Image.network(
-                                          widget.course.image,
-                                          fit: BoxFit.cover,
-                                        )),
-                                    GestureDetector(
-                                      onTap: () => Navigator.of(context).push(
-                                        PageRouteBuilder(
-                                          opaque: false,
-                                          pageBuilder: (_, __, ___) =>
-                                              VideoOverlay(
-                                                  videoUrl:
-                                                      widget.course.video),
-                                        ),
-                                      ),
-                                      child: Align(
-                                          alignment: Alignment.center,
-                                          child: Image.asset(
-                                            'assets/assessment/play.png',
-                                            height: 50,
-                                            width: 50,
-                                          )),
-                                    )
-                                  ]),
-                                  Padding(
-                                      padding: EdgeInsets.only(top: 15),
-                                      child: Row(
-                                        children: [
-                                          IconButton(
-                                              icon: Icon(Icons.chevron_left,
-                                                  size: 35,
-                                                  color: Colors.white),
-                                              onPressed: () =>
-                                                  Navigator.pop(context)),
-                                          Expanded(child: SizedBox()),
-                                          IconButton(
-                                            icon: Icon(Icons.share,
-                                                color: OlukoColors.white),
-                                            onPressed: () {
-                                              //TODO: Add share action
-                                            },
-                                          ),
-                                          Image.asset(
-                                            'assets/courses/heart.png',
-                                            scale: 4,
-                                          ),
-                                        ],
-                                      )),
-                                ]),
-                              ),
+                              child: OverlayVideoPreview(
+                                  image: widget.course.image,
+                                  video: widget.course.video,
+                                  showBackButton: true,
+                                  showHeartButton: true,
+                                  showShareButton: true,
+                                ),
                             ),
                             /*existsEnrollment
                                 ? CourseProgressBar(
