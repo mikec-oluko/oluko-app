@@ -340,13 +340,13 @@ class Routes {
       case RouteEnum.insideClass:
         providers = [
           BlocProvider<ClassBloc>.value(value: _classBloc),
-          BlocProvider<CourseEnrollmentBloc>.value(
-              value: _courseEnrollmentBloc),
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
           BlocProvider<MovementBloc>.value(value: _movementBloc),
         ];
-        final Map<String, Course> argumentsToAdd = arguments;
-        newRouteView = InsideClass(/*course: argumentsToAdd['course']*/);
+        final Map<String, dynamic> argumentsToAdd = arguments;
+        newRouteView = InsideClass(
+            courseEnrollment: argumentsToAdd['courseEnrollment'],
+            classIndex: argumentsToAdd['classIndex']);
         break;
       case RouteEnum.assessmentVideos:
         providers = [
@@ -415,6 +415,7 @@ class Routes {
           BlocProvider<CourseEnrollmentBloc>.value(
               value: _courseEnrollmentBloc),
           BlocProvider<TagBloc>.value(value: _tagBloc),
+          BlocProvider<RecommendationBloc>.value(value: _recommendationBloc),
         ];
         newRouteView = Courses();
         break;

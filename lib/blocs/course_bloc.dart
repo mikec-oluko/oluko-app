@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_category.dart';
+import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/course_statistics.dart';
 import 'package:oluko_app/repositories/course_category_repository.dart';
 import 'package:oluko_app/repositories/course_repository.dart';
@@ -25,6 +26,11 @@ class GetCourseSuccess extends CourseState {
 class UserEnrolledCoursesSuccess extends CourseState {
   final List<Course> courses;
   UserEnrolledCoursesSuccess({this.courses});
+}
+
+class GetByCourseEnrollmentsSuccess extends CourseState {
+  final List<Course> courses;
+  GetByCourseEnrollmentsSuccess({this.courses});
 }
 
 class CourseFailure extends CourseState {
@@ -93,6 +99,20 @@ class CourseBloc extends Cubit<CourseState> {
       List<Course> enrolledCourses =
           await CourseRepository.getUserEnrolled(userId);
       emit(UserEnrolledCoursesSuccess(courses: enrolledCourses));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(CourseFailure(exception: exception));
+    }
+  }
+
+  void getByCourseEnrollments(List<CourseEnrollment> courseEnrollments) async {
+    try {
+      List<Course> courses =
+          await CourseRepository.getByCourseEnrollments(courseEnrollments);
+      emit(GetByCourseEnrollmentsSuccess(courses: courses));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
