@@ -17,7 +17,8 @@ class GetFriendsSuccess extends FriendState {
 
 class GetFriendRequestsSuccess extends FriendState {
   List<UserResponse> friendRequestList;
-  GetFriendRequestsSuccess({this.friendRequestList});
+  Friend friendData;
+  GetFriendRequestsSuccess({this.friendRequestList, this.friendData});
 }
 
 class GetFriendSuggestionSuccess extends FriendState {
@@ -57,7 +58,9 @@ class FriendBloc extends Cubit<FriendState> {
               .map((e) => UserRepository().getById(e.id))
               .toList());
 
-      emit(GetFriendRequestsSuccess(friendRequestList: friendRequestUsers));
+      emit(GetFriendRequestsSuccess(
+          friendData: friendInformation,
+          friendRequestList: friendRequestUsers));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
