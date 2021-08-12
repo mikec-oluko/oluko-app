@@ -10,6 +10,7 @@ import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/friends_request_card.dart';
 import 'package:oluko_app/ui/components/friends_suggestions_section.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
+import 'package:oluko_app/utils/app_messages.dart';
 
 class FriendsRequestPage extends StatefulWidget {
   @override
@@ -18,11 +19,12 @@ class FriendsRequestPage extends StatefulWidget {
 
 class _FriendsRequestPageState extends State<FriendsRequestPage> {
   //TODO: Use from widget
+  String hardcodedUserId = '4HPomzrecweLoCAuCSVvPATtwwr2';
 
   @override
   void initState() {
     BlocProvider.of<FriendBloc>(context)
-        .getUserFriendsRequestByUserId('4HPomzrecweLoCAuCSVvPATtwwr2');
+        .getUserFriendsRequestByUserId(hardcodedUserId);
     super.initState();
   }
 
@@ -44,58 +46,69 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         color: OlukoColors.black,
-        child: Column(
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Column(
-                //     children: friends
-                //         .map((friend) => FriendRequestCard(
-                //               userData: friend,
-                //             ))
-                //         .toList()),
-                BlocBuilder<FriendBloc, FriendState>(
-                    builder: (context, friendsRequestState) {
-                  return friendsRequestState is GetFriendRequestsSuccess
-                      ? Column(
-                          children: friendsRequestState.friendRequestList
-                              .map((UserResponse friend) => FriendRequestCard(
-                                    friendUser: friend,
-                                    onFriendConfirmation:
-                                        (UserResponse friend) {
-                                      FriendRequestModel friendRequestModel =
-                                          friendsRequestState
-                                              .friendData.friendRequestReceived
-                                              .where((friendRequest) =>
-                                                  friendRequest.id == friend.id)
-                                              .toList()
-                                              .first;
-                                      BlocProvider.of<ConfirmFriendBloc>(
-                                              context)
-                                          .confirmFriend(
-                                              friendsRequestState.friendData,
-                                              friendRequestModel);
-                                    },
-                                  ))
-                              .toList(),
-                        )
-                      : SizedBox();
-                })
-              ],
-            ),
-            buildAllRequestButton(context),
-            Padding(
-              padding: const EdgeInsets.only(top: 20),
-              child: FriendSuggestionSection(
-                name: "Richard",
-                lastName: "McGregor",
-                userName: "Notorius",
-                imageUser: userImages[6],
+        child: BlocListener<ConfirmFriendBloc, ConfirmFriendState>(
+          listenWhen: (previousState, currentState) =>
+              currentState is ConfirmFriendSuccess,
+          listener: (context, confirmFriendState) {
+            BlocProvider.of<FriendBloc>(context)
+                .getUserFriendsRequestByUserId(hardcodedUserId);
+            AppMessages.showSnackbar(context, 'Friend added.');
+          },
+          child: Column(
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Column(
+                  //     children: friends
+                  //         .map((friend) => FriendRequestCard(
+                  //               userData: friend,
+                  //             ))
+                  //         .toList()),
+                  BlocBuilder<FriendBloc, FriendState>(
+                      builder: (context, friendsRequestState) {
+                    return friendsRequestState is GetFriendRequestsSuccess
+                        ? Column(
+                            children: friendsRequestState.friendRequestList
+                                .map((UserResponse friend) => FriendRequestCard(
+                                      friendUser: friend,
+                                      onFriendConfirmation:
+                                          (UserResponse friend) {
+                                        FriendRequestModel friendRequestModel =
+                                            friendsRequestState.friendData
+                                                .friendRequestReceived
+                                                .where((friendRequest) =>
+                                                    friendRequest.id ==
+                                                    friend.id)
+                                                .toList()
+                                                .first;
+                                        BlocProvider.of<ConfirmFriendBloc>(
+                                                context)
+                                            .confirmFriend(
+                                                context,
+                                                friendsRequestState.friendData,
+                                                friendRequestModel);
+                                      },
+                                    ))
+                                .toList(),
+                          )
+                        : SizedBox();
+                  })
+                ],
               ),
-            )
-          ],
+              buildAllRequestButton(context),
+              Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: FriendSuggestionSection(
+                  name: "Richard",
+                  lastName: "McGregor",
+                  userName: "Notorius",
+                  imageUser: userImages[6],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
