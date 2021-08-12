@@ -11,6 +11,7 @@ import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/list_of_items_to_widget.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/course.dart';
+import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -43,6 +44,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   List<TaskSubmission> _assessmentVideosContent = [];
   List<Challenge> _activeChallenges = [];
   List<Course> _coursesToUse = [];
+  List<CourseEnrollment> _courseEnrollmentList = [];
 
   @override
   void initState() {
@@ -269,6 +271,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         _activeChallenges = state.challenges;
                       }
                     }
+                    if (state is CourseEnrollmentListSuccess) {
+                      _courseEnrollmentList = state.courseEnrollmentList;
+                    }
                     return _activeChallenges.length != 0
                         ? _buildCarouselSection(
                             titleForSection: OlukoLocalizations.of(context)
@@ -293,8 +298,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   void _requestContentForUser(
       {BuildContext context, UserResponse userRequested}) {
-    // BlocProvider.of<CourseEnrollmentBloc>(context)
-    // .getCourseEnrollmentsByUserId(profileInfo.id);
+    BlocProvider.of<CourseEnrollmentBloc>(context)
+        .getCourseEnrollmentsByUserId(userRequested.id);
 
     BlocProvider.of<TaskSubmissionBloc>(context)
         .getTaskSubmissionByUserId(userRequested.id);
@@ -368,8 +373,19 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   context, child, frame, wasSynchronouslyLoaded,
                   height: 120, width: 120),
         ),
-        progress: 0.4,
+        progress: getCourseProgress(
+            courseEnrollments: _courseEnrollmentList, course: courseInfo),
       ),
     );
+  }
+
+  getCourseProgress({List<CourseEnrollment> courseEnrollments, Course course}) {
+    double _completion = 0.0;
+    for (CourseEnrollment courseEnrollment in courseEnrollments) {
+      if (courseEnrollment.courseId == course.id) {
+        _completion = courseEnrollment.completion / 100;
+      }
+    }
+    return _completion;
   }
 }

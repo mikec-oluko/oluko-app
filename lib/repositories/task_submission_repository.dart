@@ -120,7 +120,9 @@ class TaskSubmissionRepository {
         futures.add(await getTaskSubmissionsByAssessmentId(
             userId, asessmentId, response));
       }
-      Future.wait(futures);
+      if (futures.length != 0 && futures != null) {
+        Future.wait(futures);
+      }
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,

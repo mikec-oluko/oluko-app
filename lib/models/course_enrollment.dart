@@ -44,7 +44,7 @@ class CourseEnrollment extends Base {
         userId: json['user_id'],
         userReference: json['user_reference'],
         course: ObjectSubmodel.fromJson(json['course']),
-        completion: json['completion'] == null ? 0.0 : json['completion'],
+        completion: json['completion'] == null ? 0.0 : (json['completion']).toDouble(),
         completedAt: json['completed_at'],
         finishedAt: json['finished_at'],
         classes: json['classes'] != null
@@ -63,8 +63,8 @@ class CourseEnrollment extends Base {
     Map<String, dynamic> courseEnrollmentJson = {
       'user_id': userId,
       'user_reference': userReference,
+      'completion': completion == null ? 0.0 : completion.toDouble(),
       'course': course.toJson(),
-      'completion': completion == null ? 0.0 : completion,
       'completed_at': completedAt,
       'finished_at': finishedAt,
       'classes': classes == null
