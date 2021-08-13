@@ -16,7 +16,9 @@ class _State extends State<ChallengesCard> {
   String _defaultChallengeTitle = "in 2 weeks";
   @override
   Widget build(BuildContext context) {
-    return lockedCard(context);
+    return widget.challenge.completedAt != null
+        ? unlockedCard(context)
+        : lockedCard(context);
   }
 
   Stack lockedCard(BuildContext context) {
@@ -46,7 +48,6 @@ class _State extends State<ChallengesCard> {
             ),
           ),
         ),
-        //TODO: Know if challenge is active
         widget.challenge.completedAt == null
             ? Image.asset(
                 iconToUse,
@@ -54,6 +55,34 @@ class _State extends State<ChallengesCard> {
                 height: 60,
               )
             : SizedBox()
+      ],
+    );
+  }
+
+  Stack unlockedCard(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Align(
+            alignment: Alignment.topRight,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(15, 5, 2, 0),
+              child: Text(_defaultChallengeTitle,
+                  style: OlukoFonts.olukoSmallFont()),
+            )),
+        Container(
+          height: 115,
+          width: 80,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+            image: new DecorationImage(
+              fit: BoxFit.cover,
+              image: new NetworkImage(widget.challenge.image),
+            ),
+          ),
+        ),
+        SizedBox()
       ],
     );
   }
