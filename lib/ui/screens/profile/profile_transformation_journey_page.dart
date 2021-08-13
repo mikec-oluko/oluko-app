@@ -108,7 +108,7 @@ class _ProfileTransformationJourneyPageState
                               crossAxisCount: 3,
                               children: _contentGallery,
                             )
-                          : OlukoErrorMessage(),
+                          : Center(child: OlukoErrorMessage()),
                     ),
                   ]),
                 ),
