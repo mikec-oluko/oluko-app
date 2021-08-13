@@ -48,6 +48,7 @@ dependencies:
   webview_flutter: ^0.3.24
   amazon_cognito_identity_dart_2: ^1.0.3
   chewie: ^0.12.2
+  flutter_slidable: ^0.6.0
   #o your application.
   # Use with the CupertinoIcons class for iOS style icons.
   camera: 0.8.1+1

@@ -18,8 +18,7 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 150,
-      decoration: BoxDecoration(),
+      height: 85,
       width: widget.width,
       child: !widget.showAsGrid ? scrollableBubbles() : buildBubbleGrid(),
     );
