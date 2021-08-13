@@ -5,6 +5,7 @@ import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/list_of_items_to_widget.dart';
+import 'package:oluko_app/models/enums/file_type_enum.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
@@ -101,6 +102,22 @@ class _ProfileTransformationJourneyPageState
                                 ],
                               ),
                             ))),
+                    _contentGallery.length != 0
+                        ? Align(
+                            alignment: Alignment.topCenter,
+                            child: Align(
+                                alignment: Alignment.topLeft,
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                      10, 100, 10, 10),
+                                  child: Text(
+                                      getTitleForContent(
+                                          uploadListContent:
+                                              _transformationJourneyContent),
+                                      style: OlukoFonts.olukoBigFont()),
+                                )),
+                          )
+                        : SizedBox(),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(10, 150, 10, 0),
                       child: _contentGallery.length != 0
@@ -116,5 +133,14 @@ class _ProfileTransformationJourneyPageState
                   ]),
                 ),
               ));
+  }
+
+  String getTitleForContent(
+      {List<TransformationJourneyUpload> uploadListContent}) {
+    int _videos = 0;
+    int _images = 0;
+    uploadListContent.forEach((content) =>
+        content.type == FileTypeEnum.video ? _videos += 1 : _images += 1);
+    return "Uploaded $_images Images & $_videos Videos";
   }
 }
