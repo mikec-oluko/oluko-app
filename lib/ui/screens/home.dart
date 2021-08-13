@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
-import 'package:oluko_app/blocs/course_enrollment_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/constants/Theme.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
@@ -33,12 +34,12 @@ class _HomeState extends State<Home> {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
         _user = authState.firebaseUser;
-        BlocProvider.of<CourseEnrollmentBloc>(context)
-          ..getCourseEnrollmentsByUserId(_user.uid);
-        return BlocBuilder<CourseEnrollmentBloc, CourseEnrollmentState>(
-            builder: (context, courseEnrollmentState) {
-          if (courseEnrollmentState is CourseEnrollmentListSuccess) {
-            _courseEnrollments = courseEnrollmentState.courseEnrollmentList;
+        BlocProvider.of<CourseEnrollmentListBloc>(context)
+          ..getCourseEnrollmentsByUser(_user.uid);
+        return BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(
+            builder: (context, courseEnrollmentListState) {
+          if (courseEnrollmentListState is CourseEnrollmentsByUserSuccess) {
+            _courseEnrollments = courseEnrollmentListState.courseEnrollments;
             BlocProvider.of<CourseBloc>(context)
               ..getByCourseEnrollments(_courseEnrollments);
             return form();
@@ -75,7 +76,11 @@ class _HomeState extends State<Home> {
           builder: (context, courseState) {
         if (courseState is GetByCourseEnrollmentsSuccess) {
           _courses = courseState.courses;
-          return enrolled();
+          if (_courses != null && _courses.length > 0) {
+            return enrolled();
+          } else {
+            return SizedBox();
+          }
         } else {
           return SizedBox();
         }

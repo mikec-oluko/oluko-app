@@ -5,7 +5,6 @@ import 'package:oluko_app/models/submodels/object_submodel.dart';
 import 'base.dart';
 
 class CourseEnrollment extends Base {
-  String userId;
   DocumentReference userReference;
   ObjectSubmodel course;
   double completion;
@@ -15,8 +14,7 @@ class CourseEnrollment extends Base {
   List<Challenge> challenges;
 
   CourseEnrollment(
-      {this.userId,
-      this.userReference,
+      {this.userReference,
       this.course,
       this.completion,
       this.completedAt,
@@ -41,7 +39,6 @@ class CourseEnrollment extends Base {
 
   factory CourseEnrollment.fromJson(Map<String, dynamic> json) {
     CourseEnrollment courseEnrollment = CourseEnrollment(
-        userId: json['user_id'],
         userReference: json['user_reference'],
         course: ObjectSubmodel.fromJson(json['course']),
         completion: json['completion'] == null ? 0.0 : (json['completion']).toDouble(),
@@ -61,7 +58,6 @@ class CourseEnrollment extends Base {
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> courseEnrollmentJson = {
-      'user_id': userId,
       'user_reference': userReference,
       'completion': completion == null ? 0.0 : completion.toDouble(),
       'course': course.toJson(),
