@@ -6,10 +6,10 @@ import 'package:oluko_app/ui/components/stories_item.dart';
 class MovementItemBubbles extends StatefulWidget {
   final List<Movement> content;
   final double width;
-  final bool scrollable;
+  final bool showAsGrid;
   final Function(BuildContext, Movement) onPressed;
   MovementItemBubbles(
-      {this.content, this.width, this.onPressed, this.scrollable = true});
+      {this.content, this.width, this.onPressed, this.showAsGrid = false});
   @override
   _MovementItemBubblesState createState() => _MovementItemBubblesState();
 }
@@ -18,9 +18,10 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: 150,
       decoration: BoxDecoration(),
       width: widget.width,
-      child: widget.scrollable ? scrollableBubbles() : buildBubbles(),
+      child: !widget.showAsGrid ? scrollableBubbles() : buildBubbleGrid(),
     );
   }
 
@@ -54,16 +55,13 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
         children: buildMovementItems()
           //Prevent the last item to be overlayed by the carousel gradient
           ..add(SizedBox(
-            width: widget.scrollable ? 180 : 0,
+            width: !widget.showAsGrid ? 180 : 0,
           )));
   }
 
   Widget buildBubbleGrid() {
     return GridView.count(
-        //primary: false,
-        //padding: const EdgeInsets.all(20),
-        //crossAxisSpacing: 10,
-        //mainAxisSpacing: 10,
+        mainAxisSpacing: 15,
         crossAxisCount: 4,
         children: buildMovementItems());
   }
@@ -77,7 +75,7 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            StoriesItem(maxRadius: 32, imageUrl: imageUrl),
+            StoriesItem(maxRadius: 28, imageUrl: imageUrl),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(

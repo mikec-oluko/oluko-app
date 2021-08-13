@@ -13,6 +13,7 @@ import 'package:oluko_app/ui/components/countdown_overlay.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/segment_step_section.dart';
 import 'package:oluko_app/ui/screens/courses/segment_recording.dart';
+import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -206,7 +207,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
                 onPressed: () {
                   startRecordingAndWorkoutTogether
                       ? _startCountdown(WorkoutType.segmentWithRecording)
-                      : MovementUtils.movementDialog(
+                      : DialogUtils.getDialog(
                               context, _confirmDialogContent())
                           .then((value) => value != null
                               ? _startCountdown(value == true

@@ -92,7 +92,7 @@ class CourseRepository {
       List<CourseEnrollment> courseEnrollments) async {
     List<Course> courses = [];
     for (CourseEnrollment courseEnrollment in courseEnrollments) {
-      final DocumentSnapshot ds = await courseEnrollment.course.reference.get();
+      DocumentSnapshot ds = await courseEnrollment.course.reference.get();
       courses.add(Course.fromJson(ds.data()));
     }
     return courses;

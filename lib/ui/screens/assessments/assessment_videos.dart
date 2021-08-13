@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
-import 'package:oluko_app/blocs/blocs_per_view/task_submission_list_bloc.dart';
+import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/assessment.dart';
@@ -18,9 +18,8 @@ import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/task_card.dart';
-import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
-import 'package:oluko_app/utils/movement_utils.dart';
+import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
@@ -132,7 +131,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                                 title:
                                     OlukoLocalizations.of(context).find('done'),
                                 onPressed: () {
-                                  MovementUtils.movementDialog(
+                                  DialogUtils.getDialog(
                                       context, _confirmDialogContent(),
                                       showExitButton: false);
                                 },

@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/blocs/course_enrollment_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/movement_submission_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
