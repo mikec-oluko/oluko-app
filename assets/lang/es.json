@@ -139,5 +139,7 @@
     "challenge": "Desafío",
     "challenges": "Desafíos",
     "movesInThisClass": "Movimientos en esta clase",
-    "viewDetails": "Ver Detalles"
+    "viewDetails": "Ver Detalles",
+    "noContent":"No hay contenido para mostrar"
+
 }

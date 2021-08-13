@@ -45,6 +45,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   List<Challenge> _activeChallenges = [];
   List<Course> _coursesToUse = [];
   List<CourseEnrollment> _courseEnrollmentList = [];
+  bool _isFollow = true;
 
   @override
   void initState() {
@@ -186,6 +187,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
             ),
             Column(
               children: [
+                //TODO: Check CONNECT and FOLLOW   _currentAuthUser And _userProfileToDisplay
                 !_isCurrentUser
                     ? Padding(
                         padding: const EdgeInsets.fromLTRB(10, 30, 10, 0),
@@ -193,9 +195,15 @@ class _UserProfilePageState extends State<UserProfilePage> {
                           children: [
                             TextButton(
                               onPressed: () {
+                                setState(() {
+                                  _isFollow = !_isFollow;
+                                });
                                 //TODO: Send Like from _currentAuthUser to UserToDisplay
                               },
-                              child: Icon(Icons.favorite_border,
+                              child: Icon(
+                                  _isFollow
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
                                   color: OlukoColors.primary),
                             ),
                             Container(
@@ -316,7 +324,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   Padding buildCourseSection(
       {BuildContext context, List<Widget> contentForCourse}) {
     return Padding(
-      padding: const EdgeInsets.all(10.0).copyWith(bottom: 0),
+      padding: const EdgeInsets.fromLTRB(10, 15, 10, 0),
       child: CarouselSection(
           height: 250,
           width: MediaQuery.of(context).size.width,

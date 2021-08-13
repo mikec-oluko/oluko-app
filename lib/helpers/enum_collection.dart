@@ -34,3 +34,5 @@ enum ProfileOptionsTitle {
   settings,
   helpAndSupport
 }
+
+enum ErrorTypeOption { noConnection, noContent }
