@@ -14,7 +14,7 @@ class Challenge extends Base {
   int index;
   String challengeType;
   String result;
-  String challengeImage;
+  String image;
   String challengeName;
 
   Challenge(
@@ -30,7 +30,7 @@ class Challenge extends Base {
       this.index,
       this.challengeType,
       this.result,
-      this.challengeImage,
+      this.image,
       this.challengeName,
       String id,
       Timestamp createdAt,
@@ -62,7 +62,7 @@ class Challenge extends Base {
         requiredSegments: json['required_segments'],
         index: json['index'],
         challengeType: json['type'],
-        challengeImage: json['image'],
+        image: json['image'],
         challengeName: json['name']);
 
     challengeObject.setBase(json);
@@ -83,7 +83,7 @@ class Challenge extends Base {
       'required_segments': requiredSegments,
       'index': index,
       'type': challengeType,
-      'image': challengeImage,
+      'image': image,
       'name': challengeName,
     };
     challengeJson.addEntries(super.toJson().entries);

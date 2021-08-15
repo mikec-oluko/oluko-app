@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/course_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
+import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/profile_options.dart';
 import 'package:oluko_app/helpers/profile_routes.dart';
@@ -16,7 +19,7 @@ import '../../../constants/theme.dart';
 import '../../../routes.dart';
 
 class ProfilePage extends StatefulWidget {
-  ProfilePage({Key key}) : super(key: key);
+  ProfilePage();
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -27,16 +30,12 @@ class _ProfilePageState extends State<ProfilePage> {
   UserResponse profileInfo;
   final String profileTitle = ProfileViewConstants.profileTitle;
   @override
-  void initState() {
-    BlocProvider.of<AuthBloc>(context).checkCurrentUser();
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
       if (state is AuthSuccess) {
         profileInfo = state.user;
+        BlocProvider.of<TransformationJourneyBloc>(context)
+            .getContentByUserId(profileInfo.id);
         return profileHomeView();
       } else {
         return Container(
@@ -154,6 +153,12 @@ class _ProfilePageState extends State<ProfilePage> {
         ],
       ),
     );
+  }
+
+  void _requestContentForUser(
+      {BuildContext context, UserResponse userRequested}) {
+    BlocProvider.of<TransformationJourneyBloc>(context)
+        .getContentByUserId(userRequested.id);
   }
 
   onGoBack() {

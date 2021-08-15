@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 
@@ -118,38 +118,6 @@ class MovementUtils {
           style: OlukoFonts.olukoBigFont(),
         )
       ],
-    );
-  }
-
-  static Future<dynamic> movementDialog(
-      BuildContext context, List<Widget> content,
-      {bool showExitButton = true}) {
-    return showDialog(
-      context: context,
-      builder: (context) => new AlertDialog(
-          backgroundColor: Colors.black,
-          content: Stack(
-            children: [
-              showExitButton
-                  ? Positioned(
-                      top: -15,
-                      right: 0,
-                      child: IconButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        icon: Icon(
-                          Icons.close,
-                          color: Colors.white,
-                        ),
-                      ))
-                  : SizedBox(),
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: content,
-              ),
-            ],
-          )),
     );
   }
 }

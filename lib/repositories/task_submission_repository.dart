@@ -120,7 +120,9 @@ class TaskSubmissionRepository {
         futures.add(await getTaskSubmissionsByAssessmentId(
             userId, asessmentId, response));
       }
-      Future.wait(futures);
+      if (futures.length != 0 && futures != null) {
+        Future.wait(futures);
+      }
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,
@@ -137,26 +139,31 @@ class TaskSubmissionRepository {
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"))
         .collection('assessmentAssignments')
-        .where('user_id', isEqualTo: userId)
+        .where('created_by', isEqualTo: userId)
         .get();
     return docRef;
   }
 
   static Future getTaskSubmissionsByAssessmentId(
       String userId, String assessmentId, List<TaskSubmission> response) async {
-    CollectionReference reference = projectReference
-        .collection("assessmentAssignments")
-        .doc(assessmentId)
-        .collection('taskSubmissions');
-    final querySnapshot = await reference
-        // .where('created_by', isEqualTo: userId)
-        .where('video', isNotEqualTo: null)
-        .get();
+    try {
+      CollectionReference reference = projectReference
+          .collection("assessmentAssignments")
+          .doc(assessmentId)
+          .collection('taskSubmissions');
+      final querySnapshot = await reference
+          .where('created_by', isEqualTo: userId)
+          .where('video', isNotEqualTo: null)
+          .get();
 
-    if (querySnapshot.docs.length > 0) {
-      querySnapshot.docs.forEach((taskUploaded) {
-        response.add(TaskSubmission.fromJson(taskUploaded.data()));
-      });
+      if (querySnapshot.docs.length > 0) {
+        querySnapshot.docs.forEach((taskUploaded) {
+          response.add(TaskSubmission.fromJson(taskUploaded.data()));
+        });
+      }
+    } catch (e) {
+      print(e.toString());
+      throw e;
     }
   }
 }

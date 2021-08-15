@@ -59,6 +59,7 @@
     "yetToUnlock": "Por 'Desbloquear'",
     "tapToUpload": "Toca para Subir",
     "recordedVideo": "Video grabado",
+    "name": "Nombre",
     "firstName": "Nombre",
     "lastName": "Apellido",
     "userName": "Nombre de Usuario",
@@ -129,5 +130,14 @@
     "anonymousSubtitle": "Perfil anónimo",
     "helpAndSupport": "Ayuda y Soporte",
     "myAccount": "Mi Perfil",
-    "subscription": "Subscripción"
+    "subscription": "Subscripción",
+    "phone": "Teléfono",
+    "message": "Mensaje",
+    "submit": "Enviar",
+    "of": "de",
+    "inThis": "en este",
+    "challenge": "Desafío",
+    "challenges": "Desafíos",
+    "movesInThisClass": "Movimientos en esta clase",
+    "viewDetails": "Ver Detalles"
 }

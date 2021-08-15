@@ -34,11 +34,11 @@ class _State extends State<CourseSegmentSection> {
               height: 50,
             ),
             Padding(
-              padding: const EdgeInsets.only(bottom: 15.0),
+              padding: const EdgeInsets.only(bottom: 20.0),
               child: Text(
                 widget.segmentName,
                 style: OlukoFonts.olukoBigFont(
-                    custoFontWeight: FontWeight.normal,
+                    custoFontWeight: FontWeight.w500,
                     customColor: OlukoColors.grayColor),
               ),
             ),

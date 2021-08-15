@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/models/friend.dart';
+import 'package:oluko_app/models/friend_model.dart';
+import 'package:oluko_app/models/friend_request_model.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 class FriendRepository {
@@ -38,21 +41,18 @@ class FriendRepository {
     }
   }
 
-  static Future<List<User>> getUserFriendsRequestByUserId(String userId) async {
+  static Future<Friend> getUserFriendsRequestByUserId(String userId) async {
     //TODO: Get List of friendRequest for the userId
     try {
       QuerySnapshot docRef = await FirebaseFirestore.instance
           .collection('projects')
           .doc(GlobalConfiguration().getValue("projectId"))
-          .collection('users-friend-request')
+          .collection('friends')
           .where('id', isEqualTo: userId)
           .get();
-      List<User> listOfFriendRequests = [];
-      docRef.docs.forEach((doc) {
-        final Map<String, dynamic> element = doc.data();
-        // listOfFriendRequests.add(userFriendRequestClass.fromJson(element));
-      });
-      // return listOfFriendRequests;
+      List<Friend> listOfFriendRequests =
+          docRef.docs.map((doc) => Friend.fromJson(doc.data())).toList();
+      return listOfFriendRequests[0];
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,
@@ -89,19 +89,33 @@ class FriendRepository {
     }
   }
 
-  static Future<User> confirmFriendRequest(
-      String userId, User UserRequestedConfirmed) async {
-    //TODO: Add user to friend list, remove from friend request.
-
+  static Future<FriendModel> confirmFriendRequest(
+      Friend friend, FriendRequestModel friendRequest) async {
     try {
-      QuerySnapshot docRef = await FirebaseFirestore.instance
+      //Generate user reference from friend request
+      var friendUserDocument = await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue("projectId"))
-          .collection('users-friend')
-          .where('id', isEqualTo: userId)
+          .doc(GlobalConfiguration().getValue('projectId'))
+          .collection('users')
+          .doc(friendRequest.id)
           .get();
 
-      // return;
+      //Friend model to add as a friend
+      FriendModel friendModel = FriendModel(
+          id: friendRequest.id, reference: friendUserDocument.reference);
+
+      //Remove friend request
+      friend.friendRequestReceived
+          .removeWhere((element) => element.id == friendModel.id);
+      friend.friends.add(friendModel);
+
+      await FirebaseFirestore.instance
+          .collection('projects')
+          .doc(GlobalConfiguration().getValue("projectId"))
+          .collection('friends')
+          .doc(friend.id)
+          .set(friend.toJson());
+      return friendModel;
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,
@@ -111,18 +125,20 @@ class FriendRepository {
     }
   }
 
-  static Future<User> ignoreFriendRequest(
-      String userId, User userRequestedignored) async {
-    // TODO: Remove user from UserFriendRequest
+  static Future<FriendRequestModel> ignoreFriendRequest(
+      Friend friend, FriendRequestModel friendRequest) async {
     try {
-      QuerySnapshot docRef = await FirebaseFirestore.instance
+      //Remove friend request
+      friend.friendRequestReceived
+          .removeWhere((element) => element.id == friendRequest.id);
+
+      await FirebaseFirestore.instance
           .collection('projects')
           .doc(GlobalConfiguration().getValue("projectId"))
-          .collection('users-friend-request')
-          .where('id', isEqualTo: userId)
-          .get();
-
-      // return;
+          .collection('friends')
+          .doc(friend.id)
+          .set(friend.toJson());
+      return friendRequest;
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,

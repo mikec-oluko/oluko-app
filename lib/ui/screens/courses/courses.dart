@@ -4,7 +4,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
-import 'package:oluko_app/blocs/course_enrollment_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/favorite_bloc.dart';
 import 'package:oluko_app/blocs/recommendation_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
@@ -327,7 +327,7 @@ class _State extends State<Courses> {
                         .map((CourseEnrollment courseEnrollment) {
                       final course = courseState.values
                           .where((element) =>
-                              element.id == courseEnrollment.courseId)
+                              element.id == courseEnrollment.course.id)
                           .toList()[0];
 
                       return Padding(

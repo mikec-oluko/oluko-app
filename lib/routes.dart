@@ -5,12 +5,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
-import 'package:oluko_app/blocs/blocs_per_view/task_submission_list_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
+import 'package:oluko_app/blocs/gallery_video_bloc.dart';
+import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
 import 'package:oluko_app/blocs/class_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
-import 'package:oluko_app/blocs/course_enrollment_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/favorite_bloc.dart';
-import 'package:oluko_app/blocs/friend_bloc.dart';
+import 'package:oluko_app/blocs/friends/friend_bloc.dart';
+import 'package:oluko_app/blocs/friends/ignore_friend_request_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/plan_bloc.dart';
 import 'package:oluko_app/blocs/profile_bloc.dart';
@@ -19,7 +22,7 @@ import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/blocs/statistics_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
-import 'package:oluko_app/blocs/task_submission_bloc.dart';
+import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
@@ -42,6 +45,7 @@ import 'package:oluko_app/ui/screens/courses/movement_intro.dart';
 import 'package:oluko_app/ui/screens/profile/profile.dart';
 import 'package:oluko_app/ui/screens/profile/profile_assessment_videos_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_challenges_page.dart';
+import 'package:oluko_app/ui/screens/profile/profile_help_and_support_contact_us.dart';
 import 'package:oluko_app/ui/screens/profile/profile_help_and_support_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_my_account_page.dart';
 import 'package:oluko_app/ui/screens/profile/transformation_journey_content_detail.dart';
@@ -57,6 +61,7 @@ import 'package:oluko_app/ui/screens/authentication/sign_up_with_email.dart';
 import 'package:oluko_app/ui/screens/assessments/task_details.dart';
 import 'package:oluko_app/ui/screens/videos/videos_home.dart';
 import 'package:oluko_app/ui/screens/view_all.dart';
+import 'blocs/friends/confirm_friend_bloc.dart';
 import 'models/course.dart';
 import 'models/transformation_journey_uploads.dart';
 
@@ -70,6 +75,7 @@ enum RouteEnum {
   profileMyAccount,
   profileSubscription,
   profileHelpAndSupport,
+  profileContactUs,
   profileViewOwnProfile,
   profileChallenges,
   profileTransformationJourney,
@@ -106,6 +112,7 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.profileMyAccount: '/profile-my-account',
   RouteEnum.profileSubscription: '/profile-subscription',
   RouteEnum.profileHelpAndSupport: '/profile-help-and-support',
+  RouteEnum.profileContactUs: '/profile-help-and-support-contact-us',
   RouteEnum.profileViewOwnProfile: '/profile-view-user-profile',
   RouteEnum.profileChallenges: '/profile-challenges',
   RouteEnum.profileTransformationJourney: '/profile-transformation-journey',
@@ -144,6 +151,9 @@ class Routes {
   final CourseBloc _courseBloc = CourseBloc();
   final TagBloc _tagBloc = TagBloc();
   final FriendBloc _friendBloc = FriendBloc();
+  final ConfirmFriendBloc _confirmFriendBloc = ConfirmFriendBloc();
+  final IgnoreFriendRequestBloc _ignoreFriendRequestBloc =
+      IgnoreFriendRequestBloc();
   final AssessmentBloc _assessmentBloc = AssessmentBloc();
   final AssessmentAssignmentBloc _assessmentAssignmentBloc =
       AssessmentAssignmentBloc();
@@ -162,6 +172,9 @@ class Routes {
   final PlanBloc _planBloc = PlanBloc();
   final TaskSubmissionListBloc _taskSubmissionListBloc =
       TaskSubmissionListBloc();
+  final GalleryVideoBloc _galleryVideoBloc = GalleryVideoBloc();
+  final CourseEnrollmentListBloc _courseEnrollmentListBloc =
+      CourseEnrollmentListBloc();
 
   getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -179,13 +192,19 @@ class Routes {
         providers = [
           BlocProvider<CourseBloc>.value(value: _courseBloc),
           BlocProvider<ClassBloc>.value(value: _classBloc),
-          BlocProvider<CourseEnrollmentBloc>.value(
-              value: _courseEnrollmentBloc),
+          BlocProvider<CourseEnrollmentListBloc>.value(
+              value: _courseEnrollmentListBloc),
           BlocProvider<TagBloc>.value(value: _tagBloc),
           BlocProvider<CourseEnrollmentBloc>.value(
               value: _courseEnrollmentBloc),
           BlocProvider<FavoriteBloc>.value(value: _favoriteBloc),
           BlocProvider<RecommendationBloc>.value(value: _recommendationBloc),
+          BlocProvider<TransformationJourneyBloc>.value(
+              value: _transformationJourneyBloc),
+          BlocProvider<FriendBloc>.value(value: _friendBloc),
+          BlocProvider<ConfirmFriendBloc>.value(value: _confirmFriendBloc),
+          BlocProvider<IgnoreFriendRequestBloc>.value(
+              value: _ignoreFriendRequestBloc),
         ];
         newRouteView = MainPage();
         break;
@@ -196,7 +215,10 @@ class Routes {
         newRouteView = SignUpWithMailPage();
         break;
       case RouteEnum.friends:
-        providers = [BlocProvider<FriendBloc>.value(value: _friendBloc)];
+        providers = [
+          BlocProvider<FriendBloc>.value(value: _friendBloc),
+          BlocProvider<ConfirmFriendBloc>.value(value: _confirmFriendBloc)
+        ];
         newRouteView = FriendsPage();
         break;
       case RouteEnum.profile:
@@ -224,6 +246,9 @@ class Routes {
         break;
       case RouteEnum.profileHelpAndSupport:
         newRouteView = ProfileHelpAndSupportPage();
+        break;
+      case RouteEnum.profileContactUs:
+        newRouteView = ProfileContacUsPage();
         break;
       case RouteEnum.profileViewOwnProfile:
         providers = [
@@ -308,6 +333,8 @@ class Routes {
           BlocProvider<CourseEnrollmentBloc>.value(
               value: _courseEnrollmentBloc),
           BlocProvider<MovementBloc>.value(value: _movementBloc),
+          BlocProvider<CourseEnrollmentListBloc>.value(
+              value: _courseEnrollmentListBloc),
         ];
         final Map<String, Course> argumentsToAdd = arguments;
         newRouteView = CourseMarketing(course: argumentsToAdd['course']);
@@ -325,13 +352,13 @@ class Routes {
       case RouteEnum.insideClass:
         providers = [
           BlocProvider<ClassBloc>.value(value: _classBloc),
-          BlocProvider<CourseEnrollmentBloc>.value(
-              value: _courseEnrollmentBloc),
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
           BlocProvider<MovementBloc>.value(value: _movementBloc),
         ];
-        final Map<String, Course> argumentsToAdd = arguments;
-        newRouteView = InsideClass(/*course: argumentsToAdd['course']*/);
+        final Map<String, dynamic> argumentsToAdd = arguments;
+        newRouteView = InsideClass(
+            courseEnrollment: argumentsToAdd['courseEnrollment'],
+            classIndex: argumentsToAdd['classIndex']);
         break;
       case RouteEnum.assessmentVideos:
         providers = [
@@ -359,6 +386,7 @@ class Routes {
       case RouteEnum.selfRecording:
         providers = [
           BlocProvider<TaskBloc>.value(value: _taskBloc),
+          BlocProvider<GalleryVideoBloc>.value(value: _galleryVideoBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments;
         newRouteView = SelfRecording(
@@ -399,6 +427,7 @@ class Routes {
           BlocProvider<CourseEnrollmentBloc>.value(
               value: _courseEnrollmentBloc),
           BlocProvider<TagBloc>.value(value: _tagBloc),
+          BlocProvider<RecommendationBloc>.value(value: _recommendationBloc),
         ];
         newRouteView = Courses();
         break;

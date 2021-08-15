@@ -13,6 +13,11 @@ class GetSuccess extends ClassState {
   GetSuccess({this.classes});
 }
 
+class GetByIdSuccess extends ClassState {
+  Class classObj;
+  GetByIdSuccess({this.classObj});
+}
+
 class Failure extends ClassState {
   final Exception exception;
 
@@ -26,6 +31,19 @@ class ClassBloc extends Cubit<ClassState> {
     try {
       List<Class> classes = await ClassRepository.getAll(course);
       emit(GetSuccess(classes: classes));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: exception));
+    }
+  }
+
+    void get(String id) async {
+    try {
+      Class classObj = await ClassRepository.get(id);
+      emit(GetByIdSuccess(classObj: classObj));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

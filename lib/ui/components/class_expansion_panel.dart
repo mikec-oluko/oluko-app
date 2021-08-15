@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/submodels/class_item.dart';
-import 'package:oluko_app/models/submodels/object_submodel.dart';
-import 'package:oluko_app/models/submodels/segment_submodel.dart';
+import 'package:oluko_app/services/class_service.dart';
 import 'package:oluko_app/ui/components/challenge_section.dart';
 import 'package:oluko_app/ui/components/class_section.dart';
 import 'package:oluko_app/ui/components/course_segment_section.dart';
@@ -80,7 +79,8 @@ class _State extends State<ClassExpansionPanel> {
     List<Widget> widgets = [];
     Class classObj = widget.classes[classIndex];
     classObj.segments.forEach((segment) {
-      List<Movement> movements = getClassSegmentMovements(segment);
+      List<Movement> movements = ClassService.getClassSegmentMovements(
+          segment.movements, widget.movements);
       widgets.add(ListTile(
         title: CourseSegmentSection(
             segmentName: segment.name,
@@ -92,19 +92,5 @@ class _State extends State<ClassExpansionPanel> {
       ));
     });
     return widgets;
-  }
-
-  List<Movement> getClassSegmentMovements(SegmentSubmodel segment) {
-    List<String> movementIds = [];
-    List<Movement> movements = [];
-    segment.movements.forEach((ObjectSubmodel movement) {
-      movementIds.add(movement.id);
-    });
-    widget.movements.forEach((movement) {
-      if (movementIds.contains(movement.id)) {
-        movements.add(movement);
-      }
-    });
-    return movements;
   }
 }

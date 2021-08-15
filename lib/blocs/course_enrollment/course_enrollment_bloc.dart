@@ -23,6 +23,11 @@ class GetEnrollmentSuccess extends CourseEnrollmentState {
   GetEnrollmentSuccess({this.courseEnrollment});
 }
 
+class CreateEnrollmentSuccess extends CourseEnrollmentState {
+  CourseEnrollment courseEnrollment;
+  CreateEnrollmentSuccess({this.courseEnrollment});
+}
+
 class Failure extends CourseEnrollmentState {
   final Exception exception;
 
@@ -48,7 +53,7 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
     try {
       CourseEnrollment courseEnrollment =
           await CourseEnrollmentRepository.create(user, course);
-      emit(GetEnrollmentSuccess(courseEnrollment: courseEnrollment));
+      emit(CreateEnrollmentSuccess(courseEnrollment: courseEnrollment));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

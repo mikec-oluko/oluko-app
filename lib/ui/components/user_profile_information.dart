@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/profile_bloc.dart';
-import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/user_profile_progress.dart';
@@ -37,7 +37,6 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
 
   @override
   Widget build(BuildContext context) {
-    final String _locationDemo = "San Francisco, CA USA";
     final List<String> _valuesDemo = ["07", "10", "50"];
 
     return Padding(
@@ -104,6 +103,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                                 height: 40,
                                 child: TextButton(
                                     onPressed: () {
+                                      //UPDATE PROFILE PIC
                                       AppModal.dialogContent(
                                           context: context,
                                           content: [

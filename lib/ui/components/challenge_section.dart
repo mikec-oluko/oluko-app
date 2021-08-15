@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/submodels/segment_submodel.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ChallengeSection extends StatefulWidget {
   final List<SegmentSubmodel> challenges;
+  final bool addTitle;
 
-  ChallengeSection({this.challenges});
+  ChallengeSection({this.challenges, this.addTitle = false});
 
   @override
   _State createState() => _State();
@@ -17,15 +19,22 @@ class _State extends State<ChallengeSection> {
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
-      child: Padding(
-        padding: const EdgeInsets.all(0.0),
-        child: Column(
+      child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Divider(
               color: OlukoColors.grayColor,
               height: 50,
             ),
+            widget.addTitle
+                ? Text(
+                    buildTitle(),
+                    style: OlukoFonts.olukoBigFont(
+                        custoFontWeight: FontWeight.w500,
+                        customColor: OlukoColors.grayColor),
+                  )
+                : SizedBox(),
+            SizedBox(height: widget.addTitle ? 20 : 0),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
@@ -34,8 +43,19 @@ class _State extends State<ChallengeSection> {
             )
           ],
         ),
-      ),
     );
+  }
+
+  String buildTitle() {
+    String title = "";
+    title += widget.challenges.length.toString();
+    title += " ";
+    if (widget.challenges.length > 1) {
+      title += OlukoLocalizations.of(context).find('challenges');
+    } else {
+      title += OlukoLocalizations.of(context).find('challenge');
+    }
+    return title;
   }
 
   List<Widget> getChallengesCards() {
@@ -48,8 +68,8 @@ class _State extends State<ChallengeSection> {
             ClipRRect(
               child: Image.network(
                 challenge.challengeImage,
-                height: 115,
-                width: 80,
+                height: 140,
+                width: 100,
                 fit: BoxFit.cover,
               ),
               borderRadius: BorderRadius.only(
