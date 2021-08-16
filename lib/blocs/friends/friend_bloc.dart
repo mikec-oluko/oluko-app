@@ -11,8 +11,9 @@ abstract class FriendState {}
 class Loading extends FriendState {}
 
 class GetFriendsSuccess extends FriendState {
+  Friend friendData;
   List<UserResponse> friendUsers;
-  GetFriendsSuccess({this.friendUsers});
+  GetFriendsSuccess({this.friendData, this.friendUsers});
 }
 
 class GetFriendRequestsSuccess extends FriendState {
@@ -38,7 +39,10 @@ class FriendBloc extends Cubit<FriendState> {
   void getFriendsByUserId(String userId) async {
     try {
       Friend friendData = await FriendRepository.getUserFriendsByUserId(userId);
-      emit(GetFriendsSuccess(friendUsers: []));
+
+      List<UserResponse> friendList = await Future.wait(friendData.friends
+          .map((friend) async => UserRepository().getById(friend.id)));
+      emit(GetFriendsSuccess(friendData: friendData, friendUsers: friendList));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
