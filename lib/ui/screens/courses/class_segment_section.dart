@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/movement.dart';
-import 'package:oluko_app/models/submodels/segment_submodel.dart';
+import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/ui/components/challenge_card.dart';
 import 'package:oluko_app/ui/components/movement_item_bubbles.dart';
+import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/segment_utils.dart';
 
 class ClassSegmentSection extends StatefulWidget {
-  final SegmentSubmodel segmentSubmodel;
+  final Segment segment;
   final List<Movement> movements;
   final bool showTopDivider;
   final Function(BuildContext, Movement) onPressedMovement;
@@ -16,7 +18,7 @@ class ClassSegmentSection extends StatefulWidget {
   ClassSegmentSection(
       {this.movements,
       this.onPressedMovement,
-      this.segmentSubmodel,
+      this.segment,
       this.showTopDivider = true});
 
   @override
@@ -44,17 +46,22 @@ class _State extends State<ClassSegmentSection> {
             Padding(
               padding: const EdgeInsets.only(bottom: 20.0),
               child: Text(
-                widget.segmentSubmodel.name,
-                style: OlukoFonts.olukoBigFont(
+                widget.segment.name,
+                style: OlukoFonts.olukoSuperBigFont(
                     custoFontWeight: FontWeight.w500,
-                    customColor: OlukoColors.grayColor),
+                    customColor: OlukoColors.white),
               ),
             ),
-            widget.segmentSubmodel.challengeImage != null
+            widget.segment.isChallenge
                 ? Padding(
                     padding: const EdgeInsets.only(bottom: 35.0),
-                    child: ChallengeCard(
-                        image: widget.segmentSubmodel.challengeImage))
+                    child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ChallengeCard(image: widget.segment.image),
+                          SizedBox(width: 30.0),
+                          getSegmentSummary()
+                        ]))
                 : SizedBox(),
             Stack(
               children: [
@@ -66,9 +73,20 @@ class _State extends State<ClassSegmentSection> {
                         width: ScreenUtils.width(context) / 1)),
               ],
             ),
+            !widget.segment.isChallenge
+                ? Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: getSegmentSummary())
+                : SizedBox()
           ],
         ),
       ),
     );
+  }
+
+  Widget getSegmentSummary() {
+    return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: SegmentUtils.getSegmentSummary(widget.segment, context));
   }
 }

@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/class_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
+import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
@@ -24,7 +25,7 @@ import 'package:oluko_app/ui/screens/courses/class_detail_section.dart';
 import 'package:oluko_app/ui/screens/courses/course_info_section.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class InsideClass extends StatefulWidget {
   InsideClass({this.courseEnrollment, this.classIndex, Key key})
@@ -45,6 +46,7 @@ class _InsideClassesState extends State<InsideClass> {
   Class _class;
   User _user;
   List<Movement> _movements;
+  PanelController panelController = new PanelController();
 
   @override
   void initState() {
@@ -63,6 +65,7 @@ class _InsideClassesState extends State<InsideClass> {
             builder: (context, classState) {
           if (classState is GetByIdSuccess) {
             _class = classState.classObj;
+            BlocProvider.of<SegmentBloc>(context)..getAll(_class);
             return form();
           } else {
             return SizedBox();
@@ -77,87 +80,28 @@ class _InsideClassesState extends State<InsideClass> {
   Widget form() {
     return Form(
         key: _formKey,
-        child: Scaffold(
-            body: Container(
-          color: Colors.black,
-          child: BlocBuilder<MovementBloc, MovementState>(
-              builder: (context, movementState) {
-            if (movementState is GetAllSuccess) {
-              _movements = movementState.movements;
-              return ListView(children: [
-                Padding(
-                    padding: const EdgeInsets.only(bottom: 3),
-                    child: OverlayVideoPreview(
-                        video: _class.video,
-                        showBackButton: true,
-                        bottomWidgets: [
-                          CourseInfoSection(
-                              peopleQty: 50,
-                              audioMessageQty: 1,
-                              image: widget.courseEnrollment.course.image)
-                        ])),
-                Padding(
-                    padding: EdgeInsets.only(right: 15, left: 15, top: 25),
-                    child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _startButton(),
-                              Padding(
-                                  padding: const EdgeInsets.only(top: 15.0),
-                                  child: Text(
-                                    _class.name,
-                                    style: OlukoFonts.olukoTitleFont(
-                                        custoFontWeight: FontWeight.bold),
-                                  )),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(top: 10.0, right: 10),
-                                child: Text(
-                                  OlukoLocalizations.of(context).find('class') +
-                                      " " +
-                                      (widget.classIndex + 1).toString() +
-                                      " " +
-                                      OlukoLocalizations.of(context)
-                                          .find('of') +
-                                      " " +
-                                      widget.courseEnrollment.classes.length
-                                          .toString(),
-                                  style: OlukoFonts.olukoBigFont(
-                                      custoFontWeight: FontWeight.normal,
-                                      customColor: OlukoColors.primary),
-                                ),
-                              ),
-                              Padding(
-                                  padding: const EdgeInsets.only(top: 10.0),
-                                  child: CourseProgressBar(
-                                      value: CourseEnrollmentService
-                                          .getClassProgress(
-                                              widget.courseEnrollment,
-                                              widget.classIndex))),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 20.0),
-                                child: Text(
-                                  _class.description,
-                                  style: OlukoFonts.olukoBigFont(
-                                      custoFontWeight: FontWeight.normal,
-                                      customColor: OlukoColors.grayColor),
-                                ),
-                              ),
-                              buildChallengeSection(),
-                              classMovementSection(),
-                            ]))),
-                ClassDetailSection(classObj: _class, movements: _movements),
-                SizedBox(
-                  height: 150,
-                )
-              ]);
-            } else {
-              return SizedBox();
-            }
-          }),
-        )));
+        child: Scaffold(body: BlocBuilder<MovementBloc, MovementState>(
+            builder: (context, movementState) {
+          if (movementState is GetAllSuccess) {
+            _movements = movementState.movements;
+            return SlidingUpPanel(
+                controller: panelController,
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20)),
+                minHeight: 5,
+                collapsed: Container(
+                  color: Colors.black,
+                ),
+                panel: classDetailSection(),
+                body: Container(
+                  color: Colors.black,
+                  child: classInfoSection(),
+                ));
+          } else {
+            return SizedBox();
+          }
+        })));
   }
 
   Widget showVideoPlayer(String videoUrl) {
@@ -235,11 +179,92 @@ class _InsideClassesState extends State<InsideClass> {
 
   Widget classMovementSection() {
     return ClassMovementSection(
+      panelController: panelController,
       movements: _movements,
       classObj: _class,
       onPressedMovement: (BuildContext context, Movement movement) =>
           Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro],
               arguments: {'movement': movement}),
     );
+  }
+
+  Widget classDetailSection() {
+    return BlocBuilder<SegmentBloc, SegmentState>(
+        builder: (context, segmentState) {
+      if (segmentState is GetSegmentsSuccess) {
+        return ClassDetailSection(
+            classObj: _class,
+            movements: _movements,
+            segments: segmentState.segments);
+      } else {
+        return SizedBox();
+      }
+    });
+  }
+
+  Widget classInfoSection() {
+    return ListView(children: [
+      Padding(
+          padding: const EdgeInsets.only(bottom: 3),
+          child: OverlayVideoPreview(
+              video: _class.video,
+              showBackButton: true,
+              bottomWidgets: [
+                CourseInfoSection(
+                    peopleQty: 50,
+                    audioMessageQty: 1,
+                    image: widget.courseEnrollment.course.image)
+              ])),
+      Padding(
+          padding: EdgeInsets.only(right: 15, left: 15, top: 25),
+          child: Container(
+              width: MediaQuery.of(context).size.width,
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _startButton(),
+                    Padding(
+                        padding: const EdgeInsets.only(top: 15.0),
+                        child: Text(
+                          _class.name,
+                          style: OlukoFonts.olukoTitleFont(
+                              custoFontWeight: FontWeight.bold),
+                        )),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10.0, right: 10),
+                      child: Text(
+                        OlukoLocalizations.of(context).find('class') +
+                            " " +
+                            (widget.classIndex + 1).toString() +
+                            " " +
+                            OlukoLocalizations.of(context).find('of') +
+                            " " +
+                            widget.courseEnrollment.classes.length.toString(),
+                        style: OlukoFonts.olukoBigFont(
+                            custoFontWeight: FontWeight.normal,
+                            customColor: OlukoColors.primary),
+                      ),
+                    ),
+                    Padding(
+                        padding: const EdgeInsets.only(top: 10.0),
+                        child: CourseProgressBar(
+                            value: CourseEnrollmentService.getClassProgress(
+                                widget.courseEnrollment, widget.classIndex))),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20.0),
+                      child: Text(
+                        _class.description,
+                        style: OlukoFonts.olukoBigFont(
+                            custoFontWeight: FontWeight.normal,
+                            customColor: OlukoColors.grayColor),
+                      ),
+                    ),
+                    buildChallengeSection(),
+                    classMovementSection(),
+                  ]))),
+      SizedBox(
+        height: 150,
+      )
+    ]);
   }
 }

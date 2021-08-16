@@ -7,17 +7,19 @@ import 'package:oluko_app/services/class_service.dart';
 import 'package:oluko_app/ui/components/movement_item_bubbles.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class ClassMovementSection extends StatefulWidget {
   final Class classObj;
   final List<Movement> movements;
   final Function(BuildContext, Movement) onPressedMovement;
+  final PanelController panelController;
 
-  ClassMovementSection({
-    this.classObj,
-    this.onPressedMovement,
-    this.movements,
-  });
+  ClassMovementSection(
+      {this.classObj,
+      this.onPressedMovement,
+      this.movements,
+      this.panelController});
 
   @override
   _State createState() => _State();
@@ -48,12 +50,14 @@ class _State extends State<ClassMovementSection> {
               customColor: OlukoColors.grayColor),
         ),
         Expanded(child: SizedBox()),
-        Text(
-          OlukoLocalizations.of(context).find('viewDetails'),
-          style: OlukoFonts.olukoBigFont(
-              custoFontWeight: FontWeight.w500,
-              customColor: OlukoColors.primary),
-        )
+        GestureDetector(
+            onTap: () => widget.panelController.open(),
+            child: Text(
+              OlukoLocalizations.of(context).find('viewDetails'),
+              style: OlukoFonts.olukoBigFont(
+                  custoFontWeight: FontWeight.w500,
+                  customColor: OlukoColors.primary),
+            ))
       ]),
       buildMovementBubbles(),
     ]);

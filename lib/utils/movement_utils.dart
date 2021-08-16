@@ -95,7 +95,7 @@ class MovementUtils {
   static Widget getTextWidget(String text, bool big) {
     TextStyle style;
     if (big) {
-      style = OlukoFonts.olukoBigFont();
+      style = OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal);
     } else {
       style = OlukoFonts.olukoMediumFont();
     }
