@@ -139,7 +139,7 @@ class TaskSubmissionRepository {
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"))
         .collection('assessmentAssignments')
-        .where('user_id', isEqualTo: userId)
+        .where('created_by', isEqualTo: userId)
         .get();
     return docRef;
   }
@@ -152,7 +152,7 @@ class TaskSubmissionRepository {
           .doc(assessmentId)
           .collection('taskSubmissions');
       final querySnapshot = await reference
-          // .where('created_by', isEqualTo: userId)
+          .where('created_by', isEqualTo: userId)
           .where('video', isNotEqualTo: null)
           .get();
 
