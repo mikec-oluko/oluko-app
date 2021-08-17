@@ -8,12 +8,14 @@ import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/segment.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/countdown_overlay.dart';
+import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
-import 'package:oluko_app/ui/components/segment_step_section.dart';
+import 'package:oluko_app/ui/components/segment_image_section.dart';
+import 'package:oluko_app/ui/components/stories_item.dart';
 import 'package:oluko_app/ui/screens/courses/segment_recording.dart';
-import 'package:oluko_app/utils/dialog_utils.dart';
-import 'package:oluko_app/utils/movement_utils.dart';
+import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
@@ -32,8 +34,6 @@ class SegmentDetail extends StatefulWidget {
 
 class _SegmentDetailState extends State<SegmentDetail> {
   final toolbarHeight = kToolbarHeight * 2;
-  bool startRecordingAndWorkoutTogether = false;
-
   num currentSegmentStep;
   num totalSegmentStep;
   User _user;
@@ -71,12 +71,6 @@ class _SegmentDetailState extends State<SegmentDetail> {
     return Scaffold(
       backgroundColor: Colors.black,
       body: Container(
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                colorFilter: ColorFilter.mode(
-                    Colors.black.withOpacity(0.85), BlendMode.darken),
-                fit: BoxFit.cover,
-                image: NetworkImage(_segments[widget.segmentIndex].image))),
         width: ScreenUtils.width(context),
         height: ScreenUtils.height(context),
         child: _viewBody(),
@@ -86,120 +80,29 @@ class _SegmentDetailState extends State<SegmentDetail> {
 
   Widget _viewBody() {
     return Container(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView(children: [
-          Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        MovementUtils.movementTitle(
-                            _segments[widget.segmentIndex].name),
-                        SizedBox(height: 25),
-                        MovementUtils.description(
-                            _segments[widget.segmentIndex].description,
-                            context),
-                        SizedBox(height: 25),
-                        MovementUtils.workout(
-                            _segments[widget.segmentIndex], context),
-                      ],
-                    ),
-                  )
-                ]),
-                _menuOptions()
-              ])
-        ]),
-      ),
+      child: ListView(children: [
+        SegmentImageSection(
+            segment: _segments[widget.segmentIndex],
+            currentSegmentStep: currentSegmentStep,
+            totalSegmentStep: totalSegmentStep),
+        _menuOptions()
+      ]),
     );
   }
 
   _menuOptions() {
     return Column(
       children: [
-        //Coach recommended section
-        Padding(
-            padding: const EdgeInsets.only(top: 30.0),
-            child: Container(
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                  color: OlukoColors.listGrayColor),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(children: [
-                      Container(
-                          decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(3)),
-                              color: Colors.white),
-                          child: Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: Text(OlukoLocalizations.of(context)
-                                .find('coachRecommended')),
-                          ))
-                    ]),
-                    Row(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Icon(
-                            Icons.videocam_outlined,
-                            color: Colors.white,
-                          ),
-                        ),
-                        Expanded(
-                          child: Text(
-                            OlukoLocalizations.of(context)
-                                .find('startVideoAndWorkoutTogether'),
-                            style: OlukoFonts.olukoMediumFont(),
-                          ),
-                        ),
-                        Checkbox(
-                          value: startRecordingAndWorkoutTogether,
-                          onChanged: (bool value) {
-                            this.setState(() {
-                              startRecordingAndWorkoutTogether = value;
-                            });
-                          },
-                          fillColor: MaterialStateProperty.all(Colors.white),
-                          checkColor: Colors.black,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            )),
-        //Segment section
-        SegmentStepSection(
-            currentSegmentStep: currentSegmentStep,
-            totalSegmentStep: totalSegmentStep),
         //Submit button
         Padding(
-          padding: const EdgeInsets.only(left: 25.0, right: 25.0, bottom: 25.0),
+          padding: const EdgeInsets.only(left: 15, right: 15, bottom: 25.0),
           child: Row(children: [
             OlukoPrimaryButton(
-                title: OlukoLocalizations.of(context)
-                    .find('startWorkouts')
-                    .toUpperCase(),
-                color: Colors.white,
+                title: OlukoLocalizations.of(context).find('startWorkouts'),
+                color: OlukoColors.primary,
                 onPressed: () {
-                  startRecordingAndWorkoutTogether
-                      ? _startCountdown(WorkoutType.segmentWithRecording)
-                      : DialogUtils.getDialog(context, _confirmDialogContent())
-                          .then((value) => value != null
-                              ? _startCountdown(value == true
-                                  ? WorkoutType.segmentWithRecording
-                                  : WorkoutType.segment)
-                              : null);
+                  BottomDialogUtils.showBottomDialog(
+                      context: context, content: dialogContainer());
                 })
           ]),
         )
@@ -218,16 +121,14 @@ class _SegmentDetailState extends State<SegmentDetail> {
                           .find("segmentAndRecordingStartsIn")
                       : OlukoLocalizations.of(context).find("segmentStartsIn"),
                 )))
-        .then((value) => Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => SegmentRecording(
-                    user: _user,
-                    workoutType: workoutType,
-                    courseEnrollment: widget.courseEnrollment,
-                    segmentIndex: widget.segmentIndex,
-                    classIndex: widget.classIndex,
-                    segments: _segments))));
+        .then((value) => Navigator.pushNamed(
+                context, routeLabels[RouteEnum.segmentRecording],
+                arguments: {
+                  'segmentIndex': widget.segmentIndex,
+                  'classIndex': widget.classIndex,
+                  'courseEnrollment': widget.courseEnrollment,
+                  'workoutType': workoutType,
+                }));
   }
 
   List<Widget> _confirmDialogContent() {
@@ -265,5 +166,64 @@ class _SegmentDetailState extends State<SegmentDetail> {
         ),
       )
     ];
+  }
+
+  Widget dialogContainer() {
+    return Container(
+        decoration: BoxDecoration(
+            image: DecorationImage(
+          image: AssetImage("assets/courses/dialog_background.png"),
+          fit: BoxFit.cover,
+        )),
+        child: Stack(children: [
+          Column(children: [
+            SizedBox(height: 30),
+            Stack(alignment: Alignment.center, children: [
+              StoriesItem(
+                  maxRadius: 65,
+                  imageUrl:
+                      "https://firebasestorage.googleapis.com/v0/b/oluko-development.appspot.com/o/coach_mike.png?alt=media&token=ead25dbe-f6e5-4857-a2ed-9d77f146ee72"),
+              Image.asset('assets/courses/photo_ellipse.png', scale: 4)
+            ]),
+            SizedBox(height: 15),
+            Text("Coach Mike",
+                textAlign: TextAlign.center,
+                style: OlukoFonts.olukoSuperBigFont(
+                    custoFontWeight: FontWeight.bold)),
+            SizedBox(height: 20),
+            Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 50),
+                child: Text(
+                    "Coach Mike has requested you to record the segment",
+                    textAlign: TextAlign.center,
+                    style: OlukoFonts.olukoBigFont())),
+            SizedBox(height: 35),
+            Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    OlukoOutlinedButton(
+                      title: 'Ignore',
+                      onPressed: () {
+                        _startCountdown(WorkoutType.segment);
+                      },
+                    ),
+                    SizedBox(width: 20),
+                    OlukoPrimaryButton(
+                      title: 'Ok',
+                      onPressed: () {
+                        _startCountdown(WorkoutType.segmentWithRecording);
+                      },
+                    )
+                  ],
+                )),
+          ]),
+          Align(
+              alignment: Alignment.topRight,
+              child: IconButton(
+                  icon: Icon(Icons.close, color: Colors.white),
+                  onPressed: () => Navigator.pop(context)))
+        ]));
   }
 }

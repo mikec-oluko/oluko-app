@@ -7,6 +7,8 @@ import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/gallery_video_bloc.dart';
+import 'package:oluko_app/blocs/movement_submission_bloc.dart';
+import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
 import 'package:oluko_app/blocs/class_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
@@ -26,6 +28,7 @@ import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
+import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/screens/app_plans.dart';
@@ -175,6 +178,9 @@ class Routes {
   final GalleryVideoBloc _galleryVideoBloc = GalleryVideoBloc();
   final CourseEnrollmentListBloc _courseEnrollmentListBloc =
       CourseEnrollmentListBloc();
+  final MovementSubmissionBloc _movementSubmissionBloc =
+      MovementSubmissionBloc();
+  final SegmentSubmissionBloc _segmentSubmissionBloc = SegmentSubmissionBloc();
 
   getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -331,7 +337,21 @@ class Routes {
         );
         break;
       case RouteEnum.segmentRecording:
-        newRouteView = SegmentRecording();
+        providers = [
+          BlocProvider<SegmentBloc>.value(value: _segmentBloc),
+          BlocProvider<SegmentSubmissionBloc>.value(
+              value: _segmentSubmissionBloc),
+          BlocProvider<MovementSubmissionBloc>.value(
+              value: _movementSubmissionBloc),
+          BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc)
+        ];
+        final Map<String, dynamic> argumentsToAdd = arguments;
+        newRouteView = SegmentRecording(
+          courseEnrollment: argumentsToAdd['courseEnrollment'],
+          classIndex: argumentsToAdd['classIndex'],
+          segmentIndex: argumentsToAdd['segmentIndex'],
+          workoutType: argumentsToAdd['workType'],
+        );
         break;
       case RouteEnum.courseMarketing:
         providers = [
