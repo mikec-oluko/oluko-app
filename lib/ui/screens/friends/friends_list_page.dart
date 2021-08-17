@@ -5,6 +5,8 @@ import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/friends_card.dart';
+import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
+import 'package:oluko_app/ui/components/title_body.dart';
 
 class FriendsListPage extends StatefulWidget {
   // final List<User> friends;
@@ -69,24 +71,53 @@ class _FriendsListPageState extends State<FriendsListPage> {
 
             BlocBuilder<FriendBloc, FriendState>(
                 builder: (context, friendState) {
-              return Column(
-                  children: friendState is GetFriendsSuccess
-                      ? friendState.friendData.friends.map((friend) {
-                          UserResponse friendUser = friendState.friendUsers
-                              .where((fuser) => fuser.id == friend.id)
-                              .first;
-                          return FriendCard(
-                            name: friendUser.firstName,
-                            lastName: friendUser.lastName,
-                            userName: friendUser.username,
-                            imageUser: friendUser.avatar,
-                          );
-                        }).toList()
-                      : []);
+              return Column(children: generateFriendList(friendState));
             }),
           ],
         ),
       ),
     );
+  }
+
+  ///Manage friends retrieval state
+  List<Widget> generateFriendList(FriendState friendState) {
+    if (friendState is Loading) {
+      return [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: OlukoCircularProgressIndicator(),
+        )
+      ];
+    } else if (friendState is Failure) {
+      return [TitleBody('There was an error retrieving your Friends')];
+    } else if (friendState is GetFriendsSuccess) {
+      return friendState.friendData.friends.length == 0
+          ? [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [TitleBody('No Friends.')]),
+              )
+            ]
+          : friendState.friendData.friends.map((friend) {
+              UserResponse friendUser = friendState.friendUsers
+                  .where((fuser) => fuser.id == friend.id)
+                  .first;
+              return FriendCard(
+                name: friendUser.firstName,
+                lastName: friendUser.lastName,
+                userName: friendUser.username,
+                imageUser: friendUser.avatar,
+              );
+            }).toList();
+    } else {
+      return [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: OlukoCircularProgressIndicator(),
+        )
+      ];
+    }
   }
 }
