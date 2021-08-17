@@ -19,13 +19,17 @@ Future<void> main() async {
   final MyApp myApp = MyApp(
     initialRoute: alreadyLoggedUser == null ? '/sign-up' : '/',
   );
-  await SentryFlutter.init(
-    (options) {
-      options.dsn = GlobalConfiguration().getValue("sentryDsn");
-      options.environment = GlobalConfiguration().getValue("environment");
-    },
-    appRunner: () => runApp(myApp),
-  );
+  if (GlobalConfiguration().getValue("build") == "local") {
+    runApp(myApp);
+  } else {
+    await SentryFlutter.init(
+      (options) {
+        options.dsn = GlobalConfiguration().getValue("sentryDsn");
+        options.environment = GlobalConfiguration().getValue("environment");
+      },
+      appRunner: () => runApp(myApp),
+    );
+  }
 }
 
 const OLUKO = 'Oluko';
