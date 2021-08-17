@@ -30,7 +30,8 @@ class FriendRepository {
       if (docRef.docs.length == 0) {
         return null;
       }
-      Friend friendData = Friend.fromJson(docRef.docs[0].data());
+      var document = docRef.docs[0].data();
+      Friend friendData = Friend.fromJson(document);
       return friendData;
     } catch (e, stackTrace) {
       await Sentry.captureException(
