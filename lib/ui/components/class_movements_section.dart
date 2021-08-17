@@ -26,13 +26,9 @@ class ClassMovementSection extends StatefulWidget {
 }
 
 class _State extends State<ClassMovementSection> {
-  List<Movement> _movementsToShow = [];
-
   @override
   void initState() {
     super.initState();
-    _movementsToShow = ClassService.getClassSegmentMovements(
-        ClassService.getClassMovements(widget.classObj), widget.movements);
   }
 
   @override
@@ -69,7 +65,7 @@ class _State extends State<ClassMovementSection> {
         child: MovementItemBubbles(
             showAsGrid: true,
             onPressed: widget.onPressedMovement,
-            content: _movementsToShow,
+            content: widget.movements,
             width: ScreenUtils.width(context) / 1));
   }
 }

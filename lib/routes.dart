@@ -85,7 +85,7 @@ enum RouteEnum {
   transformationJourneyPostView,
   logIn,
   appPlans,
-  segmentDetails,
+  segmentDetail,
   movementIntro,
   segmentRecording,
   courseMarketing,
@@ -123,7 +123,7 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.transformationJourneyPostView: '/transformation-journey-post-view',
   RouteEnum.logIn: '/log-in',
   RouteEnum.appPlans: '/app-plans',
-  RouteEnum.segmentDetails: '/segment-detail',
+  RouteEnum.segmentDetail: '/segment-detail',
   RouteEnum.movementIntro: '/movement-intro',
   RouteEnum.segmentRecording: '/segment-recording',
   RouteEnum.courseMarketing: '/course-marketing',
@@ -314,8 +314,15 @@ class Routes {
       case RouteEnum.appPlans:
         newRouteView = AppPlans();
         break;
-      case RouteEnum.segmentDetails:
-        newRouteView = SegmentDetail();
+      case RouteEnum.segmentDetail:
+        providers = [
+          BlocProvider<SegmentBloc>.value(value: _segmentBloc),
+        ];
+        final Map<String, dynamic> argumentsToAdd = arguments;
+        newRouteView = SegmentDetail(
+            courseEnrollment: argumentsToAdd['courseEnrollment'],
+            classIndex: argumentsToAdd['classIndex'],
+            segmentIndex: argumentsToAdd['segmentIndex']);
         break;
       case RouteEnum.movementIntro:
         final Map<String, Movement> argumentsToAdd = arguments;

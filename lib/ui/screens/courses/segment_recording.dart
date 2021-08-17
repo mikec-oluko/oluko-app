@@ -723,7 +723,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
                   SegmentProgress(segmentSubmission: segmentSubmission)));
     } else {
       if (widget.segmentIndex < widget.segments.length - 1) {
-        Navigator.push(
+        /*Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => SegmentDetail(
@@ -731,7 +731,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
                     segments: widget.segments,
                     segmentIndex: widget.segmentIndex + 1,
                     classIndex: widget.classIndex,
-                    courseEnrollment: widget.courseEnrollment)));
+                    courseEnrollment: widget.courseEnrollment)));*/
       } else {
         //TODO: Go to next class
         /*Navigator.push(

@@ -3,12 +3,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/blocs/movement_bloc.dart';
+import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
-import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
-import 'package:oluko_app/ui/components/oluko_image_bar.dart';
 import 'package:oluko_app/ui/components/countdown_overlay.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/segment_step_section.dart';
@@ -17,23 +16,15 @@ import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
-import 'movement_intro.dart';
 
 class SegmentDetail extends StatefulWidget {
   SegmentDetail(
-      {this.segments,
-      this.courseEnrollment,
-      this.segmentIndex,
-      this.classIndex,
-      this.user,
-      Key key})
+      {this.courseEnrollment, this.segmentIndex, this.classIndex, Key key})
       : super(key: key);
 
-  List<Segment> segments;
-  CourseEnrollment courseEnrollment;
-  int segmentIndex;
-  int classIndex;
-  User user;
+  final CourseEnrollment courseEnrollment;
+  final int segmentIndex;
+  final int classIndex;
 
   @override
   _SegmentDetailState createState() => _SegmentDetailState();
@@ -45,46 +36,39 @@ class _SegmentDetailState extends State<SegmentDetail> {
 
   num currentSegmentStep;
   num totalSegmentStep;
-  MovementBloc _movementBloc;
+  User _user;
+  List<Segment> _segments;
 
   @override
   void initState() {
     currentSegmentStep = widget.segmentIndex + 1;
     totalSegmentStep =
         widget.courseEnrollment.classes[widget.classIndex].segments.length;
-    _movementBloc = MovementBloc();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-        providers: [
-          BlocProvider<MovementBloc>(
-            create: (context) => _movementBloc..getBySegment(widget.segments[widget.segmentIndex]),
-          )
-        ],
-        child:
-            BlocBuilder<MovementBloc, MovementState>(builder: (context, state) {
-          if (state is GetMovementsSuccess) {
-            return form(state.movements);
+    return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
+      if (authState is AuthSuccess) {
+        _user = authState.firebaseUser;
+        return BlocBuilder<SegmentBloc, SegmentState>(
+            builder: (context, segmentState) {
+          if (segmentState is GetSegmentsSuccess) {
+            _segments = segmentState.segments;
+            return form();
           } else {
             return SizedBox();
           }
-        }));
+        });
+      } else {
+        return SizedBox();
+      }
+    });
   }
 
-  Widget form(List<Movement> movements) {
+  Widget form() {
     return Scaffold(
-      appBar: OlukoImageBar(
-        actions: [],
-        movements: movements,
-        onPressedMovement: (BuildContext context, Movement movement) =>
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => MovementIntro(movement: movement))),
-      ),
       backgroundColor: Colors.black,
       body: Container(
         decoration: BoxDecoration(
@@ -92,9 +76,9 @@ class _SegmentDetailState extends State<SegmentDetail> {
                 colorFilter: ColorFilter.mode(
                     Colors.black.withOpacity(0.85), BlendMode.darken),
                 fit: BoxFit.cover,
-                image: NetworkImage(widget.segments[widget.segmentIndex].image))),
+                image: NetworkImage(_segments[widget.segmentIndex].image))),
         width: ScreenUtils.width(context),
-        height: ScreenUtils.height(context) - toolbarHeight,
+        height: ScreenUtils.height(context),
         child: _viewBody(),
       ),
     );
@@ -115,12 +99,15 @@ class _SegmentDetailState extends State<SegmentDetail> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        MovementUtils.movementTitle(widget.segments[widget.segmentIndex].name),
+                        MovementUtils.movementTitle(
+                            _segments[widget.segmentIndex].name),
                         SizedBox(height: 25),
                         MovementUtils.description(
-                            widget.segments[widget.segmentIndex].description, context),
+                            _segments[widget.segmentIndex].description,
+                            context),
                         SizedBox(height: 25),
-                        MovementUtils.workout(widget.segments[widget.segmentIndex], context),
+                        MovementUtils.workout(
+                            _segments[widget.segmentIndex], context),
                       ],
                     ),
                   )
@@ -207,8 +194,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
                 onPressed: () {
                   startRecordingAndWorkoutTogether
                       ? _startCountdown(WorkoutType.segmentWithRecording)
-                      : DialogUtils.getDialog(
-                              context, _confirmDialogContent())
+                      : DialogUtils.getDialog(context, _confirmDialogContent())
                           .then((value) => value != null
                               ? _startCountdown(value == true
                                   ? WorkoutType.segmentWithRecording
@@ -236,12 +222,12 @@ class _SegmentDetailState extends State<SegmentDetail> {
             context,
             MaterialPageRoute(
                 builder: (context) => SegmentRecording(
-                    user: widget.user,
+                    user: _user,
                     workoutType: workoutType,
                     courseEnrollment: widget.courseEnrollment,
                     segmentIndex: widget.segmentIndex,
                     classIndex: widget.classIndex,
-                    segments: widget.segments))));
+                    segments: _segments))));
   }
 
   List<Widget> _confirmDialogContent() {
