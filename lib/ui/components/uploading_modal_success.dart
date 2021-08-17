@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/profile_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/routes.dart';
@@ -63,8 +64,8 @@ class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
                                         UploadFrom.profileCoverImage) {
                                   BlocProvider.of<AuthBloc>(context)
                                     ..checkCurrentUser();
-                                  Navigator.pop(context);
-
+                                  BlocProvider.of<ProfileBloc>(context)
+                                    ..requestNoUploadState();
                                   Navigator.popAndPushNamed(context,
                                       returnRouteToGo(widget.goToPage));
                                 }

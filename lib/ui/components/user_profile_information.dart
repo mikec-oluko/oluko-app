@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/oluko_panel_bloc.dart';
 import 'package:oluko_app/blocs/profile_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
@@ -115,17 +116,10 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                                 child: TextButton(
                                     onPressed: () {
                                       //UPDATE PROFILE PIC
-                                      AppModal.dialogContent(
-                                          context: context,
-                                          content: [
-                                            BlocProvider.value(
-                                              value:
-                                                  BlocProvider.of<ProfileBloc>(
-                                                      context),
-                                              child: ModalUploadOptions(
-                                                  UploadFrom.profileImage),
-                                            )
-                                          ]);
+                                      BlocProvider.of<OlukoPanelBloc>(context)
+                                          .setNewState(
+                                              action: OlukoPanelAction.open,
+                                              maxHeight: 100.0);
                                     },
                                     child: Image.asset(
                                         'assets/profile/uploadImage.png')),
@@ -154,6 +148,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                                 height: 40,
                                 child: TextButton(
                                     onPressed: () {
+                                      //TODO: UPDATE HERE
                                       AppModal.dialogContent(
                                           context: context,
                                           content: [

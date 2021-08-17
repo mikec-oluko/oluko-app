@@ -23,6 +23,7 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
     return Container(
       color: OlukoColors.black,
       width: MediaQuery.of(context).size.width,
+      height: 100,
       child: ListView(
         shrinkWrap: true,
         children: [
