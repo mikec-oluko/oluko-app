@@ -8,7 +8,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class FriendState {}
 
-class Loading extends FriendState {}
+class FriendLoading extends FriendState {}
 
 class GetFriendsSuccess extends FriendState {
   Friend friendData;
@@ -27,14 +27,14 @@ class GetFriendSuggestionSuccess extends FriendState {
   GetFriendSuggestionSuccess({this.friendSuggestionList});
 }
 
-class Failure extends FriendState {
+class FriendFailure extends FriendState {
   final Exception exception;
 
-  Failure({this.exception});
+  FriendFailure({this.exception});
 }
 
 class FriendBloc extends Cubit<FriendState> {
-  FriendBloc() : super(Loading());
+  FriendBloc() : super(FriendLoading());
 
   void getFriendsByUserId(String userId) async {
     try {
@@ -48,7 +48,7 @@ class FriendBloc extends Cubit<FriendState> {
         exception,
         stackTrace: stackTrace,
       );
-      emit(Failure(exception: exception));
+      emit(FriendFailure(exception: exception));
     }
   }
 
@@ -70,7 +70,7 @@ class FriendBloc extends Cubit<FriendState> {
         exception,
         stackTrace: stackTrace,
       );
-      emit(Failure(exception: exception));
+      emit(FriendFailure(exception: exception));
     }
   }
 
@@ -84,7 +84,7 @@ class FriendBloc extends Cubit<FriendState> {
         exception,
         stackTrace: stackTrace,
       );
-      emit(Failure(exception: exception));
+      emit(FriendFailure(exception: exception));
     }
   }
 }

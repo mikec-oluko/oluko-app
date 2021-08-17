@@ -81,14 +81,14 @@ class _FriendsListPageState extends State<FriendsListPage> {
 
   ///Manage friends retrieval state
   List<Widget> generateFriendList(FriendState friendState) {
-    if (friendState is Loading) {
+    if (friendState is FriendLoading) {
       return [
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: OlukoCircularProgressIndicator(),
         )
       ];
-    } else if (friendState is Failure) {
+    } else if (friendState is FriendFailure) {
       return [TitleBody('There was an error retrieving your Friends')];
     } else if (friendState is GetFriendsSuccess) {
       return friendState.friendData.friends.length == 0
