@@ -19,6 +19,11 @@ class TransformationJourneySuccess extends TransformationJourneyState {
   TransformationJourneySuccess({this.contentFromUser});
 }
 
+class TransformationJourneyUploadSuccess extends TransformationJourneyState {
+  final List<TransformationJourneyUpload> contentFromUser;
+  TransformationJourneyUploadSuccess({this.contentFromUser});
+}
+
 class TransformationJourneyFailure extends TransformationJourneyState {
   final Exception exception;
 
@@ -60,9 +65,9 @@ class TransformationJourneyBloc extends Cubit<TransformationJourneyState> {
 
   void uploadTransformationJourneyContent(
       {DeviceContentFrom uploadedFrom}) async {
-    if (!(state is TransformationJourneyUpload)) {
-      emit(TransformationJourneyLoading());
-    }
+    // if (!(state is TransformationJourneySuccess)) {
+    emit(TransformationJourneyLoading());
+    // }
     PickedFile _image;
     try {
       final imagePicker = ImagePicker();
@@ -86,7 +91,8 @@ class TransformationJourneyBloc extends Cubit<TransformationJourneyState> {
           await TransformationJourneyRepository()
               .getUploadedContentByUserId(user.id);
 
-      emit(TransformationJourneySuccess(contentFromUser: contentUploaded));
+      emit(
+          TransformationJourneyUploadSuccess(contentFromUser: contentUploaded));
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,

@@ -20,6 +20,7 @@ class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      color: OlukoColors.black,
       width: MediaQuery.of(context).size.width,
       height: 300,
       child: Row(
@@ -69,7 +70,7 @@ class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
                                 }
                                 if (widget.goToPage ==
                                     UploadFrom.transformationJourney) {
-                                  Navigator.pop(context);
+                                  // Navigator.pop(context);
                                   Navigator.popAndPushNamed(context,
                                       returnRouteToGo(widget.goToPage));
                                 }

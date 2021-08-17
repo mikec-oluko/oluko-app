@@ -24,6 +24,7 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
 
   Container returnList(BuildContext context) {
     return Container(
+      color: OlukoColors.black,
       width: MediaQuery.of(context).size.width,
       child: ListView(
         shrinkWrap: true,
@@ -64,19 +65,19 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
         ..uploadImageForProfile(
             uploadedFrom: DeviceContentFrom.camera,
             contentFor: widget.contentFrom);
-      Navigator.pop(context);
-      AppModal.dialogContent(
-          context: context,
-          content: [UploadingModalLoader(widget.contentFrom)]);
+      // Navigator.pop(context);
+      // AppModal.dialogContent(
+      //     context: context,
+      //     content: [UploadingModalLoader(widget.contentFrom)]);
     }
     if (widget.contentFrom == UploadFrom.transformationJourney) {
-      Navigator.pop(context);
+      // Navigator.pop(context);
       BlocProvider.of<TransformationJourneyBloc>(context)
         ..uploadTransformationJourneyContent(
             uploadedFrom: DeviceContentFrom.camera);
-      AppModal.dialogContent(
-          context: context,
-          content: [UploadingModalLoader(widget.contentFrom)]);
+      // AppModal.dialogContent(
+      //     context: context,
+      //     content: [UploadingModalLoader(widget.contentFrom)]);
     }
   }
 
@@ -87,28 +88,23 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
         ..uploadImageForProfile(
             uploadedFrom: DeviceContentFrom.gallery,
             contentFor: widget.contentFrom);
-      Navigator.pop(context);
-      AppModal.dialogContent(
-          context: context,
-          content: [UploadingModalLoader(widget.contentFrom)]);
+      // Navigator.pop(context);
+      // AppModal.dialogContent(
+      //     context: context,
+      //     content: [UploadingModalLoader(widget.contentFrom)]);
     }
     if (widget.contentFrom == UploadFrom.transformationJourney) {
       BlocProvider.of<TransformationJourneyBloc>(context)
         ..uploadTransformationJourneyContent(
             uploadedFrom: DeviceContentFrom.gallery);
-      Navigator.pop(context);
-      AppModal.dialogContent(
-          context: context,
-          content: [UploadingModalLoader(widget.contentFrom)]);
+      // Navigator.pop(context);
+      // AppModal.dialogContent(
+      //     context: context,
+      //     content: [UploadingModalLoader(widget.contentFrom)]);
     }
   }
 
-  MultiBlocProvider modalOptionsViewWithProviders(BuildContext context) {
-    return MultiBlocProvider(providers: [
-      BlocProvider.value(value: BlocProvider.of<ProfileBloc>(context)),
-      BlocProvider.value(value: BlocProvider.of<AuthBloc>(context)),
-      BlocProvider.value(
-          value: BlocProvider.of<TransformationJourneyBloc>(context)),
-    ], child: returnList(context));
+  modalOptionsViewWithProviders(BuildContext context) {
+    return returnList(context);
   }
 }

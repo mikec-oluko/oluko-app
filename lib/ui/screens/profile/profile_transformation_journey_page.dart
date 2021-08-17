@@ -13,9 +13,13 @@ import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_error_message_view.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/modal_upload_options.dart';
+import 'package:oluko_app/ui/components/oluko_panel_widget.dart';
+import 'package:oluko_app/ui/components/uploading_modal_loader.dart';
+import 'package:oluko_app/ui/components/uploading_modal_success.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/app_modal.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class ProfileTransformationJourneyPage extends StatefulWidget {
   @override
@@ -28,6 +32,8 @@ class _ProfileTransformationJourneyPageState
   List<Widget> _contentGallery;
   List<TransformationJourneyUpload> _transformationJourneyContent = [];
   UserResponse _profileInfo;
+  final PanelController _panelController = new PanelController();
+  double maxHeight2 = 100.0;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +45,7 @@ class _ProfileTransformationJourneyPageState
           builder: (context, state) {
             if (state is TransformationJourneySuccess) {
               _transformationJourneyContent = state.contentFromUser;
-              _contentGallery = _contentGallery =
+              _contentGallery =
                   TransformListOfItemsToWidget.getWidgetListFromContent(
                       tansformationJourneyData: _transformationJourneyContent,
                       requestedFromRoute:
@@ -62,14 +68,18 @@ class _ProfileTransformationJourneyPageState
 
   Scaffold page(BuildContext context, UserResponse profileInfo) {
     return Scaffold(
-        appBar: OlukoAppBar(
-          title: ProfileViewConstants.profileOptionsTransformationJourney,
-          showSearchBar: false,
-        ),
-        body: _contentGallery == null
-            ? Container(
-                color: Colors.black, child: OlukoCircularProgressIndicator())
-            : Container(
+      appBar: OlukoAppBar(
+        title: ProfileViewConstants.profileOptionsTransformationJourney,
+        showSearchBar: false,
+      ),
+      body: _contentGallery == null
+          ? Container(
+              color: Colors.black, child: OlukoCircularProgressIndicator())
+          : GestureDetector(
+              onTap: () {
+                _panelController.isPanelOpen ? _panelController.close() : null;
+              },
+              child: Container(
                 constraints: BoxConstraints.expand(),
                 color: OlukoColors.black,
                 child: SafeArea(
@@ -86,18 +96,24 @@ class _ProfileTransformationJourneyPageState
                                       title: OlukoLocalizations.of(context)
                                           .find('tapToUpload'),
                                       onPressed: () {
-                                        AppModal.dialogContent(
-                                            context: context,
-                                            content: [
-                                              BlocProvider.value(
-                                                value: BlocProvider.of<
-                                                        TransformationJourneyBloc>(
-                                                    context),
-                                                child: ModalUploadOptions(
-                                                    UploadFrom
-                                                        .transformationJourney),
-                                              )
-                                            ]);
+                                        _panelController.isPanelShown
+                                            ? null
+                                            : _panelController.show();
+                                        _panelController.open();
+                                        ////////////////////////////////////////
+                                        // AppModal.dialogContent(
+                                        //     context: context,
+                                        //     content: [
+                                        //       BlocProvider.value(
+                                        //         value: BlocProvider.of<
+                                        //                 TransformationJourneyBloc>(
+                                        //             context),
+                                        //         child: ModalUploadOptions(
+                                        //             UploadFrom
+                                        //                 .transformationJourney),
+                                        //       )
+                                        //     ]);
+                                        ////////////////////////////////////////////////
                                       }),
                                 ],
                               ),
@@ -121,18 +137,67 @@ class _ProfileTransformationJourneyPageState
                     Padding(
                       padding: const EdgeInsets.fromLTRB(10, 150, 10, 0),
                       child: _contentGallery.length != 0
-                          ? GridView.count(
-                              crossAxisCount: 3,
-                              children: _contentGallery,
+                          ? Container(
+                              height: MediaQuery.of(context).size.height / 1.6,
+                              child: GridView.count(
+                                crossAxisCount: 3,
+                                children: _contentGallery,
+                              ),
                             )
                           : Center(
                               child: OlukoErrorMessage(
                               whyIsError: ErrorTypeOption.noContent,
                             )),
                     ),
+                    SlidingUpPanel(
+                      minHeight: 0.0,
+                      maxHeight: maxHeight2,
+                      collapsed: SizedBox(),
+                      defaultPanelState: PanelState.CLOSED,
+                      controller: _panelController,
+                      panelBuilder: (ScrollController controller) {
+                        return PanelWidget(
+                          panelController: _panelController,
+                          scrollController: controller,
+                          contentForPanel: [
+                            BlocBuilder<TransformationJourneyBloc,
+                                TransformationJourneyState>(
+                              builder: (context, state) {
+                                Widget _widgetToUse;
+                                if (state is TransformationJourneySuccess) {
+                                  maxHeight2 = 100;
+                                  _widgetToUse = ModalUploadOptions(
+                                      UploadFrom.transformationJourney);
+                                } else if (state
+                                    is TransformationJourneyLoading) {
+                                  maxHeight2 = 300;
+                                  _widgetToUse = LoaderAndUploadingText();
+                                } else if (state
+                                    is TransformationJourneyUploadSuccess) {
+                                  maxHeight2 = 400;
+
+                                  _widgetToUse = UploadingModalSuccess(
+                                      UploadFrom.transformationJourney);
+                                } else if (state
+                                        is TransformationJourneyNoUploads ||
+                                    state is TransformationJourneyFailure) {
+                                  maxHeight2 = 10;
+
+                                  _widgetToUse = SizedBox();
+                                }
+
+                                return _widgetToUse;
+                              },
+                            )
+                          ],
+                        );
+                      },
+                    ),
                   ]),
                 ),
-              ));
+              ),
+            ),
+    );
   }
 
   String getTitleForContent(
