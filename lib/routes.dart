@@ -62,6 +62,7 @@ import 'package:oluko_app/ui/screens/assessments/task_details.dart';
 import 'package:oluko_app/ui/screens/videos/videos_home.dart';
 import 'package:oluko_app/ui/screens/view_all.dart';
 import 'blocs/friends/confirm_friend_bloc.dart';
+import 'blocs/oluko_panel_bloc.dart';
 import 'models/course.dart';
 import 'models/transformation_journey_uploads.dart';
 
@@ -146,6 +147,7 @@ RouteEnum getEnumFromRouteString(String route) {
 }
 
 class Routes {
+  final OlukoPanelBloc _olukoPanelBloc = OlukoPanelBloc();
   final AuthBloc _authBloc = AuthBloc();
   final ProfileBloc _profileBloc = ProfileBloc();
   final CourseBloc _courseBloc = CourseBloc();
@@ -269,6 +271,7 @@ class Routes {
       case RouteEnum.profileTransformationJourney:
         providers = [
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
+          BlocProvider<OlukoPanelBloc>.value(value: _olukoPanelBloc),
           BlocProvider<CourseBloc>.value(value: _courseBloc),
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),

@@ -65,9 +65,6 @@ class TransformationJourneyBloc extends Cubit<TransformationJourneyState> {
 
   void uploadTransformationJourneyContent(
       {DeviceContentFrom uploadedFrom}) async {
-    // if (!(state is TransformationJourneySuccess)) {
-    emit(TransformationJourneyLoading());
-    // }
     PickedFile _image;
     try {
       final imagePicker = ImagePicker();
@@ -82,6 +79,7 @@ class TransformationJourneyBloc extends Cubit<TransformationJourneyState> {
         return;
       }
 
+      emit(TransformationJourneyLoading());
       UserResponse user = await AuthRepository().retrieveLoginData();
 
       TransformationJourneyUpload upload = await TransformationJourneyRepository

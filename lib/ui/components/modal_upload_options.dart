@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/profile_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
-import 'package:oluko_app/ui/components/uploading_modal_loader.dart';
-import 'package:oluko_app/utils/app_modal.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ModalUploadOptions extends StatefulWidget {
@@ -65,19 +62,11 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
         ..uploadImageForProfile(
             uploadedFrom: DeviceContentFrom.camera,
             contentFor: widget.contentFrom);
-      // Navigator.pop(context);
-      // AppModal.dialogContent(
-      //     context: context,
-      //     content: [UploadingModalLoader(widget.contentFrom)]);
     }
     if (widget.contentFrom == UploadFrom.transformationJourney) {
-      // Navigator.pop(context);
       BlocProvider.of<TransformationJourneyBloc>(context)
         ..uploadTransformationJourneyContent(
             uploadedFrom: DeviceContentFrom.camera);
-      // AppModal.dialogContent(
-      //     context: context,
-      //     content: [UploadingModalLoader(widget.contentFrom)]);
     }
   }
 
@@ -88,19 +77,11 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
         ..uploadImageForProfile(
             uploadedFrom: DeviceContentFrom.gallery,
             contentFor: widget.contentFrom);
-      // Navigator.pop(context);
-      // AppModal.dialogContent(
-      //     context: context,
-      //     content: [UploadingModalLoader(widget.contentFrom)]);
     }
     if (widget.contentFrom == UploadFrom.transformationJourney) {
       BlocProvider.of<TransformationJourneyBloc>(context)
         ..uploadTransformationJourneyContent(
             uploadedFrom: DeviceContentFrom.gallery);
-      // Navigator.pop(context);
-      // AppModal.dialogContent(
-      //     context: context,
-      //     content: [UploadingModalLoader(widget.contentFrom)]);
     }
   }
 

@@ -14,14 +14,7 @@ class PanelWidget extends StatefulWidget {
 
 class _PanelWidgetState extends State<PanelWidget> {
   @override
-  void initState() {
-    // widget.panelController.hide();
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    //Content for the panel
     return ListView(
       shrinkWrap: true,
       children: widget.contentForPanel,

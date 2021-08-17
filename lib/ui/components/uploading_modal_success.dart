@@ -70,7 +70,6 @@ class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
                                 }
                                 if (widget.goToPage ==
                                     UploadFrom.transformationJourney) {
-                                  // Navigator.pop(context);
                                   Navigator.popAndPushNamed(context,
                                       returnRouteToGo(widget.goToPage));
                                 }
