@@ -23,7 +23,6 @@ class FriendsRequestPage extends StatefulWidget {
 
 class _FriendsRequestPageState extends State<FriendsRequestPage> {
   //TODO: Use from widget
-  String hardcodedUserId = '4HPomzrecweLoCAuCSVvPATtwwr2';
   num maxRequestsToShow = 5;
 
   @override
@@ -32,7 +31,7 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
   }
 
   List<UserResponse> friends = [];
-  AuthState authData;
+  AuthSuccess _authStateData;
 
   final List<String> userImages = [
     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrpM3UTTyyqIwGsPYB1gCDhfl3XVv0Cex2Lw&usqp=CAU',
@@ -46,8 +45,8 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
-      if (authState is AuthSuccess && authData == null) {
-        authData = authState;
+      if (authState is AuthSuccess && _authStateData == null) {
+        _authStateData = authState;
         BlocProvider.of<FriendBloc>(context)
             .getUserFriendsRequestByUserId(authState.user.id);
       }
@@ -61,7 +60,7 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
               listener: (context, ignoreFriendState) {
                 if (ignoreFriendState is IgnoreFriendRequestSuccess) {
                   BlocProvider.of<FriendBloc>(context)
-                      .getUserFriendsRequestByUserId(hardcodedUserId);
+                      .getUserFriendsRequestByUserId(_authStateData.user.id);
                   AppMessages.showSnackbar(context, 'Request ignored.');
                 } else if (ignoreFriendState is IgnoreFriendRequestFailure) {
                   AppMessages.showSnackbar(context, 'Error ignoring request.');
@@ -73,7 +72,7 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
                 listener: (context, confirmFriendState) {
                   if (confirmFriendState is ConfirmFriendSuccess) {
                     BlocProvider.of<FriendBloc>(context)
-                        .getUserFriendsRequestByUserId(hardcodedUserId);
+                        .getUserFriendsRequestByUserId(_authStateData.user.id);
                     AppMessages.showSnackbar(context, 'Friend added.');
                   } else if (confirmFriendState is ConfirmFriendFailure) {
                     AppMessages.showSnackbar(context, 'Error adding friend.');
