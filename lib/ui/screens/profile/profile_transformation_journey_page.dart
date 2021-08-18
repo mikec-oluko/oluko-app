@@ -30,6 +30,7 @@ class _ProfileTransformationJourneyPageState
   int variableSet = 0;
   double width;
   double height;
+  int pos;
 
   ScrollController _scrollController;
   List<Widget> _contentGallery;
@@ -109,68 +110,86 @@ class _ProfileTransformationJourneyPageState
                                 ],
                               ),
                             ))),
-                    // Padding(
-                    //   padding: const EdgeInsets.fromLTRB(10, 150, 10, 0),
-                    //   child: _contentGallery.length != 0
-                    //       ? GridView.count(
-                    //           crossAxisCount: 3,
-                    //           children: _contentGallery,
-                    //         )
-                    //       : OlukoErrorMessage(),
-                    // ),
-                    Center(
-                      child: DragAndDropGridView(
-                        feedback: () {},
-                        itemCount: _transformationJourneyContent.length,
-                        controller: _scrollController,
-                        onWillAccept: (oldIndex, newIndex) {
-                          return true;
-                        },
-                        onReorder: (oldIndex, newIndex) {
-                          final tempt = _transformationJourneyContent[oldIndex];
-                          _transformationJourneyContent[oldIndex] =
-                              _transformationJourneyContent[newIndex];
-                          _transformationJourneyContent[newIndex] = tempt;
-                          setState(() {});
-                        },
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          childAspectRatio: 3.3 / 4,
-                        ),
-                        itemBuilder: (context, index) => Card(
-                          color: Colors.transparent,
-                          child: LayoutBuilder(
-                            builder: (context, costrains) {
-                              if (variableSet == 0) {
-                                height = 120;
-                                width = 120;
-                                variableSet++;
-                              }
-                              return ImageAndVideoContainer(
-                                backgroundImage:
-                                    _transformationJourneyContent[index]
-                                        .thumbnail,
-                                isContentVideo:
-                                    _transformationJourneyContent[index].type ==
-                                            FileTypeEnum.video
-                                        ? true
-                                        : false,
-                                videoUrl:
-                                    _transformationJourneyContent[index].file,
-                                originalContent:
-                                    _transformationJourneyContent[index],
+                    Align(
+                      alignment: Alignment.center,
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 50),
+                        child: Container(
+                          height: MediaQuery.of(context).size.height / 1.4,
+                          child: DragAndDropGridView(
+                            isCustomChildWhenDragging: true,
+                            childWhenDragging: (pos) => Container(
+                              height: 120,
+                              width: 100,
+                              decoration: BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10.0)),
+                                  border: Border.all(
+                                    width: 2.0,
+                                    color: OlukoColors.grayColor,
+                                  )),
+                            ),
+                            feedback: () {},
+                            itemCount: _transformationJourneyContent.length,
+                            controller: _scrollController,
+                            onWillAccept: (oldIndex, newIndex) {
+                              setState(
+                                () {
+                                  pos = newIndex;
+                                },
                               );
-                              ;
-                              // return GridTile(
-                              //   child: Image.network(
-                              //     _transformationJourneyContent[index]
-                              //         .thumbnail,
-                              //     fit: BoxFit.cover,
-                              //     height: height,
-                              //     width: width,
-                              //   ),
-                              // );
+                              return true;
                             },
+                            onReorder: (oldIndex, newIndex) {
+                              final tempt =
+                                  _transformationJourneyContent[oldIndex];
+                              _transformationJourneyContent[oldIndex] =
+                                  _transformationJourneyContent[newIndex];
+                              _transformationJourneyContent[newIndex] = tempt;
+                              setState(() {
+                                pos = null;
+                              });
+                            },
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                              // childAspectRatio: 3.3 / 4,
+                            ),
+                            itemBuilder: (context, index) => Opacity(
+                              opacity: pos != null
+                                  ? pos != index
+                                      ? 0.6
+                                      : 1
+                                  : 1,
+                              child: Card(
+                                color: Colors.transparent,
+                                child: LayoutBuilder(
+                                  builder: (context, costrains) {
+                                    if (variableSet == 0) {
+                                      height = 120;
+                                      width = 100;
+                                      variableSet++;
+                                    }
+                                    return ImageAndVideoContainer(
+                                      backgroundImage:
+                                          _transformationJourneyContent[index]
+                                              .thumbnail,
+                                      isContentVideo:
+                                          _transformationJourneyContent[index]
+                                                      .type ==
+                                                  FileTypeEnum.video
+                                              ? true
+                                              : false,
+                                      videoUrl:
+                                          _transformationJourneyContent[index]
+                                              .file,
+                                      originalContent:
+                                          _transformationJourneyContent[index],
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ),
