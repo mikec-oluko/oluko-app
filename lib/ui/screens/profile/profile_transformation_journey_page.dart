@@ -12,7 +12,6 @@ import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/image_and_video_container.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
-import 'package:oluko_app/ui/components/oluko_error_message_view.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/modal_upload_options.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
@@ -129,7 +128,6 @@ class _ProfileTransformationJourneyPageState
                                     color: OlukoColors.grayColor,
                                   )),
                             ),
-                            feedback: () {},
                             itemCount: _transformationJourneyContent.length,
                             controller: _scrollController,
                             onWillAccept: (oldIndex, newIndex) {
@@ -153,7 +151,6 @@ class _ProfileTransformationJourneyPageState
                             gridDelegate:
                                 SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 3,
-                              // childAspectRatio: 3.3 / 4,
                             ),
                             itemBuilder: (context, index) => Opacity(
                               opacity: pos != null
