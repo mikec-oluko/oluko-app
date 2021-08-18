@@ -15,6 +15,7 @@ import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/segment_image_section.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
 import 'package:oluko_app/ui/screens/courses/segment_recording.dart';
+import 'package:oluko_app/ui/screens/courses/segment_timers.dart';
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -101,8 +102,10 @@ class _SegmentDetailState extends State<SegmentDetail> {
                 title: OlukoLocalizations.of(context).find('startWorkouts'),
                 color: OlukoColors.primary,
                 onPressed: () {
-                  BottomDialogUtils.showBottomDialog(
-                      context: context, content: dialogContainer());
+                   Navigator.push(context,
+                       MaterialPageRoute(builder: (context) => SegmentTimers()));
+                  // BottomDialogUtils.showBottomDialog(
+                  //     context: context, content: dialogContainer());
                 })
           ]),
         )
