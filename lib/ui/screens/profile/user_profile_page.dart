@@ -144,10 +144,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
         backdropEnabled: true,
         isDraggable: false,
         margin: const EdgeInsets.all(0),
-        header: SizedBox(height: 0),
+        header: SizedBox(),
         backdropTapClosesPanel: true,
-        padding: EdgeInsets.all(0),
-        color: OlukoColors.black,
+        padding: EdgeInsets.zero,
+        color: OlukoColors.primary,
         minHeight: 0.0,
         maxHeight: panelMaxHeight,
         collapsed: SizedBox(),
@@ -156,7 +156,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
         panelBuilder: (ScrollController controller) {
           return PanelWidget(
             panelController: _panelController,
-            // scrollController: controller,
+            scrollController: controller,
             contentForPanel: [
               BlocBuilder<OlukoPanelBloc, OlukoPanelState>(
                 builder: (context, state) {
@@ -169,10 +169,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     _panelController.open();
                     panelMaxHeight = state.maxHeight;
                     _widgetToReturn = _isNewCoverImage
-                        ? Align(
-                            alignment: Alignment.topCenter,
-                            child: ModalUploadOptions(
-                                UploadFrom.profileCoverImage))
+                        ? ModalUploadOptions(UploadFrom.profileCoverImage)
                         : ModalUploadOptions(UploadFrom.profileImage);
                   }
                   if (state is OlukoPanelLoading) {
@@ -185,7 +182,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     _widgetToReturn =
                         UploadingModalSuccess(UploadFrom.profileCoverImage);
                   }
-                  return _widgetToReturn;
+                  return Container(child: _widgetToReturn);
                 },
               )
             ],
