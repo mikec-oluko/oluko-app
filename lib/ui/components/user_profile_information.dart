@@ -16,9 +16,9 @@ import 'modal_upload_options.dart';
 class UserProfileInformation extends StatefulWidget {
   final UserResponse userInformation;
   final ActualProfileRoute actualRoute;
-  final bool userIsOwnerProfile;
+  final bool isOwner;
   const UserProfileInformation(
-      {this.userInformation, this.actualRoute, this.userIsOwnerProfile})
+      {this.userInformation, this.actualRoute, this.isOwner})
       : super();
 
   @override
@@ -104,7 +104,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                           Visibility(
                             visible: widget.actualRoute ==
                                     ActualProfileRoute.userProfile &&
-                                widget.userIsOwnerProfile,
+                                widget.isOwner,
                             child: Positioned(
                               top: 25,
                               right: -12,
@@ -144,7 +144,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                           Visibility(
                             visible: widget.actualRoute ==
                                     ActualProfileRoute.userProfile &&
-                                widget.userIsOwnerProfile == true,
+                                widget.isOwner == true,
                             child: Positioned(
                               top: 25,
                               right: -12,
@@ -178,7 +178,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                   child: Row(
                     children: [
                       //PROFILE NAME AND LASTNAME
-                      !_isProfilePrivate && widget.userIsOwnerProfile
+                      !_isProfilePrivate && widget.isOwner
                           ? Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -335,7 +335,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                   ),
                 ),
                 //TODO: Check show/hide button conditions
-                !widget.userIsOwnerProfile &&
+                !widget.isOwner &&
                         widget.actualRoute == ActualProfileRoute.userProfile
                     ? Container(
                         height: 50,
@@ -360,7 +360,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
           ],
         ),
         //PROFILE ARCHIVEMENTS
-        !widget.userIsOwnerProfile && _isProfilePrivate == true
+        !widget.isOwner && _isProfilePrivate == true
             ? UserProfileProgress(
                 challengesCompleted: _archivementsDefaultValue,
                 coursesCompleted: _archivementsDefaultValue,
