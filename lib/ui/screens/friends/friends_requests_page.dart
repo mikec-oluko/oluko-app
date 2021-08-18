@@ -140,7 +140,7 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
                 padding: const EdgeInsets.all(32.0),
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: [TitleBody('No Friends.')]),
+                    children: [TitleBody('No Requests.')]),
               )
             ]
           : friendsRequestState.friendRequestList
