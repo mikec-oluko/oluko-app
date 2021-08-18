@@ -32,7 +32,7 @@ class CourseEnrollmentRepository {
         .collection('courseEnrollments');
 
     final QuerySnapshot qs = await reference
-        .where("course_id", isEqualTo: course.id)
+        .where("course.id", isEqualTo: course.id)
         .where("created_by", isEqualTo: user.uid)
         .get();
 
