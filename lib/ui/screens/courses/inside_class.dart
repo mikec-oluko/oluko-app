@@ -1,5 +1,4 @@
 import 'package:chewie/chewie.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -14,6 +13,7 @@ import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/submodels/segment_submodel.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/services/class_service.dart';
 import 'package:oluko_app/services/course_enrollment_service.dart';
 import 'package:oluko_app/ui/components/challenge_section.dart';
 import 'package:oluko_app/ui/components/class_movements_section.dart';
@@ -44,9 +44,9 @@ class _InsideClassesState extends State<InsideClass> {
   final _formKey = GlobalKey<FormState>();
   ChewieController _controller;
   Class _class;
-  User _user;
   List<Movement> _movements;
   PanelController panelController = new PanelController();
+  List<Movement> _classMovements;
 
   @override
   void initState() {
@@ -57,7 +57,6 @@ class _InsideClassesState extends State<InsideClass> {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
-        _user = authState.firebaseUser;
         BlocProvider.of<ClassBloc>(context)
           ..get(widget.courseEnrollment.classes[widget.classIndex].id);
         BlocProvider.of<MovementBloc>(context)..getAll();
@@ -137,18 +136,15 @@ class _InsideClassesState extends State<InsideClass> {
         OlukoPrimaryButton(
           title: OlukoLocalizations.of(context).find('start'),
           onPressed: () {
-            /*int segmentIndex =
+            int segmentIndex =
                 CourseEnrollmentService.getFirstUncompletedSegmentIndex(
                     widget.courseEnrollment.classes[widget.classIndex]);
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => SegmentDetail(
-                        user: _user,
-                        segments: _segments,
-                        segmentIndex: segmentIndex,
-                        classIndex: widget.classIndex,
-                        courseEnrollment: widget.courseEnrollment)));*/
+            Navigator.pushNamed(context, routeLabels[RouteEnum.segmentDetail],
+                arguments: {
+                  'segmentIndex': segmentIndex,
+                  'classIndex': widget.classIndex,
+                  'courseEnrollment': widget.courseEnrollment,
+                });
           },
         ),
       ],
@@ -178,9 +174,11 @@ class _InsideClassesState extends State<InsideClass> {
   }
 
   Widget classMovementSection() {
+    _classMovements = ClassService.getClassSegmentMovements(
+        ClassService.getClassMovements(_class), _movements);
     return ClassMovementSection(
       panelController: panelController,
-      movements: _movements,
+      movements: _classMovements,
       classObj: _class,
       onPressedMovement: (BuildContext context, Movement movement) =>
           Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro],

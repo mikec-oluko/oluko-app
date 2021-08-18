@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
+import 'package:oluko_app/models/timer_entry.dart';
+import 'package:oluko_app/models/timer_model.dart';
 
 import 'oluko_localizations.dart';
 
@@ -48,5 +50,46 @@ class SegmentUtils {
               custoFontWeight: FontWeight.w400,
               customColor: OlukoColors.grayColor),
         ));
+  }
+
+  ///Generates a list with all movement excercises and rests taking into account
+  //sets and rounds. Returns a timer entry list consumible by the timer.
+  static List<TimerEntry> getExercisesList(Segment segment) {
+    List<TimerEntry> entries = [];
+    for (var roundIndex = 0; roundIndex < segment.rounds; roundIndex++) {
+      for (var movementIndex = 0;
+          movementIndex < segment.movements.length;
+          movementIndex++) {
+        for (var setIndex = 0;
+            setIndex < segment.movements[movementIndex].timerSets;
+            setIndex++) {
+          bool isTimedEntry =
+              segment.movements[movementIndex].timerWorkTime != null;
+          bool isLastMovement = movementIndex == segment.movements.length - 1;
+          //Add work entry
+          entries.add(TimerEntry(
+              time: segment.movements[movementIndex].timerWorkTime,
+              reps: segment.movements[movementIndex].timerReps,
+              movement: segment.movements[movementIndex],
+              setNumber: setIndex,
+              roundNumber: roundIndex,
+              label:
+                  '${isTimedEntry ? segment.movements[movementIndex].timerWorkTime : segment.movements[movementIndex].timerReps} ${isTimedEntry ? 'Sec' : 'Reps'} ${segment.movements[movementIndex].name}',
+              workState: WorkState.exercising));
+          //Add rest entry
+          entries.add(TimerEntry(
+              time: isLastMovement
+                  ? segment.roundBreakDuration
+                  : segment.movements[movementIndex].timerRestTime,
+              movement: segment.movements[movementIndex],
+              setNumber: setIndex,
+              roundNumber: roundIndex,
+              label:
+                  '${isLastMovement ? segment.roundBreakDuration : segment.movements[movementIndex].timerRestTime} Sec rest',
+              workState: WorkState.repResting));
+        }
+      }
+    }
+    return entries;
   }
 }
