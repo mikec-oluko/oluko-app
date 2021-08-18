@@ -128,6 +128,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
                   'classIndex': widget.classIndex,
                   'courseEnrollment': widget.courseEnrollment,
                   'workoutType': workoutType,
+                  'segments': _segments,
                 }));
   }
 

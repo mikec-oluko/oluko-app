@@ -351,6 +351,7 @@ class Routes {
           classIndex: argumentsToAdd['classIndex'],
           segmentIndex: argumentsToAdd['segmentIndex'],
           workoutType: argumentsToAdd['workType'],
+          segments: argumentsToAdd['segments']
         );
         break;
       case RouteEnum.courseMarketing:

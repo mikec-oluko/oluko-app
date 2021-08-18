@@ -23,6 +23,7 @@ import 'package:oluko_app/ui/screens/courses/segment_progress.dart';
 import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/segment_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 
 enum WorkoutType { segment, segmentWithRecording }
@@ -32,13 +33,15 @@ class SegmentRecording extends StatefulWidget {
   final CourseEnrollment courseEnrollment;
   final int classIndex;
   final int segmentIndex;
+  final List<Segment> segments;
 
   SegmentRecording(
       {Key key,
       this.workoutType,
       this.classIndex,
       this.segmentIndex,
-      this.courseEnrollment})
+      this.courseEnrollment,
+      this.segments})
       : super(key: key);
 
   @override
@@ -57,8 +60,6 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   );
 
   //Imported from Timer POC Models
-  TaskType taskType = TaskType.DEFAULT;
-  TimerScreen timerScreen = TimerScreen.stop_watch;
   WorkState workState = WorkState.initial;
   WorkState lastWorkStateBeforePause = WorkState.initial;
 
@@ -83,7 +84,6 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   List<TimerEntry> timerEntries;
 
   User _user;
-  List<Segment> _segments;
   MovementSubmission _movementSubmission;
   SegmentSubmission _segmentSubmission;
 
@@ -91,6 +91,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   void initState() {
     _setupCameras();
     this.workoutType = widget.workoutType;
+        _startMovement();
     super.initState();
   }
 
@@ -101,8 +102,6 @@ class _SegmentRecordingState extends State<SegmentRecording> {
         _user = authState.firebaseUser;
         return BlocBuilder<SegmentBloc, SegmentState>(
             builder: (context, segmentState) {
-          if (segmentState is GetSegmentsSuccess) {
-            _segments = segmentState.segments;
             return BlocListener<MovementSubmissionBloc,
                     MovementSubmissionState>(
                 listener: (context, movementState) {
@@ -118,9 +117,6 @@ class _SegmentRecordingState extends State<SegmentRecording> {
                           }
                         },
                         child: form()));
-          } else {
-            return SizedBox();
-          }
         });
       } else {
         return SizedBox();
@@ -129,12 +125,11 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   }
 
   form() {
-    _startMovement();
     if (widget.workoutType == WorkoutType.segmentWithRecording &&
         _segmentSubmission == null) {
       BlocProvider.of<SegmentSubmissionBloc>(context)
         ..create(
-            _user, widget.courseEnrollment, _segments[widget.segmentIndex]);
+            _user, widget.courseEnrollment, widget.segments[widget.segmentIndex]);
     }
     return Scaffold(
       appBar: OlukoAppBar(
@@ -376,7 +371,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
             child: Row(
               children: [
                 MovementUtils.movementTitle(
-                    _segments[widget.segmentIndex].name),
+                    widget.segments[widget.segmentIndex].name),
                 _completedBadge()
               ],
             ),
@@ -385,13 +380,13 @@ class _SegmentRecordingState extends State<SegmentRecording> {
             padding: const EdgeInsets.all(8.0),
             child: MovementUtils.labelWithTitle(
                 '${OlukoLocalizations.of(context).find('duration')}:',
-                '${_segments[widget.segmentIndex].duration} Seconds'),
+                '${widget.segments[widget.segmentIndex].duration} Seconds'),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: MovementUtils.labelWithTitle(
                 '${OlukoLocalizations.of(context).find('rounds')}:',
-                '${_segments[widget.segmentIndex].rounds} ${OlukoLocalizations.of(context).find('rounds')}'),
+                '${widget.segments[widget.segmentIndex].rounds} ${OlukoLocalizations.of(context).find('rounds')}'),
           ),
           /*Padding(
             padding: const EdgeInsets.all(8.0),
@@ -680,11 +675,11 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     }
     this.setState(() {
       timerTaskIndex++;
-      _playTask(timerTaskIndex);
+      _playTask();
     });
   }
 
-  _playTask(num timerTaskIndex) async {
+  _playTask() async {
     workState = timerEntries[timerTaskIndex].workState;
     if (widget.workoutType == WorkoutType.segmentWithRecording &&
         timerEntries[timerTaskIndex].workState == WorkState.exercising) {
@@ -711,7 +706,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
               builder: (context) =>
                   SegmentProgress(segmentSubmission: _segmentSubmission)));
     } else {
-      if (widget.segmentIndex < _segments.length - 1) {
+      if (widget.segmentIndex < widget.segments.length - 1) {
         /*Navigator.push(
             context,
             MaterialPageRoute(
@@ -737,6 +732,14 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     }
   }
 
+  _startMovement() {
+    //Reset countdown variables
+    timerTaskIndex = 0;
+    this.timerEntries =
+        SegmentUtils.getExercisesList(widget.segments[widget.segmentIndex]);
+    _playTask();
+  }
+
   void _playCountdown() {
     if (timerTaskIndex == 0) {
       timeLeft = Duration(seconds: timerEntries[0].time);
@@ -759,58 +762,6 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     countdownTimer.cancel();
   }
 
-  ///Merge all movement Exercises (Workouts & Rests) taking into account Sets & Rounds. Returns an Exercise list consumible by the Timer.
-  List<TimerEntry> _getExercisesList(num rounds) {
-    List<TimerEntry> entries = [];
-    for (var roundIndex = 0; roundIndex < rounds; roundIndex++) {
-      for (var movementIndex = 0;
-          movementIndex < _segments[widget.segmentIndex].movements.length;
-          movementIndex++) {
-        for (var setIndex = 0;
-            setIndex <
-                _segments[widget.segmentIndex]
-                    .movements[movementIndex]
-                    .timerSets;
-            setIndex++) {
-          bool isTimedEntry = _segments[widget.segmentIndex]
-                  .movements[movementIndex]
-                  .timerWorkTime !=
-              null;
-          bool isLastMovement = movementIndex ==
-              _segments[widget.segmentIndex].movements.length - 1;
-          //Add work entry
-          entries.add(TimerEntry(
-              time: _segments[widget.segmentIndex]
-                  .movements[movementIndex]
-                  .timerWorkTime,
-              reps: _segments[widget.segmentIndex]
-                  .movements[movementIndex]
-                  .timerReps,
-              movement: _segments[widget.segmentIndex].movements[movementIndex],
-              setNumber: setIndex,
-              roundNumber: roundIndex,
-              label:
-                  '${isTimedEntry ? _segments[widget.segmentIndex].movements[movementIndex].timerWorkTime : _segments[widget.segmentIndex].movements[movementIndex].timerReps} ${isTimedEntry ? 'Sec' : 'Reps'} ${_segments[widget.segmentIndex].movements[movementIndex].name}',
-              workState: WorkState.exercising));
-          //Add rest entry
-          entries.add(TimerEntry(
-              time: isLastMovement
-                  ? _segments[widget.segmentIndex].roundBreakDuration
-                  : _segments[widget.segmentIndex]
-                      .movements[movementIndex]
-                      .timerRestTime,
-              movement: _segments[widget.segmentIndex].movements[movementIndex],
-              setNumber: setIndex,
-              roundNumber: roundIndex,
-              label:
-                  '${isLastMovement ? _segments[widget.segmentIndex].roundBreakDuration : _segments[widget.segmentIndex].movements[movementIndex].timerRestTime} Sec rest',
-              workState: WorkState.repResting));
-        }
-      }
-    }
-    return entries;
-  }
-
   @override
   void dispose() {
     if (this.countdownTimer != null && this.countdownTimer.isActive) {
@@ -820,10 +771,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     super.dispose();
   }
 
-  /*
-  Camera Functions
-  */
-
+  //Camera Functions
   Future<void> _setupCameras() async {
     int cameraPos = isCameraFront ? 0 : 1;
     try {
@@ -837,14 +785,5 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     setState(() {
       _isReady = true;
     });
-  }
-
-  _startMovement() {
-    //Reset countdown variables
-    timerTaskIndex = 0;
-    //Merge all movement exercises (Workouts & Rests) into a List iterable by the Timer
-    this.timerEntries =
-        _getExercisesList(_segments[widget.segmentIndex].rounds);
-    _playTask(timerTaskIndex);
   }
 }
