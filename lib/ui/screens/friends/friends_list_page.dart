@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/friend_model.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/friends_card.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
@@ -111,10 +112,9 @@ class _FriendsListPageState extends State<FriendsListPage> {
                   .where((fuser) => fuser.id == friend.id)
                   .first;
               return FriendCard(
-                name: friendUser.firstName,
-                lastName: friendUser.lastName,
-                userName: friendUser.username,
-                imageUser: friendUser.avatar,
+                friend: friend,
+                friendUser: friendUser,
+                onFavoriteToggle: (FriendModel friend) {},
               );
             }).toList();
     } else {
