@@ -10,7 +10,9 @@ import 'package:oluko_app/models/friend_request_model.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/friends_request_card.dart';
 import 'package:oluko_app/ui/components/friends_suggestions_section.dart';
+import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
+import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 
 class FriendsRequestPage extends StatefulWidget {
@@ -85,66 +87,10 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
                       //         .toList()),
                       BlocBuilder<FriendBloc, FriendState>(
                           builder: (context, friendsRequestState) {
-                        return friendsRequestState is GetFriendRequestsSuccess
-                            ? Column(
-                                children: friendsRequestState.friendRequestList
-                                        .map<Widget>((UserResponse friend) =>
-                                            FriendRequestCard(
-                                              friendUser: friend,
-                                              onFriendRequestIgnore:
-                                                  (UserResponse friend) {
-                                                FriendRequestModel
-                                                    friendRequestModel =
-                                                    friendsRequestState
-                                                        .friendData
-                                                        .friendRequestReceived
-                                                        .where(
-                                                            (friendRequest) =>
-                                                                friendRequest
-                                                                    .id ==
-                                                                friend.id)
-                                                        .toList()
-                                                        .first;
-                                                BlocProvider.of<
-                                                            IgnoreFriendRequestBloc>(
-                                                        context)
-                                                    .ignoreFriend(
-                                                        context,
-                                                        friendsRequestState
-                                                            .friendData,
-                                                        friendRequestModel);
-                                              },
-                                              onFriendConfirmation:
-                                                  (UserResponse friend) {
-                                                FriendRequestModel
-                                                    friendRequestModel =
-                                                    friendsRequestState
-                                                        .friendData
-                                                        .friendRequestReceived
-                                                        .where(
-                                                            (friendRequest) =>
-                                                                friendRequest
-                                                                    .id ==
-                                                                friend.id)
-                                                        .toList()
-                                                        .first;
-                                                BlocProvider.of<
-                                                            ConfirmFriendBloc>(
-                                                        context)
-                                                    .confirmFriend(
-                                                        context,
-                                                        friendsRequestState
-                                                            .friendData,
-                                                        friendRequestModel);
-                                              },
-                                            ))
-                                        .toList() +
-                                    (friendsRequestState
-                                                .friendRequestList.length >
-                                            maxRequestsToShow
-                                        ? [buildAllRequestButton(context)]
-                                        : []))
-                            : SizedBox();
+                        return Column(
+                          children:
+                              generateFriendRequestsList(friendsRequestState),
+                        );
                       })
                     ],
                   ),
@@ -178,5 +124,57 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
             ],
           )),
     );
+  }
+
+  List<Widget> generateFriendRequestsList(FriendState friendsRequestState) {
+    if (friendsRequestState is GetFriendRequestsSuccess) {
+      return friendsRequestState.friendRequestList
+              .map<Widget>((UserResponse friend) => FriendRequestCard(
+                    friendUser: friend,
+                    onFriendRequestIgnore: (UserResponse friend) {
+                      FriendRequestModel friendRequestModel =
+                          friendsRequestState.friendData.friendRequestReceived
+                              .where((friendRequest) =>
+                                  friendRequest.id == friend.id)
+                              .toList()
+                              .first;
+                      BlocProvider.of<IgnoreFriendRequestBloc>(context)
+                          .ignoreFriend(context, friendsRequestState.friendData,
+                              friendRequestModel);
+                    },
+                    onFriendConfirmation: (UserResponse friend) {
+                      FriendRequestModel friendRequestModel =
+                          friendsRequestState.friendData.friendRequestReceived
+                              .where((friendRequest) =>
+                                  friendRequest.id == friend.id)
+                              .toList()
+                              .first;
+                      BlocProvider.of<ConfirmFriendBloc>(context).confirmFriend(
+                          context,
+                          friendsRequestState.friendData,
+                          friendRequestModel);
+                    },
+                  ))
+              .toList() +
+          (friendsRequestState.friendRequestList.length > maxRequestsToShow
+              ? [buildAllRequestButton(context)]
+              : []);
+    } else if (friendsRequestState is FriendFailure) {
+      return [TitleBody('There was an error retrieving your Friends')];
+    } else if (friendsRequestState is FriendLoading) {
+      return [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: OlukoCircularProgressIndicator(),
+        )
+      ];
+    } else {
+      return [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: OlukoCircularProgressIndicator(),
+        )
+      ];
+    }
   }
 }

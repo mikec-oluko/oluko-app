@@ -8,11 +8,12 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class FriendState {}
 
-class Loading extends FriendState {}
+class FriendLoading extends FriendState {}
 
 class GetFriendsSuccess extends FriendState {
+  Friend friendData;
   List<UserResponse> friendUsers;
-  GetFriendsSuccess({this.friendUsers});
+  GetFriendsSuccess({this.friendData, this.friendUsers});
 }
 
 class GetFriendRequestsSuccess extends FriendState {
@@ -26,25 +27,28 @@ class GetFriendSuggestionSuccess extends FriendState {
   GetFriendSuggestionSuccess({this.friendSuggestionList});
 }
 
-class Failure extends FriendState {
+class FriendFailure extends FriendState {
   final Exception exception;
 
-  Failure({this.exception});
+  FriendFailure({this.exception});
 }
 
 class FriendBloc extends Cubit<FriendState> {
-  FriendBloc() : super(Loading());
+  FriendBloc() : super(FriendLoading());
 
   void getFriendsByUserId(String userId) async {
     try {
       Friend friendData = await FriendRepository.getUserFriendsByUserId(userId);
-      emit(GetFriendsSuccess(friendUsers: []));
+
+      List<UserResponse> friendList = await Future.wait(friendData.friends
+          .map((friend) async => UserRepository().getById(friend.id)));
+      emit(GetFriendsSuccess(friendData: friendData, friendUsers: friendList));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
         stackTrace: stackTrace,
       );
-      emit(Failure(exception: exception));
+      emit(FriendFailure(exception: exception));
     }
   }
 
@@ -66,7 +70,7 @@ class FriendBloc extends Cubit<FriendState> {
         exception,
         stackTrace: stackTrace,
       );
-      emit(Failure(exception: exception));
+      emit(FriendFailure(exception: exception));
     }
   }
 
@@ -80,7 +84,7 @@ class FriendBloc extends Cubit<FriendState> {
         exception,
         stackTrace: stackTrace,
       );
-      emit(Failure(exception: exception));
+      emit(FriendFailure(exception: exception));
     }
   }
 }

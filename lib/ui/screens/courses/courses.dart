@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -393,13 +396,18 @@ class _State extends State<Courses> {
   }
 
   _generateImageCourse(String imageUrl) {
-    return Image.network(
-      imageUrl,
-      fit: BoxFit.cover,
-      frameBuilder: (BuildContext context, Widget child, int frame,
-              bool wasSynchronouslyLoaded) =>
-          ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded,
-              height: 120),
-    );
+    if (imageUrl != null) {
+      return Image.network(
+        imageUrl,
+        fit: BoxFit.cover,
+        frameBuilder: (BuildContext context, Widget child, int frame,
+                bool wasSynchronouslyLoaded) =>
+            ImageUtils.frameBuilder(
+                context, child, frame, wasSynchronouslyLoaded,
+                height: 120),
+      );
+    }
+    return Image.asset("assets/courses/course_sample_7.png");
+    //TODO: fill space with default image or message
   }
 }

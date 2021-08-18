@@ -228,7 +228,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                 child: UserProfileInformation(
                                     userInformation: _userProfileToDisplay,
                                     actualRoute: ActualProfileRoute.userProfile,
-                                    userIsOwnerProfile: _isCurrentUser))),
+                                    isOwner: _isCurrentUser))),
                       ),
                       Positioned(
                         top: MediaQuery.of(context).size.height / 5,
