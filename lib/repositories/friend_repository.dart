@@ -103,7 +103,9 @@ class FriendRepository {
 
       //Friend model to add as a friend
       FriendModel friendModel = FriendModel(
-          id: friendRequest.id, reference: friendUserDocument.reference);
+          id: friendRequest.id,
+          isFavorite: false,
+          reference: friendUserDocument.reference);
 
       //Remove friend request
       friend.friendRequestReceived
@@ -140,6 +142,33 @@ class FriendRepository {
           .doc(friend.id)
           .set(friend.toJson());
       return friendRequest;
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
+      throw e;
+    }
+  }
+
+  static Future<FriendModel> markFriendAsFavorite(
+      Friend friend, FriendModel friendModel) async {
+    friendModel.isFavorite = true;
+    friend.friends = friend.friends.map((friend) {
+      if (friend.id == friendModel.id) {
+        friend.isFavorite = true;
+      }
+      return friend;
+    }).toList();
+
+    try {
+      await FirebaseFirestore.instance
+          .collection('projects')
+          .doc(GlobalConfiguration().getValue("projectId"))
+          .collection('friends')
+          .doc(friend.id)
+          .set(friend.toJson());
+      return friendModel;
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,
