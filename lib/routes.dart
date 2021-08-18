@@ -350,7 +350,7 @@ class Routes {
           courseEnrollment: argumentsToAdd['courseEnrollment'],
           classIndex: argumentsToAdd['classIndex'],
           segmentIndex: argumentsToAdd['segmentIndex'],
-          workoutType: argumentsToAdd['workType'],
+          workoutType: argumentsToAdd['workoutType'],
           segments: argumentsToAdd['segments']
         );
         break;
