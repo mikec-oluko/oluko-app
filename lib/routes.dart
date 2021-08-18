@@ -255,7 +255,7 @@ class Routes {
       case RouteEnum.profileViewOwnProfile:
         providers = [
           BlocProvider<CourseBloc>.value(value: _courseBloc),
-          BlocProvider<OlukoPanelBloc>.value(value: _olukoPanelBloc),
+          BlocProvider<OlukoPanelBloc>.value(value: OlukoPanelBloc()),
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),

@@ -15,9 +15,12 @@ class PanelWidget extends StatefulWidget {
 class _PanelWidgetState extends State<PanelWidget> {
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      shrinkWrap: true,
-      children: widget.contentForPanel,
+    return Expanded(
+      child: ListView(
+        clipBehavior: Clip.none,
+        shrinkWrap: true,
+        children: widget.contentForPanel,
+      ),
     );
   }
 }
