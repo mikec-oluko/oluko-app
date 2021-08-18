@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
-import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/list_of_items_to_widget.dart';
 import 'package:oluko_app/models/enums/file_type_enum.dart';
@@ -51,6 +51,12 @@ class _ProfileTransformationJourneyPageState
                       tansformationJourneyData: _transformationJourneyContent,
                       requestedFromRoute:
                           ActualProfileRoute.transformationJourney);
+            } else if (state is TransformationJourneyNoUploads) {
+              BlocProvider.of<TransformationJourneyBloc>(context)
+                ..emitTransformationJourneyFailure();
+            } else if (state is TransformationJourneyFailure) {
+              BlocProvider.of<TransformationJourneyBloc>(context)
+                ..getContentByUserId(_profileInfo.id);
             }
             return page(context, _profileInfo);
           },
@@ -172,5 +178,14 @@ class _ProfileTransformationJourneyPageState
                   ]),
                 ),
               ));
+  }
+
+  String getTitleForContent(
+      {List<TransformationJourneyUpload> uploadListContent}) {
+    int _videos = 0;
+    int _images = 0;
+    uploadListContent.forEach((content) =>
+        content.type == FileTypeEnum.video ? _videos += 1 : _images += 1);
+    return "Uploaded $_images Images & $_videos Videos";
   }
 }

@@ -10,6 +10,7 @@ import 'package:oluko_app/models/transformation_journey_uploads.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/video_process.dart';
 import 'package:path/path.dart' as p;
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 class TransformationJourneyRepository {
   FirebaseFirestore firestoreInstance;
@@ -45,7 +46,11 @@ class TransformationJourneyRepository {
       });
 
       return contentUploaded;
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       throw e;
     }
   }
@@ -98,7 +103,11 @@ class TransformationJourneyRepository {
         docRef.set(transformationJourneyUpload.toJson());
         return transformationJourneyUpload;
       } else {}
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       throw e;
     }
   }

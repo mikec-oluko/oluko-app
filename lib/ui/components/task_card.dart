@@ -8,8 +8,13 @@ class TaskCard extends StatefulWidget {
   final Task task;
   final Function() onPressed;
   final bool isPublic;
+  final bool isCompleted;
 
-  TaskCard({this.task, this.onPressed, this.isPublic = false});
+  TaskCard(
+      {this.task,
+      this.onPressed,
+      this.isCompleted = false,
+      this.isPublic = false});
 
   @override
   _State createState() => _State();
@@ -44,17 +49,34 @@ class _State extends State<TaskCard> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    widget.task.name,
-                                    style: OlukoFonts.olukoSuperBigFont(
-                                        customColor: OlukoColors.white,
-                                        custoFontWeight: FontWeight.bold),
-                                  ),
+                                  Row(children: [
+                                    Text(
+                                      widget.task.name,
+                                      style: OlukoFonts.olukoSuperBigFont(
+                                          customColor: OlukoColors.white,
+                                          custoFontWeight: FontWeight.bold),
+                                    ),
+                                    Expanded(child: SizedBox()),
+                                    Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                          Image.asset(
+                                            'assets/assessment/check_ellipse.png',
+                                            scale: 4,
+                                          ),
+                                          widget.isCompleted
+                                              ? Image.asset(
+                                                  'assets/assessment/check.png',
+                                                  scale: 4,
+                                                )
+                                              : SizedBox()
+                                        ])
+                                  ]),
                                   Padding(
                                     padding: const EdgeInsets.only(
                                         top: 8.0, right: 10),
                                     child: Text(
-                                      widget.task.description,
+                                      widget.task.shortDescription,
                                       style: OlukoFonts.olukoBigFont(
                                           customColor: OlukoColors.grayColor),
                                     ),

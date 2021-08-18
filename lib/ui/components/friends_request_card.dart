@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/friend_request_model.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
@@ -10,12 +11,12 @@ class FriendRequestCard extends StatefulWidget {
   // final User userData;
   // FriendRequestCard({this.userToDisplay, this.userData});
 
-  //Demo data
-  final String name;
-  final String lastName;
-  final String userName;
-  final String imageUser;
-  FriendRequestCard({this.name, this.lastName, this.userName, this.imageUser});
+  final UserResponse friendUser;
+  final Function(UserResponse) onFriendConfirmation;
+  final Function(UserResponse) onFriendRequestIgnore;
+  FriendRequestCard(
+      {this.friendUser, this.onFriendConfirmation, this.onFriendRequestIgnore});
+
   @override
   _FriendRequestCardState createState() => _FriendRequestCardState();
 }
@@ -49,7 +50,7 @@ class _FriendRequestCardState extends State<FriendRequestCard> {
                 children: [
                   CircleAvatar(
                     // backgroundImage: NetworkImage(widget.userData.photoURL),
-                    backgroundImage: NetworkImage(widget.imageUser),
+                    backgroundImage: NetworkImage(widget.friendUser.avatar),
                     backgroundColor: Colors.red,
                     radius: 30,
                   ),
@@ -63,21 +64,21 @@ class _FriendRequestCardState extends State<FriendRequestCard> {
                           children: [
                             Text(
                               // widget.userToDisplay.firstName,
-                              widget.name,
+                              widget.friendUser.firstName,
                               style: OlukoFonts.olukoMediumFont(),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(left: 5),
                               child: Text(
                                   // widget.userToDisplay.lastName,
-                                  widget.lastName,
+                                  widget.friendUser.lastName,
                                   style: OlukoFonts.olukoMediumFont()),
                             ),
                           ],
                         ),
                         Text(
                             // widget.userData.displayName,
-                            widget.userName,
+                            widget.friendUser.username,
                             style: OlukoFonts.olukoMediumFont(
                                 customColor: OlukoColors.grayColor)),
                       ],
@@ -95,7 +96,8 @@ class _FriendRequestCardState extends State<FriendRequestCard> {
                       width: 120,
                       height: 30,
                       child: TextButton(
-                        onPressed: () {},
+                        onPressed: () =>
+                            widget.onFriendConfirmation(widget.friendUser),
                         child: Text(
                           "Confirm",
                           style: OlukoFonts.olukoMediumFont(
@@ -115,7 +117,8 @@ class _FriendRequestCardState extends State<FriendRequestCard> {
                         child: OutlinedButton(
                             style: OutlinedButton.styleFrom(
                                 side: BorderSide(color: OlukoColors.grayColor)),
-                            onPressed: () {},
+                            onPressed: () =>
+                                widget.onFriendRequestIgnore(widget.friendUser),
                             child: Text("Ignore",
                                 style: OlukoFonts.olukoMediumFont(
                                     customColor: OlukoColors.grayColor))),

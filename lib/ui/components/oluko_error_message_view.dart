@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class OlukoErrorMessage extends StatelessWidget {
   final String section;
-  OlukoErrorMessage({this.section});
+  final ErrorTypeOption whyIsError;
+  OlukoErrorMessage({this.section, this.whyIsError});
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -13,6 +15,7 @@ class OlukoErrorMessage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
                 Icons.error_outline,
@@ -25,9 +28,9 @@ class OlukoErrorMessage extends StatelessWidget {
                   this.section != null
                       ? OlukoLocalizations.of(context).find('errorOcurredOn') +
                           this.section
-                      : OlukoLocalizations.of(context).find('errorOcurred'),
+                      : returnErrorText(context, whyIsError),
                   style: OlukoFonts.olukoMediumFont(
-                      customColor: OlukoColors.primary),
+                      customColor: OlukoColors.grayColor),
                 ),
               )
             ],
@@ -35,5 +38,15 @@ class OlukoErrorMessage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String returnErrorText(BuildContext context, ErrorTypeOption whyIsError) {
+    String _contentForTitle;
+    if (whyIsError == ErrorTypeOption.noContent) {
+      _contentForTitle = OlukoLocalizations.of(context).find('noContent');
+    } else {
+      _contentForTitle = OlukoLocalizations.of(context).find('errorOcurred');
+    }
+    return _contentForTitle;
   }
 }

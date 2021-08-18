@@ -118,6 +118,12 @@
     "done": "Hecho",
     "skip": "Saltar",
     "makeThisPublic": "Haga esto público",
+    "retake": "Repetir",
+    "done!": "¡Hecho!",
+    "assessmentMessagePart1": "Gracias por completar todas las evaluaciones.",
+    "assessmentMessagePart2": "Revisaremos y nos pondremos en contacto contigo en breves con la asignación de entrenador adecuada.",
+    "goBack": "Volver",
+    "ok": "Ok",
     "restricted": "Privado",
     "restrictedSubtitle": "Perfil privado",
     "anonymous": "Anónimo",
@@ -127,9 +133,13 @@
     "subscription": "Subscripción",
     "phone": "Teléfono",
     "message": "Mensaje",
-    "submit": "Enviar"
-
-
-
+    "submit": "Enviar",
+    "of": "de",
+    "inThis": "en este",
+    "challenge": "Desafío",
+    "challenges": "Desafíos",
+    "movesInThisClass": "Movimientos en esta clase",
+    "viewDetails": "Ver Detalles",
+    "noContent":"No hay contenido para mostrar"
 
 }

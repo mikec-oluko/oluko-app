@@ -1,6 +1,4 @@
 import 'package:chewie/chewie.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/task_submission.dart';
@@ -10,7 +8,6 @@ import 'package:oluko_app/utils/app_modal.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
-
 import '../../routes.dart';
 
 class ImageAndVideoPreviewCard extends StatefulWidget {
@@ -40,14 +37,7 @@ class _State extends State<ImageAndVideoPreviewCard> {
   @override
   void initState() {
     setState(() {
-      if (widget.originalContent is TransformationJourneyUpload) {
-        transformationJourneyContent = widget.originalContent;
-        titleForPreviewImage = TimeConverter.returnDateAndTimeOnStringFormat(
-            dateToFormat: transformationJourneyContent.createdAt);
-      }
-      if (widget.originalContent is TaskSubmission) {
-        taskSubmissionContent = widget.originalContent;
-      }
+      definePreviewTitleByTypeOfContent();
     });
     super.initState();
   }
@@ -56,75 +46,126 @@ class _State extends State<ImageAndVideoPreviewCard> {
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.center,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-          color: OlukoColors.black,
-          image: DecorationImage(
-              fit: BoxFit.cover,
-              alignment: Alignment.center,
-              image: Image(
-                image: widget.backgroundImage.image,
-                frameBuilder: (BuildContext context, Widget child, int frame,
-                        bool wasSynchronouslyLoaded) =>
-                    ImageUtils.frameBuilder(
-                        context, child, frame, wasSynchronouslyLoaded,
-                        height: 120),
-              ).image)),
+      decoration: getDecorationForContainer(),
       width: 120,
       height: 120,
-      child: Stack(children: [
-        widget.isContentVideo
-            ? Align(
-                alignment: Alignment.center,
-                child: TextButton(
-                    onPressed: () {
-                      //TODO: Change Modal VideoPlayer
-                      AppModal.dialogContent(
-                          closeButton: true,
-                          context: context,
-                          content: [
+      child: contentForPreview(context),
+    );
+  }
+
+  Stack contentForPreview(BuildContext context) {
+    Widget _widgetToReturn;
+    if (widget.originalContent is TaskSubmission) {
+      _widgetToReturn = videoPreview(context);
+    } else if (widget.originalContent is TransformationJourneyUpload) {
+      _widgetToReturn =
+          widget.isContentVideo ? videoPreview(context) : imagePreview(context);
+    }
+    return _widgetToReturn;
+  }
+
+  Stack imagePreview(BuildContext context) {
+    return Stack(children: [
+      InkWell(
+        onTap: () {
+          if (widget.originalContent is TransformationJourneyUpload &&
+              widget.showTitle) {
+            Navigator.pushNamed(context,
+                routeLabels[RouteEnum.transformationJournetContentDetails],
+                arguments: {
+                  'TransformationJourneyUpload': transformationJourneyContent
+                });
+          }
+        },
+        child: Align(
+            alignment: Alignment.bottomCenter,
+            child: widget.showTitle
+                ? Container(
+                    width: 120,
+                    height: 30,
+                    child: Center(
+                      child: Text(
+                        titleForPreviewImage != null
+                            ? titleForPreviewImage
+                            : '',
+                        style: OlukoFonts.olukoSmallFont(),
+                      ),
+                    ),
+                  )
+                : SizedBox()),
+      )
+    ]);
+  }
+
+  Stack videoPreview(BuildContext context) {
+    return Stack(children: [
+      Align(
+          alignment: Alignment.center,
+          child: TextButton(
+              onPressed: () {
+                //TODO: Change Modal VideoPlayer
+                widget.showTitle
+                    ? AppModal.dialogContent(
+                        closeButton: true,
+                        context: context,
+                        content: [
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 30),
                               child: showVideoPlayer(widget.videoUrl),
                             )
-                          ]);
-                    },
-                    child: Image.asset(
-                      'assets/assessment/play.png',
-                      scale: 5,
-                    )))
-            : Container(),
-        Align(
-            alignment: Alignment.bottomCenter,
-            child: widget.showTitle
-                ? InkWell(
-                    onTap: () {
-                      if (widget.originalContent
-                          is TransformationJourneyUpload) {
-                        Navigator.pushNamed(
-                            context,
-                            routeLabels[
-                                RouteEnum.transformationJournetContentDetails],
-                            arguments: {
-                              'TransformationJourneyUpload':
-                                  transformationJourneyContent
-                            });
-                      }
-                    },
-                    child: Container(
-                      width: 120,
-                      height: 30,
-                      child: Center(
-                        child: Text(
-                          titleForPreviewImage,
-                          style: OlukoFonts.olukoSmallFont(),
-                        ),
-                      ),
+                          ])
+                    : SizedBox();
+              },
+              child: Image.asset(
+                'assets/assessment/play.png',
+                scale: 5,
+              ))),
+      Align(
+          alignment: Alignment.bottomCenter,
+          child: widget.showTitle
+              ? Container(
+                  width: 120,
+                  height: 30,
+                  child: Center(
+                    child: Text(
+                      titleForPreviewImage != null ? titleForPreviewImage : '',
+                      style: OlukoFonts.olukoSmallFont(),
                     ),
-                  )
-                : SizedBox())
-      ]),
-    );
+                  ),
+                )
+              : SizedBox())
+    ]);
+  }
+
+  BoxDecoration getDecorationForContainer() {
+    return BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+        color: OlukoColors.black,
+        image: DecorationImage(
+            fit: BoxFit.cover,
+            alignment: Alignment.center,
+            image: Image(
+              image: widget.backgroundImage.image,
+              frameBuilder: (BuildContext context, Widget child, int frame,
+                      bool wasSynchronouslyLoaded) =>
+                  ImageUtils.frameBuilder(
+                      context, child, frame, wasSynchronouslyLoaded,
+                      height: 120),
+            ).image));
+  }
+
+  void definePreviewTitleByTypeOfContent() {
+    if (widget.originalContent is TransformationJourneyUpload) {
+      transformationJourneyContent = widget.originalContent;
+      titleForPreviewImage = transformationJourneyContent.createdAt != null
+          ? TimeConverter.returnDateAndTimeOnStringFormat(
+              dateToFormat: transformationJourneyContent.createdAt)
+          : "";
+    }
+    if (widget.originalContent is TaskSubmission) {
+      taskSubmissionContent = widget.originalContent;
+      titleForPreviewImage = taskSubmissionContent.task.name;
+    }
   }
 
   Widget showVideoPlayer(String videoUrl) {

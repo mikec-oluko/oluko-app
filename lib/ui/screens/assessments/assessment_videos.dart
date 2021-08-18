@@ -5,16 +5,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
-import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/task.dart';
+import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/services/task_submission_service.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
+import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/task_card.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
+import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
@@ -37,27 +42,35 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
-      if (authState is AuthSuccess) {
-        //TODO: Change this when we have multiple assessments
-        BlocProvider.of<AssessmentBloc>(context)
-          ..getById('emnsmBgZ13UBRqTS26Qd');
-        return BlocBuilder<AssessmentBloc, AssessmentState>(
-            builder: (context, assessmentState) {
-          if (assessmentState is AssessmentSuccess) {
-            _assessment = assessmentState.assessment;
-            BlocProvider.of<TaskBloc>(context)..get(_assessment);
-            BlocProvider.of<AssessmentAssignmentBloc>(context)
-              ..getOrCreate(authState.firebaseUser,_assessment);
-            return form();
-          } else {
-            return SizedBox();
-          }
-        });
-      } else {
-        return SizedBox();
-      }
-    });
+    return BlocListener<AssessmentAssignmentBloc, AssessmentAssignmentState>(
+      listener: (context, assessmentAssignmentState) {
+        if (assessmentAssignmentState is AssessmentAssignmentSuccess) {
+          BlocProvider.of<TaskSubmissionListBloc>(context)
+            ..get(assessmentAssignmentState.assessmentAssignment);
+        }
+      },
+      child: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
+        if (authState is AuthSuccess) {
+          //TODO: Change this when we have multiple assessments
+          BlocProvider.of<AssessmentBloc>(context)
+            ..getById('emnsmBgZ13UBRqTS26Qd');
+          return BlocBuilder<AssessmentBloc, AssessmentState>(
+              builder: (context, assessmentState) {
+            if (assessmentState is AssessmentSuccess) {
+              _assessment = assessmentState.assessment;
+              BlocProvider.of<TaskBloc>(context)..get(_assessment);
+              BlocProvider.of<AssessmentAssignmentBloc>(context)
+                ..getOrCreate(authState.firebaseUser, _assessment);
+              return form();
+            } else {
+              return SizedBox();
+            }
+          });
+        } else {
+          return SizedBox();
+        }
+      }),
+    );
   }
 
   Widget form() {
@@ -89,7 +102,19 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                               style: OlukoFonts.olukoSuperBigFont(
                                   customColor: OlukoColors.white),
                             )),
-                        taskCardsSection(),
+                        BlocBuilder<TaskSubmissionListBloc,
+                                TaskSubmissionListState>(
+                            builder: (context, taskSubmissionListState) {
+                          if (taskSubmissionListState
+                              is GetTaskSubmissionSuccess) {
+                            return taskCardsSection(
+                                taskSubmissionListState.taskSubmissions);
+                          } else {
+                            return Padding(
+                                padding: EdgeInsets.only(top: 30),
+                                child: CircularProgressIndicator());
+                          }
+                        }),
                         SizedBox(
                           height: 10,
                         ),
@@ -99,15 +124,16 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                           if (assessmentAssignmentState
                                   is AssessmentAssignmentSuccess &&
                               assessmentAssignmentState
-                                      .assessmentAssignment.completedAt !=
+                                      .assessmentAssignment.compleatedAt !=
                                   null) {
                             return Row(children: [
                               OlukoPrimaryButton(
                                 title:
                                     OlukoLocalizations.of(context).find('done'),
                                 onPressed: () {
-                                  Navigator.pushNamed(
-                                      context, routeLabels[RouteEnum.root]);
+                                  DialogUtils.getDialog(
+                                      context, _confirmDialogContent(),
+                                      showExitButton: false);
                                 },
                               )
                             ]);
@@ -148,7 +174,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
         child: Container(height: 400, child: Stack(children: widgets)));
   }
 
-  Widget taskCardsSection() {
+  Widget taskCardsSection(List<TaskSubmission> taskSubmissions) {
     return Column(
       children: [
         BlocBuilder<TaskBloc, TaskState>(builder: (context, taskState) {
@@ -159,10 +185,15 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                 shrinkWrap: true,
                 itemBuilder: (context, num index) {
                   Task task = taskState.values[index];
+                  TaskSubmission taskSubmission =
+                      TaskSubmissionService.getTaskSubmissionOfTask(
+                          task, taskSubmissions);
                   return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10.0),
                       child: TaskCard(
                         task: task,
+                        isCompleted: taskSubmission != null,
+                        isPublic: isPublic(taskSubmission),
                         onPressed: () {
                           if (_controller != null) {
                             _controller.pause();
@@ -183,6 +214,14 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
     );
   }
 
+  bool isPublic(TaskSubmission taskSubmission) {
+    if (taskSubmission == null) {
+      return false;
+    } else {
+      return taskSubmission.isPublic;
+    }
+  }
+
   Widget skipButton() {
     return GestureDetector(
         onTap: () {
@@ -197,5 +236,67 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                   style: OlukoFonts.olukoBigFont(
                       customColor: OlukoColors.grayColor),
                 ))));
+  }
+
+  List<Widget> _confirmDialogContent() {
+    return [
+      Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(children: [
+            Stack(alignment: Alignment.center, children: [
+              Image.asset(
+                'assets/assessment/green_ellipse.png',
+                scale: 2,
+              ),
+              Image.asset(
+                'assets/assessment/gray_check.png',
+                scale: 5,
+              )
+            ]),
+            Padding(
+                padding: const EdgeInsets.only(top: 20.0, bottom: 15.0),
+                child: Text(
+                  OlukoLocalizations.of(context).find('done!'),
+                  style: OlukoFonts.olukoSuperBigFont(
+                      customColor: OlukoColors.white,
+                      custoFontWeight: FontWeight.bold),
+                )),
+            Text(
+              OlukoLocalizations.of(context).find('assessmentMessagePart1'),
+              style:
+                  OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
+            ),
+            Text(
+              OlukoLocalizations.of(context).find('assessmentMessagePart2'),
+              style:
+                  OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
+            ),
+            Padding(
+                padding: const EdgeInsets.only(top: 25.0),
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    OlukoPrimaryButton(
+                      title: OlukoLocalizations.of(context).find('goBack'),
+                      thinPadding: true,
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                    SizedBox(width: 20),
+                    OlukoOutlinedButton(
+                      title: OlukoLocalizations.of(context).find('ok'),
+                      onPressed: () {
+                        if (_controller != null) {
+                          _controller.pause();
+                        }
+                        return Navigator.pushNamed(
+                            context, routeLabels[RouteEnum.root]);
+                      },
+                    ),
+                  ],
+                ))
+          ]))
+    ];
   }
 }

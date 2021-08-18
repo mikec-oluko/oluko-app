@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:oluko_app/constants/Theme.dart';
+import 'package:flutter/widgets.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 
@@ -39,29 +40,18 @@ class MovementUtils {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-            padding: const EdgeInsets.only(bottom: 8.0),
-            child: Text(
-              OlukoLocalizations.of(context).find('workouts') + ":",
-              style: OlukoFonts.olukoSuperBigFont(
-                  custoFontWeight: FontWeight.bold),
-            )),
-        segment.rounds != null && segment.rounds > 1
-            ? Text(
-                segment.rounds.toString() +
-                    " " +
-                    OlukoLocalizations.of(context).find('rounds') +
-                    "\n",
-                style: OlukoFonts.olukoMediumFont(),
-              )
-            : SizedBox(),
-        ListView.builder(
-            shrinkWrap: true,
-            itemCount: workoutWidgets.length,
-            itemBuilder: (context, index) {
-              return workoutWidgets[index];
-            })
-      ],
+            segment.rounds != null && segment.rounds > 1
+                ? Text(
+                    segment.rounds.toString() +
+                        " " +
+                        OlukoLocalizations.of(context).find('rounds') +
+                        "\n",
+                    style: OlukoFonts.olukoBigFont(
+                        custoFontWeight: FontWeight.bold),
+                  )
+                : SizedBox(),
+          ] +
+          workoutWidgets,
     );
   }
 
@@ -73,19 +63,19 @@ class MovementUtils {
         workoutString = movement.timerSets.toString() +
             " " +
             OlukoLocalizations.of(context).find('sets');
-
-        workouts.add(getTextWidget(workoutString, false));
+        workouts.add(Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: getTextWidget(workoutString, false)));
       }
 
       if (movement.timerReps != null) {
-        workoutString =
-            '• ' + movement.timerReps.toString() + ' rep ' + movement.name;
+        workoutString = movement.timerReps.toString() + 'x ' + movement.name;
       } else {
         workoutString =
-            '• ' + movement.timerWorkTime.toString() + ' sec ' + movement.name;
+            movement.timerWorkTime.toString() + ' sec ' + movement.name;
       }
       workouts.add(getTextWidget(workoutString, true));
-      workoutString = '• ' + movement.timerRestTime.toString() + ' sec rest';
+      workoutString = movement.timerRestTime.toString() + ' sec rest';
       workouts.add(getTextWidget(workoutString, true));
       workouts.add(getTextWidget(" ", true));
     });
@@ -95,9 +85,9 @@ class MovementUtils {
   static Widget getTextWidget(String text, bool big) {
     TextStyle style;
     if (big) {
-      style = OlukoFonts.olukoBigFont();
+      style = OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400);
     } else {
-      style = OlukoFonts.olukoMediumFont();
+      style = OlukoFonts.olukoBigFont();
     }
     return Text(
       text,
@@ -118,38 +108,6 @@ class MovementUtils {
           style: OlukoFonts.olukoBigFont(),
         )
       ],
-    );
-  }
-
-  static Future<dynamic> movementDialog(
-      BuildContext context, List<Widget> content,
-      {bool showExitButton = true}) {
-    return showDialog(
-      context: context,
-      builder: (context) => new AlertDialog(
-          backgroundColor: Colors.black,
-          content: Stack(
-            children: [
-              showExitButton
-                  ? Positioned(
-                      top: -15,
-                      right: 0,
-                      child: IconButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        icon: Icon(
-                          Icons.close,
-                          color: Colors.white,
-                        ),
-                      ))
-                  : SizedBox(),
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: content,
-              ),
-            ],
-          )),
     );
   }
 }

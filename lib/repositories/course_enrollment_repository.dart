@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:oluko_app/blocs/course_enrollment_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course.dart';
@@ -12,6 +12,7 @@ import 'package:oluko_app/models/submodels/object_submodel.dart';
 import 'package:oluko_app/models/submodels/segment_submodel.dart';
 import 'package:oluko_app/repositories/course_repository.dart';
 import 'package:oluko_app/services/course_enrollment_service.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 class CourseEnrollmentRepository {
   FirebaseFirestore firestoreInstance;
@@ -32,7 +33,7 @@ class CourseEnrollmentRepository {
 
     final QuerySnapshot qs = await reference
         .where("course_id", isEqualTo: course.id)
-        .where("user_id", isEqualTo: user.uid)
+        .where("created_by", isEqualTo: user.uid)
         .get();
 
     if (qs.docs.length > 0) {
@@ -77,16 +78,20 @@ class CourseEnrollmentRepository {
     DocumentReference courseReference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"))
-        .collection('course')
+        .collection('courses')
         .doc(course.id);
     final DocumentReference docRef = reference.doc();
     DocumentReference userReference =
         FirebaseFirestore.instance.collection('users').doc(user.uid);
+    ObjectSubmodel courseSubmodel = ObjectSubmodel(
+        id: course.id,
+        reference: courseReference,
+        name: course.name,
+        image: course.image);
     CourseEnrollment courseEnrollment = CourseEnrollment(
-        userId: user.uid,
+        createdBy: user.uid,
         userReference: userReference,
-        courseId: course.id,
-        courseReference: courseReference,
+        course: courseSubmodel,
         classes: []);
     courseEnrollment.id = docRef.id;
     courseEnrollment = await setEnrollmentClasses(course, courseEnrollment);
@@ -100,6 +105,7 @@ class CourseEnrollmentRepository {
       EnrollmentClass enrollmentClass = EnrollmentClass(
           id: classObj.id,
           name: classObj.name,
+          image: classObj.image,
           reference: classObj.reference,
           segments: []);
       enrollmentClass = await setEnrollmentSegments(enrollmentClass);
@@ -127,7 +133,7 @@ class CourseEnrollmentRepository {
           .collection('projects')
           .doc(GlobalConfiguration().getValue("projectId"))
           .collection('courseEnrollments')
-          .where('user_id', isEqualTo: userId)
+          .where('created_by', isEqualTo: userId)
           .get();
 
       if (docRef.docs.isEmpty) {
@@ -138,7 +144,11 @@ class CourseEnrollmentRepository {
         final Map<String, dynamic> course = doc.data();
         courseEnrollmentList.add(CourseEnrollment.fromJson(course));
       });
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       throw e;
     }
     return courseEnrollmentList;
@@ -164,7 +174,11 @@ class CourseEnrollmentRepository {
             courseEnrollment, challengeList));
       }
       Future.wait(futures);
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       return [];
     }
     return challengeList;

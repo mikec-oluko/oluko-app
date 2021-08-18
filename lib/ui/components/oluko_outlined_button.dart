@@ -27,14 +27,14 @@ class _State extends State<OlukoOutlinedButton> {
                   top: 15.0, bottom: 15.0, left: 5.0, right: 5.0),
               child: Text(
                 widget.title,
-                style: TextStyle(fontSize: 18),
+                style: TextStyle(fontSize: 18, color: OlukoColors.primary),
               ),
             )
           : Padding(
               padding: const EdgeInsets.all(15.0),
               child: Text(
                 widget.title,
-                style: TextStyle(fontSize: 18),
+                style: TextStyle(fontSize: 18, color: OlukoColors.primary),
               ),
             ),
     ));

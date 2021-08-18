@@ -1,11 +1,13 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:global_configuration/global_configuration.dart';
+import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
+import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/submodels/video.dart';
+import 'package:oluko_app/repositories/assessment_assignment_repository.dart';
 import 'package:oluko_app/repositories/task_submission_repository.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class TaskSubmissionState {}
 
@@ -37,14 +39,18 @@ class Failure extends TaskSubmissionState {
 class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
   TaskSubmissionBloc() : super(Loading());
 
-  Future<void> createTaskSubmission(
-      AssessmentAssignment assessmentAssignment, Task task) async {
+  Future<void> createTaskSubmission(AssessmentAssignment assessmentAssignment,
+      Task task, bool isPublic) async {
     try {
       TaskSubmission newTaskSubmission =
           await TaskSubmissionRepository.createTaskSubmission(
-              assessmentAssignment, task);
+              assessmentAssignment, task, isPublic);
       emit(CreateSuccess(taskSubmission: newTaskSubmission));
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       emit(Failure(exception: e));
     }
   }
@@ -55,9 +61,28 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
       await TaskSubmissionRepository.updateTaskSubmissionVideo(
           assessmentA, taskSubmissionId, video);
       emit(UpdateSuccess());
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       print(e.toString());
       emit(Failure(exception: e));
+    }
+  }
+
+  void updateTaskSubmissionPrivacity(AssessmentAssignment assessmentA,
+      String taskSubmissionId, bool isPublic) async {
+    try {
+      await TaskSubmissionRepository.updateTaskSubmissionPrivacity(
+          assessmentA, taskSubmissionId, isPublic);
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
+      print(e.toString());
+      //emit(Failure(exception: e));
     }
   }
 
@@ -73,7 +98,11 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
         taskSubmission = null;
       }
       emit(GetSuccess(taskSubmission: taskSubmission));
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       emit(Failure(exception: e));
     }
   }
@@ -82,11 +111,32 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
     try {
       List<TaskSubmission> taskSubmissions =
           await TaskSubmissionRepository.getTaskSubmissionsByUserId(userId);
-
       if (taskSubmissions.length != 0) {
         emit(GetUserTaskSubmissionSuccess(taskSubmissions: taskSubmissions));
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: e));
+    }
+  }
+
+  void checkCompleted(
+      AssessmentAssignment assessmentAssignment, Assessment assessment) async {
+    try {
+      List<TaskSubmission> taskSubmissions =
+          await TaskSubmissionRepository.getTaskSubmissions(
+              assessmentAssignment);
+      if (taskSubmissions.length == assessment.tasks.length) {
+        AssessmentAssignmentRepository.setAsCompleted(assessmentAssignment.id);
+      }
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       emit(Failure(exception: e));
     }
   }

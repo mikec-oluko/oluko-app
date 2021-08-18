@@ -5,6 +5,7 @@ import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/repositories/segment_submission_repository.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class SegmentSubmissionState {}
 
@@ -36,13 +37,19 @@ class CourseEnrollmentListSuccess extends SegmentSubmissionState {
 class SegmentSubmissionBloc extends Cubit<SegmentSubmissionState> {
   SegmentSubmissionBloc() : super(Loading());
 
-  void create(User user, CourseEnrollment courseEnrollment, Segment segment) async {
+  void create(
+      User user, CourseEnrollment courseEnrollment, Segment segment) async {
     try {
       SegmentSubmission segmentSubmission =
-          await SegmentSubmissionRepository.create(user, courseEnrollment, segment);
+          await SegmentSubmissionRepository.create(
+              user, courseEnrollment, segment);
       emit(CreateSuccess(segmentSubmission: segmentSubmission));
-    } catch (e) {
-      emit(Failure(exception: e));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: exception));
     }
   }
 }

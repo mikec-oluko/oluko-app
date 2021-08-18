@@ -1,9 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/blocs/friend_bloc.dart';
-import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/blocs/friends/friend_bloc.dart';
+import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/friends_card.dart';
+import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
+import 'package:oluko_app/ui/components/title_body.dart';
 
 class FriendsListPage extends StatefulWidget {
   // final List<User> friends;
@@ -17,6 +20,8 @@ class FriendsListPage extends StatefulWidget {
 class _FriendsListPageState extends State<FriendsListPage> {
   @override
   void initState() {
+    BlocProvider.of<FriendBloc>(context)
+        .getFriendsByUserId('4HPomzrecweLoCAuCSVvPATtwwr2');
     super.initState();
   }
 
@@ -63,31 +68,56 @@ class _FriendsListPageState extends State<FriendsListPage> {
             //               ))
             //           .toList()),
             // ),
-            Column(
-              children: [
-                FriendCard(
-                  name: "Lucas",
-                  lastName: "Smith",
-                  userName: "lucSmith",
-                  imageUser: userImages[2],
-                ),
-                FriendCard(
-                  name: "Ivy",
-                  lastName: "Bridge",
-                  userName: "IvyFit",
-                  imageUser: userImages[0],
-                ),
-                FriendCard(
-                  name: "Lucy",
-                  lastName: "Frost",
-                  userName: "lucy2021",
-                  imageUser: userImages[1],
-                ),
-              ],
-            )
+
+            BlocBuilder<FriendBloc, FriendState>(
+                builder: (context, friendState) {
+              return Column(children: generateFriendList(friendState));
+            }),
           ],
         ),
       ),
     );
+  }
+
+  ///Manage friends retrieval state
+  List<Widget> generateFriendList(FriendState friendState) {
+    if (friendState is FriendLoading) {
+      return [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: OlukoCircularProgressIndicator(),
+        )
+      ];
+    } else if (friendState is FriendFailure) {
+      return [TitleBody('There was an error retrieving your Friends')];
+    } else if (friendState is GetFriendsSuccess) {
+      return friendState.friendData.friends.length == 0
+          ? [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [TitleBody('No Friends.')]),
+              )
+            ]
+          : friendState.friendData.friends.map((friend) {
+              UserResponse friendUser = friendState.friendUsers
+                  .where((fuser) => fuser.id == friend.id)
+                  .first;
+              return FriendCard(
+                name: friendUser.firstName,
+                lastName: friendUser.lastName,
+                userName: friendUser.username,
+                imageUser: friendUser.avatar,
+              );
+            }).toList();
+    } else {
+      return [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: OlukoCircularProgressIndicator(),
+        )
+      ];
+    }
   }
 }

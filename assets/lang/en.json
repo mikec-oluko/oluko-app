@@ -117,8 +117,15 @@
     "done": "Done",
     "skip": "Skip",
     "makeThisPublic": "Make this public",
+    "retake": "Retake",
+    "done!": "Done!",
+    "assessmentMessagePart1": "Thank you for completing all the assessments.",
+    "assessmentMessagePart2": "We will review and get back to you shortly with suitable coach assignement.",
+    "goBack": "Go Back",
+    "ok": "Ok",
     "restricted": "Restricted",
     "restrictedSubtitle": "Restricted profile",
+    "privateProfile": "Private profile",
     "anonymous": "Anonymous",
     "anonymousSubtitle": "Anonymous profile",
     "helpAndSupport": "Help and Support",
@@ -126,6 +133,12 @@
     "subscription": "Subscription",
     "phone": "Phone",
     "message": "Message",
-    "submit": "Submit"
-    
+    "submit": "Submit",
+    "of": "of",
+    "inThis": "in this",
+    "challenge": "Challenge",
+    "challenges": "Challenges",
+    "movesInThisClass": "Moves in this class",
+    "viewDetails": "View Details",
+    "noContent":"No content to display"
 }

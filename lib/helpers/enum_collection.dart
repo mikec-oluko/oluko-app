@@ -12,6 +12,8 @@ Map<SettingsPrivacyOptions, String> privacySubtitles = {
   SettingsPrivacyOptions.anonymous: 'anonymousSubtitle',
 };
 
+enum ProgressArea { courses, classes, challenges }
+
 //Enum for modal, to update images
 enum UploadFrom { profileImage, transformationJourney, profileCoverImage }
 //Enum to share route where data for user is Requested on Profile views
@@ -32,3 +34,5 @@ enum ProfileOptionsTitle {
   settings,
   helpAndSupport
 }
+
+enum ErrorTypeOption { noConnection, noContent }

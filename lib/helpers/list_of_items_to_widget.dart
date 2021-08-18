@@ -3,6 +3,7 @@ import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/enums/file_type_enum.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
+import 'package:oluko_app/ui/components/challenges_card.dart';
 import 'package:oluko_app/ui/components/image_and_video_container.dart';
 
 import 'enum_collection.dart';
@@ -77,15 +78,12 @@ class TransformListOfItemsToWidget {
       );
     }
     if (upcomingChallengesContent != null) {
-      //TODO: Crear container con locker icon and w/ also style
-      contentForReturn = ImageAndVideoContainer(
-        backgroundImage: upcomingChallengesContent.image,
-        isContentVideo: false,
-        originalContent: upcomingChallengesContent,
-        displayOnViewNamed: routeForContent,
+      contentForReturn = Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 5),
+        child: ChallengesCard(
+            challenge: upcomingChallengesContent, routeToGo: "/"),
       );
     }
-
     return contentForReturn;
   }
 }

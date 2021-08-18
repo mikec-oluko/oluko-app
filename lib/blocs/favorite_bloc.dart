@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/favorite.dart';
 import 'package:oluko_app/repositories/favorite_repository.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class FavoriteState {}
 
@@ -24,9 +25,12 @@ class FavoriteBloc extends Cubit<FavoriteState> {
     try {
       List<Favorite> favorites = await FavoriteRepository().getAll();
       emit(FavoriteSuccess(favorites: favorites));
-    } catch (e) {
-      print(e.toString());
-      emit(Failure(exception: e));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: exception));
     }
   }
 
@@ -34,9 +38,12 @@ class FavoriteBloc extends Cubit<FavoriteState> {
     try {
       List<Favorite> favorites = await FavoriteRepository().getByUserId(userId);
       emit(FavoriteSuccess(favorites: favorites));
-    } catch (e) {
-      print(e.toString());
-      emit(Failure(exception: e));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: exception));
     }
   }
 }
