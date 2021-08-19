@@ -48,6 +48,11 @@ class CourseRepository {
       return null;
     }
     DocumentSnapshot docRef = await reference.get();
+
+    if (!docRef.exists) {
+      return null;
+    }
+
     return CourseStatistics.fromJson(docRef.data());
   }
 
