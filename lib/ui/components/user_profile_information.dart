@@ -126,7 +126,8 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                                                   BlocProvider.of<ProfileBloc>(
                                                       context),
                                               child: ModalUploadOptions(
-                                                  UploadFrom.profileImage),
+                                                  contentFrom:
+                                                      UploadFrom.profileImage),
                                             )
                                           ]);
                                     },
@@ -165,7 +166,9 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                                                   BlocProvider.of<ProfileBloc>(
                                                       context),
                                               child: ModalUploadOptions(
-                                                  UploadFrom.profileImage),
+                                                contentFrom:
+                                                    UploadFrom.profileImage,
+                                              ),
                                             )
                                           ]);
                                     },

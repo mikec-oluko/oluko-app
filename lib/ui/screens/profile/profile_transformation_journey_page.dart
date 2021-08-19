@@ -101,8 +101,12 @@ class _ProfileTransformationJourneyPageState
                                                         TransformationJourneyBloc>(
                                                     context),
                                                 child: ModalUploadOptions(
-                                                    UploadFrom
-                                                        .transformationJourney),
+                                                  contentFrom: UploadFrom
+                                                      .transformationJourney,
+                                                  indexValue:
+                                                      _transformationJourneyContent
+                                                          .length,
+                                                ),
                                               )
                                             ]);
                                       }),
@@ -118,8 +122,8 @@ class _ProfileTransformationJourneyPageState
                           child: DragAndDropGridView(
                             isCustomChildWhenDragging: true,
                             childWhenDragging: (pos) => Container(
-                              height: 120,
-                              width: 100,
+                              height: 50,
+                              width: 50,
                               decoration: BoxDecoration(
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(10.0)),
@@ -141,8 +145,10 @@ class _ProfileTransformationJourneyPageState
                             onReorder: (oldIndex, newIndex) {
                               final tempt =
                                   _transformationJourneyContent[oldIndex];
+
                               _transformationJourneyContent[oldIndex] =
                                   _transformationJourneyContent[newIndex];
+
                               _transformationJourneyContent[newIndex] = tempt;
                               setState(() {
                                 pos = null;

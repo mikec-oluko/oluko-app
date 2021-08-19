@@ -43,12 +43,13 @@ class TransformationJourneyBloc extends Cubit<TransformationJourneyState> {
     }
   }
 
-  Future<void> createTransformationJourneyUpload(
-      FileTypeEnum type, PickedFile file, String userId) async {
+  Future<void> createTransformationJourneyUpload(FileTypeEnum type,
+      PickedFile file, String userId, int indexForContent) async {
     try {
       TransformationJourneyUpload transformationJourneyUpload =
           await TransformationJourneyRepository
-              .createTransformationJourneyUpload(type, file, userId);
+              .createTransformationJourneyUpload(
+                  type, file, userId, indexForContent);
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,
@@ -59,7 +60,7 @@ class TransformationJourneyBloc extends Cubit<TransformationJourneyState> {
   }
 
   void uploadTransformationJourneyContent(
-      {DeviceContentFrom uploadedFrom}) async {
+      {DeviceContentFrom uploadedFrom, int indexForContent}) async {
     if (!(state is TransformationJourneyUpload)) {
       emit(TransformationJourneyLoading());
     }
@@ -81,7 +82,7 @@ class TransformationJourneyBloc extends Cubit<TransformationJourneyState> {
 
       TransformationJourneyUpload upload = await TransformationJourneyRepository
           .createTransformationJourneyUpload(
-              FileTypeEnum.image, _image, user.id);
+              FileTypeEnum.image, _image, user.id, indexForContent);
       List<TransformationJourneyUpload> contentUploaded =
           await TransformationJourneyRepository()
               .getUploadedContentByUserId(user.id);

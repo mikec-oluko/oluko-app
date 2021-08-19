@@ -38,13 +38,14 @@ class TransformationJourneyRepository {
           .doc(userId)
           .collection('transformationJourneyUploads')
           .where('is_deleted', isNotEqualTo: true)
+          // .orderBy('index')
           .get();
       List<TransformationJourneyUpload> contentUploaded = [];
       docRef.docs.forEach((doc) {
         final Map<String, dynamic> content = doc.data();
         contentUploaded.add(TransformationJourneyUpload.fromJson(content));
       });
-
+      contentUploaded.sort((a, b) => a.index.compareTo(b.index));
       return contentUploaded;
     } catch (e, stackTrace) {
       await Sentry.captureException(
@@ -56,7 +57,7 @@ class TransformationJourneyRepository {
   }
 
   static Future<TransformationJourneyUpload> createTransformationJourneyUpload(
-      FileTypeEnum type, PickedFile file, String userId) async {
+      FileTypeEnum type, PickedFile file, String userId, int index) async {
     try {
       CollectionReference transformationJourneyUploadsReference =
           projectReference
@@ -90,7 +91,7 @@ class TransformationJourneyRepository {
                 name: '',
                 from: Timestamp.now(),
                 description: '',
-                index: 0,
+                index: index == null ? 0 : index,
                 type: type,
                 file: downloadUrl,
                 isPublic: true,

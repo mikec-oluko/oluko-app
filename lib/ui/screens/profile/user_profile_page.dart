@@ -166,16 +166,15 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         height: 40,
                         child: TextButton(
                             onPressed: () {
-                              AppModal.dialogContent(
-                                  context: context,
-                                  content: [
-                                    BlocProvider.value(
-                                      value:
-                                          BlocProvider.of<ProfileBloc>(context),
-                                      child: ModalUploadOptions(
-                                          UploadFrom.profileCoverImage),
-                                    )
-                                  ]);
+                              AppModal
+                                  .dialogContent(context: context, content: [
+                                BlocProvider.value(
+                                  value: BlocProvider.of<ProfileBloc>(context),
+                                  child: ModalUploadOptions(
+                                    contentFrom: UploadFrom.profileCoverImage,
+                                  ),
+                                )
+                              ]);
                             },
                             child:
                                 Image.asset('assets/profile/uploadImage.png')),
