@@ -102,8 +102,6 @@ class _SegmentDetailState extends State<SegmentDetail> {
                 title: OlukoLocalizations.of(context).find('startWorkouts'),
                 color: OlukoColors.primary,
                 onPressed: () {
-                  /*Navigator.push(context,
-                       MaterialPageRoute(builder: (context) => SegmentTimers()));*/
                   BottomDialogUtils.showBottomDialog(
                       context: context, content: dialogContainer());
                 })
