@@ -65,6 +65,7 @@ import 'package:oluko_app/ui/screens/assessments/task_details.dart';
 import 'package:oluko_app/ui/screens/videos/videos_home.dart';
 import 'package:oluko_app/ui/screens/view_all.dart';
 import 'blocs/friends/confirm_friend_bloc.dart';
+import 'blocs/friends/favorite_friend_bloc.dart';
 import 'models/course.dart';
 import 'models/transformation_journey_uploads.dart';
 
@@ -157,6 +158,7 @@ class Routes {
   final ConfirmFriendBloc _confirmFriendBloc = ConfirmFriendBloc();
   final IgnoreFriendRequestBloc _ignoreFriendRequestBloc =
       IgnoreFriendRequestBloc();
+  final FavoriteFriendBloc _favoriteFriendBloc = FavoriteFriendBloc();
   final AssessmentBloc _assessmentBloc = AssessmentBloc();
   final AssessmentAssignmentBloc _assessmentAssignmentBloc =
       AssessmentAssignmentBloc();
@@ -211,6 +213,7 @@ class Routes {
           BlocProvider<ConfirmFriendBloc>.value(value: _confirmFriendBloc),
           BlocProvider<IgnoreFriendRequestBloc>.value(
               value: _ignoreFriendRequestBloc),
+          BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc)
         ];
         newRouteView = MainPage();
         break;
@@ -347,12 +350,11 @@ class Routes {
         ];
         final Map<String, dynamic> argumentsToAdd = arguments;
         newRouteView = SegmentRecording(
-          courseEnrollment: argumentsToAdd['courseEnrollment'],
-          classIndex: argumentsToAdd['classIndex'],
-          segmentIndex: argumentsToAdd['segmentIndex'],
-          workoutType: argumentsToAdd['workoutType'],
-          segments: argumentsToAdd['segments']
-        );
+            courseEnrollment: argumentsToAdd['courseEnrollment'],
+            classIndex: argumentsToAdd['classIndex'],
+            segmentIndex: argumentsToAdd['segmentIndex'],
+            workoutType: argumentsToAdd['workoutType'],
+            segments: argumentsToAdd['segments']);
         break;
       case RouteEnum.courseMarketing:
         providers = [

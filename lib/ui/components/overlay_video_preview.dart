@@ -1,7 +1,7 @@
 import 'package:chewie/chewie.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/ui/components/video_overlay.dart';
 
 class OverlayVideoPreview extends StatefulWidget {

@@ -1,7 +1,7 @@
 import 'package:chewie/chewie.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/ui/components/segment_step_section.dart';
 import 'package:oluko_app/utils/movement_utils.dart';
@@ -89,7 +89,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                   ),
                   Padding(
                       padding: EdgeInsets.only(top: 1),
-                      child: Icon(Icons.circle_outlined,
+                      child: Icon(Icons.circle,
                           size: 16, color: OlukoColors.primary))
                 ]))
           ],
