@@ -27,6 +27,7 @@ class _State extends State<CollapsedMovementVideosSection> {
           Row(children: [
             Padding(
                 padding: EdgeInsets.only(left: 20),
+              //TODO: update text translation
                 child: Text("Movement Videos",
                     style: TextStyle(
                         fontSize: 22,
