@@ -61,6 +61,7 @@ class _SegmentTimersState extends State<SegmentTimers> {
                   children: [buildCircle(), timeTimer()])),
           SizedBox(height: 50),
           _tasksSection("5 Sec Chin-Ups", "5 Sec rest"),
+          //TODO: Update hardcoded
         ]));
   }
 
