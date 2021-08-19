@@ -112,98 +112,122 @@ class _ProfileTransformationJourneyPageState
                                 ],
                               ),
                             ))),
-                    Align(
-                      alignment: Alignment.center,
-                      child: Padding(
-                        padding: EdgeInsets.only(top: 50),
-                        child: Container(
-                          height: MediaQuery.of(context).size.height / 1.4,
-                          child: DragAndDropGridView(
-                            isCustomChildWhenDragging: true,
-                            childWhenDragging: (pos) => Container(
-                              height: 50,
-                              width: 50,
-                              decoration: BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10.0)),
-                                  border: Border.all(
-                                    width: 2.0,
-                                    color: OlukoColors.grayColor,
-                                  )),
+                    _contentGallery.length != 0
+                        ? Align(
+                            alignment: Alignment.topCenter,
+                            child: Padding(
+                              padding: EdgeInsets.fromLTRB(10, 100, 10, 10),
+                              child: Text(
+                                getTitleForContent(
+                                    uploadListContent:
+                                        _transformationJourneyContent),
+                                style: OlukoFonts.olukoBigFont(),
+                              ),
                             ),
-                            itemCount: _transformationJourneyContent.length,
-                            controller: _scrollController,
-                            onWillAccept: (oldIndex, newIndex) {
-                              setState(
-                                () {
-                                  _position = newIndex;
-                                },
-                              );
-                              return true;
-                            },
-                            onReorder: (oldIndex, newIndex) {
-                              BlocProvider.of<TransformationJourneyBloc>(
-                                  context)
-                                ..changeContentOrder(
-                                    _transformationJourneyContent[oldIndex],
-                                    _transformationJourneyContent[newIndex],
-                                    _profileInfo.id);
-
-                              final elementMoved =
-                                  _transformationJourneyContent[oldIndex];
-                              _transformationJourneyContent[oldIndex] =
-                                  _transformationJourneyContent[newIndex];
-
-                              _transformationJourneyContent[newIndex] =
-                                  elementMoved;
-
-                              setState(() {
-                                _position = null;
-                              });
-                            },
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 3,
-                            ),
-                            itemBuilder: (context, index) => Opacity(
-                              opacity: _position != null
-                                  ? _position != index
-                                      ? 0.6
-                                      : 1
-                                  : 1,
-                              child: Card(
-                                color: Colors.transparent,
-                                child: LayoutBuilder(
-                                  builder: (context, costrains) {
-                                    if (_variableSet == 0) {
-                                      height = 120;
-                                      width = 100;
-                                      _variableSet++;
-                                    }
-                                    return ImageAndVideoContainer(
-                                      backgroundImage:
-                                          _transformationJourneyContent[index]
-                                              .thumbnail,
-                                      isContentVideo:
-                                          _transformationJourneyContent[index]
-                                                      .type ==
-                                                  FileTypeEnum.video
-                                              ? true
-                                              : false,
-                                      videoUrl:
-                                          _transformationJourneyContent[index]
-                                              .file,
-                                      originalContent:
-                                          _transformationJourneyContent[index],
+                          )
+                        : SizedBox(),
+                    _contentGallery.length != 0
+                        ? Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 150),
+                              child: Container(
+                                height:
+                                    MediaQuery.of(context).size.height / 1.4,
+                                child: DragAndDropGridView(
+                                  isCustomChildWhenDragging: true,
+                                  childWhenDragging: (pos) => Container(
+                                    height: 50,
+                                    width: 50,
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(10.0)),
+                                        border: Border.all(
+                                          width: 2.0,
+                                          color: OlukoColors.grayColor,
+                                        )),
+                                  ),
+                                  itemCount:
+                                      _transformationJourneyContent.length,
+                                  controller: _scrollController,
+                                  onWillAccept: (oldIndex, newIndex) {
+                                    setState(
+                                      () {
+                                        _position = newIndex;
+                                      },
                                     );
+                                    return true;
                                   },
+                                  onReorder: (oldIndex, newIndex) {
+                                    BlocProvider.of<TransformationJourneyBloc>(
+                                        context)
+                                      ..changeContentOrder(
+                                          _transformationJourneyContent[
+                                              oldIndex],
+                                          _transformationJourneyContent[
+                                              newIndex],
+                                          _profileInfo.id);
+
+                                    final elementMoved =
+                                        _transformationJourneyContent[oldIndex];
+                                    _transformationJourneyContent[oldIndex] =
+                                        _transformationJourneyContent[newIndex];
+
+                                    _transformationJourneyContent[newIndex] =
+                                        elementMoved;
+
+                                    setState(() {
+                                      _position = null;
+                                    });
+                                  },
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 3,
+                                  ),
+                                  itemBuilder: (context, index) => Opacity(
+                                    opacity: _position != null
+                                        ? _position != index
+                                            ? 0.6
+                                            : 1
+                                        : 1,
+                                    child: Card(
+                                      color: Colors.transparent,
+                                      child: LayoutBuilder(
+                                        builder: (context, costrains) {
+                                          if (_variableSet == 0) {
+                                            height = 120;
+                                            width = 100;
+                                            _variableSet++;
+                                          }
+                                          return ImageAndVideoContainer(
+                                            backgroundImage:
+                                                _transformationJourneyContent[
+                                                        index]
+                                                    .thumbnail,
+                                            isContentVideo:
+                                                _transformationJourneyContent[
+                                                                index]
+                                                            .type ==
+                                                        FileTypeEnum.video
+                                                    ? true
+                                                    : false,
+                                            videoUrl:
+                                                _transformationJourneyContent[
+                                                        index]
+                                                    .file,
+                                            originalContent:
+                                                _transformationJourneyContent[
+                                                    index],
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ),
-                      ),
-                    )
+                          )
+                        : SizedBox()
                   ]),
                 ),
               ));
