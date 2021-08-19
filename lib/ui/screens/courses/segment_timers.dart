@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/enums/movement_videos_action_enum.dart';
 import 'package:oluko_app/ui/IntervalProgressBarLib/interval_progress_bar.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/screens/courses/collapsed_movement_videos_section.dart';
@@ -41,7 +42,9 @@ class _SegmentTimersState extends State<SegmentTimers> {
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(20), topRight: Radius.circular(20)),
           minHeight: 90,
-          collapsed: CollapsedMovementVideosSection(),
+          maxHeight: 200,
+          collapsed: CollapsedMovementVideosSection(
+              action: MovementVideosActionEnum.Up),
           panel: MovementVideosSection(),
           body: timersSection()),
     );

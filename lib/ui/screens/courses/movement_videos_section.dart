@@ -29,12 +29,6 @@ class _State extends State<MovementVideosSection> {
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(20), topRight: Radius.circular(20))),
         child: Column(children: [
-          Padding(
-              padding: EdgeInsets.only(top: 20, bottom: 10),
-              child: Image.asset(
-                'assets/courses/horizontal_vector.png',
-                scale: 3,
-              )),
           // Container(
           //     height: 448,
           //     child: SingleChildScrollView(
