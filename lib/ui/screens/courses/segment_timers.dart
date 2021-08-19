@@ -38,7 +38,6 @@ class _SegmentTimersState extends State<SegmentTimers> {
       ),
       backgroundColor: Colors.black,
       body: SlidingUpPanel(
-          //controller: panelController,
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(20), topRight: Radius.circular(20)),
           minHeight: 90,
@@ -59,10 +58,7 @@ class _SegmentTimersState extends State<SegmentTimers> {
               padding: EdgeInsets.only(top: 30),
               child: Stack(
                   alignment: Alignment.center,
-                  children: [
-                        buildCircle(),
-                      ] +
-                      timeTimer())),
+                  children: [buildCircle(), timeTimer()])),
           SizedBox(height: 50),
           _tasksSection("5 Sec Chin-Ups", "5 Sec rest"),
         ]));
@@ -117,50 +113,27 @@ class _SegmentTimersState extends State<SegmentTimers> {
         strokeWith: 5,
       );
 
-  Widget topCameraIcon() {
-    return Padding(
-        padding: EdgeInsets.only(right: 5),
+    Widget timeTimer() {
+    return SizedBox(
+        height: 180,
+        width: 180,
         child: Stack(alignment: Alignment.center, children: [
-          Image.asset(
-            'assets/courses/outlined_camera.png',
-            scale: 4,
-          ),
-          Padding(
-              padding: EdgeInsets.only(top: 1),
-              child: Icon(Icons.circle_outlined,
-                  size: 12, color: OlukoColors.primary))
-        ]));
-  }
-
-  Widget audioIcon() {
-    return Padding(
-        padding: EdgeInsets.only(right: 10),
-        child: Image.asset(
-          'assets/courses/audio_icon.png',
-          scale: 4,
-        ));
-  }
-
-  List<Widget> timeTimer() {
-    return [
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 98.0),
-        child: AspectRatio(
+      AspectRatio(
             aspectRatio: 1,
             child: CircularProgressIndicator(
                 value: 0.3,
                 color: OlukoColors.coral,
                 backgroundColor: OlukoColors.grayColor)),
-      ),
+      
       Text(TimeConverter.durationToString(Duration(seconds: 8)),
           textAlign: TextAlign.center,
           style: TextStyle(
               fontSize: 25, fontWeight: FontWeight.bold, color: Colors.white))
-    ];
+    ]));
   }
 
-  List<Widget> preTimer(String type, int round) {
-    return [
+  Widget preTimer(String type, int round) {
+    return Stack(alignment: Alignment.center, children: [
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 98.0),
         child: AspectRatio(
@@ -202,11 +175,11 @@ class _SegmentTimersState extends State<SegmentTimers> {
                     fontWeight: FontWeight.bold,
                     color: Colors.white)))
       ])
-    ];
+    ]);
   }
 
-  List<Widget> pausedTimer() {
-    return [
+  Widget pausedTimer() {
+    return Stack(alignment: Alignment.center, children: [
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 98.0),
         child: AspectRatio(
@@ -229,12 +202,12 @@ class _SegmentTimersState extends State<SegmentTimers> {
             style: TextStyle(
                 fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white))
       ])
-    ];
+    ]);
   }
 
-  List<Widget> restTimer() {
+  Widget restTimer() {
     double ellipseScale = 4.5;
-    return [
+    return Stack(alignment: Alignment.center, children: [
       Image.asset(
         'assets/courses/ellipse_1.png',
         scale: ellipseScale,
@@ -269,35 +242,63 @@ class _SegmentTimersState extends State<SegmentTimers> {
             style: TextStyle(
                 fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white))
       ])
-    ];
+    ]);
   }
 
-  List<Widget> repsTimer() {
-    return [
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 98.0),
-        child: AspectRatio(
-            aspectRatio: 1,
-            child: CircularProgressIndicator(
-                value: 0,
-                color: OlukoColors.skyblue,
-                backgroundColor: OlukoColors.grayColor)),
-      ),
-      Column(children: [
-        Text("Tap here",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: OlukoColors.primary)),
-        SizedBox(height: 8),
-        Text("when completed",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w400,
-                color: OlukoColors.primary))
-      ])
-    ];
+  Widget repsTimer(Function() onTap) {
+    return GestureDetector(
+        onTap: onTap,
+        child: Stack(alignment: Alignment.center, children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 98.0),
+            child: AspectRatio(
+                aspectRatio: 1,
+                child: CircularProgressIndicator(
+                    value: 0,
+                    color: OlukoColors.skyblue,
+                    backgroundColor: OlukoColors.grayColor)),
+          ),
+          Column(children: [
+            Text("Tap here",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: OlukoColors.primary)),
+            SizedBox(height: 5),
+            Text("when done",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w400,
+                    color: OlukoColors.primary))
+          ])
+        ]));
   }
+
+  Widget topCameraIcon() {
+    return Padding(
+        padding: EdgeInsets.only(right: 5),
+        child: Stack(alignment: Alignment.center, children: [
+          Image.asset(
+            'assets/courses/outlined_camera.png',
+            scale: 4,
+          ),
+          Padding(
+              padding: EdgeInsets.only(top: 1),
+              child: Icon(Icons.circle_outlined,
+                  size: 12, color: OlukoColors.primary))
+        ]));
+  }
+
+  Widget audioIcon() {
+    return Padding(
+        padding: EdgeInsets.only(right: 10),
+        child: Image.asset(
+          'assets/courses/audio_icon.png',
+          scale: 4,
+        ));
+  }
+
+
 }

@@ -10,20 +10,25 @@ import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/movement_submission_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
-import 'package:oluko_app/models/movement_submission.dart';
+import 'package:oluko_app/models/enums/movement_videos_action_enum.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/timer_entry.dart';
 import 'package:oluko_app/models/timer_model.dart';
+import 'package:oluko_app/ui/IntervalProgressBarLib/interval_progress_bar.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
+import 'package:oluko_app/ui/screens/courses/collapsed_movement_videos_section.dart';
+import 'package:oluko_app/ui/screens/courses/movement_videos_section.dart';
 import 'package:oluko_app/ui/screens/courses/segment_progress.dart';
 import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 enum WorkoutType { segment, segmentWithRecording }
 
@@ -113,31 +118,31 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     }
     return Scaffold(
       appBar: OlukoAppBar(
+        showDivider: false,
         title: ' ',
+        actions: [topCameraIcon(), audioIcon()],
       ),
       backgroundColor: Colors.black,
-      body: Container(
-        width: ScreenUtils.width(context),
-        height: ScreenUtils.height(context) - toolbarHeight,
-        child: _body(),
-      ),
+      body: widget.workoutType == WorkoutType.segment
+          ? SlidingUpPanel(
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+              minHeight: 90,
+              maxHeight: 200,
+              collapsed: CollapsedMovementVideosSection(
+                  action: MovementVideosActionEnum.Up),
+              panel: MovementVideosSection(),
+              body: _body())
+          : _body(),
     );
   }
 
   Widget _body() {
     return Container(
-      child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-                flex: this.flexProportions(this.workoutType)[0],
-                child: _timerSection(this.workoutType, this.workState)),
-            Expanded(
-                flex: this.flexProportions(this.workoutType)[1],
-                child: _lowerSection(this.workoutType, this.workState))
-          ]),
-    );
+        child: Column(children: [
+      _timerSection(this.workoutType, this.workState),
+      _lowerSection(this.workoutType, this.workState)
+    ]));
   }
 
   /*
@@ -146,87 +151,97 @@ class _SegmentRecordingState extends State<SegmentRecording> {
 
   ///Countdown & movements information
   Widget _timerSection(WorkoutType workoutType, WorkState workState) {
-    List<Widget> widgetsToShow = [
-      Expanded(child: _countdownSection(workState)),
-      Expanded(
-          child: _tasksSection(
-              timerEntries[timerTaskIndex].label,
-              timerTaskIndex < timerEntries.length - 1
-                  ? timerEntries[timerTaskIndex + 1].label
-                  : ''))
-    ];
-    return workoutType == WorkoutType.segmentWithRecording
-        ? Row(
-            children: widgetsToShow,
-          )
-        : Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: widgetsToShow,
-              ),
-            ],
-          );
+    return Column(
+      children: [
+        Padding(
+            padding: const EdgeInsets.only(top: 3, bottom: 8),
+            child: Stack(
+                alignment: Alignment.center,
+                children: [buildCircle(), _countdownSection(workState)])),
+        _tasksSection(
+            timerEntries[timerTaskIndex].label,
+            timerTaskIndex < timerEntries.length - 1
+                ? timerEntries[timerTaskIndex + 1].label
+                : '')
+      ],
+    );
   }
 
   ///Clock countdown label
   Widget _countdownSection(WorkState workState) {
     bool isTimedTask = timerEntries[timerTaskIndex].time != null;
-    double circularProgressIndicatorValue = isTimedTask
-        ? (this.timeLeft.inSeconds / timerEntries[timerTaskIndex].time)
-        : 100;
-    return Stack(fit: StackFit.loose, alignment: Alignment.center, children: [
-      Padding(
-        padding: const EdgeInsets.all(18.0),
-        child: AspectRatio(
-            aspectRatio: 1,
-            child: CircularProgressIndicator(
-                value: isTimedTask ? circularProgressIndicatorValue : 1)),
-      ),
-      Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-              isTimedTask
-                  ? TimeConverter.durationToString(this.timeLeft)
-                  : timerEntries[timerTaskIndex].reps.toString(),
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white)),
-          !isTimedTask ? MovementUtils.movementTitle('REPS') : SizedBox(),
-          workState == WorkState.paused
-              ? MovementUtils.movementTitle(
-                  OlukoLocalizations.of(context).find('paused').toUpperCase())
-              : SizedBox()
-        ],
-      )
-    ]);
+
+    if (!isTimedTask) {
+      return repsTimer();
+    }
+
+    Duration actualTime =
+        Duration(seconds: timerEntries[timerTaskIndex].time) - this.timeLeft;
+
+    double circularProgressIndicatorValue =
+        (actualTime.inSeconds / timerEntries[timerTaskIndex].time);
+
+    if (workState == WorkState.paused) {
+      return pausedTimer(TimeConverter.durationToString(this.timeLeft));
+    }
+
+    if (workState == WorkState.repResting) {
+      return restTimer(circularProgressIndicatorValue,
+          TimeConverter.durationToString(this.timeLeft));
+    }
+
+    return timeTimer(circularProgressIndicatorValue,
+        TimeConverter.durationToString(this.timeLeft));
   }
 
   ///Current and next movement labels
   Widget _tasksSection(String currentTask, String nextTask) {
-    return Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            currentTask,
-            style: TextStyle(
-              fontSize: 25,
-              color: Colors.white,
-            ),
-          ),
-          Text(
-            nextTask,
-            style: TextStyle(
-              fontSize: 15,
-              color: Colors.grey,
-            ),
+    return widget.workoutType == WorkoutType.segment ||
+            timerEntries[timerTaskIndex].workState == WorkState.repResting
+        ? Column(
+            children: [
+              currentTaskWidget(currentTask),
+              SizedBox(height: 10),
+              nextTaskWidget(nextTask)
+            ],
           )
-        ],
+        : Padding(
+            padding: EdgeInsets.only(top: 7, bottom: 15),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                currentTaskWidget(currentTask, true),
+                //Positioned(right: -50, child: nextTaskWidget(nextTask, true)),
+              ],
+            ));
+  }
+
+  Widget currentTaskWidget(String currentTask, [bool smaller = false]) {
+    return Text(
+      currentTask,
+      style: TextStyle(
+          fontSize: smaller ? 20 : 25,
+          color: Colors.white,
+          fontWeight: FontWeight.bold),
+    );
+  }
+
+  Widget nextTaskWidget(String nextTask, [bool smaller = false]) {
+    return ShaderMask(
+      shaderCallback: (rect) {
+        return LinearGradient(
+          begin: Alignment.center,
+          end: Alignment.bottomCenter,
+          colors: [Colors.black, Colors.transparent],
+        ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
+      },
+      blendMode: BlendMode.dstIn,
+      child: Text(
+        nextTask,
+        style: TextStyle(
+            fontSize: smaller ? 20 : 25,
+            color: Color.fromRGBO(255, 255, 255, 0.25),
+            fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -247,7 +262,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
       padding: const EdgeInsets.all(20.0),
       child: Row(
         children: workoutState != WorkState.paused
-            ? _onPlayingActions()
+            ? /*_onPlayingActions()*/ [SizedBox()]
             : _onPausedActions(),
       ),
     );
@@ -257,66 +272,42 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   Widget _cameraSection() {
     TimerEntry currentTimerEntry = timerEntries[timerTaskIndex];
     bool showCamera = currentTimerEntry.workState == WorkState.exercising;
-    bool showNextButton = currentTimerEntry.reps != null &&
-        currentTimerEntry.workState == WorkState.exercising;
-    return Column(
-      children: [
-        Expanded(
-          child: Container(
-            child: showCamera
-                ? Stack(
-                    children: [
-                      (!_isReady)
-                          ? Container()
-                          : Center(
-                              child: AspectRatio(
-                                  aspectRatio: 3.0 / 4.0,
-                                  child: CameraPreview(cameraController))),
-                      Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Padding(
-                              padding: const EdgeInsets.all(20.0),
-                              child: _feedbackButton(Icons.stop,
-                                  onPressed:
-                                      () async {} /*=> this.setState(() {
+    return showCamera
+        ? SizedBox(
+            height: ScreenUtils.height(context) / 2,
+            child: Stack(
+              children: [
+                (!_isReady)
+                    ? Container()
+                    : Center(
+                        child: AspectRatio(
+                            aspectRatio: 3.0 / 4.0,
+                            child: CameraPreview(cameraController))),
+                Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: _feedbackButton(Icons.stop,
+                            onPressed:
+                                () async {} /*=> this.setState(() {
                                   this.workoutType = WorkoutType.segment;
                                 })*/
-                                  ))),
-                      Align(
-                          alignment: Alignment.bottomLeft,
-                          child: Padding(
-                              padding: const EdgeInsets.only(
-                                  right: 20.0,
-                                  left: 80.0,
-                                  top: 20.0,
-                                  bottom: 20.0),
-                              child: _cameraButton(Icons.flip_camera_android,
-                                  onPressed: () {
-                                setState(() {
-                                  isCameraFront = !isCameraFront;
-                                });
-                                _setupCameras();
-                              }))),
-                      showNextButton
-                          ? Align(
-                              alignment: Alignment.bottomLeft,
-                              child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      right: 200.0, top: 20.0, bottom: 20.0),
-                                  child: _cameraButton(Icons.fast_forward,
-                                      onPressed: () {
-                                    setState(() {
-                                      _goToNextStep();
-                                    });
-                                  })))
-                          : SizedBox(),
-                    ],
-                  )
-                : SizedBox(),
-          ),
-        ),
-      ],
-    );
+                            ))),
+                Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Padding(
+                        padding: const EdgeInsets.only(
+                            right: 20.0, left: 80.0, top: 20.0, bottom: 20.0),
+                        child: _cameraButton(Icons.flip_camera_android,
+                            onPressed: () {
+                          setState(() {
+                            isCameraFront = !isCameraFront;
+                          });
+                          _setupCameras();
+                        }))),
+              ],
+            ))
+        : SizedBox();
   }
 
   Widget _feedbackButton(IconData iconData, {Function() onPressed}) {
@@ -342,7 +333,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     );
   }
 
-  List<Widget> _onPlayingActions() {
+  /*List<Widget> _onPlayingActions() {
     bool isCurrentTaskTimed = this.timerEntries[timerTaskIndex].time != null;
     OlukoPrimaryButton mainButton = isCurrentTaskTimed
         ? OlukoPrimaryButton(
@@ -365,7 +356,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     return [
       mainButton,
     ];
-  }
+  }*/
 
   List<Widget> _onPausedActions() {
     bool isCurrentTaskTimed = this.timerEntries[timerTaskIndex].time != null;
@@ -513,5 +504,223 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     setState(() {
       _isReady = true;
     });
+  }
+
+//App bar icons
+  Widget topCameraIcon() {
+    return Padding(
+        padding: EdgeInsets.only(right: 5),
+        child: Stack(alignment: Alignment.center, children: [
+          Image.asset(
+            'assets/courses/outlined_camera.png',
+            scale: 4,
+          ),
+          Padding(
+              padding: EdgeInsets.only(top: 1),
+              child: Icon(Icons.circle_outlined,
+                  size: 12, color: OlukoColors.primary))
+        ]));
+  }
+
+  Widget audioIcon() {
+    return Padding(
+        padding: EdgeInsets.only(right: 10),
+        child: Image.asset(
+          'assets/courses/audio_icon.png',
+          scale: 4,
+        ));
+  }
+
+  //timers
+  Widget buildCircle() => IntervalProgressBar(
+        direction: IntervalProgressDirection.circle,
+        max: 8,
+        progress: 2,
+        intervalSize: 4,
+        size: Size(200, 200),
+        highlightColor: OlukoColors.primary,
+        defaultColor: OlukoColors.grayColor,
+        intervalColor: Colors.transparent,
+        intervalHighlightColor: Colors.transparent,
+        reverse: true,
+        radius: 0,
+        intervalDegrees: 5,
+        strokeWith: 5,
+      );
+
+  Widget timeTimer(double progressValue, String duration) {
+    return Container(
+        child: SizedBox(
+            height: 180,
+            width: 180,
+            child: Stack(alignment: Alignment.center, children: [
+              AspectRatio(
+                  aspectRatio: 1,
+                  child: CircularProgressIndicator(
+                      value: progressValue,
+                      color: OlukoColors.coral,
+                      backgroundColor: OlukoColors.grayColor)),
+              Text(duration,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white))
+            ])));
+  }
+
+  Widget preTimer(String type, int round) {
+    return Stack(alignment: Alignment.center, children: [
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 98.0),
+        child: AspectRatio(
+            aspectRatio: 1,
+            child: CircularProgressIndicator(
+                value: 0.4,
+                color: OlukoColors.coral,
+                backgroundColor: OlukoColors.grayColor)),
+      ),
+      Column(children: [
+        Text("4",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 80,
+                fontWeight: FontWeight.bold,
+                fontStyle: FontStyle.italic,
+                color: OlukoColors.coral)),
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Text("Round   ",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white)),
+          Text(round.toString(),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white))
+        ]),
+        SizedBox(height: 2),
+        Padding(
+            padding: const EdgeInsets.only(bottom: 5),
+            child: Text(type + " In",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white)))
+      ])
+    ]);
+  }
+
+  Widget pausedTimer(String duration) {
+    return Container(
+        child: SizedBox(
+            height: 180,
+            width: 180,
+            child: Stack(alignment: Alignment.center, children: [
+              AspectRatio(
+                  aspectRatio: 1,
+                  child: CircularProgressIndicator(
+                      value: 0,
+                      color: OlukoColors.skyblue,
+                      backgroundColor: OlukoColors.grayColor)),
+              Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Text("PAUSED",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: OlukoColors.skyblue)),
+                SizedBox(height: 12),
+                Text(duration,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white))
+              ])
+            ])));
+  }
+
+  Widget restTimer(double progressValue, String duration) {
+    //double ellipseScale = 4.5;
+    return Container(
+        child: SizedBox(
+            height: 180,
+            width: 180,
+            child: Stack(alignment: Alignment.center, children: [
+              /*Image.asset(
+                'assets/courses/ellipse_1.png',
+                scale: ellipseScale,
+              ),
+              Image.asset(
+                'assets/courses/ellipse_2.png',
+                scale: ellipseScale,
+              ),
+              Image.asset(
+                'assets/courses/ellipse_3.png',
+                scale: ellipseScale,
+              ),*/
+              AspectRatio(
+                  aspectRatio: 1,
+                  child: CircularProgressIndicator(
+                      value: progressValue,
+                      color: OlukoColors.skyblue,
+                      backgroundColor: OlukoColors.grayColor)),
+              Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Text("REST",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: OlukoColors.skyblue)),
+                SizedBox(height: 12),
+                Text(duration,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white))
+              ])
+            ])));
+  }
+
+  Widget repsTimer() {
+    return Container(
+        child: SizedBox(
+            height: 180,
+            width: 180,
+            child: GestureDetector(
+                onTap: () => this.setState(() {
+                      _goToNextStep();
+                    }),
+                child: Stack(alignment: Alignment.center, children: [
+                  AspectRatio(
+                      aspectRatio: 1,
+                      child: CircularProgressIndicator(
+                          value: 0,
+                          color: OlukoColors.skyblue,
+                          backgroundColor: OlukoColors.grayColor)),
+                  Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("Tap here",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                                color: OlukoColors.primary)),
+                        SizedBox(height: 5),
+                        Text("when done",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w400,
+                                color: OlukoColors.primary))
+                      ])
+                ]))));
   }
 }
