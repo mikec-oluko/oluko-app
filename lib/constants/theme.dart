@@ -64,7 +64,7 @@ class OlukoColors {
 
   static const Color coral = Color.fromRGBO(247, 177, 171, 1);
 
-    static const Color skyblue = Color.fromRGBO(171, 247, 233, 1);
+  static const Color skyblue = Color.fromRGBO(171, 247, 233, 1);
 
   static const Color challengeLockedFilterColor =
       Color.fromRGBO(218, 5, 5, 0.2);
