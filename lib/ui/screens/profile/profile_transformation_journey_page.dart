@@ -26,11 +26,10 @@ class ProfileTransformationJourneyPage extends StatefulWidget {
 
 class _ProfileTransformationJourneyPageState
     extends State<ProfileTransformationJourneyPage> {
-  int variableSet = 0;
+  int _variableSet = 0;
   double width;
   double height;
-  int pos;
-
+  int _position;
   ScrollController _scrollController;
   List<Widget> _contentGallery;
   List<TransformationJourneyUpload> _transformationJourneyContent = [];
@@ -137,21 +136,29 @@ class _ProfileTransformationJourneyPageState
                             onWillAccept: (oldIndex, newIndex) {
                               setState(
                                 () {
-                                  pos = newIndex;
+                                  _position = newIndex;
                                 },
                               );
                               return true;
                             },
                             onReorder: (oldIndex, newIndex) {
-                              final tempt =
-                                  _transformationJourneyContent[oldIndex];
+                              BlocProvider.of<TransformationJourneyBloc>(
+                                  context)
+                                ..changeContentOrder(
+                                    _transformationJourneyContent[oldIndex],
+                                    _transformationJourneyContent[newIndex],
+                                    _profileInfo.id);
 
+                              final elementMoved =
+                                  _transformationJourneyContent[oldIndex];
                               _transformationJourneyContent[oldIndex] =
                                   _transformationJourneyContent[newIndex];
 
-                              _transformationJourneyContent[newIndex] = tempt;
+                              _transformationJourneyContent[newIndex] =
+                                  elementMoved;
+
                               setState(() {
-                                pos = null;
+                                _position = null;
                               });
                             },
                             gridDelegate:
@@ -159,8 +166,8 @@ class _ProfileTransformationJourneyPageState
                               crossAxisCount: 3,
                             ),
                             itemBuilder: (context, index) => Opacity(
-                              opacity: pos != null
-                                  ? pos != index
+                              opacity: _position != null
+                                  ? _position != index
                                       ? 0.6
                                       : 1
                                   : 1,
@@ -168,10 +175,10 @@ class _ProfileTransformationJourneyPageState
                                 color: Colors.transparent,
                                 child: LayoutBuilder(
                                   builder: (context, costrains) {
-                                    if (variableSet == 0) {
+                                    if (_variableSet == 0) {
                                       height = 120;
                                       width = 100;
-                                      variableSet++;
+                                      _variableSet++;
                                     }
                                     return ImageAndVideoContainer(
                                       backgroundImage:

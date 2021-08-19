@@ -123,4 +123,38 @@ class TransformationJourneyRepository {
 
     return downloadUrl;
   }
+
+  static Future<bool> reorderElementsIndex(
+      {TransformationJourneyUpload elementMoved,
+      TransformationJourneyUpload elementReplaced,
+      String userId}) async {
+    updateIndexOfElements(elementMoved, elementReplaced);
+
+    try {
+      await updateDocument(userId, elementMoved);
+      await updateDocument(userId, elementReplaced);
+      return true;
+    } catch (e) {
+      print(e);
+
+      return false;
+    }
+  }
+
+  static Future updateDocument(
+      String userId, TransformationJourneyUpload elementToUpdate) async {
+    DocumentReference contentReference = projectReference
+        .collection('users')
+        .doc(userId)
+        .collection('transformationJourneyUploads')
+        .doc(elementToUpdate.id);
+    await contentReference.update(elementToUpdate.toJson());
+  }
+
+  static void updateIndexOfElements(TransformationJourneyUpload elementMoved,
+      TransformationJourneyUpload elementReplaced) {
+    final temptElement = elementMoved.index;
+    elementMoved.index = elementReplaced.index;
+    elementReplaced.index = temptElement;
+  }
 }
