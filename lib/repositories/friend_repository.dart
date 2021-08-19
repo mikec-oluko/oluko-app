@@ -153,10 +153,11 @@ class FriendRepository {
 
   static Future<FriendModel> markFriendAsFavorite(
       Friend friend, FriendModel friendModel) async {
-    friendModel.isFavorite = true;
+    friendModel.isFavorite =
+        friendModel.isFavorite == null ? false : friendModel.isFavorite;
     friend.friends = friend.friends.map((friend) {
       if (friend.id == friendModel.id) {
-        friend.isFavorite = true;
+        friend.isFavorite = friendModel.isFavorite;
       }
       return friend;
     }).toList();
