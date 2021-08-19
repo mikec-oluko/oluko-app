@@ -174,13 +174,15 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   }
                   if (state is OlukoPanelLoading) {
                     panelMaxHeight = state.maxHeight;
-                    _widgetToReturn =
-                        UploadingModalLoader(UploadFrom.profileCoverImage);
+                    _widgetToReturn = _isNewCoverImage
+                        ? ModalUploadOptions(UploadFrom.profileCoverImage)
+                        : ModalUploadOptions(UploadFrom.profileImage);
                   }
                   if (state is OlukoPanelSucess) {
                     panelMaxHeight = state.maxHeight;
-                    _widgetToReturn =
-                        UploadingModalSuccess(UploadFrom.profileCoverImage);
+                    _widgetToReturn = _isNewCoverImage
+                        ? ModalUploadOptions(UploadFrom.profileCoverImage)
+                        : ModalUploadOptions(UploadFrom.profileImage);
                   }
                   return Container(child: _widgetToReturn);
                 },
