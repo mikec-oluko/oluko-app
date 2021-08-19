@@ -34,15 +34,18 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
   @override
   void initState() {
     _userLocation = getUserLocation(widget.userInformation);
-    // PrivacyOptions
-    //         .privacyOptionsList[widget.userInformation.privacy].option !=
-    //     SettingsPrivacyOptions.restricted
-    if (PrivacyOptions
-            .privacyOptionsList[widget.userInformation.privacy].option ==
-        SettingsPrivacyOptions.restricted) {
+    if (widget.userInformation.privacy == null) {
       setState(() {
-        _isProfilePrivate = true;
+        _isProfilePrivate = false;
       });
+    } else {
+      if (PrivacyOptions
+              .privacyOptionsList[widget.userInformation.privacy].option !=
+          SettingsPrivacyOptions.restricted) {
+        setState(() {
+          _isProfilePrivate = false;
+        });
+      }
     }
     super.initState();
   }
