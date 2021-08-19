@@ -125,6 +125,7 @@
     "ok": "Ok",
     "restricted": "Restricted",
     "restrictedSubtitle": "Restricted profile",
+    "privateProfile": "Private profile",
     "anonymous": "Anonymous",
     "anonymousSubtitle": "Anonymous profile",
     "helpAndSupport": "Help and Support",
@@ -138,5 +139,6 @@
     "challenge": "Challenge",
     "challenges": "Challenges",
     "movesInThisClass": "Moves in this class",
-    "viewDetails": "View Details"
+    "viewDetails": "View Details",
+    "noContent":"No content to display"
 }
