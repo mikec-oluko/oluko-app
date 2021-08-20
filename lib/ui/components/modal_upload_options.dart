@@ -11,7 +11,8 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ModalUploadOptions extends StatefulWidget {
   final UploadFrom contentFrom;
-  ModalUploadOptions(this.contentFrom);
+  final int indexValue;
+  ModalUploadOptions({this.contentFrom, this.indexValue});
   @override
   _ModalUploadOptionsState createState() => _ModalUploadOptionsState();
 }
@@ -73,7 +74,8 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
       Navigator.pop(context);
       BlocProvider.of<TransformationJourneyBloc>(context)
         ..uploadTransformationJourneyContent(
-            uploadedFrom: DeviceContentFrom.camera);
+            uploadedFrom: DeviceContentFrom.camera,
+            indexForContent: widget.indexValue);
       AppModal.dialogContent(
           context: context,
           content: [UploadingModalLoader(widget.contentFrom)]);
@@ -95,7 +97,8 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
     if (widget.contentFrom == UploadFrom.transformationJourney) {
       BlocProvider.of<TransformationJourneyBloc>(context)
         ..uploadTransformationJourneyContent(
-            uploadedFrom: DeviceContentFrom.gallery);
+            uploadedFrom: DeviceContentFrom.gallery,
+            indexForContent: widget.indexValue);
       Navigator.pop(context);
       AppModal.dialogContent(
           context: context,
