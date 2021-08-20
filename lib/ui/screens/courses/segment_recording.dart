@@ -283,7 +283,6 @@ class _SegmentRecordingState extends State<SegmentRecording> {
                 (!_isReady)
                     ? Container()
                     : Center(
-                        //poner un stack aca
                         child: AspectRatio(
                             aspectRatio: 3.0 / 4.0,
                             child: CameraPreview(cameraController))),
