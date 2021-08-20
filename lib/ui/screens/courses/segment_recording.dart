@@ -74,7 +74,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   List<CameraDescription> cameras;
   CameraController cameraController;
   bool _isReady = false;
-  bool isCameraFront = true;
+  bool isCameraFront = false;
   List<TimerEntry> timerEntries;
 
   User _user;
@@ -278,31 +278,27 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     return showCamera
         ? SizedBox(
             height: ScreenUtils.height(context) / 2,
+            width: ScreenUtils.width(context),
             child: Stack(
               children: [
                 (!_isReady)
                     ? Container()
-                    : Center(
-                        child: AspectRatio(
-                            aspectRatio: 3.0 / 4.0,
-                            child: CameraPreview(cameraController))),
+                    : Container(
+                        decoration: BoxDecoration(
+                            image: DecorationImage(
+                          image: AssetImage(
+                              'assets/courses/camera_background.png'),
+                          fit: BoxFit.cover,
+                        )),
+                        child: Center(
+                            child: AspectRatio(
+                                aspectRatio: 3.0 / 4.0,
+                                child: CameraPreview(cameraController)))),
                 Align(
                     alignment: Alignment.bottomCenter,
                     child: Padding(
                         padding: const EdgeInsets.all(20.0),
                         child: pauseButton())),
-                Align(
-                    alignment: Alignment.bottomLeft,
-                    child: Padding(
-                        padding: const EdgeInsets.only(
-                            right: 20.0, left: 80.0, top: 20.0, bottom: 20.0),
-                        child: _cameraButton(Icons.flip_camera_android,
-                            onPressed: () {
-                          setState(() {
-                            isCameraFront = !isCameraFront;
-                          });
-                          _setupCameras();
-                        }))),
               ],
             ))
         : SizedBox();
