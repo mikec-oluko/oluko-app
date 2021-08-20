@@ -151,7 +151,8 @@ class _SegmentRecordingState extends State<SegmentRecording> {
 
   ///Countdown & movements information
   Widget _timerSection(WorkoutType workoutType, WorkState workState) {
-    return Column(
+    return Center(
+        child: Column(
       children: [
         Padding(
             padding: const EdgeInsets.only(top: 3, bottom: 8),
@@ -164,7 +165,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
                 ? timerEntries[timerTaskIndex + 1].label
                 : '')
       ],
-    );
+    ));
   }
 
   ///Clock countdown label
@@ -198,13 +199,15 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   Widget _tasksSection(String currentTask, String nextTask) {
     return widget.workoutType == WorkoutType.segment ||
             timerEntries[timerTaskIndex].workState == WorkState.repResting
-        ? Column(
-            children: [
-              currentTaskWidget(currentTask),
-              SizedBox(height: 10),
-              nextTaskWidget(nextTask)
-            ],
-          )
+        ? Padding(
+            padding: EdgeInsets.only(top: 25),
+            child: Column(
+              children: [
+                currentTaskWidget(currentTask),
+                SizedBox(height: 10),
+                nextTaskWidget(nextTask)
+              ],
+            ))
         : Padding(
             padding: EdgeInsets.only(top: 7, bottom: 15),
             child: Stack(
@@ -280,6 +283,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
                 (!_isReady)
                     ? Container()
                     : Center(
+                        //poner un stack aca
                         child: AspectRatio(
                             aspectRatio: 3.0 / 4.0,
                             child: CameraPreview(cameraController))),
@@ -287,12 +291,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
                     alignment: Alignment.bottomCenter,
                     child: Padding(
                         padding: const EdgeInsets.all(20.0),
-                        child: _feedbackButton(Icons.stop,
-                            onPressed:
-                                () async {} /*=> this.setState(() {
-                                  this.workoutType = WorkoutType.segment;
-                                })*/
-                            ))),
+                        child: pauseButton())),
                 Align(
                     alignment: Alignment.bottomLeft,
                     child: Padding(
@@ -310,16 +309,26 @@ class _SegmentRecordingState extends State<SegmentRecording> {
         : SizedBox();
   }
 
-  Widget _feedbackButton(IconData iconData, {Function() onPressed}) {
-    return OutlinedButton(
-      onPressed: onPressed,
-      child: Icon(iconData, color: Colors.white),
-      style: OutlinedButton.styleFrom(
-        padding: EdgeInsets.all(15),
-        shape: CircleBorder(),
-        side: BorderSide(color: Colors.white),
-      ),
-    );
+  Widget pauseButton() {
+    return GestureDetector(
+        //TODO: Add pause action
+        onTap: () {},
+        child: Stack(alignment: Alignment.center, children: [
+          Image.asset(
+            'assets/courses/oval.png',
+            scale: 4,
+          ),
+          Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Image.asset(
+                'assets/courses/center_oval.png',
+                scale: 4,
+              )),
+          Image.asset(
+            'assets/courses/pause_button.png',
+            scale: 4,
+          ),
+        ]));
   }
 
   Widget _cameraButton(IconData iconData, {Function() onPressed}) {
@@ -327,7 +336,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
       onPressed: onPressed,
       child: Icon(
         iconData,
-        color: Colors.white,
+        color: OlukoColors.primary,
         size: 30,
       ),
     );
