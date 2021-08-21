@@ -140,5 +140,7 @@
     "challenges": "Challenges",
     "movesInThisClass": "Moves in this class",
     "viewDetails": "View Details",
-    "noContent":"No content to display"
+    "noContent":"No content to display",
+    "cameraInfo": "Set your camera to your desired orientation & position",
+    "cameraWarning": "Hitting this button will start the recording and the Segment"
 }

@@ -101,7 +101,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
             OlukoPrimaryButton(
                 title: OlukoLocalizations.of(context).find('startWorkouts'),
                 color: OlukoColors.primary,
-                onPressed: () {                 
+                onPressed: () {
                   BottomDialogUtils.showBottomDialog(
                       context: context, content: dialogContainer());
                 })
@@ -215,7 +215,15 @@ class _SegmentDetailState extends State<SegmentDetail> {
                     OlukoPrimaryButton(
                       title: 'Ok',
                       onPressed: () {
-                        _startCountdown(WorkoutType.segmentWithRecording);
+                        Navigator.pushNamed(context,
+                            routeLabels[RouteEnum.segmentCameraPreview],
+                            arguments: {
+                              'segmentIndex': widget.segmentIndex,
+                              'classIndex': widget.classIndex,
+                              'courseEnrollment': widget.courseEnrollment,
+                              'segments': _segments,
+                            });
+                        //_startCountdown(WorkoutType.segmentWithRecording);
                       },
                     )
                   ],

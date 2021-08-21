@@ -41,6 +41,7 @@ import 'package:oluko_app/ui/screens/courses/course_marketing.dart';
 import 'package:oluko_app/ui/screens/courses/courses.dart';
 import 'package:oluko_app/ui/screens/courses/enrolled_class.dart';
 import 'package:oluko_app/ui/screens/courses/inside_class.dart';
+import 'package:oluko_app/ui/screens/courses/segment_camera_preview.dart.dart';
 import 'package:oluko_app/ui/screens/friends/friends_page.dart';
 import 'package:oluko_app/ui/screens/authentication/login.dart';
 import 'package:oluko_app/ui/screens/main_page.dart';
@@ -104,6 +105,7 @@ enum RouteEnum {
   selfRecordingPreview,
   enrolledClass,
   taskSubmissionVideo,
+  segmentCameraPreview
 }
 
 Map<RouteEnum, String> routeLabels = {
@@ -141,7 +143,8 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.selfRecording: '/self-recording',
   RouteEnum.selfRecordingPreview: '/self-recording-preview',
   RouteEnum.enrolledClass: '/enrolled-class',
-  RouteEnum.taskSubmissionVideo: '/task-submission-video'
+  RouteEnum.taskSubmissionVideo: '/task-submission-video',
+  RouteEnum.segmentCameraPreview: '/segment-camera-preview'
 };
 
 RouteEnum getEnumFromRouteString(String route) {
@@ -354,6 +357,22 @@ class Routes {
             classIndex: argumentsToAdd['classIndex'],
             segmentIndex: argumentsToAdd['segmentIndex'],
             workoutType: argumentsToAdd['workoutType'],
+            segments: argumentsToAdd['segments']);
+        break;
+      case RouteEnum.segmentCameraPreview:
+        providers = [
+          BlocProvider<SegmentBloc>.value(value: _segmentBloc),
+          BlocProvider<SegmentSubmissionBloc>.value(
+              value: _segmentSubmissionBloc),
+          BlocProvider<MovementSubmissionBloc>.value(
+              value: _movementSubmissionBloc),
+          BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc)
+        ];
+        final Map<String, dynamic> argumentsToAdd = arguments;
+        newRouteView = SegmentCameraPreview(
+            courseEnrollment: argumentsToAdd['courseEnrollment'],
+            classIndex: argumentsToAdd['classIndex'],
+            segmentIndex: argumentsToAdd['segmentIndex'],
             segments: argumentsToAdd['segments']);
         break;
       case RouteEnum.courseMarketing:

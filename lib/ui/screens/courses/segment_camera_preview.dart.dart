@@ -1,19 +1,27 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/blocs/auth_bloc.dart';
-import 'package:oluko_app/blocs/gallery_video_bloc.dart';
-import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/models/task.dart';
+import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/ui/screens/courses/segment_recording.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 class SegmentCameraPreview extends StatefulWidget {
-  SegmentCameraPreview({this.taskIndex, this.isPublic, Key key}) : super(key: key);
+  final CourseEnrollment courseEnrollment;
+  final int classIndex;
+  final int segmentIndex;
+  final List<Segment> segments;
 
-  final int taskIndex;
-  final bool isPublic;
+  SegmentCameraPreview(
+      {Key key,
+      this.classIndex,
+      this.segmentIndex,
+      this.courseEnrollment,
+      this.segments})
+      : super(key: key);
 
   @override
   _State createState() => _State();
@@ -29,9 +37,6 @@ class _State extends State<SegmentCameraPreview> {
   bool _recording = false;
   bool isCameraFront = false;
 
-  Task _task;
-  List<Task> _tasks;
-
   @override
   void initState() {
     super.initState();
@@ -46,35 +51,18 @@ class _State extends State<SegmentCameraPreview> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
-      if (authState is AuthSuccess) {
-        return BlocBuilder<TaskBloc, TaskState>(
-          builder: (context, taskState) {
-            if (taskState is TaskSuccess) {
-              _tasks = taskState.values;
-              _task = _tasks[widget.taskIndex];
-              return form();
-            } else {
-              return SizedBox();
-            }
-          },
-        );
-      } else {
-        return SizedBox();
-      }
-    });
+    return form();
   }
 
   Widget form() {
     return Form(
         key: _formKey,
         child: Scaffold(
-            bottomNavigationBar: bottomBar(),
             body: Container(
                 color: Colors.black,
                 child: Container(
                   width: MediaQuery.of(context).size.width,
-                  child: ListView(
+                  child: Column(
                     children: [
                       ConstrainedBox(
                           constraints: BoxConstraints(
@@ -86,20 +74,83 @@ class _State extends State<SegmentCameraPreview> {
                                       aspectRatio: 3.0 / 4.0,
                                       child: CameraPreview(cameraController)),
                                   Padding(
-                                      padding: EdgeInsets.all(10),
-                                      child: IconButton(
-                                        icon: Icon(
-                                          Icons.close,
-                                          size: 30,
-                                          color: Colors.white,
-                                        ),
-                                        onPressed: () => Navigator.pop(context),
-                                      )),
+                                      padding:
+                                          EdgeInsets.only(right: 10, top: 15),
+                                      child: Stack(
+                                          alignment: Alignment.center,
+                                          children: [
+                                            Image.asset(
+                                              'assets/courses/grey_circle.png',
+                                              scale: 4,
+                                            ),
+                                            IconButton(
+                                              icon: Icon(
+                                                Icons.close,
+                                                size: 28,
+                                                color: Colors.grey,
+                                              ),
+                                              onPressed: () =>
+                                                  Navigator.pop(context),
+                                            )
+                                          ])),
                                 ])),
-                      formSection(),
+                      Expanded(
+                          child: Container(
+                              width: ScreenUtils.width(context),
+                              decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                image: AssetImage(
+                                    'assets/courses/dialog_background.png'),
+                                fit: BoxFit.cover,
+                              )),
+                              child: Column(children: [
+                                Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 20.0, vertical: 4),
+                                    child: Text(
+                                        OlukoLocalizations.of(context).find('cameraInfo'),
+                                        textAlign: TextAlign.center,
+                                        style: OlukoFonts.olukoBigFont(
+                                            custoFontWeight: FontWeight.w300,
+                                            customColor: OlukoColors.white))),
+                                startButton(),
+                                Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 20.0, vertical: 2),
+                                    child: Text(
+                                        OlukoLocalizations.of(context).find('cameraWarning'),
+                                        textAlign: TextAlign.center,
+                                        style: OlukoFonts.olukoBigFont(
+                                            custoFontWeight: FontWeight.w300,
+                                            customColor: OlukoColors.primary)))
+                              ]))),
                     ],
                   ),
                 ))));
+  }
+
+  Widget startButton() {
+    return GestureDetector(
+        onTap: () {
+          Navigator.pushNamed(context, routeLabels[RouteEnum.segmentRecording],
+              arguments: {
+                'segmentIndex': widget.segmentIndex,
+                'classIndex': widget.classIndex,
+                'courseEnrollment': widget.courseEnrollment,
+                'workoutType': WorkoutType.segmentWithRecording,
+                'segments': widget.segments,
+              });
+        },
+        child: Stack(alignment: Alignment.center, children: [
+          Image.asset(
+            'assets/courses/oval.png',
+            scale: 4,
+          ),
+          Image.asset(
+            'assets/courses/green_circle.png',
+            scale: 4,
+          ),
+        ]));
   }
 
   Widget formSection() {
@@ -108,27 +159,23 @@ class _State extends State<SegmentCameraPreview> {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 15.0),
-          child: _task.stepsTitle != null
-              ? Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  child: Text(
-                    _task.stepsTitle,
-                    style: OlukoFonts.olukoSuperBigFont(
-                        customColor: OlukoColors.grayColor,
-                        custoFontWeight: FontWeight.normal),
-                  ))
-              : SizedBox(),
+          child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: Text(
+                'title',
+                style: OlukoFonts.olukoSuperBigFont(
+                    customColor: OlukoColors.grayColor,
+                    custoFontWeight: FontWeight.normal),
+              )),
         ),
-        _task.stepsDescription != null
-            ? Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                child: Text(
-                  '${_task.stepsDescription.replaceAll('\\n', '\n')}',
-                  style: OlukoFonts.olukoSuperBigFont(
-                      customColor: OlukoColors.white,
-                      custoFontWeight: FontWeight.normal),
-                ))
-            : SizedBox(),
+        Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            child: Text(
+              'description',
+              style: OlukoFonts.olukoSuperBigFont(
+                  customColor: OlukoColors.white,
+                  custoFontWeight: FontWeight.normal),
+            )),
         SizedBox(height: 50)
       ],
     );
@@ -175,51 +222,9 @@ class _State extends State<SegmentCameraPreview> {
                   ),
                 ])),
             GestureDetector(
-              onTap: () async {
-                if (_recording) {
-                  XFile videopath = await cameraController.stopVideoRecording();
-                  String path = videopath.path;
-                  Navigator.pop(context);
-                  Navigator.pushNamed(
-                      context, routeLabels[RouteEnum.selfRecordingPreview],
-                      arguments: {
-                        'taskIndex': widget.taskIndex,
-                        'filePath': path,
-                        'isPublic': widget.isPublic,
-                      });
-                } else {
-                  await cameraController.startVideoRecording();
-                }
-                setState(() {
-                  _recording = !_recording;
-                });
-              },
+              onTap: () {},
               child: _recording ? recordingIcon() : recordIcon(),
             ),
-            BlocListener<GalleryVideoBloc, GalleryVideoState>(
-                listener: (context, state) {
-                  if (state is Success && state.pickedFile != null) {
-                    Navigator.pop(context);
-                    Navigator.pushNamed(
-                        context, routeLabels[RouteEnum.selfRecordingPreview],
-                        arguments: {
-                          'taskIndex': widget.taskIndex,
-                          'filePath': state.pickedFile.path,
-                          'isPublic': widget.isPublic,
-                        });
-                  }
-                },
-                child: GestureDetector(
-                  onTap: () {
-                    BlocProvider.of<GalleryVideoBloc>(context)
-                      ..getVideoFromGallery();
-                  },
-                  child: Icon(
-                    Icons.file_upload,
-                    size: 30,
-                    color: OlukoColors.grayColor,
-                  ),
-                )),
           ],
         ),
       ),
