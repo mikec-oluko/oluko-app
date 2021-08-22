@@ -40,6 +40,7 @@ import 'package:oluko_app/ui/screens/choose_plan_payment.dart';
 import 'package:oluko_app/ui/screens/courses/course_marketing.dart';
 import 'package:oluko_app/ui/screens/courses/courses.dart';
 import 'package:oluko_app/ui/screens/courses/enrolled_class.dart';
+import 'package:oluko_app/ui/screens/courses/explore_subscribed_users.dart';
 import 'package:oluko_app/ui/screens/courses/inside_class.dart';
 import 'package:oluko_app/ui/screens/friends/friends_page.dart';
 import 'package:oluko_app/ui/screens/authentication/login.dart';
@@ -104,6 +105,7 @@ enum RouteEnum {
   selfRecordingPreview,
   enrolledClass,
   taskSubmissionVideo,
+  exploreSubscribedUsers
 }
 
 Map<RouteEnum, String> routeLabels = {
@@ -141,7 +143,8 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.selfRecording: '/self-recording',
   RouteEnum.selfRecordingPreview: '/self-recording-preview',
   RouteEnum.enrolledClass: '/enrolled-class',
-  RouteEnum.taskSubmissionVideo: '/task-submission-video'
+  RouteEnum.taskSubmissionVideo: '/task-submission-video',
+  RouteEnum.exploreSubscribedUsers: '/explore-subscribed-users'
 };
 
 RouteEnum getEnumFromRouteString(String route) {
@@ -482,6 +485,11 @@ class Routes {
           parentVideoReference:
               FirebaseFirestore.instance.collection("videosInfo"),
         );
+        break;
+      case RouteEnum.exploreSubscribedUsers:
+        Map<String, dynamic> args = arguments;
+        String courseId = args['courseId'];
+        newRouteView = ExploreSubscribedUsers(courseId: courseId);
         break;
       default:
         newRouteView = MainPage();
