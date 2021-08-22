@@ -82,7 +82,7 @@ class _ProfilePageState extends State<ProfilePage> {
             child: UserProfileInformation(
                 userInformation: profileInfo,
                 actualRoute: ActualProfileRoute.rootProfile,
-                userIsOwnerProfile: true)),
+                isOwner: true)),
       ],
     );
     return returnWidget;
