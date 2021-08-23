@@ -34,7 +34,6 @@ class StatisticsBloc extends Cubit<StatisticsState> {
         e,
         stackTrace: stackTrace,
       );
-      print(e.toStriing());
       emit(StatisticsFailure(exception: e));
     }
   }
