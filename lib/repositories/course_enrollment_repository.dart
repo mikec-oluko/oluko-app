@@ -42,19 +42,20 @@ class CourseEnrollmentRepository {
     return null;
   }
 
-  static Future<List<CourseEnrollment>> getByCourse(Course course) async {
+  static Future<List<CourseEnrollment>> getByCourse(String courseId) async {
     CollectionReference reference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"))
         .collection('courseEnrollments');
 
     final QuerySnapshot qs =
-        await reference.where("course_id", isEqualTo: course.id).get();
+        await reference.where("course_id", isEqualTo: courseId).get();
 
     if (qs.docs.length > 0) {
-      return qs.docs
-          .map((courseData) => CourseEnrollment.fromJson(courseData.data()))
-          .toList();
+      return qs.docs.map((courseData) {
+        var data = courseData.data();
+        return CourseEnrollment.fromJson(data);
+      }).toList();
     }
     return null;
   }
