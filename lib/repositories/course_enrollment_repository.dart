@@ -49,7 +49,7 @@ class CourseEnrollmentRepository {
         .collection('courseEnrollments');
 
     final QuerySnapshot qs =
-        await reference.where("course_id", isEqualTo: courseId).get();
+        await reference.where("course.id", isEqualTo: courseId).get();
 
     if (qs.docs.length > 0) {
       return qs.docs.map((courseData) {
