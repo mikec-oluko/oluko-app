@@ -39,41 +39,43 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
       body: Container(
         height: ScreenUtils.height(context),
         width: ScreenUtils.width(context),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Container(
-            child: BlocBuilder<SubscribedCourseUsersBloc,
-                    SubscribedCourseUsersState>(
-                builder: (context, subscribedCourseUsersState) {
-              return Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 16.0),
-                    child: Row(
-                      children: [
-                        TitleBody('Favourites'),
-                      ],
+        child: ListView(children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Container(
+              child: BlocBuilder<SubscribedCourseUsersBloc,
+                      SubscribedCourseUsersState>(
+                  builder: (context, subscribedCourseUsersState) {
+                return Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: Row(
+                        children: [
+                          TitleBody('Favourites'),
+                        ],
+                      ),
                     ),
-                  ),
-                  subscribedCourseUsersState is SubscribedCourseUsersSuccess
-                      ? usersGrid(subscribedCourseUsersState.users)
-                      : SizedBox(),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 16.0),
-                    child: Row(
-                      children: [
-                        TitleBody('Everyone else'),
-                      ],
+                    subscribedCourseUsersState is SubscribedCourseUsersSuccess
+                        ? usersGrid(subscribedCourseUsersState.users)
+                        : SizedBox(),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: Row(
+                        children: [
+                          TitleBody('Everyone else'),
+                        ],
+                      ),
                     ),
-                  ),
-                  subscribedCourseUsersState is SubscribedCourseUsersSuccess
-                      ? usersGrid(subscribedCourseUsersState.users)
-                      : SizedBox()
-                ],
-              );
-            }),
+                    subscribedCourseUsersState is SubscribedCourseUsersSuccess
+                        ? usersGrid(subscribedCourseUsersState.users)
+                        : SizedBox()
+                  ],
+                );
+              }),
+            ),
           ),
-        ),
+        ]),
       ),
     );
   }
