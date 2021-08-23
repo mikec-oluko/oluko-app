@@ -4,7 +4,7 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 class PanelWidget extends StatefulWidget {
   final ScrollController scrollController;
   final PanelController panelController;
-  final List<Widget> contentForPanel;
+  final Widget contentForPanel;
   const PanelWidget(
       {this.scrollController, this.panelController, this.contentForPanel});
 
@@ -16,9 +16,8 @@ class _PanelWidgetState extends State<PanelWidget> {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      clipBehavior: Clip.none,
       shrinkWrap: true,
-      children: widget.contentForPanel,
+      children: [widget.contentForPanel],
     );
   }
 }

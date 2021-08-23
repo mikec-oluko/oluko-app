@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
-import 'package:oluko_app/blocs/profile_bloc.dart';
+import 'package:oluko_app/blocs/profile/upload_avatar_bloc.dart';
+import 'package:oluko_app/blocs/profile/upload_cover_image_bloc.dart';
+import 'package:oluko_app/blocs/profile/upload_transformation_journey_content_bloc.dart';
+import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/routes.dart';
@@ -59,18 +62,23 @@ class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
                               title: _doneButtonText,
                               onPressed: () {
                                 if (widget.goToPage ==
-                                        UploadFrom.profileImage ||
-                                    widget.goToPage ==
-                                        UploadFrom.profileCoverImage) {
-                                  BlocProvider.of<AuthBloc>(context)
-                                    ..checkCurrentUser();
-                                  BlocProvider.of<ProfileBloc>(context)
-                                    ..requestNoUploadState();
+                                    UploadFrom.transformationJourney) {
+                                  BlocProvider.of<
+                                      TransformationJourneyContentBloc>(context)
+                                    ..emitDefaultState();
+                                  BlocProvider.of<TransformationJourneyBloc>(
+                                      context)
+                                    ..emitTransformationJourneyDefault();
                                   Navigator.popAndPushNamed(context,
                                       returnRouteToGo(widget.goToPage));
-                                }
-                                if (widget.goToPage ==
-                                    UploadFrom.transformationJourney) {
+                                } else {
+                                  BlocProvider.of<AuthBloc>(context)
+                                    ..checkCurrentUser();
+                                  BlocProvider.of<ProfileAvatarBloc>(context)
+                                    ..emitDefaultState();
+                                  BlocProvider.of<ProfileCoverImageBloc>(
+                                      context)
+                                    ..emitDefaultState();
                                   Navigator.popAndPushNamed(context,
                                       returnRouteToGo(widget.goToPage));
                                 }

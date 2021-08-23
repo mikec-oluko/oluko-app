@@ -1,9 +1,7 @@
 import 'dart:io';
-import 'package:image/image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:oluko_app/helpers/encoding_provider.dart';
 import 'package:oluko_app/helpers/s3_provider.dart';
 import 'package:oluko_app/models/enums/file_type_enum.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
@@ -56,7 +54,10 @@ class TransformationJourneyRepository {
   }
 
   static Future<TransformationJourneyUpload> createTransformationJourneyUpload(
-      FileTypeEnum type, PickedFile file, String userId) async {
+      FileTypeEnum type,
+      PickedFile file,
+      String userId,
+      int indexForContent) async {
     try {
       CollectionReference transformationJourneyUploadsReference =
           projectReference
@@ -90,7 +91,7 @@ class TransformationJourneyRepository {
                 name: '',
                 from: Timestamp.now(),
                 description: '',
-                index: 0,
+                index: indexForContent == null ? 0 : indexForContent,
                 type: type,
                 file: downloadUrl,
                 isPublic: true,

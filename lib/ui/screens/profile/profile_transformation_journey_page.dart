@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/oluko_panel_bloc.dart';
+import 'package:oluko_app/blocs/profile/upload_transformation_journey_content_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
@@ -14,7 +15,6 @@ import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_error_message_view.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/modal_upload_options.dart';
-import 'package:oluko_app/ui/components/oluko_panel_widget.dart';
 import 'package:oluko_app/ui/components/uploading_modal_loader.dart';
 import 'package:oluko_app/ui/components/uploading_modal_success.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
@@ -80,10 +80,10 @@ class _ProfileTransformationJourneyPageState
                                       title: OlukoLocalizations.of(context)
                                           .find('tapToUpload'),
                                       onPressed: () {
-                                        BlocProvider.of<OlukoPanelBloc>(context)
-                                            .setNewState(
-                                                action: OlukoPanelAction.open,
-                                                maxHeight: 100.0);
+                                        BlocProvider.of<
+                                                    TransformationJourneyContentBloc>(
+                                                context)
+                                            .openPanel();
                                       }),
                                 ],
                               ),
@@ -120,47 +120,49 @@ class _ProfileTransformationJourneyPageState
                             )),
                     ),
                     SlidingUpPanel(
+                      onPanelClosed: () {
+                        BlocProvider.of<TransformationJourneyContentBloc>(
+                            context)
+                          ..emitDefaultState();
+                      },
+                      backdropEnabled: true,
+                      isDraggable: false,
+                      margin: const EdgeInsets.all(0),
+                      header: SizedBox(),
+                      backdropTapClosesPanel: true,
+                      padding: EdgeInsets.zero,
                       color: OlukoColors.black,
                       minHeight: 0.0,
-                      maxHeight: panelMaxHeight,
+                      // maxHeight: panelMaxHeight,
                       collapsed: SizedBox(),
                       defaultPanelState: PanelState.CLOSED,
                       controller: _panelController,
-                      panelBuilder: (ScrollController controller) {
-                        return PanelWidget(
-                          panelController: _panelController,
-                          scrollController: controller,
-                          contentForPanel: [
-                            BlocBuilder<OlukoPanelBloc, OlukoPanelState>(
-                              builder: (context, state) {
-                                Widget _widgetToUse;
-                                if (state is OlukoPanelClose) {
-                                  _panelController.close();
-                                  _widgetToUse = SizedBox();
-                                }
-                                if (state is OlukoPanelOpen) {
-                                  _panelController.open();
-                                  panelMaxHeight = state.maxHeight;
-                                  _widgetToUse = ModalUploadOptions(
-                                      UploadFrom.transformationJourney);
-                                }
-                                if (state is OlukoPanelLoading) {
-                                  panelMaxHeight = state.maxHeight;
-                                  _widgetToUse = UploadingModalLoader(
-                                      UploadFrom.transformationJourney);
-                                }
-                                if (state is OlukoPanelSucess) {
-                                  panelMaxHeight = state.maxHeight;
-                                  _widgetToUse = UploadingModalSuccess(
-                                      UploadFrom.transformationJourney);
-                                }
-
-                                return _widgetToUse;
-                              },
-                            )
-                          ],
-                        );
-                      },
+                      panel: BlocBuilder<TransformationJourneyContentBloc,
+                              TransformationJourneyContentState>(
+                          builder: (context, state) {
+                        Widget _contentForPanel = SizedBox();
+                        if (state is TransformationJourneyContentOpen) {
+                          _panelController.open();
+                          _contentForPanel = ModalUploadOptions(
+                              UploadFrom.transformationJourney);
+                        }
+                        if (state is TransformationJourneyContentDefault) {
+                          _contentForPanel = ModalUploadOptions(
+                              UploadFrom.transformationJourney);
+                        }
+                        if (state is TransformationJourneyContentLoading) {
+                          _contentForPanel = UploadingModalLoader(
+                              UploadFrom.transformationJourney);
+                        }
+                        if (state is TransformationJourneyContentSuccess) {
+                          _contentForPanel = UploadingModalSuccess(
+                              UploadFrom.transformationJourney);
+                        }
+                        if (state is TransformationJourneyContentFailure) {
+                          _panelController.close();
+                        }
+                        return _contentForPanel;
+                      }),
                     ),
                   ]),
                 ),
@@ -179,8 +181,6 @@ class _ProfileTransformationJourneyPageState
               TransformListOfItemsToWidget.getWidgetListFromContent(
                   tansformationJourneyData: _transformationJourneyContent,
                   requestedFromRoute: ActualProfileRoute.transformationJourney);
-          BlocProvider.of<OlukoPanelBloc>(context)
-              .setNewState(action: OlukoPanelAction.close, maxHeight: null);
         }
         if (state is TransformationJourneyUploadSuccess) {
           _transformationJourneyContent = state.contentFromUser;
@@ -188,25 +188,13 @@ class _ProfileTransformationJourneyPageState
               TransformListOfItemsToWidget.getWidgetListFromContent(
                   tansformationJourneyData: _transformationJourneyContent,
                   requestedFromRoute: ActualProfileRoute.transformationJourney);
-          BlocProvider.of<OlukoPanelBloc>(context)
-              .setNewState(action: OlukoPanelAction.success, maxHeight: 400.0);
         }
-        if (state is TransformationJourneyNoUploads) {
-          BlocProvider.of<TransformationJourneyBloc>(context)
-            ..emitTransformationJourneyFailure();
-              BlocProvider.of<OlukoPanelBloc>(context)
-              .setNewState(action: OlukoPanelAction.close, maxHeight: 100);
-        }
-        if (state is TransformationJourneyFailure) {
+        if (state is TransformationJourneyFailure ||
+            state is TransformationJourneyDefault) {
           BlocProvider.of<TransformationJourneyBloc>(context)
             ..getContentByUserId(_profileInfo.id);
-             BlocProvider.of<OlukoPanelBloc>(context)
-              .setNewState(action: OlukoPanelAction.close, maxHeight: 100);
         }
-        if (state is TransformationJourneyLoading) {
-          BlocProvider.of<OlukoPanelBloc>(context)
-              .setNewState(action: OlukoPanelAction.loading, maxHeight: 300);
-        }
+        if (state is TransformationJourneyLoading) {}
         return page(context, _profileInfo);
       },
     );

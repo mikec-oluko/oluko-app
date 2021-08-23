@@ -12,7 +12,7 @@ abstract class TransformationJourneyState {}
 
 class TransformationJourneyLoading extends TransformationJourneyState {}
 
-class TransformationJourneyNoUploads extends TransformationJourneyState {}
+class TransformationJourneyDefault extends TransformationJourneyState {}
 
 class TransformationJourneySuccess extends TransformationJourneyState {
   final List<TransformationJourneyUpload> contentFromUser;
@@ -48,49 +48,13 @@ class TransformationJourneyBloc extends Cubit<TransformationJourneyState> {
     }
   }
 
-  Future<void> createTransformationJourneyUpload(
-      FileTypeEnum type, PickedFile file, String userId) async {
+  Future<void> createTransformationJourneyUpload(FileTypeEnum type,
+      PickedFile file, String userId, int indexForContent) async {
     try {
       TransformationJourneyUpload transformationJourneyUpload =
           await TransformationJourneyRepository
-              .createTransformationJourneyUpload(type, file, userId);
-    } catch (e, stackTrace) {
-      await Sentry.captureException(
-        e,
-        stackTrace: stackTrace,
-      );
-      emit(TransformationJourneyFailure(exception: e));
-    }
-  }
-
-  void uploadTransformationJourneyContent(
-      {DeviceContentFrom uploadedFrom}) async {
-    PickedFile _image;
-    try {
-      final imagePicker = ImagePicker();
-      if (uploadedFrom == DeviceContentFrom.gallery) {
-        _image = await imagePicker.getImage(source: ImageSource.gallery);
-      }
-      if (uploadedFrom == DeviceContentFrom.camera) {
-        _image = await imagePicker.getImage(source: ImageSource.camera);
-      }
-      if (_image == null) {
-        emit(TransformationJourneyNoUploads());
-        return;
-      }
-
-      emit(TransformationJourneyLoading());
-      UserResponse user = await AuthRepository().retrieveLoginData();
-
-      TransformationJourneyUpload upload = await TransformationJourneyRepository
-          .createTransformationJourneyUpload(
-              FileTypeEnum.image, _image, user.id);
-      List<TransformationJourneyUpload> contentUploaded =
-          await TransformationJourneyRepository()
-              .getUploadedContentByUserId(user.id);
-
-      emit(
-          TransformationJourneyUploadSuccess(contentFromUser: contentUploaded));
+              .createTransformationJourneyUpload(
+                  type, file, userId, indexForContent);
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,
@@ -104,6 +68,18 @@ class TransformationJourneyBloc extends Cubit<TransformationJourneyState> {
     try {
       emit(TransformationJourneyFailure(
           exception: new Exception("Upload Aborted")));
+    } catch (e, stackTrace) {
+      Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
+      emit(TransformationJourneyFailure(exception: e));
+    }
+  }
+
+  void emitTransformationJourneyDefault() {
+    try {
+      emit(TransformationJourneyDefault());
     } catch (e, stackTrace) {
       Sentry.captureException(
         e,

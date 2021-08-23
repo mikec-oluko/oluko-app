@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/blocs/profile_bloc.dart';
-import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
+import 'package:oluko_app/blocs/profile/upload_avatar_bloc.dart';
+import 'package:oluko_app/blocs/profile/upload_cover_image_bloc.dart';
+import 'package:oluko_app/blocs/profile/upload_transformation_journey_content_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -19,12 +20,13 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
     return modalOptionsViewWithProviders(context);
   }
 
-  Container returnList(BuildContext context) {
+  Widget returnList(BuildContext context) {
     return Container(
       color: OlukoColors.black,
       width: MediaQuery.of(context).size.width,
       height: 100,
       child: ListView(
+        padding: EdgeInsets.zero,
         shrinkWrap: true,
         children: [
           ListTile(
@@ -57,30 +59,38 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
   }
 
   void uploadContentFromCamera(BuildContext context) {
-    if (widget.contentFrom == UploadFrom.profileImage ||
-        widget.contentFrom == UploadFrom.profileCoverImage) {
-      BlocProvider.of<ProfileBloc>(context)
-        ..uploadImageForProfile(
-            uploadedFrom: DeviceContentFrom.camera,
-            contentFor: widget.contentFrom);
+    if (widget.contentFrom == UploadFrom.profileImage) {
+      BlocProvider.of<ProfileAvatarBloc>(context)
+        ..uploadProfileAvatarImage(
+          uploadedFrom: DeviceContentFrom.camera,
+        );
+    }
+    if (widget.contentFrom == UploadFrom.profileCoverImage) {
+      BlocProvider.of<ProfileCoverImageBloc>(context)
+        ..uploadProfileCoverImage(
+          uploadedFrom: DeviceContentFrom.camera,
+        );
     }
     if (widget.contentFrom == UploadFrom.transformationJourney) {
-      BlocProvider.of<TransformationJourneyBloc>(context)
+      BlocProvider.of<TransformationJourneyContentBloc>(context)
         ..uploadTransformationJourneyContent(
             uploadedFrom: DeviceContentFrom.camera);
     }
   }
 
   void uploadContentFromGallery(BuildContext context) {
-    if (widget.contentFrom == UploadFrom.profileImage ||
-        widget.contentFrom == UploadFrom.profileCoverImage) {
-      BlocProvider.of<ProfileBloc>(context)
-        ..uploadImageForProfile(
-            uploadedFrom: DeviceContentFrom.gallery,
-            contentFor: widget.contentFrom);
+    if (widget.contentFrom == UploadFrom.profileImage) {
+      BlocProvider.of<ProfileAvatarBloc>(context)
+        ..uploadProfileAvatarImage(uploadedFrom: DeviceContentFrom.gallery);
+    }
+    if (widget.contentFrom == UploadFrom.profileCoverImage) {
+      BlocProvider.of<ProfileCoverImageBloc>(context)
+        ..uploadProfileCoverImage(
+          uploadedFrom: DeviceContentFrom.gallery,
+        );
     }
     if (widget.contentFrom == UploadFrom.transformationJourney) {
-      BlocProvider.of<TransformationJourneyBloc>(context)
+      BlocProvider.of<TransformationJourneyContentBloc>(context)
         ..uploadTransformationJourneyContent(
             uploadedFrom: DeviceContentFrom.gallery);
     }
