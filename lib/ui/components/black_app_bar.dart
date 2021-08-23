@@ -19,6 +19,7 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
   final List<T> searchResultItems;
   final bool showSearchBar;
   final GlobalKey<SearchState> searchKey;
+  final bool showDivider;
 
   OlukoAppBar(
       {this.title,
@@ -31,6 +32,7 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
       this.suggestionMethod,
       this.searchMethod,
       this.showBackButton = true,
+      this.showDivider = true,
       this.onSearchSubmit,
       this.whenSearchBarInitialized,
       this.searchKey});
@@ -101,13 +103,15 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
                   preferredSize: Size.fromHeight(kToolbarHeight),
                   child: Column(
                     children: [
-                      Divider(
-                        height: 1,
-                        color: OlukoColors.divider,
-                        thickness: 1.5,
-                        indent: 0,
-                        endIndent: 0,
-                      )
+                      showDivider
+                          ? Divider(
+                              height: 1,
+                              color: OlukoColors.divider,
+                              thickness: 1.5,
+                              indent: 0,
+                              endIndent: 0,
+                            )
+                          : SizedBox()
                     ],
                   ))),
     );
