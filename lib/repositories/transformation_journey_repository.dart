@@ -36,13 +36,14 @@ class TransformationJourneyRepository {
           .doc(userId)
           .collection('transformationJourneyUploads')
           .where('is_deleted', isNotEqualTo: true)
+          // .orderBy('index')
           .get();
       List<TransformationJourneyUpload> contentUploaded = [];
       docRef.docs.forEach((doc) {
         final Map<String, dynamic> content = doc.data();
         contentUploaded.add(TransformationJourneyUpload.fromJson(content));
       });
-
+      contentUploaded.sort((a, b) => a.index.compareTo(b.index));
       return contentUploaded;
     } catch (e, stackTrace) {
       await Sentry.captureException(
@@ -54,10 +55,7 @@ class TransformationJourneyRepository {
   }
 
   static Future<TransformationJourneyUpload> createTransformationJourneyUpload(
-      FileTypeEnum type,
-      PickedFile file,
-      String userId,
-      int indexForContent) async {
+      FileTypeEnum type, PickedFile file, String userId, int index) async {
     try {
       CollectionReference transformationJourneyUploadsReference =
           projectReference
@@ -91,7 +89,7 @@ class TransformationJourneyRepository {
                 name: '',
                 from: Timestamp.now(),
                 description: '',
-                index: indexForContent == null ? 0 : indexForContent,
+                index: index == null ? 0 : index,
                 type: type,
                 file: downloadUrl,
                 isPublic: true,
@@ -122,5 +120,39 @@ class TransformationJourneyRepository {
         await s3Provider.putFile(file.readAsBytesSync(), folderName, basename);
 
     return downloadUrl;
+  }
+
+  static Future<bool> reorderElementsIndex(
+      {TransformationJourneyUpload elementMoved,
+      TransformationJourneyUpload elementReplaced,
+      String userId}) async {
+    updateIndexOfElements(elementMoved, elementReplaced);
+
+    try {
+      await updateDocument(userId, elementMoved);
+      await updateDocument(userId, elementReplaced);
+      return true;
+    } catch (e) {
+      print(e);
+
+      return false;
+    }
+  }
+
+  static Future updateDocument(
+      String userId, TransformationJourneyUpload elementToUpdate) async {
+    DocumentReference contentReference = projectReference
+        .collection('users')
+        .doc(userId)
+        .collection('transformationJourneyUploads')
+        .doc(elementToUpdate.id);
+    await contentReference.update(elementToUpdate.toJson());
+  }
+
+  static void updateIndexOfElements(TransformationJourneyUpload elementMoved,
+      TransformationJourneyUpload elementReplaced) {
+    final temptElement = elementMoved.index;
+    elementMoved.index = elementReplaced.index;
+    elementReplaced.index = temptElement;
   }
 }

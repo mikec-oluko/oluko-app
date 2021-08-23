@@ -180,8 +180,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   if (state is ProfileCoverImageOpen) {
                     _panelController.open();
 
-                    _contentForPanel =
-                        ModalUploadOptions(UploadFrom.profileCoverImage);
+                    _contentForPanel = ModalUploadOptions(
+                        contentFrom: UploadFrom.profileCoverImage);
                   }
                   if (state is ProfileCoverImageDefault) {
                     _contentForPanel = SizedBox();
@@ -208,8 +208,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
                   if (state is ProfileAvatarOpenPanel) {
                     _panelController.open();
-                    _contentForPanel =
-                        ModalUploadOptions(UploadFrom.profileImage);
+                    _contentForPanel = ModalUploadOptions(
+                        contentFrom: UploadFrom.profileImage);
                   }
 
                   if (state is ProfileAvatarDefault) {

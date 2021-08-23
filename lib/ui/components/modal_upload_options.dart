@@ -9,7 +9,8 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ModalUploadOptions extends StatefulWidget {
   final UploadFrom contentFrom;
-  ModalUploadOptions(this.contentFrom);
+  final int indexValue;
+  ModalUploadOptions({this.contentFrom, this.indexValue});
   @override
   _ModalUploadOptionsState createState() => _ModalUploadOptionsState();
 }

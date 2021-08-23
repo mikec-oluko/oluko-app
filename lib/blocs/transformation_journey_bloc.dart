@@ -88,4 +88,21 @@ class TransformationJourneyBloc extends Cubit<TransformationJourneyState> {
       emit(TransformationJourneyFailure(exception: e));
     }
   }
+
+  Future<void> changeContentOrder(TransformationJourneyUpload elementMoved,
+      TransformationJourneyUpload elementReplaced, String userId) async {
+    final bool isUpdated =
+        await TransformationJourneyRepository.reorderElementsIndex(
+            elementMoved: elementMoved,
+            elementReplaced: elementReplaced,
+            userId: userId);
+    if (isUpdated) {
+      List<TransformationJourneyUpload> contentUploaded =
+          await TransformationJourneyRepository()
+              .getUploadedContentByUserId(userId);
+      emit(TransformationJourneySuccess(contentFromUser: contentUploaded));
+    } else {
+      return;
+    }
+  }
 }
