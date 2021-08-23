@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
@@ -16,6 +17,7 @@ class ExploreSubscribedUsers extends StatefulWidget {
 }
 
 class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
+  List<UserResponse> allEnrolledUsers;
   List<String> storiesItem = const [
     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrpM3UTTyyqIwGsPYB1gCDhfl3XVv0Cex2Lw&usqp=CAU',
     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlCzsqcGBluOOUtgQahXtISLTM3Wb2tkpsoeMqwurI2LEP6pCS0ZgCFLQGiv8BtfJ9p2A&usqp=CAU',
@@ -28,6 +30,9 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
 
   @override
   Widget build(BuildContext context) {
+    if (allEnrolledUsers == null) {
+      BlocProvider.of<SubscribedCourseUsersBloc>(context).get(widget.courseId);
+    }
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: _appBar(),
