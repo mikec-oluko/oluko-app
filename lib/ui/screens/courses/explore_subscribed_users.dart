@@ -107,11 +107,13 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
                       child: Text(
                         '${user.firstName} ${user.lastName}',
                         style: TextStyle(color: Colors.white, fontSize: 13),
+                        textAlign: TextAlign.center,
                       ),
                     ),
                     Text(
                       '${user.username}',
                       style: TextStyle(color: Colors.grey, fontSize: 10),
+                      textAlign: TextAlign.center,
                     )
                   ],
                 ))
