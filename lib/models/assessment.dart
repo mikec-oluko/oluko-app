@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'assessment_task.dart';
+import 'submodels/assessment_task.dart';
 import 'base.dart';
 
 class Assessment extends Base {
