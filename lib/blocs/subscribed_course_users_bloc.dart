@@ -26,15 +26,20 @@ class SubscribedCourseUsersFailure extends SubscribedCourseUsersState {
 class SubscribedCourseUsersBloc extends Cubit<SubscribedCourseUsersState> {
   SubscribedCourseUsersBloc() : super(SubscribedCourseUsersLoading());
 
-  void get(Course course, String userId) async {
+  void get(String courseId) async {
     try {
+      //Fetch enrollments for this course. And retrieve all users that are already enrolled.
       List<CourseEnrollment> courseEnrollmentList =
-          await CourseEnrollmentRepository.getByCourse(course);
+          await CourseEnrollmentRepository.getByCourse(courseId);
 
-      List<DocumentSnapshot<Object>> docs = await Future.wait(
+      List<DocumentSnapshot<Map<String, dynamic>>> docs = await Future.wait(
           courseEnrollmentList.map((e) => e.userReference.get()));
+      List<UserResponse> userList = docs.map((e) {
+        var data = e.data();
+        return data != null ? UserResponse.fromJson(e.data()) : null;
+      }).toList();
 
-      List<UserResponse> userList = docs.map((e) => e.data()).toList();
+      userList.removeWhere((element) => element == null);
 
       emit(SubscribedCourseUsersSuccess(users: userList));
     } catch (exception, stackTrace) {
