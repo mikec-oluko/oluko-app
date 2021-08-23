@@ -9,6 +9,7 @@ import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.da
 import 'package:oluko_app/blocs/gallery_video_bloc.dart';
 import 'package:oluko_app/blocs/movement_submission_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
+import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
 import 'package:oluko_app/blocs/class_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
@@ -170,6 +171,8 @@ class Routes {
   final TransformationJourneyBloc _transformationJourneyBloc =
       TransformationJourneyBloc();
   final ClassBloc _classBloc = ClassBloc();
+  final SubscribedCourseUsersBloc _subscribedCourseUsersBloc =
+      SubscribedCourseUsersBloc();
   final StatisticsBloc _statisticsBloc = StatisticsBloc();
   final MovementBloc _movementBloc = MovementBloc();
   final SegmentBloc _segmentBloc = SegmentBloc();
@@ -489,6 +492,10 @@ class Routes {
       case RouteEnum.exploreSubscribedUsers:
         Map<String, dynamic> args = arguments;
         String courseId = args['courseId'];
+        providers = [
+          BlocProvider<SubscribedCourseUsersBloc>.value(
+              value: _subscribedCourseUsersBloc)
+        ];
         newRouteView = ExploreSubscribedUsers(courseId: courseId);
         break;
       default:

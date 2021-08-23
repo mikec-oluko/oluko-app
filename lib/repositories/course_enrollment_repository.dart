@@ -42,6 +42,23 @@ class CourseEnrollmentRepository {
     return null;
   }
 
+  static Future<List<CourseEnrollment>> getByCourse(Course course) async {
+    CollectionReference reference = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue("projectId"))
+        .collection('courseEnrollments');
+
+    final QuerySnapshot qs =
+        await reference.where("course_id", isEqualTo: course.id).get();
+
+    if (qs.docs.length > 0) {
+      return qs.docs
+          .map((courseData) => CourseEnrollment.fromJson(courseData.data()))
+          .toList();
+    }
+    return null;
+  }
+
   static Future<CourseEnrollment> markSegmentAsCompleted(
       CourseEnrollment courseEnrollment,
       int segmentIndex,

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
@@ -34,27 +36,35 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
         width: ScreenUtils.width(context),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 16.0),
-                child: Row(
-                  children: [
-                    TitleBody('Favourites'),
-                  ],
-                ),
-              ),
-              usersGrid(),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 16.0),
-                child: Row(
-                  children: [
-                    TitleBody('Everyone else'),
-                  ],
-                ),
-              ),
-              usersGrid()
-            ],
+          child: Container(
+            child: BlocBuilder<SubscribedCourseUsersBloc,
+                    SubscribedCourseUsersState>(
+                builder: (context, subscribedCourseUsersState) {
+              return Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16.0),
+                    child: Row(
+                      children: [
+                        TitleBody('Favourites'),
+                      ],
+                    ),
+                  ),
+                  usersGrid(),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16.0),
+                    child: Row(
+                      children: [
+                        TitleBody('Everyone else'),
+                      ],
+                    ),
+                  ),
+                  subscribedCourseUsersState is SubscribedCourseUsersSuccess
+                      ? usersGrid()
+                      : SizedBox()
+                ],
+              );
+            }),
           ),
         ),
       ),
