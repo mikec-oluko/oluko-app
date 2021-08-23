@@ -7,6 +7,7 @@ import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/course_enrollment_repository.dart';
 import 'package:oluko_app/repositories/course_repository.dart';
+import 'package:oluko_app/repositories/user_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class SubscribedCourseUsersState {}
@@ -32,12 +33,8 @@ class SubscribedCourseUsersBloc extends Cubit<SubscribedCourseUsersState> {
       List<CourseEnrollment> courseEnrollmentList =
           await CourseEnrollmentRepository.getByCourse(courseId);
 
-      List<DocumentSnapshot<Map<String, dynamic>>> docs = await Future.wait(
-          courseEnrollmentList.map((e) => e.userReference.get()));
-      List<UserResponse> userList = docs.map((e) {
-        var data = e.data();
-        return data != null ? UserResponse.fromJson(e.data()) : null;
-      }).toList();
+      List<UserResponse> userList = await Future.wait(courseEnrollmentList
+          .map((e) => UserRepository().getById(e.userReference.id)));
 
       userList.removeWhere((element) => element == null);
 
