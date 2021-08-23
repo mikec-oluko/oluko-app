@@ -72,13 +72,14 @@ class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
                                   Navigator.popAndPushNamed(context,
                                       returnRouteToGo(widget.goToPage));
                                 } else {
-                                  BlocProvider.of<AuthBloc>(context)
-                                    ..checkCurrentUser();
                                   BlocProvider.of<ProfileAvatarBloc>(context)
                                     ..emitDefaultState();
                                   BlocProvider.of<ProfileCoverImageBloc>(
                                       context)
                                     ..emitDefaultState();
+                                  BlocProvider.of<AuthBloc>(context)
+                                    ..checkCurrentUser();
+
                                   Navigator.popAndPushNamed(context,
                                       returnRouteToGo(widget.goToPage));
                                 }

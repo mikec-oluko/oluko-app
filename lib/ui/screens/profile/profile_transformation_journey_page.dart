@@ -33,7 +33,8 @@ class _ProfileTransformationJourneyPageState
   List<TransformationJourneyUpload> _transformationJourneyContent = [];
   UserResponse _profileInfo;
   final PanelController _panelController = new PanelController();
-  double panelMaxHeight = 100.0;
+  double _panelMaxHeight = 100.0;
+  double _statePanelMaxHeight = 100.0;
 
   @override
   Widget build(BuildContext context) {
@@ -119,50 +120,68 @@ class _ProfileTransformationJourneyPageState
                               whyIsError: ErrorTypeOption.noContent,
                             )),
                     ),
-                    SlidingUpPanel(
-                      onPanelClosed: () {
-                        BlocProvider.of<TransformationJourneyContentBloc>(
-                            context)
-                          ..emitDefaultState();
+                    BlocListener<TransformationJourneyContentBloc,
+                        TransformationJourneyContentState>(
+                      listener: (context, state) {
+                        if (state is TransformationJourneyContentDefault ||
+                            state is TransformationJourneyContentOpen) {
+                          _statePanelMaxHeight = 100;
+                        } else {
+                          _statePanelMaxHeight = 300;
+                        }
                       },
-                      backdropEnabled: true,
-                      isDraggable: false,
-                      margin: const EdgeInsets.all(0),
-                      header: SizedBox(),
-                      backdropTapClosesPanel: true,
-                      padding: EdgeInsets.zero,
-                      color: OlukoColors.black,
-                      minHeight: 0.0,
-                      // maxHeight: panelMaxHeight,
-                      collapsed: SizedBox(),
-                      defaultPanelState: PanelState.CLOSED,
-                      controller: _panelController,
-                      panel: BlocBuilder<TransformationJourneyContentBloc,
-                              TransformationJourneyContentState>(
-                          builder: (context, state) {
-                        Widget _contentForPanel = SizedBox();
-                        if (state is TransformationJourneyContentOpen) {
-                          _panelController.open();
-                          _contentForPanel = ModalUploadOptions(
-                              UploadFrom.transformationJourney);
-                        }
-                        if (state is TransformationJourneyContentDefault) {
-                          _contentForPanel = ModalUploadOptions(
-                              UploadFrom.transformationJourney);
-                        }
-                        if (state is TransformationJourneyContentLoading) {
-                          _contentForPanel = UploadingModalLoader(
-                              UploadFrom.transformationJourney);
-                        }
-                        if (state is TransformationJourneyContentSuccess) {
-                          _contentForPanel = UploadingModalSuccess(
-                              UploadFrom.transformationJourney);
-                        }
-                        if (state is TransformationJourneyContentFailure) {
-                          _panelController.close();
-                        }
-                        return _contentForPanel;
-                      }),
+                      child: SlidingUpPanel(
+                        onPanelOpened: () {
+                          setState(() {
+                            _panelMaxHeight = _statePanelMaxHeight;
+                          });
+                        },
+                        onPanelClosed: () {
+                          BlocProvider.of<TransformationJourneyContentBloc>(
+                              context)
+                            ..emitDefaultState();
+                        },
+                        backdropEnabled: true,
+                        isDraggable: false,
+                        margin: const EdgeInsets.all(0),
+                        header: SizedBox(),
+                        backdropTapClosesPanel: true,
+                        padding: EdgeInsets.zero,
+                        color: OlukoColors.black,
+                        minHeight: 0.0,
+                        maxHeight: _panelMaxHeight,
+                        collapsed: SizedBox(),
+                        defaultPanelState: PanelState.CLOSED,
+                        controller: _panelController,
+                        panel: BlocBuilder<TransformationJourneyContentBloc,
+                                TransformationJourneyContentState>(
+                            builder: (context, state) {
+                          Widget _contentForPanel = SizedBox();
+                          if (state is TransformationJourneyContentOpen) {
+                            _panelController.open();
+                            _contentForPanel = ModalUploadOptions(
+                                UploadFrom.transformationJourney);
+                          }
+                          if (state is TransformationJourneyContentDefault) {
+                            _panelController.isPanelOpen
+                                ? _panelController.close()
+                                : null;
+                            _contentForPanel = SizedBox();
+                          }
+                          if (state is TransformationJourneyContentLoading) {
+                            _contentForPanel = UploadingModalLoader(
+                                UploadFrom.transformationJourney);
+                          }
+                          if (state is TransformationJourneyContentSuccess) {
+                            _contentForPanel = UploadingModalSuccess(
+                                UploadFrom.transformationJourney);
+                          }
+                          if (state is TransformationJourneyContentFailure) {
+                            _panelController.close();
+                          }
+                          return _contentForPanel;
+                        }),
+                      ),
                     ),
                   ]),
                 ),
@@ -194,7 +213,6 @@ class _ProfileTransformationJourneyPageState
           BlocProvider.of<TransformationJourneyBloc>(context)
             ..getContentByUserId(_profileInfo.id);
         }
-        if (state is TransformationJourneyLoading) {}
         return page(context, _profileInfo);
       },
     );
