@@ -46,7 +46,7 @@ class _State extends State<SearchResultsGrid> {
                                 ))),
                     child: _getCourseCard(
                       Image.network(
-                        e.imageUrl,
+                        e.image,
                         fit: BoxFit.cover,
                         frameBuilder: (BuildContext context, Widget child,
                                 int frame, bool wasSynchronouslyLoaded) =>
