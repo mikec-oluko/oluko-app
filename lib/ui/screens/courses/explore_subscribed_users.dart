@@ -55,7 +55,9 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
                       ],
                     ),
                   ),
-                  usersGrid(),
+                  subscribedCourseUsersState is SubscribedCourseUsersSuccess
+                      ? usersGrid(subscribedCourseUsersState.users)
+                      : SizedBox(),
                   Padding(
                     padding: const EdgeInsets.only(bottom: 16.0),
                     child: Row(
@@ -65,7 +67,7 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
                     ),
                   ),
                   subscribedCourseUsersState is SubscribedCourseUsersSuccess
-                      ? usersGrid()
+                      ? usersGrid(subscribedCourseUsersState.users)
                       : SizedBox()
                 ],
               );
@@ -84,27 +86,29 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
     );
   }
 
-  Widget usersGrid() {
+  Widget usersGrid(List<UserResponse> users) {
     return GridView.count(
         childAspectRatio: 0.8,
         crossAxisCount: 4,
         shrinkWrap: true,
-        children: storiesItem
-            .map((e) => Column(
+        children: users
+            .map((user) => Column(
                   children: [
                     StoriesItem(
                       maxRadius: 30,
-                      imageUrl: e,
+                      imageUrl: user.avatar != null
+                          ? user.avatar
+                          : 'https://firebasestorage.googleapis.com/v0/b/oluko-development.appspot.com/o/avatar.png?alt=media&token=c16925c3-e2be-47fb-9d15-8cd1469d9790',
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0, bottom: 0.0),
                       child: Text(
-                        'Joaquin Piñeiro',
+                        '${user.firstName} ${user.lastName}',
                         style: TextStyle(color: Colors.white, fontSize: 13),
                       ),
                     ),
                     Text(
-                      'Username',
+                      '${user.username}',
                       style: TextStyle(color: Colors.grey, fontSize: 10),
                     )
                   ],
