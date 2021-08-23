@@ -123,7 +123,7 @@ class _SegmentTimersState extends State<SegmentTimers> {
             aspectRatio: 1,
             child: CircularProgressIndicator(
                 value: 0.3,
-                color: OlukoColors.coral,
+                // color: OlukoColors.coral,
                 backgroundColor: OlukoColors.grayColor)),
       
       Text(TimeConverter.durationToString(Duration(seconds: 8)),
@@ -141,7 +141,7 @@ class _SegmentTimersState extends State<SegmentTimers> {
             aspectRatio: 1,
             child: CircularProgressIndicator(
                 value: 0.4,
-                color: OlukoColors.coral,
+                // color: OlukoColors.coral,
                 backgroundColor: OlukoColors.grayColor)),
       ),
       Column(children: [
@@ -187,7 +187,7 @@ class _SegmentTimersState extends State<SegmentTimers> {
             aspectRatio: 1,
             child: CircularProgressIndicator(
                 value: 0,
-                color: OlukoColors.skyblue,
+                // color: OlukoColors.skyblue,
                 backgroundColor: OlukoColors.grayColor)),
       ),
       Column(children: [
@@ -227,7 +227,7 @@ class _SegmentTimersState extends State<SegmentTimers> {
             aspectRatio: 1,
             child: CircularProgressIndicator(
                 value: 1,
-                color: OlukoColors.skyblue,
+                // color: OlukoColors.skyblue,
                 backgroundColor: OlukoColors.grayColor)),
       ),
       Column(children: [
@@ -256,7 +256,7 @@ class _SegmentTimersState extends State<SegmentTimers> {
                 aspectRatio: 1,
                 child: CircularProgressIndicator(
                     value: 0,
-                    color: OlukoColors.skyblue,
+                    // color: OlukoColors.skyblue,
                     backgroundColor: OlukoColors.grayColor)),
           ),
           Column(children: [
@@ -287,7 +287,7 @@ class _SegmentTimersState extends State<SegmentTimers> {
           ),
           Padding(
               padding: EdgeInsets.only(top: 1),
-              child: Icon(Icons.circle_outlined,
+              child: Icon(Icons.circle,
                   size: 12, color: OlukoColors.primary))
         ]));
   }

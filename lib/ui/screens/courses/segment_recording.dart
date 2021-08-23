@@ -525,8 +525,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
           ),
           Padding(
               padding: EdgeInsets.only(top: 1),
-              child: Icon(Icons.circle_outlined,
-                  size: 12, color: OlukoColors.primary))
+              child: Icon(Icons.circle, size: 12, color: OlukoColors.primary))
         ]));
   }
 
@@ -566,7 +565,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
                   aspectRatio: 1,
                   child: CircularProgressIndicator(
                       value: progressValue,
-                      color: OlukoColors.coral,
+                      // color: OlukoColors.coral,
                       backgroundColor: OlukoColors.grayColor)),
               Text(duration,
                   textAlign: TextAlign.center,
@@ -585,7 +584,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
             aspectRatio: 1,
             child: CircularProgressIndicator(
                 value: 0.4,
-                color: OlukoColors.coral,
+                // color: OlukoColors.coral,
                 backgroundColor: OlukoColors.grayColor)),
       ),
       Column(children: [
@@ -633,7 +632,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
                   aspectRatio: 1,
                   child: CircularProgressIndicator(
                       value: 0,
-                      color: OlukoColors.skyblue,
+                      // color: OlukoColors.skyblue,
                       backgroundColor: OlukoColors.grayColor)),
               Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Text("PAUSED",
@@ -676,7 +675,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
                   aspectRatio: 1,
                   child: CircularProgressIndicator(
                       value: progressValue,
-                      color: OlukoColors.skyblue,
+                      // color: OlukoColors.skyblue,
                       backgroundColor: OlukoColors.grayColor)),
               Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Text("REST",
@@ -710,7 +709,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
                       aspectRatio: 1,
                       child: CircularProgressIndicator(
                           value: 0,
-                          color: OlukoColors.skyblue,
+                          // color: OlukoColors.skyblue,
                           backgroundColor: OlukoColors.grayColor)),
                   Column(
                       mainAxisAlignment: MainAxisAlignment.center,
