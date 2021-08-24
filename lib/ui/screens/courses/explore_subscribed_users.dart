@@ -92,6 +92,7 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
     return GridView.count(
         childAspectRatio: 0.8,
         crossAxisCount: 4,
+        physics: new NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         children: users
             .map((user) => Column(
