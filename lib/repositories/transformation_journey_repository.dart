@@ -25,7 +25,6 @@ class TransformationJourneyRepository {
     this.firestoreInstance = firestoreInstance;
   }
 
-  //TODO: Filter or not, userInfo to return only the List
   Future<List<TransformationJourneyUpload>> getUploadedContentByUserId(
       String userId) async {
     try {
@@ -36,7 +35,6 @@ class TransformationJourneyRepository {
           .doc(userId)
           .collection('transformationJourneyUploads')
           .where('is_deleted', isNotEqualTo: true)
-          // .orderBy('index')
           .get();
       List<TransformationJourneyUpload> contentUploaded = [];
       docRef.docs.forEach((doc) {

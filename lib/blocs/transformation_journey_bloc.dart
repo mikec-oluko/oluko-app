@@ -1,10 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/enums/file_type_enum.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
-import 'package:oluko_app/models/user_response.dart';
-import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/repositories/transformation_journey_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -17,11 +14,6 @@ class TransformationJourneyDefault extends TransformationJourneyState {}
 class TransformationJourneySuccess extends TransformationJourneyState {
   final List<TransformationJourneyUpload> contentFromUser;
   TransformationJourneySuccess({this.contentFromUser});
-}
-
-class TransformationJourneyUploadSuccess extends TransformationJourneyState {
-  final List<TransformationJourneyUpload> contentFromUser;
-  TransformationJourneyUploadSuccess({this.contentFromUser});
 }
 
 class TransformationJourneyFailure extends TransformationJourneyState {

@@ -2,7 +2,6 @@ import 'package:drag_and_drop_gridview/devdrag.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
-import 'package:oluko_app/blocs/oluko_panel_bloc.dart';
 import 'package:oluko_app/blocs/profile/upload_transformation_journey_content_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -14,7 +13,6 @@ import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/image_and_video_container.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
-import 'package:oluko_app/ui/components/oluko_error_message_view.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/modal_upload_options.dart';
 import 'package:oluko_app/ui/components/uploading_modal_loader.dart';
@@ -104,173 +102,163 @@ class _ProfileTransformationJourneyPageState
                         )
                       : SizedBox(),
                   _contentGallery.length != 0
-                      ? Align(
-                          alignment: Alignment.center,
-                          child: Padding(
-                            padding: EdgeInsets.only(top: 150),
-                            child: Container(
-                              height: MediaQuery.of(context).size.height / 1.4,
-                              child: DragAndDropGridView(
-                                isCustomChildWhenDragging: true,
-                                childWhenDragging: (pos) => Container(
-                                  height: 50,
-                                  width: 50,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(10.0)),
-                                      border: Border.all(
-                                        width: 2.0,
-                                        color: OlukoColors.grayColor,
-                                      )),
-                                ),
-                                itemCount: _transformationJourneyContent.length,
-                                controller: _scrollController,
-                                onWillAccept: (oldIndex, newIndex) {
-                                  setState(
-                                    () {
-                                      _position = newIndex;
-                                    },
-                                  );
-                                  return true;
-                                },
-                                onReorder: (oldIndex, newIndex) {
-                                  BlocProvider.of<TransformationJourneyBloc>(
-                                      context)
-                                    ..changeContentOrder(
-                                        _transformationJourneyContent[oldIndex],
-                                        _transformationJourneyContent[newIndex],
-                                        _profileInfo.id);
-
-                                  final elementMoved =
-                                      _transformationJourneyContent[oldIndex];
-                                  _transformationJourneyContent[oldIndex] =
-                                      _transformationJourneyContent[newIndex];
-
-                                  _transformationJourneyContent[newIndex] =
-                                      elementMoved;
-
-                                  setState(() {
-                                    _position = null;
-                                  });
-                                },
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 3,
-                                ),
-                                itemBuilder: (context, index) => Opacity(
-                                  opacity: _position != null
-                                      ? _position != index
-                                          ? 0.6
-                                          : 1
-                                      : 1,
-                                  child: Card(
-                                    color: Colors.transparent,
-                                    child: LayoutBuilder(
-                                      builder: (context, costrains) {
-                                        if (_variableSet == 0) {
-                                          height = 120;
-                                          width = 100;
-                                          _variableSet++;
-                                        }
-                                        return ImageAndVideoContainer(
-                                          backgroundImage:
-                                              _transformationJourneyContent[
-                                                      index]
-                                                  .thumbnail,
-                                          isContentVideo:
-                                              _transformationJourneyContent[
-                                                              index]
-                                                          .type ==
-                                                      FileTypeEnum.video
-                                                  ? true
-                                                  : false,
-                                          videoUrl:
-                                              _transformationJourneyContent[
-                                                      index]
-                                                  .file,
-                                          displayOnViewNamed: ActualProfileRoute
-                                              .transformationJourney,
-                                          originalContent:
-                                              _transformationJourneyContent[
-                                                  index],
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        )
+                      ? dragAndDropGridView(context)
                       : SizedBox(),
-                  BlocListener<TransformationJourneyContentBloc,
-                      TransformationJourneyContentState>(
-                    listener: (context, state) {
-                      if (state is TransformationJourneyContentDefault ||
-                          state is TransformationJourneyContentOpen) {
-                        _statePanelMaxHeight = 100;
-                      } else {
-                        _statePanelMaxHeight = 300;
-                      }
-                    },
-                    child: SlidingUpPanel(
-                      onPanelOpened: () {
-                        setState(() {
-                          _panelMaxHeight = _statePanelMaxHeight;
-                        });
-                      },
-                      onPanelClosed: () {
-                        BlocProvider.of<TransformationJourneyContentBloc>(
-                            context)
-                          ..emitDefaultState();
-                      },
-                      backdropEnabled: true,
-                      isDraggable: false,
-                      margin: const EdgeInsets.all(0),
-                      header: SizedBox(),
-                      backdropTapClosesPanel: true,
-                      padding: EdgeInsets.zero,
-                      color: OlukoColors.black,
-                      minHeight: 0.0,
-                      maxHeight: _panelMaxHeight,
-                      collapsed: SizedBox(),
-                      defaultPanelState: PanelState.CLOSED,
-                      controller: _panelController,
-                      panel: BlocBuilder<TransformationJourneyContentBloc,
-                              TransformationJourneyContentState>(
-                          builder: (context, state) {
-                        Widget _contentForPanel = SizedBox();
-                        if (state is TransformationJourneyContentOpen) {
-                          _panelController.open();
-                          _contentForPanel = ModalUploadOptions(
-                            contentFrom: UploadFrom.transformationJourney,
-                            indexValue: _transformationJourneyContent.length,
-                          );
-                        }
-                        if (state is TransformationJourneyContentDefault) {
-                          _panelController.isPanelOpen
-                              ? _panelController.close()
-                              : null;
-                          _contentForPanel = SizedBox();
-                        }
-                        if (state is TransformationJourneyContentLoading) {
-                          _contentForPanel = UploadingModalLoader(
-                              UploadFrom.transformationJourney);
-                        }
-                        if (state is TransformationJourneyContentSuccess) {
-                          _contentForPanel = UploadingModalSuccess(
-                              UploadFrom.transformationJourney);
-                        }
-                        if (state is TransformationJourneyContentFailure) {
-                          _panelController.close();
-                        }
-                        return _contentForPanel;
-                      }),
-                    ),
-                  ),
+                  slidingUpPanelComponent(context),
                 ]),
               ),
             ),
+    );
+  }
+
+  BlocListener<TransformationJourneyContentBloc,
+          TransformationJourneyContentState>
+      slidingUpPanelComponent(BuildContext context) {
+    return BlocListener<TransformationJourneyContentBloc,
+        TransformationJourneyContentState>(
+      listener: (context, state) {
+        if (state is TransformationJourneyContentDefault ||
+            state is TransformationJourneyContentOpen) {
+          _statePanelMaxHeight = 100;
+        } else {
+          _statePanelMaxHeight = 300;
+        }
+      },
+      child: SlidingUpPanel(
+        onPanelOpened: () {
+          setState(() {
+            _panelMaxHeight = _statePanelMaxHeight;
+          });
+        },
+        onPanelClosed: () {
+          BlocProvider.of<TransformationJourneyContentBloc>(context)
+            ..emitDefaultState();
+        },
+        backdropEnabled: true,
+        isDraggable: false,
+        margin: const EdgeInsets.all(0),
+        header: SizedBox(),
+        backdropTapClosesPanel: true,
+        padding: EdgeInsets.zero,
+        color: OlukoColors.black,
+        minHeight: 0.0,
+        maxHeight: _panelMaxHeight,
+        collapsed: SizedBox(),
+        defaultPanelState: PanelState.CLOSED,
+        controller: _panelController,
+        panel: BlocBuilder<TransformationJourneyContentBloc,
+            TransformationJourneyContentState>(builder: (context, state) {
+          Widget _contentForPanel = SizedBox();
+          if (state is TransformationJourneyContentOpen) {
+            _panelController.open();
+            _contentForPanel = ModalUploadOptions(
+              contentFrom: UploadFrom.transformationJourney,
+              indexValue: _transformationJourneyContent.length,
+            );
+          }
+          if (state is TransformationJourneyContentDefault) {
+            _panelController.isPanelOpen ? _panelController.close() : null;
+            _contentForPanel = SizedBox();
+          }
+          if (state is TransformationJourneyContentLoading) {
+            _contentForPanel =
+                UploadingModalLoader(UploadFrom.transformationJourney);
+          }
+          if (state is TransformationJourneyContentSuccess) {
+            _contentForPanel =
+                UploadingModalSuccess(UploadFrom.transformationJourney);
+          }
+          if (state is TransformationJourneyContentFailure) {
+            _panelController.close();
+          }
+          return _contentForPanel;
+        }),
+      ),
+    );
+  }
+
+  Align dragAndDropGridView(BuildContext context) {
+    return Align(
+      alignment: Alignment.center,
+      child: Padding(
+        padding: EdgeInsets.only(top: 150),
+        child: Container(
+          height: MediaQuery.of(context).size.height / 1.4,
+          child: DragAndDropGridView(
+            isCustomChildWhenDragging: true,
+            childWhenDragging: (pos) => Container(
+              height: 50,
+              width: 50,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  border: Border.all(
+                    width: 2.0,
+                    color: OlukoColors.grayColor,
+                  )),
+            ),
+            itemCount: _transformationJourneyContent.length,
+            controller: _scrollController,
+            onWillAccept: (oldIndex, newIndex) {
+              setState(
+                () {
+                  _position = newIndex;
+                },
+              );
+              return true;
+            },
+            onReorder: (oldIndex, newIndex) {
+              BlocProvider.of<TransformationJourneyBloc>(context)
+                ..changeContentOrder(_transformationJourneyContent[oldIndex],
+                    _transformationJourneyContent[newIndex], _profileInfo.id);
+
+              final elementMoved = _transformationJourneyContent[oldIndex];
+              _transformationJourneyContent[oldIndex] =
+                  _transformationJourneyContent[newIndex];
+
+              _transformationJourneyContent[newIndex] = elementMoved;
+
+              setState(() {
+                _position = null;
+              });
+            },
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+            ),
+            itemBuilder: (context, index) => Opacity(
+              opacity: _position != null
+                  ? _position != index
+                      ? 0.6
+                      : 1
+                  : 1,
+              child: Card(
+                color: Colors.transparent,
+                child: LayoutBuilder(
+                  builder: (context, costrains) {
+                    if (_variableSet == 0) {
+                      height = 120;
+                      width = 100;
+                      _variableSet++;
+                    }
+                    return ImageAndVideoContainer(
+                      backgroundImage:
+                          _transformationJourneyContent[index].thumbnail,
+                      isContentVideo:
+                          _transformationJourneyContent[index].type ==
+                                  FileTypeEnum.video
+                              ? true
+                              : false,
+                      videoUrl: _transformationJourneyContent[index].file,
+                      displayOnViewNamed:
+                          ActualProfileRoute.transformationJourney,
+                      originalContent: _transformationJourneyContent[index],
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -279,13 +267,6 @@ class _ProfileTransformationJourneyPageState
     return BlocBuilder<TransformationJourneyBloc, TransformationJourneyState>(
       builder: (context, state) {
         if (state is TransformationJourneySuccess) {
-          _transformationJourneyContent = state.contentFromUser;
-          _contentGallery =
-              TransformListOfItemsToWidget.getWidgetListFromContent(
-                  tansformationJourneyData: _transformationJourneyContent,
-                  requestedFromRoute: ActualProfileRoute.transformationJourney);
-        }
-        if (state is TransformationJourneyUploadSuccess) {
           _transformationJourneyContent = state.contentFromUser;
           _contentGallery =
               TransformListOfItemsToWidget.getWidgetListFromContent(

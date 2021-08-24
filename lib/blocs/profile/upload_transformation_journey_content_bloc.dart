@@ -54,8 +54,6 @@ class TransformationJourneyContentBloc
 
       await TransformationJourneyRepository.createTransformationJourneyUpload(
           FileTypeEnum.image, _image, user.id, indexForContent);
-      await TransformationJourneyRepository()
-          .getUploadedContentByUserId(user.id);
 
       emit(TransformationJourneyContentSuccess());
     } catch (e, stackTrace) {
