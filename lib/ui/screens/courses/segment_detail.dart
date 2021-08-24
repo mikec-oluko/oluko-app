@@ -19,6 +19,8 @@ import 'package:oluko_app/ui/screens/courses/segment_camera_preview.dart.dart';
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/timer_utils.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class SegmentDetail extends StatefulWidget {
   SegmentDetail(
@@ -111,28 +113,6 @@ class _SegmentDetailState extends State<SegmentDetail> {
     );
   }
 
-  _startCountdown(WorkoutType workoutType) {
-    return Navigator.of(context)
-        .push(PageRouteBuilder(
-            opaque: false,
-            pageBuilder: (BuildContext context, _, __) => CountdownOverlay(
-                  seconds: 5,
-                  title: workoutType == WorkoutType.segmentWithRecording
-                      ? OlukoLocalizations.of(context)
-                          .find("segmentAndRecordingStartsIn")
-                      : OlukoLocalizations.of(context).find("segmentStartsIn"),
-                )))
-        .then((value) => Navigator.pushNamed(
-                context, routeLabels[RouteEnum.segmentRecording],
-                arguments: {
-                  'segmentIndex': widget.segmentIndex,
-                  'classIndex': widget.classIndex,
-                  'courseEnrollment': widget.courseEnrollment,
-                  'workoutType': workoutType,
-                  'segments': _segments,
-                }));
-  }
-
   List<Widget> _confirmDialogContent() {
     return [
       Icon(Icons.warning_amber_rounded, color: Colors.white, size: 100),
@@ -208,7 +188,11 @@ class _SegmentDetailState extends State<SegmentDetail> {
                     OlukoOutlinedButton(
                       title: 'Ignore',
                       onPressed: () {
-                        _startCountdown(WorkoutType.segment);
+                        TimerUtils.startCountdown(
+                            WorkoutType.segment,
+                            context,
+                            getArguments(),
+                            _segments[widget.segmentIndex].initialTimer);
                       },
                     ),
                     SizedBox(width: 20),
@@ -223,7 +207,6 @@ class _SegmentDetailState extends State<SegmentDetail> {
                               'courseEnrollment': widget.courseEnrollment,
                               'segments': _segments,
                             });
-                        //_startCountdown(WorkoutType.segmentWithRecording);
                       },
                     )
                   ],
@@ -235,5 +218,15 @@ class _SegmentDetailState extends State<SegmentDetail> {
                   icon: Icon(Icons.close, color: Colors.white),
                   onPressed: () => Navigator.pop(context)))
         ]));
+  }
+
+  Object getArguments() {
+    return {
+      'segmentIndex': widget.segmentIndex,
+      'classIndex': widget.classIndex,
+      'courseEnrollment': widget.courseEnrollment,
+      'workoutType': WorkoutType.segment,
+      'segments': _segments,
+    };
   }
 }

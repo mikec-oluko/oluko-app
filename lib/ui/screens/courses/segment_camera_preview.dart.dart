@@ -8,6 +8,7 @@ import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/screens/courses/segment_recording.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/timer_utils.dart';
 
 class SegmentCameraPreview extends StatefulWidget {
   final CourseEnrollment courseEnrollment;
@@ -108,7 +109,8 @@ class _State extends State<SegmentCameraPreview> {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 20.0, vertical: 4),
                                     child: Text(
-                                        OlukoLocalizations.of(context).find('cameraInfo'),
+                                        OlukoLocalizations.of(context)
+                                            .find('cameraInfo'),
                                         textAlign: TextAlign.center,
                                         style: OlukoFonts.olukoBigFont(
                                             custoFontWeight: FontWeight.w300,
@@ -118,7 +120,8 @@ class _State extends State<SegmentCameraPreview> {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 20.0, vertical: 2),
                                     child: Text(
-                                        OlukoLocalizations.of(context).find('cameraWarning'),
+                                        OlukoLocalizations.of(context)
+                                            .find('cameraWarning'),
                                         textAlign: TextAlign.center,
                                         style: OlukoFonts.olukoBigFont(
                                             custoFontWeight: FontWeight.w300,
@@ -132,14 +135,11 @@ class _State extends State<SegmentCameraPreview> {
   Widget startButton() {
     return GestureDetector(
         onTap: () {
-          Navigator.pushNamed(context, routeLabels[RouteEnum.segmentRecording],
-              arguments: {
-                'segmentIndex': widget.segmentIndex,
-                'classIndex': widget.classIndex,
-                'courseEnrollment': widget.courseEnrollment,
-                'workoutType': WorkoutType.segmentWithRecording,
-                'segments': widget.segments,
-              });
+          TimerUtils.startCountdown(
+              WorkoutType.segmentWithRecording,
+              context,
+              getArguments(),
+              widget.segments[widget.segmentIndex].initialTimer);
         },
         child: Stack(alignment: Alignment.center, children: [
           Image.asset(
@@ -151,6 +151,16 @@ class _State extends State<SegmentCameraPreview> {
             scale: 4,
           ),
         ]));
+  }
+
+  getArguments() {
+    return {
+      'segmentIndex': widget.segmentIndex,
+      'classIndex': widget.classIndex,
+      'courseEnrollment': widget.courseEnrollment,
+      'workoutType': WorkoutType.segmentWithRecording,
+      'segments': widget.segments,
+    };
   }
 
   Widget formSection() {
