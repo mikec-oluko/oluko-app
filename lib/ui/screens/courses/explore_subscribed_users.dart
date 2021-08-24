@@ -7,6 +7,7 @@ import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class ExploreSubscribedUsers extends StatefulWidget {
@@ -50,7 +51,8 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
                         padding: const EdgeInsets.only(bottom: 16.0),
                         child: Row(
                           children: [
-                            TitleBody('Favourites'),
+                            TitleBody(OlukoLocalizations.of(context)
+                                .find("favourites")),
                           ],
                         ),
                       ),
@@ -61,7 +63,8 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
                         padding: const EdgeInsets.only(bottom: 16.0),
                         child: Row(
                           children: [
-                            TitleBody('Everyone else'),
+                            TitleBody(OlukoLocalizations.of(context)
+                                .find("everyoneElse")),
                           ],
                         ),
                       ),
@@ -121,7 +124,7 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
                 .toList())
         : Padding(
             padding: EdgeInsets.only(bottom: 20, top: 10),
-            child: TitleBody('No Users.'),
+            child: TitleBody(OlukoLocalizations.of(context).find("noUsers")),
           );
   }
 }
