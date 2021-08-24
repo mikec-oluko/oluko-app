@@ -75,7 +75,8 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
     if (widget.contentFrom == UploadFrom.transformationJourney) {
       BlocProvider.of<TransformationJourneyContentBloc>(context)
         ..uploadTransformationJourneyContent(
-            uploadedFrom: DeviceContentFrom.camera);
+            uploadedFrom: DeviceContentFrom.camera,
+            indexForContent: widget.indexValue);
     }
   }
 
@@ -93,7 +94,8 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
     if (widget.contentFrom == UploadFrom.transformationJourney) {
       BlocProvider.of<TransformationJourneyContentBloc>(context)
         ..uploadTransformationJourneyContent(
-            uploadedFrom: DeviceContentFrom.gallery);
+            uploadedFrom: DeviceContentFrom.gallery,
+            indexForContent: widget.indexValue);
     }
   }
 

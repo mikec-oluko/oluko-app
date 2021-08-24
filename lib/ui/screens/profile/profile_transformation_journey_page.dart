@@ -244,7 +244,7 @@ class _ProfileTransformationJourneyPageState
                           _panelController.open();
                           _contentForPanel = ModalUploadOptions(
                             contentFrom: UploadFrom.transformationJourney,
-                            indexValue: _contentGallery.length,
+                            indexValue: _transformationJourneyContent.length,
                           );
                         }
                         if (state is TransformationJourneyContentDefault) {
