@@ -38,7 +38,17 @@ class SubscribedCourseUsersBloc extends Cubit<SubscribedCourseUsersState> {
 
       userList.removeWhere((element) => element == null);
 
-      emit(SubscribedCourseUsersSuccess(users: userList));
+      List<UserResponse> uniqueUserList = [];
+      userList.forEach((element) {
+        if (uniqueUserList
+                .map((e) => e.username)
+                .toList()
+                .indexOf(element.username) ==
+            -1) {
+          uniqueUserList.add(element);
+        }
+      });
+      emit(SubscribedCourseUsersSuccess(users: uniqueUserList));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
