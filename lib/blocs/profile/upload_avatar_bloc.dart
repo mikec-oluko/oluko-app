@@ -33,14 +33,12 @@ class ProfileAvatarBloc extends Cubit<ProfileAvatarState> {
       final imagePicker = ImagePicker();
       if (uploadedFrom == DeviceContentFrom.gallery) {
         _image = await imagePicker.getImage(source: ImageSource.gallery);
-      }
-      if (uploadedFrom == DeviceContentFrom.camera) {
+      } else if (uploadedFrom == DeviceContentFrom.camera) {
         _image = await imagePicker.getImage(source: ImageSource.camera);
       }
 
       if (_image == null) {
-        emit(ProfileAvatarFailure(
-            exception: new Exception("Profile upload aborted")));
+        emit(ProfileAvatarFailure(exception: new Exception()));
         return;
       }
       emit(ProfileAvatarLoading());

@@ -39,13 +39,11 @@ class TransformationJourneyContentBloc
       final imagePicker = ImagePicker();
       if (uploadedFrom == DeviceContentFrom.gallery) {
         _image = await imagePicker.getImage(source: ImageSource.gallery);
-      }
-      if (uploadedFrom == DeviceContentFrom.camera) {
+      } else if (uploadedFrom == DeviceContentFrom.camera) {
         _image = await imagePicker.getImage(source: ImageSource.camera);
       }
       if (_image == null) {
-        emit(TransformationJourneyContentFailure(
-            exception: new Exception("Content upload canceled")));
+        emit(TransformationJourneyContentFailure(exception: new Exception()));
         return;
       }
       emit(TransformationJourneyContentLoading());

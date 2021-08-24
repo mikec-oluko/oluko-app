@@ -140,5 +140,6 @@
     "challenges": "Challenges",
     "movesInThisClass": "Moves in this class",
     "viewDetails": "View Details",
-    "noContent":"No content to display"
+    "noContent":"No content to display",
+    "profileUploadAborted":"Profile upload aborted"
 }
