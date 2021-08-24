@@ -81,7 +81,7 @@ class _CountdownOverlayState extends State<CountdownOverlay> {
         ]),
         SizedBox(height: 30),
         Stack(alignment: Alignment.center, children: [
-          TimerUtils.buildCircle(widget.totalRounds, widget.currentRound),
+          TimerUtils.roundsTimer(widget.totalRounds, widget.currentRound),
           TimerUtils.initialTimer(InitialTimerType.Start, widget.currentRound,
               widget.seconds, countdown, context)
         ])

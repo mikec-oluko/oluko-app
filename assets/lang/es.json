@@ -146,6 +146,11 @@
     "startsIn": "Comienza en",
     "endsIn": "Termina en",
     "pauseWarning": "Si presiona este botón durante la grabación, finalizará la grabación y se detendrá el segmento.",
-    "dontShowAgain": "No volver a mostrar"
+    "dontShowAgain": "No volver a mostrar",
+    "round": "Ronda",
+    "rest": "Descanso",
+    "tapHere": "Toca aquí",
+    "whenDone": "cuando termines",
+    "ignore": "Ignorar"
 
 }

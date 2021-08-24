@@ -31,7 +31,7 @@ class TimerUtils {
                 fontStyle: FontStyle.italic,
                 color: OlukoColors.coral)),
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Text("Round   ",
+          Text(OlukoLocalizations.of(context).find('round') + " ",
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontSize: 12,
@@ -69,7 +69,7 @@ class TimerUtils {
     return 1 - (currentTime / totalTime);
   }
 
-  static Widget buildCircle(int totalRounds, int currentRound) =>
+  static Widget roundsTimer(int totalRounds, int currentRound) =>
       IntervalProgressBar(
         direction: IntervalProgressDirection.circle,
         max: totalRounds,
@@ -107,7 +107,7 @@ class TimerUtils {
             ])));
   }
 
-  static Widget pausedTimer(String duration) {
+  static Widget pausedTimer(String duration, BuildContext context) {
     return Container(
         child: SizedBox(
             height: 180,
@@ -120,7 +120,8 @@ class TimerUtils {
                       color: OlukoColors.skyblue,
                       backgroundColor: OlukoColors.grayColorSemiTransparent)),
               Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Text("PAUSED",
+                Text(
+                    OlukoLocalizations.of(context).find('paused').toUpperCase(),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         fontSize: 28,
@@ -137,7 +138,8 @@ class TimerUtils {
             ])));
   }
 
-  static Widget restTimer(double progressValue, String duration) {
+  static Widget restTimer(
+      double progressValue, String duration, BuildContext context) {
     //double ellipseScale = 4.5;
     return Container(
         child: SizedBox(
@@ -163,7 +165,7 @@ class TimerUtils {
                       color: OlukoColors.skyblue,
                       backgroundColor: OlukoColors.grayColorSemiTransparent)),
               Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Text("REST",
+                Text(OlukoLocalizations.of(context).find('rest').toUpperCase(),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         fontSize: 28,
@@ -180,7 +182,7 @@ class TimerUtils {
             ])));
   }
 
-  static Widget repsTimer(Function() onTap) {
+  static Widget repsTimer(Function() onTap, BuildContext context) {
     return Container(
         child: SizedBox(
             height: 180,
@@ -198,14 +200,14 @@ class TimerUtils {
                   Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text("Tap here",
+                        Text(OlukoLocalizations.of(context).find('tapHere'),
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 fontSize: 32,
                                 fontWeight: FontWeight.bold,
                                 color: OlukoColors.primary)),
                         SizedBox(height: 5),
-                        Text("when done",
+                        Text(OlukoLocalizations.of(context).find('whenDone'),
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 fontSize: 18,
@@ -216,15 +218,14 @@ class TimerUtils {
   }
 
   static startCountdown(WorkoutType workoutType, BuildContext context,
-      Object arguments, int initialTimer) {
+      Object arguments, int initialTimer, int totalRounds, int currentRound) {
     return Navigator.of(context)
         .push(PageRouteBuilder(
             opaque: false,
             pageBuilder: (BuildContext context, _, __) => CountdownOverlay(
                   seconds: initialTimer != null ? initialTimer : 5,
-                  //TODO: Make dynamic
-                  totalRounds: 8,
-                  currentRound: 1,
+                  totalRounds: totalRounds,
+                  currentRound: currentRound,
                   recording: workoutType == WorkoutType.segmentWithRecording,
                 )))
         .then((value) => Navigator.pushNamed(

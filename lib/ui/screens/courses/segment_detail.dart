@@ -186,13 +186,16 @@ class _SegmentDetailState extends State<SegmentDetail> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     OlukoOutlinedButton(
-                      title: 'Ignore',
+                      title: OlukoLocalizations.of(context).find('ignore'),
                       onPressed: () {
+                        //TODO: Make rounds dynamic
                         TimerUtils.startCountdown(
                             WorkoutType.segment,
                             context,
                             getArguments(),
-                            _segments[widget.segmentIndex].initialTimer);
+                            _segments[widget.segmentIndex].initialTimer,
+                            8,
+                            2);
                       },
                     ),
                     SizedBox(width: 20),

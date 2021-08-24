@@ -159,7 +159,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
             padding: const EdgeInsets.only(top: 3, bottom: 8),
             child: Stack(alignment: Alignment.center, children: [
               //TODO: Make dynamic
-              TimerUtils.buildCircle(8, 2),
+              TimerUtils.roundsTimer(8, 2),
               _countdownSection(workState)
             ])),
         _tasksSection(
@@ -176,9 +176,11 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     bool isTimedTask = timerEntries[timerTaskIndex].time != null;
 
     if (!isTimedTask) {
-      return TimerUtils.repsTimer(() => this.setState(() {
-            _goToNextStep();
-          }));
+      return TimerUtils.repsTimer(
+          () => this.setState(() {
+                _goToNextStep();
+              }),
+          context);
     }
 
     Duration actualTime =
@@ -189,12 +191,12 @@ class _SegmentRecordingState extends State<SegmentRecording> {
 
     if (workState == WorkState.paused) {
       return TimerUtils.pausedTimer(
-          TimeConverter.durationToString(this.timeLeft));
+          TimeConverter.durationToString(this.timeLeft), context);
     }
 
     if (workState == WorkState.repResting) {
       return TimerUtils.restTimer(circularProgressIndicatorValue,
-          TimeConverter.durationToString(this.timeLeft));
+          TimeConverter.durationToString(this.timeLeft), context);
     }
 
     return TimerUtils.timeTimer(circularProgressIndicatorValue,
