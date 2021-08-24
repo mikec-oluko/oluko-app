@@ -52,11 +52,12 @@ class SubscribedCourseUsersBloc extends Cubit<SubscribedCourseUsersState> {
       List<FriendModel> friends = friendData.friends;
 
       List<UserResponse> favoriteUserList = [];
+      List<UserResponse> userListToShow = List.from(uniqueUserList);
 
-      uniqueUserList.map((user) => {
+      uniqueUserList.forEach((user) => {
             friends.forEach((friend) {
               if (friend.id == user.id && friend.isFavorite) {
-                uniqueUserList
+                userListToShow
                     .removeWhere((element) => element.id == friend.id);
                 favoriteUserList.add(user);
               }
@@ -64,7 +65,7 @@ class SubscribedCourseUsersBloc extends Cubit<SubscribedCourseUsersState> {
           });
 
       emit(SubscribedCourseUsersSuccess(
-          users: uniqueUserList, favoriteUsers: favoriteUserList));
+          users: userListToShow, favoriteUsers: favoriteUserList));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
