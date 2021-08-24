@@ -75,12 +75,15 @@ class _ProfilePageState extends State<ProfilePage> {
       children: [
         GestureDetector(
             onTap: () => Navigator.pushNamed(
-                    context, routeLabels[RouteEnum.profileViewOwnProfile])
+                    context, routeLabels[RouteEnum.profileViewOwnProfile],
+                    arguments: {'userRequested': profileInfo})
                 .then((value) => onGoBack()),
             child: UserProfileInformation(
-                userInformation: profileInfo,
-                actualRoute: ActualProfileRoute.rootProfile,
-                isOwner: true)),
+              userToDisplayInformation: profileInfo,
+              actualRoute: ActualProfileRoute.rootProfile,
+              currentUser: profileInfo,
+              connectStatus: null,
+            )),
       ],
     );
     return returnWidget;

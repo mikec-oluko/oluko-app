@@ -283,7 +283,9 @@ class Routes {
               value: _profileCoverImageBloc),
           BlocProvider<ProfileAvatarBloc>.value(value: _profileAvatarBloc),
         ];
-        newRouteView = UserProfilePage();
+        final Map<String, UserResponse> argumentsToAdd = arguments;
+        newRouteView =
+            UserProfilePage(userRequested: argumentsToAdd['userRequested']);
         break;
       case RouteEnum.profileChallenges:
         newRouteView = ProfileChallengesPage();

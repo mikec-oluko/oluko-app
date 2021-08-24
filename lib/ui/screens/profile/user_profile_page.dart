@@ -40,23 +40,38 @@ class UserProfilePage extends StatefulWidget {
 }
 
 class _UserProfilePageState extends State<UserProfilePage> {
+  //usuario usando la app
   UserResponse _currentAuthUser;
+  //usuario requerido para mostrar
   UserResponse _userProfileToDisplay;
+  //esta viendo su perfil
   bool _isCurrentUser = false;
+  //ya se sigue al usuario
+  bool _isFollow = true;
+  // estado de connect
+  UserConnectStatus connectStatus = UserConnectStatus.connected;
+  //testing user1 privacy
+  SettingsPrivacyOptions currentUserPrivacy;
+  //testing user2 privacy
+  SettingsPrivacyOptions otherUserPrivacy;
+
   String _connectButtonDefaultText = "Connect";
+
   List<TransformationJourneyUpload> _transformationJourneyContent = [];
   List<TaskSubmission> _assessmentVideosContent = [];
   List<Challenge> _activeChallenges = [];
   List<Course> _coursesToUse = [];
   List<CourseEnrollment> _courseEnrollmentList = [];
-  bool _isFollow = true;
+
   final PanelController _panelController = new PanelController();
   double _panelMaxHeight = 100.0;
   double _statePanelMaxHeight = 100.0;
   bool _isNewCoverImage = false;
+
   @override
   void initState() {
     setState(() {
+      //TODO: USER PARA MOSTRAR ES NUL (YA NO PASA)
       _isCurrentUser = widget.userRequested == null ? true : false;
     });
     super.initState();
@@ -65,17 +80,21 @@ class _UserProfilePageState extends State<UserProfilePage> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
+      //TODO: USERTODISPLAY ES EL QUE SE PIDIO
       _userProfileToDisplay = widget.userRequested;
 
       if (state is AuthSuccess) {
-        this._currentAuthUser = state.user;
+        //TODO: CURRENT USER ES EL QUE DEVUELVE AUTH
+        _currentAuthUser = state.user;
 
-        if (!_isOwnerProfile(
-            authUser: this._currentAuthUser,
-            userRequested: widget.userRequested)) {
-          _userProfileToDisplay = this._currentAuthUser;
+        if (_isOwnerProfile(
+            authUser: _currentAuthUser, userRequested: widget.userRequested)) {
+          //TODO: USERTODISPLAY ES AUTH PORQUE ES EL MISMO QUE EL PEDIDO
+          _userProfileToDisplay = _currentAuthUser;
+          //TODO: EL USUARIO ESTA VIENDO SU PERFIL
           _isCurrentUser = true;
         }
+        //TODO: SE PIDEN DATOS PARA EL USERTODISPLAY
         _requestContentForUser(
             context: context, userRequested: _userProfileToDisplay);
         return _buildUserProfileView(
@@ -96,10 +115,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   bool _isOwnerProfile(
       {@required UserResponse authUser, @required UserResponse userRequested}) {
-    if (userRequested == null) {
-      _isCurrentUser = false;
-      return false;
-    }
     return authUser.id == userRequested.id;
   }
 
@@ -264,10 +279,13 @@ class _UserProfilePageState extends State<UserProfilePage> {
                             height: MediaQuery.of(context).size.height / 3.5,
                             child: BlocProvider.value(
                                 value: BlocProvider.of<ProfileBloc>(context),
+                                //TODO: USERINFORMATION
                                 child: UserProfileInformation(
-                                    userInformation: _userProfileToDisplay,
+                                    userToDisplayInformation:
+                                        _userProfileToDisplay,
                                     actualRoute: ActualProfileRoute.userProfile,
-                                    isOwner: _isCurrentUser))),
+                                    currentUser: _currentAuthUser,
+                                    connectStatus: connectStatus))),
                       ),
                       Positioned(
                         top: MediaQuery.of(context).size.height / 5,
@@ -327,6 +345,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
                             ),
                           )
                         : SizedBox(),
+
+                    //TODO: VER SI PUEDO EVITAR PEDIR DATA
                     BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
                         builder: (context, state) {
                       if (state is GetUserTaskSubmissionSuccess) {
@@ -417,6 +437,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
     );
   }
 
+  //TODO: VER SI PUEDO EVITAR PEDIR DATA
   void _requestContentForUser(
       {BuildContext context, UserResponse userRequested}) {
     BlocProvider.of<CourseEnrollmentBloc>(context)
