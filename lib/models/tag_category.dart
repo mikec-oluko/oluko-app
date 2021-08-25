@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oluko_app/models/base.dart';
 import 'package:oluko_app/models/tag.dart';
-import 'package:oluko_app/models/tag_category_item.dart';
+import 'package:oluko_app/models/submodels/tag_category_item.dart';
 
 class TagCategory extends Base {
   TagCategory(
