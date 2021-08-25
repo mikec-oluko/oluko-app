@@ -15,13 +15,14 @@ For help getting started with Flutter, view our
 [online documentation](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 
-
 ## Add languages
-main.dart file you need to add the extra language 
+
+main.dart file you need to add the extra language
 assets/lang u need to create the resource file.
 use: OlukoLocalizations.of(context).find('writeText')
 
 ## Create new appbundle build (Android)
+
 ```unix
 flutter build appbundle
 ```
@@ -41,18 +42,20 @@ bundle exec fastlane beta
 
 build_scripts.sh contains scripts to build for different environments
 
-```
+```unix
     sh build_scripts.sh dev
 ```
+
 this will build development environment
 
-
-```
+```unix
     sh build_scripts.sh qa
 ```
+
 this will build qa environment
 
-```
+```unix
     sh build_scripts.sh prod
 ```
+
 this will build production environment
