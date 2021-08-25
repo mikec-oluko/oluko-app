@@ -1,8 +1,8 @@
 # oluko_app
 
 A Flutter project for Android and iOS app Oluko
-## Getting Started
 
+## Getting Started
 
 For help getting started with Flutter, view our
 [online documentation](https://flutter.dev/docs), which offers tutorials,
@@ -29,3 +29,4 @@ bundle exec fastlane beta
 ```
 
 (this builds app and deploys to app store testflight)
+
