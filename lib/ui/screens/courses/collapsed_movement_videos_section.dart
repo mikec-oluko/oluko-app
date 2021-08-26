@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:oluko_app/models/enums/movement_videos_action_enum.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class CollapsedMovementVideosSection extends StatefulWidget {
   final Widget action;
@@ -32,8 +33,7 @@ class _State extends State<CollapsedMovementVideosSection> {
           Row(children: [
             Padding(
                 padding: EdgeInsets.only(left: 20),
-                //TODO: update text translation
-                child: Text("Movement Videos",
+                child: Text(OlukoLocalizations.of(context).find('movementVideos'),
                     style: TextStyle(
                         fontSize: 22,
                         color: Colors.white,

@@ -4,6 +4,7 @@ import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/ui/components/movement_item_bubbles.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class MovementVideosSection extends StatefulWidget {
@@ -42,8 +43,7 @@ class _State extends State<MovementVideosSection> {
         child: Column(children: [
           SizedBox(height: 15),
           Row(children: [
-            //TODO: update text translation
-            Text("Movement Videos",
+            Text(OlukoLocalizations.of(context).find('movementVideos'),
                 style: TextStyle(
                     fontSize: 22,
                     color: Colors.white,

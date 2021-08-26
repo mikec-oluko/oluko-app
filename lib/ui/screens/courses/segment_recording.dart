@@ -128,6 +128,11 @@ class _SegmentRecordingState extends State<SegmentRecording> {
             widget.segments[widget.segmentIndex]);
     }
     return Scaffold(
+      bottomNavigationBar:
+          widget.workoutType == WorkoutType.segmentWithRecording &&
+                  workState == WorkState.paused
+              ? resumeButton()
+              : SizedBox(),
       appBar: OlukoAppBar(
         showDivider: false,
         title: ' ',
@@ -329,38 +334,61 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     );
   }
 
+  Widget resumeButton() {
+    return Padding(
+        padding: const EdgeInsets.all(10),
+        child: Row(children: [
+          OlukoPrimaryButton(
+              title: OlukoLocalizations.of(context).find('resume'),
+              onPressed: () {               
+                this.setState(() {
+                  _playTask();
+                });
+              })
+        ]));
+  }
+
   ///Camera recording section. Shows camera Input and start/stop buttons.
   Widget _cameraSection() {
-    TimerEntry currentTimerEntry = timerEntries[timerTaskIndex];
-    return SizedBox(
-        height: ScreenUtils.height(context) / 2,
-        width: ScreenUtils.width(context),
-        child: Stack(
-          children: [
-            (!_isReady)
-                ? Container()
-                : Container(
-                    decoration: BoxDecoration(
-                        image: DecorationImage(
-                      image: AssetImage('assets/courses/camera_background.png'),
-                      fit: BoxFit.cover,
-                    )),
-                    child: Center(
-                        child: AspectRatio(
-                            aspectRatio: 3.0 / 4.0,
-                            child: CameraPreview(cameraController)))),
-            Align(
-                alignment: Alignment.bottomCenter,
-                child: Padding(
-                    padding: const EdgeInsets.all(20.0), child: pauseButton())),
-          ],
-        ));
+    return workState == WorkState.paused
+        ? SizedBox()
+        : SizedBox(
+            height: ScreenUtils.height(context) / 2,
+            width: ScreenUtils.width(context),
+            child: Stack(
+              children: [
+                (!_isReady)
+                    ? Container()
+                    : Container(
+                        decoration: BoxDecoration(
+                            image: DecorationImage(
+                          image: AssetImage(
+                              'assets/courses/camera_background.png'),
+                          fit: BoxFit.cover,
+                        )),
+                        child: Center(
+                            child: AspectRatio(
+                                aspectRatio: 3.0 / 4.0,
+                                child: CameraPreview(cameraController)))),
+                Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: pauseButton())),
+              ],
+            ));
   }
 
   Widget pauseButton() {
     return GestureDetector(
-        //TODO: Add pause action
-        onTap: () {},
+        onTap: () async {
+          if (timerEntries[timerTaskIndex].workState == WorkState.exercising) {
+            await cameraController.stopVideoRecording();
+          }
+          setState(() {
+            _pauseCountdown();
+          });
+        },
         child: Stack(alignment: Alignment.center, children: [
           Image.asset(
             'assets/courses/oval.png',
@@ -456,10 +484,11 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   }
 
   _playTask() async {
+    WorkState previousWorkState = workState;
     workState = timerEntries[timerTaskIndex].workState;
     if (widget.workoutType == WorkoutType.segmentWithRecording &&
         timerEntries[timerTaskIndex].workState == WorkState.exercising) {
-      if (timerTaskIndex > 0) {
+      if (timerTaskIndex > 0 || previousWorkState == WorkState.paused) {
         await cameraController.startVideoRecording();
       }
     }
