@@ -1,9 +1,7 @@
 import 'dart:io';
-import 'package:image/image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:oluko_app/helpers/encoding_provider.dart';
 import 'package:oluko_app/helpers/s3_provider.dart';
 import 'package:oluko_app/models/enums/file_type_enum.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
@@ -27,7 +25,6 @@ class TransformationJourneyRepository {
     this.firestoreInstance = firestoreInstance;
   }
 
-  //TODO: Filter or not, userInfo to return only the List
   Future<List<TransformationJourneyUpload>> getUploadedContentByUserId(
       String userId) async {
     try {
@@ -38,7 +35,6 @@ class TransformationJourneyRepository {
           .doc(userId)
           .collection('transformationJourneyUploads')
           .where('is_deleted', isNotEqualTo: true)
-          // .orderBy('index')
           .get();
       List<TransformationJourneyUpload> contentUploaded = [];
       docRef.docs.forEach((doc) {

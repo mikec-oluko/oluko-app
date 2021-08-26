@@ -37,4 +37,10 @@ class ProfileRepository {
         .updateUserSettingsPreferences(user, privacyIndex, notificationValue);
     return userUpdated;
   }
+
+  Future<UserResponse> updateProfileView() async {
+    UserResponse user = await _authRepository.retrieveLoginData();
+
+    return user;
+  }
 }
