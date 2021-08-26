@@ -7,23 +7,24 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
+import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/movement_submission_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/enums/movement_videos_action_enum.dart';
+import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/timer_entry.dart';
 import 'package:oluko_app/models/timer_model.dart';
-import 'package:oluko_app/ui/IntervalProgressBarLib/interval_progress_bar.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/screens/courses/collapsed_movement_videos_section.dart';
 import 'package:oluko_app/ui/screens/courses/movement_videos_section.dart';
 import 'package:oluko_app/ui/screens/courses/segment_progress.dart';
-import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
@@ -80,6 +81,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
 
   User _user;
   SegmentSubmission _segmentSubmission;
+  List<Movement> _movements;
 
   @override
   void initState() {
@@ -94,15 +96,21 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
         _user = authState.firebaseUser;
-        return BlocBuilder<SegmentBloc, SegmentState>(
-            builder: (context, segmentState) {
-          return BlocListener<SegmentSubmissionBloc, SegmentSubmissionState>(
-              listener: (context, segmentState) {
-                if (segmentState is CreateSuccess) {
-                  _segmentSubmission = segmentState.segmentSubmission;
-                }
-              },
-              child: form());
+        return BlocBuilder<MovementBloc, MovementState>(
+            builder: (context, movementState) {
+          if (movementState is GetAllSuccess) {
+            _movements = movementState.movements;
+            return BlocListener<SegmentSubmissionBloc, SegmentSubmissionState>(
+                listener: (context, segmentSubmissionState) {
+                  if (segmentSubmissionState is CreateSuccess) {
+                    _segmentSubmission =
+                        segmentSubmissionState.segmentSubmission;
+                  }
+                },
+                child: form());
+          } else {
+            return SizedBox();
+          }
         });
       } else {
         return SizedBox();
@@ -129,10 +137,17 @@ class _SegmentRecordingState extends State<SegmentRecording> {
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(20), topRight: Radius.circular(20)),
               minHeight: 90,
-              maxHeight: 200,
+              maxHeight: 185,
               collapsed: CollapsedMovementVideosSection(
                   action: MovementVideosActionEnum.Pause),
-              panel: MovementVideosSection(),
+              panel: MovementVideosSection(
+                  segment: widget.segments[widget.segmentIndex],
+                  movements: _movements,
+                  onPressedMovement:
+                      (BuildContext context, Movement movement) =>
+                          Navigator.pushNamed(
+                              context, routeLabels[RouteEnum.movementIntro],
+                              arguments: {'movement': movement})),
               body: _body())
           : _body(),
     );

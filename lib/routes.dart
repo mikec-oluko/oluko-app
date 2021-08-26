@@ -346,6 +346,7 @@ class Routes {
       case RouteEnum.segmentRecording:
         providers = [
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
+          BlocProvider<MovementBloc>.value(value: _movementBloc),
           BlocProvider<SegmentSubmissionBloc>.value(
               value: _segmentSubmissionBloc),
           BlocProvider<MovementSubmissionBloc>.value(
