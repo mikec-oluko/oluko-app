@@ -31,7 +31,7 @@ class TimerUtils {
                 fontStyle: FontStyle.italic,
                 color: OlukoColors.coral)),
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Text(OlukoLocalizations.of(context).find('round') + " ",
+          Text(OlukoLocalizations.of(context).find('round') + "  ",
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontSize: 12,

@@ -220,8 +220,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
 
   ///Current and next movement labels
   Widget _tasksSection(String currentTask, String nextTask) {
-    return widget.workoutType == WorkoutType.segment ||
-            timerEntries[timerTaskIndex].workState == WorkState.repResting
+    return widget.workoutType == WorkoutType.segment
         ? Padding(
             padding: EdgeInsets.only(top: 25),
             child: Column(
@@ -231,15 +230,25 @@ class _SegmentRecordingState extends State<SegmentRecording> {
                 nextTaskWidget(nextTask)
               ],
             ))
-        : Padding(
-            padding: EdgeInsets.only(top: 7, bottom: 15),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                currentTaskWidget(currentTask, true),
-                //Positioned(right: -50, child: nextTaskWidget(nextTask, true)),
-              ],
-            ));
+        : Container(
+            width: ScreenUtils.width(context),
+            child: Padding(
+                padding: EdgeInsets.only(top: 7, bottom: 15),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    currentTaskWidget(currentTask, true),
+                    Positioned(
+                        left: ScreenUtils.width(context) - 70,
+                        child: Text(
+                          nextTask,
+                          style: TextStyle(
+                              fontSize: 20,
+                              color: OlukoColors.grayColorSemiTransparent,
+                              fontWeight: FontWeight.bold),
+                        )),
+                  ],
+                )));
   }
 
   Widget currentTaskWidget(String currentTask, [bool smaller = false]) {
@@ -252,7 +261,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     );
   }
 
-  Widget nextTaskWidget(String nextTask, [bool smaller = false]) {
+  Widget nextTaskWidget(String nextTask) {
     return ShaderMask(
       shaderCallback: (rect) {
         return LinearGradient(
@@ -265,7 +274,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
       child: Text(
         nextTask,
         style: TextStyle(
-            fontSize: smaller ? 20 : 25,
+            fontSize: 25,
             color: Color.fromRGBO(255, 255, 255, 0.25),
             fontWeight: FontWeight.bold),
       ),
@@ -297,34 +306,29 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   ///Camera recording section. Shows camera Input and start/stop buttons.
   Widget _cameraSection() {
     TimerEntry currentTimerEntry = timerEntries[timerTaskIndex];
-    bool showCamera = currentTimerEntry.workState == WorkState.exercising;
-    return showCamera
-        ? SizedBox(
-            height: ScreenUtils.height(context) / 2,
-            width: ScreenUtils.width(context),
-            child: Stack(
-              children: [
-                (!_isReady)
-                    ? Container()
-                    : Container(
-                        decoration: BoxDecoration(
-                            image: DecorationImage(
-                          image: AssetImage(
-                              'assets/courses/camera_background.png'),
-                          fit: BoxFit.cover,
-                        )),
-                        child: Center(
-                            child: AspectRatio(
-                                aspectRatio: 3.0 / 4.0,
-                                child: CameraPreview(cameraController)))),
-                Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: pauseButton())),
-              ],
-            ))
-        : SizedBox();
+    return SizedBox(
+        height: ScreenUtils.height(context) / 2,
+        width: ScreenUtils.width(context),
+        child: Stack(
+          children: [
+            (!_isReady)
+                ? Container()
+                : Container(
+                    decoration: BoxDecoration(
+                        image: DecorationImage(
+                      image: AssetImage('assets/courses/camera_background.png'),
+                      fit: BoxFit.cover,
+                    )),
+                    child: Center(
+                        child: AspectRatio(
+                            aspectRatio: 3.0 / 4.0,
+                            child: CameraPreview(cameraController)))),
+            Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                    padding: const EdgeInsets.all(20.0), child: pauseButton())),
+          ],
+        ));
   }
 
   Widget pauseButton() {
