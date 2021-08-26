@@ -329,6 +329,7 @@ class Routes {
       case RouteEnum.segmentDetail:
         providers = [
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
+          BlocProvider<MovementBloc>.value(value: _movementBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments;
         newRouteView = SegmentDetail(

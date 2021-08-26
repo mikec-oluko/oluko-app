@@ -12,6 +12,13 @@ class CollapsedMovementVideosSection extends StatefulWidget {
 }
 
 class _State extends State<CollapsedMovementVideosSection> {
+  bool isPlay;
+  @override
+  void initState() {
+    isPlay = widget.action == MovementVideosActionEnum.Play;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -27,7 +34,7 @@ class _State extends State<CollapsedMovementVideosSection> {
           Row(children: [
             Padding(
                 padding: EdgeInsets.only(left: 20),
-              //TODO: update text translation
+                //TODO: update text translation
                 child: Text("Movement Videos",
                     style: TextStyle(
                         fontSize: 22,
@@ -63,11 +70,14 @@ class _State extends State<CollapsedMovementVideosSection> {
                 ))
           ]));
     } else {
-      bool isPlay = widget.action == MovementVideosActionEnum.Play;
       return Padding(
           padding: EdgeInsets.only(right: 10),
           child: OutlinedButton(
-            onPressed: () {},
+            onPressed: () {
+              setState(() {
+                isPlay = !isPlay;
+              });
+            },
             child: Icon(isPlay ? Icons.play_arrow : Icons.pause,
                 color: Colors.white),
             style: OutlinedButton.styleFrom(

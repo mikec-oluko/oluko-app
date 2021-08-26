@@ -131,7 +131,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
               minHeight: 90,
               maxHeight: 200,
               collapsed: CollapsedMovementVideosSection(
-                  action: MovementVideosActionEnum.Up),
+                  action: MovementVideosActionEnum.Pause),
               panel: MovementVideosSection(),
               body: _body())
           : _body(),
@@ -272,9 +272,9 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: Row(
-        children: workoutState != WorkState.paused
-            ? /*_onPlayingActions()*/ [SizedBox()]
-            : _onPausedActions(),
+        children: workoutState == WorkState.paused
+            ? _onPausedActions()
+            : [SizedBox()],
       ),
     );
   }
