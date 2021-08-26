@@ -143,6 +143,7 @@
     "noContent":"No hay contenido para mostrar",
     "remove":"Remover",
     "connect":"Conectar",
-    "cancelConnectionRequested":"Cancelar Peticion"
+    "cancelConnectionRequested":"Cancelar Peticion",
+    "profileUploadAborted":"Carga de perfil cancelada"
 
 }

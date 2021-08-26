@@ -32,13 +32,11 @@ class ProfileCoverImageBloc extends Cubit<ProfileCoverImageState> {
       final imagePicker = ImagePicker();
       if (uploadedFrom == DeviceContentFrom.gallery) {
         _image = await imagePicker.getImage(source: ImageSource.gallery);
-      }
-      if (uploadedFrom == DeviceContentFrom.camera) {
+      } else if (uploadedFrom == DeviceContentFrom.camera) {
         _image = await imagePicker.getImage(source: ImageSource.camera);
       }
       if (_image == null) {
-        emit(ProfileCoverImageFailure(
-            exception: new Exception("Profile upload aborted")));
+        emit(ProfileCoverImageFailure(exception: new Exception()));
         return;
       }
       emit(ProfileCoverImageLoading());

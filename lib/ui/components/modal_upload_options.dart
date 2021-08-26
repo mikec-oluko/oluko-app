@@ -18,7 +18,7 @@ class ModalUploadOptions extends StatefulWidget {
 class _ModalUploadOptionsState extends State<ModalUploadOptions> {
   @override
   Widget build(BuildContext context) {
-    return modalOptionsViewWithProviders(context);
+    return returnList(context);
   }
 
   Widget returnList(BuildContext context) {
@@ -60,46 +60,47 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
   }
 
   void uploadContentFromCamera(BuildContext context) {
-    if (widget.contentFrom == UploadFrom.profileImage) {
-      BlocProvider.of<ProfileAvatarBloc>(context)
-        ..uploadProfileAvatarImage(
-          uploadedFrom: DeviceContentFrom.camera,
-        );
-    }
-    if (widget.contentFrom == UploadFrom.profileCoverImage) {
-      BlocProvider.of<ProfileCoverImageBloc>(context)
-        ..uploadProfileCoverImage(
-          uploadedFrom: DeviceContentFrom.camera,
-        );
-    }
-    if (widget.contentFrom == UploadFrom.transformationJourney) {
-      BlocProvider.of<TransformationJourneyContentBloc>(context)
-        ..uploadTransformationJourneyContent(
+    switch (widget.contentFrom) {
+      case UploadFrom.profileImage:
+        BlocProvider.of<ProfileAvatarBloc>(context)
+          ..uploadProfileAvatarImage(uploadedFrom: DeviceContentFrom.camera);
+        break;
+      case UploadFrom.profileCoverImage:
+        BlocProvider.of<ProfileCoverImageBloc>(context)
+          ..uploadProfileCoverImage(
             uploadedFrom: DeviceContentFrom.camera,
-            indexForContent: widget.indexValue);
+          );
+        break;
+      case UploadFrom.transformationJourney:
+        BlocProvider.of<TransformationJourneyContentBloc>(context)
+          ..uploadTransformationJourneyContent(
+              uploadedFrom: DeviceContentFrom.camera,
+              indexForContent: widget.indexValue);
+        break;
+      default:
     }
   }
 
   void uploadContentFromGallery(BuildContext context) {
-    if (widget.contentFrom == UploadFrom.profileImage) {
-      BlocProvider.of<ProfileAvatarBloc>(context)
-        ..uploadProfileAvatarImage(uploadedFrom: DeviceContentFrom.gallery);
-    }
-    if (widget.contentFrom == UploadFrom.profileCoverImage) {
-      BlocProvider.of<ProfileCoverImageBloc>(context)
-        ..uploadProfileCoverImage(
-          uploadedFrom: DeviceContentFrom.gallery,
-        );
-    }
-    if (widget.contentFrom == UploadFrom.transformationJourney) {
-      BlocProvider.of<TransformationJourneyContentBloc>(context)
-        ..uploadTransformationJourneyContent(
+    switch (widget.contentFrom) {
+      case UploadFrom.profileImage:
+        BlocProvider.of<ProfileAvatarBloc>(context)
+          ..uploadProfileAvatarImage(uploadedFrom: DeviceContentFrom.gallery);
+        break;
+      case UploadFrom.profileCoverImage:
+        BlocProvider.of<ProfileCoverImageBloc>(context)
+          ..uploadProfileCoverImage(
             uploadedFrom: DeviceContentFrom.gallery,
-            indexForContent: widget.indexValue);
+          );
+        break;
+      case UploadFrom.transformationJourney:
+        BlocProvider.of<TransformationJourneyContentBloc>(context)
+          ..uploadTransformationJourneyContent(
+              uploadedFrom: DeviceContentFrom.gallery,
+              indexForContent: widget.indexValue);
+        break;
+      default:
+        return;
     }
-  }
-
-  modalOptionsViewWithProviders(BuildContext context) {
-    return returnList(context);
   }
 }
