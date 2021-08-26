@@ -200,7 +200,10 @@ class _CourseMarketingState extends State<CourseMarketing> {
       if (state is StatisticsSuccess) {
         return Padding(
             padding: EdgeInsets.symmetric(vertical: 15),
-            child: StatisticChart(courseStatistics: state.courseStatistics));
+            child: StatisticChart(
+              courseStatistics: state.courseStatistics,
+              course: widget.course,
+            ));
       } else {
         return Padding(
           padding: const EdgeInsets.all(50.0),
