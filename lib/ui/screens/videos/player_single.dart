@@ -2,19 +2,16 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:oluko_app/models/video.dart';
-import 'package:oluko_app/ui/screens/videos/player_life_cycle.dart';
-import 'package:oluko_app/ui/screens/videos/aspect_ratio.dart';
-import 'package:oluko_app/ui/screens/videos/loading.dart';
+import 'package:oluko_app/models/submodels/video_info.dart';
 import 'package:video_player/video_player.dart';
 
 typedef OnCameraCallBack = void Function();
 
 class PlayerSingle extends StatefulWidget {
-  final Video video;
+  final VideoInfo videoInfo;
   final OnCameraCallBack onCamera;
 
-  const PlayerSingle({Key key, @required this.video, this.onCamera})
+  const PlayerSingle({Key key, @required this.videoInfo, this.onCamera})
       : super(key: key);
 
   @override
@@ -22,25 +19,24 @@ class PlayerSingle extends StatefulWidget {
 }
 
 class _PlayerSingleState extends State<PlayerSingle> {
-  String _error;
-  VideoPlayerController controller;
-  List<dynamic> contents;
-  bool contentInitialized = false;
-  bool _autoPlay = true;
+  //video
+  VideoPlayerController _videoController;
+  Future<void> _initializeVideoPlayerFuture;
   bool playing = false;
-  bool ended = false;
-  Timer playbackTimer;
 
   @override
   void initState() {
+    _videoController = VideoPlayerController.network(
+      widget.videoInfo.video.url,
+    );
+    _initializeVideoPlayerFuture = _videoController.initialize();
+    _videoController.setLooping(true);
     super.initState();
   }
 
   @override
   void dispose() {
-    /*if (playbackTimer != null) {
-      playbackTimer.cancel();
-    }*/
+    _videoController.dispose();
     super.dispose();
   }
 
@@ -50,31 +46,32 @@ class _PlayerSingleState extends State<PlayerSingle> {
       backgroundColor: Colors.black,
       body: Stack(
         children: <Widget>[
-          !contentInitialized ? LoadingScreen() : Container(),
-          _error == null
-              ? Opacity(
-                  opacity: contentInitialized ? 1 : 0,
-                  child: Stack(children: [
-                    Positioned(
-                        top: 0,
-                        right: 0,
-                        left: 0,
-                        bottom: 30,
-                        child: Container(
-                            height: MediaQuery.of(context).size.height,
-                            child: NetworkPlayerLifeCycle(
-                              widget.video.url,
-                              (BuildContext context,
-                                  VideoPlayerController controller) {
-                                this.controller = controller;
-                                addVideoControllerListener(controller);
-                                return AspectRatioVideo(controller);
-                              },
-                            ))),
-                  ]))
-              : Center(
-                  child: Text(_error),
-                ),
+          Opacity(
+              opacity: 1,
+              child: Stack(children: [
+                Positioned(
+                    top: 0,
+                    right: 0,
+                    left: 0,
+                    bottom: 30,
+                    child: Container(
+                      height: MediaQuery.of(context).size.height,
+                      child: FutureBuilder(
+                        future: _initializeVideoPlayerFuture,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.done) {
+                            return AspectRatio(
+                              aspectRatio: _videoController.value.aspectRatio,
+                              child: VideoPlayer(_videoController),
+                            );
+                          } else {
+                            return Center(child: CircularProgressIndicator());
+                          }
+                        },
+                      ),
+                    )),
+              ])),
           Container(
             padding: EdgeInsets.all(16.0),
             child: IconButton(
@@ -105,29 +102,7 @@ class _PlayerSingleState extends State<PlayerSingle> {
                             child: Stack(
                               alignment: AlignmentDirectional.bottomCenter,
                               children: <Widget>[
-                                Container(
-                                    height: 25,
-                                    child: Slider.adaptive(
-                                      activeColor: Colors.lightGreen.shade300,
-                                      inactiveColor: Colors.teal.shade700,
-                                      value: getCurrentVideoPosition(),
-                                      max: getSliderMac().toDouble(),
-                                      min: 0,
-                                      onChanged: (val) async {
-                                        await Future.wait([
-                                          controller.seekTo(Duration(
-                                              milliseconds: val.toInt())),
-                                        ]);
-                                        setState(() {});
-                                      },
-                                      onChangeEnd: (val) async {
-                                        this.ended = contentsEnded();
-
-                                        this._autoPlay = true;
-
-                                        setState(() {});
-                                      },
-                                    )),
+                                Container(height: 25, child: buildIndicator()),
                                 Container(
                                   height: 55,
                                 )
@@ -147,17 +122,21 @@ class _PlayerSingleState extends State<PlayerSingle> {
                                     }),
                                 IconButton(
                                     color: Colors.white,
-                                    icon: Icon(this.playing
-                                        ? Icons.stop
-                                        : contentsEnded()
-                                            ? Icons.replay
-                                            : Icons.play_arrow),
-                                    onPressed: () {
-                                      setState(() {
-                                        playing
-                                            ? pauseContents()
-                                            : playContents();
-                                      });
+                                    icon: Icon(
+                                      playing ? Icons.pause : Icons.play_arrow,
+                                    ),
+                                    onPressed: () async {
+                                      if (_videoController.value.isPlaying) {
+                                        await _videoController.pause();
+                                        setState(() {
+                                          playing = false;
+                                        });
+                                      } else {
+                                        await _videoController.play();
+                                        setState(() {
+                                          playing = true;
+                                        });
+                                      }
                                     }),
                                 IconButton(
                                     color: Colors.white,
@@ -178,126 +157,10 @@ class _PlayerSingleState extends State<PlayerSingle> {
     );
   }
 
-  double getCurrentVideoPosition() {
-    double position = 0;
-    if (controller != null && controller.value.position != null) {
-      if (controller.value.duration != null &&
-          controller.value.duration < controller.value.position) {
-        position = controller.value.duration.inMilliseconds.toDouble();
-      } else {
-        position = controller.value.position.inMilliseconds.toDouble();
-      }
-    }
-    return position;
-  }
-
-  playContents() async {
-    var position = this.controller.value.position;
-    var duration = this.controller.value.duration;
-
-    if (position.inSeconds == duration.inSeconds) {
-      resetContents();
-    } else if (position.inSeconds < duration.inSeconds) {
-      await Future.wait([this.controller.play()]);
-    }
-  }
-
-  resetContents() async {
-    this.ended = false;
-    this.contentInitialized = false;
-    this._autoPlay = true;
-    await Future.wait([
-      this.controller.seekTo(Duration(milliseconds: 0)),
-    ]);
-  }
-
-  pauseContents() async {
-    await this.controller.pause();
-
-    if (this.playbackTimer != null) {
-      this.playbackTimer.cancel();
-      this.playbackTimer = null;
-    }
-    setState(() {
-      this.playing = false;
-    });
-  }
-
-  bool contentsEnded() {
-    return videoControllerEnded(this.controller);
-  }
-
-  videoControllerEnded(videoController) {
-    if (videoController == null ||
-        videoController.value.position == null ||
-        videoController.value.duration == null) {
-      return false;
-    }
-    int controllerPosition =
-        roundedTimestamp(videoController.value.position.inMilliseconds);
-    int controllerDuration =
-        roundedTimestamp(videoController.value.duration.inMilliseconds);
-
-    bool ended = controllerPosition == controllerDuration;
-    return ended;
-  }
-
-  num roundedTimestamp(num timeStamp) {
-    const num division = 20;
-    return (timeStamp / division).ceil();
-  }
-
-  addVideoControllerListener(VideoPlayerController controller) {
-    controller.addListener(() {
-      if (contentsEnded() && allContentIsPlaying()) {
-        pauseContents();
-        this.ended = true;
-      } else if (contentsEnded() && this.ended == false) {
-        this.ended = true;
-        this.playing = false;
-      }
-      if (allContentIsPlaying()) {
-        this.playing = true;
-      } else {
-        this.playing = false;
-      }
-      if (allContentsReady() && this._autoPlay == true) {
-        this.playContents();
-        this._autoPlay = false;
-        this.contentInitialized = true;
-      }
-      setState(() {});
-    });
-  }
-
-  allContentsReady() {
-    bool created = allContentsCreated();
-    bool initialized = allVideosInitialized();
-    bool buffered = allVideosBuffered();
-    bool stopped = !controller.value.isPlaying;
-
-    return created && initialized && buffered && stopped && !contentInitialized;
-  }
-
-  allContentIsPlaying() {
-    return this.controller.value.isPlaying;
-  }
-
-  allContentsCreated() {
-    return controller != null;
-  }
-
-  allVideosInitialized() {
-    return controller.value.initialized;
-  }
-
-  allVideosBuffered() {
-    return !controller.value.isBuffering;
-  }
-
-  num getSliderMac() {
-    return controller != null && controller.value.duration != null
-        ? controller.value.duration.inMilliseconds.toDouble()
-        : 100;
-  }
+  Widget buildIndicator() => VideoProgressIndicator(
+        _videoController,
+        allowScrubbing: true,
+        colors:
+            VideoProgressColors(playedColor: Color.fromRGBO(255, 100, 0, 0.7)),
+      );
 }

@@ -7,6 +7,7 @@ import 'package:async/async.dart';
 import 'package:http/http.dart' as http;
 import 'package:amazon_cognito_identity_dart_2/sig_v4.dart';
 import 'package:oluko_app/helpers/s3_policy.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 class S3Provider {
   String accessKeyId = GlobalConfiguration().getValue("accessKeyID");
@@ -47,7 +48,11 @@ class S3Provider {
       await for (var value in res.stream.transform(utf8.decoder)) {
         print(value);
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       print(e.toString());
     }
   }
@@ -57,7 +62,11 @@ class S3Provider {
     try {
       http.Response res = await http.get(uri);
       await putFile(res.bodyBytes, 'Thumbnails', 'panda-test.jpg');
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       print(e.toString());
     }
   }
@@ -71,7 +80,11 @@ class S3Provider {
       res = await http.put(uri,
           body: bodyBytes, headers: {'x-amz-acl': 'bucket-owner-full-control'});
       return res.request.url.toString();
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       print(e.toString());
     }
   }

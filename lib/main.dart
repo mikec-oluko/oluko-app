@@ -1,92 +1,60 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/config/s3_settings.dart';
-import 'package:oluko_app/ui/screens/app_plans.dart';
-import 'package:oluko_app/ui/screens/assesment_videos.dart';
-import 'package:oluko_app/ui/screens/choose_plan_payment.dart';
-import 'package:oluko_app/ui/screens/home_page.dart';
-import 'package:oluko_app/ui/screens/Login.dart';
-import 'package:oluko_app/ui/screens/Profile.dart';
-import 'package:oluko_app/ui/screens/self_recording_preview.dart';
-import 'package:oluko_app/ui/screens/sign_up_with_email.dart';
-import 'package:oluko_app/ui/screens/sign_up.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:oluko_app/ui/screens/task_details.dart';
-import 'package:oluko_app/ui/screens/videos/home.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'config/project_settings.dart';
-import 'models/task.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   GlobalConfiguration().loadFromMap(projectSettings);
   GlobalConfiguration().loadFromMap(s3Settings);
   await Firebase.initializeApp();
-  runApp(MyApp());
+  User alreadyLoggedUser = await AuthBloc().checkCurrentUser();
+  final MyApp myApp = MyApp(
+    initialRoute: alreadyLoggedUser == null ? '/sign-up' : '/',
+  );
+  await SentryFlutter.init(
+    (options) {
+      options.dsn = GlobalConfiguration().getValue("sentryDsn");
+      options.environment = GlobalConfiguration().getValue("environment");
+    },
+    appRunner: () => runApp(myApp),
+  );
 }
 
 const OLUKO = 'Oluko';
 
 class MyApp extends StatefulWidget {
   // This widget is the root of your application.
+  final String initialRoute;
+
+  MyApp({this.initialRoute});
 
   @override
   _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  final AuthBloc _authBloc = AuthBloc();
+  Routes routes = Routes();
 
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext mainContext) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: '${OLUKO}',
       theme: ThemeData(
         primarySwatch: Colors.grey,
       ),
-      initialRoute: '/',
-      routes: {
-        '/': (context) =>
-            BlocProvider.value(value: _authBloc, child: MyHomePage(title: '')),
-        '/sign-up': (context) =>
-            BlocProvider.value(value: _authBloc, child: SignUpPage()),
-        '/sign-up-with-email': (context) =>
-            BlocProvider.value(value: _authBloc, child: SignUpWithMailPage()),
-        '/profile': (context) =>
-            BlocProvider.value(value: _authBloc, child: ProfilePage()),
-        '/log-in': (context) =>
-            BlocProvider.value(value: _authBloc, child: LoginPage()),
-        '/app-plans': (context) =>
-            BlocProvider.value(value: _authBloc, child: AppPlans()),
-        '/assessment-videos': (context) =>
-            BlocProvider.value(value: _authBloc, child: AsessmentVideos()),
-        '/task-details': (context) => BlocProvider.value(
-            value: _authBloc,
-            child: TaskDetails(
-              task: Task(description: 'Task Description'),
-            )),
-        '/self-recording-preview': (context) => BlocProvider.value(
-            value: _authBloc,
-            child: SelfRecordingPreview(
-              task: Task(description: 'Task Description', name: 'Task 1'),
-            )),
-        '/choose-plan-payment': (context) =>
-            BlocProvider.value(value: _authBloc, child: ChoosePlayPayments()),
-        '/videos': (context) => BlocProvider.value(
-            value: _authBloc,
-            child: Home(
-              title: "Videos",
-              videoParent: null,
-              parentVideoReference:
-                  FirebaseFirestore.instance.collection("videos"),
-            ))
-      },
+      initialRoute: widget.initialRoute,
+      onGenerateRoute: (RouteSettings settings) =>
+          routes.getRouteView(settings.name, settings.arguments),
       localizationsDelegates: [
-        AppLocalizations.delegate,
+        const OlukoLocalizationsDelegate(),
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
@@ -100,7 +68,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void dispose() {
-    _authBloc.close();
     super.dispose();
   }
 }

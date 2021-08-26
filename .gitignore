@@ -50,3 +50,6 @@ ios/build/*
 android/key.properties
 ios/Runner.app.dSYM.zip
 ios/Runner.ipa
+ios/Podfile.save
+android/app/google-services/google-services-prod.json
+ios/GoogleService-Info/GoogleService-Info.plist-prod

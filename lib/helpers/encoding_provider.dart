@@ -82,11 +82,25 @@ class EncodingProvider {
     return await _probe.getMediaInformation(path);
   }
 
-  static int getDuration(Map<dynamic, dynamic> info) {
-    return info['duration'];
+  static double getDuration(Map<dynamic, dynamic> info) {
+    return double.parse(info['duration']);
   }
 
   static void enableLogCallback(void Function(Log log) logCallback) {
     _config.enableLogCallback(logCallback);
+  }
+
+  static Future<String> getImageThumb(imagePath, width, height) async {
+    assert(File(imagePath).existsSync());
+
+    final String outPath = '$imagePath';
+    final arguments =
+        '-y -i $imagePath -vframes 1 -an -s ${width}x$height $outPath';
+
+    final int rc = await _encoder.execute(arguments);
+    assert(rc == 0);
+    assert(File(outPath).existsSync());
+
+    return outPath;
   }
 }

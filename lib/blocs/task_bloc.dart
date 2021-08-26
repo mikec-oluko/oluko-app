@@ -1,35 +1,41 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/repositories/task_repository.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class TaskState {}
 
-class Loading extends TaskState {}
+class TaskLoading extends TaskState {}
 
-class Success extends TaskState {
+class TaskSuccess extends TaskState {
   final List<Task> values;
-  Success({this.values});
+  TaskSuccess({this.values});
 }
 
-class Failure extends TaskState {
+class TaskFailure extends TaskState {
   final Exception exception;
 
-  Failure({this.exception});
+  TaskFailure({this.exception});
 }
 
 class TaskBloc extends Cubit<TaskState> {
-  TaskBloc() : super(Loading());
+  TaskBloc() : super(TaskLoading());
 
-  void get() async {
-    if (!(state is Success)) {
-      emit(Loading());
+  void get(Assessment assessment) async {
+    if (!(state is TaskSuccess)) {
+      emit(TaskLoading());
     }
     try {
-      List<Task> tasks = await TaskRepository().getAll();
-      tasks.sort((a, b) => a.index.compareTo(b.index));
-      emit(Success(values: tasks));
-    } catch (e) {
-      emit(Failure(exception: e));
+      List<Task> tasks = await TaskRepository.getAllByAssessment(assessment);
+      emit(TaskSuccess(values: tasks));
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
+      print(e.toString());
+      emit(TaskFailure(exception: e));
     }
   }
 }

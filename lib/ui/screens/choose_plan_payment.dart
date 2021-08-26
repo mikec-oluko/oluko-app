@@ -4,11 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/plan_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_helper.dart';
-import 'package:oluko_app/models/info_dialog.dart';
+import 'package:oluko_app/utils/info_dialog.dart';
 import 'package:oluko_app/models/plan.dart';
 import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/ui/components/subscription_card.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ChoosePlayPayments extends StatefulWidget {
   ChoosePlayPayments({Key key}) : super(key: key);
@@ -19,7 +19,6 @@ class ChoosePlayPayments extends StatefulWidget {
 
 class _ChoosePlayPaymentsState extends State<ChoosePlayPayments> {
   final _formKey = GlobalKey<FormState>();
-  SignUpResponse profileInfo;
 
   @override
   Widget build(BuildContext context) {
@@ -106,13 +105,14 @@ class _ChoosePlayPaymentsState extends State<ChoosePlayPayments> {
                       focusColor: Colors.white,
                       filled: false,
                       hintStyle: new TextStyle(color: Colors.grey[800]),
-                      hintText: AppLocalizations.of(context).emailExample,
+                      hintText:
+                          OlukoLocalizations.of(context).find('emailExample'),
                       fillColor: Colors.white70,
-                      labelText: AppLocalizations.of(context).email,
+                      labelText: OlukoLocalizations.of(context).find('email'),
                       labelStyle: new TextStyle(color: OlukoColors.primary)),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return AppLocalizations.of(context).required;
+                      return OlukoLocalizations.of(context).find('required');
                     }
                     return null;
                   },

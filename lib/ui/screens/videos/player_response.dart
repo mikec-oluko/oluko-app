@@ -3,15 +3,13 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/blocs/marker_bloc.dart';
-import 'package:oluko_app/blocs/video_tracking_bloc.dart';
-import 'package:oluko_app/models/marker.dart';
-import 'package:oluko_app/models/draw_point.dart';
+import 'package:oluko_app/blocs/video_info_bloc.dart';
+import 'package:oluko_app/models/submodels/draw_point.dart';
+import 'package:oluko_app/models/submodels/video_info.dart';
 import 'package:oluko_app/ui/screens/videos/aspect_ratio.dart';
 import 'package:oluko_app/ui/screens/videos/loading.dart';
 import 'package:oluko_app/ui/screens/videos/player_life_cycle.dart';
 import 'package:video_player/video_player.dart';
-import 'package:oluko_app/models/video.dart';
 import 'package:oluko_app/ui/screens/videos/draw.dart';
 
 typedef OnCameraCallBack = void Function();
@@ -20,14 +18,14 @@ enum PlayerState { RUNNING, STOPPED, WAITING }
 
 class PlayerResponse extends StatefulWidget {
   final DocumentReference videoReference;
-  final Video videoParent;
-  final Video video;
+  final VideoInfo parentVideoInfo;
+  final VideoInfo videoInfo;
   final OnCameraCallBack onCamera;
 
   const PlayerResponse(
       {Key key,
-      @required this.videoParent,
-      this.video,
+      @required this.parentVideoInfo,
+      this.videoInfo,
       this.videoReference,
       this.onCamera})
       : super(key: key);
@@ -37,9 +35,6 @@ class PlayerResponse extends StatefulWidget {
 }
 
 class _PlayerResponseState extends State<PlayerResponse> {
-  MarkerBloc _markerBloc;
-  VideoTrackingBloc _videoTrackingBloc;
-
   String _error;
 
   //Video controller variables
@@ -74,13 +69,16 @@ class _PlayerResponseState extends State<PlayerResponse> {
   bool canvasListenerRunning = true;
 
   //Markers variables
-  List<Marker> _markers = [];
+  List<double> _markers = [];
 
   @override
   void initState() {
     super.initState();
-    _markerBloc = MarkerBloc();
-    _videoTrackingBloc = VideoTrackingBloc();
+
+    if (widget.videoInfo.drawing.length > 0) {
+      this.canvasPointsRecording = widget.videoInfo.drawing;
+      this.isFirstRecording = false;
+    }
   }
 
   @override
@@ -93,284 +91,243 @@ class _PlayerResponseState extends State<PlayerResponse> {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-        providers: [
-          BlocProvider<MarkerBloc>(
-            create: (context) =>
-                _markerBloc..getMarkers(this.widget.videoReference),
+    return Scaffold(
+      backgroundColor: Colors.black,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          double markerPosition = getCurrentVideoPosition();
+          BlocProvider.of<VideoInfoBloc>(context)
+            ..addMarkerToVideoInfo(markerPosition, this.widget.videoReference);
+          setState(() {
+            _markers.add(markerPosition);
+          });
+        },
+        child: const Icon(Icons.add_location_rounded),
+        backgroundColor: Colors.green,
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+      body: Stack(
+        children: <Widget>[
+          !contentInitialized ? LoadingScreen() : Container(),
+          _error == null
+              ? Opacity(
+                  opacity: contentInitialized ? 1 : 0,
+                  child: Stack(children: [
+                    Positioned(
+                        top: 0,
+                        right: 0,
+                        left: 0,
+                        bottom: 30,
+                        child: Container(
+                            height: MediaQuery.of(context).size.height,
+                            child: NetworkPlayerLifeCycle(
+                              widget.parentVideoInfo.video.url,
+                              (BuildContext context,
+                                  VideoPlayerController controller) {
+                                this.videoParentController = controller;
+                                this.contents['videoParentController'] =
+                                    controller;
+                                //addVideoControllerListener(controller);
+                                return AspectRatioVideo(controller);
+                              },
+                            ))),
+                    Positioned(
+                        bottom: this.videoController != null &&
+                                this.videoController.value.aspectRatio < 1
+                            ? 110
+                            : 60,
+                        right: this.videoController != null &&
+                                this.videoController.value.aspectRatio < 1
+                            ? -100
+                            : 0,
+                        child: Container(
+                            height: MediaQuery.of(context).size.height / 3,
+                            width: MediaQuery.of(context).size.width,
+                            child: NetworkPlayerLifeCycle(
+                                widget.videoInfo.video.url,
+                                (BuildContext context,
+                                    VideoPlayerController controller) {
+                              this.videoController = controller;
+                              this.contents['videoController'] = controller;
+                              this.videoController.value.aspectRatio;
+                              this.videoParentController.value.aspectRatio;
+                              addVideoControllerListener(controller);
+                              return AspectRatioVideo(controller);
+                            }))),
+                    Opacity(opacity: 1, child: setCanvas())
+                  ]))
+              : Center(
+                  child: Text(_error),
+                ),
+          Container(
+            padding: EdgeInsets.all(16.0),
+            child: IconButton(
+              icon: Icon(Icons.close, color: Colors.white),
+              onPressed: () => Navigator.pop(context),
+            ),
           ),
-          BlocProvider<VideoTrackingBloc>(
-            create: (context) => _videoTrackingBloc
-              ..getVideoTracking(this.widget.videoReference),
-          ),
-        ],
-        child: BlocListener<VideoTrackingBloc, VideoTrackingState>(
-            listener: (context, state) {
-              if (state is VideoTrackingSuccess) {
-                if (state.videoTracking != null &&
-                    state.videoTracking.drawPoints != null) {
-                  this.canvasPointsRecording = state.videoTracking.drawPoints;
-                  this.isFirstRecording = false;
-                }
-              }
-            },
-            child: Scaffold(
-              backgroundColor: Colors.black,
-              floatingActionButton: FloatingActionButton(
-                onPressed: () async {
-                  double markerPosition = getCurrentVideoPosition();
-                  _markerBloc
-                    ..createMarker(markerPosition, this.widget.videoReference);
-                },
-                child: const Icon(Icons.add_location_rounded),
-                backgroundColor: Colors.green,
-              ),
-              floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
-              body: Stack(
-                children: <Widget>[
-                  !contentInitialized ? LoadingScreen() : Container(),
-                  _error == null
-                      ? Opacity(
-                          opacity: contentInitialized ? 1 : 0,
-                          child: Stack(children: [
-                            Positioned(
-                                top: 0,
-                                right: 0,
-                                left: 0,
-                                bottom: 30,
-                                child: Container(
-                                    height: MediaQuery.of(context).size.height,
-                                    child: NetworkPlayerLifeCycle(
-                                      widget.videoParent.url,
-                                      (BuildContext context,
-                                          VideoPlayerController controller) {
-                                        this.videoParentController = controller;
-                                        this.contents['videoParentController'] =
-                                            controller;
-                                        //addVideoControllerListener(controller);
-                                        return AspectRatioVideo(controller);
-                                      },
-                                    ))),
-                            Positioned(
-                                bottom: this.videoController != null &&
-                                        this.videoController.value.aspectRatio <
-                                            1
-                                    ? 110
-                                    : 60,
-                                right: this.videoController != null &&
-                                        this.videoController.value.aspectRatio <
-                                            1
-                                    ? -100
-                                    : 0,
-                                child: Container(
-                                    height:
-                                        MediaQuery.of(context).size.height / 3,
-                                    width: MediaQuery.of(context).size.width,
-                                    child: NetworkPlayerLifeCycle(
-                                        widget.video.url, (BuildContext context,
-                                            VideoPlayerController controller) {
-                                      this.videoController = controller;
-                                      this.contents['videoController'] =
-                                          controller;
-                                      this.videoController.value.aspectRatio;
-                                      this
-                                          .videoParentController
-                                          .value
-                                          .aspectRatio;
-                                      addVideoControllerListener(controller);
-                                      return AspectRatioVideo(controller);
-                                    }))),
-                            Opacity(opacity: 1, child: setCanvas())
-                          ]))
-                      : Center(
-                          child: Text(_error),
-                        ),
-                  Container(
-                    padding: EdgeInsets.all(16.0),
-                    child: IconButton(
-                      icon: Icon(Icons.close, color: Colors.white),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ),
-                  Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      child: Visibility(
-                          visible: !openCanvas,
-                          child: Padding(
-                            padding: openCanvas
-                                ? EdgeInsets.only(
-                                    top: 8, left: 8, right: 8, bottom: 200.0)
-                                : EdgeInsets.all(8.0),
-                            child: Container(
-                                padding: const EdgeInsets.only(
-                                    left: 8.0, right: 8.0),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20.0),
-                                    color: Colors.green),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 8.0, horizontal: 8.0),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
+          Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Visibility(
+                  visible: !openCanvas,
+                  child: Padding(
+                    padding: openCanvas
+                        ? EdgeInsets.only(
+                            top: 8, left: 8, right: 8, bottom: 200.0)
+                        : EdgeInsets.all(8.0),
+                    child: Container(
+                        padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20.0),
+                            color: Colors.green),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8.0, horizontal: 8.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Visibility(
+                                visible: true,
+                                child: Stack(
+                                    alignment:
+                                        AlignmentDirectional.bottomCenter,
                                     children: <Widget>[
-                                      Visibility(
-                                        visible: true,
-                                        child: Stack(
-                                            alignment: AlignmentDirectional
-                                                .bottomCenter,
-                                            children: <Widget>[
-                                              Container(
-                                                height: 25,
-                                                child: Slider.adaptive(
-                                                  activeColor: Colors
-                                                      .lightGreen.shade200,
-                                                  inactiveColor:
-                                                      Colors.teal.shade700,
-                                                  value:
-                                                      getCurrentVideoPosition(),
-                                                  max:
-                                                      getSliderMac().toDouble(),
-                                                  min: 0.0,
-                                                  onChanged: (val) async {
-                                                    await Future.wait([
-                                                      videoParentController
-                                                          .seekTo(Duration(
-                                                              milliseconds:
-                                                                  val.toInt())),
-                                                      videoController.seekTo(
-                                                          Duration(
-                                                              milliseconds:
-                                                                  val.toInt()))
-                                                    ]);
-                                                    // await pauseContents();
-                                                    setState(() {});
-                                                  },
-                                                  onChangeEnd: (val) async {
-                                                    // await Future.wait([
-                                                    //   videoParentController.seekTo(Duration(
-                                                    //       milliseconds: val.toInt())),
-                                                    //   videoController.seekTo(
-                                                    //       Duration(milliseconds: val.toInt()))
-                                                    // ]);
-                                                    // await pauseContents();
-                                                    this.ended =
-                                                        contentsEnded();
-                                                    this.lastPosition =
-                                                        val.toInt();
-                                                    List<DrawPoint>
-                                                        pointsUntilTimeStamp =
-                                                        getPointsUntilTimestamp(
-                                                            this
-                                                                .videoParentController
-                                                                .value
-                                                                .position
-                                                                .inMilliseconds,
-                                                            this.canvasPointsRecording);
-                                                    List<DrawingPoints>
-                                                        drawingPointsUntilTimestamp =
-                                                        [];
-                                                    pointsUntilTimeStamp
-                                                        .forEach((element) {
-                                                      drawingPointsUntilTimestamp
-                                                          .add(element.point);
-                                                    });
+                                      Container(
+                                        height: 25,
+                                        child: Slider.adaptive(
+                                          activeColor:
+                                              Colors.lightGreen.shade200,
+                                          inactiveColor: Colors.teal.shade700,
+                                          value: getCurrentVideoPosition(),
+                                          max: getSliderMac().toDouble(),
+                                          min: 0.0,
+                                          onChanged: (val) async {
+                                            await Future.wait([
+                                              videoParentController.seekTo(
+                                                  Duration(
+                                                      milliseconds:
+                                                          val.toInt())),
+                                              videoController.seekTo(Duration(
+                                                  milliseconds: val.toInt()))
+                                            ]);
+                                            // await pauseContents();
+                                            setState(() {});
+                                          },
+                                          onChangeEnd: (val) async {
+                                            // await Future.wait([
+                                            //   videoParentController.seekTo(Duration(
+                                            //       milliseconds: val.toInt())),
+                                            //   videoController.seekTo(
+                                            //       Duration(milliseconds: val.toInt()))
+                                            // ]);
+                                            // await pauseContents();
+                                            this.ended = contentsEnded();
+                                            this.lastPosition = val.toInt();
+                                            List<DrawPoint>
+                                                pointsUntilTimeStamp =
+                                                getPointsUntilTimestamp(
                                                     this
-                                                        .canvasKey
-                                                        .currentState
-                                                        .setPoints(
-                                                            drawingPointsUntilTimestamp);
-                                                    this._autoPlay = true;
+                                                        .videoParentController
+                                                        .value
+                                                        .position
+                                                        .inMilliseconds,
+                                                    this.canvasPointsRecording);
+                                            List<DrawingPoints>
+                                                drawingPointsUntilTimestamp =
+                                                [];
+                                            pointsUntilTimeStamp
+                                                .forEach((element) {
+                                              drawingPointsUntilTimestamp
+                                                  .add(element.point);
+                                            });
+                                            this
+                                                .canvasKey
+                                                .currentState
+                                                .setPoints(
+                                                    drawingPointsUntilTimestamp);
+                                            this._autoPlay = true;
 
-                                                    setState(() {});
-                                                  },
-                                                ),
-                                              ),
-                                              Container(
-                                                  height: 55,
-                                                  child: BlocBuilder<MarkerBloc,
-                                                          MarkerState>(
-                                                      builder:
-                                                          (context, state) {
-                                                    if (state
-                                                        is MarkersSuccess) {
-                                                      return _markersStack(
-                                                          state.markers);
-                                                    } else {
-                                                      return LoadingScreen();
-                                                    }
-                                                  })),
-                                            ]),
+                                            setState(() {});
+                                          },
+                                        ),
                                       ),
                                       Container(
-                                          height: 40,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: <Widget>[
-                                              IconButton(
-                                                  color: Colors.white,
-                                                  icon: Icon(Icons.arrow_back),
-                                                  onPressed: () {
-                                                    setState(() =>
-                                                        Navigator.pop(context));
-                                                  }),
-                                              IconButton(
-                                                  color: Colors.white,
-                                                  icon: Icon(this.playing
-                                                      ? Icons.stop
-                                                      : ended
-                                                          ? Icons.replay
-                                                          : Icons.play_arrow),
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      playing
-                                                          ? pauseContents()
-                                                          : this.ended
-                                                              ? resetContents()
-                                                              : playContents();
-                                                    });
-                                                  }),
-                                              IconButton(
-                                                  color: Colors.white,
-                                                  icon: Icon(Icons.camera),
-                                                  onPressed: () {
-                                                    Navigator.pop(context);
-                                                    widget.onCamera();
-                                                  }),
-                                              IconButton(
-                                                  color: Colors.white,
-                                                  icon: Icon(Icons.save),
-                                                  onPressed: () {
-                                                    _videoTrackingBloc
-                                                      ..createVideoTracking(
-                                                          this
-                                                              .canvasPointsRecording,
-                                                          widget
-                                                              .videoReference);
-                                                  }),
-                                              // IconButton(
-                                              //     icon: Icon(Icons.color_lens),
-                                              //     onPressed: () {
-                                              //       setState(() => openCanvas = true);
-                                              //     }),
-                                            ],
-                                          )),
+                                          height: 55,
+                                          child: _markersStack(
+                                              widget.videoInfo.markers)),
+                                    ]),
+                              ),
+                              Container(
+                                  height: 40,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      IconButton(
+                                          color: Colors.white,
+                                          icon: Icon(Icons.arrow_back),
+                                          onPressed: () {
+                                            setState(
+                                                () => Navigator.pop(context));
+                                          }),
+                                      IconButton(
+                                          color: Colors.white,
+                                          icon: Icon(this.playing
+                                              ? Icons.stop
+                                              : ended
+                                                  ? Icons.replay
+                                                  : Icons.play_arrow),
+                                          onPressed: () {
+                                            setState(() {
+                                              playing
+                                                  ? pauseContents()
+                                                  : this.ended
+                                                      ? resetContents()
+                                                      : playContents();
+                                            });
+                                          }),
+                                      IconButton(
+                                          color: Colors.white,
+                                          icon: Icon(Icons.camera),
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                            widget.onCamera();
+                                          }),
+                                      IconButton(
+                                          color: Colors.white,
+                                          icon: Icon(Icons.save),
+                                          onPressed: () {
+                                            BlocProvider.of<VideoInfoBloc>(
+                                                context)
+                                              ..addDrawingToVideoInfo(
+                                                  this.canvasPointsRecording,
+                                                  widget.videoReference);
+                                            widget.videoInfo.drawing =
+                                                this.canvasPointsRecording;
+                                          }),
+                                      // IconButton(
+                                      //     icon: Icon(Icons.color_lens),
+                                      //     onPressed: () {
+                                      //       setState(() => openCanvas = true);
+                                      //     }),
                                     ],
-                                  ),
-                                )),
-                          )))
-                ],
-              ),
-            )));
+                                  )),
+                            ],
+                          ),
+                        )),
+                  )))
+        ],
+      ),
+    );
   }
 
-  Widget _markersStack(List<Marker> markers) {
+  Widget _markersStack(List<double> markers) {
     _markers = markers;
     List<Widget> markerWidgets = [];
     _markers.forEach((marker) {
-      markerWidgets.add(buildMarkerTag(marker.position,
+      markerWidgets.add(buildMarkerTag(marker,
           icon: Icons.add_location_rounded, color: Colors.yellow));
     });
     return Stack(children: markerWidgets);

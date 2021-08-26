@@ -17,6 +17,7 @@
 		AE02331A2669A8CD0010EF2D /* Configuration.storekit in Resources */ = {isa = PBXBuildFile; fileRef = AE0233192669A8CD0010EF2D /* Configuration.storekit */; };
 		AE8377ED26574F4900779AC8 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AE8377EC26574F4900779AC8 /* StoreKit.framework */; };
 		AEF4D5362644F91400A9EFD4 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = AEF4D5352644F91400A9EFD4 /* GoogleService-Info.plist */; };
+		B8EA21842677CE0D006481CB /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B8EA21832677CE0D006481CB /* StoreKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -52,6 +53,7 @@
 		AE8377EC26574F4900779AC8 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		AEACCED5264F5A5E005CD158 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "Flutter/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		AEF4D5352644F91400A9EFD4 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "Flutter/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		B8EA21832677CE0D006481CB /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		E74E975157AE4782E047D866 /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		FA6BED35AFFEC33407F6EE1C /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -62,7 +64,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4254283D87E87014B0052B4A /* Pods_Runner.framework in Frameworks */,
-				AE37DECC267401160095C4F7 /* StoreKit.framework in Frameworks */,
+				B8EA21842677CE0D006481CB /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -72,7 +74,7 @@
 		731893463595272DBCFE2EE2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				AE37DECB267401160095C4F7 /* StoreKit.framework */,
+				B8EA21832677CE0D006481CB /* StoreKit.framework */,
 				4649C5F963FDFE5417A5CABC /* Pods_Runner.framework */,
 			);
 			name = Frameworks;
@@ -390,7 +392,7 @@
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 38;
+				CURRENT_PROJECT_VERSION = 53;
 				DEVELOPMENT_TEAM = 65ZQ79YCT9;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
@@ -527,7 +529,7 @@
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 38;
+				CURRENT_PROJECT_VERSION = 53;
 				DEVELOPMENT_TEAM = 65ZQ79YCT9;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
@@ -556,7 +558,7 @@
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 38;
+				CURRENT_PROJECT_VERSION = 53;
 				DEVELOPMENT_TEAM = 65ZQ79YCT9;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
