@@ -603,8 +603,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
           ),
           Padding(
               padding: EdgeInsets.only(top: 1),
-              child: Icon(Icons.circle_outlined,
-                  size: 12, color: OlukoColors.primary))
+              child: Icon(Icons.circle, size: 12, color: OlukoColors.primary))
         ]));
   }
 
