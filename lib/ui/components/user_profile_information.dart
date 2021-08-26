@@ -170,7 +170,12 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                       //USER ES PRIVADO Y NO ES OWNER
                       _isOwner
                           ? userInfoUnlocked(location)
-                          : canShowDetails()
+                          : PrivacyOptions.canShowDetails(
+                                  isOwner: _isOwner,
+                                  currentUser: widget.currentUser,
+                                  userRequested:
+                                      widget.userToDisplayInformation,
+                                  connectStatus: widget.connectStatus)
                               ? userInfoUnlocked(location)
                               : userInfoLocked(),
                     ],
@@ -204,7 +209,11 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
         ),
         //PROFILE ARCHIVEMENTS
         //CHECK TODA LA LOGICA ACA PRIVACY 1 Y  2 ADEMAS DE CONNECTION STATUS
-        canShowDetails()
+        PrivacyOptions.canShowDetails(
+                isOwner: _isOwner,
+                currentUser: widget.currentUser,
+                userRequested: widget.userToDisplayInformation,
+                connectStatus: widget.connectStatus)
             ? UserProfileProgress(
                 challengesCompleted: valuesForArchivements[0],
                 coursesCompleted: valuesForArchivements[1],
@@ -345,58 +354,58 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
         ]);
   }
 
-  bool canShowDetails() {
-    if (_isOwner) {
-      return true;
-    } else {
-      if (currentUserPrivacyOption() == SettingsPrivacyOptions.public) {
-        if (userRequestedPrivacyOption() == SettingsPrivacyOptions.public) {
-          return true;
-        } else if (userRequestedPrivacyOption() ==
-                SettingsPrivacyOptions.restricted &&
-            widget.connectStatus == UserConnectStatus.connected) {
-          return true;
-        } else if (userRequestedPrivacyOption() ==
-                SettingsPrivacyOptions.anonymous &&
-            widget.connectStatus == UserConnectStatus.connected) {
-          return true;
-        } else {
-          return false;
-        }
-      }
-      if (currentUserPrivacyOption() == SettingsPrivacyOptions.restricted) {
-        if (userRequestedPrivacyOption() == SettingsPrivacyOptions.public) {
-          return true;
-        } else if (userRequestedPrivacyOption() ==
-                SettingsPrivacyOptions.restricted &&
-            widget.connectStatus == UserConnectStatus.connected) {
-          return true;
-        } else if (userRequestedPrivacyOption() ==
-                SettingsPrivacyOptions.anonymous &&
-            widget.connectStatus == UserConnectStatus.connected) {
-          return true;
-        } else {
-          return false;
-        }
-      }
-      if (currentUserPrivacyOption() == SettingsPrivacyOptions.anonymous) {
-        if (userRequestedPrivacyOption() == SettingsPrivacyOptions.public) {
-          return true;
-        } else if (userRequestedPrivacyOption() ==
-                SettingsPrivacyOptions.restricted &&
-            widget.connectStatus == UserConnectStatus.connected) {
-          return true;
-        }
-      }
-    }
-  }
+  // bool canShowDetails() {
+  //   if (_isOwner) {
+  //     return true;
+  //   } else {
+  //     if (currentUserPrivacyOption() == SettingsPrivacyOptions.public) {
+  //       if (userRequestedPrivacyOption() == SettingsPrivacyOptions.public) {
+  //         return true;
+  //       } else if (userRequestedPrivacyOption() ==
+  //               SettingsPrivacyOptions.restricted &&
+  //           widget.connectStatus == UserConnectStatus.connected) {
+  //         return true;
+  //       } else if (userRequestedPrivacyOption() ==
+  //               SettingsPrivacyOptions.anonymous &&
+  //           widget.connectStatus == UserConnectStatus.connected) {
+  //         return true;
+  //       } else {
+  //         return false;
+  //       }
+  //     }
+  //     if (currentUserPrivacyOption() == SettingsPrivacyOptions.restricted) {
+  //       if (userRequestedPrivacyOption() == SettingsPrivacyOptions.public) {
+  //         return true;
+  //       } else if (userRequestedPrivacyOption() ==
+  //               SettingsPrivacyOptions.restricted &&
+  //           widget.connectStatus == UserConnectStatus.connected) {
+  //         return true;
+  //       } else if (userRequestedPrivacyOption() ==
+  //               SettingsPrivacyOptions.anonymous &&
+  //           widget.connectStatus == UserConnectStatus.connected) {
+  //         return true;
+  //       } else {
+  //         return false;
+  //       }
+  //     }
+  //     if (currentUserPrivacyOption() == SettingsPrivacyOptions.anonymous) {
+  //       if (userRequestedPrivacyOption() == SettingsPrivacyOptions.public) {
+  //         return true;
+  //       } else if (userRequestedPrivacyOption() ==
+  //               SettingsPrivacyOptions.restricted &&
+  //           widget.connectStatus == UserConnectStatus.connected) {
+  //         return true;
+  //       }
+  //     }
+  //   }
+  // }
 
-  SettingsPrivacyOptions currentUserPrivacyOption() {
-    return PrivacyOptions.privacyOptionsList[widget.currentUser.privacy].option;
-  }
+  // SettingsPrivacyOptions currentUserPrivacyOption() {
+  //   return PrivacyOptions.privacyOptionsList[widget.currentUser.privacy].option;
+  // }
 
-  SettingsPrivacyOptions userRequestedPrivacyOption() {
-    return PrivacyOptions
-        .privacyOptionsList[widget.userToDisplayInformation.privacy].option;
-  }
+  // SettingsPrivacyOptions userRequestedPrivacyOption() {
+  //   return PrivacyOptions
+  //       .privacyOptionsList[widget.userToDisplayInformation.privacy].option;
+  // }
 }

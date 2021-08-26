@@ -11,6 +11,7 @@ import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/list_of_items_to_widget.dart';
+import 'package:oluko_app/helpers/privacy_options.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
@@ -49,11 +50,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   //ya se sigue al usuario
   bool _isFollow = true;
   // estado de connect
-  UserConnectStatus connectStatus = UserConnectStatus.connected;
-  //testing user1 privacy
-  SettingsPrivacyOptions currentUserPrivacy;
-  //testing user2 privacy
-  SettingsPrivacyOptions otherUserPrivacy;
+  UserConnectStatus connectStatus = UserConnectStatus.noConnected;
 
   String _connectButtonDefaultText = "Connect";
 
@@ -92,11 +89,14 @@ class _UserProfilePageState extends State<UserProfilePage> {
           //TODO: USERTODISPLAY ES AUTH PORQUE ES EL MISMO QUE EL PEDIDO
           _userProfileToDisplay = _currentAuthUser;
           //TODO: EL USUARIO ESTA VIENDO SU PERFIL
-          _isCurrentUser = true;
+          _isCurrentUser = false;
         }
         //TODO: SE PIDEN DATOS PARA EL USERTODISPLAY
         _requestContentForUser(
             context: context, userRequested: _userProfileToDisplay);
+
+        _isCurrentUser == false ? print("no es") : print("es");
+
         return _buildUserProfileView(
             context: context,
             authUser: _currentAuthUser,
@@ -440,19 +440,25 @@ class _UserProfilePageState extends State<UserProfilePage> {
   //TODO: VER SI PUEDO EVITAR PEDIR DATA
   void _requestContentForUser(
       {BuildContext context, UserResponse userRequested}) {
-    BlocProvider.of<CourseEnrollmentBloc>(context)
-        .getCourseEnrollmentsByUserId(userRequested.id);
+    if (PrivacyOptions.canShowDetails(
+        isOwner: _isCurrentUser,
+        currentUser: _currentAuthUser,
+        userRequested: _userProfileToDisplay,
+        connectStatus: connectStatus)) {
+      BlocProvider.of<CourseEnrollmentBloc>(context)
+          .getCourseEnrollmentsByUserId(userRequested.id);
 
-    BlocProvider.of<TaskSubmissionBloc>(context)
-        .getTaskSubmissionByUserId(userRequested.id);
+      BlocProvider.of<TaskSubmissionBloc>(context)
+          .getTaskSubmissionByUserId(userRequested.id);
 
-    BlocProvider.of<CourseBloc>(context).getUserEnrolled(userRequested.id);
+      BlocProvider.of<CourseBloc>(context).getUserEnrolled(userRequested.id);
 
-    BlocProvider.of<TransformationJourneyBloc>(context)
-        .getContentByUserId(userRequested.id);
+      BlocProvider.of<TransformationJourneyBloc>(context)
+          .getContentByUserId(userRequested.id);
 
-    BlocProvider.of<CourseEnrollmentBloc>(context)
-        .getChallengesForUser(userRequested.id);
+      BlocProvider.of<CourseEnrollmentBloc>(context)
+          .getChallengesForUser(userRequested.id);
+    }
   }
 
   Padding buildCourseSection(
