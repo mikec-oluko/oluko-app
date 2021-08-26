@@ -29,7 +29,6 @@ class UserProfileInformation extends StatefulWidget {
 
 class _UserProfileInformationState extends State<UserProfileInformation> {
   String _userLocation;
-  //TODO: ESTABLECER ISOWNER CON LA MISMA LOGICA QUE ANTES
   bool _isOwner = false;
   String _archivementsDefaultValue = "0";
 
@@ -137,7 +136,6 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                             backgroundColor: OlukoColors.black,
                             radius: 30.0,
                           ),
-                          //USER ES OWNER Y PUEDE CAMBIAR FOTO DE PERFIL
                           Visibility(
                             visible: widget.actualRoute ==
                                     ActualProfileRoute.userProfile &&
@@ -167,7 +165,6 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                   child: Row(
                     children: [
                       //PROFILE NAME AND LASTNAME
-                      //USER ES PRIVADO Y NO ES OWNER
                       _isOwner
                           ? userInfoUnlocked(location)
                           : PrivacyOptions.canShowDetails(
@@ -208,7 +205,6 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
           ],
         ),
         //PROFILE ARCHIVEMENTS
-        //CHECK TODA LA LOGICA ACA PRIVACY 1 Y  2 ADEMAS DE CONNECTION STATUS
         PrivacyOptions.canShowDetails(
                 isOwner: _isOwner,
                 currentUser: widget.currentUser,
@@ -353,59 +349,4 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
           )
         ]);
   }
-
-  // bool canShowDetails() {
-  //   if (_isOwner) {
-  //     return true;
-  //   } else {
-  //     if (currentUserPrivacyOption() == SettingsPrivacyOptions.public) {
-  //       if (userRequestedPrivacyOption() == SettingsPrivacyOptions.public) {
-  //         return true;
-  //       } else if (userRequestedPrivacyOption() ==
-  //               SettingsPrivacyOptions.restricted &&
-  //           widget.connectStatus == UserConnectStatus.connected) {
-  //         return true;
-  //       } else if (userRequestedPrivacyOption() ==
-  //               SettingsPrivacyOptions.anonymous &&
-  //           widget.connectStatus == UserConnectStatus.connected) {
-  //         return true;
-  //       } else {
-  //         return false;
-  //       }
-  //     }
-  //     if (currentUserPrivacyOption() == SettingsPrivacyOptions.restricted) {
-  //       if (userRequestedPrivacyOption() == SettingsPrivacyOptions.public) {
-  //         return true;
-  //       } else if (userRequestedPrivacyOption() ==
-  //               SettingsPrivacyOptions.restricted &&
-  //           widget.connectStatus == UserConnectStatus.connected) {
-  //         return true;
-  //       } else if (userRequestedPrivacyOption() ==
-  //               SettingsPrivacyOptions.anonymous &&
-  //           widget.connectStatus == UserConnectStatus.connected) {
-  //         return true;
-  //       } else {
-  //         return false;
-  //       }
-  //     }
-  //     if (currentUserPrivacyOption() == SettingsPrivacyOptions.anonymous) {
-  //       if (userRequestedPrivacyOption() == SettingsPrivacyOptions.public) {
-  //         return true;
-  //       } else if (userRequestedPrivacyOption() ==
-  //               SettingsPrivacyOptions.restricted &&
-  //           widget.connectStatus == UserConnectStatus.connected) {
-  //         return true;
-  //       }
-  //     }
-  //   }
-  // }
-
-  // SettingsPrivacyOptions currentUserPrivacyOption() {
-  //   return PrivacyOptions.privacyOptionsList[widget.currentUser.privacy].option;
-  // }
-
-  // SettingsPrivacyOptions userRequestedPrivacyOption() {
-  //   return PrivacyOptions
-  //       .privacyOptionsList[widget.userToDisplayInformation.privacy].option;
-  // }
 }
