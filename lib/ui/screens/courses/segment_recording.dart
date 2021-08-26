@@ -171,7 +171,11 @@ class _SegmentRecordingState extends State<SegmentRecording> {
             setState(() {
               if (isPlaying) {
                 panelController.open();
-                _pauseCountdown();
+                if (isCurrentTaskTimed) {
+                  _pauseCountdown();
+                } else {
+                  setPaused();
+                }
               } else {
                 panelController.close();
                 this.workState = this.lastWorkStateBeforePause;
@@ -340,7 +344,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
         child: Row(children: [
           OlukoPrimaryButton(
               title: OlukoLocalizations.of(context).find('resume'),
-              onPressed: () {               
+              onPressed: () {
                 this.setState(() {
                   _playTask();
                 });
@@ -380,13 +384,18 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   }
 
   Widget pauseButton() {
+    bool isCurrentTaskTimed = this.timerEntries[timerTaskIndex].time != null;
     return GestureDetector(
         onTap: () async {
           if (timerEntries[timerTaskIndex].workState == WorkState.exercising) {
             await cameraController.stopVideoRecording();
           }
           setState(() {
-            _pauseCountdown();
+            if (isCurrentTaskTimed) {
+              _pauseCountdown();
+            } else {
+              setPaused();
+            }
           });
         },
         child: Stack(alignment: Alignment.center, children: [
@@ -561,9 +570,13 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     });
   }
 
-  void _pauseCountdown() {
+  void setPaused() {
     lastWorkStateBeforePause = workState;
     this.workState = WorkState.paused;
+  }
+
+  void _pauseCountdown() {
+    setPaused();
     countdownTimer.cancel();
   }
 
