@@ -95,7 +95,10 @@ class _State extends State<ClassCard> {
           Stack(alignment: Alignment.bottomRight, children: [
             ClipRRect(
               child: Image.network(
-                widget.enrollmentClass.image,
+                widget.enrollmentClass.image != null
+                    ? widget.enrollmentClass
+                        .image // TODO: set default picture in const file
+                    : "https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/classes_sample_images%2Fclass_sample_2.png?alt=media&token=f3ac6b80-a2f5-4612-ab72-ea72f88ad00e",
                 height: height,
                 width: width,
                 fit: BoxFit.cover,
