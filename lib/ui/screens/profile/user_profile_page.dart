@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
+import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/profile/profile_bloc.dart';
 import 'package:oluko_app/blocs/profile/upload_avatar_bloc.dart';
 import 'package:oluko_app/blocs/profile/upload_cover_image_bloc.dart';
@@ -15,6 +16,7 @@ import 'package:oluko_app/helpers/privacy_options.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/friend.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -41,18 +43,15 @@ class UserProfilePage extends StatefulWidget {
 }
 
 class _UserProfilePageState extends State<UserProfilePage> {
-  //usuario usando la app
   UserResponse _currentAuthUser;
-  //usuario requerido para mostrar
   UserResponse _userProfileToDisplay;
-  //esta viendo su perfil
   bool _isCurrentUser = false;
-  //ya se sigue al usuario
-  bool _isFollow = true;
-  // estado de connect
-  UserConnectStatus connectStatus = UserConnectStatus.noConnected;
+  bool _isFollow = false;
+  UserConnectStatus connectStatus;
+  Friend friendData;
+  List<UserResponse> friendUsers = [];
 
-  String _connectButtonDefaultText = "Connect";
+  String _connectButtonTitle = "";
 
   List<TransformationJourneyUpload> _transformationJourneyContent = [];
   List<TaskSubmission> _assessmentVideosContent = [];
@@ -68,7 +67,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
   @override
   void initState() {
     setState(() {
-      //TODO: USER PARA MOSTRAR ES NUL (YA NO PASA)
       _isCurrentUser = widget.userRequested == null ? true : false;
     });
     super.initState();
@@ -77,25 +75,23 @@ class _UserProfilePageState extends State<UserProfilePage> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
-      //TODO: USERTODISPLAY ES EL QUE SE PIDIO
       _userProfileToDisplay = widget.userRequested;
 
       if (state is AuthSuccess) {
-        //TODO: CURRENT USER ES EL QUE DEVUELVE AUTH
         _currentAuthUser = state.user;
 
         if (_isOwnerProfile(
             authUser: _currentAuthUser, userRequested: widget.userRequested)) {
-          //TODO: USERTODISPLAY ES AUTH PORQUE ES EL MISMO QUE EL PEDIDO
           _userProfileToDisplay = _currentAuthUser;
-          //TODO: EL USUARIO ESTA VIENDO SU PERFIL
-          _isCurrentUser = false;
+          _isCurrentUser = true;
         }
-        //TODO: SE PIDEN DATOS PARA EL USERTODISPLAY
         _requestContentForUser(
             context: context, userRequested: _userProfileToDisplay);
 
-        _isCurrentUser == false ? print("no es") : print("es");
+        _isCurrentUser == false
+            ? BlocProvider.of<FriendBloc>(context)
+                .getFriendsByUserId(_currentAuthUser.id)
+            : null;
 
         return _buildUserProfileView(
             context: context,
@@ -159,6 +155,17 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 _statePanelMaxHeight = 100;
               } else {
                 _statePanelMaxHeight = 300;
+              }
+            },
+          ),
+          BlocListener<FriendBloc, FriendState>(
+            listenWhen: (FriendState previous, FriendState current) =>
+                current != previous,
+            listener: (context, state) {
+              if (state is GetFriendsSuccess) {
+                friendData = state.friendData;
+                friendUsers = state.friendUsers;
+                checkConnectionStatus(userRequested, friendData);
               }
             },
           ),
@@ -279,7 +286,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
                             height: MediaQuery.of(context).size.height / 3.5,
                             child: BlocProvider.value(
                                 value: BlocProvider.of<ProfileBloc>(context),
-                                //TODO: USERINFORMATION
                                 child: UserProfileInformation(
                                     userToDisplayInformation:
                                         _userProfileToDisplay,
@@ -315,7 +321,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 ),
                 Column(
                   children: [
-                    //TODO: Check CONNECT and FOLLOW   _currentAuthUser And _userProfileToDisplay
                     !_isCurrentUser
                         ? Padding(
                             padding: const EdgeInsets.fromLTRB(10, 30, 10, 0),
@@ -326,7 +331,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                     setState(() {
                                       _isFollow = !_isFollow;
                                     });
-                                    //TODO: Send Like from _currentAuthUser to UserToDisplay
+                                    //TODO: Add user with is_favorite
                                   },
                                   child: Icon(
                                       _isFollow
@@ -337,16 +342,26 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                 Container(
                                   child: OlukoOutlinedButton(
                                       onPressed: () {
-                                        //TODO: Connect _currentAuthUser with UserToDisplay
+                                        switch (connectStatus) {
+                                          case UserConnectStatus.connected:
+                                            //TODO: remove friend
+                                            break;
+                                          case UserConnectStatus.noConnected:
+                                            //TODO: connect friend
+                                            break;
+                                          case UserConnectStatus.requestPending:
+                                            //TODO: cancel request friend
+                                            break;
+                                          default:
+                                        }
                                       },
-                                      title: _connectButtonDefaultText),
+                                      title: OlukoLocalizations.of(context)
+                                          .find(_connectButtonTitle)),
                                 ),
                               ],
                             ),
                           )
                         : SizedBox(),
-
-                    //TODO: VER SI PUEDO EVITAR PEDIR DATA
                     BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
                         builder: (context, state) {
                       if (state is GetUserTaskSubmissionSuccess) {
@@ -437,7 +452,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
     );
   }
 
-  //TODO: VER SI PUEDO EVITAR PEDIR DATA
   void _requestContentForUser(
       {BuildContext context, UserResponse userRequested}) {
     if (PrivacyOptions.canShowDetails(
@@ -535,5 +549,56 @@ class _UserProfilePageState extends State<UserProfilePage> {
       }
     }
     return _completion;
+  }
+
+  checkConnectionStatus(UserResponse userRequested, Friend friendData) {
+    friendData.friends.forEach((friend) {
+      if (friend.id == userRequested.id) {
+        if (friend.isFavorite) {
+          setState(() {
+            _isFollow = true;
+          });
+        }
+        setState(() {
+          connectStatus = UserConnectStatus.connected;
+          _connectButtonTitle = returnTitleForConnectButton(connectStatus);
+        });
+      } else {
+        setState(() {
+          connectStatus = UserConnectStatus.noConnected;
+          _connectButtonTitle = returnTitleForConnectButton(connectStatus);
+        });
+      }
+    });
+
+    friendData.friendRequestSent.forEach((request) {
+      if (request.id == userRequested.id) {
+        setState(() {
+          connectStatus = UserConnectStatus.requestPending;
+          _connectButtonTitle = returnTitleForConnectButton(connectStatus);
+        });
+      } else {
+        setState(() {
+          connectStatus = UserConnectStatus.noConnected;
+          _connectButtonTitle = returnTitleForConnectButton(connectStatus);
+        });
+      }
+    });
+  }
+
+  String returnTitleForConnectButton(UserConnectStatus connectStatus) {
+    switch (connectStatus) {
+      case UserConnectStatus.connected:
+        return "remove";
+        break;
+      case UserConnectStatus.noConnected:
+        return "connect";
+        break;
+      case UserConnectStatus.requestPending:
+        return "cancelConnectionRequested";
+        break;
+      default:
+        return "fail";
+    }
   }
 }

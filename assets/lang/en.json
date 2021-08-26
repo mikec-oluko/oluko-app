@@ -140,5 +140,9 @@
     "challenges": "Challenges",
     "movesInThisClass": "Moves in this class",
     "viewDetails": "View Details",
-    "noContent":"No content to display"
+    "noContent":"No content to display",
+    "remove":"Remove",
+    "connect":"Connect",
+    "cancelConnectionRequested":"Cancel Connection Requested"
+
 }
