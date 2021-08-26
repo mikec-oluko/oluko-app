@@ -17,7 +17,7 @@ import 'package:oluko_app/ui/components/segment_image_section.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
 import 'package:oluko_app/ui/screens/courses/collapsed_movement_videos_section.dart';
 import 'package:oluko_app/ui/screens/courses/movement_videos_section.dart';
-import 'package:oluko_app/ui/screens/courses/segment_recording.dart';
+import 'package:oluko_app/ui/screens/courses/segment_clocks.dart';
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';

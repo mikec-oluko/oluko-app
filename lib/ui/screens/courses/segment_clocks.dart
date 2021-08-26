@@ -32,14 +32,14 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 enum WorkoutType { segment, segmentWithRecording }
 
-class SegmentRecording extends StatefulWidget {
+class SegmentClocks extends StatefulWidget {
   final WorkoutType workoutType;
   final CourseEnrollment courseEnrollment;
   final int classIndex;
   final int segmentIndex;
   final List<Segment> segments;
 
-  SegmentRecording(
+  SegmentClocks(
       {Key key,
       this.workoutType,
       this.classIndex,
@@ -49,10 +49,10 @@ class SegmentRecording extends StatefulWidget {
       : super(key: key);
 
   @override
-  _SegmentRecordingState createState() => _SegmentRecordingState();
+  _SegmentClocksState createState() => _SegmentClocksState();
 }
 
-class _SegmentRecordingState extends State<SegmentRecording> {
+class _SegmentClocksState extends State<SegmentClocks> {
   WorkoutType workoutType;
 
   //Imported from Timer POC Models
@@ -425,48 +425,6 @@ class _SegmentRecordingState extends State<SegmentRecording> {
         size: 30,
       ),
     );
-  }
-
-  /*List<Widget> _onPlayingActions() {
-    bool isCurrentTaskTimed = this.timerEntries[timerTaskIndex].time != null;
-    OlukoPrimaryButton mainButton = isCurrentTaskTimed
-        ? OlukoPrimaryButton(
-            color: Colors.white,
-            title: OlukoLocalizations.of(context).find('pause').toUpperCase(),
-            onPressed: () => this.setState(() {
-              //_pauseCountdown();
-            }),
-            icon: Icon(Icons.pause),
-          )
-        : OlukoPrimaryButton(
-            color: Colors.white,
-            //TODO translate
-            title: 'NEXT',
-            onPressed: () => this.setState(() {
-                  _goToNextStep();
-                }),
-            icon: Icon(Icons.fast_forward));
-
-    return [
-      mainButton,
-    ];
-  }*/
-
-  List<Widget> _onPausedActions() {
-    bool isCurrentTaskTimed = this.timerEntries[timerTaskIndex].time != null;
-    return [
-      OlukoPrimaryButton(
-        color: Colors.white,
-        onPressed: () => this.setState(() {
-          this.workState = this.lastWorkStateBeforePause;
-          if (isCurrentTaskTimed) {
-            _playCountdown();
-          }
-        }),
-        title:
-            OlukoLocalizations.of(context).find('resumeWorkouts').toUpperCase(),
-      ),
-    ];
   }
 
   //Timer Functions

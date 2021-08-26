@@ -4,7 +4,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/IntervalProgressBarLib/interval_progress_bar.dart';
 import 'package:oluko_app/ui/components/countdown_overlay.dart';
-import 'package:oluko_app/ui/screens/courses/segment_recording.dart';
+import 'package:oluko_app/ui/screens/courses/segment_clocks.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 enum InitialTimerType { Start, End }
@@ -231,7 +231,7 @@ class TimerUtils {
                   recording: workoutType == WorkoutType.segmentWithRecording,
                 )))
         .then((value) => Navigator.pushNamed(
-            context, routeLabels[RouteEnum.segmentRecording],
+            context, routeLabels[RouteEnum.segmentClocks],
             arguments: arguments));
   }
 }
