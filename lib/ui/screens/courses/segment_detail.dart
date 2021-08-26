@@ -8,7 +8,6 @@ import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
-import 'package:oluko_app/models/enums/movement_videos_action_enum.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/routes.dart';
@@ -45,6 +44,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
   User _user;
   List<Segment> _segments;
   List<Movement> _movements;
+  PanelController panelController = new PanelController();
 
   @override
   void initState() {
@@ -86,13 +86,14 @@ class _SegmentDetailState extends State<SegmentDetail> {
         width: ScreenUtils.width(context),
         height: ScreenUtils.height(context),
         child: SlidingUpPanel(
+            controller: panelController,
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(20), topRight: Radius.circular(20)),
             minHeight: 90,
             maxHeight: 185,
-            collapsed: CollapsedMovementVideosSection(
-                action: MovementVideosActionEnum.Up),
+            collapsed: CollapsedMovementVideosSection(action: getAction()),
             panel: MovementVideosSection(
+                action: downButton(),
                 segment: _segments[widget.segmentIndex],
                 movements: _movements,
                 onPressedMovement: (BuildContext context, Movement movement) =>
@@ -102,6 +103,46 @@ class _SegmentDetailState extends State<SegmentDetail> {
             body: _viewBody()),
       ),
     );
+  }
+
+  downButton() {
+    return GestureDetector(
+        onTap: () => panelController.close(),
+        child: Padding(
+            padding: EdgeInsets.only(top: 15, bottom: 5, right: 25),
+            child: RotatedBox(
+                quarterTurns: 2,
+                child: Stack(alignment: Alignment.center, children: [
+                  Image.asset(
+                    'assets/courses/white_arrow_up.png',
+                    scale: 4,
+                  ),
+                  Padding(
+                      padding: EdgeInsets.only(top: 15),
+                      child: Image.asset(
+                        'assets/courses/grey_arrow_up.png',
+                        scale: 4,
+                      ))
+                ]))));
+  }
+
+  Widget getAction() {
+    return GestureDetector(
+        onTap: () => panelController.open(),
+        child: Padding(
+            padding: EdgeInsets.only(top: 10, bottom: 15, right: 25),
+            child: Stack(alignment: Alignment.center, children: [
+              Image.asset(
+                'assets/courses/white_arrow_up.png',
+                scale: 4,
+              ),
+              Padding(
+                  padding: EdgeInsets.only(top: 15),
+                  child: Image.asset(
+                    'assets/courses/grey_arrow_up.png',
+                    scale: 4,
+                  ))
+            ])));
   }
 
   Widget _viewBody() {

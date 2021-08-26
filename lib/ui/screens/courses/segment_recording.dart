@@ -9,11 +9,9 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/movement_submission_bloc.dart';
-import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
-import 'package:oluko_app/models/enums/movement_videos_action_enum.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
@@ -83,6 +81,10 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   SegmentSubmission _segmentSubmission;
   List<Movement> _movements;
 
+  bool isPlaying = true;
+
+  PanelController panelController = new PanelController();
+
   @override
   void initState() {
     _setupCameras();
@@ -134,13 +136,14 @@ class _SegmentRecordingState extends State<SegmentRecording> {
       backgroundColor: Colors.black,
       body: widget.workoutType == WorkoutType.segment
           ? SlidingUpPanel(
+              controller: panelController,
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(20), topRight: Radius.circular(20)),
               minHeight: 90,
               maxHeight: 185,
-              collapsed: CollapsedMovementVideosSection(
-                  action: MovementVideosActionEnum.Pause),
+              collapsed: CollapsedMovementVideosSection(action: getAction()),
               panel: MovementVideosSection(
+                  action: getAction(),
                   segment: widget.segments[widget.segmentIndex],
                   movements: _movements,
                   onPressedMovement:
@@ -151,6 +154,37 @@ class _SegmentRecordingState extends State<SegmentRecording> {
               body: _body())
           : _body(),
     );
+  }
+
+  Widget getAction() {
+    return Padding(
+        padding: EdgeInsets.only(right: 10),
+        child: OutlinedButton(
+          onPressed: () {
+            bool isCurrentTaskTimed =
+                this.timerEntries[timerTaskIndex].time != null;
+            setState(() {
+              if (isPlaying) {
+                panelController.open();
+                _pauseCountdown();
+              } else {
+                panelController.close();
+                this.workState = this.lastWorkStateBeforePause;
+                if (isCurrentTaskTimed) {
+                  _playCountdown();
+                }
+              }
+              isPlaying = !isPlaying;
+            });
+          },
+          child: Icon(isPlaying ? Icons.pause : Icons.play_arrow,
+              color: Colors.white),
+          style: OutlinedButton.styleFrom(
+            padding: EdgeInsets.all(12),
+            shape: CircleBorder(),
+            side: BorderSide(color: Colors.white),
+          ),
+        ));
   }
 
   Widget _body() {
@@ -188,14 +222,18 @@ class _SegmentRecordingState extends State<SegmentRecording> {
 
   ///Clock countdown label
   Widget _countdownSection(WorkState workState) {
-    bool isTimedTask = timerEntries[timerTaskIndex].time != null;
+    bool isRepsTask = timerEntries[timerTaskIndex].reps != null;
 
-    if (!isTimedTask) {
+    if (workState != WorkState.paused && isRepsTask) {
       return TimerUtils.repsTimer(
           () => this.setState(() {
                 _goToNextStep();
               }),
           context);
+    }
+
+    if (workState == WorkState.paused && isRepsTask) {
+      return TimerUtils.pausedTimer(context);
     }
 
     Duration actualTime =
@@ -206,7 +244,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
 
     if (workState == WorkState.paused) {
       return TimerUtils.pausedTimer(
-          TimeConverter.durationToString(this.timeLeft), context);
+          context, TimeConverter.durationToString(this.timeLeft));
     }
 
     if (workState == WorkState.repResting) {
@@ -287,19 +325,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
       color: Colors.black,
       child: workoutType == WorkoutType.segmentWithRecording
           ? _cameraSection()
-          : _controlsSection(workoutState),
-    );
-  }
-
-  ///Section with an Array of buttons to handle workout control from user
-  Widget _controlsSection(WorkState workoutState) {
-    return Padding(
-      padding: const EdgeInsets.all(20.0),
-      child: Row(
-        children: workoutState == WorkState.paused
-            ? _onPausedActions()
-            : [SizedBox()],
-      ),
+          : SizedBox(),
     );
   }
 
@@ -491,9 +517,9 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   }
 
   void _playCountdown() {
-    if (timerTaskIndex == 0) {
+    /*if (timerTaskIndex == 0) {
       timeLeft = Duration(seconds: timerEntries[0].time);
-    }
+    }*/
     countdownTimer = Timer.periodic(Duration(seconds: 1), (Timer timer) {
       if (timeLeft.inSeconds == 0) {
         _pauseCountdown();

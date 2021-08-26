@@ -107,7 +107,7 @@ class TimerUtils {
             ])));
   }
 
-  static Widget pausedTimer(String duration, BuildContext context) {
+  static Widget pausedTimer(BuildContext context, [String duration]) {
     return Container(
         child: SizedBox(
             height: 180,
@@ -127,13 +127,15 @@ class TimerUtils {
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
                         color: OlukoColors.skyblue)),
-                SizedBox(height: 12),
-                Text(duration,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white))
+                duration != null ? SizedBox(height: 12) : SizedBox(),
+                duration != null
+                    ? Text(duration,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white))
+                    : SizedBox()
               ])
             ])));
   }

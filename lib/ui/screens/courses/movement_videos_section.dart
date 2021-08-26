@@ -10,8 +10,10 @@ class MovementVideosSection extends StatefulWidget {
   final List<Movement> movements;
   final Segment segment;
   final Function(BuildContext, Movement) onPressedMovement;
+  final Widget action;
 
-  MovementVideosSection({this.segment, this.movements, this.onPressedMovement});
+  MovementVideosSection(
+      {this.segment, this.movements, this.onPressedMovement, this.action});
 
   @override
   _State createState() => _State();
@@ -29,7 +31,7 @@ class _State extends State<MovementVideosSection> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: EdgeInsets.symmetric(horizontal: 25),
+        padding: EdgeInsets.only(left: 18),
         decoration: BoxDecoration(
             image: DecorationImage(
               image: AssetImage('assets/courses/gray_background.png'),
@@ -49,9 +51,9 @@ class _State extends State<MovementVideosSection> {
             SizedBox(width: 10),
             Icon(Icons.directions_run, color: Colors.white, size: 30),
             Expanded(child: SizedBox()),
-            rightButton()
+            widget.action
           ]),
-          SizedBox(height: 12),
+          SizedBox(height: 6),
           Container(
               child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
@@ -59,7 +61,6 @@ class _State extends State<MovementVideosSection> {
                       onPressed: widget.onPressedMovement,
                       content: segmentMovements,
                       width: ScreenUtils.width(context) / 1))),
-          SizedBox(height: 13),
           Image.asset(
             'assets/courses/horizontal_vector.png',
             scale: 2,
@@ -79,24 +80,5 @@ class _State extends State<MovementVideosSection> {
       }
     });
     return movements;
-  }
-
-  rightButton() {
-    return Padding(
-        padding: EdgeInsets.only(top: 15, bottom: 5),
-        child: RotatedBox(
-            quarterTurns: 2,
-            child: Stack(alignment: Alignment.center, children: [
-              Image.asset(
-                'assets/courses/white_arrow_up.png',
-                scale: 4,
-              ),
-              Padding(
-                  padding: EdgeInsets.only(top: 15),
-                  child: Image.asset(
-                    'assets/courses/grey_arrow_up.png',
-                    scale: 4,
-                  ))
-            ])));
   }
 }
