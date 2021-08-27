@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/models/assessment.dart';
-import 'package:oluko_app/models/assessment_task.dart';
+import 'package:oluko_app/models/submodels/assessment_task.dart';
 import 'package:oluko_app/models/task.dart';
 
 class TaskRepository {
@@ -29,7 +29,7 @@ class TaskRepository {
     List<String> taskIds = assessment.tasks
         .map((AssessmentTask assessmentTask) => assessmentTask.taskId)
         .toList();
-    
+
     List<Task> response = [];
     response.length = taskIds.length;
     tasks.forEach((task) {
