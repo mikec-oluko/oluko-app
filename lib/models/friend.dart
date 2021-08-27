@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oluko_app/models/base.dart';
-import 'package:oluko_app/models/friend_model.dart';
-import 'package:oluko_app/models/friend_request_model.dart';
+import 'package:oluko_app/models/submodels/friend_model.dart';
+import 'package:oluko_app/models/submodels/friend_request_model.dart';
 
 class Friend extends Base {
   List<FriendModel> friends;
