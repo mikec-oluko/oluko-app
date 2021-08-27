@@ -39,9 +39,11 @@ class FriendBloc extends Cubit<FriendState> {
   void getFriendsByUserId(String userId) async {
     try {
       Friend friendData = await FriendRepository.getUserFriendsByUserId(userId);
-
-      List<UserResponse> friendList = await Future.wait(friendData.friends
-          .map((friend) async => UserRepository().getById(friend.id)));
+      List<UserResponse> friendList;
+      if (friendData != null) {
+        friendList = await Future.wait(friendData.friends
+            .map((friend) async => UserRepository().getById(friend.id)));
+      }
       emit(GetFriendsSuccess(friendData: friendData, friendUsers: friendList));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
