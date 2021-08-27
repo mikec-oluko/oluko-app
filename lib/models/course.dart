@@ -61,7 +61,9 @@ class Course extends Base {
     }
     Course course = Course(
         name: json['name'] != null ? json['name'] : '-',
-        statisticsReference: json['statistics_reference'],
+        statisticsReference: json['statistics_reference'] != null
+            ? json['statistics_reference']
+            : null,
         video: json['video'],
         duration: json['duration'],
         description: json['description'] != null ? json['description'] : '-',
