@@ -15,10 +15,12 @@ import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/segment_image_section.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
 import 'package:oluko_app/ui/screens/courses/segment_recording.dart';
-import 'package:oluko_app/ui/screens/courses/segment_timers.dart';
+import 'package:oluko_app/ui/screens/courses/segment_camera_preview.dart.dart';
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/timer_utils.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class SegmentDetail extends StatefulWidget {
   SegmentDetail(
@@ -111,28 +113,6 @@ class _SegmentDetailState extends State<SegmentDetail> {
     );
   }
 
-  _startCountdown(WorkoutType workoutType) {
-    return Navigator.of(context)
-        .push(PageRouteBuilder(
-            opaque: false,
-            pageBuilder: (BuildContext context, _, __) => CountdownOverlay(
-                  seconds: 5,
-                  title: workoutType == WorkoutType.segmentWithRecording
-                      ? OlukoLocalizations.of(context)
-                          .find("segmentAndRecordingStartsIn")
-                      : OlukoLocalizations.of(context).find("segmentStartsIn"),
-                )))
-        .then((value) => Navigator.pushNamed(
-                context, routeLabels[RouteEnum.segmentRecording],
-                arguments: {
-                  'segmentIndex': widget.segmentIndex,
-                  'classIndex': widget.classIndex,
-                  'courseEnrollment': widget.courseEnrollment,
-                  'workoutType': workoutType,
-                  'segments': _segments,
-                }));
-  }
-
   List<Widget> _confirmDialogContent() {
     return [
       Icon(Icons.warning_amber_rounded, color: Colors.white, size: 100),
@@ -206,16 +186,30 @@ class _SegmentDetailState extends State<SegmentDetail> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     OlukoOutlinedButton(
-                      title: 'Ignore',
+                      title: OlukoLocalizations.of(context).find('ignore'),
                       onPressed: () {
-                        _startCountdown(WorkoutType.segment);
+                        //TODO: Make rounds dynamic
+                        TimerUtils.startCountdown(
+                            WorkoutType.segment,
+                            context,
+                            getArguments(),
+                            _segments[widget.segmentIndex].initialTimer,
+                            8,
+                            2);
                       },
                     ),
                     SizedBox(width: 20),
                     OlukoPrimaryButton(
                       title: 'Ok',
                       onPressed: () {
-                        _startCountdown(WorkoutType.segmentWithRecording);
+                        Navigator.pushNamed(context,
+                            routeLabels[RouteEnum.segmentCameraPreview],
+                            arguments: {
+                              'segmentIndex': widget.segmentIndex,
+                              'classIndex': widget.classIndex,
+                              'courseEnrollment': widget.courseEnrollment,
+                              'segments': _segments,
+                            });
                       },
                     )
                   ],
@@ -227,5 +221,15 @@ class _SegmentDetailState extends State<SegmentDetail> {
                   icon: Icon(Icons.close, color: Colors.white),
                   onPressed: () => Navigator.pop(context)))
         ]));
+  }
+
+  Object getArguments() {
+    return {
+      'segmentIndex': widget.segmentIndex,
+      'classIndex': widget.classIndex,
+      'courseEnrollment': widget.courseEnrollment,
+      'workoutType': WorkoutType.segment,
+      'segments': _segments,
+    };
   }
 }

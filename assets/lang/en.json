@@ -20,6 +20,9 @@
     "paused": "Paused",
     "seconds": "Seconds",
     "bookMark": "Bookmark",
+    "favourites": "Favourites",
+    "everyoneElse": "Everyone Else",
+    "noUsers": "No Users",
     "referenceMovements": "Reference Movements",
     "referenceCourses": "Reference Courses",
     "segmentAndRecordingStartsIn": "Segment and recording starts in",
@@ -144,5 +147,16 @@
     "remove":"Remove",
     "connect":"Connect",
     "cancelConnectionRequested":"Cancel Connection Requested",
-    "profileUploadAborted":"Profile upload aborted"
+    "profileUploadAborted":"Profile upload aborted",
+    "cameraInfo": "Set your camera to your desired orientation & position",
+    "cameraWarning": "Hitting this button will start the recording and the Segment",
+    "startsIn": "Starts In",
+    "endsIn": "Ends In",
+    "pauseWarning": "Hitting this button while recording will end the recording and will pause the Segment.",
+    "dontShowAgain": "Don't show this again",
+    "round": "Round",
+    "rest": "Rest",
+    "tapHere": "Tap here",
+    "whenDone": "when done",
+    "ignore": "Ignore"
 }

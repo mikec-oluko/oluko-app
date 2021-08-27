@@ -40,8 +40,11 @@ class CourseEnrollment extends Base {
   factory CourseEnrollment.fromJson(Map<String, dynamic> json) {
     CourseEnrollment courseEnrollment = CourseEnrollment(
         userReference: json['user_reference'],
-        course: ObjectSubmodel.fromJson(json['course']),
-        completion: json['completion'] == null ? 0.0 : (json['completion']).toDouble(),
+        course: json['course'] != null
+            ? ObjectSubmodel.fromJson(json['course'])
+            : null,
+        completion:
+            json['completion'] == null ? 0.0 : (json['completion']).toDouble(),
         completedAt: json['completed_at'],
         finishedAt: json['finished_at'],
         classes: json['classes'] != null

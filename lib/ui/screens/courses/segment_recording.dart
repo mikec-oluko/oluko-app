@@ -28,6 +28,7 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
+import 'package:oluko_app/utils/timer_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 enum WorkoutType { segment, segmentWithRecording }
@@ -74,7 +75,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
   List<CameraDescription> cameras;
   CameraController cameraController;
   bool _isReady = false;
-  bool isCameraFront = true;
+  bool isCameraFront = false;
   List<TimerEntry> timerEntries;
 
   User _user;
@@ -156,9 +157,11 @@ class _SegmentRecordingState extends State<SegmentRecording> {
       children: [
         Padding(
             padding: const EdgeInsets.only(top: 3, bottom: 8),
-            child: Stack(
-                alignment: Alignment.center,
-                children: [buildCircle(), _countdownSection(workState)])),
+            child: Stack(alignment: Alignment.center, children: [
+              //TODO: Make dynamic
+              TimerUtils.roundsTimer(8, 2),
+              _countdownSection(workState)
+            ])),
         _tasksSection(
             timerEntries[timerTaskIndex].label,
             timerTaskIndex < timerEntries.length - 1
@@ -173,7 +176,11 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     bool isTimedTask = timerEntries[timerTaskIndex].time != null;
 
     if (!isTimedTask) {
-      return repsTimer();
+      return TimerUtils.repsTimer(
+          () => this.setState(() {
+                _goToNextStep();
+              }),
+          context);
     }
 
     Duration actualTime =
@@ -183,15 +190,16 @@ class _SegmentRecordingState extends State<SegmentRecording> {
         (actualTime.inSeconds / timerEntries[timerTaskIndex].time);
 
     if (workState == WorkState.paused) {
-      return pausedTimer(TimeConverter.durationToString(this.timeLeft));
+      return TimerUtils.pausedTimer(
+          TimeConverter.durationToString(this.timeLeft), context);
     }
 
     if (workState == WorkState.repResting) {
-      return restTimer(circularProgressIndicatorValue,
-          TimeConverter.durationToString(this.timeLeft));
+      return TimerUtils.restTimer(circularProgressIndicatorValue,
+          TimeConverter.durationToString(this.timeLeft), context);
     }
 
-    return timeTimer(circularProgressIndicatorValue,
+    return TimerUtils.timeTimer(circularProgressIndicatorValue,
         TimeConverter.durationToString(this.timeLeft));
   }
 
@@ -278,31 +286,27 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     return showCamera
         ? SizedBox(
             height: ScreenUtils.height(context) / 2,
+            width: ScreenUtils.width(context),
             child: Stack(
               children: [
                 (!_isReady)
                     ? Container()
-                    : Center(
-                        child: AspectRatio(
-                            aspectRatio: 3.0 / 4.0,
-                            child: CameraPreview(cameraController))),
+                    : Container(
+                        decoration: BoxDecoration(
+                            image: DecorationImage(
+                          image: AssetImage(
+                              'assets/courses/camera_background.png'),
+                          fit: BoxFit.cover,
+                        )),
+                        child: Center(
+                            child: AspectRatio(
+                                aspectRatio: 3.0 / 4.0,
+                                child: CameraPreview(cameraController)))),
                 Align(
                     alignment: Alignment.bottomCenter,
                     child: Padding(
                         padding: const EdgeInsets.all(20.0),
                         child: pauseButton())),
-                Align(
-                    alignment: Alignment.bottomLeft,
-                    child: Padding(
-                        padding: const EdgeInsets.only(
-                            right: 20.0, left: 80.0, top: 20.0, bottom: 20.0),
-                        child: _cameraButton(Icons.flip_camera_android,
-                            onPressed: () {
-                          setState(() {
-                            isCameraFront = !isCameraFront;
-                          });
-                          _setupCameras();
-                        }))),
               ],
             ))
         : SizedBox();
@@ -525,7 +529,8 @@ class _SegmentRecordingState extends State<SegmentRecording> {
           ),
           Padding(
               padding: EdgeInsets.only(top: 1),
-              child: Icon(Icons.circle, size: 12, color: OlukoColors.primary))
+              child: Icon(Icons.circle_outlined,
+                  size: 12, color: OlukoColors.primary))
         ]));
   }
 
@@ -536,198 +541,5 @@ class _SegmentRecordingState extends State<SegmentRecording> {
           'assets/courses/audio_icon.png',
           scale: 4,
         ));
-  }
-
-  //timers
-  Widget buildCircle() => IntervalProgressBar(
-        direction: IntervalProgressDirection.circle,
-        max: 8,
-        progress: 2,
-        intervalSize: 4,
-        size: Size(200, 200),
-        highlightColor: OlukoColors.primary,
-        defaultColor: OlukoColors.grayColor,
-        intervalColor: Colors.transparent,
-        intervalHighlightColor: Colors.transparent,
-        reverse: true,
-        radius: 0,
-        intervalDegrees: 5,
-        strokeWith: 5,
-      );
-
-  Widget timeTimer(double progressValue, String duration) {
-    return Container(
-        child: SizedBox(
-            height: 180,
-            width: 180,
-            child: Stack(alignment: Alignment.center, children: [
-              AspectRatio(
-                  aspectRatio: 1,
-                  child: CircularProgressIndicator(
-                      value: progressValue,
-                      // color: OlukoColors.coral,
-                      backgroundColor: OlukoColors.grayColor)),
-              Text(duration,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white))
-            ])));
-  }
-
-  Widget preTimer(String type, int round) {
-    return Stack(alignment: Alignment.center, children: [
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 98.0),
-        child: AspectRatio(
-            aspectRatio: 1,
-            child: CircularProgressIndicator(
-                value: 0.4,
-                // color: OlukoColors.coral,
-                backgroundColor: OlukoColors.grayColor)),
-      ),
-      Column(children: [
-        Text("4",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontSize: 80,
-                fontWeight: FontWeight.bold,
-                fontStyle: FontStyle.italic,
-                color: OlukoColors.coral)),
-        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Text("Round   ",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white)),
-          Text(round.toString(),
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white))
-        ]),
-        SizedBox(height: 2),
-        Padding(
-            padding: const EdgeInsets.only(bottom: 5),
-            child: Text(type + " In",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white)))
-      ])
-    ]);
-  }
-
-  Widget pausedTimer(String duration) {
-    return Container(
-        child: SizedBox(
-            height: 180,
-            width: 180,
-            child: Stack(alignment: Alignment.center, children: [
-              AspectRatio(
-                  aspectRatio: 1,
-                  child: CircularProgressIndicator(
-                      value: 0,
-                      // color: OlukoColors.skyblue,
-                      backgroundColor: OlukoColors.grayColor)),
-              Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Text("PAUSED",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: OlukoColors.skyblue)),
-                SizedBox(height: 12),
-                Text(duration,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white))
-              ])
-            ])));
-  }
-
-  Widget restTimer(double progressValue, String duration) {
-    //double ellipseScale = 4.5;
-    return Container(
-        child: SizedBox(
-            height: 180,
-            width: 180,
-            child: Stack(alignment: Alignment.center, children: [
-              /*Image.asset(
-                'assets/courses/ellipse_1.png',
-                scale: ellipseScale,
-              ),
-              Image.asset(
-                'assets/courses/ellipse_2.png',
-                scale: ellipseScale,
-              ),
-              Image.asset(
-                'assets/courses/ellipse_3.png',
-                scale: ellipseScale,
-              ),*/
-              AspectRatio(
-                  aspectRatio: 1,
-                  child: CircularProgressIndicator(
-                      value: progressValue,
-                      // color: OlukoColors.skyblue,
-                      backgroundColor: OlukoColors.grayColor)),
-              Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Text("REST",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: OlukoColors.skyblue)),
-                SizedBox(height: 12),
-                Text(duration,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white))
-              ])
-            ])));
-  }
-
-  Widget repsTimer() {
-    return Container(
-        child: SizedBox(
-            height: 180,
-            width: 180,
-            child: GestureDetector(
-                onTap: () => this.setState(() {
-                      _goToNextStep();
-                    }),
-                child: Stack(alignment: Alignment.center, children: [
-                  AspectRatio(
-                      aspectRatio: 1,
-                      child: CircularProgressIndicator(
-                          value: 0,
-                          // color: OlukoColors.skyblue,
-                          backgroundColor: OlukoColors.grayColor)),
-                  Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text("Tap here",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontSize: 32,
-                                fontWeight: FontWeight.bold,
-                                color: OlukoColors.primary)),
-                        SizedBox(height: 5),
-                        Text("when done",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w400,
-                                color: OlukoColors.primary))
-                      ])
-                ]))));
   }
 }
