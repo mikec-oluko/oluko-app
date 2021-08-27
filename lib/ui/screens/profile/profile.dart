@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
-import 'package:oluko_app/blocs/course_bloc.dart';
-import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/profile_options.dart';
@@ -153,12 +151,6 @@ class _ProfilePageState extends State<ProfilePage> {
         ],
       ),
     );
-  }
-
-  void _requestContentForUser(
-      {BuildContext context, UserResponse userRequested}) {
-    BlocProvider.of<TransformationJourneyBloc>(context)
-        .getContentByUserId(userRequested.id);
   }
 
   onGoBack() {

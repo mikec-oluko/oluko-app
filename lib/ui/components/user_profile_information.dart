@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/blocs/profile_bloc.dart';
+import 'package:oluko_app/blocs/profile/upload_avatar_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/privacy_options.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/user_profile_progress.dart';
-import 'package:oluko_app/utils/app_modal.dart';
 import 'package:oluko_app/utils/container_grediant.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
-
-import 'modal_upload_options.dart';
 
 class UserProfileInformation extends StatefulWidget {
   final UserResponse userInformation;
@@ -117,19 +114,9 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                                 height: 40,
                                 child: TextButton(
                                     onPressed: () {
-                                      //UPDATE PROFILE PIC
-                                      AppModal.dialogContent(
-                                          context: context,
-                                          content: [
-                                            BlocProvider.value(
-                                              value:
-                                                  BlocProvider.of<ProfileBloc>(
-                                                      context),
-                                              child: ModalUploadOptions(
-                                                  contentFrom:
-                                                      UploadFrom.profileImage),
-                                            )
-                                          ]);
+                                      BlocProvider.of<ProfileAvatarBloc>(
+                                          context)
+                                        ..openPanel();
                                     },
                                     child: Image.asset(
                                         'assets/profile/uploadImage.png')),
@@ -158,19 +145,9 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                                 height: 40,
                                 child: TextButton(
                                     onPressed: () {
-                                      AppModal.dialogContent(
-                                          context: context,
-                                          content: [
-                                            BlocProvider.value(
-                                              value:
-                                                  BlocProvider.of<ProfileBloc>(
-                                                      context),
-                                              child: ModalUploadOptions(
-                                                contentFrom:
-                                                    UploadFrom.profileImage,
-                                              ),
-                                            )
-                                          ]);
+                                      BlocProvider.of<ProfileAvatarBloc>(
+                                          context)
+                                        ..openPanel();
                                     },
                                     child: Image.asset(
                                         'assets/profile/uploadImage.png')),

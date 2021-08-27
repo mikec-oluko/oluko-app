@@ -7,23 +7,28 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class ProfileState {}
 
-class Loading extends ProfileState {}
+class ProfileLoading extends ProfileState {}
 
 class ProfileUploadSuccess extends ProfileState {
   final UserResponse userUpdated;
   ProfileUploadSuccess({this.userUpdated});
 }
 
-class Failure extends ProfileState {
+class ProfileUploadDefault extends ProfileState {
+  final UserResponse userUpdated;
+  ProfileUploadDefault({this.userUpdated});
+}
+
+class ProfileFailure extends ProfileState {
   final Exception exception;
 
-  Failure({this.exception});
+  ProfileFailure({this.exception});
 }
 
 class NoUploads extends ProfileState {}
 
 class ProfileBloc extends Cubit<ProfileState> {
-  ProfileBloc() : super(Loading());
+  ProfileBloc() : super(NoUploads());
 
   ProfileRepository _profileRepository = ProfileRepository();
 
@@ -31,9 +36,6 @@ class ProfileBloc extends Cubit<ProfileState> {
       {DeviceContentFrom uploadedFrom, UploadFrom contentFor}) async {
     PickedFile _image;
 
-    if (!(state is ProfileUploadSuccess)) {
-      emit(Loading());
-    }
     try {
       final imagePicker = ImagePicker();
       if (uploadedFrom == DeviceContentFrom.gallery) {
@@ -44,9 +46,12 @@ class ProfileBloc extends Cubit<ProfileState> {
       }
 
       if (_image == null) {
-        emit(Failure(exception: new Exception("Profile upload aborted")));
+        emit(
+            ProfileFailure(exception: new Exception("Profile upload aborted")));
         return;
       }
+
+      emit(ProfileLoading());
 
       if (contentFor == UploadFrom.profileCoverImage) {
         UserResponse userUpdatedCoverImage =
@@ -63,7 +68,7 @@ class ProfileBloc extends Cubit<ProfileState> {
         exception,
         stackTrace: stackTrace,
       );
-      emit(Failure(exception: exception));
+      emit(ProfileFailure(exception: exception));
     }
   }
 
@@ -77,7 +82,12 @@ class ProfileBloc extends Cubit<ProfileState> {
         exception,
         stackTrace: stackTrace,
       );
-      emit(Failure(exception: exception));
+      emit(ProfileFailure(exception: exception));
     }
+  }
+
+  Future<void> requestNoUploadState() async {
+    UserResponse user = await _profileRepository.updateProfileView();
+    emit(ProfileUploadDefault(userUpdated: user));
   }
 }
