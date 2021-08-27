@@ -1,5 +1,5 @@
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
-import 'package:oluko_app/models/timer_model.dart';
+import 'package:oluko_app/models/utils/timer_model.dart';
 
 class TimerEntry {
   MovementSubmodel movement;

@@ -16,7 +16,7 @@ import 'package:oluko_app/models/enums/movement_videos_action_enum.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/timer_entry.dart';
-import 'package:oluko_app/models/timer_model.dart';
+import 'package:oluko_app/models/utils/timer_model.dart';
 import 'package:oluko_app/ui/IntervalProgressBarLib/interval_progress_bar.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';

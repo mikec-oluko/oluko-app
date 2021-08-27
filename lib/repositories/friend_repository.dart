@@ -3,8 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/models/friend.dart';
-import 'package:oluko_app/models/friend_model.dart';
-import 'package:oluko_app/models/friend_request_model.dart';
+import 'package:oluko_app/models/submodels/friend_model.dart';
+import 'package:oluko_app/models/submodels/friend_request_model.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 class FriendRepository {
