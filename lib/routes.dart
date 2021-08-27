@@ -371,6 +371,8 @@ class Routes {
           BlocProvider<MovementBloc>.value(value: _movementBloc),
           BlocProvider<CourseEnrollmentListBloc>.value(
               value: _courseEnrollmentListBloc),
+          BlocProvider<SubscribedCourseUsersBloc>.value(
+              value: _subscribedCourseUsersBloc)
         ];
         final Map<String, Course> argumentsToAdd = arguments;
         newRouteView = CourseMarketing(course: argumentsToAdd['course']);
