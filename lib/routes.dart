@@ -38,6 +38,7 @@ import 'package:oluko_app/ui/screens/assessments/self_recording.dart';
 import 'package:oluko_app/ui/screens/assessments/self_recording_preview.dart';
 import 'package:oluko_app/ui/screens/assessments/task_submission_recorded_video.dart';
 import 'package:oluko_app/ui/screens/choose_plan_payment.dart';
+import 'package:oluko_app/ui/screens/coach_page.dart';
 import 'package:oluko_app/ui/screens/courses/course_marketing.dart';
 import 'package:oluko_app/ui/screens/courses/courses.dart';
 import 'package:oluko_app/ui/screens/courses/enrolled_class.dart';
@@ -113,6 +114,7 @@ enum RouteEnum {
   taskSubmissionVideo,
   exploreSubscribedUsers,
   segmentCameraPreview,
+  coach
 }
 
 Map<RouteEnum, String> routeLabels = {
@@ -153,6 +155,7 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.taskSubmissionVideo: '/task-submission-video',
   RouteEnum.exploreSubscribedUsers: '/explore-subscribed-users',
   RouteEnum.segmentCameraPreview: '/segment-camera-preview',
+  RouteEnum.coach: '/coach'
 };
 
 RouteEnum getEnumFromRouteString(String route) {
@@ -532,6 +535,9 @@ class Routes {
               value: _subscribedCourseUsersBloc)
         ];
         newRouteView = ExploreSubscribedUsers(courseId: courseId);
+        break;
+      case RouteEnum.coach:
+        newRouteView = CoachPage();
         break;
       default:
         newRouteView = MainPage();
