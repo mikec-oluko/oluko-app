@@ -216,8 +216,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
         Padding(
             padding: const EdgeInsets.only(top: 3, bottom: 8),
             child: Stack(alignment: Alignment.center, children: [
-              //TODO: Make dynamic
-              TimerUtils.roundsTimer(8, 2),
+              TimerUtils.roundsTimer(
+                  widget.segments[widget.segmentIndex].rounds,
+                  timerEntries[timerTaskIndex].roundNumber),
               _countdownSection(workState)
             ])),
         _tasksSection(
@@ -232,6 +233,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   ///Clock countdown label
   Widget _countdownSection(WorkState workState) {
     bool isRepsTask = timerEntries[timerTaskIndex].reps != null;
+    bool isTimedTask = timerEntries[timerTaskIndex].time != null;
 
     if (workState != WorkState.paused && isRepsTask) {
       return TimerUtils.repsTimer(
@@ -255,6 +257,16 @@ class _SegmentClocksState extends State<SegmentClocks> {
       return TimerUtils.pausedTimer(
           context, TimeConverter.durationToString(this.timeLeft));
     }
+
+    //TODO: Fix end round timer
+    /*if (isTimedTask && actualTime.inSeconds <= 5) {
+      TimerUtils.initialTimer(
+          InitialTimerType.End,
+          timerEntries[timerTaskIndex].roundNumber + 1,
+          5,
+          timeLeft.inSeconds,
+          context);
+    }*/
 
     if (workState == WorkState.repResting) {
       return TimerUtils.restTimer(circularProgressIndicatorValue,
@@ -574,7 +586,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
           ),
           Padding(
               padding: EdgeInsets.only(top: 1),
-              child: Icon(Icons.circle, size: 12, color: OlukoColors.primary))
+              child: Icon(Icons.circle_outlined,
+                  size: 12, color: OlukoColors.primary))
         ]));
   }
 
