@@ -5,7 +5,7 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/models/friend_model.dart';
+import 'package:oluko_app/models/submodels/friend_model.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/friends_card.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
