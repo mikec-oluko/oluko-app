@@ -31,6 +31,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
   String _userLocation;
   bool _isOwner = false;
   String _archivementsDefaultValue = "0";
+  PrivacyOptions _privacyOptions = PrivacyOptions();
 
   @override
   void initState() {
@@ -167,7 +168,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                       //PROFILE NAME AND LASTNAME
                       _isOwner
                           ? userInfoUnlocked(location)
-                          : PrivacyOptions.canShowDetails(
+                          : _privacyOptions.canShowDetails(
                                   isOwner: _isOwner,
                                   currentUser: widget.currentUser,
                                   userRequested:
@@ -205,7 +206,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
           ],
         ),
         //PROFILE ARCHIVEMENTS
-        PrivacyOptions.canShowDetails(
+        _privacyOptions.canShowDetails(
                 isOwner: _isOwner,
                 currentUser: widget.currentUser,
                 userRequested: widget.userToDisplayInformation,

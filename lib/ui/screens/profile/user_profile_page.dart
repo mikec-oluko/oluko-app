@@ -454,7 +454,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   void _requestContentForUser(
       {BuildContext context, UserResponse userRequested}) {
-    if (PrivacyOptions.canShowDetails(
+    if (PrivacyOptions().canShowDetails(
         isOwner: _isCurrentUser,
         currentUser: _currentAuthUser,
         userRequested: _userProfileToDisplay,
@@ -590,13 +590,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
     switch (connectStatus) {
       case UserConnectStatus.connected:
         return "remove";
-        break;
       case UserConnectStatus.noConnected:
         return "connect";
-        break;
       case UserConnectStatus.requestPending:
         return "cancelConnectionRequested";
-        break;
       default:
         return "fail";
     }

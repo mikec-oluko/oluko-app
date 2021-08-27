@@ -33,70 +33,58 @@ class PrivacyOptions {
   static SettingsPrivacyOptions getPrivacyValue(num optionSelected) =>
       privacyOptionsList.elementAt(optionSelected).option;
 
-  static bool canShowDetails(
+  SettingsPrivacyOptions currentUserPrivacyOption(UserResponse currentUser) {
+    return PrivacyOptions.privacyOptionsList[currentUser.privacy].option;
+  }
+
+  SettingsPrivacyOptions userRequestedPrivacyOption(
+      UserResponse userToDisplayInformation) {
+    return PrivacyOptions
+        .privacyOptionsList[userToDisplayInformation.privacy].option;
+  }
+
+  canShowDetails(
       {bool isOwner,
       UserResponse currentUser,
       UserResponse userRequested,
       UserConnectStatus connectStatus}) {
+    final _currentUserPrivacyOption =
+        this.currentUserPrivacyOption(currentUser);
+    final _userRequestedPrivacyOption =
+        this.userRequestedPrivacyOption(userRequested);
     if (isOwner) {
       return true;
-    } else {
-      if (currentUserPrivacyOption(currentUser) ==
-          SettingsPrivacyOptions.public) {
-        if (userRequestedPrivacyOption(userRequested) ==
-            SettingsPrivacyOptions.public) {
-          return true;
-        } else if (userRequestedPrivacyOption(userRequested) ==
-                SettingsPrivacyOptions.restricted &&
-            connectStatus == UserConnectStatus.connected) {
-          return true;
-        } else if (userRequestedPrivacyOption(userRequested) ==
-                SettingsPrivacyOptions.anonymous &&
-            connectStatus == UserConnectStatus.connected) {
-          return true;
-        } else {
-          return false;
-        }
-      }
-      if (currentUserPrivacyOption(currentUser) ==
-          SettingsPrivacyOptions.restricted) {
-        if (userRequestedPrivacyOption(userRequested) ==
-            SettingsPrivacyOptions.public) {
-          return true;
-        } else if (userRequestedPrivacyOption(userRequested) ==
-                SettingsPrivacyOptions.restricted &&
-            connectStatus == UserConnectStatus.connected) {
-          return true;
-        } else if (userRequestedPrivacyOption(userRequested) ==
-                SettingsPrivacyOptions.anonymous &&
-            connectStatus == UserConnectStatus.connected) {
-          return true;
-        } else {
-          return false;
-        }
-      }
-      if (currentUserPrivacyOption(currentUser) ==
-          SettingsPrivacyOptions.anonymous) {
-        if (userRequestedPrivacyOption(userRequested) ==
-            SettingsPrivacyOptions.public) {
-          return true;
-        } else if (userRequestedPrivacyOption(userRequested) ==
-                SettingsPrivacyOptions.restricted &&
-            connectStatus == UserConnectStatus.connected) {
-          return true;
-        }
-      }
     }
-  }
-
-  static SettingsPrivacyOptions currentUserPrivacyOption(
-      UserResponse currentUser) {
-    return PrivacyOptions.privacyOptionsList[currentUser.privacy].option;
-  }
-
-  static SettingsPrivacyOptions userRequestedPrivacyOption(
-      UserResponse userToDisplayInformation) {
-    return PrivacyOptions
-        .privacyOptionsList[userToDisplayInformation.privacy].option;
+    switch (_currentUserPrivacyOption) {
+      case SettingsPrivacyOptions.public:
+        if (_userRequestedPrivacyOption == SettingsPrivacyOptions.public ||
+            ((_userRequestedPrivacyOption ==
+                        SettingsPrivacyOptions.restricted ||
+                    _userRequestedPrivacyOption ==
+                        SettingsPrivacyOptions.anonymous) &&
+                connectStatus == UserConnectStatus.connected)) {
+          return true;
+        }
+        return false;
+      case SettingsPrivacyOptions.restricted:
+        if (_userRequestedPrivacyOption == SettingsPrivacyOptions.public ||
+            ((_userRequestedPrivacyOption ==
+                        SettingsPrivacyOptions.restricted ||
+                    _userRequestedPrivacyOption ==
+                        SettingsPrivacyOptions.anonymous) &&
+                connectStatus == UserConnectStatus.connected)) {
+          return true;
+        }
+        return false;
+      case SettingsPrivacyOptions.anonymous:
+        if (_userRequestedPrivacyOption == SettingsPrivacyOptions.public ||
+            (_userRequestedPrivacyOption == SettingsPrivacyOptions.restricted &&
+                connectStatus == UserConnectStatus.connected)) {
+          return true;
+        }
+        return false;
+      default:
+        break;
+    }
   }
 }
