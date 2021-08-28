@@ -5,37 +5,39 @@
     
     
       
-      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000454">
+      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.00027">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="1: is_ci" time="0.000118">
+      <testcase classname="fastlane.lanes" name="1: is_ci" time="8.4e-05">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="2: is_ci" time="7.7e-05">
+      <testcase classname="fastlane.lanes" name="2: is_ci" time="6.1e-05">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="3: match" time="2139.619144">
+      <testcase classname="fastlane.lanes" name="3: match" time="319.173261">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="4: increment_build_number" time="7201.632262">
+      <testcase classname="fastlane.lanes" name="4: increment_build_number" time="0.792638">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="5: build_app" time="976.436017">
+      <testcase classname="fastlane.lanes" name="5: build_app" time="461.896057">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="6: upload_to_testflight" time="4741.053472">
+      <testcase classname="fastlane.lanes" name="6: upload_to_testflight" time="1983.67356">
+        
+          <failure message="/Users/joaquincayrus/.gem/ruby/3.0.1/gems/fastlane-2.191.0/fastlane/lib/fastlane/actions/actions_helper.rb:67:in `execute_action&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/fastlane-2.191.0/fastlane/lib/fastlane/runner.rb:255:in `block in execute_action&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/fastlane-2.191.0/fastlane/lib/fastlane/runner.rb:229:in `chdir&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/fastlane-2.191.0/fastlane/lib/fastlane/runner.rb:229:in `execute_action&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/fastlane-2.191.0/fastlane/lib/fastlane/runner.rb:157:in `trigger_action_by_name&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/fastlane-2.191.0/fastlane/lib/fastlane/fast_file.rb:159:in `method_missing&apos;&#10;Fastfile:50:in `block (2 levels) in parsing_binding&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/fastlane-2.191.0/fastlane/lib/fastlane/lane.rb:33:in `call&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/fastlane-2.191.0/fastlane/lib/fastlane/runner.rb:49:in `block in execute&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/fastlane-2.191.0/fastlane/lib/fastlane/runner.rb:45:in `chdir&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/fastlane-2.191.0/fastlane/lib/fastlane/runner.rb:45:in `execute&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/fastlane-2.191.0/fastlane/lib/fastlane/lane_manager.rb:47:in `cruise_lane&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/fastlane-2.191.0/fastlane/lib/fastlane/command_line_handler.rb:36:in `handle&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/fastlane-2.191.0/fastlane/lib/fastlane/commands_generator.rb:109:in `block (2 levels) in run&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/commander-4.6.0/lib/commander/command.rb:187:in `call&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/commander-4.6.0/lib/commander/command.rb:157:in `run&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/commander-4.6.0/lib/commander/runner.rb:444:in `run_active_command&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/fastlane-2.191.0/fastlane_core/lib/fastlane_core/ui/fastlane_runner.rb:76:in `run!&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/commander-4.6.0/lib/commander/delegates.rb:18:in `run!&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/fastlane-2.191.0/fastlane/lib/fastlane/commands_generator.rb:353:in `run&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/fastlane-2.191.0/fastlane/lib/fastlane/commands_generator.rb:42:in `start&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/fastlane-2.191.0/fastlane/lib/fastlane/cli_tools_distributor.rb:122:in `take_off&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/fastlane-2.191.0/bin/fastlane:23:in `&lt;top (required)&gt;&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/bin/fastlane:23:in `load&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/bin/fastlane:23:in `&lt;top (required)&gt;&apos;&#10;/Users/joaquincayrus/.rubies/ruby-3.0.1/lib/ruby/3.0.0/bundler/cli/exec.rb:63:in `load&apos;&#10;/Users/joaquincayrus/.rubies/ruby-3.0.1/lib/ruby/3.0.0/bundler/cli/exec.rb:63:in `kernel_load&apos;&#10;/Users/joaquincayrus/.rubies/ruby-3.0.1/lib/ruby/3.0.0/bundler/cli/exec.rb:28:in `run&apos;&#10;/Users/joaquincayrus/.rubies/ruby-3.0.1/lib/ruby/3.0.0/bundler/cli.rb:494:in `exec&apos;&#10;/Users/joaquincayrus/.rubies/ruby-3.0.1/lib/ruby/3.0.0/bundler/vendor/thor/lib/thor/command.rb:27:in `run&apos;&#10;/Users/joaquincayrus/.rubies/ruby-3.0.1/lib/ruby/3.0.0/bundler/vendor/thor/lib/thor/invocation.rb:127:in `invoke_command&apos;&#10;/Users/joaquincayrus/.rubies/ruby-3.0.1/lib/ruby/3.0.0/bundler/vendor/thor/lib/thor.rb:392:in `dispatch&apos;&#10;/Users/joaquincayrus/.rubies/ruby-3.0.1/lib/ruby/3.0.0/bundler/cli.rb:30:in `dispatch&apos;&#10;/Users/joaquincayrus/.rubies/ruby-3.0.1/lib/ruby/3.0.0/bundler/vendor/thor/lib/thor/base.rb:485:in `start&apos;&#10;/Users/joaquincayrus/.rubies/ruby-3.0.1/lib/ruby/3.0.0/bundler/cli.rb:24:in `start&apos;&#10;/Users/joaquincayrus/.rubies/ruby-3.0.1/lib/ruby/gems/3.0.0/gems/bundler-2.2.15/libexec/bundle:49:in `block in &lt;top (required)&gt;&apos;&#10;/Users/joaquincayrus/.rubies/ruby-3.0.1/lib/ruby/3.0.0/bundler/friendly_errors.rb:130:in `with_friendly_errors&apos;&#10;/Users/joaquincayrus/.rubies/ruby-3.0.1/lib/ruby/gems/3.0.0/gems/bundler-2.2.15/libexec/bundle:37:in `&lt;top (required)&gt;&apos;&#10;/Users/joaquincayrus/.rubies/ruby-3.0.1/bin/bundle:23:in `load&apos;&#10;/Users/joaquincayrus/.rubies/ruby-3.0.1/bin/bundle:23:in `&lt;main&gt;&apos;&#10;&#10;Failed to open TCP connection to appstoreconnect.apple.com:443 (getaddrinfo: nodename nor servname provided, or not known)" />
         
       </testcase>
     

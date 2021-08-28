@@ -1,10 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/enums/file_type_enum.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
-import 'package:oluko_app/models/user_response.dart';
-import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/repositories/transformation_journey_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -12,7 +9,7 @@ abstract class TransformationJourneyState {}
 
 class TransformationJourneyLoading extends TransformationJourneyState {}
 
-class TransformationJourneyNoUploads extends TransformationJourneyState {}
+class TransformationJourneyDefault extends TransformationJourneyState {}
 
 class TransformationJourneySuccess extends TransformationJourneyState {
   final List<TransformationJourneyUpload> contentFromUser;
@@ -59,37 +56,12 @@ class TransformationJourneyBloc extends Cubit<TransformationJourneyState> {
     }
   }
 
-  void uploadTransformationJourneyContent(
-      {DeviceContentFrom uploadedFrom, int indexForContent}) async {
-    if (!(state is TransformationJourneyUpload)) {
-      emit(TransformationJourneyLoading());
-    }
-    PickedFile _image;
+  void emitTransformationJourneyFailure() {
     try {
-      final imagePicker = ImagePicker();
-      if (uploadedFrom == DeviceContentFrom.gallery) {
-        _image = await imagePicker.getImage(source: ImageSource.gallery);
-      }
-      if (uploadedFrom == DeviceContentFrom.camera) {
-        _image = await imagePicker.getImage(source: ImageSource.camera);
-      }
-      if (_image == null) {
-        emit(TransformationJourneyNoUploads());
-        return;
-      }
-
-      UserResponse user = await AuthRepository().retrieveLoginData();
-
-      TransformationJourneyUpload upload = await TransformationJourneyRepository
-          .createTransformationJourneyUpload(
-              FileTypeEnum.image, _image, user.id, indexForContent);
-      List<TransformationJourneyUpload> contentUploaded =
-          await TransformationJourneyRepository()
-              .getUploadedContentByUserId(user.id);
-
-      emit(TransformationJourneySuccess(contentFromUser: contentUploaded));
+      emit(TransformationJourneyFailure(
+          exception: new Exception("Upload Aborted")));
     } catch (e, stackTrace) {
-      await Sentry.captureException(
+      Sentry.captureException(
         e,
         stackTrace: stackTrace,
       );
@@ -97,10 +69,9 @@ class TransformationJourneyBloc extends Cubit<TransformationJourneyState> {
     }
   }
 
-  void emitTransformationJourneyFailure() {
+  void emitTransformationJourneyDefault() {
     try {
-      emit(TransformationJourneyFailure(
-          exception: new Exception("Upload Aborted")));
+      emit(TransformationJourneyDefault());
     } catch (e, stackTrace) {
       Sentry.captureException(
         e,

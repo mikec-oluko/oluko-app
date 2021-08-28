@@ -9,6 +9,7 @@ import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.da
 import 'package:oluko_app/blocs/gallery_video_bloc.dart';
 import 'package:oluko_app/blocs/movement_submission_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
+import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
 import 'package:oluko_app/blocs/class_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
@@ -18,7 +19,7 @@ import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/ignore_friend_request_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/plan_bloc.dart';
-import 'package:oluko_app/blocs/profile_bloc.dart';
+import 'package:oluko_app/blocs/profile/profile_bloc.dart';
 import 'package:oluko_app/blocs/recommendation_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/blocs/statistics_bloc.dart';
@@ -40,7 +41,9 @@ import 'package:oluko_app/ui/screens/choose_plan_payment.dart';
 import 'package:oluko_app/ui/screens/courses/course_marketing.dart';
 import 'package:oluko_app/ui/screens/courses/courses.dart';
 import 'package:oluko_app/ui/screens/courses/enrolled_class.dart';
+import 'package:oluko_app/ui/screens/courses/explore_subscribed_users.dart';
 import 'package:oluko_app/ui/screens/courses/inside_class.dart';
+import 'package:oluko_app/ui/screens/courses/segment_camera_preview.dart.dart';
 import 'package:oluko_app/ui/screens/friends/friends_page.dart';
 import 'package:oluko_app/ui/screens/authentication/login.dart';
 import 'package:oluko_app/ui/screens/main_page.dart';
@@ -58,13 +61,17 @@ import 'package:oluko_app/ui/screens/profile/profile_subscription_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_transformation_journey_page.dart';
 import 'package:oluko_app/ui/screens/profile/transformation_journey_post.dart';
 import 'package:oluko_app/ui/screens/courses/segment_detail.dart';
-import 'package:oluko_app/ui/screens/courses/segment_recording.dart';
+import 'ui/screens/courses/segment_clocks.dart';
 import 'package:oluko_app/ui/screens/authentication/sign_up.dart';
 import 'package:oluko_app/ui/screens/authentication/sign_up_with_email.dart';
 import 'package:oluko_app/ui/screens/assessments/task_details.dart';
 import 'package:oluko_app/ui/screens/videos/videos_home.dart';
 import 'package:oluko_app/ui/screens/view_all.dart';
 import 'blocs/friends/confirm_friend_bloc.dart';
+import 'blocs/oluko_panel_bloc.dart';
+import 'blocs/profile/upload_avatar_bloc.dart';
+import 'blocs/profile/upload_cover_image_bloc.dart';
+import 'blocs/profile/upload_transformation_journey_content_bloc.dart';
 import 'blocs/friends/favorite_friend_bloc.dart';
 import 'models/course.dart';
 import 'models/transformation_journey_uploads.dart';
@@ -91,7 +98,7 @@ enum RouteEnum {
   appPlans,
   segmentDetail,
   movementIntro,
-  segmentRecording,
+  segmentClocks,
   courseMarketing,
   assessmentVideos,
   taskDetails,
@@ -104,6 +111,8 @@ enum RouteEnum {
   selfRecordingPreview,
   enrolledClass,
   taskSubmissionVideo,
+  exploreSubscribedUsers,
+  segmentCameraPreview,
 }
 
 Map<RouteEnum, String> routeLabels = {
@@ -129,7 +138,7 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.appPlans: '/app-plans',
   RouteEnum.segmentDetail: '/segment-detail',
   RouteEnum.movementIntro: '/movement-intro',
-  RouteEnum.segmentRecording: '/segment-recording',
+  RouteEnum.segmentClocks: '/segment-clocks',
   RouteEnum.courseMarketing: '/course-marketing',
   RouteEnum.assessmentVideos: '/assessment-videos',
   RouteEnum.taskDetails: '/task-details',
@@ -141,7 +150,9 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.selfRecording: '/self-recording',
   RouteEnum.selfRecordingPreview: '/self-recording-preview',
   RouteEnum.enrolledClass: '/enrolled-class',
-  RouteEnum.taskSubmissionVideo: '/task-submission-video'
+  RouteEnum.taskSubmissionVideo: '/task-submission-video',
+  RouteEnum.exploreSubscribedUsers: '/explore-subscribed-users',
+  RouteEnum.segmentCameraPreview: '/segment-camera-preview',
 };
 
 RouteEnum getEnumFromRouteString(String route) {
@@ -150,6 +161,7 @@ RouteEnum getEnumFromRouteString(String route) {
 }
 
 class Routes {
+  final OlukoPanelBloc _olukoPanelBloc = OlukoPanelBloc();
   final AuthBloc _authBloc = AuthBloc();
   final ProfileBloc _profileBloc = ProfileBloc();
   final CourseBloc _courseBloc = CourseBloc();
@@ -167,6 +179,8 @@ class Routes {
   final TransformationJourneyBloc _transformationJourneyBloc =
       TransformationJourneyBloc();
   final ClassBloc _classBloc = ClassBloc();
+  final SubscribedCourseUsersBloc _subscribedCourseUsersBloc =
+      SubscribedCourseUsersBloc();
   final StatisticsBloc _statisticsBloc = StatisticsBloc();
   final MovementBloc _movementBloc = MovementBloc();
   final SegmentBloc _segmentBloc = SegmentBloc();
@@ -183,6 +197,10 @@ class Routes {
   final MovementSubmissionBloc _movementSubmissionBloc =
       MovementSubmissionBloc();
   final SegmentSubmissionBloc _segmentSubmissionBloc = SegmentSubmissionBloc();
+  final TransformationJourneyContentBloc _transformationJourneyContentBloc =
+      TransformationJourneyContentBloc();
+  final ProfileAvatarBloc _profileAvatarBloc = ProfileAvatarBloc();
+  final ProfileCoverImageBloc _profileCoverImageBloc = ProfileCoverImageBloc();
 
   getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -262,6 +280,7 @@ class Routes {
       case RouteEnum.profileViewOwnProfile:
         providers = [
           BlocProvider<CourseBloc>.value(value: _courseBloc),
+          BlocProvider<OlukoPanelBloc>.value(value: OlukoPanelBloc()),
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
@@ -269,6 +288,9 @@ class Routes {
               value: _courseEnrollmentBloc),
           BlocProvider<TransformationJourneyBloc>.value(
               value: _transformationJourneyBloc),
+          BlocProvider<ProfileCoverImageBloc>.value(
+              value: _profileCoverImageBloc),
+          BlocProvider<ProfileAvatarBloc>.value(value: _profileAvatarBloc),
         ];
         newRouteView = UserProfilePage();
         break;
@@ -278,6 +300,7 @@ class Routes {
       case RouteEnum.profileTransformationJourney:
         providers = [
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
+          BlocProvider<OlukoPanelBloc>.value(value: _olukoPanelBloc),
           BlocProvider<CourseBloc>.value(value: _courseBloc),
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
@@ -285,6 +308,8 @@ class Routes {
               value: _courseEnrollmentBloc),
           BlocProvider<TransformationJourneyBloc>.value(
               value: _transformationJourneyBloc),
+          BlocProvider<TransformationJourneyContentBloc>.value(
+              value: _transformationJourneyContentBloc),
         ];
         newRouteView = ProfileTransformationJourneyPage();
         break;
@@ -326,6 +351,7 @@ class Routes {
       case RouteEnum.segmentDetail:
         providers = [
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
+          BlocProvider<MovementBloc>.value(value: _movementBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments;
         newRouteView = SegmentDetail(
@@ -339,7 +365,25 @@ class Routes {
           movement: argumentsToAdd['movement'],
         );
         break;
-      case RouteEnum.segmentRecording:
+      case RouteEnum.segmentClocks:
+        providers = [
+          BlocProvider<SegmentBloc>.value(value: _segmentBloc),
+          BlocProvider<MovementBloc>.value(value: _movementBloc),
+          BlocProvider<SegmentSubmissionBloc>.value(
+              value: _segmentSubmissionBloc),
+          BlocProvider<MovementSubmissionBloc>.value(
+              value: _movementSubmissionBloc),
+          BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc)
+        ];
+        final Map<String, dynamic> argumentsToAdd = arguments;
+        newRouteView = SegmentClocks(
+            courseEnrollment: argumentsToAdd['courseEnrollment'],
+            classIndex: argumentsToAdd['classIndex'],
+            segmentIndex: argumentsToAdd['segmentIndex'],
+            workoutType: argumentsToAdd['workoutType'],
+            segments: argumentsToAdd['segments']);
+        break;
+      case RouteEnum.segmentCameraPreview:
         providers = [
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
           BlocProvider<SegmentSubmissionBloc>.value(
@@ -349,11 +393,10 @@ class Routes {
           BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments;
-        newRouteView = SegmentRecording(
+        newRouteView = SegmentCameraPreview(
             courseEnrollment: argumentsToAdd['courseEnrollment'],
             classIndex: argumentsToAdd['classIndex'],
             segmentIndex: argumentsToAdd['segmentIndex'],
-            workoutType: argumentsToAdd['workoutType'],
             segments: argumentsToAdd['segments']);
         break;
       case RouteEnum.courseMarketing:
@@ -482,6 +525,15 @@ class Routes {
           parentVideoReference:
               FirebaseFirestore.instance.collection("videosInfo"),
         );
+        break;
+      case RouteEnum.exploreSubscribedUsers:
+        Map<String, dynamic> args = arguments;
+        String courseId = args['courseId'];
+        providers = [
+          BlocProvider<SubscribedCourseUsersBloc>.value(
+              value: _subscribedCourseUsersBloc)
+        ];
+        newRouteView = ExploreSubscribedUsers(courseId: courseId);
         break;
       default:
         newRouteView = MainPage();
