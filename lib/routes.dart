@@ -73,6 +73,7 @@ import 'blocs/profile/upload_avatar_bloc.dart';
 import 'blocs/profile/upload_cover_image_bloc.dart';
 import 'blocs/profile/upload_transformation_journey_content_bloc.dart';
 import 'blocs/friends/favorite_friend_bloc.dart';
+import 'blocs/user_statistics_bloc.dart';
 import 'models/course.dart';
 import 'models/transformation_journey_uploads.dart';
 
@@ -201,6 +202,7 @@ class Routes {
       TransformationJourneyContentBloc();
   final ProfileAvatarBloc _profileAvatarBloc = ProfileAvatarBloc();
   final ProfileCoverImageBloc _profileCoverImageBloc = ProfileCoverImageBloc();
+  final UserStatisticsBloc _userStatisticsBloc = UserStatisticsBloc();
 
   getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -231,7 +233,8 @@ class Routes {
           BlocProvider<ConfirmFriendBloc>.value(value: _confirmFriendBloc),
           BlocProvider<IgnoreFriendRequestBloc>.value(
               value: _ignoreFriendRequestBloc),
-          BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc)
+          BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
+          BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
         ];
         newRouteView = MainPage();
         break;
@@ -249,6 +252,9 @@ class Routes {
         newRouteView = FriendsPage();
         break;
       case RouteEnum.profile:
+        providers = [
+          BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
+        ];
         newRouteView = ProfilePage();
         break;
       case RouteEnum.profileSettings:
@@ -292,6 +298,7 @@ class Routes {
           BlocProvider<ProfileCoverImageBloc>.value(
               value: _profileCoverImageBloc),
           BlocProvider<ProfileAvatarBloc>.value(value: _profileAvatarBloc),
+          BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
         ];
         final Map<String, UserResponse> argumentsToAdd = arguments;
         newRouteView =

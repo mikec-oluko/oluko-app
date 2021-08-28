@@ -9,6 +9,7 @@ import 'package:oluko_app/blocs/profile/upload_avatar_bloc.dart';
 import 'package:oluko_app/blocs/profile/upload_cover_image_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
+import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/list_of_items_to_widget.dart';
@@ -20,6 +21,7 @@ import 'package:oluko_app/models/friend.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
 import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/models/user_statistics.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/carousel_small_section.dart';
@@ -58,6 +60,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   List<Challenge> _activeChallenges = [];
   List<Course> _coursesToUse = [];
   List<CourseEnrollment> _courseEnrollmentList = [];
+  UserStatistics userStats;
 
   final PanelController _panelController = new PanelController();
   double _panelMaxHeight = 100.0;
@@ -286,12 +289,23 @@ class _UserProfilePageState extends State<UserProfilePage> {
                             height: MediaQuery.of(context).size.height / 3.5,
                             child: BlocProvider.value(
                                 value: BlocProvider.of<ProfileBloc>(context),
-                                child: UserProfileInformation(
-                                    userToDisplayInformation:
-                                        _userProfileToDisplay,
-                                    actualRoute: ActualProfileRoute.userProfile,
-                                    currentUser: _currentAuthUser,
-                                    connectStatus: connectStatus))),
+                                child: BlocBuilder<UserStatisticsBloc,
+                                    UserStatisticsState>(
+                                  builder: (context, state) {
+                                    if (state is StatisticsSuccess) {
+                                      userStats = state.userStats;
+                                    }
+                                    return UserProfileInformation(
+                                      userToDisplayInformation:
+                                          _userProfileToDisplay,
+                                      actualRoute:
+                                          ActualProfileRoute.userProfile,
+                                      currentUser: _currentAuthUser,
+                                      connectStatus: connectStatus,
+                                      userStats: userStats,
+                                    );
+                                  },
+                                ))),
                       ),
                       Positioned(
                         top: MediaQuery.of(context).size.height / 5,
@@ -472,6 +486,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
       BlocProvider.of<CourseEnrollmentBloc>(context)
           .getChallengesForUser(userRequested.id);
+
+      BlocProvider.of<UserStatisticsBloc>(context)
+          .getUserStatistics(userRequested.id);
     }
   }
 

@@ -5,6 +5,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/privacy_options.dart';
 import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/models/user_statistics.dart';
 import 'package:oluko_app/ui/components/user_profile_progress.dart';
 import 'package:oluko_app/utils/container_grediant.dart';
 import 'package:oluko_app/utils/image_utils.dart';
@@ -15,12 +16,14 @@ class UserProfileInformation extends StatefulWidget {
   final ActualProfileRoute actualRoute;
   final UserResponse currentUser;
   final UserConnectStatus connectStatus;
+  final UserStatistics userStats;
 
   const UserProfileInformation(
       {this.userToDisplayInformation,
       this.actualRoute,
       this.currentUser,
-      this.connectStatus})
+      this.connectStatus,
+      this.userStats})
       : super();
 
   @override
@@ -212,9 +215,15 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                 userRequested: widget.userToDisplayInformation,
                 connectStatus: widget.connectStatus)
             ? UserProfileProgress(
-                challengesCompleted: valuesForArchivements[0],
-                coursesCompleted: valuesForArchivements[1],
-                classesCompleted: valuesForArchivements[2],
+                challengesCompleted: widget.userStats != null
+                    ? widget.userStats.completedChallenges.toString()
+                    : _archivementsDefaultValue,
+                coursesCompleted: widget.userStats != null
+                    ? widget.userStats.completedCourses.toString()
+                    : _archivementsDefaultValue,
+                classesCompleted: widget.userStats != null
+                    ? widget.userStats.completedClasses.toString()
+                    : _archivementsDefaultValue,
               )
             : UserProfileProgress(
                 challengesCompleted: _archivementsDefaultValue,
