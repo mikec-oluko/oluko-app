@@ -73,7 +73,7 @@ class TimerUtils {
       IntervalProgressBar(
         direction: IntervalProgressDirection.circle,
         max: totalRounds,
-        progress: currentRound,
+        progress: currentRound - 1,
         intervalSize: 4,
         size: Size(200, 200),
         highlightColor: OlukoColors.primary,

@@ -275,25 +275,36 @@ class _SegmentClocksState extends State<SegmentClocks> {
   }
 
   Widget recordingTaskSection(String currentTask, String nextTask) {
-    return Container(
-        width: ScreenUtils.width(context),
-        child: Padding(
-            padding: EdgeInsets.only(top: 7, bottom: 15),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                currentTaskWidget(currentTask, true),
-                Positioned(
-                    left: ScreenUtils.width(context) - 70,
-                    child: Text(
-                      nextTask,
-                      style: TextStyle(
-                          fontSize: 20,
-                          color: OlukoColors.grayColorSemiTransparent,
-                          fontWeight: FontWeight.bold),
-                    )),
-              ],
-            )));
+    if (timerEntries[timerTaskIndex].label == null) {
+      List<Widget> items = getJoinedLabel();
+      return Container(
+          height: 45,
+          child: ListView(children: [
+            Padding(
+                padding: EdgeInsets.only(top: 10),
+                child: Column(children: items))
+          ]));
+    } else {
+      return Container(
+          width: ScreenUtils.width(context),
+          child: Padding(
+              padding: EdgeInsets.only(top: 7, bottom: 15),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  currentTaskWidget(currentTask, true),
+                  Positioned(
+                      left: ScreenUtils.width(context) - 70,
+                      child: Text(
+                        nextTask,
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: OlukoColors.grayColorSemiTransparent,
+                            fontWeight: FontWeight.bold),
+                      )),
+                ],
+              )));
+    }
   }
 
   ///Clock countdown label
