@@ -1,7 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
+import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/coach_segment_content.dart';
+import 'package:oluko_app/helpers/coach_segment_info.dart';
+import 'package:oluko_app/models/challenge.dart';
+import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/task_submission.dart';
+
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
-import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
+import 'package:oluko_app/ui/components/coach_tab_challenge_card.dart';
+import 'package:oluko_app/ui/components/coach_tab_segment_card.dart';
+import 'package:oluko_app/ui/components/image_and_video_container.dart';
+import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/utils/container_grediant.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
@@ -14,6 +28,12 @@ class CoachPage extends StatefulWidget {
 
 bool selected = false;
 final PanelController _panelController = new PanelController();
+List<Challenge> _activeChallenges = [];
+List<CourseEnrollment> _courseEnrollmentList = [];
+UserResponse _currentAuthUser;
+List<InfoForSegments> toDoSegments = [];
+List<CoachSegmentContent> actualSegmentsToDisplay = [];
+List<TaskSubmission> _assessmentVideosContent = [];
 
 class _CoachPageState extends State<CoachPage> {
   @override
@@ -22,13 +42,49 @@ class _CoachPageState extends State<CoachPage> {
       topLeft: Radius.circular(24.0),
       topRight: Radius.circular(24.0),
     );
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        if (state is AuthSuccess) {
+          _currentAuthUser = state.user;
+
+          BlocProvider.of<CourseEnrollmentBloc>(context)
+              .getCourseEnrollmentsByUserId(_currentAuthUser.id);
+
+          BlocProvider.of<CourseEnrollmentBloc>(context)
+              .getChallengesForUser(_currentAuthUser.id);
+
+          BlocProvider.of<TaskSubmissionBloc>(context)
+              .getTaskSubmissionByUserId(_currentAuthUser.id);
+
+          return coachView(radius, context);
+        } else {
+          return Container(
+            color: OlukoColors.black,
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            child: OlukoCircularProgressIndicator(),
+          );
+        }
+      },
+    );
+  }
+
+  Scaffold coachView(BorderRadiusGeometry radius, BuildContext context) {
     return Scaffold(
       appBar: OlukoAppBar(
         title: "Coach Section",
         showSearchBar: false,
       ),
       body: SlidingUpPanel(
-        header: Text("My Timeline"),
+        header: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 20, 0, 20),
+          child: Text(
+            "My Timeline",
+            style: OlukoFonts.olukoBigFont(
+                customColor: OlukoColors.grayColor,
+                custoFontWeight: FontWeight.w500),
+          ),
+        ),
         borderRadius: radius,
         backdropEnabled: true,
         isDraggable: true,
@@ -78,7 +134,58 @@ class _CoachPageState extends State<CoachPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           contentSection(title: "Mentored Videos"),
-                          contentSection(title: "Pending Review"),
+                          BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
+                              builder: (context, state) {
+                            if (state is GetUserTaskSubmissionSuccess) {
+                              _assessmentVideosContent = state.taskSubmissions;
+                            }
+
+                            return Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 5),
+                                      child: Text(
+                                        "Sent Videos",
+                                        style: OlukoFonts.olukoMediumFont(
+                                            customColor: OlukoColors.grayColor,
+                                            custoFontWeight: FontWeight.w500),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(5.0),
+                                      child: Container(
+                                        width: 150,
+                                        height: 100,
+                                        color: Colors.black,
+                                        child: _assessmentVideosContent
+                                                    .length !=
+                                                0
+                                            ? ImageAndVideoContainer(
+                                                backgroundImage:
+                                                    _assessmentVideosContent[0]
+                                                        .video
+                                                        .thumbUrl,
+                                                isContentVideo: true,
+                                                videoUrl:
+                                                    _assessmentVideosContent[0]
+                                                        .video
+                                                        .url,
+                                                originalContent:
+                                                    _assessmentVideosContent[0],
+                                              )
+                                            : SizedBox(),
+                                      ),
+                                    )
+                                  ],
+                                )
+                              ],
+                            );
+                          }),
+                          contentSection(title: "Sent for Review"),
                           contentSection(title: "Recomended Videos"),
                           contentSection(title: "Voice Messages"),
                         ],
@@ -105,25 +212,37 @@ class _CoachPageState extends State<CoachPage> {
     );
   }
 
-  Container toDoSection(BuildContext context) {
-    return Container(
-        color: Colors.black,
-        width: MediaQuery.of(context).size.width,
-        height: 120,
-        child: ListView(
-            padding: EdgeInsets.zero,
-            shrinkWrap: true,
-            scrollDirection: Axis.horizontal,
-            children: [
-              Wrap(
+  Widget toDoSection(BuildContext context) {
+    return BlocBuilder<CourseEnrollmentBloc, CourseEnrollmentState>(
+      builder: (context, state) {
+        if (state is GetCourseEnrollmentChallenge) {
+          if (_activeChallenges.length == 0) {
+            _activeChallenges = state.challenges;
+          }
+        }
+        if (state is CourseEnrollmentListSuccess) {
+          _courseEnrollmentList = state.courseEnrollmentList;
+          toDoSegments = segments(_courseEnrollmentList);
+          actualSegmentsToDisplay =
+              createSegmentContentInforamtion(toDoSegments);
+        }
+        return Container(
+            color: Colors.black,
+            width: MediaQuery.of(context).size.width,
+            height: 120,
+            child: ListView(
+                padding: EdgeInsets.zero,
+                shrinkWrap: true,
+                scrollDirection: Axis.horizontal,
                 children: [
-                  challengeCard(),
-                  segmentCard(),
-                  challengeCard(),
-                  segmentCard(),
-                ],
-              ),
-            ]));
+                  Wrap(children: toDoContent()
+                      // children: segmentCard(
+                      // actualSegmentsToDisplay: actualSegmentsToDisplay),
+                      // children: challengeCard(challenges: _activeChallenges),
+                      ),
+                ]));
+      },
+    );
   }
 
   Container assessmentSection(BuildContext context) {
@@ -211,146 +330,52 @@ class _CoachPageState extends State<CoachPage> {
     );
   }
 
-  Padding challengeCard() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 5),
-      child: Container(
-        height: 100,
-        width: 150,
-        color: OlukoColors.challengesGreyBackground,
-        child: Wrap(
-          children: [
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(5),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(10),
-                            bottomRight: Radius.circular(10))),
-                    width: 60,
-                    height: 90,
-                  ),
-                ),
-                Expanded(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 2),
-                              child: Text(
-                                "Challenge",
-                                style: OlukoFonts.olukoSmallFont(
-                                    customColor: OlukoColors.grayColor,
-                                    custoFontWeight: FontWeight.w500),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 2),
-                              child: Text(
-                                "Workout ABS",
-                                overflow: TextOverflow.ellipsis,
-                                style: OlukoFonts.olukoMediumFont(
-                                    customColor: OlukoColors.white,
-                                    custoFontWeight: FontWeight.w500),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 2),
-                              child: Text(
-                                "Challenge by:",
-                                style: OlukoFonts.olukoSmallFont(
-                                    customColor: OlukoColors.grayColor,
-                                    custoFontWeight: FontWeight.w500),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 2),
-                              child: Text(
-                                "Coach",
-                                style: OlukoFonts.olukoMediumFont(
-                                    customColor: OlukoColors.white,
-                                    custoFontWeight: FontWeight.w500),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                )
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
+  //Lista de challenges a widget
+  challengeCard({List<Challenge> challenges}) {
+    List<Widget> contentForSection = [];
+
+    challenges.forEach((challenge) {
+      contentForSection.add(returnCardForChallenge(challenge));
+    });
+
+    return contentForSection;
   }
 
-  Padding segmentCard() {
-    return Padding(
+  //Lista de segments a widget
+  segmentCard({List<CoachSegmentContent> actualSegmentsToDisplay}) {
+    List<Widget> contentForSection = [];
+
+    actualSegmentsToDisplay.forEach((segment) {
+      if (segment.compleatedAt == null) {
+        contentForSection.add(returnCardForSegment(segment));
+      }
+    });
+
+    return contentForSection;
+  }
+
+  toDoContent() {
+    return challengeCard(challenges: _activeChallenges) +
+        segmentCard(actualSegmentsToDisplay: actualSegmentsToDisplay);
+  }
+
+  returnCardForChallenge(Challenge upcomingChallengesContent) {
+    Widget contentForReturn = SizedBox();
+    contentForReturn = Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5),
-      child: Container(
-        height: 100,
-        width: 150,
-        color: OlukoColors.challengesGreyBackground,
-        child: Wrap(
-          children: [
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(5),
-                  child: Container(
-                    color: Colors.white,
-                    width: 60,
-                    height: 90,
-                  ),
-                ),
-                Expanded(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 2),
-                              child: Text(
-                                "Segment 2/5",
-                                style: OlukoFonts.olukoSmallFont(
-                                    customColor: OlukoColors.grayColor,
-                                    custoFontWeight: FontWeight.w500),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 2),
-                              child: Text(
-                                "Killer ABS",
-                                overflow: TextOverflow.ellipsis,
-                                style: OlukoFonts.olukoMediumFont(
-                                    customColor: OlukoColors.white,
-                                    custoFontWeight: FontWeight.w500),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                )
-              ],
-            ),
-          ],
-        ),
-      ),
+      child: CoachTabChallengeCard(challenge: upcomingChallengesContent),
     );
+    return contentForReturn;
+  }
+
+  //transforma segment a segment card
+  returnCardForSegment(CoachSegmentContent segment) {
+    Widget contentForReturn = SizedBox();
+    contentForReturn = Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      child: CoachTabSegmentCard(segment: segment),
+    );
+    return contentForReturn;
   }
 
   AnimatedContainer userProgressComponent(BuildContext context) {
@@ -434,7 +459,7 @@ class _CoachPageState extends State<CoachPage> {
     );
   }
 
-  Row contentSection({String title}) {
+  Row contentSection({String title, contentForSection}) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -462,5 +487,41 @@ class _CoachPageState extends State<CoachPage> {
         )
       ],
     );
+  }
+
+  segments(List<CourseEnrollment> courseEnrollments) {
+    List<InfoForSegments> listOfSegments = [];
+    String className;
+    String classImage;
+
+    courseEnrollments.forEach((courseEnrollment) {
+      courseEnrollment.classes.forEach((classToCheck) {
+        className = classToCheck.name;
+        classImage = classToCheck.image;
+        InfoForSegments infoForSegmentElement = InfoForSegments(
+            classImage: classImage, className: className, segments: []);
+        classToCheck.segments.forEach((segment) {
+          infoForSegmentElement.segments.add(segment);
+        });
+        listOfSegments.add(infoForSegmentElement);
+      });
+    });
+    return listOfSegments;
+  }
+
+  createSegmentContentInforamtion(List<InfoForSegments> segments) {
+    List<CoachSegmentContent> coachSegmentContent = [];
+
+    segments.forEach((segment) {
+      segment.segments.forEach((actualSegment) {
+        coachSegmentContent.add(CoachSegmentContent(
+            classImage: segment.classImage,
+            className: segment.className,
+            segmentName: actualSegment.name,
+            compleatedAt: actualSegment.compleatedAt,
+            segmentReference: actualSegment.reference));
+      });
+    });
+    return coachSegmentContent;
   }
 }

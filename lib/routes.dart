@@ -234,7 +234,8 @@ class Routes {
           BlocProvider<ConfirmFriendBloc>.value(value: _confirmFriendBloc),
           BlocProvider<IgnoreFriendRequestBloc>.value(
               value: _ignoreFriendRequestBloc),
-          BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc)
+          BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
+          BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
         ];
         newRouteView = MainPage();
         break;
@@ -539,6 +540,12 @@ class Routes {
         newRouteView = ExploreSubscribedUsers(courseId: courseId);
         break;
       case RouteEnum.coach:
+        providers = [
+          BlocProvider<ProfileBloc>.value(value: _profileBloc),
+          BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
+          BlocProvider<TransformationJourneyBloc>.value(
+              value: _transformationJourneyBloc),
+        ];
         newRouteView = CoachPage();
         break;
       default:
