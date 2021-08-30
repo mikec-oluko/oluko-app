@@ -56,6 +56,10 @@ class SegmentRecording extends StatefulWidget {
 }
 
 class _SegmentRecordingState extends State<SegmentRecording> {
+  Image movementVideoThumbnailImage = Image.asset(
+    'assets/assessment/task_response_thumbnail.png',
+    fit: BoxFit.cover,
+  );
   WorkoutType workoutType;
 
   //Imported from Timer POC Models
@@ -261,12 +265,16 @@ class _SegmentRecordingState extends State<SegmentRecording> {
 
   ///Lower half of the view
   Widget _lowerSection(WorkoutType workoutType, WorkState workoutState) {
-    return Container(
-      color: Colors.black,
-      child: workoutType == WorkoutType.segmentWithRecording
-          ? _cameraSection()
-          : _controlsSection(workoutState),
-    );
+    if (workoutState != WorkState.finished) {
+      return Container(
+        color: Colors.black,
+        child: workoutType == WorkoutType.segmentWithRecording
+            ? _cameraSection()
+            : _controlsSection(workoutState),
+      );
+    } else {
+      return _segmentInfoSection();
+    }
   }
 
   ///Section with an Array of buttons to handle workout control from user
@@ -439,7 +447,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
               builder: (context) =>
                   SegmentProgress(segmentSubmission: _segmentSubmission)));
     } else {
-      if (widget.segmentIndex < widget.segments.length - 1) {
+      if (false) {
         Navigator.pushNamed(context, routeLabels[RouteEnum.segmentDetail],
             arguments: {
               'segmentIndex': widget.segmentIndex + 1,
@@ -447,15 +455,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
               'courseEnrollment': widget.courseEnrollment,
             });
       } else {
-        //TODO: Go to next class
-        /*Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => SegmentDetail(
-                    segmentIndex: 0,
-                    classIndex: widget.classIndex,
-                    courseEnrollment: widget.courseEnrollment)));*/
-        //ver lo de las clases porque no tengo la lista de clases
+        setState(() {});
       }
     }
   }
@@ -538,4 +538,228 @@ class _SegmentRecordingState extends State<SegmentRecording> {
           scale: 4,
         ));
   }
+
+  ///Section with information about segment and workout movements.
+  // ignore: unused_element
+  Widget _segmentInfoSection() {
+    return Padding(
+      padding: const EdgeInsets.all(30.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _completedBadge(),
+                MovementUtils.movementTitle(
+                    widget.segments[widget.segmentIndex].name),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: MovementUtils.labelWithTitle(
+                '${OlukoLocalizations.of(context).find('duration')}:',
+                '${widget.segments[widget.segmentIndex].duration} Seconds'),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: MovementUtils.labelWithTitle(
+                '${OlukoLocalizations.of(context).find('rounds')}:',
+                '${widget.segments[widget.segmentIndex].rounds} ${OlukoLocalizations.of(context).find('rounds')}'),
+          ),
+          /*Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: MovementUtils.workout(tasks, context),
+          ),*/
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
+            child: _feedbackCard(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  ///Information card with sharing options for the recorded video
+  Widget _shareCard() {
+    return Container(
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(5)),
+          color: OlukoColors.listGrayColor),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                      flex: 2,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.all(Radius.circular(5)),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            movementVideoThumbnailImage,
+                          ],
+                        ),
+                      )),
+                  Expanded(
+                    flex: 8,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 15.0, top: 0),
+                      child: Container(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.max,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              OlukoLocalizations.of(context)
+                                  .find('shareYourVideo'),
+                              style: OlukoFonts.olukoBigFont(),
+                              textAlign: TextAlign.start,
+                            ),
+                            Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 10),
+                                  child: Column(
+                                    children: [
+                                      ElevatedButton(
+                                        onPressed: () {},
+                                        child: Icon(Icons.movie),
+                                        style: ElevatedButton.styleFrom(
+                                            minimumSize: Size(50, 50),
+                                            primary: Colors.white),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text('Stories',
+                                            style:
+                                                OlukoFonts.olukoMediumFont()),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    children: [
+                                      ElevatedButton(
+                                        onPressed: () {},
+                                        child: Icon(Icons.send),
+                                        style: ElevatedButton.styleFrom(
+                                            minimumSize: Size(50, 50),
+                                            primary: Colors.white),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text('To Coach',
+                                            style:
+                                                OlukoFonts.olukoMediumFont()),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  //Information card with Feedback Options
+  // ignore: unused_element
+  Widget _feedbackCard() {
+    return Container(
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(5)),
+          color: OlukoColors.listGrayColor),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                OlukoLocalizations.of(context).find('howWasYourWorkoutSession'),
+                style: OlukoFonts.olukoBigFont(),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: Column(
+                    children: [_feedbackButton(Icons.favorite)],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [_feedbackButton(Icons.close)],
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _feedbackButton(IconData iconData, {Function() onPressed}) {
+    return OutlinedButton(
+      onPressed: onPressed,
+      child: Icon(iconData, color: Colors.white),
+      style: OutlinedButton.styleFrom(
+        padding: EdgeInsets.all(15),
+        shape: CircleBorder(),
+        side: BorderSide(color: Colors.white),
+      ),
+    );
+  }
+
+  Widget _completedBadge() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: OlukoColors.listGrayColor,
+          borderRadius: BorderRadius.all(Radius.circular(5)),
+        ),
+        padding: EdgeInsets.all(5),
+        child: Text(
+          'COMPLETED',
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
+    );
+  }
+
+  /*
+  Other Methods
+  */
+
 }
