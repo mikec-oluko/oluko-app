@@ -17,11 +17,13 @@ import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/timer_entry.dart';
 import 'package:oluko_app/models/utils/timer_model.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/IntervalProgressBarLib/interval_progress_bar.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/screens/courses/collapsed_movement_videos_section.dart';
 import 'package:oluko_app/ui/screens/courses/movement_videos_section.dart';
+import 'package:oluko_app/ui/screens/courses/segment_detail.dart';
 import 'package:oluko_app/ui/screens/courses/segment_progress.dart';
 import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -438,23 +440,18 @@ class _SegmentRecordingState extends State<SegmentRecording> {
                   SegmentProgress(segmentSubmission: _segmentSubmission)));
     } else {
       if (widget.segmentIndex < widget.segments.length - 1) {
-        /*Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => SegmentDetail(
-                    user: widget.user,
-                    segments: widget.segments,
-                    segmentIndex: widget.segmentIndex + 1,
-                    classIndex: widget.classIndex,
-                    courseEnrollment: widget.courseEnrollment)));*/
+        Navigator.pushNamed(context, routeLabels[RouteEnum.segmentDetail],
+            arguments: {
+              'segmentIndex': widget.segmentIndex + 1,
+              'classIndex': widget.classIndex,
+              'courseEnrollment': widget.courseEnrollment,
+            });
       } else {
         //TODO: Go to next class
         /*Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => SegmentDetail(
-                    user: widget.user,
-                    segments: widget.segments,
                     segmentIndex: 0,
                     classIndex: widget.classIndex,
                     courseEnrollment: widget.courseEnrollment)));*/
