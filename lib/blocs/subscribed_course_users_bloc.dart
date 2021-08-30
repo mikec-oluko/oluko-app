@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/friend.dart';
-import 'package:oluko_app/models/friend_model.dart';
+import 'package:oluko_app/models/submodels/friend_model.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/course_enrollment_repository.dart';
 import 'package:oluko_app/repositories/friend_repository.dart';
