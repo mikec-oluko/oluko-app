@@ -79,7 +79,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   User _user;
   SegmentSubmission _segmentSubmission;
-  List<Movement> _movements;
+  List<Movement> _movements = [];
 
   bool isPlaying = true;
 
@@ -221,13 +221,79 @@ class _SegmentClocksState extends State<SegmentClocks> {
                   timerEntries[timerTaskIndex].roundNumber),
               _countdownSection(workState)
             ])),
-        _tasksSection(
-            timerEntries[timerTaskIndex].label,
-            timerTaskIndex < timerEntries.length - 1
-                ? timerEntries[timerTaskIndex + 1].label
-                : '')
+        _tasksSection()
       ],
     ));
+  }
+
+  ///Current and next movement labels
+  Widget _tasksSection() {
+    String currentTask = timerEntries[timerTaskIndex].label;
+    String nextTask = timerTaskIndex < timerEntries.length - 1
+        ? timerEntries[timerTaskIndex + 1].label
+        : '';
+    return widget.workoutType == WorkoutType.segment
+        ? taskSectionWithoutRecording(currentTask, nextTask)
+        : recordingTaskSection(currentTask, nextTask);
+  }
+
+  Widget taskSectionWithoutRecording(String currentTask, String nextTask) {
+    if (timerEntries[timerTaskIndex].label == null) {
+      return Padding(
+          padding: EdgeInsets.only(top: 25),
+          child: Column(children: getJoinedLabel()));
+    } else {
+      return Padding(
+          padding: EdgeInsets.only(top: 25),
+          child: Column(
+            children: [
+              currentTaskWidget(currentTask),
+              SizedBox(height: 10),
+              nextTaskWidget(nextTask)
+            ],
+          ));
+    }
+  }
+
+  List<Widget> getJoinedLabel() {
+    List<Widget> labelWidgets = [];
+    timerEntries[timerTaskIndex].labels.forEach((label) {
+      labelWidgets.add(Text(label,
+          style: TextStyle(
+              fontSize: 20,
+              color: OlukoColors.white,
+              fontWeight: FontWeight.w300)));
+      labelWidgets.add(Divider(
+        height: 10,
+        color: OlukoColors.divider,
+        thickness: 0,
+        indent: 0,
+        endIndent: 0,
+      ));
+    });
+    return labelWidgets;
+  }
+
+  Widget recordingTaskSection(String currentTask, String nextTask) {
+    return Container(
+        width: ScreenUtils.width(context),
+        child: Padding(
+            padding: EdgeInsets.only(top: 7, bottom: 15),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                currentTaskWidget(currentTask, true),
+                Positioned(
+                    left: ScreenUtils.width(context) - 70,
+                    child: Text(
+                      nextTask,
+                      style: TextStyle(
+                          fontSize: 20,
+                          color: OlukoColors.grayColorSemiTransparent,
+                          fontWeight: FontWeight.bold),
+                    )),
+              ],
+            )));
   }
 
   ///Clock countdown label
@@ -275,39 +341,6 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
     return TimerUtils.timeTimer(circularProgressIndicatorValue,
         TimeConverter.durationToString(this.timeLeft));
-  }
-
-  ///Current and next movement labels
-  Widget _tasksSection(String currentTask, String nextTask) {
-    return widget.workoutType == WorkoutType.segment
-        ? Padding(
-            padding: EdgeInsets.only(top: 25),
-            child: Column(
-              children: [
-                currentTaskWidget(currentTask),
-                SizedBox(height: 10),
-                nextTaskWidget(nextTask)
-              ],
-            ))
-        : Container(
-            width: ScreenUtils.width(context),
-            child: Padding(
-                padding: EdgeInsets.only(top: 7, bottom: 15),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    currentTaskWidget(currentTask, true),
-                    Positioned(
-                        left: ScreenUtils.width(context) - 70,
-                        child: Text(
-                          nextTask,
-                          style: TextStyle(
-                              fontSize: 20,
-                              color: OlukoColors.grayColorSemiTransparent,
-                              fontWeight: FontWeight.bold),
-                        )),
-                  ],
-                )));
   }
 
   Widget currentTaskWidget(String currentTask, [bool smaller = false]) {
@@ -519,8 +552,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
   _startMovement() {
     //Reset countdown variables
     timerTaskIndex = 0;
-    this.timerEntries =
-        SegmentUtils.getExercisesList(widget.segments[widget.segmentIndex]);
+    this.timerEntries = SegmentUtils.getExercisesList(
+        widget.segments[widget.segmentIndex], context);
     _playTask();
   }
 
