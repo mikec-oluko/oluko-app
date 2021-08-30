@@ -4,7 +4,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/IntervalProgressBarLib/interval_progress_bar.dart';
 import 'package:oluko_app/ui/components/countdown_overlay.dart';
-import 'package:oluko_app/ui/screens/courses/segment_recording.dart';
+import 'package:oluko_app/ui/screens/courses/segment_clocks.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 enum InitialTimerType { Start, End }
@@ -31,7 +31,7 @@ class TimerUtils {
                 fontStyle: FontStyle.italic,
                 color: OlukoColors.coral)),
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Text(OlukoLocalizations.of(context).find('round') + " ",
+          Text(OlukoLocalizations.of(context).find('round') + "  ",
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontSize: 12,
@@ -107,7 +107,7 @@ class TimerUtils {
             ])));
   }
 
-  static Widget pausedTimer(String duration, BuildContext context) {
+  static Widget pausedTimer(BuildContext context, [String duration]) {
     return Container(
         child: SizedBox(
             height: 180,
@@ -127,13 +127,15 @@ class TimerUtils {
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
                         color: OlukoColors.skyblue)),
-                SizedBox(height: 12),
-                Text(duration,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white))
+                duration != null ? SizedBox(height: 12) : SizedBox(),
+                duration != null
+                    ? Text(duration,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white))
+                    : SizedBox()
               ])
             ])));
   }
@@ -229,7 +231,7 @@ class TimerUtils {
                   recording: workoutType == WorkoutType.segmentWithRecording,
                 )))
         .then((value) => Navigator.pushNamed(
-            context, routeLabels[RouteEnum.segmentRecording],
+            context, routeLabels[RouteEnum.segmentClocks],
             arguments: arguments));
   }
 }
