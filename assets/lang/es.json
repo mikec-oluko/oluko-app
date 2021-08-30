@@ -158,6 +158,8 @@
     "rest": "Descanso",
     "tapHere": "Toca aquí",
     "whenDone": "cuando termines",
-    "ignore": "Ignorar"
+    "ignore": "Ignorar",
+    "resume": "Reanudar",
+    "movementVideos": "Videos de los movimientos"
 
 }

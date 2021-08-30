@@ -61,7 +61,7 @@ import 'package:oluko_app/ui/screens/profile/profile_subscription_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_transformation_journey_page.dart';
 import 'package:oluko_app/ui/screens/profile/transformation_journey_post.dart';
 import 'package:oluko_app/ui/screens/courses/segment_detail.dart';
-import 'package:oluko_app/ui/screens/courses/segment_recording.dart';
+import 'ui/screens/courses/segment_clocks.dart';
 import 'package:oluko_app/ui/screens/authentication/sign_up.dart';
 import 'package:oluko_app/ui/screens/authentication/sign_up_with_email.dart';
 import 'package:oluko_app/ui/screens/assessments/task_details.dart';
@@ -99,7 +99,7 @@ enum RouteEnum {
   appPlans,
   segmentDetail,
   movementIntro,
-  segmentRecording,
+  segmentClocks,
   courseMarketing,
   assessmentVideos,
   taskDetails,
@@ -139,7 +139,7 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.appPlans: '/app-plans',
   RouteEnum.segmentDetail: '/segment-detail',
   RouteEnum.movementIntro: '/movement-intro',
-  RouteEnum.segmentRecording: '/segment-recording',
+  RouteEnum.segmentClocks: '/segment-clocks',
   RouteEnum.courseMarketing: '/course-marketing',
   RouteEnum.assessmentVideos: '/assessment-videos',
   RouteEnum.taskDetails: '/task-details',
@@ -361,6 +361,7 @@ class Routes {
       case RouteEnum.segmentDetail:
         providers = [
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
+          BlocProvider<MovementBloc>.value(value: _movementBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments;
         newRouteView = SegmentDetail(
@@ -374,9 +375,10 @@ class Routes {
           movement: argumentsToAdd['movement'],
         );
         break;
-      case RouteEnum.segmentRecording:
+      case RouteEnum.segmentClocks:
         providers = [
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
+          BlocProvider<MovementBloc>.value(value: _movementBloc),
           BlocProvider<SegmentSubmissionBloc>.value(
               value: _segmentSubmissionBloc),
           BlocProvider<MovementSubmissionBloc>.value(
@@ -384,7 +386,7 @@ class Routes {
           BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments;
-        newRouteView = SegmentRecording(
+        newRouteView = SegmentClocks(
             courseEnrollment: argumentsToAdd['courseEnrollment'],
             classIndex: argumentsToAdd['classIndex'],
             segmentIndex: argumentsToAdd['segmentIndex'],

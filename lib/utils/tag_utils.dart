@@ -1,6 +1,6 @@
 import 'package:oluko_app/models/tag.dart';
 import 'package:oluko_app/models/tag_category.dart';
-import 'package:oluko_app/models/tag_category_item.dart';
+import 'package:oluko_app/models/submodels/tag_category_item.dart';
 
 class TagUtils {
   static List<Tag> filterByCategories(
