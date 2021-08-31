@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_ffmpeg/media_information.dart';
 import 'package:flutter_ffmpeg/stream_information.dart';
 import 'package:image_picker/image_picker.dart';
@@ -5,6 +7,8 @@ import 'package:oluko_app/helpers/encoding_provider.dart';
 import 'package:oluko_app/helpers/s3_provider.dart';
 import 'package:path/path.dart' as p;
 import 'dart:io';
+
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 class VideoProcess {
   static Future<String> uploadFile(filePath, folderName) async {
@@ -54,8 +58,18 @@ class VideoProcess {
       //The operator '~/' get the closest int to the operation
       height = (width ~/ aspectRatio);
     }
-    String thumbnailPath =
-        await EncodingProvider.getThumb(video.path, width, height);
-    return thumbnailPath;
+    var properties = videoInfo.getAllProperties();
+    try {
+      String thumbnailPath =
+          await EncodingProvider.getThumb(video.path, width, height);
+      return thumbnailPath;
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
+      log(e.toString());
+    }
+    return null;
   }
 }
