@@ -5,17 +5,25 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/privacy_options.dart';
 import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/models/user_statistics.dart';
 import 'package:oluko_app/ui/components/user_profile_progress.dart';
 import 'package:oluko_app/utils/container_grediant.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class UserProfileInformation extends StatefulWidget {
-  final UserResponse userInformation;
+  final UserResponse userToDisplayInformation;
   final ActualProfileRoute actualRoute;
-  final bool isOwner;
+  final UserResponse currentUser;
+  final UserConnectStatus connectStatus;
+  final UserStatistics userStats;
+
   const UserProfileInformation(
-      {this.userInformation, this.actualRoute, this.isOwner})
+      {this.userToDisplayInformation,
+      this.actualRoute,
+      this.currentUser,
+      this.connectStatus,
+      this.userStats})
       : super();
 
   @override
@@ -24,26 +32,26 @@ class UserProfileInformation extends StatefulWidget {
 
 class _UserProfileInformationState extends State<UserProfileInformation> {
   String _userLocation;
-  bool _isProfilePrivate = false;
+  bool _isOwner = false;
   String _archivementsDefaultValue = "0";
+  PrivacyOptions _privacyOptions = PrivacyOptions();
 
   @override
   void initState() {
-    _userLocation = getUserLocation(widget.userInformation);
-    if (widget.userInformation.privacy == null) {
-      setState(() {
-        _isProfilePrivate = false;
-      });
-    } else {
-      if (PrivacyOptions
-              .privacyOptionsList[widget.userInformation.privacy].option !=
-          SettingsPrivacyOptions.restricted) {
-        setState(() {
-          _isProfilePrivate = false;
-        });
-      }
+    _userLocation = getUserLocation(widget.userToDisplayInformation);
+    if (_isOwnerProfile(
+        currentUser: widget.currentUser,
+        userRequested: widget.userToDisplayInformation)) {
+      _isOwner = true;
     }
+
     super.initState();
+  }
+
+  bool _isOwnerProfile(
+      {@required UserResponse currentUser,
+      @required UserResponse userRequested}) {
+    return currentUser.id == userRequested.id;
   }
 
   @override
@@ -82,14 +90,14 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                widget.userInformation.avatarThumbnail != null
+                widget.userToDisplayInformation.avatarThumbnail != null
                     ? Padding(
                         padding: const EdgeInsets.all(5.0),
                         child: Stack(clipBehavior: Clip.none, children: [
                           CircleAvatar(
                             backgroundColor: OlukoColors.black,
                             backgroundImage: Image.network(
-                              widget.userInformation.avatarThumbnail,
+                              widget.userToDisplayInformation.avatarThumbnail,
                               fit: BoxFit.contain,
                               frameBuilder: (BuildContext context, Widget child,
                                       int frame, bool wasSynchronouslyLoaded) =>
@@ -104,7 +112,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                           Visibility(
                             visible: widget.actualRoute ==
                                     ActualProfileRoute.userProfile &&
-                                widget.isOwner,
+                                _isOwner,
                             child: Positioned(
                               top: 25,
                               right: -12,
@@ -135,7 +143,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                           Visibility(
                             visible: widget.actualRoute ==
                                     ActualProfileRoute.userProfile &&
-                                widget.isOwner == true,
+                                _isOwner,
                             child: Positioned(
                               top: 25,
                               right: -12,
@@ -161,164 +169,22 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                   child: Row(
                     children: [
                       //PROFILE NAME AND LASTNAME
-                      !_isProfilePrivate && widget.isOwner
-                          ? Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                  Center(
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(left: 10.0)
-                                          .copyWith(top: 5),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            this
-                                                .widget
-                                                .userInformation
-                                                .firstName,
-                                            style: OlukoFonts.olukoBigFont(
-                                                customColor:
-                                                    OlukoColors.primary,
-                                                custoFontWeight:
-                                                    FontWeight.w500),
-                                          ),
-                                          SizedBox(
-                                            width: 5.0,
-                                          ),
-                                          Text(
-                                            this
-                                                .widget
-                                                .userInformation
-                                                .lastName,
-                                            style: OlukoFonts.olukoBigFont(
-                                                customColor:
-                                                    OlukoColors.primary,
-                                                custoFontWeight:
-                                                    FontWeight.w500),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 5.0,
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 10.0),
-                                    child: IntrinsicHeight(
-                                      child: Container(
-                                        height: 30,
-                                        width: 170,
-                                        child: Wrap(
-                                          children: [
-                                            Text(
-                                              this
-                                                  .widget
-                                                  .userInformation
-                                                  .username,
-                                              style: OlukoFonts.olukoMediumFont(
-                                                  customColor:
-                                                      OlukoColors.grayColor,
-                                                  custoFontWeight:
-                                                      FontWeight.w300),
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 3),
-                                              child: Container(
-                                                  width: 1,
-                                                  height: 15,
-                                                  color: OlukoColors.grayColor),
-                                            ),
-                                            _userLocation != null
-                                                ? Text(
-                                                    location,
-                                                    style: OlukoFonts
-                                                        .olukoMediumFont(
-                                                            customColor:
-                                                                OlukoColors
-                                                                    .grayColor,
-                                                            custoFontWeight:
-                                                                FontWeight
-                                                                    .w300),
-                                                  )
-                                                : SizedBox(),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                ])
-                          : Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 10.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        this.widget.userInformation.firstName,
-                                        style: OlukoFonts.olukoBigFont(
-                                            customColor: OlukoColors.primary,
-                                            custoFontWeight: FontWeight.w500),
-                                      ),
-                                      SizedBox(
-                                        width: 5.0,
-                                      ),
-                                      Text(
-                                        this.widget.userInformation.lastName,
-                                        style: OlukoFonts.olukoBigFont(
-                                            customColor: OlukoColors.primary,
-                                            custoFontWeight: FontWeight.w500),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Row(
-                                  children: [
-                                    Container(
-                                      height: 35,
-                                      width: 35,
-                                      child: TextButton(
-                                          onPressed: () {},
-                                          child: Image.asset(
-                                            'assets/profile/lockedProfile.png',
-                                            fit: BoxFit.fill,
-                                            height: 60,
-                                            width: 60,
-                                          )),
-                                    ),
-                                    Container(
-                                      width: 150,
-                                      height: 25,
-                                      child: Text(
-                                          OlukoLocalizations.of(context)
-                                              .find('privateProfile'),
-                                          style: OlukoFonts.olukoMediumFont(
-                                              customColor:
-                                                  OlukoColors.grayColor,
-                                              custoFontWeight:
-                                                  FontWeight.w300)),
-                                    )
-                                  ],
-                                )
-                              ],
-                            ),
+                      _isOwner
+                          ? userInfoUnlocked(location)
+                          : _privacyOptions.canShowDetails(
+                                  isOwner: _isOwner,
+                                  currentUser: widget.currentUser,
+                                  userRequested:
+                                      widget.userToDisplayInformation,
+                                  connectStatus: widget.connectStatus)
+                              ? userInfoUnlocked(location)
+                              : userInfoLocked(),
                     ],
                   ),
                 ),
                 //TODO: Check show/hide button conditions
-                !widget.isOwner &&
+                //HIFIVE BUTTON
+                !_isOwner &&
                         widget.actualRoute == ActualProfileRoute.userProfile
                     ? Container(
                         height: 50,
@@ -343,18 +209,154 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
           ],
         ),
         //PROFILE ARCHIVEMENTS
-        !widget.isOwner && _isProfilePrivate == true
+        _privacyOptions.canShowDetails(
+                isOwner: _isOwner,
+                currentUser: widget.currentUser,
+                userRequested: widget.userToDisplayInformation,
+                connectStatus: widget.connectStatus)
             ? UserProfileProgress(
+                challengesCompleted: widget.userStats != null
+                    ? widget.userStats.completedChallenges.toString()
+                    : _archivementsDefaultValue,
+                coursesCompleted: widget.userStats != null
+                    ? widget.userStats.completedCourses.toString()
+                    : _archivementsDefaultValue,
+                classesCompleted: widget.userStats != null
+                    ? widget.userStats.completedClasses.toString()
+                    : _archivementsDefaultValue,
+              )
+            : UserProfileProgress(
                 challengesCompleted: _archivementsDefaultValue,
                 coursesCompleted: _archivementsDefaultValue,
                 classesCompleted: _archivementsDefaultValue,
               )
-            : UserProfileProgress(
-                challengesCompleted: valuesForArchivements[0],
-                coursesCompleted: valuesForArchivements[1],
-                classesCompleted: valuesForArchivements[2],
-              )
       ],
     );
+  }
+
+  Column userInfoLocked() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 10.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                this.widget.userToDisplayInformation.firstName,
+                style: OlukoFonts.olukoBigFont(
+                    customColor: OlukoColors.primary,
+                    custoFontWeight: FontWeight.w500),
+              ),
+              SizedBox(
+                width: 5.0,
+              ),
+              Text(
+                this.widget.userToDisplayInformation.lastName,
+                style: OlukoFonts.olukoBigFont(
+                    customColor: OlukoColors.primary,
+                    custoFontWeight: FontWeight.w500),
+              ),
+            ],
+          ),
+        ),
+        Row(
+          children: [
+            Container(
+              height: 35,
+              width: 35,
+              child: TextButton(
+                  onPressed: () {},
+                  child: Image.asset(
+                    'assets/profile/lockedProfile.png',
+                    fit: BoxFit.fill,
+                    height: 60,
+                    width: 60,
+                  )),
+            ),
+            Container(
+              width: 150,
+              height: 25,
+              child: Text(OlukoLocalizations.of(context).find('privateProfile'),
+                  style: OlukoFonts.olukoMediumFont(
+                      customColor: OlukoColors.grayColor,
+                      custoFontWeight: FontWeight.w300)),
+            )
+          ],
+        )
+      ],
+    );
+  }
+
+  Column userInfoUnlocked(String location) {
+    return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 10.0).copyWith(top: 5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    this.widget.userToDisplayInformation.firstName,
+                    style: OlukoFonts.olukoBigFont(
+                        customColor: OlukoColors.primary,
+                        custoFontWeight: FontWeight.w500),
+                  ),
+                  SizedBox(
+                    width: 5.0,
+                  ),
+                  Text(
+                    this.widget.userToDisplayInformation.lastName,
+                    style: OlukoFonts.olukoBigFont(
+                        customColor: OlukoColors.primary,
+                        custoFontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 5.0,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 10.0),
+            child: IntrinsicHeight(
+              child: Container(
+                height: 30,
+                width: 170,
+                child: Wrap(
+                  children: [
+                    Text(
+                      this.widget.userToDisplayInformation.username,
+                      style: OlukoFonts.olukoMediumFont(
+                          customColor: OlukoColors.grayColor,
+                          custoFontWeight: FontWeight.w300),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 3),
+                      child: Container(
+                          width: 1, height: 15, color: OlukoColors.grayColor),
+                    ),
+                    _userLocation != null
+                        ? Text(
+                            location,
+                            style: OlukoFonts.olukoMediumFont(
+                                customColor: OlukoColors.grayColor,
+                                custoFontWeight: FontWeight.w300),
+                          )
+                        : SizedBox(),
+                  ],
+                ),
+              ),
+            ),
+          )
+        ]);
   }
 }
