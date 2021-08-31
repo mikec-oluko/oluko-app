@@ -3,21 +3,24 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
+import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/coach_segment_content.dart';
 import 'package:oluko_app/helpers/coach_segment_info.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/task_submission.dart';
-
 import 'package:oluko_app/models/user_response.dart';
-import 'package:oluko_app/ui/components/black_app_bar.dart';
+import 'package:oluko_app/models/user_statistics.dart';
 import 'package:oluko_app/ui/components/coach_tab_challenge_card.dart';
 import 'package:oluko_app/ui/components/coach_tab_segment_card.dart';
 import 'package:oluko_app/ui/components/image_and_video_container.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/utils/container_grediant.dart';
+import 'package:oluko_app/utils/image_utils.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import '../../../routes.dart';
 
 class CoachPage extends StatefulWidget {
   const CoachPage();
@@ -34,6 +37,7 @@ UserResponse _currentAuthUser;
 List<InfoForSegments> toDoSegments = [];
 List<CoachSegmentContent> actualSegmentsToDisplay = [];
 List<TaskSubmission> _assessmentVideosContent = [];
+UserStatistics userStats;
 
 class _CoachPageState extends State<CoachPage> {
   @override
@@ -42,19 +46,13 @@ class _CoachPageState extends State<CoachPage> {
       topLeft: Radius.circular(24.0),
       topRight: Radius.circular(24.0),
     );
+
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         if (state is AuthSuccess) {
           _currentAuthUser = state.user;
 
-          BlocProvider.of<CourseEnrollmentBloc>(context)
-              .getCourseEnrollmentsByUserId(_currentAuthUser.id);
-
-          BlocProvider.of<CourseEnrollmentBloc>(context)
-              .getChallengesForUser(_currentAuthUser.id);
-
-          BlocProvider.of<TaskSubmissionBloc>(context)
-              .getTaskSubmissionByUserId(_currentAuthUser.id);
+          requestCurrentUserData(context);
 
           return coachView(radius, context);
         } else {
@@ -69,11 +67,76 @@ class _CoachPageState extends State<CoachPage> {
     );
   }
 
+  void requestCurrentUserData(BuildContext context) {
+    BlocProvider.of<UserStatisticsBloc>(context)
+        .getUserStatistics(_currentAuthUser.id);
+
+    BlocProvider.of<CourseEnrollmentBloc>(context)
+        .getCourseEnrollmentsByUserId(_currentAuthUser.id);
+
+    BlocProvider.of<CourseEnrollmentBloc>(context)
+        .getChallengesForUser(_currentAuthUser.id);
+
+    BlocProvider.of<TaskSubmissionBloc>(context)
+        .getTaskSubmissionByUserId(_currentAuthUser.id);
+  }
+
   Scaffold coachView(BorderRadiusGeometry radius, BuildContext context) {
     return Scaffold(
-      appBar: OlukoAppBar(
-        title: "Coach Section",
-        showSearchBar: false,
+      appBar: AppBar(
+        actions: [
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                child: GestureDetector(
+                  onTap: () {
+                    //TODO: COACH PAGE
+                    Navigator.pushNamed(context,
+                        routeLabels[RouteEnum.profileTransformationJourney]);
+                  },
+                  child: Text(
+                    "HI COACH",
+                    style: OlukoFonts.olukoMediumFont(
+                        customColor: OlukoColors.primary,
+                        custoFontWeight: FontWeight.w500),
+                  ),
+                ),
+              ),
+              _currentAuthUser.avatarThumbnail != null
+                  ? CircleAvatar(
+                      backgroundColor: OlukoColors.black,
+                      backgroundImage: Image.network(
+                        _currentAuthUser.avatarThumbnail,
+                        fit: BoxFit.contain,
+                        frameBuilder: (BuildContext context, Widget child,
+                                int frame, bool wasSynchronouslyLoaded) =>
+                            ImageUtils.frameBuilder(
+                                context, child, frame, wasSynchronouslyLoaded,
+                                height: 24, width: 24),
+                        height: 24,
+                        width: 24,
+                      ).image,
+                      radius: 24.0,
+                    )
+                  : CircleAvatar(
+                      backgroundColor: OlukoColors.primary,
+                      radius: 24.0,
+                    ),
+            ],
+          )
+        ],
+        elevation: 0.0,
+        backgroundColor: OlukoColors.black,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            Navigator.popAndPushNamed(context, routeLabels[RouteEnum.root]);
+          },
+        ),
       ),
       body: SlidingUpPanel(
         header: Padding(
@@ -113,102 +176,162 @@ class _CoachPageState extends State<CoachPage> {
         controller: _panelController,
         body: Container(
           color: Colors.black,
-          child: ListView(
-            children: [
-              Container(
-                color: Colors.black,
-                width: MediaQuery.of(context).size.width,
-                height: 300,
-              ),
-              userProgressComponent(context),
-              Container(
-                color: Colors.black,
-                width: MediaQuery.of(context).size.width,
-                height: 150,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          contentSection(title: "Mentored Videos"),
-                          BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
-                              builder: (context, state) {
-                            if (state is GetUserTaskSubmissionSuccess) {
-                              _assessmentVideosContent = state.taskSubmissions;
-                            }
-
-                            return Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 5),
-                                      child: Text(
-                                        "Sent Videos",
-                                        style: OlukoFonts.olukoMediumFont(
-                                            customColor: OlukoColors.grayColor,
-                                            custoFontWeight: FontWeight.w500),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(5.0),
-                                      child: Container(
-                                        width: 150,
-                                        height: 100,
-                                        color: Colors.black,
-                                        child: _assessmentVideosContent
-                                                    .length !=
-                                                0
-                                            ? ImageAndVideoContainer(
-                                                backgroundImage:
-                                                    _assessmentVideosContent[0]
-                                                        .video
-                                                        .thumbUrl,
-                                                isContentVideo: true,
-                                                videoUrl:
-                                                    _assessmentVideosContent[0]
-                                                        .video
-                                                        .url,
-                                                originalContent:
-                                                    _assessmentVideosContent[0],
-                                              )
-                                            : SizedBox(),
-                                      ),
-                                    )
-                                  ],
-                                )
-                              ],
-                            );
-                          }),
-                          contentSection(title: "Sent for Review"),
-                          contentSection(title: "Recomended Videos"),
-                          contentSection(title: "Voice Messages"),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Text(
-                "To Do",
-                style: OlukoFonts.olukoMediumFont(
-                    customColor: OlukoColors.white,
-                    custoFontWeight: FontWeight.w500),
-              ),
-              toDoSection(context),
-              assessmentSection(context),
-              SizedBox(
-                height: 200,
-              )
-            ],
-          ),
+          child: coachViewPageContent(context),
         ),
       ),
+    );
+  }
+
+  ListView coachViewPageContent(BuildContext context) {
+    return ListView(
+      children: [
+        cardSlider(context),
+        userProgressSection(),
+        carouselContentPreview(context),
+        carouselToDoSection(context),
+        assessmentSection(context),
+        SizedBox(
+          height: 200,
+        )
+      ],
+    );
+  }
+
+  Container carouselToDoSection(BuildContext context) {
+    return Container(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "To Do",
+            style: OlukoFonts.olukoMediumFont(
+                customColor: OlukoColors.white,
+                custoFontWeight: FontWeight.w500),
+          ),
+          toDoSection(context),
+        ],
+      ),
+    );
+  }
+
+  Container carouselContentPreview(BuildContext context) {
+    return Container(
+      color: Colors.black,
+      width: MediaQuery.of(context).size.width,
+      height: 150,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                contentSection(title: "Mentored Videos"),
+                BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
+                    builder: (context, state) {
+                  if (state is GetUserTaskSubmissionSuccess) {
+                    _assessmentVideosContent = state.taskSubmissions;
+                  }
+                  return _assessmentVideosContent.length != null
+                      ? Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 5),
+                                  child: Text(
+                                    OlukoLocalizations.of(context)
+                                        .find('sentVideos'),
+                                    style: OlukoFonts.olukoMediumFont(
+                                        customColor: OlukoColors.grayColor,
+                                        custoFontWeight: FontWeight.w500),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Navigator.pushNamed(context,
+                                          routeLabels[RouteEnum.sentVideos],
+                                          arguments: {
+                                            'taskSubmissions':
+                                                _assessmentVideosContent
+                                          });
+                                    },
+                                    child: Container(
+                                      width: 150,
+                                      height: 100,
+                                      color: Colors.black,
+                                      child: _assessmentVideosContent
+                                                  .length !=
+                                              0
+                                          ? ImageAndVideoContainer(
+                                              backgroundImage:
+                                                  _assessmentVideosContent[0]
+                                                      .video
+                                                      .thumbUrl,
+                                              isContentVideo: true,
+                                              videoUrl:
+                                                  _assessmentVideosContent[0]
+                                                      .video
+                                                      .url,
+                                              originalContent:
+                                                  _assessmentVideosContent[0],
+                                              isCoach: true)
+                                          : SizedBox(),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            )
+                          ],
+                        )
+                      : Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            color: OlukoColors.blackColorSemiTransparent,
+                          ),
+                          width: 150,
+                          height: 100,
+                          child: Center(
+                            child: Text(
+                              "No Content...",
+                              style: OlukoFonts.olukoMediumFont(
+                                  customColor: OlukoColors.primary,
+                                  custoFontWeight: FontWeight.w500),
+                            ),
+                          ),
+                        );
+                }),
+                contentSection(title: "Recomended Videos"),
+                contentSection(title: "Voice Messages"),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  BlocBuilder<UserStatisticsBloc, UserStatisticsState> userProgressSection() {
+    return BlocBuilder<UserStatisticsBloc, UserStatisticsState>(
+        builder: (context, state) {
+      if (state is StatisticsSuccess) {
+        userStats = state.userStats;
+      }
+      return userProgressComponent(context, userStats);
+    });
+  }
+
+  Container cardSlider(BuildContext context) {
+    return Container(
+      color: Colors.black,
+      width: MediaQuery.of(context).size.width,
+      height: 300,
     );
   }
 
@@ -235,16 +358,13 @@ class _CoachPageState extends State<CoachPage> {
                 shrinkWrap: true,
                 scrollDirection: Axis.horizontal,
                 children: [
-                  Wrap(children: toDoContent()
-                      // children: segmentCard(
-                      // actualSegmentsToDisplay: actualSegmentsToDisplay),
-                      // children: challengeCard(challenges: _activeChallenges),
-                      ),
+                  Wrap(children: toDoContent()),
                 ]));
       },
     );
   }
 
+  //TODO: ASSESSMENTS
   Container assessmentSection(BuildContext context) {
     return Container(
         color: Colors.black,
@@ -265,6 +385,7 @@ class _CoachPageState extends State<CoachPage> {
             ]));
   }
 
+  //TODO: ASSESSMENTSSS
   Padding assessmentCard() {
     return Padding(
       padding: const EdgeInsets.all(5.0),
@@ -330,7 +451,6 @@ class _CoachPageState extends State<CoachPage> {
     );
   }
 
-  //Lista de challenges a widget
   challengeCard({List<Challenge> challenges}) {
     List<Widget> contentForSection = [];
 
@@ -341,7 +461,6 @@ class _CoachPageState extends State<CoachPage> {
     return contentForSection;
   }
 
-  //Lista de segments a widget
   segmentCard({List<CoachSegmentContent> actualSegmentsToDisplay}) {
     List<Widget> contentForSection = [];
 
@@ -368,7 +487,6 @@ class _CoachPageState extends State<CoachPage> {
     return contentForReturn;
   }
 
-  //transforma segment a segment card
   returnCardForSegment(CoachSegmentContent segment) {
     Widget contentForReturn = SizedBox();
     contentForReturn = Padding(
@@ -378,7 +496,7 @@ class _CoachPageState extends State<CoachPage> {
     return contentForReturn;
   }
 
-  AnimatedContainer userProgressComponent(BuildContext context) {
+  userProgressComponent(BuildContext context, UserStatistics userStats) {
     return AnimatedContainer(
       decoration: ContainerGradient.getContainerGradientDecoration(),
       width: MediaQuery.of(context).size.width,
@@ -393,8 +511,16 @@ class _CoachPageState extends State<CoachPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                progressComponent(value: 2, title: "Classes Completed"),
-                progressComponent(value: 3, title: "Challenges Completed"),
+                progressComponent(
+                  value: userStats != null ? userStats.completedClasses : 0,
+                  title:
+                      OlukoLocalizations.of(context).find('classesCompleted'),
+                ),
+                progressComponent(
+                    value:
+                        userStats != null ? userStats.completedChallenges : 0,
+                    title: OlukoLocalizations.of(context)
+                        .find('challengesCompleted')),
                 TextButton(
                     onPressed: () {
                       setState(() {
@@ -412,9 +538,14 @@ class _CoachPageState extends State<CoachPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                progressComponent(value: 5, title: "Course Completed"),
                 progressComponent(
-                    value: 20, title: "App Completed", needPercent: true),
+                    value: userStats != null ? userStats.completedCourses : 0,
+                    title: OlukoLocalizations.of(context)
+                        .find('coursesCompleted')),
+                progressComponent(
+                    value: 0,
+                    title: OlukoLocalizations.of(context).find('appCompleted'),
+                    needPercent: true),
                 Container(
                   width: 70,
                   height: 50,
@@ -478,9 +609,20 @@ class _CoachPageState extends State<CoachPage> {
             Padding(
               padding: const EdgeInsets.all(5.0),
               child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  color: OlukoColors.blackColorSemiTransparent,
+                ),
                 width: 150,
                 height: 100,
-                color: Colors.blue,
+                child: Center(
+                  child: Text(
+                    "No Content...",
+                    style: OlukoFonts.olukoMediumFont(
+                        customColor: OlukoColors.primary,
+                        custoFontWeight: FontWeight.w500),
+                  ),
+                ),
               ),
             )
           ],

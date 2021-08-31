@@ -71,6 +71,9 @@ class OlukoColors {
 
   static const Color grayColorSemiTransparent =
       Color.fromRGBO(148, 148, 148, 0.6);
+
+  static const Color blackColorSemiTransparent =
+      Color.fromRGBO(24, 24, 24, 0.6);
 }
 
 class OlukoFonts {

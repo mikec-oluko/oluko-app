@@ -31,6 +31,7 @@ import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/movement.dart';
+import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/screens/app_plans.dart';
 import 'package:oluko_app/ui/screens/assessments/assessment_videos.dart';
@@ -38,7 +39,9 @@ import 'package:oluko_app/ui/screens/assessments/self_recording.dart';
 import 'package:oluko_app/ui/screens/assessments/self_recording_preview.dart';
 import 'package:oluko_app/ui/screens/assessments/task_submission_recorded_video.dart';
 import 'package:oluko_app/ui/screens/choose_plan_payment.dart';
-import 'package:oluko_app/ui/screens/coach_page.dart';
+import 'package:oluko_app/ui/screens/coach/coach_page.dart';
+import 'package:oluko_app/ui/screens/coach/coach_show_video.dart';
+import 'package:oluko_app/ui/screens/coach/sent_videos.dart';
 import 'package:oluko_app/ui/screens/courses/course_marketing.dart';
 import 'package:oluko_app/ui/screens/courses/courses.dart';
 import 'package:oluko_app/ui/screens/courses/enrolled_class.dart';
@@ -115,7 +118,9 @@ enum RouteEnum {
   taskSubmissionVideo,
   exploreSubscribedUsers,
   segmentCameraPreview,
-  coach
+  coach,
+  sentVideos,
+  coachShowVideo
 }
 
 Map<RouteEnum, String> routeLabels = {
@@ -156,7 +161,9 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.taskSubmissionVideo: '/task-submission-video',
   RouteEnum.exploreSubscribedUsers: '/explore-subscribed-users',
   RouteEnum.segmentCameraPreview: '/segment-camera-preview',
-  RouteEnum.coach: '/coach'
+  RouteEnum.coach: '/coach',
+  RouteEnum.sentVideos: '/coach-sent-videos',
+  RouteEnum.coachShowVideo: '/coach-show-video'
 };
 
 RouteEnum getEnumFromRouteString(String route) {
@@ -557,6 +564,19 @@ class Routes {
               value: _transformationJourneyBloc),
         ];
         newRouteView = CoachPage();
+        break;
+      case RouteEnum.sentVideos:
+        final Map<String, List<TaskSubmission>> argumentsToAdd = arguments;
+        newRouteView =
+            SentVideosPage(taskSubmissions: argumentsToAdd['taskSubmissions']);
+        break;
+      case RouteEnum.coachShowVideo:
+        final Map<String, dynamic> argumentsToAdd = arguments;
+
+        newRouteView = CoachShowVideo(
+          videoUrl: argumentsToAdd['videoUrl'],
+          titleForContent: argumentsToAdd['titleForView'],
+        );
         break;
       default:
         newRouteView = MainPage();

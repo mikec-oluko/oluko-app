@@ -219,8 +219,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         UploadingModalLoader(UploadFrom.profileCoverImage);
                   }
                   if (state is ProfileCoverSuccess) {
-                    _contentForPanel =
-                        UploadingModalSuccess(UploadFrom.profileCoverImage);
+                    _contentForPanel = UploadingModalSuccess(
+                        goToPage: UploadFrom.profileImage,
+                        userRequested: _userProfileToDisplay);
                   }
                   if (state is ProfileCoverImageFailure) {
                     _panelController.close();
@@ -249,8 +250,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         UploadingModalLoader(UploadFrom.profileImage);
                   }
                   if (state is ProfileAvatarSuccess) {
-                    _contentForPanel =
-                        UploadingModalSuccess(UploadFrom.profileImage);
+                    _contentForPanel = UploadingModalSuccess(
+                        goToPage: UploadFrom.profileImage,
+                        userRequested: _userProfileToDisplay);
                   }
                   if (state is ProfileAvatarFailure) {
                     _panelController.close();

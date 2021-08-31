@@ -52,7 +52,7 @@ class _CoachTabChallengeCardState extends State<CoachTabChallengeCard> {
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 2),
                             child: Text(
-                              OlukoLocalizations.of(context).find("Challenge"),
+                              OlukoLocalizations.of(context).find("challenge"),
                               style: OlukoFonts.olukoSmallFont(
                                   customColor: OlukoColors.grayColor,
                                   custoFontWeight: FontWeight.w500),
@@ -72,7 +72,7 @@ class _CoachTabChallengeCardState extends State<CoachTabChallengeCard> {
                             padding: const EdgeInsets.symmetric(vertical: 2),
                             child: Text(
                               OlukoLocalizations.of(context)
-                                  .find("ChallengeBy"),
+                                  .find("challengeBy"),
                               style: OlukoFonts.olukoSmallFont(
                                   customColor: OlukoColors.grayColor,
                                   custoFontWeight: FontWeight.w500),

@@ -11,13 +11,15 @@ class ImageAndVideoContainer extends StatefulWidget {
   final String videoUrl;
   final ActualProfileRoute displayOnViewNamed;
   final dynamic originalContent;
+  final bool isCoach;
 
   ImageAndVideoContainer(
       {this.backgroundImage,
       this.isContentVideo,
       this.videoUrl,
       this.displayOnViewNamed,
-      this.originalContent});
+      this.originalContent,
+      this.isCoach = false});
 
   @override
   _ImageAndVideoContainerState createState() => _ImageAndVideoContainerState();
@@ -26,26 +28,24 @@ class ImageAndVideoContainer extends StatefulWidget {
 class _ImageAndVideoContainerState extends State<ImageAndVideoContainer> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(5),
-      child: Container(
-          height: 120,
-          width: 100,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-            color: OlukoColors.black,
-          ),
-          child: ImageAndVideoPreviewCard(
-            backgroundImage: backgroundNetworkImage(),
-            videoUrl: widget.videoUrl,
-            isContentVideo: widget.isContentVideo,
-            showTitle: widget.displayOnViewNamed ==
-                    ActualProfileRoute.userAssessmentVideos ||
-                widget.displayOnViewNamed ==
-                    ActualProfileRoute.transformationJourney,
-            originalContent: widget.originalContent,
-          )),
-    );
+    return Container(
+        height: widget.isCoach ? 150 : 120,
+        width: 100,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+          color: OlukoColors.black,
+        ),
+        child: ImageAndVideoPreviewCard(
+          backgroundImage: backgroundNetworkImage(),
+          videoUrl: widget.videoUrl,
+          isContentVideo: widget.isContentVideo,
+          showTitle: widget.displayOnViewNamed ==
+                  ActualProfileRoute.userAssessmentVideos ||
+              widget.displayOnViewNamed ==
+                  ActualProfileRoute.transformationJourney,
+          originalContent: widget.originalContent,
+          isCoach: widget.isCoach,
+        ));
   }
 
   Image backgroundNetworkImage() {
@@ -55,8 +55,8 @@ class _ImageAndVideoContainerState extends State<ImageAndVideoContainer> {
       frameBuilder: (BuildContext context, Widget child, int frame,
               bool wasSynchronouslyLoaded) =>
           ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded,
-              height: 120, width: 120),
-      height: 120,
+              height: widget.isCoach ? 150 : 120, width: 120),
+      height: widget.isCoach ? 150 : 120,
       width: 120,
     );
   }

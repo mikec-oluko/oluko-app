@@ -54,27 +54,34 @@ class TransformListOfItemsToWidget {
     Widget contentForReturn = SizedBox();
 
     if (transformationJourneyContent != null) {
-      contentForReturn = ImageAndVideoContainer(
-        backgroundImage: transformationJourneyContent.thumbnail,
-        isContentVideo: transformationJourneyContent.type == FileTypeEnum.video
-            ? true
-            : false,
-        videoUrl: transformationJourneyContent.file,
-        displayOnViewNamed: routeForContent,
-        originalContent: transformationJourneyContent,
+      contentForReturn = Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: ImageAndVideoContainer(
+          backgroundImage: transformationJourneyContent.thumbnail,
+          isContentVideo:
+              transformationJourneyContent.type == FileTypeEnum.video
+                  ? true
+                  : false,
+          videoUrl: transformationJourneyContent.file,
+          displayOnViewNamed: routeForContent,
+          originalContent: transformationJourneyContent,
+        ),
       );
     }
     if (taskSubmissionContent != null && taskSubmissionContent.video != null) {
-      contentForReturn = ImageAndVideoContainer(
-        backgroundImage: taskSubmissionContent.video.thumbUrl != null
-            ? taskSubmissionContent.video.thumbUrl
-            : '',
-        isContentVideo: taskSubmissionContent.video != null,
-        videoUrl: taskSubmissionContent.video.url != null
-            ? taskSubmissionContent.video.url
-            : '',
-        originalContent: taskSubmissionContent,
-        displayOnViewNamed: routeForContent,
+      contentForReturn = Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: ImageAndVideoContainer(
+          backgroundImage: taskSubmissionContent.video.thumbUrl != null
+              ? taskSubmissionContent.video.thumbUrl
+              : '',
+          isContentVideo: taskSubmissionContent.video != null,
+          videoUrl: taskSubmissionContent.video.url != null
+              ? taskSubmissionContent.video.url
+              : '',
+          originalContent: taskSubmissionContent,
+          displayOnViewNamed: routeForContent,
+        ),
       );
     }
     if (upcomingChallengesContent != null) {
