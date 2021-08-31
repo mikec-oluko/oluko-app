@@ -168,11 +168,13 @@ class _SegmentRecordingState extends State<SegmentRecording> {
               TimerUtils.roundsTimer(8, 2),
               _countdownSection(workState)
             ])),
-        _tasksSection(
-            timerEntries[timerTaskIndex].label,
-            timerTaskIndex < timerEntries.length - 1
-                ? timerEntries[timerTaskIndex + 1].label
-                : '')
+        workState == WorkState.finished
+            ? SizedBox()
+            : _tasksSection(
+                timerEntries[timerTaskIndex].label,
+                timerTaskIndex < timerEntries.length - 1
+                    ? timerEntries[timerTaskIndex + 1].label
+                    : '')
       ],
     ));
   }
@@ -545,40 +547,46 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     return Padding(
       padding: const EdgeInsets.all(30.0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _completedBadge(),
+                //_completedBadge(),
                 MovementUtils.movementTitle(
                     widget.segments[widget.segmentIndex].name),
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: MovementUtils.labelWithTitle(
-                '${OlukoLocalizations.of(context).find('duration')}:',
-                '${widget.segments[widget.segmentIndex].duration} Seconds'),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: MovementUtils.labelWithTitle(
-                '${OlukoLocalizations.of(context).find('rounds')}:',
-                '${widget.segments[widget.segmentIndex].rounds} ${OlukoLocalizations.of(context).find('rounds')}'),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.all(8.0),
+          //   child: MovementUtils.labelWithTitle(
+          //       '${OlukoLocalizations.of(context).find('duration')}:',
+          //       '${widget.segments[widget.segmentIndex].duration} Seconds'),
+          // ),
+          // Padding(
+          //   padding: const EdgeInsets.all(8.0),
+          //   child: MovementUtils.labelWithTitle(
+          //       '${OlukoLocalizations.of(context).find('rounds')}:',
+          //       '${widget.segments[widget.segmentIndex].rounds} ${OlukoLocalizations.of(context).find('rounds')}'),
+          // ),
           /*Padding(
             padding: const EdgeInsets.all(8.0),
             child: MovementUtils.workout(tasks, context),
           ),*/
+          _tasksSection(
+              timerEntries[timerTaskIndex].label,
+              timerTaskIndex < timerEntries.length - 1
+                  ? timerEntries[timerTaskIndex + 1].label
+                  : ''),
           Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
-            child: _feedbackCard(),
-          ),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
+              child: workoutType == WorkoutType.segment
+                  ? _feedbackCard()
+                  : _shareCard()),
         ],
       ),
     );
