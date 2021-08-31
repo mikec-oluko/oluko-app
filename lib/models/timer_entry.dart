@@ -5,6 +5,7 @@ class TimerEntry {
   MovementSubmodel movement;
   WorkState workState;
   String label;
+  List<String> labels;
   num setNumber;
   num roundNumber;
   num time;
@@ -14,29 +15,9 @@ class TimerEntry {
       {this.movement,
       this.workState,
       this.label,
+      this.labels,
       this.setNumber,
       this.roundNumber,
       this.time,
       this.reps});
-
-  factory TimerEntry.fromJson(Map<String, dynamic> json) {
-    return TimerEntry(
-        movement: json['movement'],
-        workState: json['work_state'],
-        label: json['label'],
-        setNumber: json['set_number'],
-        roundNumber: json['round_number'],
-        time: json['time'],
-        reps: json['reps']);
-  }
-
-  Map<String, dynamic> toJson() => {
-        'movement': movement,
-        'work_state': workState,
-        'label': label,
-        'set_number': setNumber,
-        'round_number': roundNumber,
-        'time': time,
-        'reps': reps,
-      };
 }

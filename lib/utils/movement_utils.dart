@@ -72,12 +72,19 @@ class MovementUtils {
         workoutString = movement.timerReps.toString() + 'x ' + movement.name;
       } else {
         workoutString =
-            movement.timerWorkTime.toString() + ' sec ' + movement.name;
+            movement.timerWorkTime.toString() + 's ' + movement.name;
       }
       workouts.add(getTextWidget(workoutString, true));
-      workoutString = movement.timerRestTime.toString() + ' sec rest';
-      workouts.add(getTextWidget(workoutString, true));
-      workouts.add(getTextWidget(" ", true));
+
+      bool hasRest = movement.timerRestTime != null;
+
+      if (hasRest) {
+        workoutString = movement.timerRestTime.toString() + 's rest';
+        workouts.add(getTextWidget(workoutString, true));
+      }
+      if (hasRest) {
+        workouts.add(getTextWidget(" ", true));
+      }
     });
     return workouts;
   }
