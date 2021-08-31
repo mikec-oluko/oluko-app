@@ -20,6 +20,7 @@ import 'package:oluko_app/models/utils/timer_model.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/IntervalProgressBarLib/interval_progress_bar.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
+import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/screens/courses/collapsed_movement_videos_section.dart';
 import 'package:oluko_app/ui/screens/courses/movement_videos_section.dart';
@@ -130,7 +131,8 @@ class _SegmentRecordingState extends State<SegmentRecording> {
         actions: [topCameraIcon(), audioIcon()],
       ),
       backgroundColor: Colors.black,
-      body: widget.workoutType == WorkoutType.segment
+      body: widget.workoutType == WorkoutType.segment &&
+              workState != WorkState.finished
           ? SlidingUpPanel(
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(20), topRight: Radius.circular(20)),
@@ -146,10 +148,29 @@ class _SegmentRecordingState extends State<SegmentRecording> {
 
   Widget _body() {
     return Container(
-        child: Column(children: [
-      _timerSection(this.workoutType, this.workState),
-      _lowerSection(this.workoutType, this.workState)
-    ]));
+        child: Column(
+      children: [
+        _timerSection(this.workoutType, this.workState),
+        Expanded(child: _lowerSection(this.workoutType, this.workState)),
+        Padding(
+          padding: const EdgeInsets.all(25.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              OlukoOutlinedButton(
+                title: 'Go To Class',
+              ),
+              SizedBox(
+                width: 15,
+              ),
+              OlukoPrimaryButton(
+                title: 'Next Segment',
+              ),
+            ],
+          ),
+        ),
+      ],
+    ));
   }
 
   /*
@@ -442,24 +463,7 @@ class _SegmentRecordingState extends State<SegmentRecording> {
     BlocProvider.of<CourseEnrollmentBloc>(context)
       ..markSegmentAsCompleated(
           widget.courseEnrollment, widget.segmentIndex, widget.classIndex);
-    if (widget.workoutType == WorkoutType.segmentWithRecording) {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  SegmentProgress(segmentSubmission: _segmentSubmission)));
-    } else {
-      if (false) {
-        Navigator.pushNamed(context, routeLabels[RouteEnum.segmentDetail],
-            arguments: {
-              'segmentIndex': widget.segmentIndex + 1,
-              'classIndex': widget.classIndex,
-              'courseEnrollment': widget.courseEnrollment,
-            });
-      } else {
-        setState(() {});
-      }
-    }
+    setState(() {});
   }
 
   _startMovement() {
