@@ -166,6 +166,22 @@ class _SegmentRecordingState extends State<SegmentRecording> {
               ),
               OlukoPrimaryButton(
                 title: 'Next Segment',
+                onPressed: () {
+                  widget.segmentIndex < widget.segments.length - 1
+                      ? Navigator.pushNamed(
+                          context, routeLabels[RouteEnum.segmentRecording],
+                          arguments: {
+                              'segmentIndex': widget.segmentIndex + 1,
+                              'classIndex': widget.classIndex,
+                              'courseEnrollment': widget.courseEnrollment,
+                              'workoutType': workoutType,
+                              'segments': widget.segments,
+                            })
+                      : Navigator.popUntil(
+                          context,
+                          ModalRoute.withName(
+                              routeLabels[RouteEnum.insideClass]));
+                },
               ),
             ],
           ),
