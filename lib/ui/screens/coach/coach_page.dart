@@ -99,12 +99,12 @@ class _CoachPageState extends State<CoachPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 5),
                 child: GestureDetector(
                   onTap: () {
-                    //TODO: COACH PAGE
-                    Navigator.pushNamed(context,
-                        routeLabels[RouteEnum.profileTransformationJourney]);
+                    Navigator.pushNamed(
+                        context, routeLabels[RouteEnum.coachProfile],
+                        arguments: {'coachUser': _currentAuthUser});
                   },
                   child: Text(
-                    OlukoLocalizations.of(context).find('hiCoah'),
+                    OlukoLocalizations.of(context).find('hiCoach'),
                     style: OlukoFonts.olukoMediumFont(
                         customColor: OlukoColors.primary,
                         custoFontWeight: FontWeight.w500),
@@ -246,9 +246,88 @@ class _CoachPageState extends State<CoachPage> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                contentSection(
-                    title:
-                        OlukoLocalizations.of(context).find('mentoredVideos')),
+                // contentSection(
+                //     title:
+                //         OlukoLocalizations.of(context).find('mentoredVideos')),
+                BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
+                    builder: (context, state) {
+                  if (state is GetUserTaskSubmissionSuccess) {
+                    _assessmentVideosContent = state.taskSubmissions;
+                  }
+                  return _assessmentVideosContent.length != null
+                      ? Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 5),
+                                  child: Text(
+                                    OlukoLocalizations.of(context)
+                                        .find('mentoredVideos'),
+                                    style: OlukoFonts.olukoMediumFont(
+                                        customColor: OlukoColors.grayColor,
+                                        custoFontWeight: FontWeight.w500),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Navigator.pushNamed(context,
+                                          routeLabels[RouteEnum.mentoredVideos],
+                                          arguments: {
+                                            'taskSubmissions':
+                                                _assessmentVideosContent
+                                          });
+                                    },
+                                    child: Container(
+                                      width: 150,
+                                      height: 100,
+                                      color: Colors.black,
+                                      child: _assessmentVideosContent
+                                                  .length !=
+                                              0
+                                          ? ImageAndVideoContainer(
+                                              backgroundImage:
+                                                  _assessmentVideosContent[0]
+                                                      .video
+                                                      .thumbUrl,
+                                              isContentVideo: true,
+                                              videoUrl:
+                                                  _assessmentVideosContent[0]
+                                                      .video
+                                                      .url,
+                                              originalContent:
+                                                  _assessmentVideosContent[0],
+                                              isCoach: true)
+                                          : SizedBox(),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            )
+                          ],
+                        )
+                      : Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            color: OlukoColors.blackColorSemiTransparent,
+                          ),
+                          width: 150,
+                          height: 100,
+                          child: Center(
+                            child: Text(
+                              OlukoLocalizations.of(context).find('noContent'),
+                              style: OlukoFonts.olukoMediumFont(
+                                  customColor: OlukoColors.primary,
+                                  custoFontWeight: FontWeight.w500),
+                            ),
+                          ),
+                        );
+                }),
+
                 BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
                     builder: (context, state) {
                   if (state is GetUserTaskSubmissionSuccess) {

@@ -166,7 +166,8 @@
     "sentVideos":"Sent Videos",
     "date":"Date",
     "mentoredVideos": "Mentored Videos",
-    "hiCoah":"HI COACH",
+    "hiCoach":"HI COACH",
     "toDo":"To Do",
-    "myTimeline":"My Timeline"
+    "myTimeline":"My Timeline",
+    "all":"All"
 }

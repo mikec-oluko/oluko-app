@@ -166,9 +166,11 @@
     "sentVideos":"Videos enviados",
     "date":"Fecha",
     "mentoredVideos": "Videos de Mentores",
-    "hiCoah":"HOLA COACH",
+    "hiCoach":"HOLA COACH",
     "toDo":"Por hacer",
-    "myTimeline":"Mi Cronología"
+    "myTimeline":"Mi Cronología",
+    "all":"Todo"
+
 
 
 
