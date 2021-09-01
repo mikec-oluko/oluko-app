@@ -545,6 +545,7 @@ class Routes {
 
     //Generate route with selected BLoCs
     return MaterialPageRoute(
+        settings: RouteSettings(name: route),
         builder: (c) => MultiBlocProvider(
             providers: selectedProviders,
             child: Builder(builder: (context) {

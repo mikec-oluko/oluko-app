@@ -158,8 +158,9 @@ class _SegmentRecordingState extends State<SegmentRecording> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               OlukoOutlinedButton(
-                title: 'Go To Class',
-              ),
+                  title: 'Go To Class',
+                  onPressed: () => Navigator.popUntil(context,
+                      ModalRoute.withName(routeLabels[RouteEnum.insideClass]))),
               SizedBox(
                 width: 15,
               ),
