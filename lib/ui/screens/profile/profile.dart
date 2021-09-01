@@ -3,10 +3,12 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
+import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/profile_options.dart';
 import 'package:oluko_app/helpers/profile_routes.dart';
 import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/models/user_statistics.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/user_profile_information.dart';
@@ -26,6 +28,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final _formKey = GlobalKey<FormState>();
   UserResponse profileInfo;
+  UserStatistics userStats;
   final String profileTitle = ProfileViewConstants.profileTitle;
   @override
   Widget build(BuildContext context) {
@@ -34,6 +37,9 @@ class _ProfilePageState extends State<ProfilePage> {
         profileInfo = state.user;
         BlocProvider.of<TransformationJourneyBloc>(context)
             .getContentByUserId(profileInfo.id);
+        BlocProvider.of<UserStatisticsBloc>(context)
+            .getUserStatistics(profileInfo.id);
+
         return profileHomeView();
       } else {
         return Container(
@@ -75,12 +81,23 @@ class _ProfilePageState extends State<ProfilePage> {
       children: [
         GestureDetector(
             onTap: () => Navigator.pushNamed(
-                    context, routeLabels[RouteEnum.profileViewOwnProfile])
+                    context, routeLabels[RouteEnum.profileViewOwnProfile],
+                    arguments: {'userRequested': profileInfo})
                 .then((value) => onGoBack()),
-            child: UserProfileInformation(
-                userInformation: profileInfo,
-                actualRoute: ActualProfileRoute.rootProfile,
-                isOwner: true)),
+            child: BlocBuilder<UserStatisticsBloc, UserStatisticsState>(
+              builder: (context, state) {
+                if (state is StatisticsSuccess) {
+                  userStats = state.userStats;
+                }
+                return UserProfileInformation(
+                  userToDisplayInformation: profileInfo,
+                  actualRoute: ActualProfileRoute.rootProfile,
+                  currentUser: profileInfo,
+                  connectStatus: null,
+                  userStats: userStats,
+                );
+              },
+            )),
       ],
     );
     return returnWidget;
