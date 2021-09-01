@@ -7,6 +7,8 @@ import 'package:oluko_app/ui/screens/friends/friends_page.dart';
 import 'package:oluko_app/ui/screens/home.dart';
 import 'package:oluko_app/ui/screens/profile/profile.dart';
 
+import 'coach/coach_no_assigned_timer_page.dart';
+
 class MainPage extends StatefulWidget {
   MainPage({Key key}) : super(key: key);
 
@@ -31,7 +33,8 @@ class _MainPageState extends State<MainPage>
     //   ),
     // ),
     // ----
-    CoachPage(),
+    // CoachPage(),
+    CoachAssignedCountDown(),
     FriendsPage(),
     Courses(),
     ProfilePage()

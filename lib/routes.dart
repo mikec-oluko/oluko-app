@@ -39,6 +39,7 @@ import 'package:oluko_app/ui/screens/assessments/self_recording.dart';
 import 'package:oluko_app/ui/screens/assessments/self_recording_preview.dart';
 import 'package:oluko_app/ui/screens/assessments/task_submission_recorded_video.dart';
 import 'package:oluko_app/ui/screens/choose_plan_payment.dart';
+import 'package:oluko_app/ui/screens/coach/coach_no_assigned_timer_page.dart';
 import 'package:oluko_app/ui/screens/coach/coach_page.dart';
 import 'package:oluko_app/ui/screens/coach/coach_profile.dart';
 import 'package:oluko_app/ui/screens/coach/coach_show_video.dart';
@@ -576,7 +577,8 @@ class Routes {
           BlocProvider<TaskBloc>.value(value: _taskBloc),
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
         ];
-        newRouteView = CoachPage();
+        // newRouteView = CoachPage();
+        newRouteView = CoachAssignedCountDown();
         break;
       case RouteEnum.sentVideos:
         final Map<String, List<TaskSubmission>> argumentsToAdd = arguments;

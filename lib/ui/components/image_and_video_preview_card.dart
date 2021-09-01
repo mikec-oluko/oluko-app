@@ -108,13 +108,27 @@ class _State extends State<ImageAndVideoPreviewCard> {
                 //TODO: Change Modal VideoPlayer
                 widget.showTitle
                     ? AppModal.dialogContent(
-                        closeButton: true,
+                        // closeButton: true,
                         context: context,
                         content: [
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 30),
                               child: showVideoPlayer(widget.videoUrl),
-                            )
+                            ),
+                            Container(
+                                child: GestureDetector(
+                              onTap: () => Navigator.pop(context),
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 20),
+                                child: Image.asset(
+                                  'assets/courses/video_cross.png',
+                                  color: Colors.white,
+                                  height: 80,
+                                  width: 80,
+                                ),
+                              ),
+                            ))
                           ])
                     : SizedBox();
               },
