@@ -86,6 +86,10 @@ class MovementUtils {
         workouts.add(getTextWidget(" ", true));
       }
     });
+    if (segment.roundBreakDuration != null) {
+      workoutString = segment.roundBreakDuration.toString() + 's rest';
+      workouts.add(getTextWidget(workoutString, true));
+    }
     return workouts;
   }
 

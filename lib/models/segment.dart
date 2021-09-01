@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:oluko_app/models/base.dart';
+import 'package:oluko_app/models/enums/counter_enum.dart';
 import 'package:oluko_app/models/enums/timer_type_enum.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 
@@ -56,7 +57,9 @@ class Segment extends Base {
         roundBreakDuration: json['round_break_duration'],
         isChallenge: json['is_challenge'],
         isPublished: json['is_published'],
-        timerType: json['timer_type'] == null ? null : EnumToString.fromString(TimerTypeEnum.values, json['timer_type']),
+        timerType: json['timer_type'] == null
+            ? null
+            : EnumToString.fromString(TimerTypeEnum.values, json['timer_type']),
         movements: json['movements'] == null
             ? null
             : List<MovementSubmodel>.from(json['movements']
@@ -76,7 +79,8 @@ class Segment extends Base {
       'round_break_duration': roundBreakDuration,
       'is_challenge': isChallenge,
       'is_published': isPublished,
-      'timer_type': timerType == null ? null : EnumToString.convertToString(timerType),
+      'timer_type':
+          timerType == null ? null : EnumToString.convertToString(timerType),
       'movements': movements == null
           ? null
           : List<dynamic>.from(movements.map((movement) => movement.toJson()))

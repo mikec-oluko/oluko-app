@@ -86,7 +86,9 @@ class TimerUtils {
         strokeWith: 5,
       );
 
-  static Widget timeTimer(double progressValue, String duration) {
+  static Widget timeTimer(
+      double progressValue, String duration, BuildContext context,
+      [String counter]) {
     return Container(
         child: SizedBox(
             height: 180,
@@ -98,12 +100,26 @@ class TimerUtils {
                       value: progressValue,
                       color: OlukoColors.coral,
                       backgroundColor: OlukoColors.grayColorSemiTransparent)),
-              Text(duration,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white))
+              Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Text(duration,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white)),
+                counter != null
+                    ? Padding(
+                        padding: EdgeInsets.only(top: 5),
+                        child: Text(
+                            OlukoLocalizations.of(context).find('countYour') +
+                                counter,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w300,
+                                color: OlukoColors.coral)))
+                    : SizedBox()
+              ])
             ])));
   }
 

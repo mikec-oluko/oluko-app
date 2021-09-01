@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/enums/timer_model.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/timer_entry.dart';
-import 'package:oluko_app/models/utils/timer_model.dart';
 
 import 'oluko_localizations.dart';
 
@@ -69,9 +69,9 @@ class SegmentUtils {
       for (var movementIndex = 0;
           movementIndex < segment.movements.length;
           movementIndex++) {
-        for (var setIndex = 0;
-            setIndex < segment.movements[movementIndex].timerSets;
-            setIndex++) {
+        bool hasSets = segment.movements[movementIndex].timerSets != null;
+        int cantSets = hasSets ? segment.movements[movementIndex].timerSets : 1;
+        for (var setIndex = 0; setIndex < cantSets; setIndex++) {
           bool isTimedEntry =
               segment.movements[movementIndex].timerWorkTime != null;
           bool isLastMovement = movementIndex == segment.movements.length - 1;
@@ -82,8 +82,9 @@ class SegmentUtils {
               movement: segment.movements[movementIndex],
               setNumber: setIndex,
               roundNumber: roundIndex,
+              counter: segment.movements[movementIndex].counter,
               label:
-                  '${isTimedEntry ? segment.movements[movementIndex].timerWorkTime : segment.movements[movementIndex].timerReps} ${isTimedEntry ? 'Sec' : 'Reps'} ${segment.movements[movementIndex].name}',
+                  '${isTimedEntry ? segment.movements[movementIndex].timerWorkTime : segment.movements[movementIndex].timerReps}${isTimedEntry ? 's' : 'x'} ${segment.movements[movementIndex].name}',
               workState: WorkState.exercising));
 
           bool hasRest = segment.movements[movementIndex].timerRestTime != null;
@@ -96,11 +97,11 @@ class SegmentUtils {
                 setNumber: setIndex,
                 roundNumber: roundIndex,
                 label:
-                    '${isLastMovement ? segment.roundBreakDuration : segment.movements[movementIndex].timerRestTime} Sec rest',
-                workState: WorkState.repResting));
+                    '${segment.movements[movementIndex].timerRestTime}s rest',
+                workState: WorkState.resting));
           }
 
-          if (isLastMovement) {
+          if (isLastMovement && segment.roundBreakDuration != null) {
             //Add round rest entry
             entries.add(TimerEntry(
                 time: segment.roundBreakDuration,
@@ -108,8 +109,8 @@ class SegmentUtils {
                 setNumber: setIndex,
                 roundNumber: roundIndex,
                 label:
-                    '${isLastMovement ? segment.roundBreakDuration : segment.movements[movementIndex].timerRestTime} Sec rest',
-                workState: WorkState.repResting));
+                    '${isLastMovement ? segment.roundBreakDuration : segment.movements[movementIndex].timerRestTime}s rest',
+                workState: WorkState.resting));
           }
         }
       }
@@ -121,12 +122,12 @@ class SegmentUtils {
       Segment segment, BuildContext context) {
     List<TimerEntry> entries = [];
     for (var roundIndex = 0; roundIndex < segment.rounds; roundIndex++) {
-        //Add work entry
-        entries.add(TimerEntry(
-            roundNumber: roundIndex,
-            reps: segment.movements[0].timerReps,//Sets the timer by reps
-            labels: getMovements(segment, context),
-            workState: WorkState.exercising));
+      //Add work entry
+      entries.add(TimerEntry(
+          roundNumber: roundIndex,
+          reps: segment.movements[0].timerReps, //Sets the timer by reps
+          labels: getMovements(segment, context),
+          workState: WorkState.exercising));
     }
     return entries;
   }
@@ -152,6 +153,9 @@ class SegmentUtils {
 
   static bool hasRest(Segment segment) {
     bool hasRest = false;
+    if (segment.roundBreakDuration != null) {
+      return true;
+    }
     for (var movementIndex = 0;
         movementIndex < segment.movements.length;
         movementIndex++) {

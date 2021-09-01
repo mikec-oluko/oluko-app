@@ -12,12 +12,13 @@ import 'package:oluko_app/blocs/movement_submission_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/enums/counter_enum.dart';
+import 'package:oluko_app/models/enums/timer_model.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/timer_entry.dart';
 import 'package:oluko_app/routes.dart';
-import 'package:oluko_app/models/utils/timer_model.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/screens/courses/collapsed_movement_videos_section.dart';
@@ -109,7 +110,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
                         segmentSubmissionState.segmentSubmission;
                   }
                 },
-                child: form());
+                child: GestureDetector(
+                    onTap: () {
+                      FocusScope.of(context).unfocus();
+                    },
+                    child: form()));
           } else {
             return SizedBox();
           }
@@ -128,6 +133,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
             widget.segments[widget.segmentIndex]);
     }
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       bottomNavigationBar:
           widget.workoutType == WorkoutType.segmentWithRecording &&
                   workState == WorkState.paused
@@ -249,10 +255,48 @@ class _SegmentClocksState extends State<SegmentClocks> {
             children: [
               currentTaskWidget(currentTask),
               SizedBox(height: 10),
-              nextTaskWidget(nextTask)
+              nextTaskWidget(nextTask),
+              SizedBox(height: 15),
+              timerEntries[timerTaskIndex].workState == WorkState.resting
+                  ? getTextField()
+                  : SizedBox()
             ],
           ));
     }
+  }
+
+  Widget getTextField() {
+    return Container(
+        decoration: BoxDecoration(
+            image: DecorationImage(
+          image: AssetImage('assets/courses/gray_background.png'),
+          fit: BoxFit.cover,
+        )),
+        height: 50,
+        child: Row(children: [
+          SizedBox(width: 20),
+          Text("Enter score: ",
+              style: TextStyle(
+                  fontSize: 18,
+                  color: OlukoColors.white,
+                  fontWeight: FontWeight.w300)),
+          SizedBox(width: 10),
+          SizedBox(
+              width: 40,
+              child: TextField(
+                style: TextStyle(
+                    fontSize: 20,
+                    color: OlukoColors.white,
+                    fontWeight: FontWeight.bold),
+                keyboardType: TextInputType.number,
+              )),
+          SizedBox(width: 10),
+          Text(timerEntries[timerTaskIndex].movement.name,
+              style: TextStyle(
+                  fontSize: 18,
+                  color: OlukoColors.white,
+                  fontWeight: FontWeight.w300)),
+        ]));
   }
 
   List<Widget> getJoinedLabel() {
@@ -345,13 +389,17 @@ class _SegmentClocksState extends State<SegmentClocks> {
           context);
     }*/
 
-    if (workState == WorkState.repResting) {
+    if (workState == WorkState.resting) {
       return TimerUtils.restTimer(circularProgressIndicatorValue,
           TimeConverter.durationToString(this.timeLeft), context);
     }
 
+    String counter = timerEntries[timerTaskIndex].counter == CounterEnum.reps
+        ? timerEntries[timerTaskIndex].movement.name
+        : null;
+
     return TimerUtils.timeTimer(circularProgressIndicatorValue,
-        TimeConverter.durationToString(this.timeLeft));
+        TimeConverter.durationToString(this.timeLeft), context, counter);
   }
 
   Widget currentTaskWidget(String currentTask, [bool smaller = false]) {
