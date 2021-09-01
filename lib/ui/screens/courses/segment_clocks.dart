@@ -574,7 +574,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
           ),
           Padding(
               padding: EdgeInsets.only(top: 1),
-              child: Icon(Icons.circle_outlined,
+              child: Icon(Icons.circle,
                   size: 12, color: OlukoColors.primary))
         ]));
   }
