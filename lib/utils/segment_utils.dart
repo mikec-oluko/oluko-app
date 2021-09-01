@@ -80,7 +80,7 @@ class SegmentUtils {
               time: segment.movements[movementIndex].timerWorkTime,
               reps: segment.movements[movementIndex].timerReps,
               movement: segment.movements[movementIndex],
-              setNumber: setIndex,
+              setNumber: hasSets ? setIndex : null,
               roundNumber: roundIndex,
               counter: segment.movements[movementIndex].counter,
               label:
@@ -94,7 +94,7 @@ class SegmentUtils {
             entries.add(TimerEntry(
                 time: segment.movements[movementIndex].timerRestTime,
                 movement: segment.movements[movementIndex],
-                setNumber: setIndex,
+                setNumber: hasSets ? setIndex : null,
                 roundNumber: roundIndex,
                 label:
                     '${segment.movements[movementIndex].timerRestTime}s rest',
@@ -106,7 +106,7 @@ class SegmentUtils {
             entries.add(TimerEntry(
                 time: segment.roundBreakDuration,
                 movement: segment.movements[movementIndex],
-                setNumber: setIndex,
+                setNumber: hasSets ? setIndex : null,
                 roundNumber: roundIndex,
                 label:
                     '${isLastMovement ? segment.roundBreakDuration : segment.movements[movementIndex].timerRestTime}s rest',

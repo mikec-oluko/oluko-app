@@ -6,6 +6,7 @@ import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
 import 'package:oluko_app/blocs/gallery_video_bloc.dart';
 import 'package:oluko_app/blocs/movement_submission_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
@@ -203,6 +204,8 @@ class Routes {
   final ProfileAvatarBloc _profileAvatarBloc = ProfileAvatarBloc();
   final ProfileCoverImageBloc _profileCoverImageBloc = ProfileCoverImageBloc();
   final UserStatisticsBloc _userStatisticsBloc = UserStatisticsBloc();
+  final CourseEnrollmentUpdateBloc _courseEnrollmentUpdateBloc =
+      CourseEnrollmentUpdateBloc();
 
   getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -383,7 +386,10 @@ class Routes {
               value: _segmentSubmissionBloc),
           BlocProvider<MovementSubmissionBloc>.value(
               value: _movementSubmissionBloc),
-          BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc)
+          BlocProvider<CourseEnrollmentBloc>.value(
+              value: _courseEnrollmentBloc),
+          BlocProvider<CourseEnrollmentUpdateBloc>.value(
+              value: _courseEnrollmentUpdateBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments;
         newRouteView = SegmentClocks(

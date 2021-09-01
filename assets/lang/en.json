@@ -161,5 +161,6 @@
     "ignore": "Ignore",
     "resume": "Resume",
     "movementVideos": "Movement Videos",
-    "countYour": "Count your "
+    "countYour": "Count your ",
+    "enterScore": "Enter score: "
 }

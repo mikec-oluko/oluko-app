@@ -6,8 +6,11 @@ import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/submodels/counter.dart';
 import 'package:oluko_app/models/submodels/enrollment_class.dart';
+import 'package:oluko_app/models/submodels/enrollment_movement.dart';
 import 'package:oluko_app/models/submodels/enrollment_segment.dart';
+import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
 import 'package:oluko_app/models/submodels/segment_submodel.dart';
 import 'package:oluko_app/repositories/course_repository.dart';
@@ -214,5 +217,40 @@ class CourseEnrollmentRepository {
       Map<String, dynamic> challenge = challengeDoc.data();
       challenges.add(Challenge.fromJson(challenge));
     }
+  }
+
+  static Future<CourseEnrollment> saveMovementCounter(
+      CourseEnrollment courseEnrollment,
+      int segmentIndex,
+      int classIndex,
+      MovementSubmodel movement,
+      Counter counter) async {
+    DocumentReference reference = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue("projectId"))
+        .collection('courseEnrollments')
+        .doc(courseEnrollment.id);
+
+    EnrollmentMovement enrollmentMovement = EnrollmentMovement(
+        id: movement.id,
+        reference: movement.reference,
+        name: movement.name,
+        counter: counter);
+    List<EnrollmentClass> classes = courseEnrollment.classes;
+    List<EnrollmentMovement> movements =
+        classes[classIndex].segments[segmentIndex].movements;
+    if (movements != null) {
+      classes[classIndex]
+          .segments[segmentIndex]
+          .movements
+          .add(enrollmentMovement);
+    } else {
+      classes[classIndex].segments[segmentIndex].movements = [
+        enrollmentMovement
+      ];
+    }
+
+    reference.update(
+        {'classes': List<dynamic>.from(classes.map((c) => c.toJson()))});
   }
 }

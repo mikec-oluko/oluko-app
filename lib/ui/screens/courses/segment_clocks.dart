@@ -7,6 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/movement_submission_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
@@ -17,6 +18,7 @@ import 'package:oluko_app/models/enums/timer_model.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
+import 'package:oluko_app/models/submodels/counter.dart';
 import 'package:oluko_app/models/timer_entry.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
@@ -85,6 +87,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
   bool isPlaying = true;
 
   PanelController panelController = new PanelController();
+
+  TextEditingController textController = new TextEditingController();
 
   @override
   void initState() {
@@ -275,7 +279,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
         height: 50,
         child: Row(children: [
           SizedBox(width: 20),
-          Text("Enter score: ",
+          Text(OlukoLocalizations.of(context).find('enterScore'),
               style: TextStyle(
                   fontSize: 18,
                   color: OlukoColors.white,
@@ -284,6 +288,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
           SizedBox(
               width: 40,
               child: TextField(
+                controller: textController,
                 style: TextStyle(
                     fontSize: 20,
                     color: OlukoColors.white,
@@ -544,6 +549,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   void _goToNextStep() {
     _saveLastStep(timerEntries[timerTaskIndex]);
+
+    _saveCounter();
+
     if (timerTaskIndex == timerEntries.length - 1) {
       _finishWorkout();
       return;
@@ -552,6 +560,21 @@ class _SegmentClocksState extends State<SegmentClocks> {
       timerTaskIndex++;
       _playTask();
     });
+  }
+
+  _saveCounter() {
+    if (timerEntries[timerTaskIndex].workState == WorkState.resting &&
+        timerEntries[timerTaskIndex].movement.counter != null &&
+        textController.text != "") {
+      Counter counter = Counter(
+          round: timerEntries[timerTaskIndex].roundNumber,
+          set: timerEntries[timerTaskIndex].setNumber,
+          counter: int.parse(textController.text));
+      BlocProvider.of<CourseEnrollmentUpdateBloc>(context)
+        ..saveMovementCounter(widget.courseEnrollment, widget.segmentIndex,
+            widget.classIndex, timerEntries[timerTaskIndex].movement, counter);
+    }
+    textController.clear();
   }
 
   _playTask() async {
