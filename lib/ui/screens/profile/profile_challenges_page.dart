@@ -32,9 +32,12 @@ class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
     );
   }
 
-  List<Widget> buildListOfChallenges(List<Challenge> challenges) => challenges
-      .map((challenge) => ChallengesCard(
-            challenge: challenge,
-          ))
-      .toList();
+  List<Widget> buildListOfChallenges(List<Challenge> challenges) =>
+      challenges != null
+          ? challenges
+              .map((challenge) => ChallengesCard(
+                    challenge: challenge,
+                  ))
+              .toList()
+          : [Icon(Icons.error)];
 }
