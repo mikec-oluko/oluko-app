@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
+import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/coach_segment_content.dart';
 import 'package:oluko_app/helpers/coach_segment_info.dart';
+import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/user_statistics.dart';
@@ -38,6 +42,8 @@ List<InfoForSegments> toDoSegments = [];
 List<CoachSegmentContent> actualSegmentsToDisplay = [];
 List<TaskSubmission> _assessmentVideosContent = [];
 UserStatistics userStats;
+Assessment _assessment;
+List<Task> _tasks = [];
 
 class _CoachPageState extends State<CoachPage> {
   @override
@@ -79,6 +85,8 @@ class _CoachPageState extends State<CoachPage> {
 
     BlocProvider.of<TaskSubmissionBloc>(context)
         .getTaskSubmissionByUserId(_currentAuthUser.id);
+
+    BlocProvider.of<AssessmentBloc>(context)..getById('emnsmBgZ13UBRqTS26Qd');
   }
 
   Scaffold coachView(BorderRadiusGeometry radius, BuildContext context) {
@@ -96,7 +104,7 @@ class _CoachPageState extends State<CoachPage> {
                         routeLabels[RouteEnum.profileTransformationJourney]);
                   },
                   child: Text(
-                    "HI COACH",
+                    OlukoLocalizations.of(context).find('hiCoah'),
                     style: OlukoFonts.olukoMediumFont(
                         customColor: OlukoColors.primary,
                         custoFontWeight: FontWeight.w500),
@@ -142,7 +150,7 @@ class _CoachPageState extends State<CoachPage> {
         header: Padding(
           padding: const EdgeInsets.fromLTRB(20, 20, 0, 20),
           child: Text(
-            "My Timeline",
+            OlukoLocalizations.of(context).find('myTimeline'),
             style: OlukoFonts.olukoBigFont(
                 customColor: OlukoColors.grayColor,
                 custoFontWeight: FontWeight.w500),
@@ -189,7 +197,17 @@ class _CoachPageState extends State<CoachPage> {
         userProgressSection(),
         carouselContentPreview(context),
         carouselToDoSection(context),
-        assessmentSection(context),
+        BlocBuilder<AssessmentBloc, AssessmentState>(
+          builder: (context, state) {
+            if (state is AssessmentSuccess) {
+              _assessment = state.assessment;
+              BlocProvider.of<TaskBloc>(context)..get(_assessment);
+              return assessmentSection(context);
+            } else {
+              return SizedBox();
+            }
+          },
+        ),
         SizedBox(
           height: 200,
         )
@@ -204,7 +222,7 @@ class _CoachPageState extends State<CoachPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "To Do",
+            OlukoLocalizations.of(context).find('toDo'),
             style: OlukoFonts.olukoMediumFont(
                 customColor: OlukoColors.white,
                 custoFontWeight: FontWeight.w500),
@@ -228,7 +246,9 @@ class _CoachPageState extends State<CoachPage> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                contentSection(title: "Mentored Videos"),
+                contentSection(
+                    title:
+                        OlukoLocalizations.of(context).find('mentoredVideos')),
                 BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
                     builder: (context, state) {
                   if (state is GetUserTaskSubmissionSuccess) {
@@ -299,7 +319,7 @@ class _CoachPageState extends State<CoachPage> {
                           height: 100,
                           child: Center(
                             child: Text(
-                              "No Content...",
+                              OlukoLocalizations.of(context).find('noContent'),
                               style: OlukoFonts.olukoMediumFont(
                                   customColor: OlukoColors.primary,
                                   custoFontWeight: FontWeight.w500),
@@ -364,34 +384,33 @@ class _CoachPageState extends State<CoachPage> {
     );
   }
 
-  //TODO: ASSESSMENTS
-  Container assessmentSection(BuildContext context) {
-    return Container(
-        color: Colors.black,
-        width: MediaQuery.of(context).size.width,
-        height: 200,
-        child: ListView(
-            padding: EdgeInsets.zero,
-            shrinkWrap: true,
-            scrollDirection: Axis.horizontal,
-            children: [
-              Wrap(
+  assessmentSection(BuildContext context) {
+    return BlocBuilder<TaskBloc, TaskState>(
+      builder: (context, state) {
+        if (state is TaskSuccess) {
+          _tasks = state.values;
+        }
+        return Container(
+            color: Colors.black,
+            width: MediaQuery.of(context).size.width,
+            height: 200,
+            child: ListView(
+                padding: EdgeInsets.zero,
+                shrinkWrap: true,
+                scrollDirection: Axis.horizontal,
                 children: [
-                  assessmentCard(),
-                  assessmentCard(),
-                  assessmentCard(),
-                ],
-              ),
-            ]));
+                  Wrap(children: getAssessmentCards(tasks: _tasks)),
+                ]));
+      },
+    );
   }
 
-  //TODO: ASSESSMENTSSS
-  Padding assessmentCard() {
+  Padding assessmentCard(Task task) {
     return Padding(
       padding: const EdgeInsets.all(5.0),
       child: Container(
         width: 250,
-        height: 150,
+        height: 170,
         color: OlukoColors.challengesGreyBackground,
         child: Padding(
           padding: const EdgeInsets.all(5.0),
@@ -402,7 +421,7 @@ class _CoachPageState extends State<CoachPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Introduce Yourself",
+                    task.name,
                     style: OlukoFonts.olukoBigFont(
                         customColor: OlukoColors.white,
                         custoFontWeight: FontWeight.w500),
@@ -416,7 +435,7 @@ class _CoachPageState extends State<CoachPage> {
               Wrap(
                 children: [
                   Text(
-                    "Contrary to popular belief, Lor em Ipsum is not sim ply ran...",
+                    task.description,
                     style: OlukoFonts.olukoMediumFont(
                         customColor: OlukoColors.grayColor,
                         custoFontWeight: FontWeight.w500),
@@ -427,7 +446,7 @@ class _CoachPageState extends State<CoachPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Public",
+                    OlukoLocalizations.of(context).find('public'),
                     style: OlukoFonts.olukoBigFont(
                         customColor: OlukoColors.grayColor,
                         custoFontWeight: FontWeight.w500),
@@ -451,25 +470,29 @@ class _CoachPageState extends State<CoachPage> {
     );
   }
 
+  getAssessmentCards({List<Task> tasks}) {
+    List<Widget> contentForSection = [];
+    tasks.forEach((task) {
+      contentForSection.add(assessmentCard(task));
+    });
+    return contentForSection;
+  }
+
   challengeCard({List<Challenge> challenges}) {
     List<Widget> contentForSection = [];
-
     challenges.forEach((challenge) {
       contentForSection.add(returnCardForChallenge(challenge));
     });
-
     return contentForSection;
   }
 
   segmentCard({List<CoachSegmentContent> actualSegmentsToDisplay}) {
     List<Widget> contentForSection = [];
-
     actualSegmentsToDisplay.forEach((segment) {
       if (segment.compleatedAt == null) {
         contentForSection.add(returnCardForSegment(segment));
       }
     });
-
     return contentForSection;
   }
 
@@ -617,7 +640,7 @@ class _CoachPageState extends State<CoachPage> {
                 height: 100,
                 child: Center(
                   child: Text(
-                    "No Content...",
+                    OlukoLocalizations.of(context).find('noContent'),
                     style: OlukoFonts.olukoMediumFont(
                         customColor: OlukoColors.primary,
                         custoFontWeight: FontWeight.w500),

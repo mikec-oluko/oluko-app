@@ -165,5 +165,8 @@
     "appCompleted":"App Completed",
     "sentVideos":"Sent Videos",
     "date":"Date",
-    "mentoredVideos": "Mentored Videos"
+    "mentoredVideos": "Mentored Videos",
+    "hiCoah":"HI COACH",
+    "toDo":"To Do",
+    "myTimeline":"My Timeline"
 }

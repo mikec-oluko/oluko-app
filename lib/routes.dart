@@ -246,6 +246,8 @@ class Routes {
           BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
+          BlocProvider<TaskBloc>.value(value: _taskBloc),
+          BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
         ];
         newRouteView = MainPage();
         break;
@@ -562,6 +564,8 @@ class Routes {
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
           BlocProvider<TransformationJourneyBloc>.value(
               value: _transformationJourneyBloc),
+          BlocProvider<TaskBloc>.value(value: _taskBloc),
+          BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
         ];
         newRouteView = CoachPage();
         break;
