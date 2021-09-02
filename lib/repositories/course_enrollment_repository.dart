@@ -239,16 +239,17 @@ class CourseEnrollmentRepository {
     List<EnrollmentClass> classes = courseEnrollment.classes;
     List<EnrollmentMovement> movements =
         classes[classIndex].segments[segmentIndex].movements;
-    if (movements != null) {
-      classes[classIndex]
-          .segments[segmentIndex]
-          .movements
-          .add(enrollmentMovement);
-    } else {
-      classes[classIndex].segments[segmentIndex].movements = [
-        enrollmentMovement
-      ];
+        
+    if (movements == null ||
+        counter.round == 1 && counter.set == null ||
+        counter.round == 1 && counter.set == 1) {
+      classes[classIndex].segments[segmentIndex].movements = [];
     }
+
+    classes[classIndex]
+        .segments[segmentIndex]
+        .movements
+        .add(enrollmentMovement);
 
     reference.update(
         {'classes': List<dynamic>.from(classes.map((c) => c.toJson()))});

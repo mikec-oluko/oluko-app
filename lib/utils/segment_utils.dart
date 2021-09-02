@@ -80,8 +80,8 @@ class SegmentUtils {
               time: segment.movements[movementIndex].timerWorkTime,
               reps: segment.movements[movementIndex].timerReps,
               movement: segment.movements[movementIndex],
-              setNumber: hasSets ? setIndex : null,
-              roundNumber: roundIndex,
+              setNumber: hasSets ? setIndex + 1 : null,
+              roundNumber: roundIndex + 1,
               counter: segment.movements[movementIndex].counter,
               label:
                   '${isTimedEntry ? segment.movements[movementIndex].timerWorkTime : segment.movements[movementIndex].timerReps}${isTimedEntry ? 's' : 'x'} ${segment.movements[movementIndex].name}',
@@ -94,8 +94,8 @@ class SegmentUtils {
             entries.add(TimerEntry(
                 time: segment.movements[movementIndex].timerRestTime,
                 movement: segment.movements[movementIndex],
-                setNumber: hasSets ? setIndex : null,
-                roundNumber: roundIndex,
+                setNumber: hasSets ? setIndex + 1 : null,
+                roundNumber: roundIndex + 1,
                 label:
                     '${segment.movements[movementIndex].timerRestTime}s rest',
                 workState: WorkState.resting));
@@ -106,8 +106,8 @@ class SegmentUtils {
             entries.add(TimerEntry(
                 time: segment.roundBreakDuration,
                 movement: segment.movements[movementIndex],
-                setNumber: hasSets ? setIndex : null,
-                roundNumber: roundIndex,
+                setNumber: hasSets ? setIndex + 1 : null,
+                roundNumber: roundIndex + 1,
                 label:
                     '${isLastMovement ? segment.roundBreakDuration : segment.movements[movementIndex].timerRestTime}s rest',
                 workState: WorkState.resting));
@@ -124,7 +124,7 @@ class SegmentUtils {
     for (var roundIndex = 0; roundIndex < segment.rounds; roundIndex++) {
       //Add work entry
       entries.add(TimerEntry(
-          roundNumber: roundIndex,
+          roundNumber: roundIndex + 1,
           reps: segment.movements[0].timerReps, //Sets the timer by reps
           labels: getMovements(segment, context),
           workState: WorkState.exercising));
