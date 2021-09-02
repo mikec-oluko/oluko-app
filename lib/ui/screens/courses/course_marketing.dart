@@ -10,10 +10,12 @@ import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/statistics_bloc.dart';
+import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/course_statistics.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/class_expansion_panel.dart';
@@ -38,6 +40,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
   final _formKey = GlobalKey<FormState>();
   ChewieController _controller;
   User _user;
+  AuthSuccess _userState;
   List<Class> _classes;
 
   @override
@@ -50,12 +53,18 @@ class _CourseMarketingState extends State<CourseMarketing> {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
         _user = authState.firebaseUser;
-        BlocProvider.of<ClassBloc>(context)..getAll(widget.course);
-        BlocProvider.of<StatisticsBloc>(context)
-          ..get(widget.course.statisticsReference);
-        BlocProvider.of<MovementBloc>(context)..getAll();
-        BlocProvider.of<CourseEnrollmentBloc>(context)
-          ..get(authState.firebaseUser, widget.course);
+        if (_userState == null) {
+          _userState = authState;
+          BlocProvider.of<SubscribedCourseUsersBloc>(context)
+              .get(widget.course.id, _userState.user.id);
+          BlocProvider.of<ClassBloc>(context)..getAll(widget.course);
+          BlocProvider.of<StatisticsBloc>(context)
+            ..get(widget.course.statisticsReference);
+          BlocProvider.of<MovementBloc>(context)..getAll();
+          BlocProvider.of<CourseEnrollmentBloc>(context)
+            ..get(authState.firebaseUser, widget.course);
+        }
+
         return form();
       } else {
         return SizedBox();
@@ -195,13 +204,16 @@ class _CourseMarketingState extends State<CourseMarketing> {
   }
 
   Widget buildStatistics() {
-    return BlocBuilder<StatisticsBloc, StatisticsState>(
+    return BlocBuilder<SubscribedCourseUsersBloc, SubscribedCourseUsersState>(
         builder: (context, state) {
-      if (state is StatisticsSuccess) {
+      if (state is SubscribedCourseUsersSuccess) {
         return Padding(
             padding: EdgeInsets.symmetric(vertical: 15),
             child: StatisticChart(
-              courseStatistics: state.courseStatistics,
+              courseStatistics: CourseStatistics(
+                  courseId: widget.course.id,
+                  takingUp: state.users.length,
+                  doing: state.users.length),
               course: widget.course,
             ));
       } else {

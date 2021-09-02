@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
+import 'package:oluko_app/utils/segment_utils.dart';
 
 import 'oluko_localizations.dart';
 
@@ -41,14 +42,8 @@ class MovementUtils {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
             segment.rounds != null && segment.rounds > 1
-                ? Text(
-                    segment.rounds.toString() +
-                        " " +
-                        OlukoLocalizations.of(context).find('rounds') +
-                        "\n",
-                    style: OlukoFonts.olukoBigFont(
-                        custoFontWeight: FontWeight.bold),
-                  )
+                ? SegmentUtils.getRoundTitle(
+                    segment, context, OlukoColors.white)
                 : SizedBox(),
           ] +
           workoutWidgets,
@@ -56,7 +51,11 @@ class MovementUtils {
   }
 
   static List<Widget> getWorkouts(Segment segment, BuildContext context) {
-    List<Widget> workouts = [];
+    List<Widget> workouts = [
+      SizedBox(
+        height: 10,
+      )
+    ];
     String workoutString;
     segment.movements.forEach((MovementSubmodel movement) {
       if (movement.timerSets != null && movement.timerSets > 1) {
@@ -86,6 +85,10 @@ class MovementUtils {
         workouts.add(getTextWidget(" ", true));
       }
     });
+    if (segment.roundBreakDuration != null) {
+      workoutString = segment.roundBreakDuration.toString() + 's rest';
+      workouts.add(getTextWidget(workoutString, true));
+    }
     return workouts;
   }
 
