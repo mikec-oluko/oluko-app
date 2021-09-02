@@ -245,6 +245,11 @@ class _SegmentRecordingState extends State<SegmentRecording> {
           TimeConverter.durationToString(this.timeLeft), context);
     }
 
+    if (workState == WorkState.finished) {
+      return TimerUtils.completedTimer(circularProgressIndicatorValue,
+          TimeConverter.durationToString(this.timeLeft));
+    }
+
     return TimerUtils.timeTimer(circularProgressIndicatorValue,
         TimeConverter.durationToString(this.timeLeft));
   }
