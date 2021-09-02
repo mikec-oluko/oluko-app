@@ -2,8 +2,7 @@ enum WorkState {
   initial,
   starting,
   exercising,
-  repResting,
-  setResting,
+  resting,
   finished,
   paused
 }

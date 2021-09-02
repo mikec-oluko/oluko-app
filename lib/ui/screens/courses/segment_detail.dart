@@ -55,7 +55,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext xcontext) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
         _user = authState.firebaseUser;
