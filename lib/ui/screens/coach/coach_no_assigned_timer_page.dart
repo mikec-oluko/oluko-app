@@ -155,7 +155,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                               height: 20,
                             ),
                             Text(
-                              OlukoLocalizations.of(context).find('minutes'),
+                              OlukoLocalizations.of(context).find('minute'),
                               textAlign: TextAlign.center,
                               style: OlukoFonts.olukoMediumFont(
                                   customColor: OlukoColors.primary,
