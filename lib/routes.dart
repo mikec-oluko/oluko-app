@@ -286,6 +286,8 @@ class Routes {
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
           BlocProvider<CourseEnrollmentBloc>.value(
               value: _courseEnrollmentBloc),
+          BlocProvider<CourseEnrollmentListBloc>.value(
+              value: _courseEnrollmentListBloc),
           BlocProvider<TransformationJourneyBloc>.value(
               value: _transformationJourneyBloc),
           BlocProvider<ProfileCoverImageBloc>.value(
