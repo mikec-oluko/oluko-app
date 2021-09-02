@@ -9,6 +9,7 @@ import 'package:oluko_app/ui/components/stories_item.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/user_utils.dart';
 
 class ExploreSubscribedUsers extends StatefulWidget {
   String courseId;
@@ -104,7 +105,7 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
                           maxRadius: 30,
                           imageUrl: user.avatar != null
                               ? user.avatar
-                              : 'https://firebasestorage.googleapis.com/v0/b/oluko-development.appspot.com/o/avatar.png?alt=media&token=c16925c3-e2be-47fb-9d15-8cd1469d9790',
+                              : UserUtils().defaultAvatarImageUrl,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0, bottom: 0.0),
