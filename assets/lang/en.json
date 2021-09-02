@@ -157,5 +157,6 @@
     "whenDone": "when done",
     "ignore": "Ignore",
     "resume": "Resume",
-    "movementVideos": "Movement Videos"
+    "movementVideos": "Movement Videos",
+    "yourCurrentPlanDoesntIncludeAssessment": "Your current plan doesn't include these assessment tasks"
 }

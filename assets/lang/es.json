@@ -157,6 +157,8 @@
     "whenDone": "cuando termines",
     "ignore": "Ignorar",
     "resume": "Reanudar",
-    "movementVideos": "Videos de los movimientos"
+    "movementVideos": "Videos de los movimientos",
+
+    "yourCurrentPlanDoesntIncludeAssessment": "Tu plan actual no incluye estas pruebas"
 
 }

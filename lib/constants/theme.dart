@@ -71,6 +71,9 @@ class OlukoColors {
 
   static const Color grayColorSemiTransparent =
       Color.fromRGBO(148, 148, 148, 0.6);
+
+  static const Color taskCardBackgroundDisabled =
+      Color.fromRGBO(30, 30, 30, 0.8);
 }
 
 class OlukoFonts {
