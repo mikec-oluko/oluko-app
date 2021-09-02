@@ -2,6 +2,8 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/movement_info_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/movement.dart';
@@ -24,9 +26,9 @@ class MovementIntro extends StatefulWidget {
 }
 
 class _MovementIntroState extends State<MovementIntro>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   final toolbarHeight = kToolbarHeight * 2;
-  final tabs = ['Intro', 'Technique', 'Modifier', 'Rehab 1', 'Rehab 2'];
+  final tabs = ['Intro'];
   Map<String, bool> coursesBookmarked = {};
 
   //TODO Make Dynamic
@@ -82,11 +84,12 @@ class _MovementIntroState extends State<MovementIntro>
   TabController tabController;
   List<ChewieController> _videoControllers = [null, null];
   List<Key> _videoKeys = [GlobalKey(), GlobalKey()];
+  MovementInfoSuccess _movementInfoSuccess;
 
   @override
   void initState() {
-    tabController =
-        TabController(initialIndex: 0, length: tabs.length, vsync: this);
+    // tabController =
+    //     TabController(initialIndex: 0, length: tabs.length, vsync: this);
     referenceCourses.forEach((course) => coursesBookmarked[course.id] = false);
     super.initState();
   }
@@ -114,73 +117,93 @@ class _MovementIntroState extends State<MovementIntro>
   }
 
   Widget _viewBody() {
-    return Container(
-      child: ListView(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: MovementUtils.movementTitle(
-                                widget.movement.name),
-                          ),
-                          SizedBox(height: 25),
-                          Column(
+    return BlocBuilder<MovementInfoBloc, MovementInfoState>(
+        builder: (context, movementInfoState) {
+      if (_movementInfoSuccess == null &&
+          !(movementInfoState is MovementInfoSuccess)) {
+        BlocProvider.of<MovementInfoBloc>(context).get(widget.movement.id);
+      }
+      if (movementInfoState is MovementInfoSuccess) {
+        if (_movementInfoSuccess == null) {
+          _movementInfoSuccess = movementInfoState;
+          movementInfoState.movementVariants.forEach((element) {
+            tabs.add(element.name);
+          });
+          tabController =
+              TabController(initialIndex: 0, length: tabs.length, vsync: this);
+        }
+        return Container(
+          child: ListView(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Container(
-                                width: ScreenUtils.width(context),
-                                decoration: BoxDecoration(
-                                    border: Border.symmetric(
-                                        horizontal:
-                                            BorderSide(color: Colors.white))),
-                                child: TabBar(
-                                  isScrollable: true,
-                                  onTap: (index) => this.setState(() {
-                                    tabController.index =
-                                        0; //Remove after adding tabs
-                                  }),
-                                  controller: tabController,
-                                  indicatorSize: TabBarIndicatorSize.tab,
-                                  indicator: BoxDecoration(color: Colors.white),
-                                  tabs: _getTabs(),
-                                ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: MovementUtils.movementTitle(
+                                    widget.movement.name),
                               ),
+                              SizedBox(height: 25),
+                              Column(
+                                children: [
+                                  Container(
+                                    width: ScreenUtils.width(context),
+                                    decoration: BoxDecoration(
+                                        border: Border.symmetric(
+                                            horizontal: BorderSide(
+                                                color: Colors.white))),
+                                    child: TabBar(
+                                      isScrollable: true,
+                                      onTap: (index) => this.setState(() {
+                                        tabController.index =
+                                            0; //Remove after adding tabs
+                                      }),
+                                      controller: tabController,
+                                      indicatorSize: TabBarIndicatorSize.tab,
+                                      indicator:
+                                          BoxDecoration(color: Colors.white),
+                                      tabs: _getTabs(),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Builder(builder: (context) {
+                                switch (tabController.index) {
+                                  case 0:
+                                    return _firstTab();
+                                  case 1:
+                                    return _firstTab();
+                                  //_secondTab();
+                                  case 2:
+                                    return _firstTab();
+                                  case 3:
+                                    return _firstTab();
+                                  default:
+                                    return _firstTab();
+                                }
+                              })
                             ],
                           ),
-                          Builder(builder: (context) {
-                            switch (tabController.index) {
-                              case 0:
-                                return _firstTab();
-                              case 1:
-                                return _firstTab();
-                              //_secondTab();
-                              case 2:
-                                return _firstTab();
-                              case 3:
-                                return _firstTab();
-                              default:
-                                return _firstTab();
-                            }
-                          })
-                        ],
-                      ),
-                    )
-                  ]),
-                ]),
+                        )
+                      ]),
+                    ]),
+              ),
+            ],
           ),
-        ],
-      ),
-    );
+        );
+      } else {
+        return SizedBox();
+      }
+    });
   }
 
   Widget courseRow(Course course) {
