@@ -437,7 +437,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
   ///Lower half of the view
   Widget _lowerSection(WorkoutType workoutType, WorkState workoutState) {
     if (workoutState != WorkState.finished) {
-      return Container(color: Colors.black, child: _cameraSection());
+      return Container(
+          color: Colors.black,
+          child: workoutType == WorkoutType.segmentWithRecording
+              ? _cameraSection()
+              : SizedBox());
     } else {
       return _segmentInfoSection();
     }
