@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
+import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/profile/profile_bloc.dart';
 import 'package:oluko_app/blocs/profile/upload_avatar_bloc.dart';
@@ -18,6 +19,7 @@ import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/friend.dart';
+import 'package:oluko_app/models/submodels/friend_model.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -344,6 +346,13 @@ class _UserProfilePageState extends State<UserProfilePage> {
                               children: [
                                 TextButton(
                                   onPressed: () {
+                                    //TODO: Remove Favorite Friend
+                                    _isFollow
+                                        ? null
+                                        : BlocProvider.of<FavoriteFriendBloc>(
+                                            context)
+                                      ..favoriteFriend(context, friendData,
+                                          FriendModel(id: userRequested.id));
                                     setState(() {
                                       _isFollow = !_isFollow;
                                     });
@@ -364,9 +373,15 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                             break;
                                           case UserConnectStatus.noConnected:
                                             //TODO: connect friend
+                                            BlocProvider.of<FriendBloc>(context)
+                                              ..sendRequestOfConnect(
+                                                  friendData, userRequested.id);
                                             break;
                                           case UserConnectStatus.requestPending:
                                             //TODO: cancel request friend
+                                            BlocProvider.of<FriendBloc>(context)
+                                              ..removeRequestSent(
+                                                  friendData, userRequested.id);
                                             break;
                                           default:
                                         }
