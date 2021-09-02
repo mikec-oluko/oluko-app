@@ -169,5 +169,11 @@
     "hiCoach":"HI COACH",
     "toDo":"To Do",
     "myTimeline":"My Timeline",
-    "all":"All"
+    "all":"All",
+    "hey": "Hey!",
+    "coachText": "Your coach will be assigning soon. We will notify when the coach is assigned.",
+    "hours":"Hour(s)",
+    "twoDots": ":",
+    "minutes": "Minute(s)",
+    "second": "Second(s)"
 }

@@ -169,7 +169,13 @@
     "hiCoach":"HOLA COACH",
     "toDo":"Por hacer",
     "myTimeline":"Mi Cronología",
-    "all":"Todo"
+    "all":"Todo",
+    "hey": "Hey!",
+    "coachText":"Se te asignara un Coach pronto. Te notificaremos cuando el Coach sea asignado.",
+    "hours":"Hora(s)",
+    "twoDots": ":",
+    "minutes": "Minuto(s)",
+    "second": "Segundo(s)"
 
 
 

@@ -346,7 +346,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
                               children: [
                                 TextButton(
                                   onPressed: () {
-                                    //TODO: Remove Favorite Friend
                                     _isFollow
                                         ? null
                                         : BlocProvider.of<FavoriteFriendBloc>(
@@ -356,7 +355,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                     setState(() {
                                       _isFollow = !_isFollow;
                                     });
-                                    //TODO: Add user with is_favorite
                                   },
                                   child: Icon(
                                       _isFollow
@@ -369,22 +367,22 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                       onPressed: () {
                                         switch (connectStatus) {
                                           case UserConnectStatus.connected:
-                                            //TODO: remove friend
                                             break;
                                           case UserConnectStatus.noConnected:
-                                            //TODO: connect friend
                                             BlocProvider.of<FriendBloc>(context)
                                               ..sendRequestOfConnect(
                                                   friendData, userRequested.id);
                                             break;
                                           case UserConnectStatus.requestPending:
-                                            //TODO: cancel request friend
                                             BlocProvider.of<FriendBloc>(context)
                                               ..removeRequestSent(
                                                   friendData, userRequested.id);
                                             break;
                                           default:
                                         }
+                                        BlocProvider.of<FriendBloc>(context)
+                                            .getFriendsByUserId(
+                                                _currentAuthUser.id);
                                       },
                                       title: OlukoLocalizations.of(context)
                                           .find(_connectButtonTitle)),
