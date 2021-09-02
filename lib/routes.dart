@@ -61,6 +61,7 @@ import 'package:oluko_app/ui/screens/profile/profile_subscription_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_transformation_journey_page.dart';
 import 'package:oluko_app/ui/screens/profile/transformation_journey_post.dart';
 import 'package:oluko_app/ui/screens/courses/segment_detail.dart';
+import 'blocs/movement_info_bloc.dart';
 import 'ui/screens/courses/segment_clocks.dart';
 import 'package:oluko_app/ui/screens/authentication/sign_up.dart';
 import 'package:oluko_app/ui/screens/authentication/sign_up_with_email.dart';
@@ -184,6 +185,7 @@ class Routes {
       SubscribedCourseUsersBloc();
   final StatisticsBloc _statisticsBloc = StatisticsBloc();
   final MovementBloc _movementBloc = MovementBloc();
+  final MovementInfoBloc _movementInfoBloc = MovementInfoBloc();
   final SegmentBloc _segmentBloc = SegmentBloc();
   final TaskBloc _taskBloc = TaskBloc();
   final VideoBloc _videoBloc = VideoBloc();
@@ -370,6 +372,9 @@ class Routes {
             segmentIndex: argumentsToAdd['segmentIndex']);
         break;
       case RouteEnum.movementIntro:
+        providers = [
+          BlocProvider<MovementInfoBloc>.value(value: _movementInfoBloc)
+        ];
         final Map<String, Movement> argumentsToAdd = arguments;
         newRouteView = MovementIntro(
           movement: argumentsToAdd['movement'],
