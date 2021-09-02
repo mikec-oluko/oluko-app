@@ -1,3 +1,5 @@
+import 'package:oluko_app/models/user_response.dart';
+
 import 'enum_collection.dart';
 
 class PrivacyOptions {
@@ -30,4 +32,59 @@ class PrivacyOptions {
 
   static SettingsPrivacyOptions getPrivacyValue(num optionSelected) =>
       privacyOptionsList.elementAt(optionSelected).option;
+
+  SettingsPrivacyOptions currentUserPrivacyOption(UserResponse currentUser) {
+    return PrivacyOptions.privacyOptionsList[currentUser.privacy].option;
+  }
+
+  SettingsPrivacyOptions userRequestedPrivacyOption(
+      UserResponse userToDisplayInformation) {
+    return PrivacyOptions
+        .privacyOptionsList[userToDisplayInformation.privacy].option;
+  }
+
+  canShowDetails(
+      {bool isOwner,
+      UserResponse currentUser,
+      UserResponse userRequested,
+      UserConnectStatus connectStatus}) {
+    final _currentUserPrivacyOption =
+        this.currentUserPrivacyOption(currentUser);
+    final _userRequestedPrivacyOption =
+        this.userRequestedPrivacyOption(userRequested);
+    if (isOwner) {
+      return true;
+    }
+    switch (_currentUserPrivacyOption) {
+      case SettingsPrivacyOptions.public:
+        if (_userRequestedPrivacyOption == SettingsPrivacyOptions.public ||
+            ((_userRequestedPrivacyOption ==
+                        SettingsPrivacyOptions.restricted ||
+                    _userRequestedPrivacyOption ==
+                        SettingsPrivacyOptions.anonymous) &&
+                connectStatus == UserConnectStatus.connected)) {
+          return true;
+        }
+        return false;
+      case SettingsPrivacyOptions.restricted:
+        if (_userRequestedPrivacyOption == SettingsPrivacyOptions.public ||
+            ((_userRequestedPrivacyOption ==
+                        SettingsPrivacyOptions.restricted ||
+                    _userRequestedPrivacyOption ==
+                        SettingsPrivacyOptions.anonymous) &&
+                connectStatus == UserConnectStatus.connected)) {
+          return true;
+        }
+        return false;
+      case SettingsPrivacyOptions.anonymous:
+        if (_userRequestedPrivacyOption == SettingsPrivacyOptions.public ||
+            (_userRequestedPrivacyOption == SettingsPrivacyOptions.restricted &&
+                connectStatus == UserConnectStatus.connected)) {
+          return true;
+        }
+        return false;
+      default:
+        break;
+    }
+  }
 }

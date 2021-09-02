@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/segment.dart';
-import 'package:oluko_app/ui/screens/courses/segment_recording.dart';
+import 'package:oluko_app/ui/screens/courses/segment_clocks.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/timer_utils.dart';

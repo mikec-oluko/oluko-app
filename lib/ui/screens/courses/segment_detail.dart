@@ -4,18 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/routes.dart';
-import 'package:oluko_app/ui/components/countdown_overlay.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/segment_image_section.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
-import 'package:oluko_app/ui/screens/courses/segment_recording.dart';
-import 'package:oluko_app/ui/screens/courses/segment_camera_preview.dart.dart';
+import 'package:oluko_app/ui/screens/courses/collapsed_movement_videos_section.dart';
+import 'package:oluko_app/ui/screens/courses/movement_videos_section.dart';
+import 'package:oluko_app/ui/screens/courses/segment_clocks.dart';
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -41,6 +43,8 @@ class _SegmentDetailState extends State<SegmentDetail> {
   num totalSegmentStep;
   User _user;
   List<Segment> _segments;
+  List<Movement> _movements;
+  PanelController panelController = new PanelController();
 
   @override
   void initState() {
@@ -57,12 +61,17 @@ class _SegmentDetailState extends State<SegmentDetail> {
         _user = authState.firebaseUser;
         return BlocBuilder<SegmentBloc, SegmentState>(
             builder: (context, segmentState) {
-          if (segmentState is GetSegmentsSuccess) {
-            _segments = segmentState.segments;
-            return form();
-          } else {
-            return SizedBox();
-          }
+          return BlocBuilder<MovementBloc, MovementState>(
+              builder: (context, movementState) {
+            if (segmentState is GetSegmentsSuccess &&
+                movementState is GetAllSuccess) {
+              _segments = segmentState.segments;
+              _movements = movementState.movements;
+              return form();
+            } else {
+              return SizedBox();
+            }
+          });
         });
       } else {
         return SizedBox();
@@ -76,9 +85,64 @@ class _SegmentDetailState extends State<SegmentDetail> {
       body: Container(
         width: ScreenUtils.width(context),
         height: ScreenUtils.height(context),
-        child: _viewBody(),
+        child: SlidingUpPanel(
+            controller: panelController,
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+            minHeight: 90,
+            maxHeight: 185,
+            collapsed: CollapsedMovementVideosSection(action: getAction()),
+            panel: MovementVideosSection(
+                action: downButton(),
+                segment: _segments[widget.segmentIndex],
+                movements: _movements,
+                onPressedMovement: (BuildContext context, Movement movement) =>
+                    Navigator.pushNamed(
+                        context, routeLabels[RouteEnum.movementIntro],
+                        arguments: {'movement': movement})),
+            body: _viewBody()),
       ),
     );
+  }
+
+  downButton() {
+    return GestureDetector(
+        onTap: () => panelController.close(),
+        child: Padding(
+            padding: EdgeInsets.only(top: 15, bottom: 5, right: 25),
+            child: RotatedBox(
+                quarterTurns: 2,
+                child: Stack(alignment: Alignment.center, children: [
+                  Image.asset(
+                    'assets/courses/white_arrow_up.png',
+                    scale: 4,
+                  ),
+                  Padding(
+                      padding: EdgeInsets.only(top: 15),
+                      child: Image.asset(
+                        'assets/courses/grey_arrow_up.png',
+                        scale: 4,
+                      ))
+                ]))));
+  }
+
+  Widget getAction() {
+    return GestureDetector(
+        onTap: () => panelController.open(),
+        child: Padding(
+            padding: EdgeInsets.only(top: 10, bottom: 15, right: 25),
+            child: Stack(alignment: Alignment.center, children: [
+              Image.asset(
+                'assets/courses/white_arrow_up.png',
+                scale: 4,
+              ),
+              Padding(
+                  padding: EdgeInsets.only(top: 15),
+                  child: Image.asset(
+                    'assets/courses/grey_arrow_up.png',
+                    scale: 4,
+                  ))
+            ])));
   }
 
   Widget _viewBody() {
@@ -108,7 +172,8 @@ class _SegmentDetailState extends State<SegmentDetail> {
                       context: context, content: dialogContainer());
                 })
           ]),
-        )
+        ),
+        SizedBox(height: 85)
       ],
     );
   }
@@ -188,14 +253,13 @@ class _SegmentDetailState extends State<SegmentDetail> {
                     OlukoOutlinedButton(
                       title: OlukoLocalizations.of(context).find('ignore'),
                       onPressed: () {
-                        //TODO: Make rounds dynamic
                         TimerUtils.startCountdown(
                             WorkoutType.segment,
                             context,
                             getArguments(),
                             _segments[widget.segmentIndex].initialTimer,
-                            8,
-                            2);
+                            _segments[widget.segmentIndex].rounds,
+                            1);
                       },
                     ),
                     SizedBox(width: 20),

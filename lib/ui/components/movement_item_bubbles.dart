@@ -18,7 +18,7 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 85,
+      height: 100,
       width: widget.width,
       child: !widget.showAsGrid ? scrollableBubbles() : buildBubbleGrid(),
     );
@@ -60,9 +60,7 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
 
   Widget buildBubbleGrid() {
     return GridView.count(
-        mainAxisSpacing: 15,
-        crossAxisCount: 4,
-        children: buildMovementItems());
+        mainAxisSpacing: 15, crossAxisCount: 4, children: buildMovementItems());
   }
 
   Widget _imageItem(BuildContext context, String imageUrl, String name,
@@ -70,23 +68,22 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
     return GestureDetector(
       onTap: () => onPressed(context),
       child: Container(
-        width: 85,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            StoriesItem(maxRadius: 28, imageUrl: imageUrl),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                name,
-                textAlign: TextAlign.center,
-                style: OlukoFonts.olukoSmallFont(
-                    customColor: OlukoColors.grayColor),
-              ),
-            )
-          ],
-        ),
-      ),
+          width: 85,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              StoriesItem(maxRadius: 28, imageUrl: imageUrl),
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Text(
+                  name,
+                  textAlign: TextAlign.center,
+                  style: OlukoFonts.olukoSmallFont(
+                      customColor: OlukoColors.grayColor),
+                ),
+              )
+            ],
+          )),
     );
   }
 }
