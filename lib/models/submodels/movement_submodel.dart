@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:enum_to_string/enum_to_string.dart';
 import 'package:oluko_app/models/enums/counter_enum.dart';
 
 class MovementSubmodel {
@@ -7,7 +6,6 @@ class MovementSubmodel {
   String id;
   String name;
   String timerType;
-  int timerTotalTime;
   int timerWorkTime;
   int timerRestTime;
   int timerSets;
@@ -19,7 +17,6 @@ class MovementSubmodel {
       this.name,
       this.reference,
       this.timerType,
-      this.timerTotalTime,
       this.timerWorkTime,
       this.timerRestTime,
       this.timerSets,
@@ -32,7 +29,6 @@ class MovementSubmodel {
       id: json['id'],
       name: json['name'],
       timerType: json['timer_type'],
-      timerTotalTime: json['timer_total_time'],
       timerWorkTime: json['timer_work_time'],
       timerRestTime: json['timer_rest_time'],
       timerSets: json['timer_sets'],
@@ -47,7 +43,6 @@ class MovementSubmodel {
         'id': id,
         'name': name,
         'timer_type': timerType,
-        'timer_total_time': timerTotalTime,
         'timer_work_time': timerWorkTime,
         'timer_rest_time': timerRestTime,
         'timer_sets': timerSets,

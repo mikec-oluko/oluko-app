@@ -260,9 +260,6 @@ class _InsideClassesState extends State<InsideClass> {
                     buildChallengeSection(),
                     classMovementSection(),
                   ]))),
-      SizedBox(
-        height: 150,
-      )
     ]);
   }
 }

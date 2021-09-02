@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:enum_to_string/enum_to_string.dart';
 import 'package:oluko_app/models/base.dart';
-import 'package:oluko_app/models/enums/counter_enum.dart';
 import 'package:oluko_app/models/enums/timer_type_enum.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 
@@ -10,7 +8,8 @@ class Segment extends Base {
   List<MovementSubmodel> movements;
   String image;
   String description;
-  int duration;
+  String duration;
+  int totalTime;
   int initialTimer;
   int rounds;
   int roundBreakDuration;
@@ -30,6 +29,7 @@ class Segment extends Base {
       this.isChallenge,
       this.isPublished,
       this.timerType,
+      this.totalTime,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -53,6 +53,7 @@ class Segment extends Base {
         rounds: json['rounds'],
         description: json['description'],
         duration: json['duration'],
+        totalTime: json['total_time'],
         initialTimer: json['initial_timer'],
         roundBreakDuration: json['round_break_duration'],
         isChallenge: json['is_challenge'],
@@ -74,6 +75,7 @@ class Segment extends Base {
       'image': image,
       'rounds': rounds,
       'duration': duration,
+      "total_time": totalTime,
       'description': description,
       'initial_timer': initialTimer,
       'round_break_duration': roundBreakDuration,

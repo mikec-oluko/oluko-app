@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/enums/timer_model.dart';
+import 'package:oluko_app/models/enums/timer_type_enum.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/timer_entry.dart';
@@ -12,18 +13,44 @@ class SegmentUtils {
     List<Widget> workoutWidgets = getWorkouts(segment, context);
     return [
           segment.rounds != null && segment.rounds > 1
-              ? Text(
-                  segment.rounds.toString() +
-                      " " +
-                      OlukoLocalizations.of(context).find('rounds'),
-                  style: OlukoFonts.olukoBigFont(
-                      customColor: OlukoColors.grayColor,
-                      custoFontWeight: FontWeight.bold),
-                )
+              ? getRoundTitle(segment, context, OlukoColors.grayColor)
               : SizedBox(),
           SizedBox(height: 12.0)
         ] +
         workoutWidgets;
+  }
+
+  static Widget getRoundTitle(
+      Segment segment, BuildContext context, Color color) {
+    if (segment.timerType == TimerTypeEnum.EMOM) {
+      return getEMOMTitle(segment, context, color);
+    } else {
+      return Text(
+        segment.rounds.toString() +
+            " " +
+            OlukoLocalizations.of(context).find('rounds'),
+        style: OlukoFonts.olukoBigFont(
+            customColor: color, custoFontWeight: FontWeight.bold),
+      );
+    }
+  }
+
+  static Widget getEMOMTitle(
+      Segment segment, BuildContext context, Color color) {
+    return Text(
+      "EMOM: " +
+          segment.rounds.toString() +
+          " " +
+          OlukoLocalizations.of(context).find('rounds') +
+          " " +
+          OlukoLocalizations.of(context).find('in') +
+          " " +
+          segment.totalTime.toString() +
+          " " +
+          OlukoLocalizations.of(context).find('minutes'),
+      style: OlukoFonts.olukoBigFont(
+          customColor: color, custoFontWeight: FontWeight.bold),
+    );
   }
 
   static List<Widget> getWorkouts(Segment segment, BuildContext context) {
@@ -125,7 +152,12 @@ class SegmentUtils {
       //Add work entry
       entries.add(TimerEntry(
           roundNumber: roundIndex + 1,
-          reps: segment.movements[0].timerReps, //Sets the timer by reps
+          reps: segment.timerType == TimerTypeEnum.combined
+              ? segment.movements[0].timerReps
+              : null,
+          time: segment.timerType == TimerTypeEnum.EMOM
+              ? (segment.totalTime ~/ segment.rounds).toInt()
+              : null,
           labels: getMovements(segment, context),
           workState: WorkState.exercising));
     }
