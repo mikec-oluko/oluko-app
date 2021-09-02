@@ -134,14 +134,13 @@ class _State extends State<SegmentCameraPreview> {
   Widget startButton() {
     return GestureDetector(
         onTap: () {
-          //TODO: Make rounds dynamic
           TimerUtils.startCountdown(
               WorkoutType.segmentWithRecording,
               context,
               getArguments(),
               widget.segments[widget.segmentIndex].initialTimer,
-              8,
-              2);
+              widget.segments[widget.segmentIndex].rounds,
+              1);
         },
         child: Stack(alignment: Alignment.center, children: [
           Image.asset(

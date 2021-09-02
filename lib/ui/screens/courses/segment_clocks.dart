@@ -23,10 +23,11 @@ import 'package:oluko_app/models/submodels/counter.dart';
 import 'package:oluko_app/models/timer_entry.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
+import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/screens/courses/collapsed_movement_videos_section.dart';
 import 'package:oluko_app/ui/screens/courses/movement_videos_section.dart';
-import 'package:oluko_app/ui/screens/courses/segment_progress.dart';
+import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
@@ -58,7 +59,10 @@ class SegmentClocks extends StatefulWidget {
 
 class _SegmentClocksState extends State<SegmentClocks> {
   WorkoutType workoutType;
-
+  Image movementVideoThumbnailImage = Image.asset(
+    'assets/assessment/task_response_thumbnail.png',
+    fit: BoxFit.cover,
+  );
   //Imported from Timer POC Models
   WorkState workState = WorkState.initial;
   WorkState lastWorkStateBeforePause = WorkState.initial;
@@ -150,7 +154,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
         actions: [topCameraIcon(), audioIcon()],
       ),
       backgroundColor: Colors.black,
-      body: widget.workoutType == WorkoutType.segment
+      body: widget.workoutType == WorkoutType.segment &&
+              workState != WorkState.finished
           ? SlidingUpPanel(
               controller: panelController,
               borderRadius: BorderRadius.only(
@@ -209,10 +214,46 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   Widget _body() {
     return Container(
-        child: Column(children: [
-      _timerSection(this.workoutType, this.workState),
-      _lowerSection(this.workoutType, this.workState)
-    ]));
+        child: Column(
+      children: [
+        _timerSection(this.workoutType, this.workState),
+        Expanded(child: _lowerSection(this.workoutType, this.workState)),
+        Padding(
+          padding: const EdgeInsets.all(25.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              OlukoOutlinedButton(
+                  title: 'Go To Class',
+                  onPressed: () => Navigator.popUntil(context,
+                      ModalRoute.withName(routeLabels[RouteEnum.insideClass]))),
+              SizedBox(
+                width: 15,
+              ),
+              OlukoPrimaryButton(
+                title: 'Next Segment',
+                onPressed: () {
+                  widget.segmentIndex < widget.segments.length - 1
+                      ? Navigator.pushNamed(
+                          context, routeLabels[RouteEnum.segmentClocks],
+                          arguments: {
+                              'segmentIndex': widget.segmentIndex + 1,
+                              'classIndex': widget.classIndex,
+                              'courseEnrollment': widget.courseEnrollment,
+                              'workoutType': workoutType,
+                              'segments': widget.segments,
+                            })
+                      : Navigator.popUntil(
+                          context,
+                          ModalRoute.withName(
+                              routeLabels[RouteEnum.insideClass]));
+                },
+              ),
+            ],
+          ),
+        ),
+      ],
+    ));
   }
 
   /*
@@ -235,7 +276,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                   timerEntries[timerTaskIndex].roundNumber),
               _countdownSection(workState)
             ])),
-        _tasksSection()
+        workState == WorkState.finished ? SizedBox() : _tasksSection()
       ],
     ));
   }
@@ -265,7 +306,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
               SizedBox(height: 10),
               nextTaskWidget(nextTask),
               SizedBox(height: 15),
-              timerEntries[timerTaskIndex].workState == WorkState.resting
+              timerEntries[timerTaskIndex].workState == WorkState.resting &&
+                      (timerEntries[timerTaskIndex - 1].counter ==
+                              CounterEnum.reps ||
+                          timerEntries[timerTaskIndex - 1].counter ==
+                              CounterEnum.distance)
                   ? getTextField()
                   : SizedBox()
             ],
@@ -275,7 +320,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   Widget getTextField() {
     bool isCounterByReps =
-        timerEntries[timerTaskIndex].counter == CounterEnum.reps;
+        timerEntries[timerTaskIndex - 1].counter == CounterEnum.reps;
     return Container(
         decoration: BoxDecoration(
             image: DecorationImage(
@@ -391,6 +436,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
     double circularProgressIndicatorValue =
         (actualTime.inSeconds / timerEntries[timerTaskIndex].time);
 
+    if (workState == WorkState.finished) {
+      return TimerUtils.completedTimer(circularProgressIndicatorValue,
+          TimeConverter.durationToString(this.timeLeft), context);
+    }
+
     if (workState == WorkState.paused) {
       return TimerUtils.pausedTimer(
           context, TimeConverter.durationToString(this.timeLeft));
@@ -451,12 +501,15 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   ///Lower half of the view
   Widget _lowerSection(WorkoutType workoutType, WorkState workoutState) {
-    return Container(
-      color: Colors.black,
-      child: workoutType == WorkoutType.segmentWithRecording
-          ? _cameraSection()
-          : SizedBox(),
-    );
+    if (workoutState != WorkState.finished) {
+      return Container(
+          color: Colors.black,
+          child: workoutType == WorkoutType.segmentWithRecording
+              ? _cameraSection()
+              : SizedBox());
+    } else {
+      return _segmentInfoSection();
+    }
   }
 
   Widget resumeButton() {
@@ -610,37 +663,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
     BlocProvider.of<CourseEnrollmentBloc>(context)
       ..markSegmentAsCompleated(
           widget.courseEnrollment, widget.segmentIndex, widget.classIndex);
-    if (widget.workoutType == WorkoutType.segmentWithRecording) {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  SegmentProgress(segmentSubmission: _segmentSubmission)));
-    } else {
-      if (widget.segmentIndex < widget.segments.length - 1) {
-        /*Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => SegmentDetail(
-                    user: widget.user,
-                    segments: widget.segments,
-                    segmentIndex: widget.segmentIndex + 1,
-                    classIndex: widget.classIndex,
-                    courseEnrollment: widget.courseEnrollment)));*/
-      } else {
-        //TODO: Go to next class
-        /*Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => SegmentDetail(
-                    user: widget.user,
-                    segments: widget.segments,
-                    segmentIndex: 0,
-                    classIndex: widget.classIndex,
-                    courseEnrollment: widget.courseEnrollment)));*/
-        //ver lo de las clases porque no tengo la lista de clases
-      }
-    }
+    setState(() {});
   }
 
   _startMovement() {
@@ -726,4 +749,230 @@ class _SegmentClocksState extends State<SegmentClocks> {
           scale: 4,
         ));
   }
+
+  ///Section with information about segment and workout movements.
+  // ignore: unused_element
+  Widget _segmentInfoSection() {
+    return Padding(
+      padding: const EdgeInsets.all(30.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                //_completedBadge(),
+                MovementUtils.movementTitle(
+                    widget.segments[widget.segmentIndex].name),
+              ],
+            ),
+          ),
+          // Padding(
+          //   padding: const EdgeInsets.all(8.0),
+          //   child: MovementUtils.labelWithTitle(
+          //       '${OlukoLocalizations.of(context).find('duration')}:',
+          //       '${widget.segments[widget.segmentIndex].duration} Seconds'),
+          // ),
+          // Padding(
+          //   padding: const EdgeInsets.all(8.0),
+          //   child: MovementUtils.labelWithTitle(
+          //       '${OlukoLocalizations.of(context).find('rounds')}:',
+          //       '${widget.segments[widget.segmentIndex].rounds} ${OlukoLocalizations.of(context).find('rounds')}'),
+          // ),
+          /*Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: MovementUtils.workout(tasks, context),
+          ),*/
+          _tasksSection(),
+          Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
+              child: workoutType == WorkoutType.segment
+                  ? _feedbackCard()
+                  : _shareCard()),
+        ],
+      ),
+    );
+  }
+
+  ///Information card with sharing options for the recorded video
+  Widget _shareCard() {
+    return Container(
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(5)),
+          color: OlukoColors.listGrayColor),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                      flex: 2,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.all(Radius.circular(5)),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            movementVideoThumbnailImage,
+                          ],
+                        ),
+                      )),
+                  Expanded(
+                    flex: 8,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 15.0, top: 0),
+                      child: Container(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.max,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              OlukoLocalizations.of(context)
+                                  .find('shareYourVideo'),
+                              style: OlukoFonts.olukoBigFont(),
+                              textAlign: TextAlign.start,
+                            ),
+                            Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 10),
+                                  child: Column(
+                                    children: [
+                                      ElevatedButton(
+                                        onPressed: () {},
+                                        child: Icon(Icons.movie),
+                                        style: ElevatedButton.styleFrom(
+                                            minimumSize: Size(50, 50),
+                                            primary: Colors.white),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text('Stories',
+                                            style:
+                                                OlukoFonts.olukoMediumFont()),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    children: [
+                                      ElevatedButton(
+                                        onPressed: () {},
+                                        child: Icon(Icons.send),
+                                        style: ElevatedButton.styleFrom(
+                                            minimumSize: Size(50, 50),
+                                            primary: Colors.white),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text('To Coach',
+                                            style:
+                                                OlukoFonts.olukoMediumFont()),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  //Information card with Feedback Options
+  // ignore: unused_element
+  Widget _feedbackCard() {
+    return Container(
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(5)),
+          color: OlukoColors.listGrayColor),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                OlukoLocalizations.of(context).find('howWasYourWorkoutSession'),
+                style: OlukoFonts.olukoBigFont(),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: Column(
+                    children: [_feedbackButton(Icons.favorite)],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [_feedbackButton(Icons.close)],
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _feedbackButton(IconData iconData, {Function() onPressed}) {
+    return OutlinedButton(
+      onPressed: onPressed,
+      child: Icon(iconData, color: Colors.white),
+      style: OutlinedButton.styleFrom(
+        padding: EdgeInsets.all(15),
+        shape: CircleBorder(),
+        side: BorderSide(color: Colors.white),
+      ),
+    );
+  }
+
+  Widget _completedBadge() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: OlukoColors.listGrayColor,
+          borderRadius: BorderRadius.all(Radius.circular(5)),
+        ),
+        padding: EdgeInsets.all(5),
+        child: Text(
+          'COMPLETED',
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
+    );
+  }
+
+  /*
+  Other Methods
+  */
+
 }

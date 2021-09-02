@@ -139,6 +139,9 @@ class _InsideClassesState extends State<InsideClass> {
             int segmentIndex =
                 CourseEnrollmentService.getFirstUncompletedSegmentIndex(
                     widget.courseEnrollment.classes[widget.classIndex]);
+            if (segmentIndex == -1) {
+              segmentIndex = 0;
+            }
             Navigator.pushNamed(context, routeLabels[RouteEnum.segmentDetail],
                 arguments: {
                   'segmentIndex': segmentIndex,

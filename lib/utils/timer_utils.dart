@@ -143,6 +143,37 @@ class TimerUtils {
     ]);
   }
 
+  static Widget completedTimer(
+      double progressValue, String duration, BuildContext context) {
+    return Container(
+        child: SizedBox(
+            height: 180,
+            width: 180,
+            child: Stack(alignment: Alignment.center, children: [
+              AspectRatio(
+                  aspectRatio: 1,
+                  child: CircularProgressIndicator(
+                      value: progressValue,
+                      color: OlukoColors.coral,
+                      backgroundColor: OlukoColors.grayColorSemiTransparent)),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image(
+                      image: AssetImage(
+                          'assets/self_recording/completed_tick.png')),
+                  SizedBox(height: 8),
+                  Text(OlukoLocalizations.of(context).find('completed'),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white)),
+                ],
+              )
+            ])));
+  }
+
   static Widget pausedTimer(BuildContext context, [String duration]) {
     return Container(
         child: SizedBox(

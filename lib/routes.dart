@@ -424,6 +424,8 @@ class Routes {
           BlocProvider<MovementBloc>.value(value: _movementBloc),
           BlocProvider<CourseEnrollmentListBloc>.value(
               value: _courseEnrollmentListBloc),
+          BlocProvider<SubscribedCourseUsersBloc>.value(
+              value: _subscribedCourseUsersBloc)
         ];
         final Map<String, Course> argumentsToAdd = arguments;
         newRouteView = CourseMarketing(course: argumentsToAdd['course']);
@@ -561,6 +563,7 @@ class Routes {
 
     //Generate route with selected BLoCs
     return MaterialPageRoute(
+        settings: RouteSettings(name: route),
         builder: (c) => MultiBlocProvider(
             providers: selectedProviders,
             child: Builder(builder: (context) {
