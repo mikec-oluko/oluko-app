@@ -107,19 +107,4 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
       emit(Failure(exception: exception));
     }
   }
-
-  void getCourseEnrollmentsByUserId(String userId) async {
-    try {
-      List<CourseEnrollment> courseEnrollments =
-          await CourseEnrollmentRepository.getUserCourseEnrollments(userId);
-      emit(
-          CourseEnrollmentListSuccess(courseEnrollmentList: courseEnrollments));
-    } catch (exception, stackTrace) {
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
-      );
-      emit(Failure(exception: exception));
-    }
-  }
 }

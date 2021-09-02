@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/profile/profile_bloc.dart';
 import 'package:oluko_app/blocs/profile/upload_avatar_bloc.dart';
 import 'package:oluko_app/blocs/profile/upload_cover_image_bloc.dart';
@@ -419,7 +420,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   void _requestContentForUser(
       {BuildContext context, UserResponse userRequested}) {
-    BlocProvider.of<CourseEnrollmentBloc>(context)
+    BlocProvider.of<CourseEnrollmentListBloc>(context)
         .getCourseEnrollmentsByUserId(userRequested.id);
 
     BlocProvider.of<TaskSubmissionBloc>(context)

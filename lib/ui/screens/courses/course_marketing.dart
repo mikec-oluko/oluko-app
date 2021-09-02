@@ -78,7 +78,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
             builder: (context, enrollmentState) {
           return BlocBuilder<ClassBloc, ClassState>(
               builder: (context, classState) {
-            if (enrollmentState is GetEnrollmentSuccess &&
+            if ((enrollmentState is GetEnrollmentSuccess) &&
                 classState is GetSuccess) {
               _classes = classState
                   .classes; //TODO: this is receiving old classes from another (previously opened) course
