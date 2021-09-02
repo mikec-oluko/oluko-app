@@ -270,6 +270,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
   }
 
   Widget getTextField() {
+    bool isCounterByReps =
+        timerEntries[timerTaskIndex].counter == CounterEnum.reps;
     return Container(
         decoration: BoxDecoration(
             image: DecorationImage(
@@ -286,7 +288,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                   fontWeight: FontWeight.w300)),
           SizedBox(width: 10),
           SizedBox(
-              width: 40,
+              width: isCounterByReps ? 40 : 70,
               child: TextField(
                 controller: textController,
                 style: TextStyle(
@@ -296,11 +298,17 @@ class _SegmentClocksState extends State<SegmentClocks> {
                 keyboardType: TextInputType.number,
               )),
           SizedBox(width: 10),
-          Text(timerEntries[timerTaskIndex].movement.name,
-              style: TextStyle(
-                  fontSize: 18,
-                  color: OlukoColors.white,
-                  fontWeight: FontWeight.w300)),
+          isCounterByReps
+              ? Text(timerEntries[timerTaskIndex].movement.name,
+                  style: TextStyle(
+                      fontSize: 18,
+                      color: OlukoColors.white,
+                      fontWeight: FontWeight.w300))
+              : Text(OlukoLocalizations.of(context).find('meters'),
+                  style: TextStyle(
+                      fontSize: 18,
+                      color: OlukoColors.white,
+                      fontWeight: FontWeight.w300)),
         ]));
   }
 
