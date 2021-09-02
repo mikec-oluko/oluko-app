@@ -123,6 +123,26 @@ class TimerUtils {
             ])));
   }
 
+  static Widget getEMOMRounds(int round) {
+    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      Text('Round',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              fontStyle: FontStyle.italic,
+              color: OlukoColors.primary)),
+      SizedBox(width: 10),
+      Text(round.toString(),
+          textAlign: TextAlign.center,
+          style: TextStyle(
+              fontSize: 50,
+              fontWeight: FontWeight.bold,
+              fontStyle: FontStyle.italic,
+              color: OlukoColors.white)),
+    ]);
+  }
+
   static Widget pausedTimer(BuildContext context, [String duration]) {
     return Container(
         child: SizedBox(

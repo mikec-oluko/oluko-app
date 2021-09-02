@@ -15,6 +15,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/enums/counter_enum.dart';
 import 'package:oluko_app/models/enums/timer_model.dart';
+import 'package:oluko_app/models/enums/timer_type_enum.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
@@ -223,6 +224,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
     return Center(
         child: Column(
       children: [
+        widget.segments[widget.segmentIndex].timerType == TimerTypeEnum.EMOM
+            ? TimerUtils.getEMOMRounds(timerEntries[timerTaskIndex].roundNumber)
+            : SizedBox(),
         Padding(
             padding: const EdgeInsets.only(top: 3, bottom: 8),
             child: Stack(alignment: Alignment.center, children: [
