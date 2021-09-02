@@ -37,9 +37,8 @@ class MovementSubmodel {
       timerRestTime: json['timer_rest_time'],
       timerSets: json['timer_sets'],
       timerReps: json['timer_reps'],
-      counter: json['counter'] == null
-          ? null
-          : EnumToString.fromString(CounterEnum.values, json['counter']),
+      counter:
+          json['counter'] == null ? null : CounterEnum.values[json['counter']],
     );
   }
 
@@ -53,7 +52,6 @@ class MovementSubmodel {
         'timer_rest_time': timerRestTime,
         'timer_sets': timerSets,
         'timer_reps': timerReps,
-        'counter':
-            counter == null ? null : EnumToString.convertToString(counter),
+        'counter': counter == null ? null : counter.index,
       };
 }

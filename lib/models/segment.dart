@@ -59,7 +59,7 @@ class Segment extends Base {
         isPublished: json['is_published'],
         timerType: json['timer_type'] == null
             ? null
-            : EnumToString.fromString(TimerTypeEnum.values, json['timer_type']),
+            : TimerTypeEnum.values[json['timer_type']],
         movements: json['movements'] == null
             ? null
             : List<MovementSubmodel>.from(json['movements']
@@ -79,8 +79,7 @@ class Segment extends Base {
       'round_break_duration': roundBreakDuration,
       'is_challenge': isChallenge,
       'is_published': isPublished,
-      'timer_type':
-          timerType == null ? null : EnumToString.convertToString(timerType),
+      'timer_type': timerType == null ? null : timerType.index,
       'movements': movements == null
           ? null
           : List<dynamic>.from(movements.map((movement) => movement.toJson()))
