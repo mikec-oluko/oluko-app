@@ -6,6 +6,7 @@ import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
 import 'package:oluko_app/blocs/gallery_video_bloc.dart';
 import 'package:oluko_app/blocs/movement_submission_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
@@ -31,6 +32,7 @@ import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/movement.dart';
+import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/screens/app_plans.dart';
 import 'package:oluko_app/ui/screens/assessments/assessment_videos.dart';
@@ -38,6 +40,12 @@ import 'package:oluko_app/ui/screens/assessments/self_recording.dart';
 import 'package:oluko_app/ui/screens/assessments/self_recording_preview.dart';
 import 'package:oluko_app/ui/screens/assessments/task_submission_recorded_video.dart';
 import 'package:oluko_app/ui/screens/choose_plan_payment.dart';
+import 'package:oluko_app/ui/screens/coach/coach_no_assigned_timer_page.dart';
+import 'package:oluko_app/ui/screens/coach/coach_page.dart';
+import 'package:oluko_app/ui/screens/coach/coach_profile.dart';
+import 'package:oluko_app/ui/screens/coach/coach_show_video.dart';
+import 'package:oluko_app/ui/screens/coach/mentored_videos.dart';
+import 'package:oluko_app/ui/screens/coach/sent_videos.dart';
 import 'package:oluko_app/ui/screens/courses/course_marketing.dart';
 import 'package:oluko_app/ui/screens/courses/courses.dart';
 import 'package:oluko_app/ui/screens/courses/enrolled_class.dart';
@@ -61,6 +69,7 @@ import 'package:oluko_app/ui/screens/profile/profile_subscription_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_transformation_journey_page.dart';
 import 'package:oluko_app/ui/screens/profile/transformation_journey_post.dart';
 import 'package:oluko_app/ui/screens/courses/segment_detail.dart';
+import 'blocs/movement_info_bloc.dart';
 import 'ui/screens/courses/segment_clocks.dart';
 import 'package:oluko_app/ui/screens/authentication/sign_up.dart';
 import 'package:oluko_app/ui/screens/authentication/sign_up_with_email.dart';
@@ -73,6 +82,7 @@ import 'blocs/profile/upload_avatar_bloc.dart';
 import 'blocs/profile/upload_cover_image_bloc.dart';
 import 'blocs/profile/upload_transformation_journey_content_bloc.dart';
 import 'blocs/friends/favorite_friend_bloc.dart';
+import 'blocs/user_statistics_bloc.dart';
 import 'models/course.dart';
 import 'models/transformation_journey_uploads.dart';
 
@@ -113,6 +123,12 @@ enum RouteEnum {
   taskSubmissionVideo,
   exploreSubscribedUsers,
   segmentCameraPreview,
+  coach,
+  coach2,
+  sentVideos,
+  mentoredVideos,
+  coachShowVideo,
+  coachProfile
 }
 
 Map<RouteEnum, String> routeLabels = {
@@ -153,6 +169,12 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.taskSubmissionVideo: '/task-submission-video',
   RouteEnum.exploreSubscribedUsers: '/explore-subscribed-users',
   RouteEnum.segmentCameraPreview: '/segment-camera-preview',
+  RouteEnum.coach: '/coach',
+  RouteEnum.coach2: '/coach2',
+  RouteEnum.sentVideos: '/coach-sent-videos',
+  RouteEnum.mentoredVideos: '/coach-mentored-videos',
+  RouteEnum.coachShowVideo: '/coach-show-video',
+  RouteEnum.coachProfile: '/coach-profile'
 };
 
 RouteEnum getEnumFromRouteString(String route) {
@@ -183,6 +205,7 @@ class Routes {
       SubscribedCourseUsersBloc();
   final StatisticsBloc _statisticsBloc = StatisticsBloc();
   final MovementBloc _movementBloc = MovementBloc();
+  final MovementInfoBloc _movementInfoBloc = MovementInfoBloc();
   final SegmentBloc _segmentBloc = SegmentBloc();
   final TaskBloc _taskBloc = TaskBloc();
   final VideoBloc _videoBloc = VideoBloc();
@@ -201,6 +224,9 @@ class Routes {
       TransformationJourneyContentBloc();
   final ProfileAvatarBloc _profileAvatarBloc = ProfileAvatarBloc();
   final ProfileCoverImageBloc _profileCoverImageBloc = ProfileCoverImageBloc();
+  final UserStatisticsBloc _userStatisticsBloc = UserStatisticsBloc();
+  final CourseEnrollmentUpdateBloc _courseEnrollmentUpdateBloc =
+      CourseEnrollmentUpdateBloc();
 
   getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -231,7 +257,12 @@ class Routes {
           BlocProvider<ConfirmFriendBloc>.value(value: _confirmFriendBloc),
           BlocProvider<IgnoreFriendRequestBloc>.value(
               value: _ignoreFriendRequestBloc),
-          BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc)
+          BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
+          BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
+          BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
+          BlocProvider<TaskBloc>.value(value: _taskBloc),
+          BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
+          BlocProvider<ProfileBloc>.value(value: _profileBloc),
         ];
         newRouteView = MainPage();
         break;
@@ -249,6 +280,9 @@ class Routes {
         newRouteView = FriendsPage();
         break;
       case RouteEnum.profile:
+        providers = [
+          BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
+        ];
         newRouteView = ProfilePage();
         break;
       case RouteEnum.profileSettings:
@@ -280,21 +314,30 @@ class Routes {
       case RouteEnum.profileViewOwnProfile:
         providers = [
           BlocProvider<CourseBloc>.value(value: _courseBloc),
+          BlocProvider<FriendBloc>.value(value: _friendBloc),
           BlocProvider<OlukoPanelBloc>.value(value: OlukoPanelBloc()),
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
           BlocProvider<CourseEnrollmentBloc>.value(
               value: _courseEnrollmentBloc),
+          BlocProvider<CourseEnrollmentListBloc>.value(
+              value: _courseEnrollmentListBloc),
           BlocProvider<TransformationJourneyBloc>.value(
               value: _transformationJourneyBloc),
           BlocProvider<ProfileCoverImageBloc>.value(
               value: _profileCoverImageBloc),
           BlocProvider<ProfileAvatarBloc>.value(value: _profileAvatarBloc),
+          BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
         ];
-        newRouteView = UserProfilePage();
+        final Map<String, UserResponse> argumentsToAdd = arguments;
+        newRouteView =
+            UserProfilePage(userRequested: argumentsToAdd['userRequested']);
         break;
       case RouteEnum.profileChallenges:
+        providers = [
+          BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc)
+        ];
         newRouteView = ProfileChallengesPage();
         break;
       case RouteEnum.profileTransformationJourney:
@@ -360,6 +403,9 @@ class Routes {
             segmentIndex: argumentsToAdd['segmentIndex']);
         break;
       case RouteEnum.movementIntro:
+        providers = [
+          BlocProvider<MovementInfoBloc>.value(value: _movementInfoBloc)
+        ];
         final Map<String, Movement> argumentsToAdd = arguments;
         newRouteView = MovementIntro(
           movement: argumentsToAdd['movement'],
@@ -373,7 +419,10 @@ class Routes {
               value: _segmentSubmissionBloc),
           BlocProvider<MovementSubmissionBloc>.value(
               value: _movementSubmissionBloc),
-          BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc)
+          BlocProvider<CourseEnrollmentBloc>.value(
+              value: _courseEnrollmentBloc),
+          BlocProvider<CourseEnrollmentUpdateBloc>.value(
+              value: _courseEnrollmentUpdateBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments;
         newRouteView = SegmentClocks(
@@ -408,6 +457,8 @@ class Routes {
           BlocProvider<MovementBloc>.value(value: _movementBloc),
           BlocProvider<CourseEnrollmentListBloc>.value(
               value: _courseEnrollmentListBloc),
+          BlocProvider<SubscribedCourseUsersBloc>.value(
+              value: _subscribedCourseUsersBloc)
         ];
         final Map<String, Course> argumentsToAdd = arguments;
         newRouteView = CourseMarketing(course: argumentsToAdd['course']);
@@ -475,6 +526,8 @@ class Routes {
           BlocProvider<TaskBloc>.value(value: _taskBloc),
           BlocProvider<VideoBloc>.value(value: _videoBloc),
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
+          BlocProvider<TaskSubmissionListBloc>.value(
+              value: _taskSubmissionListBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments;
         newRouteView = SelfRecordingPreview(
@@ -535,6 +588,60 @@ class Routes {
         ];
         newRouteView = ExploreSubscribedUsers(courseId: courseId);
         break;
+      case RouteEnum.coach:
+        providers = [
+          BlocProvider<ProfileBloc>.value(value: _profileBloc),
+          BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
+          BlocProvider<TransformationJourneyBloc>.value(
+              value: _transformationJourneyBloc),
+          BlocProvider<CourseEnrollmentListBloc>.value(
+              value: _courseEnrollmentListBloc),
+          BlocProvider<TaskBloc>.value(value: _taskBloc),
+          BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
+          BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
+          BlocProvider<CourseEnrollmentBloc>.value(
+              value: _courseEnrollmentBloc),
+        ];
+        newRouteView = CoachAssignedCountDown();
+        break;
+      case RouteEnum.coach2:
+        providers = [
+          BlocProvider<ProfileBloc>.value(value: _profileBloc),
+          BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
+          BlocProvider<TransformationJourneyBloc>.value(
+              value: _transformationJourneyBloc),
+          BlocProvider<CourseEnrollmentListBloc>.value(
+              value: _courseEnrollmentListBloc),
+          BlocProvider<TaskBloc>.value(value: _taskBloc),
+          BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
+          BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
+          BlocProvider<CourseEnrollmentBloc>.value(
+              value: _courseEnrollmentBloc),
+        ];
+        newRouteView = CoachPage();
+        break;
+      case RouteEnum.sentVideos:
+        final Map<String, List<TaskSubmission>> argumentsToAdd = arguments;
+        newRouteView =
+            SentVideosPage(taskSubmissions: argumentsToAdd['taskSubmissions']);
+        break;
+      case RouteEnum.mentoredVideos:
+        final Map<String, List<TaskSubmission>> argumentsToAdd = arguments;
+        newRouteView = MentoredVideosPage(
+            taskSubmissions: argumentsToAdd['taskSubmissions']);
+        break;
+      case RouteEnum.coachShowVideo:
+        final Map<String, dynamic> argumentsToAdd = arguments;
+
+        newRouteView = CoachShowVideo(
+          videoUrl: argumentsToAdd['videoUrl'],
+          titleForContent: argumentsToAdd['titleForView'],
+        );
+        break;
+      case RouteEnum.coachProfile:
+        final Map<String, UserResponse> argumentsToAdd = arguments;
+        newRouteView = CoachProfile(coachUser: argumentsToAdd['coachUser']);
+        break;
       default:
         newRouteView = MainPage();
         break;
@@ -545,6 +652,7 @@ class Routes {
 
     //Generate route with selected BLoCs
     return MaterialPageRoute(
+        settings: RouteSettings(name: route),
         builder: (c) => MultiBlocProvider(
             providers: selectedProviders,
             child: Builder(builder: (context) {

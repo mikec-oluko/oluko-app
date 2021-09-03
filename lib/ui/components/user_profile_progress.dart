@@ -44,7 +44,7 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
               //CLASSES COMPLETED
               profileAccomplishments(
                   achievementTitle:
-                      OlukoLocalizations.of(context).find('ClassesCompleted'),
+                      OlukoLocalizations.of(context).find('classesCompleted'),
                   achievementValue: widget.classesCompleted),
             ],
           ),

@@ -1,0 +1,1 @@
+enum TimerTypeEnum { AMRAP, EMOM, combined }

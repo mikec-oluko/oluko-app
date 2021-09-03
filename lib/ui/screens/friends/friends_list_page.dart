@@ -105,28 +105,32 @@ class _FriendsListPageState extends State<FriendsListPage> {
     } else if (friendState is FriendFailure) {
       return [TitleBody('There was an error retrieving your Friends')];
     } else if (friendState is GetFriendsSuccess) {
-      return friendState.friendData.friends.length == 0
-          ? [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [TitleBody('No Friends.')]),
-              )
-            ]
-          : friendState.friendData.friends.map((friend) {
-              UserResponse friendUser = friendState.friendUsers
-                  .where((fuser) => fuser.id == friend.id)
-                  .first;
-              return FriendCard(
-                friend: friend,
-                friendUser: friendUser,
-                onFavoriteToggle: (FriendModel friendModel) {
-                  BlocProvider.of<FavoriteFriendBloc>(context).favoriteFriend(
-                      context, friendState.friendData, friendModel);
-                },
-              );
-            }).toList();
+      if (friendState.friendData != null) {
+        return friendState.friendData.friends.length == 0
+            ? [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [TitleBody('No Friends.')]),
+                )
+              ]
+            : friendState.friendData.friends.map((friend) {
+                UserResponse friendUser = friendState.friendUsers
+                    .where((fuser) => fuser.id == friend.id)
+                    .first;
+                return FriendCard(
+                  friend: friend,
+                  friendUser: friendUser,
+                  onFavoriteToggle: (FriendModel friendModel) {
+                    BlocProvider.of<FavoriteFriendBloc>(context).favoriteFriend(
+                        context, friendState.friendData, friendModel);
+                  },
+                );
+              }).toList();
+      } else {
+        return [];
+      }
     } else {
       return [
         Padding(

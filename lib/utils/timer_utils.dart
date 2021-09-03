@@ -19,7 +19,7 @@ class TimerUtils {
             aspectRatio: 1,
             child: CircularProgressIndicator(
                 value: getProgress(totalTime, countDown),
-                color: OlukoColors.coral,
+                // color: OlukoColors.coral,
                 backgroundColor: OlukoColors.grayColorSemiTransparent)),
       ),
       Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -73,7 +73,7 @@ class TimerUtils {
       IntervalProgressBar(
         direction: IntervalProgressDirection.circle,
         max: totalRounds,
-        progress: currentRound,
+        progress: currentRound - 1,
         intervalSize: 4,
         size: Size(200, 200),
         highlightColor: OlukoColors.primary,
@@ -86,7 +86,9 @@ class TimerUtils {
         strokeWith: 5,
       );
 
-  static Widget timeTimer(double progressValue, String duration) {
+  static Widget timeTimer(
+      double progressValue, String duration, BuildContext context,
+      [String counter]) {
     return Container(
         child: SizedBox(
             height: 180,
@@ -98,12 +100,77 @@ class TimerUtils {
                       value: progressValue,
                       color: OlukoColors.coral,
                       backgroundColor: OlukoColors.grayColorSemiTransparent)),
-              Text(duration,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white))
+              Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Text(duration,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white)),
+                counter != null
+                    ? Padding(
+                        padding: EdgeInsets.only(top: 5),
+                        child: Text(
+                            OlukoLocalizations.of(context).find('countYour') +
+                                counter,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w300,
+                                color: OlukoColors.coral)))
+                    : SizedBox()
+              ])
+            ])));
+  }
+
+  static Widget getRoundLabel(int round) {
+    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      Text('Round',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              fontStyle: FontStyle.italic,
+              color: OlukoColors.primary)),
+      SizedBox(width: 10),
+      Text(round.toString(),
+          textAlign: TextAlign.center,
+          style: TextStyle(
+              fontSize: 50,
+              fontWeight: FontWeight.bold,
+              fontStyle: FontStyle.italic,
+              color: OlukoColors.white)),
+    ]);
+  }
+
+  static Widget completedTimer(
+      double progressValue, String duration, BuildContext context) {
+    return Container(
+        child: SizedBox(
+            height: 180,
+            width: 180,
+            child: Stack(alignment: Alignment.center, children: [
+              AspectRatio(
+                  aspectRatio: 1,
+                  child: CircularProgressIndicator(
+                      value: progressValue,
+                      // color: OlukoColors.coral,
+                      backgroundColor: OlukoColors.grayColorSemiTransparent)),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image(
+                      image: AssetImage(
+                          'assets/self_recording/completed_tick.png')),
+                  SizedBox(height: 8),
+                  Text(OlukoLocalizations.of(context).find('completed'),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white)),
+                ],
+              )
             ])));
   }
 
@@ -117,7 +184,7 @@ class TimerUtils {
                   aspectRatio: 1,
                   child: CircularProgressIndicator(
                       value: 0,
-                      color: OlukoColors.skyblue,
+                      // color: OlukoColors.skyblue,
                       backgroundColor: OlukoColors.grayColorSemiTransparent)),
               Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Text(
@@ -164,7 +231,7 @@ class TimerUtils {
                   aspectRatio: 1,
                   child: CircularProgressIndicator(
                       value: progressValue,
-                      color: OlukoColors.skyblue,
+                      // color: OlukoColors.skyblue,
                       backgroundColor: OlukoColors.grayColorSemiTransparent)),
               Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Text(OlukoLocalizations.of(context).find('rest').toUpperCase(),
@@ -196,7 +263,7 @@ class TimerUtils {
                       aspectRatio: 1,
                       child: CircularProgressIndicator(
                           value: 0,
-                          color: OlukoColors.skyblue,
+                          // color: OlukoColors.skyblue,
                           backgroundColor:
                               OlukoColors.grayColorSemiTransparent)),
                   Column(
@@ -226,12 +293,56 @@ class TimerUtils {
             opaque: false,
             pageBuilder: (BuildContext context, _, __) => CountdownOverlay(
                   seconds: initialTimer != null ? initialTimer : 5,
-                  totalRounds: totalRounds,
-                  currentRound: currentRound,
+                  totalRounds: totalRounds != null ? totalRounds : 1,
+                  currentRound: currentRound != null ? currentRound : 0,
                   recording: workoutType == WorkoutType.segmentWithRecording,
                 )))
         .then((value) => Navigator.pushNamed(
             context, routeLabels[RouteEnum.segmentClocks],
             arguments: arguments));
+  }
+
+  static Widget AMRAPTimer(double progressValue, String duration,
+      BuildContext context, Function() onTap) {
+    return GestureDetector(
+        onTap: onTap,
+        child: Container(
+            child: SizedBox(
+                height: 180,
+                width: 180,
+                child: Stack(alignment: Alignment.center, children: [
+                  AspectRatio(
+                      aspectRatio: 1,
+                      child: CircularProgressIndicator(
+                          value: progressValue,
+                          color: OlukoColors.coral,
+                          backgroundColor:
+                              OlukoColors.grayColorSemiTransparent)),
+                  Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(duration,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white)),
+                        SizedBox(height: 12),
+                        Text(OlukoLocalizations.of(context).find('tapHere'),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 26,
+                                fontWeight: FontWeight.bold,
+                                color: OlukoColors.primary)),
+                        SizedBox(height: 3),
+                        Text(
+                            OlukoLocalizations.of(context).find('forNextRound'),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400,
+                                color: OlukoColors.primary))
+                      ])
+                ]))));
   }
 }

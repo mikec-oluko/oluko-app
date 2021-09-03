@@ -48,7 +48,7 @@ class AssessmentAssignmentRepository {
     }
   }
 
-  static void setAsCompleted(String id) async {
+  static Future<bool> setAsCompleted(String id) async {
     DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"))
@@ -57,5 +57,6 @@ class AssessmentAssignmentRepository {
     reference.update({
       'compleated_at': Timestamp.now(),
     });
+    return true;
   }
 }

@@ -7,22 +7,27 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/movement_submission_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/enums/counter_enum.dart';
+import 'package:oluko_app/models/enums/timer_model.dart';
+import 'package:oluko_app/models/enums/timer_type_enum.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
+import 'package:oluko_app/models/submodels/counter.dart';
 import 'package:oluko_app/models/timer_entry.dart';
-import 'package:oluko_app/models/utils/timer_model.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
+import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/screens/courses/collapsed_movement_videos_section.dart';
 import 'package:oluko_app/ui/screens/courses/movement_videos_section.dart';
-import 'package:oluko_app/ui/screens/courses/segment_progress.dart';
+import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
@@ -54,7 +59,10 @@ class SegmentClocks extends StatefulWidget {
 
 class _SegmentClocksState extends State<SegmentClocks> {
   WorkoutType workoutType;
-
+  Image movementVideoThumbnailImage = Image.asset(
+    'assets/assessment/task_response_thumbnail.png',
+    fit: BoxFit.cover,
+  );
   //Imported from Timer POC Models
   WorkState workState = WorkState.initial;
   WorkState lastWorkStateBeforePause = WorkState.initial;
@@ -79,11 +87,15 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   User _user;
   SegmentSubmission _segmentSubmission;
-  List<Movement> _movements;
+  List<Movement> _movements = [];
 
   bool isPlaying = true;
 
   PanelController panelController = new PanelController();
+
+  TextEditingController textController = new TextEditingController();
+
+  int AMRAPRound = 0;
 
   @override
   void initState() {
@@ -109,7 +121,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
                         segmentSubmissionState.segmentSubmission;
                   }
                 },
-                child: form());
+                child: GestureDetector(
+                    onTap: () {
+                      FocusScope.of(context).unfocus();
+                    },
+                    child: form()));
           } else {
             return SizedBox();
           }
@@ -128,6 +144,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
             widget.segments[widget.segmentIndex]);
     }
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       bottomNavigationBar:
           widget.workoutType == WorkoutType.segmentWithRecording &&
                   workState == WorkState.paused
@@ -139,7 +156,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
         actions: [topCameraIcon(), audioIcon()],
       ),
       backgroundColor: Colors.black,
-      body: widget.workoutType == WorkoutType.segment
+      body: widget.workoutType == WorkoutType.segment &&
+              workState != WorkState.finished
           ? SlidingUpPanel(
               controller: panelController,
               borderRadius: BorderRadius.only(
@@ -198,10 +216,50 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   Widget _body() {
     return Container(
-        child: Column(children: [
-      _timerSection(this.workoutType, this.workState),
-      _lowerSection(this.workoutType, this.workState)
-    ]));
+        child: ListView(
+      children: [
+        _timerSection(this.workoutType, this.workState),
+        Expanded(child: _lowerSection(this.workoutType, this.workState)),
+        workState == WorkState.finished
+            ? Padding(
+                padding: const EdgeInsets.all(25.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    OlukoOutlinedButton(
+                        title: 'Go To Class',
+                        onPressed: () => Navigator.popUntil(
+                            context,
+                            ModalRoute.withName(
+                                routeLabels[RouteEnum.insideClass]))),
+                    SizedBox(
+                      width: 15,
+                    ),
+                    OlukoPrimaryButton(
+                      title: 'Next Segment',
+                      onPressed: () {
+                        widget.segmentIndex < widget.segments.length - 1
+                            ? Navigator.pushNamed(
+                                context, routeLabels[RouteEnum.segmentClocks],
+                                arguments: {
+                                    'segmentIndex': widget.segmentIndex + 1,
+                                    'classIndex': widget.classIndex,
+                                    'courseEnrollment': widget.courseEnrollment,
+                                    'workoutType': workoutType,
+                                    'segments': widget.segments,
+                                  })
+                            : Navigator.popUntil(
+                                context,
+                                ModalRoute.withName(
+                                    routeLabels[RouteEnum.insideClass]));
+                      },
+                    ),
+                  ],
+                ),
+              )
+            : SizedBox(),
+      ],
+    ));
   }
 
   /*
@@ -213,25 +271,164 @@ class _SegmentClocksState extends State<SegmentClocks> {
     return Center(
         child: Column(
       children: [
+        widget.segments[widget.segmentIndex].timerType == TimerTypeEnum.EMOM
+            ? TimerUtils.getRoundLabel(timerEntries[timerTaskIndex].roundNumber)
+            : SizedBox(),
+        widget.segments[widget.segmentIndex].timerType == TimerTypeEnum.AMRAP
+            ? TimerUtils.getRoundLabel(AMRAPRound)
+            : SizedBox(),
         Padding(
             padding: const EdgeInsets.only(top: 3, bottom: 8),
             child: Stack(alignment: Alignment.center, children: [
-              //TODO: Make dynamic
-              TimerUtils.roundsTimer(8, 2),
+              widget.segments[widget.segmentIndex].timerType !=
+                      TimerTypeEnum.AMRAP
+                  ? TimerUtils.roundsTimer(
+                      widget.segments[widget.segmentIndex].rounds,
+                      timerEntries[timerTaskIndex].roundNumber)
+                  : TimerUtils.roundsTimer(AMRAPRound + 1, AMRAPRound),
               _countdownSection(workState)
             ])),
-        _tasksSection(
-            timerEntries[timerTaskIndex].label,
-            timerTaskIndex < timerEntries.length - 1
-                ? timerEntries[timerTaskIndex + 1].label
-                : '')
+        workState == WorkState.finished ? SizedBox() : _tasksSection()
       ],
     ));
+  }
+
+  ///Current and next movement labels
+  Widget _tasksSection() {
+    String currentTask = timerEntries[timerTaskIndex].label;
+    String nextTask = timerTaskIndex < timerEntries.length - 1
+        ? timerEntries[timerTaskIndex + 1].label
+        : '';
+    return widget.workoutType == WorkoutType.segment
+        ? taskSectionWithoutRecording(currentTask, nextTask)
+        : recordingTaskSection(currentTask, nextTask);
+  }
+
+  Widget taskSectionWithoutRecording(String currentTask, String nextTask) {
+    if (timerEntries[timerTaskIndex].label == null) {
+      return Padding(
+          padding: EdgeInsets.only(top: 25),
+          child: Column(children: getJoinedLabel()));
+    } else {
+      return Padding(
+          padding: EdgeInsets.only(top: 25),
+          child: Column(
+            children: [
+              currentTaskWidget(currentTask),
+              SizedBox(height: 10),
+              nextTaskWidget(nextTask),
+              SizedBox(height: 15),
+              timerEntries[timerTaskIndex].workState == WorkState.resting &&
+                      (timerEntries[timerTaskIndex - 1].counter ==
+                              CounterEnum.reps ||
+                          timerEntries[timerTaskIndex - 1].counter ==
+                              CounterEnum.distance)
+                  ? getTextField()
+                  : SizedBox()
+            ],
+          ));
+    }
+  }
+
+  Widget getTextField() {
+    bool isCounterByReps =
+        timerEntries[timerTaskIndex - 1].counter == CounterEnum.reps;
+    return Container(
+        decoration: BoxDecoration(
+            image: DecorationImage(
+          image: AssetImage('assets/courses/gray_background.png'),
+          fit: BoxFit.cover,
+        )),
+        height: 50,
+        child: Row(children: [
+          SizedBox(width: 20),
+          Text(OlukoLocalizations.of(context).find('enterScore'),
+              style: TextStyle(
+                  fontSize: 18,
+                  color: OlukoColors.white,
+                  fontWeight: FontWeight.w300)),
+          SizedBox(width: 10),
+          SizedBox(
+              width: isCounterByReps ? 40 : 70,
+              child: TextField(
+                controller: textController,
+                style: TextStyle(
+                    fontSize: 20,
+                    color: OlukoColors.white,
+                    fontWeight: FontWeight.bold),
+                keyboardType: TextInputType.number,
+              )),
+          SizedBox(width: 10),
+          isCounterByReps
+              ? Text(timerEntries[timerTaskIndex].movement.name,
+                  style: TextStyle(
+                      fontSize: 18,
+                      color: OlukoColors.white,
+                      fontWeight: FontWeight.w300))
+              : Text(OlukoLocalizations.of(context).find('meters'),
+                  style: TextStyle(
+                      fontSize: 18,
+                      color: OlukoColors.white,
+                      fontWeight: FontWeight.w300)),
+        ]));
+  }
+
+  List<Widget> getJoinedLabel() {
+    List<Widget> labelWidgets = [];
+    timerEntries[timerTaskIndex].labels.forEach((label) {
+      labelWidgets.add(Text(label,
+          style: TextStyle(
+              fontSize: 20,
+              color: OlukoColors.white,
+              fontWeight: FontWeight.w300)));
+      labelWidgets.add(Divider(
+        height: 10,
+        color: OlukoColors.divider,
+        thickness: 0,
+        indent: 0,
+        endIndent: 0,
+      ));
+    });
+    return labelWidgets;
+  }
+
+  Widget recordingTaskSection(String currentTask, String nextTask) {
+    if (timerEntries[timerTaskIndex].label == null) {
+      List<Widget> items = getJoinedLabel();
+      return Container(
+          height: 45,
+          child: ListView(children: [
+            Padding(
+                padding: EdgeInsets.only(top: 10),
+                child: Column(children: items))
+          ]));
+    } else {
+      return Container(
+          width: ScreenUtils.width(context),
+          child: Padding(
+              padding: EdgeInsets.only(top: 7, bottom: 15),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  currentTaskWidget(currentTask, true),
+                  Positioned(
+                      left: ScreenUtils.width(context) - 70,
+                      child: Text(
+                        nextTask,
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: OlukoColors.grayColorSemiTransparent,
+                            fontWeight: FontWeight.bold),
+                      )),
+                ],
+              )));
+    }
   }
 
   ///Clock countdown label
   Widget _countdownSection(WorkState workState) {
     bool isRepsTask = timerEntries[timerTaskIndex].reps != null;
+    bool isTimedTask = timerEntries[timerTaskIndex].time != null;
 
     if (workState != WorkState.paused && isRepsTask) {
       return TimerUtils.repsTimer(
@@ -251,51 +448,48 @@ class _SegmentClocksState extends State<SegmentClocks> {
     double circularProgressIndicatorValue =
         (actualTime.inSeconds / timerEntries[timerTaskIndex].time);
 
+    if (workState == WorkState.finished) {
+      return TimerUtils.completedTimer(circularProgressIndicatorValue,
+          TimeConverter.durationToString(this.timeLeft), context);
+    }
+
     if (workState == WorkState.paused) {
       return TimerUtils.pausedTimer(
           context, TimeConverter.durationToString(this.timeLeft));
     }
 
-    if (workState == WorkState.repResting) {
+    //TODO: Fix end round timer
+    /*if (isTimedTask && actualTime.inSeconds <= 5) {
+      TimerUtils.initialTimer(
+          InitialTimerType.End,
+          timerEntries[timerTaskIndex].roundNumber + 1,
+          5,
+          timeLeft.inSeconds,
+          context);
+    }*/
+
+    if (workState == WorkState.resting) {
       return TimerUtils.restTimer(circularProgressIndicatorValue,
           TimeConverter.durationToString(this.timeLeft), context);
     }
 
-    return TimerUtils.timeTimer(circularProgressIndicatorValue,
-        TimeConverter.durationToString(this.timeLeft));
-  }
+    if (timerEntries[timerTaskIndex].roundNumber == null) {
+      //is AMRAP
+      return TimerUtils.AMRAPTimer(
+          circularProgressIndicatorValue,
+          TimeConverter.durationToString(this.timeLeft),
+          context,
+          () => this.setState(() {
+                AMRAPRound++;
+              }));
+    }
 
-  ///Current and next movement labels
-  Widget _tasksSection(String currentTask, String nextTask) {
-    return widget.workoutType == WorkoutType.segment
-        ? Padding(
-            padding: EdgeInsets.only(top: 25),
-            child: Column(
-              children: [
-                currentTaskWidget(currentTask),
-                SizedBox(height: 10),
-                nextTaskWidget(nextTask)
-              ],
-            ))
-        : Container(
-            width: ScreenUtils.width(context),
-            child: Padding(
-                padding: EdgeInsets.only(top: 7, bottom: 15),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    currentTaskWidget(currentTask, true),
-                    Positioned(
-                        left: ScreenUtils.width(context) - 70,
-                        child: Text(
-                          nextTask,
-                          style: TextStyle(
-                              fontSize: 20,
-                              color: OlukoColors.grayColorSemiTransparent,
-                              fontWeight: FontWeight.bold),
-                        )),
-                  ],
-                )));
+    String counter = timerEntries[timerTaskIndex].counter == CounterEnum.reps
+        ? timerEntries[timerTaskIndex].movement.name
+        : null;
+
+    return TimerUtils.timeTimer(circularProgressIndicatorValue,
+        TimeConverter.durationToString(this.timeLeft), context, counter);
   }
 
   Widget currentTaskWidget(String currentTask, [bool smaller = false]) {
@@ -330,12 +524,15 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   ///Lower half of the view
   Widget _lowerSection(WorkoutType workoutType, WorkState workoutState) {
-    return Container(
-      color: Colors.black,
-      child: workoutType == WorkoutType.segmentWithRecording
-          ? _cameraSection()
-          : SizedBox(),
-    );
+    if (workoutState != WorkState.finished) {
+      return Container(
+          color: Colors.black,
+          child: workoutType == WorkoutType.segmentWithRecording
+              ? _cameraSection()
+              : SizedBox());
+    } else {
+      return _segmentInfoSection();
+    }
   }
 
   Widget resumeButton() {
@@ -440,6 +637,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   void _goToNextStep() {
     _saveLastStep(timerEntries[timerTaskIndex]);
+
+    _saveCounter();
+
     if (timerTaskIndex == timerEntries.length - 1) {
       _finishWorkout();
       return;
@@ -448,6 +648,21 @@ class _SegmentClocksState extends State<SegmentClocks> {
       timerTaskIndex++;
       _playTask();
     });
+  }
+
+  _saveCounter() {
+    if (timerEntries[timerTaskIndex].workState == WorkState.resting &&
+        timerEntries[timerTaskIndex].movement.counter != null &&
+        textController.text != "") {
+      Counter counter = Counter(
+          round: timerEntries[timerTaskIndex].roundNumber,
+          set: timerEntries[timerTaskIndex].setNumber,
+          counter: int.parse(textController.text));
+      BlocProvider.of<CourseEnrollmentUpdateBloc>(context)
+        ..saveMovementCounter(widget.courseEnrollment, widget.segmentIndex,
+            widget.classIndex, timerEntries[timerTaskIndex].movement, counter);
+    }
+    textController.clear();
   }
 
   _playTask() async {
@@ -471,44 +686,14 @@ class _SegmentClocksState extends State<SegmentClocks> {
     BlocProvider.of<CourseEnrollmentBloc>(context)
       ..markSegmentAsCompleated(
           widget.courseEnrollment, widget.segmentIndex, widget.classIndex);
-    if (widget.workoutType == WorkoutType.segmentWithRecording) {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  SegmentProgress(segmentSubmission: _segmentSubmission)));
-    } else {
-      if (widget.segmentIndex < widget.segments.length - 1) {
-        /*Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => SegmentDetail(
-                    user: widget.user,
-                    segments: widget.segments,
-                    segmentIndex: widget.segmentIndex + 1,
-                    classIndex: widget.classIndex,
-                    courseEnrollment: widget.courseEnrollment)));*/
-      } else {
-        //TODO: Go to next class
-        /*Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => SegmentDetail(
-                    user: widget.user,
-                    segments: widget.segments,
-                    segmentIndex: 0,
-                    classIndex: widget.classIndex,
-                    courseEnrollment: widget.courseEnrollment)));*/
-        //ver lo de las clases porque no tengo la lista de clases
-      }
-    }
+    setState(() {});
   }
 
   _startMovement() {
     //Reset countdown variables
     timerTaskIndex = 0;
-    this.timerEntries =
-        SegmentUtils.getExercisesList(widget.segments[widget.segmentIndex]);
+    this.timerEntries = SegmentUtils.getExercisesList(
+        widget.segments[widget.segmentIndex], context);
     _playTask();
   }
 
@@ -574,7 +759,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
           ),
           Padding(
               padding: EdgeInsets.only(top: 1),
-              child: Icon(Icons.circle, size: 12, color: OlukoColors.primary))
+              child: Icon(Icons.circle_outlined,
+                  size: 12, color: OlukoColors.primary))
         ]));
   }
 
@@ -586,4 +772,230 @@ class _SegmentClocksState extends State<SegmentClocks> {
           scale: 4,
         ));
   }
+
+  ///Section with information about segment and workout movements.
+  // ignore: unused_element
+  Widget _segmentInfoSection() {
+    return Padding(
+      padding: const EdgeInsets.all(30.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                //_completedBadge(),
+                MovementUtils.movementTitle(
+                    widget.segments[widget.segmentIndex].name),
+              ],
+            ),
+          ),
+          // Padding(
+          //   padding: const EdgeInsets.all(8.0),
+          //   child: MovementUtils.labelWithTitle(
+          //       '${OlukoLocalizations.of(context).find('duration')}:',
+          //       '${widget.segments[widget.segmentIndex].duration} Seconds'),
+          // ),
+          // Padding(
+          //   padding: const EdgeInsets.all(8.0),
+          //   child: MovementUtils.labelWithTitle(
+          //       '${OlukoLocalizations.of(context).find('rounds')}:',
+          //       '${widget.segments[widget.segmentIndex].rounds} ${OlukoLocalizations.of(context).find('rounds')}'),
+          // ),
+          /*Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: MovementUtils.workout(tasks, context),
+          ),*/
+          _tasksSection(),
+          Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
+              child: workoutType == WorkoutType.segment
+                  ? _feedbackCard()
+                  : _shareCard()),
+        ],
+      ),
+    );
+  }
+
+  ///Information card with sharing options for the recorded video
+  Widget _shareCard() {
+    return Container(
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(5)),
+          color: OlukoColors.listGrayColor),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                      flex: 2,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.all(Radius.circular(5)),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            movementVideoThumbnailImage,
+                          ],
+                        ),
+                      )),
+                  Expanded(
+                    flex: 8,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 15.0, top: 0),
+                      child: Container(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.max,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              OlukoLocalizations.of(context)
+                                  .find('shareYourVideo'),
+                              style: OlukoFonts.olukoBigFont(),
+                              textAlign: TextAlign.start,
+                            ),
+                            Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 10),
+                                  child: Column(
+                                    children: [
+                                      ElevatedButton(
+                                        onPressed: () {},
+                                        child: Icon(Icons.movie),
+                                        style: ElevatedButton.styleFrom(
+                                            minimumSize: Size(50, 50),
+                                            primary: Colors.white),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text('Stories',
+                                            style:
+                                                OlukoFonts.olukoMediumFont()),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    children: [
+                                      ElevatedButton(
+                                        onPressed: () {},
+                                        child: Icon(Icons.send),
+                                        style: ElevatedButton.styleFrom(
+                                            minimumSize: Size(50, 50),
+                                            primary: Colors.white),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text('To Coach',
+                                            style:
+                                                OlukoFonts.olukoMediumFont()),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  //Information card with Feedback Options
+  // ignore: unused_element
+  Widget _feedbackCard() {
+    return Container(
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(5)),
+          color: OlukoColors.listGrayColor),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                OlukoLocalizations.of(context).find('howWasYourWorkoutSession'),
+                style: OlukoFonts.olukoBigFont(),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: Column(
+                    children: [_feedbackButton(Icons.favorite)],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [_feedbackButton(Icons.close)],
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _feedbackButton(IconData iconData, {Function() onPressed}) {
+    return OutlinedButton(
+      onPressed: onPressed,
+      child: Icon(iconData, color: Colors.white),
+      style: OutlinedButton.styleFrom(
+        padding: EdgeInsets.all(15),
+        shape: CircleBorder(),
+        side: BorderSide(color: Colors.white),
+      ),
+    );
+  }
+
+  Widget _completedBadge() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: OlukoColors.listGrayColor,
+          borderRadius: BorderRadius.all(Radius.circular(5)),
+        ),
+        padding: EdgeInsets.all(5),
+        child: Text(
+          'COMPLETED',
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
+    );
+  }
+
+  /*
+  Other Methods
+  */
+
 }

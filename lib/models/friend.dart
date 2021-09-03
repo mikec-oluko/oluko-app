@@ -32,18 +32,27 @@ class Friend extends Base {
 
   factory Friend.fromJson(Map<String, dynamic> json) {
     Friend favorite = Friend(
-        friends: List.from(json['friends'])
-            .map((friend) => FriendModel.fromJson(friend))
-            .toList(),
-        friendRequestSent: List.from(json['friend_request_sent'])
-            .map((friend) => FriendRequestModel.fromJson(friend))
-            .toList(),
-        friendRequestReceived: List.from(json['friend_request_received'])
-            .map((friend) => FriendRequestModel.fromJson(friend))
-            .toList(),
-        blocked: List.from(json['blocked'])
-            .map((friend) => FriendModel.fromJson(friend))
-            .toList());
+        friends: List.from(json['friends']).length > 0
+            ? List.from(json['friends'])
+                .map((friend) => FriendModel.fromJson(friend))
+                .toList()
+            : [],
+        friendRequestSent: List.from(json['friend_request_sent']).length > 0
+            ? List.from(json['friend_request_sent'])
+                .map((friend) => FriendRequestModel.fromJson(friend))
+                .toList()
+            : [],
+        friendRequestReceived:
+            List.from(json['friend_request_received']).length > 0
+                ? List.from(json['friend_request_received'])
+                    .map((friend) => FriendRequestModel.fromJson(friend))
+                    .toList()
+                : [],
+        blocked: List.from(json['blocked']).length > 0
+            ? List.from(json['blocked'])
+                .map((friend) => FriendModel.fromJson(friend))
+                .toList()
+            : []);
     favorite.setBase(json);
     return favorite;
   }

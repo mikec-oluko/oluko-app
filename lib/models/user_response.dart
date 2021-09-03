@@ -18,6 +18,7 @@ class UserResponse extends Base {
       this.city,
       this.state,
       this.country,
+      this.currentPlan,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -45,7 +46,7 @@ class UserResponse extends Base {
       city,
       state,
       country;
-
+  num currentPlan;
   num hubspotCompanyId;
   num hubspotContactId;
   int privacy;
@@ -66,8 +67,9 @@ class UserResponse extends Base {
       firebaseId: json['firebase_id'],
       hubspotCompanyId: json['hubspot_company_id'],
       hubspotContactId: json['hubspot_contact_id'],
-      notification: json['notification'],
-      privacy: json['privacy'],
+      notification: json['notification'] == null ? true : json['notification'],
+      privacy: json['privacy'] == null ? 0 : json['privacy'],
+      currentPlan: json['current_plan'],
     );
     userResponse.setBase(json);
     return userResponse;
@@ -92,8 +94,9 @@ class UserResponse extends Base {
       'firebase_id': firebaseId,
       'hubspot_company_id': hubspotCompanyId,
       'hubspot_contact_id': hubspotContactId,
-      'notification': notification,
-      'privacy': privacy,
+      'notification': notification == null ? true : notification,
+      'privacy': privacy == null ? 0 : privacy,
+      'current_plan': currentPlan,
     };
     userReponseJson.addEntries(super.toJson().entries);
     return userReponseJson;
