@@ -123,7 +123,7 @@ class TimerUtils {
             ])));
   }
 
-  static Widget getEMOMRounds(int round) {
+  static Widget getRoundLabel(int round) {
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
       Text('Round',
           textAlign: TextAlign.center,
@@ -293,8 +293,8 @@ class TimerUtils {
             opaque: false,
             pageBuilder: (BuildContext context, _, __) => CountdownOverlay(
                   seconds: initialTimer != null ? initialTimer : 5,
-                  totalRounds: totalRounds,
-                  currentRound: currentRound,
+                  totalRounds: totalRounds != null ? totalRounds : 1,
+                  currentRound: currentRound != null ? currentRound : 0,
                   recording: workoutType == WorkoutType.segmentWithRecording,
                 )))
         .then((value) => Navigator.pushNamed(
@@ -302,40 +302,47 @@ class TimerUtils {
             arguments: arguments));
   }
 
-  static Widget AMRAPTimer(
-      double progressValue, String duration, BuildContext context) {
-    return Container(
-        child: SizedBox(
-            height: 180,
-            width: 180,
-            child: Stack(alignment: Alignment.center, children: [
-              AspectRatio(
-                  aspectRatio: 1,
-                  child: CircularProgressIndicator(
-                      value: progressValue,
-                      color: OlukoColors.coral,
-                      backgroundColor: OlukoColors.grayColorSemiTransparent)),
-              Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Text(duration,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white)),
+  static Widget AMRAPTimer(double progressValue, String duration,
+      BuildContext context, Function() onTap) {
+    return GestureDetector(
+        onTap: onTap,
+        child: Container(
+            child: SizedBox(
+                height: 180,
+                width: 180,
+                child: Stack(alignment: Alignment.center, children: [
+                  AspectRatio(
+                      aspectRatio: 1,
+                      child: CircularProgressIndicator(
+                          value: progressValue,
+                          color: OlukoColors.coral,
+                          backgroundColor:
+                              OlukoColors.grayColorSemiTransparent)),
+                  Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(duration,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white)),
+                        SizedBox(height: 12),
                         Text(OlukoLocalizations.of(context).find('tapHere'),
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                                fontSize: 32,
+                                fontSize: 26,
                                 fontWeight: FontWeight.bold,
                                 color: OlukoColors.primary)),
-                        SizedBox(height: 5),
-                        Text(OlukoLocalizations.of(context).find('forNextRound'),
+                        SizedBox(height: 3),
+                        Text(
+                            OlukoLocalizations.of(context).find('forNextRound'),
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                                fontSize: 18,
+                                fontSize: 16,
                                 fontWeight: FontWeight.w400,
                                 color: OlukoColors.primary))
-              ])
-            ])));
+                      ])
+                ]))));
   }
 }

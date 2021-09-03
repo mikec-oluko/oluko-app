@@ -41,10 +41,7 @@ class MovementUtils {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-            segment.rounds != null && segment.rounds > 1
-                ? SegmentUtils.getRoundTitle(
-                    segment, context, OlukoColors.white)
-                : SizedBox(),
+            SegmentUtils.getRoundTitle(segment, context, OlukoColors.white)
           ] +
           workoutWidgets,
     );
