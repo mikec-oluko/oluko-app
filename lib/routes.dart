@@ -588,6 +588,8 @@ class Routes {
               value: _transformationJourneyBloc),
           BlocProvider<TaskBloc>.value(value: _taskBloc),
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
+          BlocProvider<CourseEnrollmentListBloc>.value(
+              value: _courseEnrollmentListBloc),
         ];
         // newRouteView = CoachPage();
         newRouteView = CoachAssignedCountDown();
