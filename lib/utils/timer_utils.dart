@@ -73,7 +73,7 @@ class TimerUtils {
       IntervalProgressBar(
         direction: IntervalProgressDirection.circle,
         max: totalRounds,
-        progress: currentRound,
+        progress: currentRound - 1,
         intervalSize: 4,
         size: Size(200, 200),
         highlightColor: OlukoColors.primary,
@@ -86,7 +86,9 @@ class TimerUtils {
         strokeWith: 5,
       );
 
-  static Widget timeTimer(double progressValue, String duration) {
+  static Widget timeTimer(
+      double progressValue, String duration, BuildContext context,
+      [String counter]) {
     return Container(
         child: SizedBox(
             height: 180,
@@ -98,12 +100,77 @@ class TimerUtils {
                       value: progressValue,
                       color: OlukoColors.coral,
                       backgroundColor: OlukoColors.grayColorSemiTransparent)),
-              Text(duration,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white))
+              Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Text(duration,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white)),
+                counter != null
+                    ? Padding(
+                        padding: EdgeInsets.only(top: 5),
+                        child: Text(
+                            OlukoLocalizations.of(context).find('countYour') +
+                                counter,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w300,
+                                color: OlukoColors.coral)))
+                    : SizedBox()
+              ])
+            ])));
+  }
+
+  static Widget getEMOMRounds(int round) {
+    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      Text('Round',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              fontStyle: FontStyle.italic,
+              color: OlukoColors.primary)),
+      SizedBox(width: 10),
+      Text(round.toString(),
+          textAlign: TextAlign.center,
+          style: TextStyle(
+              fontSize: 50,
+              fontWeight: FontWeight.bold,
+              fontStyle: FontStyle.italic,
+              color: OlukoColors.white)),
+    ]);
+  }
+
+  static Widget completedTimer(
+      double progressValue, String duration, BuildContext context) {
+    return Container(
+        child: SizedBox(
+            height: 180,
+            width: 180,
+            child: Stack(alignment: Alignment.center, children: [
+              AspectRatio(
+                  aspectRatio: 1,
+                  child: CircularProgressIndicator(
+                      value: progressValue,
+                      color: OlukoColors.coral,
+                      backgroundColor: OlukoColors.grayColorSemiTransparent)),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image(
+                      image: AssetImage(
+                          'assets/self_recording/completed_tick.png')),
+                  SizedBox(height: 8),
+                  Text(OlukoLocalizations.of(context).find('completed'),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white)),
+                ],
+              )
             ])));
   }
 

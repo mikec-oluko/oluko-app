@@ -55,7 +55,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext xcontext) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
         _user = authState.firebaseUser;
@@ -253,14 +253,13 @@ class _SegmentDetailState extends State<SegmentDetail> {
                     OlukoOutlinedButton(
                       title: OlukoLocalizations.of(context).find('ignore'),
                       onPressed: () {
-                        //TODO: Make rounds dynamic
                         TimerUtils.startCountdown(
                             WorkoutType.segment,
                             context,
                             getArguments(),
                             _segments[widget.segmentIndex].initialTimer,
-                            8,
-                            2);
+                            _segments[widget.segmentIndex].rounds,
+                            1);
                       },
                     ),
                     SizedBox(width: 20),

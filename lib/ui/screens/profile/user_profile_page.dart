@@ -4,20 +4,25 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
+import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/profile/profile_bloc.dart';
 import 'package:oluko_app/blocs/profile/upload_avatar_bloc.dart';
 import 'package:oluko_app/blocs/profile/upload_cover_image_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
+import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/list_of_items_to_widget.dart';
+import 'package:oluko_app/helpers/privacy_options.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/friend.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
 import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/models/user_statistics.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/carousel_small_section.dart';
@@ -44,17 +49,25 @@ class _UserProfilePageState extends State<UserProfilePage> {
   UserResponse _currentAuthUser;
   UserResponse _userProfileToDisplay;
   bool _isCurrentUser = false;
-  String _connectButtonDefaultText = "Connect";
+  bool _isFollow = false;
+  UserConnectStatus connectStatus;
+  Friend friendData;
+  List<UserResponse> friendUsers = [];
+
+  String _connectButtonTitle = "";
+
   List<TransformationJourneyUpload> _transformationJourneyContent = [];
   List<TaskSubmission> _assessmentVideosContent = [];
   List<Challenge> _activeChallenges = [];
   List<Course> _coursesToUse = [];
   List<CourseEnrollment> _courseEnrollmentList = [];
-  bool _isFollow = true;
+  UserStatistics userStats;
+
   final PanelController _panelController = new PanelController();
   double _panelMaxHeight = 100.0;
   double _statePanelMaxHeight = 100.0;
   bool _isNewCoverImage = false;
+
   @override
   void initState() {
     setState(() {
@@ -69,16 +82,21 @@ class _UserProfilePageState extends State<UserProfilePage> {
       _userProfileToDisplay = widget.userRequested;
 
       if (state is AuthSuccess) {
-        this._currentAuthUser = state.user;
+        _currentAuthUser = state.user;
 
-        if (!_isOwnerProfile(
-            authUser: this._currentAuthUser,
-            userRequested: widget.userRequested)) {
-          _userProfileToDisplay = this._currentAuthUser;
+        if (_isOwnerProfile(
+            authUser: _currentAuthUser, userRequested: widget.userRequested)) {
+          _userProfileToDisplay = _currentAuthUser;
           _isCurrentUser = true;
         }
         _requestContentForUser(
             context: context, userRequested: _userProfileToDisplay);
+
+        _isCurrentUser == false
+            ? BlocProvider.of<FriendBloc>(context)
+                .getFriendsByUserId(_currentAuthUser.id)
+            : null;
+
         return _buildUserProfileView(
             context: context,
             authUser: _currentAuthUser,
@@ -97,10 +115,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   bool _isOwnerProfile(
       {@required UserResponse authUser, @required UserResponse userRequested}) {
-    if (userRequested == null) {
-      _isCurrentUser = false;
-      return false;
-    }
     return authUser.id == userRequested.id;
   }
 
@@ -145,6 +159,17 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 _statePanelMaxHeight = 100;
               } else {
                 _statePanelMaxHeight = 300;
+              }
+            },
+          ),
+          BlocListener<FriendBloc, FriendState>(
+            listenWhen: (FriendState previous, FriendState current) =>
+                current != previous,
+            listener: (context, state) {
+              if (state is GetFriendsSuccess) {
+                friendData = state.friendData;
+                friendUsers = state.friendUsers;
+                checkConnectionStatus(userRequested, friendData);
               }
             },
           ),
@@ -265,10 +290,23 @@ class _UserProfilePageState extends State<UserProfilePage> {
                             height: MediaQuery.of(context).size.height / 3.5,
                             child: BlocProvider.value(
                                 value: BlocProvider.of<ProfileBloc>(context),
-                                child: UserProfileInformation(
-                                    userInformation: _userProfileToDisplay,
-                                    actualRoute: ActualProfileRoute.userProfile,
-                                    isOwner: _isCurrentUser))),
+                                child: BlocBuilder<UserStatisticsBloc,
+                                    UserStatisticsState>(
+                                  builder: (context, state) {
+                                    if (state is StatisticsSuccess) {
+                                      userStats = state.userStats;
+                                    }
+                                    return UserProfileInformation(
+                                      userToDisplayInformation:
+                                          _userProfileToDisplay,
+                                      actualRoute:
+                                          ActualProfileRoute.userProfile,
+                                      currentUser: _currentAuthUser,
+                                      connectStatus: connectStatus,
+                                      userStats: userStats,
+                                    );
+                                  },
+                                ))),
                       ),
                       Positioned(
                         top: MediaQuery.of(context).size.height / 5,
@@ -298,7 +336,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 ),
                 Column(
                   children: [
-                    //TODO: Check CONNECT and FOLLOW   _currentAuthUser And _userProfileToDisplay
                     !_isCurrentUser
                         ? Padding(
                             padding: const EdgeInsets.fromLTRB(10, 30, 10, 0),
@@ -309,7 +346,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                     setState(() {
                                       _isFollow = !_isFollow;
                                     });
-                                    //TODO: Send Like from _currentAuthUser to UserToDisplay
+                                    //TODO: Add user with is_favorite
                                   },
                                   child: Icon(
                                       _isFollow
@@ -320,9 +357,21 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                 Container(
                                   child: OlukoOutlinedButton(
                                       onPressed: () {
-                                        //TODO: Connect _currentAuthUser with UserToDisplay
+                                        switch (connectStatus) {
+                                          case UserConnectStatus.connected:
+                                            //TODO: remove friend
+                                            break;
+                                          case UserConnectStatus.noConnected:
+                                            //TODO: connect friend
+                                            break;
+                                          case UserConnectStatus.requestPending:
+                                            //TODO: cancel request friend
+                                            break;
+                                          default:
+                                        }
                                       },
-                                      title: _connectButtonDefaultText),
+                                      title: OlukoLocalizations.of(context)
+                                          .find(_connectButtonTitle)),
                                 ),
                               ],
                             ),
@@ -420,19 +469,28 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   void _requestContentForUser(
       {BuildContext context, UserResponse userRequested}) {
-    BlocProvider.of<CourseEnrollmentListBloc>(context)
-        .getCourseEnrollmentsByUserId(userRequested.id);
+    if (PrivacyOptions().canShowDetails(
+        isOwner: _isCurrentUser,
+        currentUser: _currentAuthUser,
+        userRequested: _userProfileToDisplay,
+        connectStatus: connectStatus)) {
+      BlocProvider.of<CourseEnrollmentBloc>(context)
+          .getCourseEnrollmentsByUserId(userRequested.id);
 
-    BlocProvider.of<TaskSubmissionBloc>(context)
-        .getTaskSubmissionByUserId(userRequested.id);
+      BlocProvider.of<TaskSubmissionBloc>(context)
+          .getTaskSubmissionByUserId(userRequested.id);
 
-    BlocProvider.of<CourseBloc>(context).getUserEnrolled(userRequested.id);
+      BlocProvider.of<CourseBloc>(context).getUserEnrolled(userRequested.id);
 
-    BlocProvider.of<TransformationJourneyBloc>(context)
-        .getContentByUserId(userRequested.id);
+      BlocProvider.of<TransformationJourneyBloc>(context)
+          .getContentByUserId(userRequested.id);
 
-    BlocProvider.of<CourseEnrollmentBloc>(context)
-        .getChallengesForUser(userRequested.id);
+      BlocProvider.of<CourseEnrollmentBloc>(context)
+          .getChallengesForUser(userRequested.id);
+
+      BlocProvider.of<UserStatisticsBloc>(context)
+          .getUserStatistics(userRequested.id);
+    }
   }
 
   Padding buildCourseSection(
@@ -509,5 +567,53 @@ class _UserProfilePageState extends State<UserProfilePage> {
       }
     }
     return _completion;
+  }
+
+  checkConnectionStatus(UserResponse userRequested, Friend friendData) {
+    friendData.friends.forEach((friend) {
+      if (friend.id == userRequested.id) {
+        if (friend.isFavorite) {
+          setState(() {
+            _isFollow = true;
+          });
+        }
+        setState(() {
+          connectStatus = UserConnectStatus.connected;
+          _connectButtonTitle = returnTitleForConnectButton(connectStatus);
+        });
+      } else {
+        setState(() {
+          connectStatus = UserConnectStatus.noConnected;
+          _connectButtonTitle = returnTitleForConnectButton(connectStatus);
+        });
+      }
+    });
+
+    friendData.friendRequestSent.forEach((request) {
+      if (request.id == userRequested.id) {
+        setState(() {
+          connectStatus = UserConnectStatus.requestPending;
+          _connectButtonTitle = returnTitleForConnectButton(connectStatus);
+        });
+      } else {
+        setState(() {
+          connectStatus = UserConnectStatus.noConnected;
+          _connectButtonTitle = returnTitleForConnectButton(connectStatus);
+        });
+      }
+    });
+  }
+
+  String returnTitleForConnectButton(UserConnectStatus connectStatus) {
+    switch (connectStatus) {
+      case UserConnectStatus.connected:
+        return "remove";
+      case UserConnectStatus.noConnected:
+        return "connect";
+      case UserConnectStatus.requestPending:
+        return "cancelConnectionRequested";
+      default:
+        return "fail";
+    }
   }
 }

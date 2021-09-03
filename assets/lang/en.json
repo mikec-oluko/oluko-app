@@ -143,8 +143,11 @@
     "challenges": "Challenges",
     "movesInThisClass": "Moves in this class",
     "viewDetails": "View Details",
-    "noContent":"No content to display",
-    "profileUploadAborted":"Profile upload aborted",
+    "noContent": "No content to display",
+    "remove": "Remove",
+    "connect": "Connect",
+    "cancelConnectionRequested": "Cancel Connection Requested",
+    "profileUploadAborted": "Profile upload aborted",
     "cameraInfo": "Set your camera to your desired orientation & position",
     "cameraWarning": "Hitting this button will start the recording and the Segment",
     "startsIn": "Starts In",
@@ -158,5 +161,10 @@
     "ignore": "Ignore",
     "resume": "Resume",
     "movementVideos": "Movement Videos",
-    "yourCurrentPlanDoesntIncludeAssessment": "Your current plan doesn't include these assessment tasks"
+    "yourCurrentPlanDoesntIncludeAssessment": "Your current plan doesn't include these assessment tasks",
+    "countYour": "Count your ",
+    "enterScore": "Enter score: ",
+    "meters": "Meters",
+    "in": "in",
+    "minutes": "minutes"
 }
