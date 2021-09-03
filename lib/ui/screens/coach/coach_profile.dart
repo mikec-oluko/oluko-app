@@ -3,6 +3,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/utils/container_grediant.dart';
 import 'package:oluko_app/utils/image_utils.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class CoachProfile extends StatefulWidget {
   final UserResponse coachUser;
@@ -39,8 +40,6 @@ class _CoachProfileState extends State<CoachProfile> {
         ),
       ),
       body: Container(
-        // width: MediaQuery.of(context).size.width,
-        // height: MediaQuery.of(context).size.height,
         color: OlukoColors.black,
         constraints: BoxConstraints.expand(),
         child: ListView(
@@ -106,23 +105,53 @@ class _CoachProfileState extends State<CoachProfile> {
                           height: 50,
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Row(
-                              children: [
-                                Image.asset(
-                                  'assets/assessment/play.png',
-                                  scale: 5,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10),
-                                  child: Image.asset(
-                                    'assets/courses/audio.png',
-                                    width: 100,
-                                    fit: BoxFit.fill,
-                                    scale: 5,
+                            child: IntrinsicHeight(
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Image.asset(
+                                        'assets/assessment/play.png',
+                                        scale: 5,
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 10),
+                                        child: Image.asset(
+                                          'assets/courses/coach_audio.png',
+                                          width: 150,
+                                          fit: BoxFit.fill,
+                                          scale: 5,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                              ],
+                                  VerticalDivider(color: OlukoColors.grayColor),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 5),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Image.asset(
+                                          'assets/courses/coach_delete.png',
+                                          scale: 5,
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Image.asset(
+                                          'assets/courses/coach_tick.png',
+                                          scale: 5,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         )
@@ -314,7 +343,7 @@ class _CoachProfileState extends State<CoachProfile> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                widget.coachUser.firstName,
+                                OlukoLocalizations.of(context).find('coach'),
                                 style: OlukoFonts.olukoBigFont(
                                     customColor: OlukoColors.primary,
                                     custoFontWeight: FontWeight.w500),
@@ -323,7 +352,8 @@ class _CoachProfileState extends State<CoachProfile> {
                                 width: 5.0,
                               ),
                               Text(
-                                widget.coachUser.lastName,
+                                // widget.coachUser.lastName,
+                                widget.coachUser.firstName,
                                 style: OlukoFonts.olukoBigFont(
                                     customColor: OlukoColors.primary,
                                     custoFontWeight: FontWeight.w500),

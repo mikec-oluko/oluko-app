@@ -125,24 +125,30 @@ class _CoachPageState extends State<CoachPage> {
               ),
             ),
             _currentAuthUser.avatarThumbnail != null
-                ? CircleAvatar(
-                    backgroundColor: OlukoColors.black,
-                    backgroundImage: Image.network(
-                      _currentAuthUser.avatarThumbnail,
-                      fit: BoxFit.contain,
-                      frameBuilder: (BuildContext context, Widget child,
-                              int frame, bool wasSynchronouslyLoaded) =>
-                          ImageUtils.frameBuilder(
-                              context, child, frame, wasSynchronouslyLoaded,
-                              height: 24, width: 24),
-                      height: 24,
-                      width: 24,
-                    ).image,
-                    radius: 24.0,
+                ? Padding(
+                    padding: const EdgeInsets.only(right: 5),
+                    child: CircleAvatar(
+                      backgroundColor: OlukoColors.black,
+                      backgroundImage: Image.network(
+                        _currentAuthUser.avatarThumbnail,
+                        fit: BoxFit.contain,
+                        frameBuilder: (BuildContext context, Widget child,
+                                int frame, bool wasSynchronouslyLoaded) =>
+                            ImageUtils.frameBuilder(
+                                context, child, frame, wasSynchronouslyLoaded,
+                                height: 24, width: 24),
+                        height: 24,
+                        width: 24,
+                      ).image,
+                      radius: 24.0,
+                    ),
                   )
-                : CircleAvatar(
-                    backgroundColor: OlukoColors.primary,
-                    radius: 24.0,
+                : Padding(
+                    padding: const EdgeInsets.only(right: 5),
+                    child: CircleAvatar(
+                      backgroundColor: OlukoColors.primary,
+                      radius: 24.0,
+                    ),
                   ),
           ],
         )
@@ -166,11 +172,14 @@ class _CoachPageState extends State<CoachPage> {
     return SlidingUpPanel(
       header: Padding(
         padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
-        child: Text(
-          OlukoLocalizations.of(context).find('myTimeline'),
-          style: OlukoFonts.olukoBigFont(
-              customColor: OlukoColors.grayColor,
-              custoFontWeight: FontWeight.w500),
+        child: Padding(
+          padding: const EdgeInsets.only(left: 10),
+          child: Text(
+            OlukoLocalizations.of(context).find('myTimeline'),
+            style: OlukoFonts.olukoBigFont(
+                customColor: OlukoColors.grayColor,
+                custoFontWeight: FontWeight.w500),
+          ),
         ),
       ),
       borderRadius: radius,
@@ -233,7 +242,7 @@ class _CoachPageState extends State<CoachPage> {
     );
   }
 
-  cardSliderSection(BuildContext context, List<Widget> children2) {
+  cardSliderSection(BuildContext context, List<Widget> listOfContent) {
     return Container(
       color: Colors.black,
       width: MediaQuery.of(context).size.width,
@@ -245,7 +254,7 @@ class _CoachPageState extends State<CoachPage> {
           Padding(
             padding: const EdgeInsets.fromLTRB(35, 20, 35, 20),
             child: CarouselSlider(
-              items: children2,
+              items: listOfContent,
               options: CarouselOptions(
                   aspectRatio: 5.4,
                   viewportFraction: 0.7,
@@ -276,7 +285,7 @@ class _CoachPageState extends State<CoachPage> {
   }
 
   Container videosContentHorizontalCarousel(
-      BuildContext context, List<Widget> children2) {
+      BuildContext context, List<Widget> listOfContent) {
     return Container(
       color: Colors.black,
       width: MediaQuery.of(context).size.width,
@@ -288,7 +297,7 @@ class _CoachPageState extends State<CoachPage> {
             padding: const EdgeInsets.only(top: 10),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: children2,
+              children: listOfContent,
             ),
           )
         ],
@@ -349,6 +358,7 @@ class _CoachPageState extends State<CoachPage> {
     return BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
         builder: (context, state) {
       if (state is GetUserTaskSubmissionSuccess) {
+        // _assessmentVideosContent = [];
         _assessmentVideosContent = state.taskSubmissions;
       }
       return _assessmentVideosContent.length != null
@@ -403,7 +413,12 @@ class _CoachPageState extends State<CoachPage> {
                                                 _assessmentVideosContent[0],
                                             isCoach: true,
                                             isForCarousel: isForCarousel)
-                                        : SizedBox(),
+                                        : contentSection(
+                                            title:
+                                                OlukoLocalizations.of(context)
+                                                    .find('sentVideos'),
+                                            isForCarousel: isForCarousel,
+                                            needTitle: false),
                                   ),
                                 ],
                               )
@@ -425,7 +440,11 @@ class _CoachPageState extends State<CoachPage> {
                                             _assessmentVideosContent[0],
                                         isCoach: true,
                                         isForCarousel: isForCarousel)
-                                    : SizedBox(),
+                                    : contentSection(
+                                        title: OlukoLocalizations.of(context)
+                                            .find('sentVideos'),
+                                        isForCarousel: isForCarousel,
+                                        needTitle: false),
                               ),
                       ),
                     )
@@ -434,38 +453,14 @@ class _CoachPageState extends State<CoachPage> {
               ],
             )
           : isForCarousel
-              ? Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                    color: OlukoColors.blackColorSemiTransparent,
-                  ),
-                  height: 150,
-                  width: 200,
-                  child: Center(
-                    child: Text(
-                      OlukoLocalizations.of(context).find('noContent'),
-                      style: OlukoFonts.olukoMediumFont(
-                          customColor: OlukoColors.primary,
-                          custoFontWeight: FontWeight.w500),
-                    ),
-                  ),
-                )
-              : Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                    color: OlukoColors.blackColorSemiTransparent,
-                  ),
-                  width: 150,
-                  height: 100,
-                  child: Center(
-                    child: Text(
-                      OlukoLocalizations.of(context).find('noContent'),
-                      style: OlukoFonts.olukoMediumFont(
-                          customColor: OlukoColors.primary,
-                          custoFontWeight: FontWeight.w500),
-                    ),
-                  ),
-                );
+              ? contentSection(
+                  title: OlukoLocalizations.of(context).find('sentVideos'),
+                  isForCarousel: isForCarousel,
+                  needTitle: false)
+              : contentSection(
+                  title: OlukoLocalizations.of(context).find('sentVideos'),
+                  isForCarousel: isForCarousel,
+                  needTitle: false);
     });
   }
 
@@ -621,30 +616,35 @@ class _CoachPageState extends State<CoachPage> {
   }
 
   Widget toDoSection(BuildContext context) {
-    return BlocBuilder<CourseEnrollmentBloc, CourseEnrollmentState>(
+    return BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(
       builder: (context, state) {
-        if (state is GetCourseEnrollmentChallenge) {
-          if (_activeChallenges.length == 0) {
-            _activeChallenges = state.challenges;
-          }
-        }
-        if (state is CourseEnrollmentListSuccess) {
-          _courseEnrollmentList = state.courseEnrollmentList;
+        if (state is CourseEnrollmentsByUserSuccess) {
+          _courseEnrollmentList = state.courseEnrollments;
           toDoSegments = segments(_courseEnrollmentList);
           actualSegmentsToDisplay =
               createSegmentContentInforamtion(toDoSegments);
         }
-        return Container(
-            color: Colors.black,
-            width: MediaQuery.of(context).size.width,
-            height: 120,
-            child: ListView(
-                padding: EdgeInsets.zero,
-                shrinkWrap: true,
-                scrollDirection: Axis.horizontal,
-                children: [
-                  Wrap(children: toDoContent()),
-                ]));
+        return BlocBuilder<CourseEnrollmentBloc, CourseEnrollmentState>(
+          builder: (context, state) {
+            if (state is GetCourseEnrollmentChallenge) {
+              if (_activeChallenges.length == 0) {
+                _activeChallenges = state.challenges;
+              }
+            }
+
+            return Container(
+                color: Colors.black,
+                width: MediaQuery.of(context).size.width,
+                height: 120,
+                child: ListView(
+                    padding: EdgeInsets.zero,
+                    shrinkWrap: true,
+                    scrollDirection: Axis.horizontal,
+                    children: [
+                      Wrap(children: toDoContent()),
+                    ]));
+          },
+        );
       },
     );
   }
@@ -724,9 +724,11 @@ class _CoachPageState extends State<CoachPage> {
 
   challengeCard({List<Challenge> challenges}) {
     List<Widget> contentForSection = [];
-    challenges.forEach((challenge) {
-      contentForSection.add(returnCardForChallenge(challenge));
-    });
+    if (challenges.length != 0) {
+      challenges.forEach((challenge) {
+        contentForSection.add(returnCardForChallenge(challenge));
+      });
+    }
     return contentForSection;
   }
 
@@ -771,7 +773,7 @@ class _CoachPageState extends State<CoachPage> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Text(
-            OlukoLocalizations.of(context).find('toDo'),
+            OlukoLocalizations.of(context).find('activityStats'),
             style: OlukoFonts.olukoMediumFont(
                 customColor: OlukoColors.white,
                 custoFontWeight: FontWeight.w500),
@@ -877,7 +879,8 @@ class _CoachPageState extends State<CoachPage> {
     );
   }
 
-  Row contentSection({String title, bool isForCarousel}) {
+  Row contentSection(
+      {String title, bool isForCarousel, bool needTitle = true}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -887,12 +890,14 @@ class _CoachPageState extends State<CoachPage> {
           children: [
             Padding(
               padding: const EdgeInsets.only(left: 5),
-              child: Text(
-                title,
-                style: OlukoFonts.olukoMediumFont(
-                    customColor: OlukoColors.grayColor,
-                    custoFontWeight: FontWeight.w500),
-              ),
+              child: needTitle
+                  ? Text(
+                      title,
+                      style: OlukoFonts.olukoMediumFont(
+                          customColor: OlukoColors.grayColor,
+                          custoFontWeight: FontWeight.w500),
+                    )
+                  : SizedBox(),
             ),
             Padding(
               padding: isForCarousel
