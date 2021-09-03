@@ -345,10 +345,27 @@ class _CoachPageState extends State<CoachPage> {
   }
 
   listOfContentForUser(bool carousel) {
+    if (carousel) {
+      return [
+        mentoredVideos(carousel),
+        sentVideos(carousel),
+        contentSection(title: "Recomended Videos", isForCarousel: carousel),
+        contentSection(title: "Voice Messages", isForCarousel: carousel),
+      ];
+    }
     return [
       mentoredVideos(carousel),
+      SizedBox(
+        width: 5,
+      ),
       sentVideos(carousel),
+      SizedBox(
+        width: 5,
+      ),
       contentSection(title: "Recomended Videos", isForCarousel: carousel),
+      SizedBox(
+        width: 5,
+      ),
       contentSection(title: "Voice Messages", isForCarousel: carousel),
     ];
   }
@@ -380,9 +397,7 @@ class _CoachPageState extends State<CoachPage> {
                       ),
                     ),
                     Padding(
-                      padding: isForCarousel
-                          ? const EdgeInsets.all(0)
-                          : const EdgeInsets.all(5.0),
+                      padding: const EdgeInsets.all(0),
                       child: GestureDetector(
                         onTap: () {
                           Navigator.pushNamed(
@@ -469,6 +484,7 @@ class _CoachPageState extends State<CoachPage> {
     return BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
         builder: (context, state) {
       if (state is GetUserTaskSubmissionSuccess) {
+        // _assessmentVideosContent = [];
         _assessmentVideosContent = state.taskSubmissions;
       }
       return _assessmentVideosContent.length != null
@@ -490,9 +506,7 @@ class _CoachPageState extends State<CoachPage> {
                       ),
                     ),
                     Padding(
-                      padding: isForCarousel
-                          ? const EdgeInsets.all(0)
-                          : const EdgeInsets.all(5.0),
+                      padding: const EdgeInsets.all(0),
                       child: GestureDetector(
                         onTap: () {
                           Navigator.pushNamed(
@@ -523,7 +537,12 @@ class _CoachPageState extends State<CoachPage> {
                                                 _assessmentVideosContent[0],
                                             isCoach: true,
                                             isForCarousel: isForCarousel)
-                                        : SizedBox(),
+                                        : contentSection(
+                                            title:
+                                                OlukoLocalizations.of(context)
+                                                    .find('mentoredVideos'),
+                                            isForCarousel: isForCarousel,
+                                            needTitle: false),
                                   ),
                                 ],
                               )
@@ -545,7 +564,11 @@ class _CoachPageState extends State<CoachPage> {
                                             _assessmentVideosContent[0],
                                         isCoach: true,
                                         isForCarousel: isForCarousel)
-                                    : SizedBox(),
+                                    : contentSection(
+                                        title: OlukoLocalizations.of(context)
+                                            .find('mentoredVideos'),
+                                        isForCarousel: isForCarousel,
+                                        needTitle: false),
                               ),
                       ),
                     )
@@ -554,38 +577,14 @@ class _CoachPageState extends State<CoachPage> {
               ],
             )
           : isForCarousel
-              ? Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                    color: OlukoColors.blackColorSemiTransparent,
-                  ),
-                  height: 150,
-                  width: 200,
-                  child: Center(
-                    child: Text(
-                      OlukoLocalizations.of(context).find('noContent'),
-                      style: OlukoFonts.olukoMediumFont(
-                          customColor: OlukoColors.primary,
-                          custoFontWeight: FontWeight.w500),
-                    ),
-                  ),
-                )
-              : Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                    color: OlukoColors.blackColorSemiTransparent,
-                  ),
-                  width: 150,
-                  height: 100,
-                  child: Center(
-                    child: Text(
-                      OlukoLocalizations.of(context).find('noContent'),
-                      style: OlukoFonts.olukoMediumFont(
-                          customColor: OlukoColors.primary,
-                          custoFontWeight: FontWeight.w500),
-                    ),
-                  ),
-                );
+              ? contentSection(
+                  title: OlukoLocalizations.of(context).find('mentoredVideos'),
+                  isForCarousel: isForCarousel,
+                  needTitle: false)
+              : contentSection(
+                  title: OlukoLocalizations.of(context).find('mentoredVideos'),
+                  isForCarousel: isForCarousel,
+                  needTitle: false);
     });
   }
 
@@ -902,7 +901,7 @@ class _CoachPageState extends State<CoachPage> {
             Padding(
               padding: isForCarousel
                   ? const EdgeInsets.all(0)
-                  : const EdgeInsets.all(5.0),
+                  : const EdgeInsets.all(0.0),
               child: !isForCarousel
                   ? Container(
                       decoration: BoxDecoration(
