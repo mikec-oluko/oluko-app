@@ -683,7 +683,8 @@ class _CoachPageState extends State<CoachPage> {
                           customColor: OlukoColors.white,
                           custoFontWeight: FontWeight.w500),
                     ),
-                    test(task, _assessmentVideosContent) == false
+                    checkAssessmentSubmitted(task, _assessmentVideosContent) ==
+                            false
                         ? Image.asset(
                             'assets/assessment/check_ellipse.png',
                             scale: 4,
@@ -747,8 +748,12 @@ class _CoachPageState extends State<CoachPage> {
     );
   }
 
-  test(Task task, List<TaskSubmission> tasksSubmitted) {
+  checkAssessmentSubmitted(Task task, List<TaskSubmission> tasksSubmitted) {
     bool result = false;
+    if (tasksSubmitted.length == null || tasksSubmitted.length == 0) {
+      result = false;
+    }
+
     tasksSubmitted.forEach((taskSub) {
       if (taskSub.task.id == task.id) {
         result = true;
