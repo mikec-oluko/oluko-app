@@ -19,7 +19,7 @@ class TimerUtils {
             aspectRatio: 1,
             child: CircularProgressIndicator(
                 value: getProgress(totalTime, countDown),
-                color: OlukoColors.coral,
+                // color: OlukoColors.coral,
                 backgroundColor: OlukoColors.grayColorSemiTransparent)),
       ),
       Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -98,7 +98,7 @@ class TimerUtils {
                   aspectRatio: 1,
                   child: CircularProgressIndicator(
                       value: progressValue,
-                      color: OlukoColors.coral,
+                      // color: OlukoColors.coral,
                       backgroundColor: OlukoColors.grayColorSemiTransparent)),
               Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Text(duration,
@@ -184,7 +184,7 @@ class TimerUtils {
                   aspectRatio: 1,
                   child: CircularProgressIndicator(
                       value: 0,
-                      color: OlukoColors.skyblue,
+                      // color: OlukoColors.skyblue,
                       backgroundColor: OlukoColors.grayColorSemiTransparent)),
               Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Text(
@@ -231,7 +231,7 @@ class TimerUtils {
                   aspectRatio: 1,
                   child: CircularProgressIndicator(
                       value: progressValue,
-                      color: OlukoColors.skyblue,
+                      // color: OlukoColors.skyblue,
                       backgroundColor: OlukoColors.grayColorSemiTransparent)),
               Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Text(OlukoLocalizations.of(context).find('rest').toUpperCase(),
@@ -263,7 +263,7 @@ class TimerUtils {
                       aspectRatio: 1,
                       child: CircularProgressIndicator(
                           value: 0,
-                          color: OlukoColors.skyblue,
+                          // color: OlukoColors.skyblue,
                           backgroundColor:
                               OlukoColors.grayColorSemiTransparent)),
                   Column(

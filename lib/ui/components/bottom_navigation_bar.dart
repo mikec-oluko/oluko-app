@@ -90,8 +90,7 @@ class _State extends State<OlukoBottomNavigationBar> {
       OlukoBottomNavigationBarItem(
           title: OlukoLocalizations.of(context).find('coach'),
           assetImageUrl: 'assets/bottom_navigation_bar/coach.png',
-          route: '/coach',
-          disabled: true),
+          route: '/coach'),
       //TODO: Item for testing (remove it later)
       /*OlukoBottomNavigationBarItem(
           title: "TEST",

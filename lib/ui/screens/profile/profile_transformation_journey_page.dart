@@ -165,8 +165,8 @@ class _ProfileTransformationJourneyPageState
                 UploadingModalLoader(UploadFrom.transformationJourney);
           }
           if (state is TransformationJourneyContentSuccess) {
-            _contentForPanel =
-                UploadingModalSuccess(UploadFrom.transformationJourney);
+            _contentForPanel = UploadingModalSuccess(
+                goToPage: UploadFrom.transformationJourney);
           }
           if (state is TransformationJourneyContentFailure) {
             _panelController.close();

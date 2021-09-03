@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
+import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/profile/profile_bloc.dart';
@@ -19,6 +20,7 @@ import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/friend.dart';
+import 'package:oluko_app/models/submodels/friend_model.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -220,8 +222,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         UploadingModalLoader(UploadFrom.profileCoverImage);
                   }
                   if (state is ProfileCoverSuccess) {
-                    _contentForPanel =
-                        UploadingModalSuccess(UploadFrom.profileCoverImage);
+                    _contentForPanel = UploadingModalSuccess(
+                        goToPage: UploadFrom.profileImage,
+                        userRequested: _userProfileToDisplay);
                   }
                   if (state is ProfileCoverImageFailure) {
                     _panelController.close();
@@ -250,8 +253,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         UploadingModalLoader(UploadFrom.profileImage);
                   }
                   if (state is ProfileAvatarSuccess) {
-                    _contentForPanel =
-                        UploadingModalSuccess(UploadFrom.profileImage);
+                    _contentForPanel = UploadingModalSuccess(
+                        goToPage: UploadFrom.profileImage,
+                        userRequested: _userProfileToDisplay);
                   }
                   if (state is ProfileAvatarFailure) {
                     _panelController.close();
@@ -343,10 +347,15 @@ class _UserProfilePageState extends State<UserProfilePage> {
                               children: [
                                 TextButton(
                                   onPressed: () {
+                                    _isFollow
+                                        ? null
+                                        : BlocProvider.of<FavoriteFriendBloc>(
+                                            context)
+                                      ..favoriteFriend(context, friendData,
+                                          FriendModel(id: userRequested.id));
                                     setState(() {
                                       _isFollow = !_isFollow;
                                     });
-                                    //TODO: Add user with is_favorite
                                   },
                                   child: Icon(
                                       _isFollow
@@ -359,16 +368,22 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                       onPressed: () {
                                         switch (connectStatus) {
                                           case UserConnectStatus.connected:
-                                            //TODO: remove friend
                                             break;
                                           case UserConnectStatus.noConnected:
-                                            //TODO: connect friend
+                                            BlocProvider.of<FriendBloc>(context)
+                                              ..sendRequestOfConnect(
+                                                  friendData, userRequested.id);
                                             break;
                                           case UserConnectStatus.requestPending:
-                                            //TODO: cancel request friend
+                                            BlocProvider.of<FriendBloc>(context)
+                                              ..removeRequestSent(
+                                                  friendData, userRequested.id);
                                             break;
                                           default:
                                         }
+                                        BlocProvider.of<FriendBloc>(context)
+                                            .getFriendsByUserId(
+                                                _currentAuthUser.id);
                                       },
                                       title: OlukoLocalizations.of(context)
                                           .find(_connectButtonTitle)),

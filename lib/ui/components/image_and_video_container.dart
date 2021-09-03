@@ -11,13 +11,17 @@ class ImageAndVideoContainer extends StatefulWidget {
   final String videoUrl;
   final ActualProfileRoute displayOnViewNamed;
   final dynamic originalContent;
+  final bool isCoach;
+  final bool isForCarousel;
 
   ImageAndVideoContainer(
       {this.backgroundImage,
       this.isContentVideo,
       this.videoUrl,
       this.displayOnViewNamed,
-      this.originalContent});
+      this.originalContent,
+      this.isCoach = false,
+      this.isForCarousel = false});
 
   @override
   _ImageAndVideoContainerState createState() => _ImageAndVideoContainerState();
@@ -26,38 +30,68 @@ class ImageAndVideoContainer extends StatefulWidget {
 class _ImageAndVideoContainerState extends State<ImageAndVideoContainer> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(5),
-      child: Container(
-          height: 120,
-          width: 100,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-            color: OlukoColors.black,
-          ),
-          child: ImageAndVideoPreviewCard(
-            backgroundImage: backgroundNetworkImage(),
-            videoUrl: widget.videoUrl,
-            isContentVideo: widget.isContentVideo,
-            showTitle: widget.displayOnViewNamed ==
-                    ActualProfileRoute.userAssessmentVideos ||
-                widget.displayOnViewNamed ==
-                    ActualProfileRoute.transformationJourney,
-            originalContent: widget.originalContent,
-          )),
-    );
+    return !widget.isForCarousel
+        ? Container(
+            height: widget.isCoach ? 150 : 120,
+            width: 100,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              color: OlukoColors.black,
+            ),
+            child: ImageAndVideoPreviewCard(
+              backgroundImage: backgroundNetworkImage(),
+              videoUrl: widget.videoUrl,
+              isContentVideo: widget.isContentVideo,
+              showTitle: widget.displayOnViewNamed ==
+                      ActualProfileRoute.userAssessmentVideos ||
+                  widget.displayOnViewNamed ==
+                      ActualProfileRoute.transformationJourney,
+              originalContent: widget.originalContent,
+              isCoach: widget.isCoach,
+            ))
+        : Container(
+            height: 150,
+            width: 200,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              color: OlukoColors.black,
+            ),
+            child: ImageAndVideoPreviewCard(
+              backgroundImage: backgroundNetworkImage(),
+              videoUrl: widget.videoUrl,
+              isContentVideo: widget.isContentVideo,
+              showTitle: widget.displayOnViewNamed ==
+                      ActualProfileRoute.userAssessmentVideos ||
+                  widget.displayOnViewNamed ==
+                      ActualProfileRoute.transformationJourney,
+              originalContent: widget.originalContent,
+              isCoach: widget.isCoach,
+            ));
   }
 
   Image backgroundNetworkImage() {
+    if (widget.isForCarousel) {
+      return Image.network(
+        widget.backgroundImage,
+        fit: BoxFit.contain,
+        height: 150,
+        width: 250,
+        frameBuilder: (BuildContext context, Widget child, int frame,
+                bool wasSynchronouslyLoaded) =>
+            ImageUtils.frameBuilder(
+                context, child, frame, wasSynchronouslyLoaded,
+                height: 150, width: 250),
+      );
+    }
     return Image.network(
       widget.backgroundImage,
       fit: BoxFit.contain,
+      height: widget.isCoach ? 150 : 120,
+      width: 120,
       frameBuilder: (BuildContext context, Widget child, int frame,
               bool wasSynchronouslyLoaded) =>
           ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded,
-              height: 120, width: 120),
-      height: 120,
-      width: 120,
+              height: widget.isCoach ? 150 : 120, width: 120),
     );
   }
 }

@@ -93,4 +93,34 @@ class FriendBloc extends Cubit<FriendState> {
       emit(FriendFailure(exception: exception));
     }
   }
+
+  void removeRequestSent(
+      Friend currentUserFriend, String userRequestedId) async {
+    try {
+      await FriendRepository.removeRequestSent(
+          currentUserFriend, userRequestedId);
+      // emit(GetFriendSuggestionSuccess(friendSuggestionList: null));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(FriendFailure(exception: exception));
+    }
+  }
+
+  void sendRequestOfConnect(
+      Friend currentUserFriend, String userRequestedId) async {
+    try {
+      await FriendRepository.sendRequestOfConnectOnBothUsers(
+          currentUserFriend, userRequestedId);
+      // emit(GetFriendSuggestionSuccess(friendSuggestionList: null));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(FriendFailure(exception: exception));
+    }
+  }
 }

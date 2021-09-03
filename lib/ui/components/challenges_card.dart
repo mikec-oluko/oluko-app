@@ -26,13 +26,13 @@ class _State extends State<ChallengesCard> {
     return Stack(
       alignment: Alignment.center,
       children: [
-        Align(
-            alignment: Alignment.topRight,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(15, 5, 2, 0),
-              child: Text(_defaultChallengeTitle,
-                  style: OlukoFonts.olukoSmallFont()),
-            )),
+        // Align(
+        //     alignment: Alignment.topRight,
+        //     child: Padding(
+        //       padding: const EdgeInsets.fromLTRB(15, 5, 2, 0),
+        //       child: Text(_defaultChallengeTitle,
+        //           style: OlukoFonts.olukoSmallFont()),
+        //     )),
         Container(
           height: 115,
           width: 80,
@@ -63,13 +63,13 @@ class _State extends State<ChallengesCard> {
     return Stack(
       alignment: Alignment.center,
       children: [
-        Align(
-            alignment: Alignment.topRight,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(15, 5, 2, 0),
-              child: Text(_defaultChallengeTitle,
-                  style: OlukoFonts.olukoSmallFont()),
-            )),
+        // Align(
+        //     alignment: Alignment.topRight,
+        //     child: Padding(
+        //       padding: const EdgeInsets.fromLTRB(15, 5, 2, 0),
+        //       child: Text(_defaultChallengeTitle,
+        //           style: OlukoFonts.olukoSmallFont()),
+        //     )),
         Container(
           height: 115,
           width: 80,

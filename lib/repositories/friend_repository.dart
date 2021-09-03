@@ -224,4 +224,124 @@ class FriendRepository {
       throw e;
     }
   }
+
+  static Future<FriendRequestModel> cancelFriendRequestSend(
+      Friend friend, FriendRequestModel friendRequest) async {
+    try {
+      //Remove friend request sent
+      friend.friendRequestSent
+          .removeWhere((element) => element.id == friendRequest.id);
+
+      await FirebaseFirestore.instance
+          .collection('projects')
+          .doc(GlobalConfiguration().getValue("projectId"))
+          .collection('friends')
+          .doc(friend.id)
+          .set(friend.toJson());
+      return friendRequest;
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
+      throw e;
+    }
+  }
+
+  //Remove request sent from currentUser.sent and UserToConnect.received
+  static removeRequestSent(
+      Friend currentUserFriend, String userRequestedId) async {
+    try {
+      //CREO EL FRIENDREQUESTMODEL PARA USERREQUESTED
+      FriendRequestModel userRequestedAsRequestModel =
+          FriendRequestModel(id: userRequestedId);
+
+      //CREO EL FRIENDREQUESTMODEL PARA CURRENTUSER
+      FriendRequestModel currentUserAsRequestModel =
+          FriendRequestModel(id: currentUserFriend.id);
+
+      //ELIMINO USERREQUESTED DE MIS FRIEND REQUEST SENT
+      await cancelFriendRequestSend(
+          currentUserFriend, userRequestedAsRequestModel);
+      //PIDO EL MODELO FRIEND DE USERREQUESTED
+      Friend userRequestedAsFriend =
+          await getUserFriendsByUserId(userRequestedId);
+
+      await ignoreFriendRequest(
+          userRequestedAsFriend, currentUserAsRequestModel);
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
+      throw e;
+    }
+  }
+
+  //add on currentUser request sent to UserToConnect
+  static Future<FriendRequestModel> addUserRequestToSent(
+      Friend friend, FriendRequestModel friendRequest) async {
+    try {
+      friend.friendRequestSent.add(friendRequest);
+
+      await FirebaseFirestore.instance
+          .collection('projects')
+          .doc(GlobalConfiguration().getValue("projectId"))
+          .collection('friends')
+          .doc(friend.id)
+          .set(friend.toJson());
+
+      return friendRequest;
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
+      throw e;
+    }
+  }
+
+  //add on UserToConnect the request on received
+  static Future<FriendRequestModel> addUserRequestToReceived(
+      String userRequestedId, String currentUserId) async {
+    try {
+      FriendRequestModel userToConnect = FriendRequestModel(id: currentUserId);
+
+      Friend friend = await getUserFriendsByUserId(userRequestedId);
+
+      friend.friendRequestReceived.add(userToConnect);
+
+      await FirebaseFirestore.instance
+          .collection('projects')
+          .doc(GlobalConfiguration().getValue("projectId"))
+          .collection('friends')
+          .doc(friend.id)
+          .set(friend.toJson());
+
+      return userToConnect;
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
+      throw e;
+    }
+  }
+
+  static sendRequestOfConnectOnBothUsers(
+      Friend currentUserFriend, String userRequestedId) async {
+    try {
+      FriendRequestModel userRequestedAsRequestModel =
+          FriendRequestModel(id: userRequestedId);
+
+      addUserRequestToSent(currentUserFriend, userRequestedAsRequestModel);
+      addUserRequestToReceived(userRequestedId, currentUserFriend.id);
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
+      throw e;
+    }
+  }
 }
