@@ -214,7 +214,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   Widget _body() {
     return Container(
-        child: Column(
+        child: ListView(
       children: [
         _timerSection(this.workoutType, this.workState),
         Expanded(child: _lowerSection(this.workoutType, this.workState)),
