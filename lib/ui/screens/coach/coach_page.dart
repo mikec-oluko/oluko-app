@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
@@ -83,7 +84,7 @@ class _CoachPageState extends State<CoachPage> {
     BlocProvider.of<UserStatisticsBloc>(context)
         .getUserStatistics(_currentAuthUser.id);
 
-    BlocProvider.of<CourseEnrollmentBloc>(context)
+    BlocProvider.of<CourseEnrollmentListBloc>(context)
         .getCourseEnrollmentsByUserId(_currentAuthUser.id);
 
     BlocProvider.of<CourseEnrollmentBloc>(context)

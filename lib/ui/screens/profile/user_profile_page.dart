@@ -489,7 +489,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
         currentUser: _currentAuthUser,
         userRequested: _userProfileToDisplay,
         connectStatus: connectStatus)) {
-      BlocProvider.of<CourseEnrollmentBloc>(context)
+      BlocProvider.of<CourseEnrollmentListBloc>(context)
           .getCourseEnrollmentsByUserId(userRequested.id);
 
       BlocProvider.of<TaskSubmissionBloc>(context)
