@@ -78,11 +78,13 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Container(
           decoration: BoxDecoration(
-              color: OlukoColors.primary,
+              color: OlukoColors.listGrayColor,
               borderRadius: BorderRadius.all(Radius.circular(6.0)),
               image: DecorationImage(
-                image: NetworkImage(taskSubmitted.video.thumbUrl),
-                fit: BoxFit.cover,
+                image: taskSubmitted.video.thumbUrl != null
+                    ? NetworkImage(taskSubmitted.video.thumbUrl)
+                    : AssetImage("assets/home/mvt.png"),
+                fit: BoxFit.fitWidth,
                 onError: (exception, stackTrace) {
                   return Text('Your error widget...');
                 },
