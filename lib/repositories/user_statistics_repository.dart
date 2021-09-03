@@ -20,6 +20,10 @@ class UserStatisticsRepository {
         .collection('userStatistics')
         .doc(userId);
     DocumentSnapshot ds = await docRef.get();
-    return UserStatistics.fromJson(ds.data());
+    var doc = ds.data();
+    if (doc != null) {
+      return UserStatistics.fromJson(ds.data());
+    }
+    return null;
   }
 }
