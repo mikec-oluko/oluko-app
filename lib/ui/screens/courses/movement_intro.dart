@@ -164,7 +164,9 @@ class _MovementIntroState extends State<MovementIntro>
                                     child: TabBar(
                                       isScrollable: true,
                                       onTap: (index) => this.setState(() {
-                                        tabController.index = index;
+                                        this.setState(() {
+                                          tabController.index = index;
+                                        });
                                       }),
                                       controller: tabController,
                                       indicatorSize: TabBarIndicatorSize.tab,
@@ -293,7 +295,8 @@ class _MovementIntroState extends State<MovementIntro>
       child: Column(children: [
         Container(
             height: 200,
-            child: Stack(children: _videoPlayer(movement.video, 0))),
+            child: Stack(
+                children: _videoPlayer(movement.video, tabController.index))),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(

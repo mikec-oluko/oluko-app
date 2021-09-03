@@ -220,40 +220,44 @@ class _SegmentClocksState extends State<SegmentClocks> {
       children: [
         _timerSection(this.workoutType, this.workState),
         Expanded(child: _lowerSection(this.workoutType, this.workState)),
-        Padding(
-          padding: const EdgeInsets.all(25.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              OlukoOutlinedButton(
-                  title: 'Go To Class',
-                  onPressed: () => Navigator.popUntil(context,
-                      ModalRoute.withName(routeLabels[RouteEnum.insideClass]))),
-              SizedBox(
-                width: 15,
-              ),
-              OlukoPrimaryButton(
-                title: 'Next Segment',
-                onPressed: () {
-                  widget.segmentIndex < widget.segments.length - 1
-                      ? Navigator.pushNamed(
-                          context, routeLabels[RouteEnum.segmentClocks],
-                          arguments: {
-                              'segmentIndex': widget.segmentIndex + 1,
-                              'classIndex': widget.classIndex,
-                              'courseEnrollment': widget.courseEnrollment,
-                              'workoutType': workoutType,
-                              'segments': widget.segments,
-                            })
-                      : Navigator.popUntil(
-                          context,
-                          ModalRoute.withName(
-                              routeLabels[RouteEnum.insideClass]));
-                },
-              ),
-            ],
-          ),
-        ),
+        workState == WorkState.finished
+            ? Padding(
+                padding: const EdgeInsets.all(25.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    OlukoOutlinedButton(
+                        title: 'Go To Class',
+                        onPressed: () => Navigator.popUntil(
+                            context,
+                            ModalRoute.withName(
+                                routeLabels[RouteEnum.insideClass]))),
+                    SizedBox(
+                      width: 15,
+                    ),
+                    OlukoPrimaryButton(
+                      title: 'Next Segment',
+                      onPressed: () {
+                        widget.segmentIndex < widget.segments.length - 1
+                            ? Navigator.pushNamed(
+                                context, routeLabels[RouteEnum.segmentClocks],
+                                arguments: {
+                                    'segmentIndex': widget.segmentIndex + 1,
+                                    'classIndex': widget.classIndex,
+                                    'courseEnrollment': widget.courseEnrollment,
+                                    'workoutType': workoutType,
+                                    'segments': widget.segments,
+                                  })
+                            : Navigator.popUntil(
+                                context,
+                                ModalRoute.withName(
+                                    routeLabels[RouteEnum.insideClass]));
+                      },
+                    ),
+                  ],
+                ),
+              )
+            : SizedBox(),
       ],
     ));
   }
