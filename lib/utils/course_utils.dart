@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
-import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/base.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_category.dart';
-import 'package:oluko_app/models/course_category_item.dart';
+import 'package:oluko_app/models/submodels/course_category_item.dart';
 import 'package:oluko_app/models/search_results.dart';
 import 'package:oluko_app/models/tag.dart';
 import 'package:oluko_app/ui/components/filter_selector.dart';

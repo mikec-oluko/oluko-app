@@ -63,4 +63,14 @@ class ClassRepository {
           List<dynamic>.from(segments.map((segment) => segment.toJson()))
     });
   }
+
+  static Future<Class> get(String id) async {
+    DocumentReference reference = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue("projectId"))
+        .collection('classes')
+        .doc(id);
+    DocumentSnapshot ds = await reference.get();
+    return Class.fromJson(ds.data());
+  }
 }

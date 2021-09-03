@@ -1,17 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:oluko_app/blocs/course_enrollment_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/submodels/counter.dart';
 import 'package:oluko_app/models/submodels/enrollment_class.dart';
+import 'package:oluko_app/models/submodels/enrollment_movement.dart';
 import 'package:oluko_app/models/submodels/enrollment_segment.dart';
+import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
 import 'package:oluko_app/models/submodels/segment_submodel.dart';
 import 'package:oluko_app/repositories/course_repository.dart';
 import 'package:oluko_app/services/course_enrollment_service.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 class CourseEnrollmentRepository {
   FirebaseFirestore firestoreInstance;
@@ -31,12 +35,30 @@ class CourseEnrollmentRepository {
         .collection('courseEnrollments');
 
     final QuerySnapshot qs = await reference
-        .where("course_id", isEqualTo: course.id)
-        .where("user_id", isEqualTo: user.uid)
+        .where("course.id", isEqualTo: course.id)
+        .where("created_by", isEqualTo: user.uid)
         .get();
 
     if (qs.docs.length > 0) {
       return CourseEnrollment.fromJson(qs.docs[0].data());
+    }
+    return null;
+  }
+
+  static Future<List<CourseEnrollment>> getByCourse(String courseId) async {
+    CollectionReference reference = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue("projectId"))
+        .collection('courseEnrollments');
+
+    final QuerySnapshot qs =
+        await reference.where("course.id", isEqualTo: courseId).get();
+
+    if (qs.docs.length > 0) {
+      return qs.docs.map((courseData) {
+        var data = courseData.data();
+        return CourseEnrollment.fromJson(data);
+      }).toList();
     }
     return null;
   }
@@ -77,16 +99,20 @@ class CourseEnrollmentRepository {
     DocumentReference courseReference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"))
-        .collection('course')
+        .collection('courses')
         .doc(course.id);
     final DocumentReference docRef = reference.doc();
     DocumentReference userReference =
         FirebaseFirestore.instance.collection('users').doc(user.uid);
+    ObjectSubmodel courseSubmodel = ObjectSubmodel(
+        id: course.id,
+        reference: courseReference,
+        name: course.name,
+        image: course.image);
     CourseEnrollment courseEnrollment = CourseEnrollment(
-        userId: user.uid,
+        createdBy: user.uid,
         userReference: userReference,
-        courseId: course.id,
-        courseReference: courseReference,
+        course: courseSubmodel,
         classes: []);
     courseEnrollment.id = docRef.id;
     courseEnrollment = await setEnrollmentClasses(course, courseEnrollment);
@@ -100,6 +126,7 @@ class CourseEnrollmentRepository {
       EnrollmentClass enrollmentClass = EnrollmentClass(
           id: classObj.id,
           name: classObj.name,
+          image: classObj.image,
           reference: classObj.reference,
           segments: []);
       enrollmentClass = await setEnrollmentSegments(enrollmentClass);
@@ -127,7 +154,7 @@ class CourseEnrollmentRepository {
           .collection('projects')
           .doc(GlobalConfiguration().getValue("projectId"))
           .collection('courseEnrollments')
-          .where('user_id', isEqualTo: userId)
+          .where('created_by', isEqualTo: userId)
           .get();
 
       if (docRef.docs.isEmpty) {
@@ -138,7 +165,11 @@ class CourseEnrollmentRepository {
         final Map<String, dynamic> course = doc.data();
         courseEnrollmentList.add(CourseEnrollment.fromJson(course));
       });
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       throw e;
     }
     return courseEnrollmentList;
@@ -164,7 +195,11 @@ class CourseEnrollmentRepository {
             courseEnrollment, challengeList));
       }
       Future.wait(futures);
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       return [];
     }
     return challengeList;
@@ -176,11 +211,47 @@ class CourseEnrollmentRepository {
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"))
         .collection('challenges')
-        .where('course_enrollment_id', isEqualTo: courseEnrollment.id)
+        // .where('course_enrollment_id', isEqualTo: courseEnrollment.id)
         .get();
     for (var challengeDoc in query.docs) {
       Map<String, dynamic> challenge = challengeDoc.data();
       challenges.add(Challenge.fromJson(challenge));
     }
+  }
+
+  static Future<CourseEnrollment> saveMovementCounter(
+      CourseEnrollment courseEnrollment,
+      int segmentIndex,
+      int classIndex,
+      MovementSubmodel movement,
+      Counter counter) async {
+    DocumentReference reference = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue("projectId"))
+        .collection('courseEnrollments')
+        .doc(courseEnrollment.id);
+
+    EnrollmentMovement enrollmentMovement = EnrollmentMovement(
+        id: movement.id,
+        reference: movement.reference,
+        name: movement.name,
+        counter: counter);
+    List<EnrollmentClass> classes = courseEnrollment.classes;
+    List<EnrollmentMovement> movements =
+        classes[classIndex].segments[segmentIndex].movements;
+        
+    if (movements == null ||
+        counter.round == 1 && counter.set == null ||
+        counter.round == 1 && counter.set == 1) {
+      classes[classIndex].segments[segmentIndex].movements = [];
+    }
+
+    classes[classIndex]
+        .segments[segmentIndex]
+        .movements
+        .add(enrollmentMovement);
+
+    reference.update(
+        {'classes': List<dynamic>.from(classes.map((c) => c.toJson()))});
   }
 }

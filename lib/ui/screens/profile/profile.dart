@@ -2,20 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
+import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/helpers/profile_options.dart';
+import 'package:oluko_app/helpers/profile_routes.dart';
 import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/models/user_statistics.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
-import 'package:oluko_app/ui/components/oluko_error_message_view.dart';
 import 'package:oluko_app/ui/components/user_profile_information.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
-import 'package:oluko_app/ui/screens/profile/profile_routes.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import '../../../constants/theme.dart';
 import '../../../routes.dart';
 
 class ProfilePage extends StatefulWidget {
-  ProfilePage({Key key}) : super(key: key);
+  ProfilePage();
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -23,20 +27,19 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final _formKey = GlobalKey<FormState>();
-  bool _isTesting = false;
   UserResponse profileInfo;
+  UserStatistics userStats;
   final String profileTitle = ProfileViewConstants.profileTitle;
-  @override
-  void initState() {
-    BlocProvider.of<AuthBloc>(context).checkCurrentUser();
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
       if (state is AuthSuccess) {
-        this.profileInfo = state.user;
+        profileInfo = state.user;
+        BlocProvider.of<TransformationJourneyBloc>(context)
+            .getContentByUserId(profileInfo.id);
+        BlocProvider.of<UserStatisticsBloc>(context)
+            .getUserStatistics(profileInfo.id);
+
         return profileHomeView();
       } else {
         return Container(
@@ -74,31 +77,39 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget userInformationSection() {
     Widget returnWidget;
-    _isTesting == false
-        ? returnWidget = Column(
-            children: [
-              GestureDetector(
-                  onTap: () => Navigator.pushNamed(
-                          context, ProfileRoutes.userInformationRoute)
-                      .then((value) => onGoBack()),
-                  child: UserProfileInformation(
-                      userInformation: profileInfo,
-                      actualRoute: ActualProfileRoute.rootProfile,
-                      userIsOwnerProfile: true)),
-            ],
-          )
-        : returnWidget = Center(child: OlukoErrorMessage());
-
+    returnWidget = Column(
+      children: [
+        GestureDetector(
+            onTap: () => Navigator.pushNamed(
+                    context, routeLabels[RouteEnum.profileViewOwnProfile],
+                    arguments: {'userRequested': profileInfo})
+                .then((value) => onGoBack()),
+            child: BlocBuilder<UserStatisticsBloc, UserStatisticsState>(
+              builder: (context, state) {
+                if (state is StatisticsSuccess) {
+                  userStats = state.userStats;
+                }
+                return UserProfileInformation(
+                  userToDisplayInformation: profileInfo,
+                  actualRoute: ActualProfileRoute.rootProfile,
+                  currentUser: profileInfo,
+                  connectStatus: null,
+                  userStats: userStats,
+                );
+              },
+            )),
+      ],
+    );
     return returnWidget;
   }
 
   Padding buildOptionsList() {
     return Padding(
-      padding: const EdgeInsets.only(top: 175),
+      padding: const EdgeInsets.only(top: 170),
       child: ListView.builder(
-          itemCount: ProfileViewConstants.profileOptions.length,
+          itemCount: ProfileOptions.profileOptions.length,
           itemBuilder: (_, index) =>
-              profileOptions(ProfileViewConstants.profileOptions[index])),
+              profileOptions(ProfileOptions.profileOptions[index])),
     );
   }
 
@@ -119,14 +130,15 @@ class _ProfilePageState extends State<ProfilePage> {
           InkWell(
             onTap: option.enable
                 ? () {
-                    if (option.option ==
-                        ProfileViewConstants.profileOptionsSettings) {
+                    if (option.option == ProfileOptionsTitle.settings) {
                       Navigator.pushNamed(
-                          context, routeLabels[RouteEnum.profileSettings],
-                          arguments: {'profileInfo': profileInfo});
+                              context, routeLabels[RouteEnum.profileSettings],
+                              arguments: {'profileInfo': profileInfo})
+                          .then((value) => onGoBack());
+                    } else {
+                      Navigator.pushNamed(context,
+                          ProfileRoutes.returnRouteName(option.option));
                     }
-                    Navigator.pushNamed(
-                        context, ProfileRoutes.returnRouteName(option.option));
                   }
                 : () {},
             child: Row(
@@ -134,7 +146,9 @@ class _ProfilePageState extends State<ProfilePage> {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(left: 25.0),
-                  child: Text(option.option,
+                  child: Text(
+                      OlukoLocalizations.of(context)
+                          .find(returnOptionString(option.option)),
                       style: option.enable
                           ? OlukoFonts.olukoMediumFont()
                           : OlukoFonts.olukoMediumFont(
@@ -166,7 +180,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
   handleResult(AsyncSnapshot snapshot) {
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      ProfileRoutes.returnToHome(context: context);
+      Navigator.popUntil(context, ModalRoute.withName('/'));
     });
   }
+
+  String returnOptionString(ProfileOptionsTitle option) =>
+      option.toString().split(".")[1];
 }

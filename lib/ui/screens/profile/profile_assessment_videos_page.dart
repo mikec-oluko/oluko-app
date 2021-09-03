@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
-import 'package:oluko_app/blocs/task_submission_bloc.dart';
-import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
+import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/list_of_items_to_widget.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -30,18 +31,16 @@ class _ProfileAssessmentVideosPageState
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
       if (state is AuthSuccess) {
         _profileInfo = state.user;
-        BlocProvider.of<TaskSubmissionBloc>(context)
-            .getTaskSubmissionByUserId(_profileInfo.id);
-        return BlocConsumer<TaskSubmissionBloc, TaskSubmissionState>(
-          listener: (context, state) {
+        return BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
+          builder: (context, state) {
             if (state is GetUserTaskSubmissionSuccess) {
               _assessmentVideoContent = state.taskSubmissions;
               _contentGallery =
                   TransformListOfItemsToWidget.getWidgetListFromContent(
-                      assessmentVideoData: _assessmentVideoContent);
+                      assessmentVideoData: _assessmentVideoContent,
+                      requestedFromRoute:
+                          ActualProfileRoute.userAssessmentVideos);
             }
-          },
-          builder: (context, state) {
             return page(context, _profileInfo);
           },
         );
@@ -53,42 +52,29 @@ class _ProfileAssessmentVideosPageState
 
   Scaffold page(BuildContext context, UserResponse profileInfo) {
     return Scaffold(
-      appBar: OlukoAppBar(
-        title: ProfileViewConstants.profileOptionsAssessmentVideos,
-        showSearchBar: false,
-      ),
-      body: _contentGallery == null
-          ? Container(
-              color: Colors.black, child: OlukoCircularProgressIndicator())
-          : BlocConsumer<TaskSubmissionBloc, TaskSubmissionState>(
-              listener: (context, state) {
-                if (state is GetUserTaskSubmissionSuccess) {
-                  _assessmentVideoContent = state.taskSubmissions;
-                  _contentGallery =
-                      TransformListOfItemsToWidget.getWidgetListFromContent(
-                          assessmentVideoData: _assessmentVideoContent);
-                }
-              },
-              builder: (context, state) {
-                return Container(
-                  constraints: BoxConstraints.expand(),
-                  color: OlukoColors.black,
-                  child: SafeArea(
-                    child: Stack(children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(10, 50, 10, 10),
-                        child: _contentGallery.length != 0
-                            ? GridView.count(
-                                crossAxisCount: 3,
-                                children: _contentGallery,
-                              )
-                            : OlukoErrorMessage(),
-                      ),
-                    ]),
-                  ),
-                );
-              },
-            ),
-    );
+        appBar: OlukoAppBar(
+          title: ProfileViewConstants.profileOptionsAssessmentVideos,
+          showSearchBar: false,
+        ),
+        body: _contentGallery == null
+            ? Container(
+                color: Colors.black, child: OlukoCircularProgressIndicator())
+            : Container(
+                constraints: BoxConstraints.expand(),
+                color: OlukoColors.black,
+                child: SafeArea(
+                  child: Stack(children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(10, 50, 10, 10),
+                      child: _contentGallery.length != 0
+                          ? GridView.count(
+                              crossAxisCount: 3,
+                              children: _contentGallery,
+                            )
+                          : OlukoErrorMessage(),
+                    ),
+                  ]),
+                ),
+              ));
   }
 }

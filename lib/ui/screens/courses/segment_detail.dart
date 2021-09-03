@@ -3,36 +3,35 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
+import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
-import 'package:oluko_app/ui/components/oluko_image_bar.dart';
-import 'package:oluko_app/ui/components/countdown_overlay.dart';
+import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
-import 'package:oluko_app/ui/components/segment_step_section.dart';
-import 'package:oluko_app/ui/screens/courses/segment_recording.dart';
-import 'package:oluko_app/utils/movement_utils.dart';
+import 'package:oluko_app/ui/components/segment_image_section.dart';
+import 'package:oluko_app/ui/components/stories_item.dart';
+import 'package:oluko_app/ui/screens/courses/collapsed_movement_videos_section.dart';
+import 'package:oluko_app/ui/screens/courses/movement_videos_section.dart';
+import 'package:oluko_app/ui/screens/courses/segment_clocks.dart';
+import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
-import 'movement_intro.dart';
+import 'package:oluko_app/utils/timer_utils.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class SegmentDetail extends StatefulWidget {
   SegmentDetail(
-      {this.segments,
-      this.courseEnrollment,
-      this.segmentIndex,
-      this.classIndex,
-      this.user,
-      Key key})
+      {this.courseEnrollment, this.segmentIndex, this.classIndex, Key key})
       : super(key: key);
 
-  List<Segment> segments;
-  CourseEnrollment courseEnrollment;
-  int segmentIndex;
-  int classIndex;
-  User user;
+  final CourseEnrollment courseEnrollment;
+  final int segmentIndex;
+  final int classIndex;
 
   @override
   _SegmentDetailState createState() => _SegmentDetailState();
@@ -40,207 +39,147 @@ class SegmentDetail extends StatefulWidget {
 
 class _SegmentDetailState extends State<SegmentDetail> {
   final toolbarHeight = kToolbarHeight * 2;
-  bool startRecordingAndWorkoutTogether = false;
-
   num currentSegmentStep;
   num totalSegmentStep;
-  MovementBloc _movementBloc;
+  User _user;
+  List<Segment> _segments;
+  List<Movement> _movements;
+  PanelController panelController = new PanelController();
 
   @override
   void initState() {
     currentSegmentStep = widget.segmentIndex + 1;
     totalSegmentStep =
         widget.courseEnrollment.classes[widget.classIndex].segments.length;
-    _movementBloc = MovementBloc();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-        providers: [
-          BlocProvider<MovementBloc>(
-            create: (context) => _movementBloc..getBySegment(widget.segments[widget.segmentIndex]),
-          )
-        ],
-        child:
-            BlocBuilder<MovementBloc, MovementState>(builder: (context, state) {
-          if (state is GetMovementsSuccess) {
-            return form(state.movements);
-          } else {
-            return SizedBox();
-          }
-        }));
+    return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
+      if (authState is AuthSuccess) {
+        _user = authState.firebaseUser;
+        return BlocBuilder<SegmentBloc, SegmentState>(
+            builder: (context, segmentState) {
+          return BlocBuilder<MovementBloc, MovementState>(
+              builder: (context, movementState) {
+            if (segmentState is GetSegmentsSuccess &&
+                movementState is GetAllSuccess) {
+              _segments = segmentState.segments;
+              _movements = movementState.movements;
+              return form();
+            } else {
+              return SizedBox();
+            }
+          });
+        });
+      } else {
+        return SizedBox();
+      }
+    });
   }
 
-  Widget form(List<Movement> movements) {
+  Widget form() {
     return Scaffold(
-      appBar: OlukoImageBar(
-        actions: [],
-        movements: movements,
-        onPressedMovement: (BuildContext context, Movement movement) =>
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => MovementIntro(movement: movement))),
-      ),
       backgroundColor: Colors.black,
       body: Container(
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                colorFilter: ColorFilter.mode(
-                    Colors.black.withOpacity(0.85), BlendMode.darken),
-                fit: BoxFit.cover,
-                image: NetworkImage(widget.segments[widget.segmentIndex].image))),
         width: ScreenUtils.width(context),
-        height: ScreenUtils.height(context) - toolbarHeight,
-        child: _viewBody(),
+        height: ScreenUtils.height(context),
+        child: SlidingUpPanel(
+            controller: panelController,
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+            minHeight: 90,
+            maxHeight: 185,
+            collapsed: CollapsedMovementVideosSection(action: getAction()),
+            panel: MovementVideosSection(
+                action: downButton(),
+                segment: _segments[widget.segmentIndex],
+                movements: _movements,
+                onPressedMovement: (BuildContext context, Movement movement) =>
+                    Navigator.pushNamed(
+                        context, routeLabels[RouteEnum.movementIntro],
+                        arguments: {'movement': movement})),
+            body: _viewBody()),
       ),
     );
   }
 
+  downButton() {
+    return GestureDetector(
+        onTap: () => panelController.close(),
+        child: Padding(
+            padding: EdgeInsets.only(top: 15, bottom: 5, right: 25),
+            child: RotatedBox(
+                quarterTurns: 2,
+                child: Stack(alignment: Alignment.center, children: [
+                  Image.asset(
+                    'assets/courses/white_arrow_up.png',
+                    scale: 4,
+                  ),
+                  Padding(
+                      padding: EdgeInsets.only(top: 15),
+                      child: Image.asset(
+                        'assets/courses/grey_arrow_up.png',
+                        scale: 4,
+                      ))
+                ]))));
+  }
+
+  Widget getAction() {
+    return GestureDetector(
+        onTap: () => panelController.open(),
+        child: Padding(
+            padding: EdgeInsets.only(top: 10, bottom: 15, right: 25),
+            child: Stack(alignment: Alignment.center, children: [
+              Image.asset(
+                'assets/courses/white_arrow_up.png',
+                scale: 4,
+              ),
+              Padding(
+                  padding: EdgeInsets.only(top: 15),
+                  child: Image.asset(
+                    'assets/courses/grey_arrow_up.png',
+                    scale: 4,
+                  ))
+            ])));
+  }
+
   Widget _viewBody() {
     return Container(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView(children: [
-          Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        MovementUtils.movementTitle(widget.segments[widget.segmentIndex].name),
-                        SizedBox(height: 25),
-                        MovementUtils.description(
-                            widget.segments[widget.segmentIndex].description, context),
-                        SizedBox(height: 25),
-                        MovementUtils.workout(widget.segments[widget.segmentIndex], context),
-                      ],
-                    ),
-                  )
-                ]),
-                _menuOptions()
-              ])
-        ]),
-      ),
+      child: ListView(children: [
+        SegmentImageSection(
+            segment: _segments[widget.segmentIndex],
+            currentSegmentStep: currentSegmentStep,
+            totalSegmentStep: totalSegmentStep),
+        _menuOptions()
+      ]),
     );
   }
 
   _menuOptions() {
     return Column(
       children: [
-        //Coach recommended section
-        Padding(
-            padding: const EdgeInsets.only(top: 30.0),
-            child: Container(
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                  color: OlukoColors.listGrayColor),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(children: [
-                      Container(
-                          decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(3)),
-                              color: Colors.white),
-                          child: Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: Text(OlukoLocalizations.of(context)
-                                .find('coachRecommended')),
-                          ))
-                    ]),
-                    Row(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Icon(
-                            Icons.videocam_outlined,
-                            color: Colors.white,
-                          ),
-                        ),
-                        Expanded(
-                          child: Text(
-                            OlukoLocalizations.of(context)
-                                .find('startVideoAndWorkoutTogether'),
-                            style: OlukoFonts.olukoMediumFont(),
-                          ),
-                        ),
-                        Checkbox(
-                          value: startRecordingAndWorkoutTogether,
-                          onChanged: (bool value) {
-                            this.setState(() {
-                              startRecordingAndWorkoutTogether = value;
-                            });
-                          },
-                          fillColor: MaterialStateProperty.all(Colors.white),
-                          checkColor: Colors.black,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            )),
-        //Segment section
-        SegmentStepSection(
-            currentSegmentStep: currentSegmentStep,
-            totalSegmentStep: totalSegmentStep),
         //Submit button
         Padding(
-          padding: const EdgeInsets.only(left: 25.0, right: 25.0, bottom: 25.0),
+          padding: const EdgeInsets.only(left: 15, right: 15, bottom: 25.0),
           child: Row(children: [
             OlukoPrimaryButton(
-                title: OlukoLocalizations.of(context)
-                    .find('startWorkouts')
-                    .toUpperCase(),
-                color: Colors.white,
+                title: OlukoLocalizations.of(context).find('startWorkouts'),
+                color: OlukoColors.primary,
                 onPressed: () {
-                  startRecordingAndWorkoutTogether
-                      ? _startCountdown(WorkoutType.segmentWithRecording)
-                      : MovementUtils.movementDialog(
-                              context, _confirmDialogContent())
-                          .then((value) => value != null
-                              ? _startCountdown(value == true
-                                  ? WorkoutType.segmentWithRecording
-                                  : WorkoutType.segment)
-                              : null);
+                  if (hasNoRest()) {
+                    navigateToSegmentWithoutRecording();
+                  } else {
+                    BottomDialogUtils.showBottomDialog(
+                        context: context, content: dialogContainer());
+                  }
                 })
           ]),
-        )
+        ),
+        SizedBox(height: 85)
       ],
     );
-  }
-
-  _startCountdown(WorkoutType workoutType) {
-    return Navigator.of(context)
-        .push(PageRouteBuilder(
-            opaque: false,
-            pageBuilder: (BuildContext context, _, __) => CountdownOverlay(
-                  seconds: 5,
-                  title: workoutType == WorkoutType.segmentWithRecording
-                      ? OlukoLocalizations.of(context)
-                          .find("segmentAndRecordingStartsIn")
-                      : OlukoLocalizations.of(context).find("segmentStartsIn"),
-                )))
-        .then((value) => Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => SegmentRecording(
-                    user: widget.user,
-                    workoutType: workoutType,
-                    courseEnrollment: widget.courseEnrollment,
-                    segmentIndex: widget.segmentIndex,
-                    classIndex: widget.classIndex,
-                    segments: widget.segments))));
   }
 
   List<Widget> _confirmDialogContent() {
@@ -278,5 +217,105 @@ class _SegmentDetailState extends State<SegmentDetail> {
         ),
       )
     ];
+  }
+
+  Widget dialogContainer() {
+    return Container(
+        decoration: BoxDecoration(
+            image: DecorationImage(
+          image: AssetImage("assets/courses/dialog_background.png"),
+          fit: BoxFit.cover,
+        )),
+        child: Stack(children: [
+          Column(children: [
+            SizedBox(height: 30),
+            Stack(alignment: Alignment.center, children: [
+              StoriesItem(
+                  maxRadius: 65,
+                  imageUrl:
+                      "https://firebasestorage.googleapis.com/v0/b/oluko-development.appspot.com/o/coach_mike.png?alt=media&token=ead25dbe-f6e5-4857-a2ed-9d77f146ee72"),
+              Image.asset('assets/courses/photo_ellipse.png', scale: 4)
+            ]),
+            SizedBox(height: 15),
+            Text("Coach Mike",
+                textAlign: TextAlign.center,
+                style: OlukoFonts.olukoSuperBigFont(
+                    custoFontWeight: FontWeight.bold)),
+            SizedBox(height: 20),
+            Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 50),
+                child: Text(
+                    "Coach Mike has requested you to record the segment",
+                    textAlign: TextAlign.center,
+                    style: OlukoFonts.olukoBigFont())),
+            SizedBox(height: 35),
+            Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    OlukoOutlinedButton(
+                      title: OlukoLocalizations.of(context).find('ignore'),
+                      onPressed: () {
+                        navigateToSegmentWithoutRecording();
+                      },
+                    ),
+                    SizedBox(width: 20),
+                    OlukoPrimaryButton(
+                      title: 'Ok',
+                      onPressed: () {
+                        navigateToSegmentWithRecording();
+                      },
+                    )
+                  ],
+                )),
+          ]),
+          Align(
+              alignment: Alignment.topRight,
+              child: IconButton(
+                  icon: Icon(Icons.close, color: Colors.white),
+                  onPressed: () => Navigator.pop(context)))
+        ]));
+  }
+
+  navigateToSegmentWithRecording() {
+    Navigator.pushNamed(context, routeLabels[RouteEnum.segmentCameraPreview],
+        arguments: {
+          'segmentIndex': widget.segmentIndex,
+          'classIndex': widget.classIndex,
+          'courseEnrollment': widget.courseEnrollment,
+          'segments': _segments,
+        });
+  }
+
+  navigateToSegmentWithoutRecording() {
+    TimerUtils.startCountdown(
+        WorkoutType.segment,
+        context,
+        getArguments(),
+        _segments[widget.segmentIndex].initialTimer,
+        _segments[widget.segmentIndex].rounds,
+        1);
+  }
+
+  Object getArguments() {
+    return {
+      'segmentIndex': widget.segmentIndex,
+      'classIndex': widget.classIndex,
+      'courseEnrollment': widget.courseEnrollment,
+      'workoutType': WorkoutType.segment,
+      'segments': _segments,
+    };
+  }
+
+//Condition to block the segments that don't work with recording yet.
+  bool hasNoRest() {
+    bool hasNoRest = false;
+    for (var i = 0; i < _segments[widget.segmentIndex].movements.length; i++) {
+      if (_segments[widget.segmentIndex].movements[i].timerRestTime == null) {
+        return true;
+      }
+    }
+    return hasNoRest;
   }
 }

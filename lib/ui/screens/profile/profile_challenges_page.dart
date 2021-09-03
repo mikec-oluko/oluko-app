@@ -1,41 +1,115 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/challenges_card.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ProfileChallengesPage extends StatefulWidget {
-  final List<Challenge> challenges;
-  ProfileChallengesPage({this.challenges});
+  ProfileChallengesPage();
   @override
   _ProfileChallengesPageState createState() => _ProfileChallengesPageState();
 }
 
 class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
+  List<Challenge> challenges;
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: OlukoAppBar(
-        title: ProfileViewConstants.profileChallengesPageTitle,
-        showSearchBar: false,
-      ),
-      body: Container(
-        color: OlukoColors.black,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-          child: ListView(
-            children: buildListOfChallenges(widget.challenges),
+    return BlocBuilder<CourseEnrollmentBloc, CourseEnrollmentState>(
+      builder: (context, state) {
+        if (state is GetCourseEnrollmentChallenge) {
+          challenges = state.challenges;
+        }
+        return Scaffold(
+          appBar: OlukoAppBar(
+            title: ProfileViewConstants.profileChallengesPageTitle,
+            showSearchBar: false,
           ),
-        ),
-      ),
+          body: Container(
+            color: OlukoColors.black,
+            child: Container(
+              child: Stack(
+                children: [
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Text(
+                            OlukoLocalizations.of(context)
+                                .find('upcomingChallenges'),
+                            style: OlukoFonts.olukoBigFont(
+                                customColor: OlukoColors.white,
+                                custoFontWeight: FontWeight.w500),
+                          ),
+                        ),
+                        Row(children: [
+                          Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: 150,
+                            child: ListView(
+                              padding: const EdgeInsets.all(0),
+                              scrollDirection: Axis.horizontal,
+                              children: buildListOfChallenges(challenges),
+                            ),
+                          )
+                        ]),
+                      ],
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height / 2,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            OlukoLocalizations.of(context).find('all'),
+                            style: OlukoFonts.olukoBigFont(
+                                customColor: OlukoColors.white,
+                                custoFontWeight: FontWeight.w500),
+                          ),
+                          GridView.count(
+                            childAspectRatio: 0.5,
+                            shrinkWrap: true,
+                            primary: false,
+                            padding: const EdgeInsets.all(0),
+                            crossAxisCount: 4,
+                            children: buildListOfChallenges(challenges),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
-  List<Widget> buildListOfChallenges(List<Challenge> challenges) => challenges
-      .map((challenge) => ChallengesCard(
-            challenge: challenge,
-            needHeader: false,
-          ))
-      .toList();
+  List<Widget> buildListOfChallenges(List<Challenge> challenges) {
+    List<Widget> contentToReturn = [];
+    challenges.forEach((challenge) {
+      contentToReturn.add(Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: ChallengesCard(
+          challenge: challenge,
+        ),
+      ));
+    });
+    return contentToReturn;
+  }
 }

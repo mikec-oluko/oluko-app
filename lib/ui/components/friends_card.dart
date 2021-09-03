@@ -1,17 +1,17 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/submodels/friend_model.dart';
 import 'package:oluko_app/models/user_response.dart';
 
 class FriendCard extends StatefulWidget {
   // final UserResponse userToDisplay;
   // final User userData;
   // FriendCard({this.userToDisplay, this.userData});
-  final String name;
-  final String lastName;
-  final String userName;
-  final String imageUser;
-  FriendCard({this.name, this.lastName, this.userName, this.imageUser});
+  final UserResponse friendUser;
+  final FriendModel friend;
+  Function(FriendModel) onFavoriteToggle;
+  FriendCard({this.friendUser, this.friend, this.onFavoriteToggle});
   @override
   _FriendCardState createState() => _FriendCardState();
 }
@@ -41,7 +41,7 @@ class _FriendCardState extends State<FriendCard> {
             children: [
               CircleAvatar(
                 // backgroundImage: NetworkImage(widget.userData.photoURL),
-                backgroundImage: NetworkImage(widget.imageUser),
+                backgroundImage: NetworkImage(widget.friendUser.avatar),
                 backgroundColor: Colors.red,
                 radius: 30,
               ),
@@ -58,21 +58,21 @@ class _FriendCardState extends State<FriendCard> {
                           children: [
                             Text(
                               // widget.userToDisplay.firstName,
-                              widget.name,
+                              widget.friendUser.firstName,
                               style: OlukoFonts.olukoMediumFont(),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(left: 5),
                               // child: Text(widget.userToDisplay.lastName,
                               //     style: OlukoFonts.olukoMediumFont()),
-                              child: Text(widget.lastName,
+                              child: Text(widget.friendUser.lastName,
                                   style: OlukoFonts.olukoMediumFont()),
                             ),
                           ],
                         ),
                       ],
                     ),
-                    Text(widget.userName,
+                    Text(widget.friendUser.username,
                         style: OlukoFonts.olukoMediumFont(
                             customColor: OlukoColors.grayColor)),
                     // Text(widget.userData.displayName,
@@ -88,10 +88,20 @@ class _FriendCardState extends State<FriendCard> {
             children: [
               IconButton(
                   icon: Icon(
-                    Icons.star,
+                    widget.friend.isFavorite != null && widget.friend.isFavorite
+                        ? Icons.star
+                        : Icons.star_outline,
                     color: OlukoColors.primary,
                   ),
-                  onPressed: () {}),
+                  onPressed: () {
+                    this.setState(() {
+                      if (widget.friend.isFavorite == null) {
+                        widget.friend.isFavorite = false;
+                      }
+                      widget.friend.isFavorite = !widget.friend.isFavorite;
+                      widget.onFavoriteToggle(widget.friend);
+                    });
+                  }),
             ],
           )
         ]),

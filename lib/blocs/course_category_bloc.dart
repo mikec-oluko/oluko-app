@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/course_category.dart';
 import 'package:oluko_app/repositories/course_category_repository.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class CourseCategoryState {}
 
@@ -28,8 +29,12 @@ class CourseCategoryBloc extends Cubit<CourseCategoryState> {
     try {
       List<CourseCategory> courses = await CourseCategoryRepository().getAll();
       emit(CourseCategorySuccess(values: courses));
-    } catch (e) {
-      emit(CourseCategoryFailure(exception: e));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(CourseCategoryFailure(exception: exception));
     }
   }
 }

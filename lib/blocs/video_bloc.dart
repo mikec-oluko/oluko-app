@@ -12,6 +12,7 @@ import 'package:oluko_app/utils/time_converter.dart';
 import 'package:oluko_app/utils/video_process.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class VideoState {}
 
@@ -53,7 +54,11 @@ class VideoBloc extends Cubit<VideoState> {
     try {
       Video video = await _processVideo(context, videoFile, aspectRatio, id);
       emit(VideoSuccess(video: video));
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       emit(VideoFailure(exceptionMessage: e.toString()));
     }
   }
@@ -84,8 +89,15 @@ class VideoBloc extends Cubit<VideoState> {
     _processPhase = OlukoLocalizations.of(context).find('generatingThumbnail');
     _progress += _unitOfProgress;
     emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
-
-    final thumbFilePath = await EncodingProvider.getThumb(videoPath, 100, 150);
+    var thumbFilePath;
+    try {
+      thumbFilePath = await EncodingProvider.getThumb(videoPath, 100, 150);
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
+    }
 
     _processPhase = OlukoLocalizations.of(context).find('encodingVideo');
     _progress += _unitOfProgress;
@@ -110,7 +122,10 @@ class VideoBloc extends Cubit<VideoState> {
 
   Future<Video> afterEcondingProcessing(Video video, String thumbFilePath,
       String encodedFilesDir, BuildContext context) async {
-    final thumbUrl = await VideoProcess.uploadFile(thumbFilePath, video.name);
+    var thumbUrl;
+    if (thumbFilePath != null) {
+      thumbUrl = await VideoProcess.uploadFile(thumbFilePath, video.name);
+    }
     final videoUrl =
         await _uploadHLSFiles(context, encodedFilesDir, video.name);
 

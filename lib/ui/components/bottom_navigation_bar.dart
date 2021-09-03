@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/models/oluko_bottom_navigation_bar_item.dart';
+import 'package:oluko_app/models/utils/oluko_bottom_navigation_bar_item.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
@@ -90,8 +90,7 @@ class _State extends State<OlukoBottomNavigationBar> {
       OlukoBottomNavigationBarItem(
           title: OlukoLocalizations.of(context).find('coach'),
           assetImageUrl: 'assets/bottom_navigation_bar/coach.png',
-          route: '/coach',
-          disabled: true),
+          route: '/coach'),
       //TODO: Item for testing (remove it later)
       /*OlukoBottomNavigationBarItem(
           title: "TEST",

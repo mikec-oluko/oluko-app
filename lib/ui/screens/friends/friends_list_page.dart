@@ -1,9 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/blocs/friend_bloc.dart';
-import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
+import 'package:oluko_app/blocs/friends/friend_bloc.dart';
+import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/submodels/friend_model.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/friends_card.dart';
+import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
+import 'package:oluko_app/ui/components/title_body.dart';
+import 'package:oluko_app/utils/app_messages.dart';
 
 class FriendsListPage extends StatefulWidget {
   // final List<User> friends;
@@ -15,6 +22,8 @@ class FriendsListPage extends StatefulWidget {
 }
 
 class _FriendsListPageState extends State<FriendsListPage> {
+  AuthSuccess _authStateData;
+
   @override
   void initState() {
     super.initState();
@@ -35,59 +44,110 @@ class _FriendsListPageState extends State<FriendsListPage> {
 
   @override
   Widget build(BuildContext context) {
-    //TODO: Use userId
-    // BlocProvider.of<FriendBloc>(context).getUserFriendsRequestByUserId(userId);
-    return SingleChildScrollView(
-      child: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        color: OlukoColors.black,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 10),
-              child: Text(_title, style: OlukoFonts.olukoBigFont()),
-            ),
-            // BlocListener<FriendBloc, FriendState>(
-            //   listener: (context, state) {
-            //     if (state is GetFriendsSuccess) {
-            //       friends = state.friendUsers;
-            //     }
-            //   },
-            //   child: Column(
-            //       children: friends
-            //           .map((friend) => FriendCard(
-            //                 userData: friend,
-            //               ))
-            //           .toList()),
-            // ),
-            Column(
+    return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
+      if (authState is AuthSuccess && _authStateData == null) {
+        _authStateData = authState;
+        BlocProvider.of<FriendBloc>(context)
+            .getFriendsByUserId(authState.user.id);
+      }
+      return BlocListener<FavoriteFriendBloc, FavoriteFriendState>(
+        listener: (context, favoriteState) {
+          handleFriendFavoriteState(favoriteState);
+        },
+        child: SingleChildScrollView(
+          child: Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            color: OlukoColors.black,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                FriendCard(
-                  name: "Lucas",
-                  lastName: "Smith",
-                  userName: "lucSmith",
-                  imageUser: userImages[2],
+                Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: Text(_title, style: OlukoFonts.olukoBigFont()),
                 ),
-                FriendCard(
-                  name: "Ivy",
-                  lastName: "Bridge",
-                  userName: "IvyFit",
-                  imageUser: userImages[0],
-                ),
-                FriendCard(
-                  name: "Lucy",
-                  lastName: "Frost",
-                  userName: "lucy2021",
-                  imageUser: userImages[1],
-                ),
+                // BlocListener<FriendBloc, FriendState>(
+                //   listener: (context, state) {
+                //     if (state is GetFriendsSuccess) {
+                //       friends = state.friendUsers;
+                //     }
+                //   },
+                //   child: Column(
+                //       children: friends
+                //           .map((friend) => FriendCard(
+                //                 userData: friend,
+                //               ))
+                //           .toList()),
+                // ),
+
+                BlocBuilder<FriendBloc, FriendState>(
+                    builder: (context, friendState) {
+                  return Column(children: generateFriendList(friendState));
+                }),
               ],
-            )
-          ],
+            ),
+          ),
         ),
-      ),
-    );
+      );
+    });
+  }
+
+  ///Manage friends retrieval state
+  List<Widget> generateFriendList(FriendState friendState) {
+    if (friendState is FriendLoading) {
+      return [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: OlukoCircularProgressIndicator(),
+        )
+      ];
+    } else if (friendState is FriendFailure) {
+      return [TitleBody('There was an error retrieving your Friends')];
+    } else if (friendState is GetFriendsSuccess) {
+      if (friendState.friendData != null) {
+        return friendState.friendData.friends.length == 0
+            ? [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [TitleBody('No Friends.')]),
+                )
+              ]
+            : friendState.friendData.friends.map((friend) {
+                UserResponse friendUser = friendState.friendUsers
+                    .where((fuser) => fuser.id == friend.id)
+                    .first;
+                return FriendCard(
+                  friend: friend,
+                  friendUser: friendUser,
+                  onFavoriteToggle: (FriendModel friendModel) {
+                    BlocProvider.of<FavoriteFriendBloc>(context).favoriteFriend(
+                        context, friendState.friendData, friendModel);
+                  },
+                );
+              }).toList();
+      } else {
+        return [];
+      }
+    } else {
+      return [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: OlukoCircularProgressIndicator(),
+        )
+      ];
+    }
+  }
+
+  handleFriendFavoriteState(FavoriteFriendState favoriteState) {
+    if (favoriteState is FavoriteFriendSuccess) {
+      BlocProvider.of<FriendBloc>(context)
+          .getFriendsByUserId(_authStateData.user.id);
+      AppMessages.showSnackbar(context, 'Friend updated.');
+    } else if (favoriteState is FavoriteFriendFailure) {
+      AppMessages.showSnackbar(context, 'Error updating Friend.');
+    }
   }
 }

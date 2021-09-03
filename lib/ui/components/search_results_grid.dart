@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/ui/screens/courses/course_marketing.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 
+import '../../routes.dart';
 import 'course_card.dart';
 
 class SearchResultsGrid<T> extends StatefulWidget {
@@ -34,19 +36,13 @@ class _State extends State<SearchResultsGrid> {
                   padding: const EdgeInsets.all(8.0),
                   child: Container(
                       child: GestureDetector(
-                    onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context2) => BlocProvider<AuthBloc>(
-                                  create: (context2) =>
-                                      BlocProvider.of<AuthBloc>(context),
-                                  child: CourseMarketing(
-                                      course:
-                                          e),
-                                ))),
+                    //TODO: not generic, depends on T being course only
+                    onTap: () => Navigator.pushNamed(
+                        context, routeLabels[RouteEnum.courseMarketing],
+                        arguments: {'course': e as Course}),
                     child: _getCourseCard(
                       Image.network(
-                        e.imageUrl,
+                        e.image,
                         fit: BoxFit.cover,
                         frameBuilder: (BuildContext context, Widget child,
                                 int frame, bool wasSynchronouslyLoaded) =>

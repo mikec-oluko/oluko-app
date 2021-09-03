@@ -8,8 +8,15 @@ class TaskCard extends StatefulWidget {
   final Task task;
   final Function() onPressed;
   final bool isPublic;
+  final bool isCompleted;
+  final bool isDisabled;
 
-  TaskCard({this.task, this.onPressed, this.isPublic = false});
+  TaskCard(
+      {this.task,
+      this.onPressed,
+      this.isCompleted = false,
+      this.isPublic = false,
+      this.isDisabled = false});
 
   @override
   _State createState() => _State();
@@ -23,7 +30,9 @@ class _State extends State<TaskCard> {
         child: Container(
           decoration: BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(10)),
-              color: OlukoColors.taskCardBackground),
+              color: !widget.isDisabled
+                  ? OlukoColors.taskCardBackground
+                  : OlukoColors.taskCardBackgroundDisabled),
           width: MediaQuery.of(context).size.width,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -44,17 +53,34 @@ class _State extends State<TaskCard> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    widget.task.name,
-                                    style: OlukoFonts.olukoSuperBigFont(
-                                        customColor: OlukoColors.white,
-                                        custoFontWeight: FontWeight.bold),
-                                  ),
+                                  Row(children: [
+                                    Text(
+                                      widget.task.name,
+                                      style: OlukoFonts.olukoSuperBigFont(
+                                          customColor: OlukoColors.white,
+                                          custoFontWeight: FontWeight.bold),
+                                    ),
+                                    Expanded(child: SizedBox()),
+                                    Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                          Image.asset(
+                                            'assets/assessment/check_ellipse.png',
+                                            scale: 4,
+                                          ),
+                                          widget.isCompleted
+                                              ? Image.asset(
+                                                  'assets/assessment/check.png',
+                                                  scale: 4,
+                                                )
+                                              : SizedBox()
+                                        ])
+                                  ]),
                                   Padding(
                                     padding: const EdgeInsets.only(
                                         top: 8.0, right: 10),
                                     child: Text(
-                                      widget.task.description,
+                                      widget.task.shortDescription,
                                       style: OlukoFonts.olukoBigFont(
                                           customColor: OlukoColors.grayColor),
                                     ),
@@ -81,16 +107,18 @@ class _State extends State<TaskCard> {
                                   custoFontWeight: FontWeight.bold),
                             ),
                             Expanded(child: SizedBox()),
-                            Stack(alignment: Alignment.center, children: [
-                              Image.asset(
-                                'assets/assessment/green_ellipse.png',
-                                scale: 4,
-                              ),
-                              Image.asset(
-                                'assets/home/right_icon.png',
-                                scale: 4,
-                              )
-                            ]),
+                            !widget.isDisabled
+                                ? Stack(alignment: Alignment.center, children: [
+                                    Image.asset(
+                                      'assets/assessment/green_ellipse.png',
+                                      scale: 4,
+                                    ),
+                                    Image.asset(
+                                      'assets/home/right_icon.png',
+                                      scale: 4,
+                                    )
+                                  ])
+                                : SizedBox(),
                           ])),
                     ],
                   )),

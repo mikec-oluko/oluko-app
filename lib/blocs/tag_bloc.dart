@@ -4,6 +4,7 @@ import 'package:oluko_app/models/tag_category.dart';
 import 'package:oluko_app/repositories/tag_category_repository.dart';
 import 'package:oluko_app/repositories/tag_repository.dart';
 import 'package:oluko_app/utils/tag_utils.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class TagState {}
 
@@ -31,7 +32,11 @@ class TagBloc extends Cubit<TagState> {
     try {
       List<Tag> tags = await TagRepository().getAll();
       emit(TagSuccess(values: tags));
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       emit(TagFailure(exception: e));
     }
   }
@@ -46,7 +51,11 @@ class TagBloc extends Cubit<TagState> {
       Map<TagCategory, List<Tag>> mappedTags =
           TagUtils.mapTagsByCategories(tags, tagCategories);
       emit(TagSuccess(values: tags, tagsByCategories: mappedTags));
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       emit(TagFailure(exception: e));
     }
   }

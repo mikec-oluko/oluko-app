@@ -1,10 +1,12 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_category.dart';
+import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/course_statistics.dart';
 import 'package:oluko_app/repositories/course_category_repository.dart';
 import 'package:oluko_app/repositories/course_repository.dart';
 import 'package:oluko_app/utils/course_utils.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class CourseState {}
 
@@ -26,6 +28,11 @@ class UserEnrolledCoursesSuccess extends CourseState {
   UserEnrolledCoursesSuccess({this.courses});
 }
 
+class GetByCourseEnrollmentsSuccess extends CourseState {
+  final List<Course> courses;
+  GetByCourseEnrollmentsSuccess({this.courses});
+}
+
 class CourseFailure extends CourseState {
   final Exception exception;
 
@@ -42,8 +49,12 @@ class CourseBloc extends Cubit<CourseState> {
     try {
       List<Course> courses = await CourseRepository().getAll();
       emit(CourseSuccess(values: courses));
-    } catch (e) {
-      emit(CourseFailure(exception: e));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(CourseFailure(exception: exception));
     }
   }
 
@@ -58,9 +69,12 @@ class CourseBloc extends Cubit<CourseState> {
       Map<CourseCategory, List<Course>> mappedCourses =
           CourseUtils.mapCoursesByCategories(courses, courseCategories);
       emit(CourseSuccess(values: courses, coursesByCategories: mappedCourses));
-    } catch (e) {
-      print(e.toString());
-      emit(CourseFailure(exception: e));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(CourseFailure(exception: exception));
     }
   }
 
@@ -71,8 +85,12 @@ class CourseBloc extends Cubit<CourseState> {
     try {
       Course course = await CourseRepository.get(id);
       emit(GetCourseSuccess(course: course));
-    } catch (e) {
-      emit(CourseFailure(exception: e));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(CourseFailure(exception: exception));
     }
   }
 
@@ -81,8 +99,26 @@ class CourseBloc extends Cubit<CourseState> {
       List<Course> enrolledCourses =
           await CourseRepository.getUserEnrolled(userId);
       emit(UserEnrolledCoursesSuccess(courses: enrolledCourses));
-    } catch (e) {
-      emit(CourseFailure(exception: e));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(CourseFailure(exception: exception));
+    }
+  }
+
+  void getByCourseEnrollments(List<CourseEnrollment> courseEnrollments) async {
+    try {
+      List<Course> courses =
+          await CourseRepository.getByCourseEnrollments(courseEnrollments);
+      emit(GetByCourseEnrollmentsSuccess(courses: courses));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(CourseFailure(exception: exception));
     }
   }
 }

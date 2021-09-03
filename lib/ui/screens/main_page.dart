@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';
+import 'package:oluko_app/ui/screens/coach/coach_page.dart';
 import 'package:oluko_app/ui/screens/courses/courses.dart';
 import 'package:oluko_app/ui/screens/friends/friends_page.dart';
 import 'package:oluko_app/ui/screens/home.dart';
 import 'package:oluko_app/ui/screens/profile/profile.dart';
+
+import 'coach/coach_no_assigned_timer_page.dart';
 
 class MainPage extends StatefulWidget {
   MainPage({Key key}) : super(key: key);
@@ -20,16 +23,18 @@ class _MainPageState extends State<MainPage>
     //TODO:Change to Home() when finished
     Home(),
     //Reserved for Coach Section
-    Container(
-      color: Colors.black,
-      child: Center(
-        child: Text(
-          'COACH SECTION',
-          style: OlukoFonts.olukoBigFont(),
-        ),
-      ),
-    ),
+    // Container(
+    //   color: Colors.black,
+    //   child: Center(
+    //     child: Text(
+    //       'COACH SECTION',
+    //       style: OlukoFonts.olukoBigFont(),
+    //     ),
+    //   ),
+    // ),
     // ----
+    // CoachPage(),
+    CoachAssignedCountDown(),
     FriendsPage(),
     Courses(),
     ProfilePage()

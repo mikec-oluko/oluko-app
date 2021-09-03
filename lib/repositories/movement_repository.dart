@@ -40,6 +40,29 @@ class MovementRepository {
     return mapQueryToMovement(querySnapshot);
   }
 
+  static Future<List<Movement>> get(String id) async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue("projectId"))
+        .collection('movements')
+        .where('id', isEqualTo: id)
+        .get();
+    return mapQueryToMovement(querySnapshot);
+  }
+
+  static Future<List<Movement>> getVariants(String id) async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue("projectId"))
+        .collection('movements')
+        .doc(id)
+        .collection('movementVariants')
+        .get();
+
+    var items = mapQueryToMovement(querySnapshot);
+    return items;
+  }
+
   static Future<Movement> create(
       Movement movement, DocumentReference segmentReference) async {
     CollectionReference reference = FirebaseFirestore.instance

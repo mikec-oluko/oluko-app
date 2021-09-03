@@ -19,11 +19,13 @@ class AssessmentAssignmentRepository {
     CollectionReference assessmentAssignmentReference =
         projectReference.collection("assessmentAssignments");
 
-            DocumentReference assessmentReference =
+    DocumentReference assessmentReference =
         projectReference.collection("assessment").doc(assessment.id);
 
-    AssessmentAssignment assessmentAssignment =
-        AssessmentAssignment(createdBy: user.uid, assessmentId: assessment.id, assessmentReference: assessmentReference);
+    AssessmentAssignment assessmentAssignment = AssessmentAssignment(
+        createdBy: user.uid,
+        assessmentId: assessment.id,
+        assessmentReference: assessmentReference);
 
     final DocumentReference docRef = assessmentAssignmentReference.doc();
     assessmentAssignment.id = docRef.id;
@@ -44,5 +46,17 @@ class AssessmentAssignmentRepository {
     } else {
       return null;
     }
+  }
+
+  static Future<bool> setAsCompleted(String id) async {
+    DocumentReference reference = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue("projectId"))
+        .collection('assessmentAssignments')
+        .doc(id);
+    reference.update({
+      'compleated_at': Timestamp.now(),
+    });
+    return true;
   }
 }

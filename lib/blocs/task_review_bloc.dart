@@ -6,6 +6,7 @@ import 'package:oluko_app/models/submodels/video_info.dart';
 import 'package:oluko_app/models/task_review.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/repositories/task_review_repository.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class TaskReviewState {}
 
@@ -44,7 +45,11 @@ class TaskReviewBloc extends Cubit<TaskReviewState> {
       newTaskReview =
           TaskReviewRepository.createTaskReview(newTaskReview, reference);
       emit(CreateSuccess(taskReviewId: newTaskReview.id));
-    } catch (e) {
+    } catch (e, stackTrace) {
+      Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       emit(Failure(exception: e));
     }
   }
@@ -55,7 +60,11 @@ class TaskReviewBloc extends Cubit<TaskReviewState> {
       await TaskReviewRepository.updateTaskReviewVideoInfo(
           videoInfo, reference);
       emit(UpdateSuccess());
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       emit(Failure(exception: e));
     }
   }

@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:oluko_app/constants/Theme.dart';
+import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_statistics.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class StatisticChart extends StatefulWidget {
   final CourseStatistics courseStatistics;
+  final Course course;
 
-  StatisticChart({this.courseStatistics});
+  StatisticChart({this.courseStatistics, this.course});
 
   @override
   _State createState() => _State();
@@ -66,12 +69,21 @@ class _State extends State<StatisticChart> {
                             children: [
                               Padding(
                                 padding: const EdgeInsets.only(top: 5.0),
-                                child: Text(
-                                  OlukoLocalizations.of(context)
-                                      .find('explore'),
-                                  style: OlukoFonts.olukoMediumFont(
-                                      customColor: OlukoColors.primary,
-                                      decoration: TextDecoration.underline),
+                                child: GestureDetector(
+                                  onTap: () => Navigator.pushNamed(
+                                      context,
+                                      routeLabels[
+                                          RouteEnum.exploreSubscribedUsers],
+                                      arguments: {
+                                        'courseId': widget.course.id
+                                      }),
+                                  child: Text(
+                                    OlukoLocalizations.of(context)
+                                        .find('explore'),
+                                    style: OlukoFonts.olukoMediumFont(
+                                        customColor: OlukoColors.primary,
+                                        decoration: TextDecoration.underline),
+                                  ),
                                 ),
                               )
                             ],

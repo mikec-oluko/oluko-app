@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/blocs/auth_bloc.dart';
-import 'package:oluko_app/blocs/profile_bloc.dart';
-import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
+import 'package:oluko_app/blocs/profile/upload_avatar_bloc.dart';
+import 'package:oluko_app/blocs/profile/upload_cover_image_bloc.dart';
+import 'package:oluko_app/blocs/profile/upload_transformation_journey_content_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
-import 'package:oluko_app/ui/components/uploading_modal_loader.dart';
-import 'package:oluko_app/utils/app_modal.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ModalUploadOptions extends StatefulWidget {
   final UploadFrom contentFrom;
-  ModalUploadOptions(this.contentFrom);
+  final int indexValue;
+  ModalUploadOptions({this.contentFrom, this.indexValue});
   @override
   _ModalUploadOptionsState createState() => _ModalUploadOptionsState();
 }
@@ -19,42 +18,21 @@ class ModalUploadOptions extends StatefulWidget {
 class _ModalUploadOptionsState extends State<ModalUploadOptions> {
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(providers: [
-      BlocProvider.value(value: BlocProvider.of<ProfileBloc>(context)),
-      BlocProvider.value(value: BlocProvider.of<AuthBloc>(context)),
-      BlocProvider.value(
-          value: BlocProvider.of<TransformationJourneyBloc>(context)),
-    ], child: returnList(context));
+    return returnList(context);
   }
 
-  Container returnList(BuildContext context) {
+  Widget returnList(BuildContext context) {
     return Container(
+      color: OlukoColors.black,
       width: MediaQuery.of(context).size.width,
+      height: 100,
       child: ListView(
+        padding: EdgeInsets.zero,
         shrinkWrap: true,
         children: [
           ListTile(
             onTap: () {
-              if (widget.contentFrom == UploadFrom.profileImage ||
-                  widget.contentFrom == UploadFrom.profileCoverImage) {
-                BlocProvider.of<ProfileBloc>(context)
-                  ..uploadImageForProfile(
-                      uploadedFrom: DeviceContentFrom.camera,
-                      contentFor: widget.contentFrom);
-                AppModal.dialogContent(
-                    context: context,
-                    content: [UploadingModalLoader(widget.contentFrom)]);
-              }
-              if (widget.contentFrom == UploadFrom.transformationJourney) {
-                Navigator.pop(context);
-                BlocProvider.of<TransformationJourneyBloc>(context)
-                  ..uploadTransformationJourneyContent(
-                      uploadedFrom: DeviceContentFrom.camera);
-                Navigator.pop(context);
-                AppModal.dialogContent(
-                    context: context,
-                    content: [UploadingModalLoader(widget.contentFrom)]);
-              }
+              uploadContentFromCamera(context);
             },
             leading: Icon(
               Icons.camera_alt_outlined,
@@ -66,27 +44,7 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
           ),
           ListTile(
             onTap: () {
-              if (widget.contentFrom == UploadFrom.profileImage ||
-                  widget.contentFrom == UploadFrom.profileCoverImage) {
-                BlocProvider.of<ProfileBloc>(context)
-                  ..uploadImageForProfile(
-                      uploadedFrom: DeviceContentFrom.gallery,
-                      contentFor: widget.contentFrom);
-                Navigator.pop(context);
-                AppModal.dialogContent(
-                    context: context,
-                    content: [UploadingModalLoader(widget.contentFrom)]);
-              }
-              if (widget.contentFrom == UploadFrom.transformationJourney) {
-                Navigator.pop(context);
-                BlocProvider.of<TransformationJourneyBloc>(context)
-                  ..uploadTransformationJourneyContent(
-                      uploadedFrom: DeviceContentFrom.gallery);
-                Navigator.pop(context);
-                AppModal.dialogContent(
-                    context: context,
-                    content: [UploadingModalLoader(widget.contentFrom)]);
-              }
+              uploadContentFromGallery(context);
             },
             leading: Icon(
               Icons.image,
@@ -99,5 +57,50 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
         ],
       ),
     );
+  }
+
+  void uploadContentFromCamera(BuildContext context) {
+    switch (widget.contentFrom) {
+      case UploadFrom.profileImage:
+        BlocProvider.of<ProfileAvatarBloc>(context)
+          ..uploadProfileAvatarImage(uploadedFrom: DeviceContentFrom.camera);
+        break;
+      case UploadFrom.profileCoverImage:
+        BlocProvider.of<ProfileCoverImageBloc>(context)
+          ..uploadProfileCoverImage(
+            uploadedFrom: DeviceContentFrom.camera,
+          );
+        break;
+      case UploadFrom.transformationJourney:
+        BlocProvider.of<TransformationJourneyContentBloc>(context)
+          ..uploadTransformationJourneyContent(
+              uploadedFrom: DeviceContentFrom.camera,
+              indexForContent: widget.indexValue);
+        break;
+      default:
+    }
+  }
+
+  void uploadContentFromGallery(BuildContext context) {
+    switch (widget.contentFrom) {
+      case UploadFrom.profileImage:
+        BlocProvider.of<ProfileAvatarBloc>(context)
+          ..uploadProfileAvatarImage(uploadedFrom: DeviceContentFrom.gallery);
+        break;
+      case UploadFrom.profileCoverImage:
+        BlocProvider.of<ProfileCoverImageBloc>(context)
+          ..uploadProfileCoverImage(
+            uploadedFrom: DeviceContentFrom.gallery,
+          );
+        break;
+      case UploadFrom.transformationJourney:
+        BlocProvider.of<TransformationJourneyContentBloc>(context)
+          ..uploadTransformationJourneyContent(
+              uploadedFrom: DeviceContentFrom.gallery,
+              indexForContent: widget.indexValue);
+        break;
+      default:
+        return;
+    }
   }
 }

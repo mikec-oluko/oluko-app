@@ -1,15 +1,14 @@
 import 'dart:io';
-import 'package:image/image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:oluko_app/helpers/encoding_provider.dart';
 import 'package:oluko_app/helpers/s3_provider.dart';
 import 'package:oluko_app/models/enums/file_type_enum.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/video_process.dart';
 import 'package:path/path.dart' as p;
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 class TransformationJourneyRepository {
   FirebaseFirestore firestoreInstance;
@@ -26,7 +25,6 @@ class TransformationJourneyRepository {
     this.firestoreInstance = firestoreInstance;
   }
 
-  //TODO: Filter or not, userInfo to return only the List
   Future<List<TransformationJourneyUpload>> getUploadedContentByUserId(
       String userId) async {
     try {
@@ -43,15 +41,19 @@ class TransformationJourneyRepository {
         final Map<String, dynamic> content = doc.data();
         contentUploaded.add(TransformationJourneyUpload.fromJson(content));
       });
-
+      contentUploaded.sort((a, b) => a.index.compareTo(b.index));
       return contentUploaded;
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       throw e;
     }
   }
 
   static Future<TransformationJourneyUpload> createTransformationJourneyUpload(
-      FileTypeEnum type, PickedFile file, String userId) async {
+      FileTypeEnum type, PickedFile file, String userId, int index) async {
     try {
       CollectionReference transformationJourneyUploadsReference =
           projectReference
@@ -85,7 +87,7 @@ class TransformationJourneyRepository {
                 name: '',
                 from: Timestamp.now(),
                 description: '',
-                index: 0,
+                index: index == null ? 0 : index,
                 type: type,
                 file: downloadUrl,
                 isPublic: true,
@@ -98,7 +100,11 @@ class TransformationJourneyRepository {
         docRef.set(transformationJourneyUpload.toJson());
         return transformationJourneyUpload;
       } else {}
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       throw e;
     }
   }
@@ -112,5 +118,39 @@ class TransformationJourneyRepository {
         await s3Provider.putFile(file.readAsBytesSync(), folderName, basename);
 
     return downloadUrl;
+  }
+
+  static Future<bool> reorderElementsIndex(
+      {TransformationJourneyUpload elementMoved,
+      TransformationJourneyUpload elementReplaced,
+      String userId}) async {
+    updateIndexOfElements(elementMoved, elementReplaced);
+
+    try {
+      await updateDocument(userId, elementMoved);
+      await updateDocument(userId, elementReplaced);
+      return true;
+    } catch (e) {
+      print(e);
+
+      return false;
+    }
+  }
+
+  static Future updateDocument(
+      String userId, TransformationJourneyUpload elementToUpdate) async {
+    DocumentReference contentReference = projectReference
+        .collection('users')
+        .doc(userId)
+        .collection('transformationJourneyUploads')
+        .doc(elementToUpdate.id);
+    await contentReference.update(elementToUpdate.toJson());
+  }
+
+  static void updateIndexOfElements(TransformationJourneyUpload elementMoved,
+      TransformationJourneyUpload elementReplaced) {
+    final temptElement = elementMoved.index;
+    elementMoved.index = elementReplaced.index;
+    elementReplaced.index = temptElement;
   }
 }
