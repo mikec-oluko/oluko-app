@@ -69,24 +69,30 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
               Container(
                 child: Column(
                   children: [
-                    TextButton(
-                      onPressed: () {
+                    // TextButton(
+                    //   onPressed: () {
+                    //     Navigator.pushNamed(
+                    //         context, routeLabels[RouteEnum.coach2]);
+                    //   },
+                    //   child: Text(
+                    //     OlukoLocalizations.of(context).find('coach'),
+                    //     textAlign: TextAlign.center,
+                    //     style: OlukoFonts.olukoMediumFont(
+                    //         customColor: OlukoColors.primary,
+                    //         custoFontWeight: FontWeight.w500),
+                    //   ),
+                    // ),
+                    GestureDetector(
+                      onTap: () {
                         Navigator.pushNamed(
                             context, routeLabels[RouteEnum.coach2]);
                       },
-                      child: Text(
-                        OlukoLocalizations.of(context).find('coach'),
-                        textAlign: TextAlign.center,
-                        style: OlukoFonts.olukoMediumFont(
-                            customColor: OlukoColors.primary,
-                            custoFontWeight: FontWeight.w500),
+                      child: Image.asset(
+                        'assets/courses/coach.png',
+                        color: OlukoColors.primary,
+                        height: 100,
+                        width: 100,
                       ),
-                    ),
-                    Image.asset(
-                      'assets/courses/coach.png',
-                      color: OlukoColors.primary,
-                      height: 100,
-                      width: 100,
                     ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),

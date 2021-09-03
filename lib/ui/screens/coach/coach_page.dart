@@ -400,11 +400,14 @@ class _CoachPageState extends State<CoachPage> {
                       padding: const EdgeInsets.all(0),
                       child: GestureDetector(
                         onTap: () {
-                          Navigator.pushNamed(
-                              context, routeLabels[RouteEnum.sentVideos],
-                              arguments: {
-                                'taskSubmissions': _assessmentVideosContent
-                              });
+                          _assessmentVideosContent.length != null
+                              ? Navigator.pushNamed(
+                                  context, routeLabels[RouteEnum.sentVideos],
+                                  arguments: {
+                                      'taskSubmissions':
+                                          _assessmentVideosContent
+                                    })
+                              : () {};
                         },
                         child: isForCarousel
                             ? Wrap(
@@ -509,11 +512,14 @@ class _CoachPageState extends State<CoachPage> {
                       padding: const EdgeInsets.all(0),
                       child: GestureDetector(
                         onTap: () {
-                          Navigator.pushNamed(
-                              context, routeLabels[RouteEnum.mentoredVideos],
-                              arguments: {
-                                'taskSubmissions': _assessmentVideosContent
-                              });
+                          _assessmentVideosContent.length != null
+                              ? Navigator.pushNamed(context,
+                                  routeLabels[RouteEnum.mentoredVideos],
+                                  arguments: {
+                                      'taskSubmissions':
+                                          _assessmentVideosContent
+                                    })
+                              : () {};
                         },
                         child: isForCarousel
                             ? Wrap(
