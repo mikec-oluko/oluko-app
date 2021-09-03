@@ -164,8 +164,7 @@ class _MovementIntroState extends State<MovementIntro>
                                     child: TabBar(
                                       isScrollable: true,
                                       onTap: (index) => this.setState(() {
-                                        tabController.index =
-                                            0; //Remove after adding tabs
+                                        tabController.index = index;
                                       }),
                                       controller: tabController,
                                       indicatorSize: TabBarIndicatorSize.tab,
@@ -177,18 +176,12 @@ class _MovementIntroState extends State<MovementIntro>
                                 ],
                               ),
                               Builder(builder: (context) {
-                                switch (tabController.index) {
-                                  case 0:
-                                    return _firstTab();
-                                  case 1:
-                                    return _firstTab();
-                                  //_secondTab();
-                                  case 2:
-                                    return _firstTab();
-                                  case 3:
-                                    return _firstTab();
-                                  default:
-                                    return _firstTab();
+                                if (tabController.index == 0) {
+                                  return _firstTab(widget.movement);
+                                } else {
+                                  return _firstTab(
+                                      movementInfoState.movementVariants[
+                                          tabController.index - 1]);
                                 }
                               })
                             ],
@@ -295,12 +288,12 @@ class _MovementIntroState extends State<MovementIntro>
     }
   }
 
-  _firstTab() {
+  _firstTab(Movement movement) {
     return Container(
       child: Column(children: [
         Container(
             height: 200,
-            child: Stack(children: _videoPlayer(widget.movement.video, 0))),
+            child: Stack(children: _videoPlayer(movement.video, 0))),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -308,7 +301,7 @@ class _MovementIntroState extends State<MovementIntro>
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: Text(
-                  widget.movement.description,
+                  movement.description,
                   style: OlukoFonts.olukoMediumFont(),
                 ),
               ),
@@ -438,7 +431,7 @@ class _MovementIntroState extends State<MovementIntro>
   List<Tab> _getTabs() {
     List<Tab> tabItems = [];
     for (var i = 0; i < tabs.length; i++) {
-      tabItems.add(_tabItem(tabs[i], i, disabled: i > 0));
+      tabItems.add(_tabItem(tabs[i], i));
     }
     return tabItems;
   }
