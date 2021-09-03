@@ -316,6 +316,8 @@ class Routes {
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
           BlocProvider<CourseEnrollmentBloc>.value(
               value: _courseEnrollmentBloc),
+          BlocProvider<CourseEnrollmentListBloc>.value(
+              value: _courseEnrollmentListBloc),
           BlocProvider<TransformationJourneyBloc>.value(
               value: _transformationJourneyBloc),
           BlocProvider<ProfileCoverImageBloc>.value(
@@ -516,6 +518,8 @@ class Routes {
           BlocProvider<TaskBloc>.value(value: _taskBloc),
           BlocProvider<VideoBloc>.value(value: _videoBloc),
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
+          BlocProvider<TaskSubmissionListBloc>.value(
+              value: _taskSubmissionListBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments;
         newRouteView = SelfRecordingPreview(

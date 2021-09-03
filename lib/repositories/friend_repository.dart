@@ -51,9 +51,13 @@ class FriendRepository {
           .collection('friends')
           .where('id', isEqualTo: userId)
           .get();
-      List<Friend> listOfFriendRequests =
-          docRef.docs.map((doc) => Friend.fromJson(doc.data())).toList();
-      return listOfFriendRequests[0];
+      if (docRef.docs.isNotEmpty) {
+        List<Friend> listOfFriendRequests =
+            docRef.docs.map((doc) => Friend.fromJson(doc.data())).toList();
+        return listOfFriendRequests[0];
+      } else {
+        return null;
+      }
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,

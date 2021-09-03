@@ -9,6 +9,7 @@ import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
+import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/assessment.dart';
@@ -113,6 +114,8 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                   _assessmentAssignment, _taskSubmission.id, state.video);
             BlocProvider.of<TaskSubmissionBloc>(context)
               ..checkCompleted(_assessmentAssignment, _assessment);
+            BlocProvider.of<TaskSubmissionListBloc>(context)
+              ..get(_assessmentAssignment);
             Navigator.pop(context);
             Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails],
                 arguments: {'taskIndex': widget.taskIndex});

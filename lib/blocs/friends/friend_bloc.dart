@@ -59,14 +59,18 @@ class FriendBloc extends Cubit<FriendState> {
       Friend friendInformation =
           await FriendRepository.getUserFriendsRequestByUserId(userId);
 
-      List<UserResponse> friendRequestUsers = await Future.wait(
-          friendInformation.friendRequestReceived
-              .map((e) => UserRepository().getById(e.id))
-              .toList());
+      if (friendInformation != null) {
+        List<UserResponse> friendRequestUsers = await Future.wait(
+            friendInformation.friendRequestReceived
+                .map((e) => UserRepository().getById(e.id))
+                .toList());
 
-      emit(GetFriendRequestsSuccess(
-          friendData: friendInformation,
-          friendRequestList: friendRequestUsers));
+        emit(GetFriendRequestsSuccess(
+            friendData: friendInformation,
+            friendRequestList: friendRequestUsers));
+      } else {
+        emit(GetFriendRequestsSuccess(friendData: null, friendRequestList: []));
+      }
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

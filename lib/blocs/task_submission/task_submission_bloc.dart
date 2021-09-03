@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/models/task.dart';
@@ -123,7 +122,7 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
     }
   }
 
-  void checkCompleted(
+  Future<bool> checkCompleted(
       AssessmentAssignment assessmentAssignment, Assessment assessment) async {
     try {
       List<TaskSubmission> taskSubmissions =
@@ -132,12 +131,14 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
       if (taskSubmissions.length == assessment.tasks.length) {
         AssessmentAssignmentRepository.setAsCompleted(assessmentAssignment.id);
       }
+      return true;
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,
         stackTrace: stackTrace,
       );
       emit(Failure(exception: e));
+      return false;
     }
   }
 }
