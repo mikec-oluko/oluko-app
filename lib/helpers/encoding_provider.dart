@@ -55,15 +55,19 @@ class EncodingProvider {
   }
 
   static Future<String> getThumb(videoPath, width, height) async {
-    assert(File(videoPath).existsSync());
-
-    final String outPath = '$videoPath.jpg';
-    final arguments =
+    assert(await File(videoPath).exists());
+    var imagePath = videoPath;
+    if (videoPath.toString().contains('.mp4')) {
+      imagePath = (videoPath
+          .toString()
+          .substring(0, (videoPath.toString().length) - 4));
+    }
+    final String outPath = '$imagePath.jpg';
+    var arguments =
         '-y -i $videoPath -vframes 1 -an -s ${width}x${height} -ss 1 $outPath';
-
-    final int rc = await _encoder.execute(arguments);
+    int rc = await _encoder.execute(arguments);
     assert(rc == 0);
-    assert(File(outPath).existsSync());
+    assert(await File(outPath).exists());
 
     return outPath;
   }

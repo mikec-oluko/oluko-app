@@ -1,5 +1,7 @@
+import 'package:oluko_app/models/enums/counter_enum.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
-import 'package:oluko_app/models/utils/timer_model.dart';
+
+import 'enums/timer_model.dart';
 
 class TimerEntry {
   MovementSubmodel movement;
@@ -10,6 +12,7 @@ class TimerEntry {
   num roundNumber;
   num time;
   num reps;
+  CounterEnum counter;
 
   TimerEntry(
       {this.movement,
@@ -19,5 +22,6 @@ class TimerEntry {
       this.setNumber,
       this.roundNumber,
       this.time,
-      this.reps});
+      this.reps,
+      this.counter});
 }

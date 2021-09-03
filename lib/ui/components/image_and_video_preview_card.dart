@@ -16,13 +16,15 @@ class ImageAndVideoPreviewCard extends StatefulWidget {
   final String videoUrl;
   final bool showTitle;
   final dynamic originalContent;
+  final bool isCoach;
 
   ImageAndVideoPreviewCard(
       {this.backgroundImage,
       this.videoUrl,
       this.isContentVideo = false,
       this.showTitle = false,
-      this.originalContent});
+      this.originalContent,
+      this.isCoach = false});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -47,7 +49,7 @@ class _State extends State<ImageAndVideoPreviewCard> {
     return Container(
       alignment: Alignment.center,
       decoration: getDecorationForContainer(),
-      width: 120,
+      width: widget.isCoach ? 150 : 120,
       height: 120,
       child: contentForPreview(context),
     );
@@ -106,13 +108,27 @@ class _State extends State<ImageAndVideoPreviewCard> {
                 //TODO: Change Modal VideoPlayer
                 widget.showTitle
                     ? AppModal.dialogContent(
-                        closeButton: true,
+                        // closeButton: true,
                         context: context,
                         content: [
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 30),
                               child: showVideoPlayer(widget.videoUrl),
-                            )
+                            ),
+                            Container(
+                                child: GestureDetector(
+                              onTap: () => Navigator.pop(context),
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 20),
+                                child: Image.asset(
+                                  'assets/courses/video_cross.png',
+                                  color: Colors.white,
+                                  height: 80,
+                                  width: 80,
+                                ),
+                              ),
+                            ))
                           ])
                     : SizedBox();
               },
@@ -124,7 +140,7 @@ class _State extends State<ImageAndVideoPreviewCard> {
           alignment: Alignment.bottomCenter,
           child: widget.showTitle
               ? Container(
-                  width: 120,
+                  width: widget.isCoach ? 150 : 120,
                   height: 30,
                   child: Center(
                     child: Text(

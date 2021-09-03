@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/favorite_bloc.dart';
 import 'package:oluko_app/blocs/recommendation_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
@@ -316,17 +317,17 @@ class _State extends State<Courses> {
   _activeCoursesSection(courseState) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       AuthSuccess authSuccess = authState;
-      return BlocBuilder<CourseEnrollmentBloc, CourseEnrollmentState>(
-          bloc: BlocProvider.of<CourseEnrollmentBloc>(context)
-            ..getCourseEnrollmentsByUserId(authSuccess.user.id),
+      return BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(
+          bloc: BlocProvider.of<CourseEnrollmentListBloc>(context)
+            ..getCourseEnrollmentsByUser(authSuccess.user.id),
           builder: (context, courseEnrollmentState) {
-            return courseEnrollmentState is CourseEnrollmentListSuccess &&
+            return courseEnrollmentState is CourseEnrollmentsByUserSuccess &&
                     courseState is CourseSuccess &&
-                    courseEnrollmentState.courseEnrollmentList.length > 0
+                    courseEnrollmentState.courseEnrollments.length > 0
                 ? CarouselSection(
                     title: OlukoLocalizations.of(context).find('activeCourses'),
                     height: carouselSectionHeight + 10,
-                    children: courseEnrollmentState.courseEnrollmentList
+                    children: courseEnrollmentState.courseEnrollments
                         .map((CourseEnrollment courseEnrollment) {
                       final course = courseState.values
                           .where((element) =>

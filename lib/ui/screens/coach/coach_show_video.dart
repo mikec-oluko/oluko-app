@@ -1,52 +1,55 @@
 import 'package:chewie/chewie.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
-class VideoOverlay extends StatefulWidget {
+class CoachShowVideo extends StatefulWidget {
   final String videoUrl;
-
-  VideoOverlay({this.videoUrl, Key key}) : super(key: key);
+  final String titleForContent;
+  const CoachShowVideo({this.videoUrl, this.titleForContent});
 
   @override
-  _VideoOverlayState createState() => _VideoOverlayState();
+  _CoachShowVideoState createState() => _CoachShowVideoState();
 }
 
-class _VideoOverlayState extends State<VideoOverlay> {
+class _CoachShowVideoState extends State<CoachShowVideo> {
   ChewieController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
+  bool isMentored = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.black.withOpacity(0.5),
-        body: Stack(
+      appBar: AppBar(
+        title: Text(
+          widget.titleForContent,
+          style: OlukoFonts.olukoTitleFont(
+              customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+        ),
+        elevation: 0.0,
+        backgroundColor: OlukoColors.black,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+      body: Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        color: OlukoColors.black,
+        child: Stack(
           children: [
-            Positioned(
-                top: ScreenUtils.height(context) / 4,
-                left: 0,
-                right: 0,
+            Align(
+                alignment: Alignment.center,
                 child: showVideoPlayer(widget.videoUrl)),
-            Positioned(
-                bottom: ScreenUtils.height(context) / 5,
-                left: 0,
-                right: 0,
-                child: GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Image.asset(
-                    'assets/courses/video_cross.png',
-                    color: Colors.white,
-                    height: 60,
-                    width: 60,
-                  ),
-                )),
           ],
-        ));
+        ),
+      ),
+    );
   }
 
   Widget showVideoPlayer(String videoUrl) {

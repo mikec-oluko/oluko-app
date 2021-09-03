@@ -11,6 +11,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/services/task_submission_service.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
@@ -19,6 +20,7 @@ import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/task_card.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
+import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -34,6 +36,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
   final _formKey = GlobalKey<FormState>();
   ChewieController _controller;
   Assessment _assessment;
+  UserResponse _user;
 
   @override
   void initState() {
@@ -51,6 +54,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
       },
       child: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
         if (authState is AuthSuccess) {
+          _user = authState.user;
           //TODO: Change this when we have multiple assessments
           BlocProvider.of<AssessmentBloc>(context)
             ..getById('emnsmBgZ13UBRqTS26Qd');
@@ -194,13 +198,21 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                         task: task,
                         isCompleted: taskSubmission != null,
                         isPublic: isPublic(taskSubmission),
+                        isDisabled: isTaskDisabled(index),
                         onPressed: () {
                           if (_controller != null) {
                             _controller.pause();
                           }
-                          return Navigator.pushNamed(
-                              context, routeLabels[RouteEnum.taskDetails],
-                              arguments: {'taskIndex': index});
+                          if (isTaskDisabled(index)) {
+                            AppMessages.showSnackbar(
+                                context,
+                                OlukoLocalizations.of(context).find(
+                                    'yourCurrentPlanDoesntIncludeAssessment'));
+                          } else {
+                            return Navigator.pushNamed(
+                                context, routeLabels[RouteEnum.taskDetails],
+                                arguments: {'taskIndex': index});
+                          }
                         },
                       ));
                 });
@@ -213,6 +225,9 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
       ],
     );
   }
+
+  bool isTaskDisabled(num index) =>
+      (_user.currentPlan != 1 || _user.currentPlan != 2) && index > 1;
 
   bool isPublic(TaskSubmission taskSubmission) {
     if (taskSubmission == null) {

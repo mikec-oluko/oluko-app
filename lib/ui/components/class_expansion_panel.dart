@@ -30,16 +30,19 @@ class _State extends State<ClassExpansionPanel> {
   @override
   void initState() {
     super.initState();
-    _classItems = generateClassItems();
+    // _classItems = generateClassItems(); //TODO: this is receiving old classes from another course
   }
 
   @override
   Widget build(BuildContext context) {
+    _classItems = generateClassItems();
     return ExpansionPanelList(
       expansionCallback: (int index, bool isExpanded) {
-        setState(() {
-          _classItems[index].expanded = !_classItems[index].expanded;
-        });
+        if (_classItems.length > 0) {
+          setState(() {
+            _classItems[index].expanded = !_classItems[index].expanded;
+          });
+        }
       },
       children: _classItems.map<ExpansionPanel>((ClassItem item) {
         return ExpansionPanel(
@@ -77,6 +80,9 @@ class _State extends State<ClassExpansionPanel> {
 
   List<Widget> getClassWidgets(int classIndex) {
     List<Widget> widgets = [];
+    if (widget.classes.length - 1 < classIndex) {
+      return [];
+    }
     Class classObj = widget.classes[classIndex];
     classObj.segments.forEach((segment) {
       List<Movement> movements = ClassService.getClassSegmentMovements(

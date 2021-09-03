@@ -7,26 +7,26 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/movement_submission_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/enums/counter_enum.dart';
+import 'package:oluko_app/models/enums/timer_model.dart';
+import 'package:oluko_app/models/enums/timer_type_enum.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
+import 'package:oluko_app/models/submodels/counter.dart';
 import 'package:oluko_app/models/timer_entry.dart';
 import 'package:oluko_app/routes.dart';
-import 'package:oluko_app/models/utils/timer_model.dart';
-import 'package:oluko_app/routes.dart';
-import 'package:oluko_app/ui/IntervalProgressBarLib/interval_progress_bar.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/screens/courses/collapsed_movement_videos_section.dart';
 import 'package:oluko_app/ui/screens/courses/movement_videos_section.dart';
-import 'package:oluko_app/ui/screens/courses/segment_detail.dart';
-import 'package:oluko_app/ui/screens/courses/segment_progress.dart';
 import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -93,6 +93,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   PanelController panelController = new PanelController();
 
+  TextEditingController textController = new TextEditingController();
+
   @override
   void initState() {
     _setupCameras();
@@ -117,7 +119,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
                         segmentSubmissionState.segmentSubmission;
                   }
                 },
-                child: form());
+                child: GestureDetector(
+                    onTap: () {
+                      FocusScope.of(context).unfocus();
+                    },
+                    child: form()));
           } else {
             return SizedBox();
           }
@@ -136,6 +142,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
             widget.segments[widget.segmentIndex]);
     }
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       bottomNavigationBar:
           widget.workoutType == WorkoutType.segmentWithRecording &&
                   workState == WorkState.paused
@@ -258,6 +265,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
     return Center(
         child: Column(
       children: [
+        widget.segments[widget.segmentIndex].timerType == TimerTypeEnum.EMOM
+            ? TimerUtils.getEMOMRounds(timerEntries[timerTaskIndex].roundNumber)
+            : SizedBox(),
         Padding(
             padding: const EdgeInsets.only(top: 3, bottom: 8),
             child: Stack(alignment: Alignment.center, children: [
@@ -294,10 +304,61 @@ class _SegmentClocksState extends State<SegmentClocks> {
             children: [
               currentTaskWidget(currentTask),
               SizedBox(height: 10),
-              nextTaskWidget(nextTask)
+              nextTaskWidget(nextTask),
+              SizedBox(height: 15),
+              timerEntries[timerTaskIndex].workState == WorkState.resting &&
+                      (timerEntries[timerTaskIndex - 1].counter ==
+                              CounterEnum.reps ||
+                          timerEntries[timerTaskIndex - 1].counter ==
+                              CounterEnum.distance)
+                  ? getTextField()
+                  : SizedBox()
             ],
           ));
     }
+  }
+
+  Widget getTextField() {
+    bool isCounterByReps =
+        timerEntries[timerTaskIndex - 1].counter == CounterEnum.reps;
+    return Container(
+        decoration: BoxDecoration(
+            image: DecorationImage(
+          image: AssetImage('assets/courses/gray_background.png'),
+          fit: BoxFit.cover,
+        )),
+        height: 50,
+        child: Row(children: [
+          SizedBox(width: 20),
+          Text(OlukoLocalizations.of(context).find('enterScore'),
+              style: TextStyle(
+                  fontSize: 18,
+                  color: OlukoColors.white,
+                  fontWeight: FontWeight.w300)),
+          SizedBox(width: 10),
+          SizedBox(
+              width: isCounterByReps ? 40 : 70,
+              child: TextField(
+                controller: textController,
+                style: TextStyle(
+                    fontSize: 20,
+                    color: OlukoColors.white,
+                    fontWeight: FontWeight.bold),
+                keyboardType: TextInputType.number,
+              )),
+          SizedBox(width: 10),
+          isCounterByReps
+              ? Text(timerEntries[timerTaskIndex].movement.name,
+                  style: TextStyle(
+                      fontSize: 18,
+                      color: OlukoColors.white,
+                      fontWeight: FontWeight.w300))
+              : Text(OlukoLocalizations.of(context).find('meters'),
+                  style: TextStyle(
+                      fontSize: 18,
+                      color: OlukoColors.white,
+                      fontWeight: FontWeight.w300)),
+        ]));
   }
 
   List<Widget> getJoinedLabel() {
@@ -375,6 +436,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
     double circularProgressIndicatorValue =
         (actualTime.inSeconds / timerEntries[timerTaskIndex].time);
 
+    if (workState == WorkState.finished) {
+      return TimerUtils.completedTimer(circularProgressIndicatorValue,
+          TimeConverter.durationToString(this.timeLeft), context);
+    }
+
     if (workState == WorkState.paused) {
       return TimerUtils.pausedTimer(
           context, TimeConverter.durationToString(this.timeLeft));
@@ -390,18 +456,17 @@ class _SegmentClocksState extends State<SegmentClocks> {
           context);
     }*/
 
-    if (workState == WorkState.repResting) {
+    if (workState == WorkState.resting) {
       return TimerUtils.restTimer(circularProgressIndicatorValue,
           TimeConverter.durationToString(this.timeLeft), context);
     }
 
-    if (workState == WorkState.finished) {
-      return TimerUtils.completedTimer(circularProgressIndicatorValue,
-          TimeConverter.durationToString(this.timeLeft));
-    }
+    String counter = timerEntries[timerTaskIndex].counter == CounterEnum.reps
+        ? timerEntries[timerTaskIndex].movement.name
+        : null;
 
     return TimerUtils.timeTimer(circularProgressIndicatorValue,
-        TimeConverter.durationToString(this.timeLeft));
+        TimeConverter.durationToString(this.timeLeft), context, counter);
   }
 
   Widget currentTaskWidget(String currentTask, [bool smaller = false]) {
@@ -549,6 +614,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   void _goToNextStep() {
     _saveLastStep(timerEntries[timerTaskIndex]);
+
+    _saveCounter();
+
     if (timerTaskIndex == timerEntries.length - 1) {
       _finishWorkout();
       return;
@@ -557,6 +625,21 @@ class _SegmentClocksState extends State<SegmentClocks> {
       timerTaskIndex++;
       _playTask();
     });
+  }
+
+  _saveCounter() {
+    if (timerEntries[timerTaskIndex].workState == WorkState.resting &&
+        timerEntries[timerTaskIndex].movement.counter != null &&
+        textController.text != "") {
+      Counter counter = Counter(
+          round: timerEntries[timerTaskIndex].roundNumber,
+          set: timerEntries[timerTaskIndex].setNumber,
+          counter: int.parse(textController.text));
+      BlocProvider.of<CourseEnrollmentUpdateBloc>(context)
+        ..saveMovementCounter(widget.courseEnrollment, widget.segmentIndex,
+            widget.classIndex, timerEntries[timerTaskIndex].movement, counter);
+    }
+    textController.clear();
   }
 
   _playTask() async {
@@ -653,7 +736,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
           ),
           Padding(
               padding: EdgeInsets.only(top: 1),
-              child: Icon(Icons.circle_outlined,
+              child: Icon(Icons.circle,
                   size: 12, color: OlukoColors.primary))
         ]));
   }
