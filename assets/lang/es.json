@@ -182,5 +182,6 @@
     "meters": "Metros",
     "in": "en",
     "minutes": "minutos",
-    "forNextRound": "para la siguente ronda"
+    "forNextRound": "para la siguente ronda",
+    "activityStats":"Estadísticas de actividad"
 }
