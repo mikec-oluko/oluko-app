@@ -95,6 +95,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   TextEditingController textController = new TextEditingController();
 
+  int AMRAPRound = 0;
+
   @override
   void initState() {
     _setupCameras();
@@ -218,40 +220,44 @@ class _SegmentClocksState extends State<SegmentClocks> {
       children: [
         _timerSection(this.workoutType, this.workState),
         Expanded(child: _lowerSection(this.workoutType, this.workState)),
-        Padding(
-          padding: const EdgeInsets.all(25.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              OlukoOutlinedButton(
-                  title: 'Go To Class',
-                  onPressed: () => Navigator.popUntil(context,
-                      ModalRoute.withName(routeLabels[RouteEnum.insideClass]))),
-              SizedBox(
-                width: 15,
-              ),
-              OlukoPrimaryButton(
-                title: 'Next Segment',
-                onPressed: () {
-                  widget.segmentIndex < widget.segments.length - 1
-                      ? Navigator.pushNamed(
-                          context, routeLabels[RouteEnum.segmentClocks],
-                          arguments: {
-                              'segmentIndex': widget.segmentIndex + 1,
-                              'classIndex': widget.classIndex,
-                              'courseEnrollment': widget.courseEnrollment,
-                              'workoutType': workoutType,
-                              'segments': widget.segments,
-                            })
-                      : Navigator.popUntil(
-                          context,
-                          ModalRoute.withName(
-                              routeLabels[RouteEnum.insideClass]));
-                },
-              ),
-            ],
-          ),
-        ),
+        workState == WorkState.finished
+            ? Padding(
+                padding: const EdgeInsets.all(25.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    OlukoOutlinedButton(
+                        title: 'Go To Class',
+                        onPressed: () => Navigator.popUntil(
+                            context,
+                            ModalRoute.withName(
+                                routeLabels[RouteEnum.insideClass]))),
+                    SizedBox(
+                      width: 15,
+                    ),
+                    OlukoPrimaryButton(
+                      title: 'Next Segment',
+                      onPressed: () {
+                        widget.segmentIndex < widget.segments.length - 1
+                            ? Navigator.pushNamed(
+                                context, routeLabels[RouteEnum.segmentClocks],
+                                arguments: {
+                                    'segmentIndex': widget.segmentIndex + 1,
+                                    'classIndex': widget.classIndex,
+                                    'courseEnrollment': widget.courseEnrollment,
+                                    'workoutType': workoutType,
+                                    'segments': widget.segments,
+                                  })
+                            : Navigator.popUntil(
+                                context,
+                                ModalRoute.withName(
+                                    routeLabels[RouteEnum.insideClass]));
+                      },
+                    ),
+                  ],
+                ),
+              )
+            : SizedBox(),
       ],
     ));
   }
@@ -266,14 +272,20 @@ class _SegmentClocksState extends State<SegmentClocks> {
         child: Column(
       children: [
         widget.segments[widget.segmentIndex].timerType == TimerTypeEnum.EMOM
-            ? TimerUtils.getEMOMRounds(timerEntries[timerTaskIndex].roundNumber)
+            ? TimerUtils.getRoundLabel(timerEntries[timerTaskIndex].roundNumber)
+            : SizedBox(),
+        widget.segments[widget.segmentIndex].timerType == TimerTypeEnum.AMRAP
+            ? TimerUtils.getRoundLabel(AMRAPRound)
             : SizedBox(),
         Padding(
             padding: const EdgeInsets.only(top: 3, bottom: 8),
             child: Stack(alignment: Alignment.center, children: [
-              TimerUtils.roundsTimer(
-                  widget.segments[widget.segmentIndex].rounds,
-                  timerEntries[timerTaskIndex].roundNumber),
+              widget.segments[widget.segmentIndex].timerType !=
+                      TimerTypeEnum.AMRAP
+                  ? TimerUtils.roundsTimer(
+                      widget.segments[widget.segmentIndex].rounds,
+                      timerEntries[timerTaskIndex].roundNumber)
+                  : TimerUtils.roundsTimer(AMRAPRound + 1, AMRAPRound),
               _countdownSection(workState)
             ])),
         workState == WorkState.finished ? SizedBox() : _tasksSection()
@@ -459,6 +471,17 @@ class _SegmentClocksState extends State<SegmentClocks> {
     if (workState == WorkState.resting) {
       return TimerUtils.restTimer(circularProgressIndicatorValue,
           TimeConverter.durationToString(this.timeLeft), context);
+    }
+
+    if (timerEntries[timerTaskIndex].roundNumber == null) {
+      //is AMRAP
+      return TimerUtils.AMRAPTimer(
+          circularProgressIndicatorValue,
+          TimeConverter.durationToString(this.timeLeft),
+          context,
+          () => this.setState(() {
+                AMRAPRound++;
+              }));
     }
 
     String counter = timerEntries[timerTaskIndex].counter == CounterEnum.reps
@@ -736,7 +759,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
           ),
           Padding(
               padding: EdgeInsets.only(top: 1),
-              child: Icon(Icons.circle,
+              child: Icon(Icons.circle_outlined,
                   size: 12, color: OlukoColors.primary))
         ]));
   }

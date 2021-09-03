@@ -89,7 +89,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                   ),
                   Padding(
                       padding: EdgeInsets.only(top: 1),
-                      child: Icon(Icons.circle,
+                      child: Icon(Icons.circle_outlined,
                           size: 16, color: OlukoColors.primary))
                 ]))
           ],
