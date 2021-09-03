@@ -338,7 +338,10 @@ class _CoachPageState extends State<CoachPage> {
                 shrinkWrap: true,
                 scrollDirection: Axis.horizontal,
                 children: [
-                  Wrap(children: getAssessmentCards(tasks: _tasks)),
+                  Wrap(
+                      children: getAssessmentCards(
+                          tasks: _tasks,
+                          tasksSubmitted: _assessmentVideosContent)),
                 ]));
       },
     );
@@ -654,75 +657,117 @@ class _CoachPageState extends State<CoachPage> {
     );
   }
 
-  Padding returnCardForAssessment(Task task) {
+  Padding returnCardForAssessment(
+      Task task, List<TaskSubmission> tasksSubmitted) {
     return Padding(
       padding: const EdgeInsets.all(5.0),
-      child: Container(
-        width: 250,
-        height: 170,
-        color: OlukoColors.challengesGreyBackground,
-        child: Padding(
-          padding: const EdgeInsets.all(5.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    task.name,
-                    style: OlukoFonts.olukoBigFont(
-                        customColor: OlukoColors.white,
-                        custoFontWeight: FontWeight.w500),
-                  ),
-                  Image.asset(
-                    'assets/assessment/check_ellipse.png',
-                    scale: 4,
-                  ),
-                ],
-              ),
-              Wrap(
-                children: [
-                  Text(
-                    task.description,
-                    style: OlukoFonts.olukoMediumFont(
-                        customColor: OlukoColors.grayColor,
-                        custoFontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    OlukoLocalizations.of(context).find('public'),
-                    style: OlukoFonts.olukoBigFont(
-                        customColor: OlukoColors.grayColor,
-                        custoFontWeight: FontWeight.w500),
-                  ),
-                  Stack(alignment: Alignment.center, children: [
-                    Image.asset(
-                      'assets/assessment/green_ellipse.png',
-                      scale: 4,
+      child: GestureDetector(
+        onTap: () {
+          Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos]);
+        },
+        child: Container(
+          width: 250,
+          height: 170,
+          color: OlukoColors.challengesGreyBackground,
+          child: Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      task.name,
+                      style: OlukoFonts.olukoBigFont(
+                          customColor: OlukoColors.white,
+                          custoFontWeight: FontWeight.w500),
                     ),
-                    Image.asset(
-                      'assets/home/right_icon.png',
-                      scale: 4,
-                    )
-                  ])
-                ],
-              ),
-            ],
+                    checkAssessmentSubmitted(task, _assessmentVideosContent) ==
+                            false
+                        ? Image.asset(
+                            'assets/assessment/check_ellipse.png',
+                            scale: 4,
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Container(
+                              width: 35,
+                              height: 35,
+                              child:
+                                  Stack(alignment: Alignment.center, children: [
+                                Image.asset(
+                                  'assets/assessment/green_ellipse.png',
+                                  scale: 2,
+                                ),
+                                Image.asset(
+                                  'assets/assessment/gray_check.png',
+                                  scale: 5,
+                                )
+                              ]),
+                            ),
+                          ),
+                  ],
+                ),
+                Wrap(
+                  children: [
+                    Text(
+                      task.description,
+                      style: OlukoFonts.olukoMediumFont(
+                          customColor: OlukoColors.grayColor,
+                          custoFontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      OlukoLocalizations.of(context).find('public'),
+                      style: OlukoFonts.olukoBigFont(
+                          customColor: OlukoColors.grayColor,
+                          custoFontWeight: FontWeight.w500),
+                    ),
+                    Stack(alignment: Alignment.center, children: [
+                      Image.asset(
+                        'assets/assessment/green_ellipse.png',
+                        scale: 4,
+                      ),
+                      Image.asset(
+                        'assets/home/right_icon.png',
+                        scale: 4,
+                      )
+                    ])
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  getAssessmentCards({List<Task> tasks}) {
+  checkAssessmentSubmitted(Task task, List<TaskSubmission> tasksSubmitted) {
+    bool result = false;
+    if (tasksSubmitted.length == null || tasksSubmitted.length == 0) {
+      result = false;
+    }
+
+    tasksSubmitted.forEach((taskSub) {
+      if (taskSub.task.id == task.id) {
+        result = true;
+      } else {
+        result = false;
+      }
+    });
+    return result;
+  }
+
+  getAssessmentCards({List<Task> tasks, List<TaskSubmission> tasksSubmitted}) {
     List<Widget> contentForSection = [];
     tasks.forEach((task) {
-      contentForSection.add(returnCardForAssessment(task));
+      contentForSection.add(returnCardForAssessment(task, tasksSubmitted));
     });
     return contentForSection;
   }

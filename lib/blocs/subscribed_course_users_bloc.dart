@@ -32,36 +32,41 @@ class SubscribedCourseUsersBloc extends Cubit<SubscribedCourseUsersState> {
       List<CourseEnrollment> courseEnrollmentList =
           await CourseEnrollmentRepository.getByCourse(courseId);
 
-      //User list for all subscribers of this course.
-      List<UserResponse> usersSubscribedToCourse = await Future.wait(
-          courseEnrollmentList
-              .map((e) => UserRepository().getById(e.userReference.id)));
-      //Remove enrollments without user
-      usersSubscribedToCourse.removeWhere((element) => element == null);
-
       List<UserResponse> uniqueUserList = [];
       List<String> uniqueUserIds = [];
-
-      usersSubscribedToCourse.forEach((userSubscribed) {
-        if (uniqueUserIds.indexOf(userSubscribed.id) == -1) {
-          uniqueUserList.add(userSubscribed);
-          uniqueUserIds.add(userSubscribed.id);
-        }
-      });
-
-      Friend friendData = await FriendRepository.getUserFriendsByUserId(userId);
-      List<FriendModel> friends = friendData.friends;
-
       List<UserResponse> favoriteUserList = [];
-      List<UserResponse> userListToShow = List.from(uniqueUserList);
+      List<UserResponse> userListToShow = [];
+      if (courseEnrollmentList != null) {
+        //User list for all subscribers of this course.
+        List<UserResponse> usersSubscribedToCourse = await Future.wait(
+            courseEnrollmentList
+                .map((e) => UserRepository().getById(e.userReference.id)));
+        //Remove enrollments without user
+        usersSubscribedToCourse.removeWhere((element) => element == null);
 
-      friends.forEach((friend) {
-        if (friend.isFavorite) {
-          num index =
-              userListToShow.map((user) => user.id).toList().indexOf(friend.id);
-          favoriteUserList.add(userListToShow[index]);
-        }
-      });
+        usersSubscribedToCourse.forEach((userSubscribed) {
+          if (uniqueUserIds.indexOf(userSubscribed.id) == -1) {
+            uniqueUserList.add(userSubscribed);
+            uniqueUserIds.add(userSubscribed.id);
+          }
+        });
+
+        Friend friendData =
+            await FriendRepository.getUserFriendsByUserId(userId);
+        List<FriendModel> friends = friendData.friends;
+
+        userListToShow = List.from(uniqueUserList);
+
+        friends.forEach((friend) {
+          if (friend.isFavorite) {
+            num index = userListToShow
+                .map((user) => user.id)
+                .toList()
+                .indexOf(friend.id);
+            favoriteUserList.add(userListToShow[index]);
+          }
+        });
+      }
 
       emit(SubscribedCourseUsersSuccess(
           users: userListToShow, favoriteUsers: favoriteUserList));
