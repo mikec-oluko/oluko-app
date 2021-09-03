@@ -35,10 +35,15 @@ class _State extends State<StoriesItem> {
                     new AlwaysStoppedAnimation<Color>(OlukoColors.primary),
               ),
             ),
-            CircleAvatar(
-              backgroundImage: NetworkImage(widget.imageUrl),
-              maxRadius: widget.maxRadius,
-            ),
+            widget.imageUrl != null
+                ? CircleAvatar(
+                    backgroundImage: NetworkImage(widget.imageUrl),
+                    maxRadius: widget.maxRadius,
+                  )
+                : CircleAvatar(
+                    child: Icon(Icons.error),
+                    maxRadius: widget.maxRadius,
+                  ),
           ],
         ),
         widget.name != null

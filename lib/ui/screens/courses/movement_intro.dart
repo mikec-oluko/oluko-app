@@ -26,7 +26,10 @@ class MovementIntro extends StatefulWidget {
 class _MovementIntroState extends State<MovementIntro>
     with SingleTickerProviderStateMixin {
   final toolbarHeight = kToolbarHeight * 2;
-  final tabs = ['Intro', 'Technique', 'Modifier', 'Rehab 1', 'Rehab 2'];
+  final tabs = [
+    'Intro',
+    'test'
+  ]; //TODO: DELETE TEST DATA , 'Technique', 'Modifier', 'Rehab 1', 'Rehab 2'];
   Map<String, bool> coursesBookmarked = {};
 
   //TODO Make Dynamic
@@ -147,7 +150,7 @@ class _MovementIntroState extends State<MovementIntro>
                                   isScrollable: true,
                                   onTap: (index) => this.setState(() {
                                     tabController.index =
-                                        0; //Remove after adding tabs
+                                        index; //Remove after adding tabs
                                   }),
                                   controller: tabController,
                                   indicatorSize: TabBarIndicatorSize.tab,

@@ -28,12 +28,12 @@ class _VideoOverlayState extends State<VideoOverlay> {
         body: Stack(
           children: [
             Positioned(
-                top: 200,
+                top: ScreenUtils.height(context) / 4,
                 left: 0,
                 right: 0,
                 child: showVideoPlayer(widget.videoUrl)),
             Positioned(
-                bottom: 200,
+                bottom: ScreenUtils.height(context) / 5,
                 left: 0,
                 right: 0,
                 child: GestureDetector(
@@ -41,8 +41,8 @@ class _VideoOverlayState extends State<VideoOverlay> {
                   child: Image.asset(
                     'assets/courses/video_cross.png',
                     color: Colors.white,
-                    height: 80,
-                    width: 80,
+                    height: 60,
+                    width: 60,
                   ),
                 )),
           ],

@@ -161,6 +161,7 @@
     "ignore": "Ignore",
     "resume": "Resume",
     "movementVideos": "Movement Videos",
+    "yourCurrentPlanDoesntIncludeAssessment": "Your current plan doesn't include these assessment tasks",
     "countYour": "Count your ",
     "enterScore": "Enter score: ",
     "meters": "Meters",
