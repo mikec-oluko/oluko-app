@@ -95,6 +95,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   TextEditingController textController = new TextEditingController();
 
+  int AMRAPRound = 0;
+
   @override
   void initState() {
     _setupCameras();
@@ -270,14 +272,20 @@ class _SegmentClocksState extends State<SegmentClocks> {
         child: Column(
       children: [
         widget.segments[widget.segmentIndex].timerType == TimerTypeEnum.EMOM
-            ? TimerUtils.getEMOMRounds(timerEntries[timerTaskIndex].roundNumber)
+            ? TimerUtils.getRoundLabel(timerEntries[timerTaskIndex].roundNumber)
+            : SizedBox(),
+        widget.segments[widget.segmentIndex].timerType == TimerTypeEnum.AMRAP
+            ? TimerUtils.getRoundLabel(AMRAPRound)
             : SizedBox(),
         Padding(
             padding: const EdgeInsets.only(top: 3, bottom: 8),
             child: Stack(alignment: Alignment.center, children: [
-              TimerUtils.roundsTimer(
-                  widget.segments[widget.segmentIndex].rounds,
-                  timerEntries[timerTaskIndex].roundNumber),
+              widget.segments[widget.segmentIndex].timerType !=
+                      TimerTypeEnum.AMRAP
+                  ? TimerUtils.roundsTimer(
+                      widget.segments[widget.segmentIndex].rounds,
+                      timerEntries[timerTaskIndex].roundNumber)
+                  : TimerUtils.roundsTimer(AMRAPRound + 1, AMRAPRound),
               _countdownSection(workState)
             ])),
         workState == WorkState.finished ? SizedBox() : _tasksSection()
@@ -463,6 +471,17 @@ class _SegmentClocksState extends State<SegmentClocks> {
     if (workState == WorkState.resting) {
       return TimerUtils.restTimer(circularProgressIndicatorValue,
           TimeConverter.durationToString(this.timeLeft), context);
+    }
+
+    if (timerEntries[timerTaskIndex].roundNumber == null) {
+      //is AMRAP
+      return TimerUtils.AMRAPTimer(
+          circularProgressIndicatorValue,
+          TimeConverter.durationToString(this.timeLeft),
+          context,
+          () => this.setState(() {
+                AMRAPRound++;
+              }));
     }
 
     String counter = timerEntries[timerTaskIndex].counter == CounterEnum.reps
@@ -740,7 +759,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
           ),
           Padding(
               padding: EdgeInsets.only(top: 1),
-              child: Icon(Icons.circle, size: 12, color: OlukoColors.primary))
+              child: Icon(Icons.circle_outlined,
+                  size: 12, color: OlukoColors.primary))
         ]));
   }
 

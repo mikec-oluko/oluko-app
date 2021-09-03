@@ -12,9 +12,7 @@ class SegmentUtils {
   static List<Widget> getSegmentSummary(Segment segment, BuildContext context) {
     List<Widget> workoutWidgets = getWorkouts(segment, context);
     return [
-          segment.rounds != null && segment.rounds > 1
-              ? getRoundTitle(segment, context, OlukoColors.grayColor)
-              : SizedBox(),
+          getRoundTitle(segment, context, OlukoColors.grayColor),
           SizedBox(height: 12.0)
         ] +
         workoutWidgets;
@@ -24,14 +22,26 @@ class SegmentUtils {
       Segment segment, BuildContext context, Color color) {
     if (segment.timerType == TimerTypeEnum.EMOM) {
       return getEMOMTitle(segment, context, color);
-    } else {
+    } else if (segment.timerType == TimerTypeEnum.AMRAP) {
       return Text(
-        segment.rounds.toString() +
+        segment.totalTime.toString() +
             " " +
-            OlukoLocalizations.of(context).find('rounds'),
+            OlukoLocalizations.of(context).find('minutes') +
+            " " +
+            "AMRAP",
         style: OlukoFonts.olukoBigFont(
             customColor: color, custoFontWeight: FontWeight.bold),
       );
+    } else {
+      return segment.rounds > 1
+          ? Text(
+              segment.rounds.toString() +
+                  " " +
+                  OlukoLocalizations.of(context).find('rounds'),
+              style: OlukoFonts.olukoBigFont(
+                  customColor: color, custoFontWeight: FontWeight.bold),
+            )
+          : SizedBox();
     }
   }
 
@@ -148,20 +158,30 @@ class SegmentUtils {
   static List<TimerEntry> getJoinedExercisesList(
       Segment segment, BuildContext context) {
     List<TimerEntry> entries = [];
-    for (var roundIndex = 0; roundIndex < segment.rounds; roundIndex++) {
+    bool hasRounds = segment.rounds != null;
+    int cantRounds = hasRounds ? segment.rounds : 1;
+    for (var roundIndex = 0; roundIndex < cantRounds; roundIndex++) {
       //Add work entry
       entries.add(TimerEntry(
-          roundNumber: roundIndex + 1,
+          roundNumber: hasRounds ? roundIndex + 1 : null,
           reps: segment.timerType == TimerTypeEnum.combined
               ? segment.movements[0].timerReps
               : null,
-          time: segment.timerType == TimerTypeEnum.EMOM
-              ? (segment.totalTime ~/ segment.rounds).toInt()
-              : null,
+          time: getJoinedTime(segment),
           labels: getMovements(segment, context),
           workState: WorkState.exercising));
     }
     return entries;
+  }
+
+  static int getJoinedTime(Segment segment) {
+    if (segment.timerType == TimerTypeEnum.EMOM) {
+      return (segment.totalTime ~/ segment.rounds).toInt();
+    } else if (segment.timerType == TimerTypeEnum.AMRAP) {
+      return segment.totalTime;
+    } else {
+      return null;
+    }
   }
 
   static List<String> getMovements(Segment segment, BuildContext context) {
