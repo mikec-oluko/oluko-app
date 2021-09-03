@@ -123,6 +123,7 @@ enum RouteEnum {
   exploreSubscribedUsers,
   segmentCameraPreview,
   coach,
+  coach2,
   sentVideos,
   mentoredVideos,
   coachShowVideo,
@@ -168,6 +169,7 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.exploreSubscribedUsers: '/explore-subscribed-users',
   RouteEnum.segmentCameraPreview: '/segment-camera-preview',
   RouteEnum.coach: '/coach',
+  RouteEnum.coach2: '/coach2',
   RouteEnum.sentVideos: '/coach-sent-videos',
   RouteEnum.mentoredVideos: '/coach-mentored-videos',
   RouteEnum.coachShowVideo: '/coach-show-video',
@@ -258,6 +260,7 @@ class Routes {
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
           BlocProvider<TaskBloc>.value(value: _taskBloc),
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
+          BlocProvider<ProfileBloc>.value(value: _profileBloc),
         ];
         newRouteView = MainPage();
         break;
@@ -586,13 +589,31 @@ class Routes {
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
           BlocProvider<TransformationJourneyBloc>.value(
               value: _transformationJourneyBloc),
-          BlocProvider<TaskBloc>.value(value: _taskBloc),
-          BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
           BlocProvider<CourseEnrollmentListBloc>.value(
               value: _courseEnrollmentListBloc),
+          BlocProvider<TaskBloc>.value(value: _taskBloc),
+          BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
+          BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
+          BlocProvider<CourseEnrollmentBloc>.value(
+              value: _courseEnrollmentBloc),
         ];
-        // newRouteView = CoachPage();
         newRouteView = CoachAssignedCountDown();
+        break;
+      case RouteEnum.coach2:
+        providers = [
+          BlocProvider<ProfileBloc>.value(value: _profileBloc),
+          BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
+          BlocProvider<TransformationJourneyBloc>.value(
+              value: _transformationJourneyBloc),
+          BlocProvider<CourseEnrollmentListBloc>.value(
+              value: _courseEnrollmentListBloc),
+          BlocProvider<TaskBloc>.value(value: _taskBloc),
+          BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
+          BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
+          BlocProvider<CourseEnrollmentBloc>.value(
+              value: _courseEnrollmentBloc),
+        ];
+        newRouteView = CoachPage();
         break;
       case RouteEnum.sentVideos:
         final Map<String, List<TaskSubmission>> argumentsToAdd = arguments;
