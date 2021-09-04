@@ -12,7 +12,7 @@ fi
 if [ "$1" = "prod" ]
     then echo "Setting up production environment" && flutter clean && \
     cp ios/Flutter/src/production/GoogleService-Info.plist ios/Flutter && \
-    cp ios/Flutter/src/production/google-services.json android/app && \
+    cp android/app/src/production/google-services.json android/app && \
     cp lib/config/src/production/project_settings.dart lib/config/src/production/s3_settings.dart lib/config && \
     flutter pub get && cd ios && pod install && cd ..
 fi
