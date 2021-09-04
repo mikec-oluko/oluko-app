@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:14784345427:android:f745cc798bc6936d131da6",
         "android_client_info": {
-          "package_name": "app.oluko.mvt"
+          "package_name": "com.app.oluko.mvt"
         }
       },
       "oauth_client": [
@@ -46,7 +46,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:14784345427:android:50df5c4c952bd40c131da6",
         "android_client_info": {
-          "package_name": "com.app.oluko_app"
+          "package_name": "com.app.oluko.mvt"
         }
       },
       "oauth_client": [
@@ -54,7 +54,7 @@
           "client_id": "14784345427-bi8fgmvikguffc4rvu3006roheodeqna.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.app.oluko_app",
+            "package_name": "com.app.oluko.mvt",
             "certificate_hash": "4b374314dfe5005f2e787bcb5cbaceddb3e3151c"
           }
         },
@@ -62,7 +62,7 @@
           "client_id": "14784345427-qprj0m9712q62j9tajdb2csjshadma7a.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.app.oluko_app",
+            "package_name": "com.app.oluko.mvt",
             "certificate_hash": "daeee9cd9daea51cc77148ceb151b8d745af89ca"
           }
         },
