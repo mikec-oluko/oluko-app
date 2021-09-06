@@ -42,7 +42,7 @@ packages:
       name: async
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.5.0"
+    version: "2.6.1"
   bloc:
     dependency: transitive
     description:
@@ -314,6 +314,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.1.0"
+  flutter_exif_rotation:
+    dependency: "direct main"
+    description:
+      name: flutter_exif_rotation
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.4.1"
   flutter_facebook_auth:
     dependency: "direct main"
     description:
@@ -594,7 +601,7 @@ packages:
       name: node_preamble
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.4.13"
+    version: "2.0.1"
   package_config:
     dependency: transitive
     description:
@@ -872,7 +879,7 @@ packages:
       name: source_span
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.8.0"
+    version: "1.8.1"
   stack_trace:
     dependency: transitive
     description:
@@ -921,21 +928,21 @@ packages:
       name: test
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.16.5"
+    version: "1.16.8"
   test_api:
     dependency: transitive
     description:
       name: test_api
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.2.19"
+    version: "0.3.0"
   test_core:
     dependency: transitive
     description:
       name: test_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.3.15"
+    version: "0.3.19"
   timeago:
     dependency: "direct main"
     description:
