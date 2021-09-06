@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/challenge.dart';
+import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/enums/file_type_enum.dart';
+import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
 import 'package:oluko_app/ui/components/challenges_card.dart';
+import 'package:oluko_app/ui/components/coach_assessment_card.dart';
+import 'package:oluko_app/ui/components/coach_tab_challenge_card.dart';
+import 'package:oluko_app/ui/components/coach_tab_segment_card.dart';
 import 'package:oluko_app/ui/components/image_and_video_container.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
+import 'coach_segment_content.dart';
+import 'coach_segment_info.dart';
 import 'enum_collection.dart';
 
 class TransformListOfItemsToWidget {
@@ -92,5 +101,96 @@ class TransformListOfItemsToWidget {
       );
     }
     return contentForReturn;
+  }
+
+  static coachChallengesAndSegments(
+      {List<Challenge> challenges, List<CoachSegmentContent> segments}) {
+    List<Widget> contentForSection = [];
+
+    if (challenges.length != 0) {
+      challenges.forEach((challenge) {
+        contentForSection.add(returnCardForChallenge(challenge));
+      });
+    }
+
+    if (segments.length != 0) {
+      segments.forEach((segment) {
+        if (segment.compleatedAt == null) {
+          contentForSection.add(returnCardForSegment(segment));
+        }
+      });
+    }
+    return contentForSection;
+  }
+
+  static returnCardForChallenge(Challenge upcomingChallengesContent) {
+    Widget contentForReturn = SizedBox();
+    contentForReturn = Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      child: CoachTabChallengeCard(challenge: upcomingChallengesContent),
+    );
+    return contentForReturn;
+  }
+
+  static returnCardForSegment(CoachSegmentContent segment) {
+    Widget contentForReturn = SizedBox();
+    contentForReturn = Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      child: CoachTabSegmentCard(segment: segment),
+    );
+    return contentForReturn;
+  }
+
+  static getAssessmentCards(
+      {List<Task> tasks, List<TaskSubmission> tasksSubmitted}) {
+    List<Widget> contentForSection = [];
+    tasks.forEach((task) {
+      contentForSection.add(returnCardForAssessment(task, tasksSubmitted));
+    });
+    return contentForSection;
+  }
+
+  static returnCardForAssessment(
+      Task task, List<TaskSubmission> tasksSubmitted) {
+    return Padding(
+        padding: const EdgeInsets.all(5.0),
+        child:
+            CoachAssessmentCard(task: task, assessmentVideos: tasksSubmitted));
+  }
+
+  static segments(List<CourseEnrollment> courseEnrollments) {
+    List<InfoForSegments> listOfSegments = [];
+    String className;
+    String classImage;
+
+    courseEnrollments.forEach((courseEnrollment) {
+      courseEnrollment.classes.forEach((classToCheck) {
+        className = classToCheck.name;
+        classImage = classToCheck.image;
+        InfoForSegments infoForSegmentElement = InfoForSegments(
+            classImage: classImage, className: className, segments: []);
+        classToCheck.segments.forEach((segment) {
+          infoForSegmentElement.segments.add(segment);
+        });
+        listOfSegments.add(infoForSegmentElement);
+      });
+    });
+    return listOfSegments;
+  }
+
+  static createSegmentContentInforamtion(List<InfoForSegments> segments) {
+    List<CoachSegmentContent> coachSegmentContent = [];
+
+    segments.forEach((segment) {
+      segment.segments.forEach((actualSegment) {
+        coachSegmentContent.add(CoachSegmentContent(
+            classImage: segment.classImage,
+            className: segment.className,
+            segmentName: actualSegment.name,
+            compleatedAt: actualSegment.compleatedAt,
+            segmentReference: actualSegment.reference));
+      });
+    });
+    return coachSegmentContent;
   }
 }
