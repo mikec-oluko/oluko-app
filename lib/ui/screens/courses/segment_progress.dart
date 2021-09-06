@@ -1,14 +1,11 @@
 import 'dart:io';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/movement_submission_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/enums/submission_state_enum.dart';
 import 'package:oluko_app/models/movement_submission.dart';
-import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
@@ -17,22 +14,11 @@ import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class SegmentProgress extends StatefulWidget {
-  SegmentProgress(
-      {this.segmentSubmission,
-      this.user,
-      this.classIndex,
-      this.segmentIndex,
-      this.courseEnrollment,
-      this.segment,
-      Key key})
+  SegmentProgress({this.segmentSubmission, Key key})
       : super(key: key);
 
   final SegmentSubmission segmentSubmission;
-  final User user;
-  final CourseEnrollment courseEnrollment;
-  final Segment segment;
-  final int classIndex;
-  final int segmentIndex;
+
 
   @override
   _SegmentProgressState createState() => _SegmentProgressState();

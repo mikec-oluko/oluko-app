@@ -55,7 +55,7 @@ class SegmentSubmissionRepository {
     return segmentSubmission;
   }
 
-  static Future<SegmentSubmission> updateSegmentSubmission(
+  static Future<void> updateSegmentSubmission(
       SegmentSubmission segmentSubmission,
       MovementSubmission movementSubmission) async {
     DocumentReference projectReference = FirebaseFirestore.instance
