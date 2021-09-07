@@ -8,6 +8,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/oluko_image_bar.dart';
 import 'package:oluko_app/ui/components/movement_item_bubbles.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
@@ -210,7 +211,12 @@ class _MovementIntroState extends State<MovementIntro>
           children: [
             Column(
               children: [
-                Container(height: 100, child: Image.network(course.image))
+                GestureDetector(
+                    onTap: () => Navigator.pushNamed(
+                        context, routeLabels[RouteEnum.courseMarketing],
+                        arguments: {'course': course}),
+                    child: Container(
+                        height: 100, child: Image.network(course.image)))
               ],
             ),
             Padding(
