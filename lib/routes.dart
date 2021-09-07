@@ -275,6 +275,11 @@ class Routes {
       case RouteEnum.friends:
         providers = [
           BlocProvider<FriendBloc>.value(value: _friendBloc),
+          BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
+          BlocProvider<TransformationJourneyBloc>.value(
+              value: _transformationJourneyBloc),
+          BlocProvider<CourseEnrollmentBloc>.value(
+              value: _courseEnrollmentBloc),
           BlocProvider<ConfirmFriendBloc>.value(value: _confirmFriendBloc)
         ];
         newRouteView = FriendsPage();

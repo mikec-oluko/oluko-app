@@ -452,6 +452,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                       builder: (context, state) {
                         if (state is GetCourseEnrollmentChallenge) {
                           if (_activeChallenges.length == 0) {
+                            //TODO: CHECK HERE
                             _activeChallenges = state.challenges;
                           }
                         }
@@ -585,38 +586,51 @@ class _UserProfilePageState extends State<UserProfilePage> {
   }
 
   checkConnectionStatus(UserResponse userRequested, Friend friendData) {
-    friendData.friends.forEach((friend) {
-      if (friend.id == userRequested.id) {
-        if (friend.isFavorite) {
+    if (friendData.friends.length == 0) {
+      setState(() {
+        _isFollow = false;
+      });
+    } else {
+      friendData.friends.forEach((friend) {
+        if (friend.id == userRequested.id) {
+          if (friend.isFavorite) {
+            setState(() {
+              _isFollow = true;
+            });
+          }
           setState(() {
-            _isFollow = true;
+            connectStatus = UserConnectStatus.connected;
+            _connectButtonTitle = returnTitleForConnectButton(connectStatus);
+          });
+        } else {
+          setState(() {
+            connectStatus = UserConnectStatus.noConnected;
+            _connectButtonTitle = returnTitleForConnectButton(connectStatus);
           });
         }
-        setState(() {
-          connectStatus = UserConnectStatus.connected;
-          _connectButtonTitle = returnTitleForConnectButton(connectStatus);
-        });
-      } else {
-        setState(() {
-          connectStatus = UserConnectStatus.noConnected;
-          _connectButtonTitle = returnTitleForConnectButton(connectStatus);
-        });
-      }
-    });
+      });
+    }
 
-    friendData.friendRequestSent.forEach((request) {
-      if (request.id == userRequested.id) {
-        setState(() {
-          connectStatus = UserConnectStatus.requestPending;
-          _connectButtonTitle = returnTitleForConnectButton(connectStatus);
-        });
-      } else {
-        setState(() {
-          connectStatus = UserConnectStatus.noConnected;
-          _connectButtonTitle = returnTitleForConnectButton(connectStatus);
-        });
-      }
-    });
+    if (friendData.friendRequestSent.length == 0) {
+      setState(() {
+        connectStatus = UserConnectStatus.noConnected;
+        _connectButtonTitle = returnTitleForConnectButton(connectStatus);
+      });
+    } else {
+      friendData.friendRequestSent.forEach((request) {
+        if (request.id == userRequested.id) {
+          setState(() {
+            connectStatus = UserConnectStatus.requestPending;
+            _connectButtonTitle = returnTitleForConnectButton(connectStatus);
+          });
+        } else {
+          setState(() {
+            connectStatus = UserConnectStatus.noConnected;
+            _connectButtonTitle = returnTitleForConnectButton(connectStatus);
+          });
+        }
+      });
+    }
   }
 
   String returnTitleForConnectButton(UserConnectStatus connectStatus) {

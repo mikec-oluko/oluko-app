@@ -27,6 +27,11 @@ class GetUserTaskSubmissionSuccess extends TaskSubmissionState {
   GetUserTaskSubmissionSuccess({this.taskSubmissions});
 }
 
+class TaskSubmissionDefault extends TaskSubmissionState {
+  List<TaskSubmission> taskSubmissions;
+  TaskSubmissionDefault({this.taskSubmissions});
+}
+
 class UpdateSuccess extends TaskSubmissionState {}
 
 class Failure extends TaskSubmissionState {
@@ -140,5 +145,9 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
       emit(Failure(exception: e));
       return false;
     }
+  }
+
+  void setTaskSubmissionDefaultState() {
+    emit(TaskSubmissionDefault(taskSubmissions: []));
   }
 }
