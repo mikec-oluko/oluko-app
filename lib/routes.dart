@@ -46,6 +46,7 @@ import 'package:oluko_app/ui/screens/coach/coach_profile.dart';
 import 'package:oluko_app/ui/screens/coach/coach_show_video.dart';
 import 'package:oluko_app/ui/screens/coach/mentored_videos.dart';
 import 'package:oluko_app/ui/screens/coach/sent_videos.dart';
+import 'package:oluko_app/ui/screens/courses/completed_class.dart';
 import 'package:oluko_app/ui/screens/courses/course_marketing.dart';
 import 'package:oluko_app/ui/screens/courses/courses.dart';
 import 'package:oluko_app/ui/screens/courses/enrolled_class.dart';
@@ -128,7 +129,8 @@ enum RouteEnum {
   sentVideos,
   mentoredVideos,
   coachShowVideo,
-  coachProfile
+  coachProfile,
+  completedClass
 }
 
 Map<RouteEnum, String> routeLabels = {
@@ -174,7 +176,8 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.sentVideos: '/coach-sent-videos',
   RouteEnum.mentoredVideos: '/coach-mentored-videos',
   RouteEnum.coachShowVideo: '/coach-show-video',
-  RouteEnum.coachProfile: '/coach-profile'
+  RouteEnum.coachProfile: '/coach-profile',
+  RouteEnum.completedClass: '/completed-class'
 };
 
 RouteEnum getEnumFromRouteString(String route) {
@@ -268,6 +271,12 @@ class Routes {
         break;
       case RouteEnum.signUp:
         newRouteView = SignUpPage();
+        break;
+      case RouteEnum.completedClass:
+        final Map<String, dynamic> argumentsToAdd = arguments;
+        newRouteView = CompletedClass(
+            courseEnrollment: argumentsToAdd['courseEnrollment'],
+            classIndex: argumentsToAdd['classIndex']);
         break;
       case RouteEnum.signUpWithEmail:
         newRouteView = SignUpWithMailPage();

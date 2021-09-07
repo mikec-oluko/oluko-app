@@ -57,6 +57,17 @@ class TimeConverter {
         OlukoLocalizations.of(context).find('classes');
   }
 
+  static String toClassProgress(
+      int currentClass, int totalClasses, BuildContext context) {
+    return OlukoLocalizations.of(context).find('class') +
+        " " +
+        (currentClass + 1).toString() +
+        " " +
+        OlukoLocalizations.of(context).find('of') +
+        " " +
+        totalClasses.toString();
+  }
+
   static String returnDateAndTimeOnStringFormat({Timestamp dateToFormat}) {
     String dateToReturnAsString;
     String date =
