@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/models/movement.dart';
+import 'package:oluko_app/models/movement_relation.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
@@ -61,6 +62,19 @@ class MovementRepository {
 
     var items = mapQueryToMovement(querySnapshot);
     return items;
+  }
+
+  static Future<MovementRelation> getRelations(String id) async {
+    DocumentSnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue("projectId"))
+        .collection('movementRelations')
+        .doc(id)
+        .get();
+
+    MovementRelation movementRelation =
+        MovementRelation.fromJson(querySnapshot.data());
+    return movementRelation;
   }
 
   static Future<Movement> create(
