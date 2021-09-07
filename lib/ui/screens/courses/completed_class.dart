@@ -99,7 +99,7 @@ class _CompletedClassState extends State<CompletedClass> {
               child: RotationTransition(
                   turns: AlwaysStoppedAnimation(-0.01),
                   child: Text(
-                    'Add Your Selfie...',
+                    OlukoLocalizations.of(context).find('addYourSelfie'),
                     style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w400,
