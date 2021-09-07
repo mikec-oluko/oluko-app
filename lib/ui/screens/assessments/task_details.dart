@@ -336,12 +336,15 @@ class _TaskDetailsState extends State<TaskDetails> {
       child: ClipRRect(
         borderRadius: BorderRadius.all(Radius.circular(20)),
         child: Stack(alignment: AlignmentDirectional.center, children: [
-          Image.network(thumbnail),
+          thumbnail == null
+              ? Icon(Icons.no_photography)
+              : Image.network(thumbnail),
           Align(
               alignment: Alignment.center,
               child: Image.asset(
                 "assets/assessment/play.png",
                 height: 40,
+                width: 60,
               )),
           Positioned(
               bottom: 10,

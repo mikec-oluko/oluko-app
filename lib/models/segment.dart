@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:enum_to_string/enum_to_string.dart';
 import 'package:oluko_app/models/base.dart';
 import 'package:oluko_app/models/enums/timer_type_enum.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
@@ -9,7 +8,8 @@ class Segment extends Base {
   List<MovementSubmodel> movements;
   String image;
   String description;
-  int duration;
+  String duration;
+  int totalTime;
   int initialTimer;
   int rounds;
   int roundBreakDuration;
@@ -29,6 +29,7 @@ class Segment extends Base {
       this.isChallenge,
       this.isPublished,
       this.timerType,
+      this.totalTime,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -52,11 +53,14 @@ class Segment extends Base {
         rounds: json['rounds'],
         description: json['description'],
         duration: json['duration'],
+        totalTime: json['total_time'],
         initialTimer: json['initial_timer'],
         roundBreakDuration: json['round_break_duration'],
         isChallenge: json['is_challenge'],
         isPublished: json['is_published'],
-        timerType: json['timer_type'] == null ? null : EnumToString.fromString(TimerTypeEnum.values, json['timer_type']),
+        timerType: json['timer_type'] == null
+            ? null
+            : TimerTypeEnum.values[json['timer_type']],
         movements: json['movements'] == null
             ? null
             : List<MovementSubmodel>.from(json['movements']
@@ -71,12 +75,13 @@ class Segment extends Base {
       'image': image,
       'rounds': rounds,
       'duration': duration,
+      "total_time": totalTime,
       'description': description,
       'initial_timer': initialTimer,
       'round_break_duration': roundBreakDuration,
       'is_challenge': isChallenge,
       'is_published': isPublished,
-      'timer_type': timerType == null ? null : EnumToString.convertToString(timerType),
+      'timer_type': timerType == null ? null : timerType.index,
       'movements': movements == null
           ? null
           : List<dynamic>.from(movements.map((movement) => movement.toJson()))

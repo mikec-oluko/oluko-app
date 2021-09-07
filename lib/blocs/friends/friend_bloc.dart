@@ -59,14 +59,18 @@ class FriendBloc extends Cubit<FriendState> {
       Friend friendInformation =
           await FriendRepository.getUserFriendsRequestByUserId(userId);
 
-      List<UserResponse> friendRequestUsers = await Future.wait(
-          friendInformation.friendRequestReceived
-              .map((e) => UserRepository().getById(e.id))
-              .toList());
+      if (friendInformation != null) {
+        List<UserResponse> friendRequestUsers = await Future.wait(
+            friendInformation.friendRequestReceived
+                .map((e) => UserRepository().getById(e.id))
+                .toList());
 
-      emit(GetFriendRequestsSuccess(
-          friendData: friendInformation,
-          friendRequestList: friendRequestUsers));
+        emit(GetFriendRequestsSuccess(
+            friendData: friendInformation,
+            friendRequestList: friendRequestUsers));
+      } else {
+        emit(GetFriendRequestsSuccess(friendData: null, friendRequestList: []));
+      }
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
@@ -81,6 +85,36 @@ class FriendBloc extends Cubit<FriendState> {
       List<User> friendsSuggestionList =
           await FriendRepository.getUserFriendsSuggestionsByUserId(userId);
       emit(GetFriendSuggestionSuccess(friendSuggestionList: null));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(FriendFailure(exception: exception));
+    }
+  }
+
+  void removeRequestSent(
+      Friend currentUserFriend, String userRequestedId) async {
+    try {
+      await FriendRepository.removeRequestSent(
+          currentUserFriend, userRequestedId);
+      // emit(GetFriendSuggestionSuccess(friendSuggestionList: null));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(FriendFailure(exception: exception));
+    }
+  }
+
+  void sendRequestOfConnect(
+      Friend currentUserFriend, String userRequestedId) async {
+    try {
+      await FriendRepository.sendRequestOfConnectOnBothUsers(
+          currentUserFriend, userRequestedId);
+      // emit(GetFriendSuggestionSuccess(friendSuggestionList: null));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

@@ -168,8 +168,12 @@ class _SegmentDetailState extends State<SegmentDetail> {
                 title: OlukoLocalizations.of(context).find('startWorkouts'),
                 color: OlukoColors.primary,
                 onPressed: () {
-                  BottomDialogUtils.showBottomDialog(
-                      context: context, content: dialogContainer());
+                  if (hasNoRest()) {
+                    navigateToSegmentWithoutRecording();
+                  } else {
+                    BottomDialogUtils.showBottomDialog(
+                        context: context, content: dialogContainer());
+                  }
                 })
           ]),
         ),
@@ -253,27 +257,14 @@ class _SegmentDetailState extends State<SegmentDetail> {
                     OlukoOutlinedButton(
                       title: OlukoLocalizations.of(context).find('ignore'),
                       onPressed: () {
-                        TimerUtils.startCountdown(
-                            WorkoutType.segment,
-                            context,
-                            getArguments(),
-                            _segments[widget.segmentIndex].initialTimer,
-                            _segments[widget.segmentIndex].rounds,
-                            1);
+                        navigateToSegmentWithoutRecording();
                       },
                     ),
                     SizedBox(width: 20),
                     OlukoPrimaryButton(
                       title: 'Ok',
                       onPressed: () {
-                        Navigator.pushNamed(context,
-                            routeLabels[RouteEnum.segmentCameraPreview],
-                            arguments: {
-                              'segmentIndex': widget.segmentIndex,
-                              'classIndex': widget.classIndex,
-                              'courseEnrollment': widget.courseEnrollment,
-                              'segments': _segments,
-                            });
+                        navigateToSegmentWithRecording();
                       },
                     )
                   ],
@@ -287,6 +278,26 @@ class _SegmentDetailState extends State<SegmentDetail> {
         ]));
   }
 
+  navigateToSegmentWithRecording() {
+    Navigator.pushNamed(context, routeLabels[RouteEnum.segmentCameraPreview],
+        arguments: {
+          'segmentIndex': widget.segmentIndex,
+          'classIndex': widget.classIndex,
+          'courseEnrollment': widget.courseEnrollment,
+          'segments': _segments,
+        });
+  }
+
+  navigateToSegmentWithoutRecording() {
+    TimerUtils.startCountdown(
+        WorkoutType.segment,
+        context,
+        getArguments(),
+        _segments[widget.segmentIndex].initialTimer,
+        _segments[widget.segmentIndex].rounds,
+        1);
+  }
+
   Object getArguments() {
     return {
       'segmentIndex': widget.segmentIndex,
@@ -295,5 +306,16 @@ class _SegmentDetailState extends State<SegmentDetail> {
       'workoutType': WorkoutType.segment,
       'segments': _segments,
     };
+  }
+
+//Condition to block the segments that don't work with recording yet.
+  bool hasNoRest() {
+    bool hasNoRest = false;
+    for (var i = 0; i < _segments[widget.segmentIndex].movements.length; i++) {
+      if (_segments[widget.segmentIndex].movements[i].timerRestTime == null) {
+        return true;
+      }
+    }
+    return hasNoRest;
   }
 }

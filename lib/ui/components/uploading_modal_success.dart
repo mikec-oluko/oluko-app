@@ -7,12 +7,14 @@ import 'package:oluko_app/blocs/profile/upload_transformation_journey_content_bl
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 
 class UploadingModalSuccess extends StatefulWidget {
   final UploadFrom goToPage;
-  UploadingModalSuccess(this.goToPage);
+  final UserResponse userRequested;
+  UploadingModalSuccess({this.goToPage, this.userRequested});
 
   @override
   _UploadingModalSuccessState createState() => _UploadingModalSuccessState();
@@ -69,8 +71,10 @@ class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
                                   BlocProvider.of<TransformationJourneyBloc>(
                                       context)
                                     ..emitTransformationJourneyDefault();
-                                  Navigator.popAndPushNamed(context,
-                                      returnRouteToGo(widget.goToPage));
+                                  Navigator.popAndPushNamed(
+                                      context,
+                                      routeLabels[RouteEnum
+                                          .profileTransformationJourney]);
                                 } else {
                                   BlocProvider.of<ProfileAvatarBloc>(context)
                                     ..emitDefaultState();
@@ -80,8 +84,13 @@ class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
                                   BlocProvider.of<AuthBloc>(context)
                                     ..checkCurrentUser();
 
-                                  Navigator.popAndPushNamed(context,
-                                      returnRouteToGo(widget.goToPage));
+                                  Navigator.popAndPushNamed(
+                                      context,
+                                      routeLabels[
+                                          RouteEnum.profileViewOwnProfile],
+                                      arguments: {
+                                        'userRequested': widget.userRequested
+                                      });
                                 }
                               }),
                         ],
@@ -93,19 +102,5 @@ class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
         ],
       ),
     );
-  }
-
-  String returnRouteToGo(UploadFrom cameFrom) {
-    String routeToGo = '/';
-    if (cameFrom == UploadFrom.transformationJourney) {
-      routeToGo = routeLabels[RouteEnum.profileTransformationJourney];
-    }
-    if (cameFrom == UploadFrom.profileImage) {
-      routeToGo = routeLabels[RouteEnum.profileViewOwnProfile];
-    }
-    if (cameFrom == UploadFrom.profileCoverImage) {
-      routeToGo = routeLabels[RouteEnum.profileViewOwnProfile];
-    }
-    return routeToGo;
   }
 }
