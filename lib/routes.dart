@@ -419,6 +419,7 @@ class Routes {
               value: _segmentSubmissionBloc),
           BlocProvider<MovementSubmissionBloc>.value(
               value: _movementSubmissionBloc),
+          BlocProvider<VideoBloc>.value(value: _videoBloc),
           BlocProvider<CourseEnrollmentBloc>.value(
               value: _courseEnrollmentBloc),
           BlocProvider<CourseEnrollmentUpdateBloc>.value(

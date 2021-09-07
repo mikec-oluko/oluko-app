@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -11,12 +12,15 @@ import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/movement_submission_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
+import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/enums/counter_enum.dart';
+import 'package:oluko_app/models/enums/submission_state_enum.dart';
 import 'package:oluko_app/models/enums/timer_model.dart';
 import 'package:oluko_app/models/enums/timer_type_enum.dart';
 import 'package:oluko_app/models/movement.dart';
+import 'package:oluko_app/models/movement_submission.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/submodels/counter.dart';
@@ -25,10 +29,13 @@ import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
+import 'package:oluko_app/ui/components/progress_bar.dart';
 import 'package:oluko_app/ui/screens/courses/collapsed_movement_videos_section.dart';
 import 'package:oluko_app/ui/screens/courses/feedback_card.dart';
 import 'package:oluko_app/ui/screens/courses/movement_videos_section.dart';
 import 'package:oluko_app/ui/screens/courses/share_card.dart';
+import 'package:oluko_app/utils/app_messages.dart';
+import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -98,6 +105,13 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   Widget topBarIcon;
 
+  int currentMovementSubmission = 1;
+  int totalMovementSubmissions;
+  List<MovementSubmission> _movementSubmissions;
+  String processPhase = "";
+  double progress = 0.0;
+  bool isThereError = false;
+
   @override
   void initState() {
     _setupCameras();
@@ -127,7 +141,24 @@ class _SegmentClocksState extends State<SegmentClocks> {
                     onTap: () {
                       FocusScope.of(context).unfocus();
                     },
-                    child: form()));
+                    child: BlocListener<VideoBloc, VideoState>(
+                        listener: (context, state) {
+                          saveMovement(state);
+                        },
+                        child: BlocListener<MovementSubmissionBloc,
+                                MovementSubmissionState>(
+                            listener: (context, state) {
+                              if (state is GetMovementSubmissionSuccess) {
+                                if (_movementSubmissions == null) {
+                                  totalMovementSubmissions =
+                                      state.movementSubmissions.length;
+                                  _movementSubmissions =
+                                      state.movementSubmissions;
+                                  processMovementSubmission();
+                                }
+                              }
+                            },
+                            child: form()))));
           } else {
             return SizedBox();
           }
@@ -686,6 +717,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
         topBarIcon = uploadingIcon();
       }
     });
+    BlocProvider.of<MovementSubmissionBloc>(context)..get(_segmentSubmission);
   }
 
   _startMovement() {
@@ -766,15 +798,20 @@ class _SegmentClocksState extends State<SegmentClocks> {
   Widget uploadingIcon() {
     return Padding(
         padding: EdgeInsets.only(right: 2),
-        child: Row(children: [
-          Text(
-            "Uploading",
-            style: OlukoFonts.olukoMediumFont(custoFontWeight: FontWeight.w400),
-            textAlign: TextAlign.start,
-          ),
-          SizedBox(width: 4),
-          Icon(Icons.upload, color: Colors.white)
-        ]));
+        child: GestureDetector(
+            onTap: () => BottomDialogUtils.showBottomDialog(
+                context: context,
+                content: dialogContainer()),
+            child: Row(children: [
+              Text(
+                "Uploading",
+                style: OlukoFonts.olukoMediumFont(
+                    custoFontWeight: FontWeight.w400),
+                textAlign: TextAlign.start,
+              ),
+              SizedBox(width: 4),
+              Icon(Icons.upload, color: Colors.white)
+            ])));
   }
 
   Widget audioIcon() {
@@ -815,5 +852,121 @@ class _SegmentClocksState extends State<SegmentClocks> {
         ],
       ),
     );
+  }
+
+  //video uploading methods
+
+  processMovementSubmission() {
+    MovementSubmission movementSubmission =
+        _movementSubmissions[currentMovementSubmission - 1];
+    BlocProvider.of<VideoBloc>(context)
+      ..createVideo(context, File(movementSubmission.videoState.stateInfo),
+          3.0 / 4.0, movementSubmission.id);
+  }
+
+  void saveMovement(VideoState state) {
+    MovementSubmission ms = _movementSubmissions[currentMovementSubmission - 1];
+    if (state is VideoProcessing) {
+      updateProgress(state);
+    } else if (state is VideoEncoded) {
+      saveEncodedState(state, ms);
+    } else if (state is VideoSuccess || state is VideoFailure) {
+      if (state is VideoSuccess) {
+        saveUploadedState(state, ms);
+      } else if (state is VideoFailure) {
+        saveErrorState(state, ms);
+      }
+      if (currentMovementSubmission < totalMovementSubmissions) {
+        setState(() {
+          currentMovementSubmission++;
+        });
+        processMovementSubmission();
+      } else {
+        showSegmentMessage();
+      }
+    }
+  }
+
+  void saveEncodedState(VideoEncoded state, MovementSubmission ms) {
+    setState(() {
+      ms.videoState.state = SubmissionStateEnum.encoded;
+      ms.videoState.stateInfo = state.encodedFilesDir;
+      ms.video = state.video;
+      ms.videoState.stateExtraInfo = state.thumbFilePath;
+    });
+    BlocProvider.of<MovementSubmissionBloc>(context)..updateStateToEncoded(ms);
+  }
+
+  void saveUploadedState(VideoSuccess state, MovementSubmission ms) {
+    setState(() {
+      processPhase = OlukoLocalizations.of(context).find('completed');
+      progress = 1.0;
+      ms.video = state.video;
+    });
+    BlocProvider.of<MovementSubmissionBloc>(context)..updateVideo(ms);
+  }
+
+  void saveErrorState(VideoFailure state, MovementSubmission ms) {
+    setState(() {
+      isThereError = true;
+      ms.videoState.error = state.exceptionMessage;
+    });
+    BlocProvider.of<MovementSubmissionBloc>(context)..updateStateToError(ms);
+  }
+
+  void showSegmentMessage() {
+    String message;
+    if (isThereError) {
+      message = OlukoLocalizations.of(context).find('uploadedWithErrors');
+    } else {
+      message = OlukoLocalizations.of(context).find('uploadedSuccessfully');
+    }
+    AppMessages.showSnackbar(context, message);
+  }
+
+  void updateProgress(VideoProcessing state) {
+    setState(() {
+      processPhase = state.processPhase;
+      progress = state.progress;
+    });
+  }
+
+  Widget dialogContainer() {
+    return Stack(children: [
+      Container(
+          decoration: BoxDecoration(
+              image: DecorationImage(
+            image: AssetImage("assets/courses/dialog_background.png"),
+            fit: BoxFit.cover,
+          )),
+          child: Column(children: [
+            SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.only(top: 50.0),
+              child: totalMovementSubmissions != null
+                  ? Text(
+                      OlukoLocalizations.of(context).find('processingVideo') +
+                          " " +
+                          currentMovementSubmission.toString() +
+                          OlukoLocalizations.of(context).find('outOf') +
+                          totalMovementSubmissions.toString(),
+                      style: OlukoFonts.olukoBigFont(
+                          custoFontWeight: FontWeight.bold,
+                          customColor: OlukoColors.white),
+                    )
+                  : SizedBox(),
+            ),
+            SizedBox(height: 10),
+            Padding(
+                padding: const EdgeInsets.all(40.0),
+                child: ProgressBar(
+                    processPhase: processPhase, progress: progress)),
+          ])),
+      Align(
+          alignment: Alignment.topRight,
+          child: IconButton(
+              icon: Icon(Icons.close, color: Colors.white),
+              onPressed: () => Navigator.pop(context)))
+    ]);
   }
 }
