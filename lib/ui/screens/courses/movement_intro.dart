@@ -329,6 +329,9 @@ class _MovementIntroState extends State<MovementIntro>
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     MovementItemBubbles(
+                        onPressed: (context, movement) => Navigator.pushNamed(
+                            context, routeLabels[RouteEnum.movementIntro],
+                            arguments: {'movement': movement}),
                         content: this._movementInfoSuccess.relatedMovements,
                         width: ScreenUtils.width(context) / 1.2),
                   ],
