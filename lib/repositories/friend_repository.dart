@@ -113,6 +113,10 @@ class FriendRepository {
       //Remove friend request
       friend.friendRequestReceived
           .removeWhere((element) => element.id == friendModel.id);
+
+      friend.friendRequestSent
+          .removeWhere((element) => element.id == friendModel.id);
+
       friend.friends.add(friendModel);
 
       await FirebaseFirestore.instance

@@ -194,7 +194,8 @@ class CourseEnrollmentRepository {
         futures.add(await getChallengesFromCourseEnrollment(
             courseEnrollment, challengeList));
       }
-      Future.wait(futures);
+      futures
+          .forEach((element) => element != null ? Future.wait(futures) : null);
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,
@@ -239,7 +240,7 @@ class CourseEnrollmentRepository {
     List<EnrollmentClass> classes = courseEnrollment.classes;
     List<EnrollmentMovement> movements =
         classes[classIndex].segments[segmentIndex].movements;
-        
+
     if (movements == null ||
         counter.round == 1 && counter.set == null ||
         counter.round == 1 && counter.set == 1) {

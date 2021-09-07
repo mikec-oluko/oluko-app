@@ -121,7 +121,8 @@ class TaskSubmissionRepository {
             userId, asessmentId, response));
       }
       if (futures.length != 0 && futures != null) {
-        Future.wait(futures);
+        futures.forEach(
+            (element) => element != null ? Future.wait(futures) : null);
       }
     } catch (e, stackTrace) {
       await Sentry.captureException(

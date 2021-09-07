@@ -368,6 +368,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                       onPressed: () {
                                         switch (connectStatus) {
                                           case UserConnectStatus.connected:
+                                            //TODO: Remove friend
                                             break;
                                           case UserConnectStatus.noConnected:
                                             BlocProvider.of<FriendBloc>(context)
@@ -452,7 +453,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
                       builder: (context, state) {
                         if (state is GetCourseEnrollmentChallenge) {
                           if (_activeChallenges.length == 0) {
-                            //TODO: CHECK HERE
                             _activeChallenges = state.challenges;
                           }
                         }
