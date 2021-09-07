@@ -90,7 +90,6 @@ class _MovementIntroState extends State<MovementIntro>
   void initState() {
     // tabController =
     //     TabController(initialIndex: 0, length: tabs.length, vsync: this);
-    referenceCourses.forEach((course) => coursesBookmarked[course.id] = false);
     super.initState();
   }
 
@@ -242,7 +241,8 @@ class _MovementIntroState extends State<MovementIntro>
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Icon(
-                            this.coursesBookmarked[course.id]
+                            this.coursesBookmarked[course.id] != null &&
+                                    this.coursesBookmarked[course.id] == true
                                 ? Icons.bookmark
                                 : Icons.bookmark_border,
                             size: 20,
@@ -323,7 +323,7 @@ class _MovementIntroState extends State<MovementIntro>
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     MovementItemBubbles(
-                        content: this.referenceMovements,
+                        content: this._movementInfoSuccess.relatedMovements,
                         width: ScreenUtils.width(context) / 1.2),
                   ],
                 ),
@@ -341,7 +341,9 @@ class _MovementIntroState extends State<MovementIntro>
                 ],
               ),
               Column(
-                  children: referenceCourses
+                  children: this
+                      ._movementInfoSuccess
+                      .relatedCourses
                       .map((Course course) => courseRow(course))
                       .toList()),
             ],
