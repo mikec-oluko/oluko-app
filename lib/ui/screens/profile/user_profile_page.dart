@@ -370,6 +370,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                         switch (connectStatus) {
                                           case UserConnectStatus.connected:
                                             //TODO: Remove friend
+                                            BlocProvider.of<FriendBloc>(context)
+                                              ..removeFriend(
+                                                  friendData, userRequested.id);
                                             break;
                                           case UserConnectStatus.noConnected:
                                             BlocProvider.of<FriendBloc>(context)
@@ -612,31 +615,28 @@ class _UserProfilePageState extends State<UserProfilePage> {
             _connectButtonTitle = returnTitleForConnectButton(connectStatus);
           });
         } else {
-          setState(() {
-            connectStatus = UserConnectStatus.noConnected;
-            _connectButtonTitle = returnTitleForConnectButton(connectStatus);
-          });
-        }
-      });
-    }
-
-    if (friendData.friendRequestSent.length == 0) {
-      setState(() {
-        connectStatus = UserConnectStatus.noConnected;
-        _connectButtonTitle = returnTitleForConnectButton(connectStatus);
-      });
-    } else {
-      friendData.friendRequestSent.forEach((request) {
-        if (request.id == userRequested.id) {
-          setState(() {
-            connectStatus = UserConnectStatus.requestPending;
-            _connectButtonTitle = returnTitleForConnectButton(connectStatus);
-          });
-        } else {
-          setState(() {
-            connectStatus = UserConnectStatus.noConnected;
-            _connectButtonTitle = returnTitleForConnectButton(connectStatus);
-          });
+          if (friendData.friendRequestSent.length == 0) {
+            setState(() {
+              connectStatus = UserConnectStatus.noConnected;
+              _connectButtonTitle = returnTitleForConnectButton(connectStatus);
+            });
+          } else {
+            friendData.friendRequestSent.forEach((request) {
+              if (request.id == userRequested.id) {
+                setState(() {
+                  connectStatus = UserConnectStatus.requestPending;
+                  _connectButtonTitle =
+                      returnTitleForConnectButton(connectStatus);
+                });
+              } else {
+                setState(() {
+                  connectStatus = UserConnectStatus.noConnected;
+                  _connectButtonTitle =
+                      returnTitleForConnectButton(connectStatus);
+                });
+              }
+            });
+          }
         }
       });
     }

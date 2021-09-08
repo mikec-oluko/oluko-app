@@ -347,4 +347,27 @@ class FriendRepository {
       throw e;
     }
   }
+
+  static Future<Friend> removeFriendFromList(
+      Friend friend, String friendToRemoveId) async {
+    try {
+      //Remove friend request
+      friend.friends.removeWhere(
+          (friendFromList) => friendFromList.id == friendToRemoveId);
+
+      await FirebaseFirestore.instance
+          .collection('projects')
+          .doc(GlobalConfiguration().getValue("projectId"))
+          .collection('friends')
+          .doc(friend.id)
+          .set(friend.toJson());
+      return friend;
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
+      throw e;
+    }
+  }
 }
