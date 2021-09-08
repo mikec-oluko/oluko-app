@@ -58,7 +58,7 @@ class _FriendRequestCardState extends State<FriendRequestCard> {
                       child: CircleAvatar(
                         // backgroundImage: NetworkImage(widget.userData.photoURL),
                         backgroundImage: NetworkImage(widget.friendUser.avatar),
-                        backgroundColor: Colors.red,
+                        backgroundColor: OlukoColors.black,
                         radius: 30,
                       ),
                       onTap: () {

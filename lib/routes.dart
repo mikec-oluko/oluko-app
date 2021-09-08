@@ -360,7 +360,9 @@ class Routes {
           BlocProvider<TransformationJourneyContentBloc>.value(
               value: _transformationJourneyContentBloc),
         ];
-        newRouteView = ProfileTransformationJourneyPage();
+        final Map<String, UserResponse> argumentsToAdd = arguments;
+        newRouteView = ProfileTransformationJourneyPage(
+            userRequested: argumentsToAdd['profileInfo']);
         break;
       case RouteEnum.profileAssessmentVideos:
         providers = [

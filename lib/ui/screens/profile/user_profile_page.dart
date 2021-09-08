@@ -406,8 +406,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
                           ? _buildCarouselSection(
                               titleForSection: OlukoLocalizations.of(context)
                                   .find('assessmentVideos'),
-                              routeForSection: routeLabels[
-                                  RouteEnum.profileAssessmentVideos],
+                              routeForSection:
+                                  RouteEnum.profileAssessmentVideos,
                               contentForSection: TransformListOfItemsToWidget
                                   .getWidgetListFromContent(
                                       assessmentVideoData:
@@ -426,8 +426,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
                             ? _buildCarouselSection(
                                 titleForSection: OlukoLocalizations.of(context)
                                     .find('transformationJourney'),
-                                routeForSection: routeLabels[
-                                    RouteEnum.profileTransformationJourney],
+                                routeForSection:
+                                    RouteEnum.profileTransformationJourney,
                                 contentForSection: TransformListOfItemsToWidget
                                     .getWidgetListFromContent(
                                         tansformationJourneyData:
@@ -466,8 +466,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                             ? _buildCarouselSection(
                                 titleForSection: OlukoLocalizations.of(context)
                                     .find('upcomingChallenges'),
-                                routeForSection:
-                                    routeLabels[RouteEnum.profileChallenges],
+                                routeForSection: RouteEnum.profileChallenges,
                                 contentForSection: TransformListOfItemsToWidget
                                     .getWidgetListFromContent(
                                         upcomingChallenges: _activeChallenges,
@@ -532,7 +531,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   }
 
   Padding _buildCarouselSection(
-      {String routeForSection,
+      {RouteEnum routeForSection,
       String titleForSection,
       List<Widget> contentForSection}) {
     return Padding(
@@ -540,6 +539,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
         child: CarouselSmallSection(
             routeToGo: routeForSection,
             title: titleForSection,
+            userToGetData: _userProfileToDisplay,
             children: contentForSection.length != 0
                 ? contentForSection
                 : [
