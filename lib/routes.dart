@@ -28,6 +28,7 @@ import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
+import 'package:oluko_app/blocs/user_list_bloc.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
@@ -225,6 +226,7 @@ class Routes {
   final UserStatisticsBloc _userStatisticsBloc = UserStatisticsBloc();
   final CourseEnrollmentUpdateBloc _courseEnrollmentUpdateBloc =
       CourseEnrollmentUpdateBloc();
+  final UserListBloc _userListBloc = UserListBloc();
 
   getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -260,6 +262,7 @@ class Routes {
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
           BlocProvider<TaskBloc>.value(value: _taskBloc),
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
+          BlocProvider<UserListBloc>.value(value: _userListBloc),
         ];
         newRouteView = MainPage();
         break;
@@ -272,7 +275,8 @@ class Routes {
       case RouteEnum.friends:
         providers = [
           BlocProvider<FriendBloc>.value(value: _friendBloc),
-          BlocProvider<ConfirmFriendBloc>.value(value: _confirmFriendBloc)
+          BlocProvider<ConfirmFriendBloc>.value(value: _confirmFriendBloc),
+          BlocProvider<UserListBloc>.value(value: _userListBloc)
         ];
         newRouteView = FriendsPage();
         break;
