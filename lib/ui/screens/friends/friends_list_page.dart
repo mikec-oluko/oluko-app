@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
+import 'package:oluko_app/blocs/user_list_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/submodels/friend_model.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -23,6 +24,7 @@ class FriendsListPage extends StatefulWidget {
 
 class _FriendsListPageState extends State<FriendsListPage> {
   AuthSuccess _authStateData;
+  UserListSuccess _userListSuccessData;
 
   @override
   void initState() {
@@ -83,7 +85,14 @@ class _FriendsListPageState extends State<FriendsListPage> {
 
                 BlocBuilder<FriendBloc, FriendState>(
                     builder: (context, friendState) {
-                  return Column(children: generateFriendList(friendState));
+                  return BlocBuilder<UserListBloc, UserListState>(
+                      builder: (context, userListState) {
+                    return Column(
+                        children: generateFriendList(friendState)
+                            .expand((element) =>
+                                generateUsersList(friendState, userListState))
+                            .toList());
+                  });
                 }),
               ],
             ),
@@ -122,6 +131,58 @@ class _FriendsListPageState extends State<FriendsListPage> {
                 return FriendCard(
                   friend: friend,
                   friendUser: friendUser,
+                  onFavoriteToggle: (FriendModel friendModel) {
+                    BlocProvider.of<FavoriteFriendBloc>(context).favoriteFriend(
+                        context, friendState.friendData, friendModel);
+                  },
+                );
+              }).toList();
+      } else {
+        return [];
+      }
+    } else {
+      return [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: OlukoCircularProgressIndicator(),
+        )
+      ];
+    }
+  }
+
+  List<Widget> generateUsersList(
+      FriendState friendState, UserListState userListState) {
+    if (!(userListState is UserListSuccess) && _userListSuccessData == null) {
+      BlocProvider.of<UserListBloc>(context).get();
+    }
+    if (userListState is UserListSuccess) {
+      _userListSuccessData = userListState;
+    }
+    if (friendState is FriendLoading) {
+      return [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: OlukoCircularProgressIndicator(),
+        )
+      ];
+    } else if (friendState is FriendFailure) {
+      return [TitleBody('There was an error retrieving your Friends')];
+    } else if (friendState is GetFriendsSuccess &&
+        userListState is UserListSuccess) {
+      if (userListState.users != null) {
+        return userListState.users.length == 0
+            ? [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [TitleBody('No Friends.')]),
+                )
+              ]
+            : userListState.users.map((user) {
+                return FriendCard(
+                  friend: null,
+                  friendUser: user,
                   onFavoriteToggle: (FriendModel friendModel) {
                     BlocProvider.of<FavoriteFriendBloc>(context).favoriteFriend(
                         context, friendState.friendData, friendModel);
