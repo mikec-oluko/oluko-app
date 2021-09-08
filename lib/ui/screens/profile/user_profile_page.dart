@@ -54,6 +54,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   bool _isFollow = false;
   UserConnectStatus connectStatus;
   Friend friendData;
+  FriendModel friendModel;
   List<UserResponse> friendUsers = [];
 
   String _connectButtonTitle = "";
@@ -347,12 +348,12 @@ class _UserProfilePageState extends State<UserProfilePage> {
                               children: [
                                 TextButton(
                                   onPressed: () {
-                                    _isFollow
-                                        ? null
-                                        : BlocProvider.of<FavoriteFriendBloc>(
-                                            context)
-                                      ..favoriteFriend(context, friendData,
-                                          FriendModel(id: userRequested.id));
+                                    setState(() {
+                                      friendModel.isFavorite = !_isFollow;
+                                    });
+                                    BlocProvider.of<FavoriteFriendBloc>(context)
+                                      ..favoriteFriend(
+                                          context, friendData, friendModel);
                                     setState(() {
                                       _isFollow = !_isFollow;
                                     });
@@ -593,9 +594,17 @@ class _UserProfilePageState extends State<UserProfilePage> {
     } else {
       friendData.friends.forEach((friend) {
         if (friend.id == userRequested.id) {
+          setState(() {
+            friendModel = friend;
+          });
+
           if (friend.isFavorite) {
             setState(() {
               _isFollow = true;
+            });
+          } else {
+            setState(() {
+              _isFollow = false;
             });
           }
           setState(() {

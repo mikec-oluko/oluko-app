@@ -334,6 +334,7 @@ class Routes {
               value: _profileCoverImageBloc),
           BlocProvider<ProfileAvatarBloc>.value(value: _profileAvatarBloc),
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
+          BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
         ];
         final Map<String, UserResponse> argumentsToAdd = arguments;
         newRouteView =
