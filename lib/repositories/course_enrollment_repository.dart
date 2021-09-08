@@ -92,18 +92,16 @@ class CourseEnrollmentRepository {
   }
 
   static Future<CourseEnrollment> create(User user, Course course) async {
-    CollectionReference reference = FirebaseFirestore.instance
+    DocumentReference projectReference = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
-        .collection('courseEnrollments');
-    DocumentReference courseReference = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
-        .collection('courses')
-        .doc(course.id);
+        .doc(GlobalConfiguration().getValue("projectId"));
+    CollectionReference reference =
+        projectReference.collection('courseEnrollments');
+    DocumentReference courseReference =
+        projectReference.collection('courses').doc(course.id);
     final DocumentReference docRef = reference.doc();
     DocumentReference userReference =
-        FirebaseFirestore.instance.collection('users').doc(user.uid);
+        projectReference.collection('users').doc(user.uid);
     ObjectSubmodel courseSubmodel = ObjectSubmodel(
         id: course.id,
         reference: courseReference,
@@ -239,7 +237,7 @@ class CourseEnrollmentRepository {
     List<EnrollmentClass> classes = courseEnrollment.classes;
     List<EnrollmentMovement> movements =
         classes[classIndex].segments[segmentIndex].movements;
-        
+
     if (movements == null ||
         counter.round == 1 && counter.set == null ||
         counter.round == 1 && counter.set == 1) {
