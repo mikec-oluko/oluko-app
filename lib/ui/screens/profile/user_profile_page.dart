@@ -369,7 +369,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                       onPressed: () {
                                         switch (connectStatus) {
                                           case UserConnectStatus.connected:
-                                            //TODO: Remove friend
                                             BlocProvider.of<FriendBloc>(context)
                                               ..removeFriend(
                                                   friendData, userRequested.id);
@@ -590,39 +589,25 @@ class _UserProfilePageState extends State<UserProfilePage> {
   }
 
   checkConnectionStatus(UserResponse userRequested, Friend friendData) {
-    if (friendData.friends.length == 0) {
-      setState(() {
-        _isFollow = false;
-      });
-    } else {
-      friendData.friends.forEach((friend) {
-        if (friend.id == userRequested.id) {
-          setState(() {
-            friendModel = friend;
-          });
-
-          if (friend.isFavorite) {
+    if (friendData.friends.length != 0) {
+      friendData.friends.forEach((friendFromList) {
+        if (friendFromList.id == userRequested.id) {
+          if (friendFromList.isFavorite) {
             setState(() {
               _isFollow = true;
-            });
-          } else {
-            setState(() {
-              _isFollow = false;
-            });
-          }
-          setState(() {
-            connectStatus = UserConnectStatus.connected;
-            _connectButtonTitle = returnTitleForConnectButton(connectStatus);
-          });
-        } else {
-          if (friendData.friendRequestSent.length == 0) {
-            setState(() {
-              connectStatus = UserConnectStatus.noConnected;
+              connectStatus = UserConnectStatus.connected;
               _connectButtonTitle = returnTitleForConnectButton(connectStatus);
             });
           } else {
-            friendData.friendRequestSent.forEach((request) {
-              if (request.id == userRequested.id) {
+            setState(() {
+              connectStatus = UserConnectStatus.connected;
+              _connectButtonTitle = returnTitleForConnectButton(connectStatus);
+            });
+          }
+        } else {
+          if (friendData.friendRequestSent.length != 0) {
+            friendData.friendRequestSent.forEach((friendRequestSent) {
+              if (friendRequestSent.id == userRequested.id) {
                 setState(() {
                   connectStatus = UserConnectStatus.requestPending;
                   _connectButtonTitle =
@@ -636,9 +621,35 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 });
               }
             });
+          } else {
+            setState(() {
+              connectStatus = UserConnectStatus.noConnected;
+              _connectButtonTitle = returnTitleForConnectButton(connectStatus);
+            });
           }
         }
       });
+    } else {
+      if (friendData.friendRequestSent.length != 0) {
+        friendData.friendRequestSent.forEach((friendRequestSent) {
+          if (friendRequestSent.id == userRequested.id) {
+            setState(() {
+              connectStatus = UserConnectStatus.requestPending;
+              _connectButtonTitle = returnTitleForConnectButton(connectStatus);
+            });
+          } else {
+            setState(() {
+              connectStatus = UserConnectStatus.noConnected;
+              _connectButtonTitle = returnTitleForConnectButton(connectStatus);
+            });
+          }
+        });
+      } else {
+        setState(() {
+          connectStatus = UserConnectStatus.noConnected;
+          _connectButtonTitle = returnTitleForConnectButton(connectStatus);
+        });
+      }
     }
   }
 
