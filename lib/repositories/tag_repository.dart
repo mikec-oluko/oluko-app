@@ -21,7 +21,7 @@ class TagRepository {
         .get();
     List<Tag> response = [];
     docRef.docs.forEach((doc) {
-      final Map<String, dynamic> element = doc.data();
+      final Map<String, dynamic> element = doc.data() as Map<String, dynamic>;
       response.add(Tag.fromJson(element));
     });
     return response;

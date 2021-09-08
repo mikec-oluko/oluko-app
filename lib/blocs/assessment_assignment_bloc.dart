@@ -15,7 +15,7 @@ class AssessmentAssignmentSuccess extends AssessmentAssignmentState {
 }
 
 class AssessmentAssignmentFailure extends AssessmentAssignmentState {
-  final Exception exception;
+  final dynamic exception;
 
   AssessmentAssignmentFailure({this.exception});
 }
@@ -28,8 +28,7 @@ class AssessmentAssignmentBloc extends Cubit<AssessmentAssignmentState> {
       emit(AssessmentAssignmentLoading());
     }
     try {
-      AssessmentAssignment assessmentA =
-          await AssessmentAssignmentRepository.getByUserId(user.uid);
+      AssessmentAssignment assessmentA = await AssessmentAssignmentRepository.getByUserId(user.uid);
       if (assessmentA == null) {
         assessmentA = AssessmentAssignmentRepository.create(user, assessment);
       }
@@ -40,6 +39,7 @@ class AssessmentAssignmentBloc extends Cubit<AssessmentAssignmentState> {
         stackTrace: stackTrace,
       );
       emit(AssessmentAssignmentFailure(exception: exception));
+      rethrow;
     }
   }
 }

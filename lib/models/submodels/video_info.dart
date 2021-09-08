@@ -4,7 +4,7 @@ import 'package:oluko_app/models/submodels/video.dart';
 
 import '../base.dart';
 
-class VideoInfo extends Base{
+class VideoInfo extends Base {
   List<DrawPoint> drawing;
   List<Event> events;
   List<double> markers;
@@ -12,22 +12,25 @@ class VideoInfo extends Base{
 
   VideoInfo({this.drawing, this.events, this.markers, this.video});
 
-  factory VideoInfo.fromJson(Map<String, dynamic> json) {
-    return VideoInfo(
-      events: List<Event>.from(
-          json['events'].map((event) => Event.fromJson(event))),
-      markers: List<double>.from(json['markers']),
-      video: Video.fromJson(json['video']),
-      drawing: List<DrawPoint>.from(
-          json['drawing'].map((drawPoint) => DrawPoint.fromJson(drawPoint))),
-    );
-  }
+  //TODO: missing impl
+  static VideoInfo fromJson(Object data) {}
 
-  Map<String, dynamic> toJson() => {
-        'events': List<dynamic>.from(events.map((event) => event.toJson())),
-        'markers': List<dynamic>.from(markers),
-        'video': video.toJson(),
-        'drawing':
-            List<dynamic>.from(drawing.map((drawPoint) => drawPoint.toJson())),
-      };
+  // factory VideoInfo.fromJson(Object json) {
+  //   return VideoInfo(
+  //     events: List<Event>.from(
+  //         json['events'].map((event) => Event.fromJson(event))),
+  //     markers: List<double>.from(json['markers']),
+  //     video: Video.fromJson(json['video']),
+  //     drawing: List<DrawPoint>.from(
+  //         json['drawing'].map((drawPoint) => DrawPoint.fromJson(drawPoint))),
+  //   );
+  // }
+
+  // Map<String, dynamic> toJson() => {
+  //       'events': List<dynamic>.from(events.map((event) => event.toJson())),
+  //       'markers': List<dynamic>.from(markers),
+  //       'video': video.toJson(),
+  //       'drawing':
+  //           List<dynamic>.from(drawing.map((drawPoint) => drawPoint.toJson())),
+  //     };
 }

@@ -18,7 +18,7 @@ class AssessmentSuccess extends AssessmentState {
 }
 
 class AssessmentFailure extends AssessmentState {
-  final Exception exception;
+  final dynamic exception;
 
   AssessmentFailure({this.exception});
 }
@@ -39,6 +39,7 @@ class AssessmentBloc extends Cubit<AssessmentState> {
         stackTrace: stackTrace,
       );
       emit(AssessmentFailure(exception: exception));
+      rethrow;
     }
   }
 
@@ -55,6 +56,7 @@ class AssessmentBloc extends Cubit<AssessmentState> {
         stackTrace: stackTrace,
       );
       emit(AssessmentFailure(exception: exception));
+      rethrow;
     }
   }
 }

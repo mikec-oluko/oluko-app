@@ -29,7 +29,7 @@ class CreateEnrollmentSuccess extends CourseEnrollmentState {
 }
 
 class Failure extends CourseEnrollmentState {
-  final Exception exception;
+  final dynamic exception;
 
   Failure({this.exception});
 }
@@ -51,8 +51,7 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
 
   void create(User user, Course course) async {
     try {
-      CourseEnrollment courseEnrollment =
-          await CourseEnrollmentRepository.create(user, course);
+      CourseEnrollment courseEnrollment = await CourseEnrollmentRepository.create(user, course);
       emit(CreateEnrollmentSuccess(courseEnrollment: courseEnrollment));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -60,13 +59,13 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
         stackTrace: stackTrace,
       );
       emit(Failure(exception: exception));
+      rethrow;
     }
   }
 
   void get(User user, Course course) async {
     try {
-      CourseEnrollment courseEnrollment =
-          await CourseEnrollmentRepository.get(course, user);
+      CourseEnrollment courseEnrollment = await CourseEnrollmentRepository.get(course, user);
       emit(GetEnrollmentSuccess(courseEnrollment: courseEnrollment));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -74,14 +73,13 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
         stackTrace: stackTrace,
       );
       emit(Failure(exception: exception));
+      rethrow;
     }
   }
 
-  void markSegmentAsCompleated(CourseEnrollment courseEnrollment,
-      int segmentIndex, int classIndex) async {
+  void markSegmentAsCompleated(CourseEnrollment courseEnrollment, int segmentIndex, int classIndex) async {
     try {
-      await CourseEnrollmentRepository.markSegmentAsCompleted(
-          courseEnrollment, segmentIndex, classIndex);
+      await CourseEnrollmentRepository.markSegmentAsCompleted(courseEnrollment, segmentIndex, classIndex);
       emit(MarkSegmentSuccess());
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -89,6 +87,7 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
         stackTrace: stackTrace,
       );
       emit(Failure(exception: exception));
+      rethrow;
     }
   }
 
@@ -97,14 +96,14 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
       List<Challenge> courseEnrollmentsChallenges =
           await CourseEnrollmentRepository().getUserChallengesByUserId(userId);
 
-      emit(GetCourseEnrollmentChallenge(
-          challenges: courseEnrollmentsChallenges));
+      emit(GetCourseEnrollmentChallenge(challenges: courseEnrollmentsChallenges));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
         stackTrace: stackTrace,
       );
       emit(Failure(exception: exception));
+      rethrow;
     }
   }
 }

@@ -13,12 +13,11 @@ class MovementInfoSuccess extends MovementInfoState {
   Movement movement;
   List<Movement> movementVariants;
   MovementRelation movementRelation;
-  MovementInfoSuccess(
-      {this.movement, this.movementVariants, this.movementRelation});
+  MovementInfoSuccess({this.movement, this.movementVariants, this.movementRelation});
 }
 
 class MovementInfoFailure extends MovementInfoState {
-  final Exception exception;
+  final dynamic exception;
 
   MovementInfoFailure({this.exception});
 }
@@ -29,22 +28,19 @@ class MovementInfoBloc extends Cubit<MovementInfoState> {
   void get(String movementId) async {
     try {
       List<Movement> movements = await MovementRepository.get(movementId);
-      List<Movement> movementVariants =
-          await MovementRepository.getVariants(movementId);
+      List<Movement> movementVariants = await MovementRepository.getVariants(movementId);
 
-      MovementRelation movementRelation =
-          await MovementRepository.getRelations(movementId);
+      MovementRelation movementRelation = await MovementRepository.getRelations(movementId);
 
       emit(MovementInfoSuccess(
-          movement: movements[0],
-          movementVariants: movementVariants,
-          movementRelation: movementRelation));
+          movement: movements[0], movementVariants: movementVariants, movementRelation: movementRelation));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
         stackTrace: stackTrace,
       );
       emit(MovementInfoFailure(exception: exception));
+      rethrow;
     }
   }
 }

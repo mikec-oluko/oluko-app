@@ -42,8 +42,8 @@ class TimeConverter {
 
   static String durationToString(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, "0");
-    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
-    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60).toInt());
+    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60).toInt());
     return "$twoDigitMinutes:$twoDigitSeconds";
   }
 
@@ -59,8 +59,7 @@ class TimeConverter {
 
   static String returnDateAndTimeOnStringFormat({Timestamp dateToFormat}) {
     String dateToReturnAsString;
-    String date =
-        dateToFormat.toDate().toString().split(" ")[0].replaceAll("-", ".");
+    String date = dateToFormat.toDate().toString().split(" ")[0].replaceAll("-", ".");
     String hour = dateToFormat.toDate().toString().split(" ")[1].split(".")[0];
     hour = hour.replaceRange(hour.lastIndexOf(":"), hour.length, "");
     dateToReturnAsString = date + " | " + hour;

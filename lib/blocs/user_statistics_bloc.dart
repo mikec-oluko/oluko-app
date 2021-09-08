@@ -14,7 +14,7 @@ class StatisticsSuccess extends UserStatisticsState {
 }
 
 class Failure extends UserStatisticsState {
-  final Exception exception;
+  final dynamic exception;
 
   Failure({this.exception});
 }
@@ -27,8 +27,7 @@ class UserStatisticsBloc extends Cubit<UserStatisticsState> {
       emit(Loading());
     }
     try {
-      UserStatistics userStats =
-          await UserStatisticsRepository.getUserStatics(userId);
+      UserStatistics userStats = await UserStatisticsRepository.getUserStatics(userId);
       emit(StatisticsSuccess(userStats: userStats));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -36,6 +35,7 @@ class UserStatisticsBloc extends Cubit<UserStatisticsState> {
         stackTrace: stackTrace,
       );
       emit(Failure(exception: exception));
+      rethrow;
     }
   }
 }

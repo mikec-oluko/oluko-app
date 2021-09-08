@@ -111,9 +111,7 @@ class _PlayerDoubleState extends State<PlayerDouble> {
   }
 
   checkEventToPerform(List<Event> events, int position) {
-    if (events.length > 0 &&
-        index < events.length &&
-        position > events[index].recordingPosition) {
+    if (events.length > 0 && index < events.length && position > events[index].recordingPosition) {
       EventType eventType = events[index].eventType;
       playOrPauseParentVideo(eventType);
       setState(() {
@@ -185,8 +183,7 @@ class _PlayerDoubleState extends State<PlayerDouble> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.done) {
                           return AspectRatio(
-                            aspectRatio:
-                                _parentVideoController.value.aspectRatio,
+                            aspectRatio: _parentVideoController.value.aspectRatio,
                             child: VideoPlayer(_parentVideoController),
                           );
                         } else {
@@ -235,12 +232,9 @@ class _PlayerDoubleState extends State<PlayerDouble> {
                 padding: EdgeInsets.all(8.0),
                 child: Container(
                     padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20.0),
-                        color: Colors.green),
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(20.0), color: Colors.green),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 8.0, horizontal: 8.0),
+                      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
@@ -273,9 +267,7 @@ class _PlayerDoubleState extends State<PlayerDouble> {
                                 IconButton(
                                     color: Colors.white,
                                     icon: Icon(
-                                      videoPlaying
-                                          ? Icons.pause
-                                          : Icons.play_arrow,
+                                      videoPlaying ? Icons.pause : Icons.play_arrow,
                                     ),
                                     onPressed: () async {
                                       if (_videoController.value.isPlaying) {
@@ -334,23 +326,19 @@ class _PlayerDoubleState extends State<PlayerDouble> {
   Widget buildIndicator() => VideoProgressIndicator(
         _videoController,
         allowScrubbing: true,
-        colors:
-            VideoProgressColors(playedColor: Color.fromRGBO(255, 100, 0, 0.7)),
+        colors: VideoProgressColors(playedColor: Color.fromRGBO(255, 100, 0, 0.7)),
       );
 
   //DRAWING FUNCTIONS
 
   playBackCanvas() async {
     List<DrawPoint> drawingsUntilTimeStamp = getDrawingsUntilTimestamp(
-        this._videoController.value.position.inMilliseconds,
-        List.from(this.canvasPointsRecording));
+        this._videoController.value.position.inMilliseconds, List.from(this.canvasPointsRecording));
     List<DrawPoint> drawingsAfterTimeStamp = getDrawingsAfterTimestamp(
-        this._videoController.value.position.inMilliseconds,
-        List.from(this.canvasPointsRecording));
+        this._videoController.value.position.inMilliseconds, List.from(this.canvasPointsRecording));
 
     List<DrawingPoints> pointsToSet = [];
-    if (_videoController != null &&
-        _videoController.value.position.inMilliseconds == 0) {
+    if (_videoController != null && _videoController.value.position.inMilliseconds == 0) {
       pointsToSet = [];
     } else {
       pointsToSet = drawingsUntilTimeStamp.map((e) => e.point).toList();
@@ -359,13 +347,11 @@ class _PlayerDoubleState extends State<PlayerDouble> {
     this.canvasKey.currentState.setPoints(pointsToSet);
     List<DrawPoint> recPoints = drawingsAfterTimeStamp;
 
-    this.playbackTimer =
-        Timer.periodic(new Duration(milliseconds: 10), (timer) {
+    this.playbackTimer = Timer.periodic(new Duration(milliseconds: 10), (timer) {
       if (recPoints.length == 0) {
         return;
       }
-      bool isAheadOfTime = recPoints[0].timeStamp >
-          this._videoController.value.position.inMilliseconds;
+      bool isAheadOfTime = recPoints[0].miliseconds > this._videoController.value.position.inMilliseconds;
       if (isAheadOfTime) {
         return;
       }
@@ -377,18 +363,17 @@ class _PlayerDoubleState extends State<PlayerDouble> {
 
   List<DrawPoint> getPointsUntilTimestamp(
       //se tendria que usar en el onChangeEnd
-      num timeStamp,
+      num miliseconds,
       List<DrawPoint> canvasPoints) {
     for (var i = 0; i < canvasPoints.length; i++) {
-      if (canvasPoints[i].timeStamp > timeStamp) {
+      if (canvasPoints[i].miliseconds > miliseconds) {
         return canvasPoints.getRange(0, i).toList();
       }
     }
     return [];
   }
 
-  List<DrawPoint> getDrawingsUntilTimestamp(
-      num timeStamp, List<DrawPoint> canvasPoints) {
+  List<DrawPoint> getDrawingsUntilTimestamp(num timeStamp, List<DrawPoint> canvasPoints) {
     if (this.canvasKey.currentState.points.length == 0) {
       return [];
     }
@@ -400,8 +385,7 @@ class _PlayerDoubleState extends State<PlayerDouble> {
     return canvasPoints;
   }
 
-  List<DrawPoint> getDrawingsAfterTimestamp(
-      num timeStamp, List<DrawPoint> canvasPoints) {
+  List<DrawPoint> getDrawingsAfterTimestamp(num timeStamp, List<DrawPoint> canvasPoints) {
     if (this.canvasKey.currentState.points.length == 0) {
       return canvasPoints;
     }
@@ -420,7 +404,7 @@ class _PlayerDoubleState extends State<PlayerDouble> {
     }
   }
 
-  setCanvas() {
+  Widget setCanvas() {
     canvasInstance = Draw(
       key: canvasKey,
       onClose: () => setState(() => openCanvas = false),

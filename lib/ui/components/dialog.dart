@@ -19,15 +19,14 @@ class _DialogWidgetState extends State<DialogWidget> {
   }
 }
 
-_dialogContent(BuildContext context, List<Widget> content) {
+Widget _dialogContent(BuildContext context, List<Widget> content) {
   return Container(
       color: OlukoColors.black,
       child: MultiBlocProvider(
         providers: [
           BlocProvider.value(value: BlocProvider.of<ProfileBloc>(context)),
           BlocProvider.value(value: BlocProvider.of<AuthBloc>(context)),
-          BlocProvider.value(
-              value: BlocProvider.of<TransformationJourneyBloc>(context))
+          BlocProvider.value(value: BlocProvider.of<TransformationJourneyBloc>(context))
         ],
         child: ListView(
           shrinkWrap: true,

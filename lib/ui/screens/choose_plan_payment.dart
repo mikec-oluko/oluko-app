@@ -142,7 +142,7 @@ class _ChoosePlayPaymentsState extends State<ChoosePlayPayments> {
     }
   }
 
-  showWaitlist(context, InfoDialog infoDialog) {
+  showWaitlist(BuildContext context, InfoDialog infoDialog) {
     showDialog(
         context: context,
         builder: (context2) {

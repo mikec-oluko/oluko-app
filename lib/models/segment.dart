@@ -48,23 +48,21 @@ class Segment extends Base {
 
   factory Segment.fromJson(Map<String, dynamic> json) {
     Segment segment = Segment(
-        name: json['name'],
-        image: json['image'],
-        rounds: json['rounds'],
-        description: json['description'],
-        duration: json['duration'],
-        totalTime: json['total_time'],
-        initialTimer: json['initial_timer'],
-        roundBreakDuration: json['round_break_duration'],
-        isChallenge: json['is_challenge'],
-        isPublished: json['is_published'],
-        timerType: json['timer_type'] == null
-            ? null
-            : TimerTypeEnum.values[json['timer_type']],
+        name: json['name'].toString(),
+        image: json['image'].toString(),
+        rounds: json['rounds'] as int,
+        description: json['description'].toString(),
+        duration: json['duration'].toString(),
+        totalTime: json['total_time'] as int,
+        initialTimer: json['initial_timer'] as int,
+        roundBreakDuration: json['round_break_duration'] as int,
+        isChallenge: json['is_challenge'] as bool,
+        isPublished: json['is_published'] as bool,
+        timerType: json['timer_type'] == null ? null : TimerTypeEnum.values[json['timer_type'] as int],
         movements: json['movements'] == null
             ? null
-            : List<MovementSubmodel>.from(json['movements']
-                .map((movement) => MovementSubmodel.fromJson(movement))));
+            : List<MovementSubmodel>.from((json['movements'] as Iterable)
+                .map((movement) => MovementSubmodel.fromJson(movement as Map<String, dynamic>))));
     segment.setBase(json);
     return segment;
   }
@@ -82,9 +80,7 @@ class Segment extends Base {
       'is_challenge': isChallenge,
       'is_published': isPublished,
       'timer_type': timerType == null ? null : timerType.index,
-      'movements': movements == null
-          ? null
-          : List<dynamic>.from(movements.map((movement) => movement.toJson()))
+      'movements': movements == null ? null : List<dynamic>.from(movements.map((movement) => movement.toJson()))
     };
     movementJson.addEntries(super.toJson().entries);
     return movementJson;
