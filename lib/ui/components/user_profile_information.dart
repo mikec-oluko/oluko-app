@@ -334,7 +334,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                 child: Wrap(
                   children: [
                     Text(
-                      this.widget.userToDisplayInformation.username,
+                      this.widget.userToDisplayInformation.username ?? '',
                       style: OlukoFonts.olukoMediumFont(
                           customColor: OlukoColors.grayColor,
                           custoFontWeight: FontWeight.w300),
