@@ -373,7 +373,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                               ..removeFriend(
                                                   friendData, userRequested.id);
                                             break;
-                                          case UserConnectStatus.noConnected:
+                                          case UserConnectStatus.notConnected:
                                             BlocProvider.of<FriendBloc>(context)
                                               ..sendRequestOfConnect(
                                                   friendData, userRequested.id);
@@ -615,7 +615,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 });
               } else {
                 setState(() {
-                  connectStatus = UserConnectStatus.noConnected;
+                  connectStatus = UserConnectStatus.notConnected;
                   _connectButtonTitle =
                       returnTitleForConnectButton(connectStatus);
                 });
@@ -623,7 +623,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
             });
           } else {
             setState(() {
-              connectStatus = UserConnectStatus.noConnected;
+              connectStatus = UserConnectStatus.notConnected;
               _connectButtonTitle = returnTitleForConnectButton(connectStatus);
             });
           }
@@ -639,14 +639,14 @@ class _UserProfilePageState extends State<UserProfilePage> {
             });
           } else {
             setState(() {
-              connectStatus = UserConnectStatus.noConnected;
+              connectStatus = UserConnectStatus.notConnected;
               _connectButtonTitle = returnTitleForConnectButton(connectStatus);
             });
           }
         });
       } else {
         setState(() {
-          connectStatus = UserConnectStatus.noConnected;
+          connectStatus = UserConnectStatus.notConnected;
           _connectButtonTitle = returnTitleForConnectButton(connectStatus);
         });
       }
@@ -657,7 +657,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
     switch (connectStatus) {
       case UserConnectStatus.connected:
         return "remove";
-      case UserConnectStatus.noConnected:
+      case UserConnectStatus.notConnected:
         return "connect";
       case UserConnectStatus.requestPending:
         return "cancelConnectionRequested";
