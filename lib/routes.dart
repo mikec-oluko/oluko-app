@@ -259,9 +259,10 @@ class Routes {
         newRouteView = SignUpPage();
         break;
       case RouteEnum.completedClass:
-        final Map<String, dynamic> argumentsToAdd = arguments;
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = CompletedClass(
-            courseEnrollment: argumentsToAdd['courseEnrollment'], classIndex: argumentsToAdd['classIndex']);
+            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
+            classIndex: argumentsToAdd['classIndex'] as int);
         break;
       case RouteEnum.signUpWithEmail:
         newRouteView = SignUpWithMailPage();

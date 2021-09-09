@@ -292,7 +292,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
     ));
   }
 
-  getRoundsTimer() {
+  Widget getRoundsTimer() {
     if (workState == WorkState.finished) {
       return TimerUtils.roundsTimer(
           widget.segments[widget.segmentIndex].rounds, widget.segments[widget.segmentIndex].rounds + 1);
