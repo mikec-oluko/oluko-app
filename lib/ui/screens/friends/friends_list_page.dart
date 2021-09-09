@@ -56,19 +56,14 @@ class _FriendsListPageState extends State<FriendsListPage> {
         listener: (context, favoriteState) {
           handleFriendFavoriteState(favoriteState);
         },
-        child: SingleChildScrollView(
-          child: Container(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            color: OlukoColors.black,
+        child: Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: Text(_title, style: OlukoFonts.olukoBigFont()),
-                ),
                 // BlocListener<FriendBloc, FriendState>(
                 //   listener: (context, state) {
                 //     if (state is GetFriendsSuccess) {
@@ -88,10 +83,26 @@ class _FriendsListPageState extends State<FriendsListPage> {
                   return BlocBuilder<UserListBloc, UserListState>(
                       builder: (context, userListState) {
                     return Column(
-                        children: generateFriendList(friendState)
-                            .expand((element) =>
-                                generateUsersList(friendState, userListState))
-                            .toList());
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: Text('My Friends',
+                              style: OlukoFonts.olukoBigFont()),
+                        ),
+                        Column(
+                            children: generateFriendList(friendState).toList()),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: Text('Other users',
+                              style: OlukoFonts.olukoBigFont()),
+                        ),
+                        Column(
+                          children:
+                              generateUsersList(friendState, userListState),
+                        )
+                      ],
+                    );
                   });
                 }),
               ],
