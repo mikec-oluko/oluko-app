@@ -4,11 +4,7 @@ import 'package:oluko_app/utils/info_dialog.dart';
 
 import 'base.dart';
 
-enum PlanFeature {
-  ACCESS_CONTENT,
-  CONNECT_COACH_TWICE_WEEK,
-  CONNECT_COACH_TWICE_MONTH
-}
+enum PlanFeature { ACCESS_CONTENT, CONNECT_COACH_TWICE_WEEK, CONNECT_COACH_TWICE_MONTH }
 
 enum PlanDuration { YEARLY, MONTHLY, DAILY }
 
@@ -59,19 +55,15 @@ class Plan extends Base {
 
   factory Plan.fromJson(Map<String, dynamic> json) {
     Plan plan = Plan(
-      duration: EnumHelper.enumFromString<PlanDuration>(
-          PlanDuration.values, json['duration']),
-      features: List.from(json['features'])
-          .map((e) =>
-              EnumHelper.enumFromString<PlanFeature>(PlanFeature.values, e))
+      duration: EnumHelper.enumFromString<PlanDuration>(PlanDuration.values, json['duration'].toString()),
+      features: List.from(json['features'] as Iterable)
+          .map((e) => EnumHelper.enumFromString<PlanFeature>(PlanFeature.values, e.toString()))
           .toList(),
-      infoDialog: json['info_dialog'] != null
-          ? InfoDialog.fromJson(json['info_dialog'])
-          : null,
-      price: json['price'],
-      recurrent: json['recurrent'],
-      title: json['title'],
-      backgroundImage: json['background_image'],
+      infoDialog: json['info_dialog'] != null ? InfoDialog.fromJson(json['info_dialog'] as Map<String, dynamic>) : null,
+      price: json['price'] as num,
+      recurrent: json['recurrent'] as bool,
+      title: json['title'].toString(),
+      backgroundImage: json['background_image'].toString(),
     );
     plan.setBase(json);
     return plan;
@@ -80,8 +72,7 @@ class Plan extends Base {
   Map<String, dynamic> toJson() {
     Map<String, dynamic> planJson = {
       'duration': EnumHelper.enumToString(duration),
-      'features':
-          features.map((feature) => EnumHelper.enumToString(feature)).toList(),
+      'features': features.map((feature) => EnumHelper.enumToString(feature)).toList(),
       'info_dialog': infoDialog.toJson(),
       'price': price,
       'recurrent': recurrent,

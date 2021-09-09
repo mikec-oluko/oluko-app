@@ -45,7 +45,7 @@ class TakeVideoSuccess extends VideoInfoState {
 }
 
 class Failure extends VideoInfoState {
-  final Exception exception;
+  final dynamic exception;
 
   Failure({this.exception});
 }
@@ -61,14 +61,12 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
   List<VideoInfo> _videoInfoList = [];
   List<double> _markerList = [];
 
-  void addMarkerToVideoInfo(
-      double position, DocumentReference reference) async {
+  void addMarkerToVideoInfo(double position, DocumentReference reference) async {
     /*if (!(state is MarkersSuccess)) {
       emit(Loading());
     }*/
     try {
-      double newMarker =
-          await VideoInfoRepository.addMarkerToVideoInfo(position, reference);
+      double newMarker = await VideoInfoRepository.addMarkerToVideoInfo(position, reference);
       _markerList.insert(0, newMarker);
       //emit(MarkersSuccess(markers: _markerList));
     } catch (e, stackTrace) {
@@ -78,17 +76,16 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
       );
       print(e.toString());
       //emit(Failure(exception: e));
+      rethrow;
     }
   }
 
-  void addDrawingToVideoInfo(List<DrawPoint> canvasPointsRecording,
-      DocumentReference reference) async {
+  void addDrawingToVideoInfo(List<DrawPoint> canvasPointsRecording, DocumentReference reference) async {
     /*if (!(state is DrawingSuccess)) {
       emit(Loading());
     }*/
     try {
-      await VideoInfoRepository.addDrawingToVideoInfo(
-          canvasPointsRecording, reference);
+      await VideoInfoRepository.addDrawingToVideoInfo(canvasPointsRecording, reference);
       //emit(DrawingSuccess());
     } catch (e, stackTrace) {
       await Sentry.captureException(
@@ -97,6 +94,7 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
       );
       print(e.toString());
       //emit(Failure(exception: e));
+      rethrow;
     }
   }
 
@@ -105,8 +103,7 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
       emit(Loading());
     }
     try {
-      _videoInfoList =
-          await VideoInfoRepository.getVideosInfoByUser(user.uid, parent);
+      _videoInfoList = await VideoInfoRepository.getVideosInfoByUser(user.uid, parent);
       emit(VideoInfoSuccess(videosInfo: _videoInfoList));
     } catch (e, stackTrace) {
       await Sentry.captureException(
@@ -115,11 +112,11 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
       );
       print(e.toString());
       emit(Failure(exception: e));
+      rethrow;
     }
   }
 
-  void createVideoInfo(CollectionReference reference, User user, bool addToList,
-      {Video video, List<Event> events}) {
+  void createVideoInfo(CollectionReference reference, User user, bool addToList, {Video video, List<Event> events}) {
     if (!(state is VideoInfoSuccess)) {
       emit(Loading());
     }
@@ -131,8 +128,7 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
         drawing: [],
         video: video != null ? video : Video(),
       );
-      newVideoInfo =
-          VideoInfoRepository.createVideoInfo(newVideoInfo, reference);
+      newVideoInfo = VideoInfoRepository.createVideoInfo(newVideoInfo, reference);
       if (addToList) {
         _videoInfoList.insert(0, newVideoInfo);
       }
@@ -143,11 +139,11 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
         stackTrace: stackTrace,
       );
       emit(Failure(exception: e));
+      rethrow;
     }
   }
 
-  void takeVideo(User user, ImageSource imageSource,
-      CollectionReference reference, bool addToList) async {
+  void takeVideo(User user, ImageSource imageSource, CollectionReference reference, bool addToList) async {
     if (_imagePickerActive) return;
 
     _imagePickerActive = true;
@@ -167,27 +163,25 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
         stackTrace: stackTrace,
       );
       print('${e.toString()}');
+      rethrow;
     } finally {
       //_processing = false;
     }
   }
 
-  Future<void> processVideo(User user, File rawVideoFile,
-      CollectionReference reference, bool addToList,
+  Future<void> processVideo(User user, File rawVideoFile, CollectionReference reference, bool addToList,
       {double givenAspectRatio, List<Event> events}) async {
     Video video;
     if (givenAspectRatio == null) {
       video = await createVideo(rawVideoFile);
     } else {
-      video =
-          await createVideo(rawVideoFile, givenAspectRatio: givenAspectRatio);
+      video = await createVideo(rawVideoFile, givenAspectRatio: givenAspectRatio);
     }
 
     createVideoInfo(reference, user, addToList, video: video, events: events);
   }
 
-  Future<Video> createVideo(File rawVideoFile,
-      {double givenAspectRatio}) async {
+  Future<Video> createVideo(File rawVideoFile, {double givenAspectRatio}) async {
     _progress = 0.0;
     emit(TakeVideoSuccess(processPhase: _processPhase, progress: _progress));
 
@@ -209,23 +203,20 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
       aspectRatio = EncodingProvider.getAspectRatio(info.getAllProperties());
     }
 
-    double durationInSeconds =
-        EncodingProvider.getDuration(info.getMediaProperties());
+    double durationInSeconds = EncodingProvider.getDuration(info.getMediaProperties());
     int durationInMilliseconds = (durationInSeconds * 1000).toInt();
 
     _processPhase = 'Generating thumbnail';
     _progress += _unitOfProgress;
     emit(TakeVideoSuccess(processPhase: _processPhase, progress: _progress));
 
-    final thumbFilePath =
-        await EncodingProvider.getThumb(rawVideoPath, 100, 150);
+    final thumbFilePath = await EncodingProvider.getThumb(rawVideoPath, 100, 150);
 
     _processPhase = 'Encoding video';
     _progress += _unitOfProgress;
     emit(TakeVideoSuccess(processPhase: _processPhase, progress: _progress));
 
-    final encodedFilesDir =
-        await EncodingProvider.encodeHLS(rawVideoPath, outDirPath);
+    final encodedFilesDir = await EncodingProvider.encodeHLS(rawVideoPath, outDirPath);
 
     _processPhase = 'Uploading thumbnail to cloud storage';
     _progress += _unitOfProgress;
@@ -244,7 +235,7 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
     return video;
   }
 
-  Future<String> _uploadHLSFiles(dirPath, videoName) async {
+  Future<String> _uploadHLSFiles(String dirPath, String videoName) async {
     final videosDir = Directory(dirPath);
 
     var playlistUrl = '';
@@ -254,10 +245,11 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
     for (FileSystemEntity file in files) {
       final fileName = p.basename(file.path);
       final fileExtension = getFileExtension(fileName);
-      if (fileExtension == 'm3u8')
-        _updatePlaylistUrls(file, videoName, s3Storage: true);
+      if (fileExtension == 'm3u8') {
+        if (file is File) _updatePlaylistUrls(file, videoName, s3Storage: true);
+      }
 
-      double fileProgress = 0.4 / files.length.toDouble();
+      final double fileProgress = 0.4 / files.length.toDouble();
       _processPhase = 'Uploading video part file $i out of ${files.length}';
       _progress += fileProgress;
       emit(TakeVideoSuccess(processPhase: _processPhase, progress: _progress));
@@ -278,32 +270,28 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
     return exploded[exploded.length - 1];
   }
 
-  Future<String> _uploadFile(filePath, folderName) async {
+  Future<String> _uploadFile(String filePath, String folderName) async {
     final file = new File(filePath);
     final basename = p.basename(filePath);
 
     final S3Provider s3Provider = S3Provider();
-    String downloadUrl =
-        await s3Provider.putFile(file.readAsBytesSync(), folderName, basename);
+    String downloadUrl = await s3Provider.putFile(file.readAsBytesSync(), folderName, basename);
 
     return downloadUrl;
   }
 
   void _updatePlaylistUrls(File file, String videoName, {bool s3Storage}) {
     final lines = file.readAsLinesSync();
-    var updatedLines = [];
+    List<String> updatedLines = [];
 
     for (final String line in lines) {
       var updatedLine = line;
       if (line.contains('.ts') || line.contains('.m3u8')) {
-        updatedLine = s3Storage == null
-            ? '$videoName%2F$line?alt=media'
-            : '$line?alt=media';
+        updatedLine = s3Storage == null ? '$videoName%2F$line?alt=media' : '$line?alt=media';
       }
       updatedLines.add(updatedLine);
     }
-    final updatedContents =
-        updatedLines.reduce((value, element) => value + '\n' + element);
+    final String updatedContents = updatedLines.reduce((value, element) => value + '\n' + element);
 
     file.writeAsStringSync(updatedContents);
   }

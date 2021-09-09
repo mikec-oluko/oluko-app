@@ -17,7 +17,7 @@ class ConfirmFriendSuccess extends ConfirmFriendState {
 }
 
 class ConfirmFriendFailure extends ConfirmFriendState {
-  final Exception exception;
+  final dynamic exception;
 
   ConfirmFriendFailure({this.exception});
 }
@@ -25,11 +25,9 @@ class ConfirmFriendFailure extends ConfirmFriendState {
 class ConfirmFriendBloc extends Cubit<ConfirmFriendState> {
   ConfirmFriendBloc() : super(Loading());
 
-  void confirmFriend(BuildContext context, Friend friend,
-      FriendRequestModel friendRequest) async {
+  void confirmFriend(BuildContext context, Friend friend, FriendRequestModel friendRequest) async {
     try {
-      FriendModel friendModel =
-          await FriendRepository.confirmFriendRequest(friend, friendRequest);
+      FriendModel friendModel = await FriendRepository.confirmFriendRequest(friend, friendRequest);
       emit(ConfirmFriendSuccess(friendModel: friendModel));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -37,6 +35,7 @@ class ConfirmFriendBloc extends Cubit<ConfirmFriendState> {
         stackTrace: stackTrace,
       );
       emit(ConfirmFriendFailure(exception: exception));
+      rethrow;
     }
   }
 }

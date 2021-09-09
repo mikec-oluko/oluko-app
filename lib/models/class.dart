@@ -34,14 +34,15 @@ class Class extends Base {
 
   factory Class.fromJson(Map<String, dynamic> json) {
     Class classObject = Class(
-        video: json['video'],
-        name: json['name'],
-        image: json['image'],
-        description: json['description'],
+        video: json['video'].toString(),
+        name: json['name'].toString(),
+        image: json['image'].toString(),
+        description: json['description'].toString(),
         segments: json['segments'] == null
             ? null
-            : List<SegmentSubmodel>.from(json['segments']
-                .map((segment) => SegmentSubmodel.fromJson(segment))));
+            : List<SegmentSubmodel>.from((json['segments'] as Iterable).map(
+                (segment) => SegmentSubmodel.fromJson(
+                    segment as Map<String, dynamic>))));
     classObject.setBase(json);
     return classObject;
   }

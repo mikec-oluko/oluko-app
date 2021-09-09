@@ -6,8 +6,8 @@ class SearchBar<T> extends StatefulWidget {
   final Function(SearchResults<T>) onSearchResults;
   final Function(SearchResults<T>) onSearchSubmit;
   final Function(TextEditingController) whenInitialized;
-  final List<dynamic> Function(String, List<T>) suggestionMethod;
-  final List<dynamic> Function(String, List<T>) searchMethod;
+  final List<T> Function(String, List<T>) suggestionMethod;
+  final List<T> Function(String, List<T>) searchMethod;
   final List<T> items;
   final GlobalKey<SearchState> searchKey;
   SearchBar({Key key, this.onSearchResults, this.suggestionMethod, this.searchMethod, this.items, this.onSearchSubmit, this.whenInitialized, this.searchKey}) : super(key: key);
@@ -96,9 +96,10 @@ class SearchState<T> extends State<SearchBar> {
   void updateSearchQuery(String newQuery) {
     setState(() {
       searchQuery = newQuery;
-      List<T> suggestedItems = widget.suggestionMethod(searchQuery, widget.items);
-      List<T> searchResults = widget.searchMethod(searchQuery, widget.items);
-      widget.onSearchResults(SearchResults<T>(query: newQuery, suggestedItems: suggestedItems, searchResults: searchResults));
+      List<T> suggestedItems = widget.suggestionMethod(searchQuery, widget.items) as List<T>;
+      List<T> searchResults = widget.searchMethod(searchQuery, widget.items) as List<T>;
+      widget.onSearchResults(
+          SearchResults<T>(query: newQuery, suggestedItems: suggestedItems, searchResults: searchResults));
     });
   }
 
@@ -107,7 +108,8 @@ class SearchState<T> extends State<SearchBar> {
       searchQuery = newQuery;
       List<T> suggestedItems = widget.suggestionMethod(searchQuery, widget.items);
       List<T> searchResults = widget.searchMethod(searchQuery, widget.items);
-      widget.onSearchSubmit(SearchResults<T>(query: newQuery, suggestedItems: suggestedItems, searchResults: searchResults));
+      widget.onSearchSubmit(SearchResults<T>(
+          query: newQuery, suggestedItems: suggestedItems as List<T>, searchResults: searchResults as List<T>));
     });
   }
 }

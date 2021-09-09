@@ -17,7 +17,7 @@ class ProfileCoverSuccess extends ProfileCoverImageState {
 }
 
 class ProfileCoverImageFailure extends ProfileCoverImageState {
-  Exception exception;
+  dynamic exception;
   ProfileCoverImageFailure({this.exception});
 }
 
@@ -48,6 +48,7 @@ class ProfileCoverImageBloc extends Cubit<ProfileCoverImageState> {
         stackTrace: stackTrace,
       );
       emit(ProfileCoverImageFailure(exception: exception));
+      rethrow;
     }
   }
 

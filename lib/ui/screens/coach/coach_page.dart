@@ -77,22 +77,18 @@ class _CoachPageState extends State<CoachPage> {
   }
 
   void requestCurrentUserData(BuildContext context) {
-    BlocProvider.of<UserStatisticsBloc>(context)
-        .getUserStatistics(_currentAuthUser.id);
+    BlocProvider.of<UserStatisticsBloc>(context).getUserStatistics(_currentAuthUser.id);
 
-    BlocProvider.of<CourseEnrollmentListBloc>(context)
-        .getCourseEnrollmentsByUserId(_currentAuthUser.id);
+    BlocProvider.of<CourseEnrollmentListBloc>(context).getCourseEnrollmentsByUserId(_currentAuthUser.id);
 
-    BlocProvider.of<CourseEnrollmentBloc>(context)
-        .getChallengesForUser(_currentAuthUser.id);
+    BlocProvider.of<CourseEnrollmentBloc>(context).getChallengesForUser(_currentAuthUser.id);
 
-    BlocProvider.of<TaskSubmissionBloc>(context)
-        .getTaskSubmissionByUserId(_currentAuthUser.id);
+    BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionByUserId(_currentAuthUser.id);
 
     BlocProvider.of<AssessmentBloc>(context)..getById('emnsmBgZ13UBRqTS26Qd');
   }
 
-  coachViewPageContent(BuildContext context) {
+  Widget coachViewPageContent(BuildContext context) {
     return BlocBuilder<AssessmentBloc, AssessmentState>(
       builder: (context, state) {
         if (state is AssessmentSuccess) {
@@ -100,12 +96,9 @@ class _CoachPageState extends State<CoachPage> {
           BlocProvider.of<TaskBloc>(context)..get(_assessment);
           return ListView(
             children: [
-              CoachCarouselSliderSection(
-                  contentForCarousel: listOfContentForUser(true)),
+              CoachCarouselSliderSection(contentForCarousel: listOfContentForUser(true)),
               userProgressSection(),
-              CoachHorizontalCarousel(
-                  contentToDisplay: listOfContentForUser(false),
-                  isForVideoContent: true),
+              CoachHorizontalCarousel(contentToDisplay: listOfContentForUser(false), isForVideoContent: true),
               carouselToDoSection(context),
               assessmentSection(context),
               SizedBox(
@@ -121,8 +114,7 @@ class _CoachPageState extends State<CoachPage> {
   }
 
   BlocBuilder<UserStatisticsBloc, UserStatisticsState> userProgressSection() {
-    return BlocBuilder<UserStatisticsBloc, UserStatisticsState>(
-        builder: (context, state) {
+    return BlocBuilder<UserStatisticsBloc, UserStatisticsState>(builder: (context, state) {
       if (state is StatisticsSuccess) {
         _userStats = state.userStats;
       }
@@ -142,9 +134,7 @@ class _CoachPageState extends State<CoachPage> {
         children: [
           Text(
             OlukoLocalizations.of(context).find('toDo'),
-            style: OlukoFonts.olukoMediumFont(
-                customColor: OlukoColors.white,
-                custoFontWeight: FontWeight.w500),
+            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
           ),
           toDoSection(context),
         ],
@@ -157,11 +147,8 @@ class _CoachPageState extends State<CoachPage> {
       builder: (context, state) {
         if (state is CourseEnrollmentsByUserSuccess) {
           _courseEnrollmentList = state.courseEnrollments;
-          _toDoSegments =
-              TransformListOfItemsToWidget.segments(_courseEnrollmentList);
-          actualSegmentsToDisplay =
-              TransformListOfItemsToWidget.createSegmentContentInforamtion(
-                  _toDoSegments);
+          _toDoSegments = TransformListOfItemsToWidget.segments(_courseEnrollmentList);
+          actualSegmentsToDisplay = TransformListOfItemsToWidget.createSegmentContentInforamtion(_toDoSegments);
         }
         return BlocBuilder<CourseEnrollmentBloc, CourseEnrollmentState>(
           builder: (context, state) {
@@ -177,33 +164,31 @@ class _CoachPageState extends State<CoachPage> {
     );
   }
 
-  toDoContent() => TransformListOfItemsToWidget.coachChallengesAndSegments(
+  List<Widget> toDoContent() => TransformListOfItemsToWidget.coachChallengesAndSegments(
       challenges: _activeChallenges, segments: actualSegmentsToDisplay);
 
-  assessmentSection(BuildContext context) {
+  Widget assessmentSection(BuildContext context) {
     return BlocBuilder<TaskBloc, TaskState>(
       builder: (context, state) {
         if (state is TaskSuccess) {
           _tasks = state.values;
         }
         return CoachHorizontalCarousel(
-          contentToDisplay: TransformListOfItemsToWidget.getAssessmentCards(
-              tasks: _tasks, tasksSubmitted: _assessmentVideosContent),
+          contentToDisplay:
+              TransformListOfItemsToWidget.getAssessmentCards(tasks: _tasks, tasksSubmitted: _assessmentVideosContent),
           isAssessmentContent: true,
         );
       },
     );
   }
 
-  listOfContentForUser(bool carousel) {
+  List<Widget> listOfContentForUser(bool carousel) {
     if (carousel) {
       return [
         mentoredVideos(carousel),
         sentVideos(carousel),
-        CoachContentSectionCard(
-            title: "Recomended Videos", isForCarousel: carousel),
-        CoachContentSectionCard(
-            title: "Voice Messages", isForCarousel: carousel),
+        CoachContentSectionCard(title: "Recomended Videos", isForCarousel: carousel),
+        CoachContentSectionCard(title: "Voice Messages", isForCarousel: carousel),
       ];
     }
     return [
@@ -215,8 +200,7 @@ class _CoachPageState extends State<CoachPage> {
       SizedBox(
         width: 5,
       ),
-      CoachContentSectionCard(
-          title: "Recomended Videos", isForCarousel: carousel),
+      CoachContentSectionCard(title: "Recomended Videos", isForCarousel: carousel),
       SizedBox(
         width: 5,
       ),
@@ -224,43 +208,33 @@ class _CoachPageState extends State<CoachPage> {
     ];
   }
 
-  BlocBuilder<TaskSubmissionBloc, TaskSubmissionState> sentVideos(
-      bool isForCarousel) {
-    return BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
-        builder: (context, state) {
+  BlocBuilder<TaskSubmissionBloc, TaskSubmissionState> sentVideos(bool isForCarousel) {
+    return BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(builder: (context, state) {
       if (state is GetUserTaskSubmissionSuccess) {
         // _assessmentVideosContent = [];
         _assessmentVideosContent = state.taskSubmissions;
       }
-      return _assessmentVideosContent.length != null &&
-              _assessmentVideosContent.length != 0
+      return _assessmentVideosContent.length != null && _assessmentVideosContent.length != 0
           ? CoachContentPreviewContent(
               contentFor: CoachContentSection.sentVideos,
-              titleForSection:
-                  OlukoLocalizations.of(context).find('sentVideos'),
+              titleForSection: OlukoLocalizations.of(context).find('sentVideos'),
               videoContent: _assessmentVideosContent,
               isForCarousel: isForCarousel)
           : CoachContentSectionCard(
-              title: OlukoLocalizations.of(context).find('sentVideos'),
-              isForCarousel: isForCarousel,
-              needTitle: false);
+              title: OlukoLocalizations.of(context).find('sentVideos'), isForCarousel: isForCarousel, needTitle: false);
     });
   }
 
-  BlocBuilder<TaskSubmissionBloc, TaskSubmissionState> mentoredVideos(
-      bool isForCarousel) {
-    return BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
-        builder: (context, state) {
+  BlocBuilder<TaskSubmissionBloc, TaskSubmissionState> mentoredVideos(bool isForCarousel) {
+    return BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(builder: (context, state) {
       if (state is GetUserTaskSubmissionSuccess) {
         // _assessmentVideosContent = [];
         _assessmentVideosContent = state.taskSubmissions;
       }
-      return _assessmentVideosContent.length != null &&
-              _assessmentVideosContent.length != 0
+      return _assessmentVideosContent.length != null && _assessmentVideosContent.length != 0
           ? CoachContentPreviewContent(
               contentFor: CoachContentSection.mentoredVideos,
-              titleForSection:
-                  OlukoLocalizations.of(context).find('mentoredVideos'),
+              titleForSection: OlukoLocalizations.of(context).find('mentoredVideos'),
               videoContent: _assessmentVideosContent,
               isForCarousel: isForCarousel)
           : CoachContentSectionCard(
@@ -278,21 +252,18 @@ class _CoachPageState extends State<CoachPage> {
     widgets.add(OlukoVideoPlayer(
         videoUrl: videoUrl,
         autoPlay: false,
-        whenInitialized: (ChewieController chewieController) =>
-            this.setState(() {
+        whenInitialized: (ChewieController chewieController) => this.setState(() {
               _controller = chewieController;
             })));
 
     return ConstrainedBox(
         constraints: BoxConstraints(
-            maxHeight:
-                MediaQuery.of(context).orientation == Orientation.portrait
-                    ? ScreenUtils.height(context) / 4
-                    : ScreenUtils.height(context) / 1.5,
-            minHeight:
-                MediaQuery.of(context).orientation == Orientation.portrait
-                    ? ScreenUtils.height(context) / 4
-                    : ScreenUtils.height(context) / 1.5),
+            maxHeight: MediaQuery.of(context).orientation == Orientation.portrait
+                ? ScreenUtils.height(context) / 4
+                : ScreenUtils.height(context) / 1.5,
+            minHeight: MediaQuery.of(context).orientation == Orientation.portrait
+                ? ScreenUtils.height(context) / 4
+                : ScreenUtils.height(context) / 1.5),
         child: Container(height: 400, child: Stack(children: widgets)));
   }
 }
