@@ -26,7 +26,7 @@ class CourseRepository {
         .get();
     List<Course> response = [];
     docRef.docs.forEach((doc) {
-      final Map<String, dynamic> element = doc.data();
+      final Map<String, dynamic> element = doc.data() as Map<String, dynamic>;
       response.add(Course.fromJson(element));
     });
     return response;
@@ -39,7 +39,7 @@ class CourseRepository {
         .collection('courses')
         .doc(courseId);
     DocumentSnapshot ds = await docRef.get();
-    return Course.fromJson(ds.data());
+    return Course.fromJson(ds.data() as Map<String, dynamic>);
   }
 
   static Future<CourseStatistics> getStatistics(
@@ -53,7 +53,7 @@ class CourseRepository {
       return null;
     }
 
-    return CourseStatistics.fromJson(docRef.data());
+    return CourseStatistics.fromJson(docRef.data() as Map<String, dynamic>);
   }
 
   static Course create(Course course) {
@@ -70,7 +70,7 @@ class CourseRepository {
   static Future<void> updateClasses(
       ObjectSubmodel classObj, DocumentReference reference) async {
     DocumentSnapshot ds = await reference.get();
-    Course course = Course.fromJson(ds.data());
+    Course course = Course.fromJson(ds.data() as Map<String, dynamic>);
     List<ObjectSubmodel> classes;
     if (course.classes == null) {
       classes = [];
@@ -88,7 +88,7 @@ class CourseRepository {
         await CourseEnrollmentRepository.getUserCourseEnrollments(userId);
     for (CourseEnrollment courseEnrollment in coruseEnrollments) {
       final DocumentSnapshot ds = await courseEnrollment.course.reference.get();
-      coursesList.add(Course.fromJson(ds.data()));
+      coursesList.add(Course.fromJson(ds.data() as Map<String, dynamic>));
     }
     return coursesList;
   }
@@ -98,7 +98,7 @@ class CourseRepository {
     List<Course> courses = [];
     for (CourseEnrollment courseEnrollment in courseEnrollments) {
       DocumentSnapshot ds = await courseEnrollment.course.reference.get();
-      courses.add(Course.fromJson(ds.data()));
+      courses.add(Course.fromJson(ds.data() as Map<String, dynamic>));
     }
     return courses;
   }

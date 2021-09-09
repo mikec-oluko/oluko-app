@@ -43,7 +43,7 @@ class TaskRepository {
 
   static List<Task> mapQueryToTask(QuerySnapshot qs) {
     return qs.docs.map((DocumentSnapshot ds) {
-      return Task.fromJson(ds.data());
+      return Task.fromJson(ds.data() as Map<String, dynamic>);
     }).toList();
   }
 }

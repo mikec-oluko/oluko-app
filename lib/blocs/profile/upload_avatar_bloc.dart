@@ -17,7 +17,7 @@ class ProfileAvatarSuccess extends ProfileAvatarState {
 }
 
 class ProfileAvatarFailure extends ProfileAvatarState {
-  Exception exception;
+  dynamic exception;
   ProfileAvatarFailure({this.exception});
 }
 
@@ -25,8 +25,7 @@ class ProfileAvatarBloc extends Cubit<ProfileAvatarState> {
   ProfileAvatarBloc() : super(ProfileAvatarDefault());
   ProfileRepository _profileRepository = ProfileRepository();
 
-  void uploadProfileAvatarImage(
-      {DeviceContentFrom uploadedFrom, UploadFrom contentFor}) async {
+  void uploadProfileAvatarImage({DeviceContentFrom uploadedFrom, UploadFrom contentFor}) async {
     PickedFile _image;
 
     try {
@@ -50,6 +49,7 @@ class ProfileAvatarBloc extends Cubit<ProfileAvatarState> {
         stackTrace: stackTrace,
       );
       emit(ProfileAvatarFailure(exception: exception));
+      rethrow;
     }
   }
 

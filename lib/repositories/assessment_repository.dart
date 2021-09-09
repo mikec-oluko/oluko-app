@@ -21,7 +21,7 @@ class AssessmentRepository {
         .get();
     List<Assessment> response = [];
     docRef.docs.forEach((doc) {
-      final Map<String, dynamic> element = doc.data();
+      final Map<String, dynamic> element = doc.data() as Map<String, dynamic>;
       response.add(Assessment.fromJson(element));
     });
     return response;
@@ -34,9 +34,9 @@ class AssessmentRepository {
         .collection('assessments')
         .where('id', isEqualTo: id)
         .get();
-    if (docRef.docs.length>0){
-      return Assessment.fromJson(docRef.docs[0].data());
-    }else{
+    if (docRef.docs.length > 0) {
+      return Assessment.fromJson(docRef.docs[0].data() as Map<String, dynamic>);
+    } else {
       return null;
     }
   }

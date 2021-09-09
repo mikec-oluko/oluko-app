@@ -23,12 +23,10 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class ProfileTransformationJourneyPage extends StatefulWidget {
   @override
-  _ProfileTransformationJourneyPageState createState() =>
-      _ProfileTransformationJourneyPageState();
+  _ProfileTransformationJourneyPageState createState() => _ProfileTransformationJourneyPageState();
 }
 
-class _ProfileTransformationJourneyPageState
-    extends State<ProfileTransformationJourneyPage> {
+class _ProfileTransformationJourneyPageState extends State<ProfileTransformationJourneyPage> {
   int _variableSet = 0;
   double width;
   double height;
@@ -60,8 +58,7 @@ class _ProfileTransformationJourneyPageState
         showSearchBar: false,
       ),
       body: _contentGallery == null
-          ? Container(
-              color: Colors.black, child: OlukoCircularProgressIndicator())
+          ? Container(color: Colors.black, child: OlukoCircularProgressIndicator())
           : Container(
               constraints: BoxConstraints.expand(),
               color: OlukoColors.black,
@@ -76,13 +73,9 @@ class _ProfileTransformationJourneyPageState
                             child: Row(
                               children: [
                                 OlukoOutlinedButton(
-                                    title: OlukoLocalizations.of(context)
-                                        .find('tapToUpload'),
+                                    title: OlukoLocalizations.of(context).find('tapToUpload'),
                                     onPressed: () {
-                                      BlocProvider.of<
-                                                  TransformationJourneyContentBloc>(
-                                              context)
-                                          .openPanel();
+                                      BlocProvider.of<TransformationJourneyContentBloc>(context).openPanel();
                                     }),
                               ],
                             ),
@@ -93,17 +86,13 @@ class _ProfileTransformationJourneyPageState
                           child: Padding(
                             padding: EdgeInsets.fromLTRB(10, 100, 10, 10),
                             child: Text(
-                              getTitleForContent(
-                                  uploadListContent:
-                                      _transformationJourneyContent),
+                              getTitleForContent(uploadListContent: _transformationJourneyContent),
                               style: OlukoFonts.olukoBigFont(),
                             ),
                           ),
                         )
                       : SizedBox(),
-                  _contentGallery.length != 0
-                      ? dragAndDropGridView(context)
-                      : SizedBox(),
+                  _contentGallery.length != 0 ? dragAndDropGridView(context) : SizedBox(),
                   slidingUpPanelComponent(context),
                 ]),
               ),
@@ -111,14 +100,11 @@ class _ProfileTransformationJourneyPageState
     );
   }
 
-  BlocListener<TransformationJourneyContentBloc,
-          TransformationJourneyContentState>
-      slidingUpPanelComponent(BuildContext context) {
-    return BlocListener<TransformationJourneyContentBloc,
-        TransformationJourneyContentState>(
+  BlocListener<TransformationJourneyContentBloc, TransformationJourneyContentState> slidingUpPanelComponent(
+      BuildContext context) {
+    return BlocListener<TransformationJourneyContentBloc, TransformationJourneyContentState>(
       listener: (context, state) {
-        if (state is TransformationJourneyContentDefault ||
-            state is TransformationJourneyContentOpen) {
+        if (state is TransformationJourneyContentDefault || state is TransformationJourneyContentOpen) {
           _statePanelMaxHeight = 100;
         } else {
           _statePanelMaxHeight = 300;
@@ -131,8 +117,7 @@ class _ProfileTransformationJourneyPageState
           });
         },
         onPanelClosed: () {
-          BlocProvider.of<TransformationJourneyContentBloc>(context)
-            ..emitDefaultState();
+          BlocProvider.of<TransformationJourneyContentBloc>(context)..emitDefaultState();
         },
         backdropEnabled: true,
         isDraggable: false,
@@ -146,8 +131,8 @@ class _ProfileTransformationJourneyPageState
         collapsed: SizedBox(),
         defaultPanelState: PanelState.CLOSED,
         controller: _panelController,
-        panel: BlocBuilder<TransformationJourneyContentBloc,
-            TransformationJourneyContentState>(builder: (context, state) {
+        panel:
+            BlocBuilder<TransformationJourneyContentBloc, TransformationJourneyContentState>(builder: (context, state) {
           Widget _contentForPanel = SizedBox();
           if (state is TransformationJourneyContentOpen) {
             _panelController.open();
@@ -161,12 +146,10 @@ class _ProfileTransformationJourneyPageState
             _contentForPanel = SizedBox();
           }
           if (state is TransformationJourneyContentLoading) {
-            _contentForPanel =
-                UploadingModalLoader(UploadFrom.transformationJourney);
+            _contentForPanel = UploadingModalLoader(UploadFrom.transformationJourney);
           }
           if (state is TransformationJourneyContentSuccess) {
-            _contentForPanel = UploadingModalSuccess(
-                goToPage: UploadFrom.transformationJourney);
+            _contentForPanel = UploadingModalSuccess(goToPage: UploadFrom.transformationJourney);
           }
           if (state is TransformationJourneyContentFailure) {
             _panelController.close();
@@ -198,7 +181,7 @@ class _ProfileTransformationJourneyPageState
             ),
             itemCount: _transformationJourneyContent.length,
             controller: _scrollController,
-            onWillAccept: (oldIndex, newIndex) {
+            onWillAccept: (int oldIndex, int newIndex) {
               setState(
                 () {
                   _position = newIndex;
@@ -206,14 +189,13 @@ class _ProfileTransformationJourneyPageState
               );
               return true;
             },
-            onReorder: (oldIndex, newIndex) {
+            onReorder: (int oldIndex, int newIndex) {
               BlocProvider.of<TransformationJourneyBloc>(context)
-                ..changeContentOrder(_transformationJourneyContent[oldIndex],
-                    _transformationJourneyContent[newIndex], _profileInfo.id);
+                ..changeContentOrder(
+                    _transformationJourneyContent[oldIndex], _transformationJourneyContent[newIndex], _profileInfo.id);
 
               final elementMoved = _transformationJourneyContent[oldIndex];
-              _transformationJourneyContent[oldIndex] =
-                  _transformationJourneyContent[newIndex];
+              _transformationJourneyContent[oldIndex] = _transformationJourneyContent[newIndex];
 
               _transformationJourneyContent[newIndex] = elementMoved;
 
@@ -240,16 +222,10 @@ class _ProfileTransformationJourneyPageState
                       _variableSet++;
                     }
                     return ImageAndVideoContainer(
-                      backgroundImage:
-                          _transformationJourneyContent[index].thumbnail,
-                      isContentVideo:
-                          _transformationJourneyContent[index].type ==
-                                  FileTypeEnum.video
-                              ? true
-                              : false,
+                      backgroundImage: _transformationJourneyContent[index].thumbnail,
+                      isContentVideo: _transformationJourneyContent[index].type == FileTypeEnum.video ? true : false,
                       videoUrl: _transformationJourneyContent[index].file,
-                      displayOnViewNamed:
-                          ActualProfileRoute.transformationJourney,
+                      displayOnViewNamed: ActualProfileRoute.transformationJourney,
                       originalContent: _transformationJourneyContent[index],
                     );
                   },
@@ -262,33 +238,27 @@ class _ProfileTransformationJourneyPageState
     );
   }
 
-  BlocBuilder<TransformationJourneyBloc, TransformationJourneyState>
-      transformationJourneyView() {
+  BlocBuilder<TransformationJourneyBloc, TransformationJourneyState> transformationJourneyView() {
     return BlocBuilder<TransformationJourneyBloc, TransformationJourneyState>(
       builder: (context, state) {
         if (state is TransformationJourneySuccess) {
           _transformationJourneyContent = state.contentFromUser;
-          _contentGallery =
-              TransformListOfItemsToWidget.getWidgetListFromContent(
-                  tansformationJourneyData: _transformationJourneyContent,
-                  requestedFromRoute: ActualProfileRoute.transformationJourney);
+          _contentGallery = TransformListOfItemsToWidget.getWidgetListFromContent(
+              tansformationJourneyData: _transformationJourneyContent,
+              requestedFromRoute: ActualProfileRoute.transformationJourney);
         }
-        if (state is TransformationJourneyFailure ||
-            state is TransformationJourneyDefault) {
-          BlocProvider.of<TransformationJourneyBloc>(context)
-            ..getContentByUserId(_profileInfo.id);
+        if (state is TransformationJourneyFailure || state is TransformationJourneyDefault) {
+          BlocProvider.of<TransformationJourneyBloc>(context)..getContentByUserId(_profileInfo.id);
         }
         return page(context, _profileInfo);
       },
     );
   }
 
-  String getTitleForContent(
-      {List<TransformationJourneyUpload> uploadListContent}) {
+  String getTitleForContent({List<TransformationJourneyUpload> uploadListContent}) {
     int _videos = 0;
     int _images = 0;
-    uploadListContent.forEach((content) =>
-        content.type == FileTypeEnum.video ? _videos += 1 : _images += 1);
+    uploadListContent.forEach((content) => content.type == FileTypeEnum.video ? _videos += 1 : _images += 1);
     return "Uploaded $_images Images & $_videos Videos";
   }
 }

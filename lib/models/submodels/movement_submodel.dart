@@ -25,16 +25,17 @@ class MovementSubmodel {
 
   factory MovementSubmodel.fromJson(Map<String, dynamic> json) {
     return MovementSubmodel(
-      reference: json['reference'],
-      id: json['id'],
-      name: json['name'],
-      timerType: json['timer_type'],
-      timerWorkTime: json['timer_work_time'],
-      timerRestTime: json['timer_rest_time'],
-      timerSets: json['timer_sets'],
-      timerReps: json['timer_reps'],
-      counter:
-          json['counter'] == null ? null : CounterEnum.values[json['counter']],
+      reference: json['reference'] as DocumentReference,
+      id: json['id'].toString(),
+      name: json['name'].toString(),
+      timerType: json['timer_type'].toString(),
+      timerWorkTime: json['timer_work_time'] as int,
+      timerRestTime: json['timer_rest_time'] as int,
+      timerSets: json['timer_sets'] as int,
+      timerReps: json['timer_reps'] as int,
+      counter: json['counter'] == null
+          ? null
+          : CounterEnum.values[json['counter'] as int],
     );
   }
 

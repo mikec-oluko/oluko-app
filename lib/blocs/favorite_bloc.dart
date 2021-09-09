@@ -13,7 +13,7 @@ class FavoriteSuccess extends FavoriteState {
 }
 
 class Failure extends FavoriteState {
-  final Exception exception;
+  final dynamic exception;
 
   Failure({this.exception});
 }
@@ -31,6 +31,7 @@ class FavoriteBloc extends Cubit<FavoriteState> {
         stackTrace: stackTrace,
       );
       emit(Failure(exception: exception));
+      rethrow;
     }
   }
 
@@ -44,6 +45,7 @@ class FavoriteBloc extends Cubit<FavoriteState> {
         stackTrace: stackTrace,
       );
       emit(Failure(exception: exception));
+      rethrow;
     }
   }
 }
