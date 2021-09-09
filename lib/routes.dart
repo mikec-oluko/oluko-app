@@ -273,6 +273,10 @@ class Routes {
         newRouteView = SignUpPage();
         break;
       case RouteEnum.completedClass:
+        providers = [
+          BlocProvider<CourseEnrollmentUpdateBloc>.value(
+              value: _courseEnrollmentUpdateBloc)
+        ];
         final Map<String, dynamic> argumentsToAdd = arguments;
         newRouteView = CompletedClass(
             courseEnrollment: argumentsToAdd['courseEnrollment'],

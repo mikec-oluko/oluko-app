@@ -1,9 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
@@ -25,6 +29,13 @@ class CompletedClass extends StatefulWidget {
 class _CompletedClassState extends State<CompletedClass> {
   User _user;
 
+  PickedFile _image;
+  final imagePicker = ImagePicker();
+
+  String _imageUrl;
+
+  DateTime _date;
+
   @override
   void initState() {
     super.initState();
@@ -35,7 +46,18 @@ class _CompletedClassState extends State<CompletedClass> {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
         _user = authState.firebaseUser;
-        return form();
+        return /*BlocListener<CourseEnrollmentUpdateBloc,
+                CourseEnrollmentUpdateState>(
+            listener: (context, courseEnrollmentUpdateState) {
+              if (courseEnrollmentUpdateState is SaveSelfieSuccess) {
+                setState(() {
+                  _imageUrl = courseEnrollmentUpdateState.courseEnrollment
+                      .classes[widget.classIndex].selfieThumbnailUrl;
+                });
+              }
+            },
+            child:*/
+            form();
       } else {
         return SizedBox();
       }
@@ -56,7 +78,7 @@ class _CompletedClassState extends State<CompletedClass> {
               getClassCard(),
               SizedBox(height: 20),
               getCompletedSegments(),
-              getPhotoFrame(),
+              showPhotoFrame(),
               SizedBox(height: 10),
               Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 80),
@@ -69,6 +91,20 @@ class _CompletedClassState extends State<CompletedClass> {
             ])));
   }
 
+  Widget showPhotoFrame() {
+    return BlocBuilder<CourseEnrollmentUpdateBloc, CourseEnrollmentUpdateState>(
+        builder: (context, courseEnrollmentUpdateState) {
+      if (courseEnrollmentUpdateState is SaveSelfieSuccess) {
+        _imageUrl = courseEnrollmentUpdateState
+            .courseEnrollment.classes[widget.classIndex].selfieThumbnailUrl;
+        _date = DateTime.now();
+        return getPhotoFrame();
+      } else {
+        return getAddPhotoFrame();
+      }
+    });
+  }
+
   Widget getPhotoFrame() {
     return Padding(
         padding: const EdgeInsets.symmetric(vertical: 15),
@@ -78,35 +114,81 @@ class _CompletedClassState extends State<CompletedClass> {
                 padding: const EdgeInsets.only(bottom: 30, left: 10),
                 child: RotationTransition(
                     turns: AlwaysStoppedAnimation(-0.01),
-                    child: Container(
-                      height: 153,
-                      width: 153,
-                      decoration: BoxDecoration(
-                        image: new DecorationImage(
-                          fit: BoxFit.cover,
-                          image: new AssetImage(
-                              'assets/assessment/task_response_thumbnail.png'),
-                        ),
-                      ),
-                    ))),
+                    child: RotatedBox(
+                        quarterTurns: 1,
+                        child: Container(
+                          height: 153,
+                          width: 153,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              fit: BoxFit.fill,
+                              image: NetworkImage(_imageUrl),
+                            ),
+                          ),
+                        )))),
             Image.asset(
               'assets/courses/empty_frame.png',
               scale: 3,
             )
           ]),
           Padding(
-              padding: const EdgeInsets.only(bottom: 33, left: 18),
+              padding: const EdgeInsets.only(bottom: 29),
               child: RotationTransition(
                   turns: AlwaysStoppedAnimation(-0.01),
-                  child: Text(
-                    OlukoLocalizations.of(context).find('addYourSelfie'),
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        color: OlukoColors.black),
-                    textAlign: TextAlign.start,
-                  ))),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          DateFormat('yyyy/MM/dd').format(_date).toString() +
+                              '              ',
+                          style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: OlukoColors.black),
+                          textAlign: TextAlign.start,
+                        ),
+                        Text(
+                          DateFormat('hh:mm a').format(_date).toString() +
+                              '              ',
+                          style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              color: OlukoColors.black),
+                          textAlign: TextAlign.start,
+                        )
+                      ]))),
         ]));
+  }
+
+  Widget getAddPhotoFrame() {
+    return GestureDetector(
+        onTap: () async {
+          _image = await imagePicker.getImage(source: ImageSource.camera);
+          BlocProvider.of<CourseEnrollmentUpdateBloc>(context)
+            ..saveSelfie(widget.courseEnrollment, widget.classIndex, _image);
+        },
+        child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 15),
+            child: Stack(alignment: Alignment.bottomCenter, children: [
+              Stack(alignment: Alignment.center, children: [
+                Image.asset(
+                  'assets/courses/frame.png',
+                  scale: 3,
+                )
+              ]),
+              Padding(
+                  padding: const EdgeInsets.only(bottom: 33, left: 18),
+                  child: RotationTransition(
+                      turns: AlwaysStoppedAnimation(-0.01),
+                      child: Text(
+                        OlukoLocalizations.of(context).find('addYourSelfie'),
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            color: OlukoColors.black),
+                        textAlign: TextAlign.start,
+                      ))),
+            ])));
   }
 
   Widget getClassCard() {

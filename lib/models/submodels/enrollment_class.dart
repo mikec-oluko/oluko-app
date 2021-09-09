@@ -8,6 +8,8 @@ class EnrollmentClass {
   String image;
   Timestamp compleatedAt;
   List<EnrollmentSegment> segments;
+  String selfieDownloadUrl;
+  String selfieThumbnailUrl;
 
   EnrollmentClass(
       {this.id,
@@ -15,7 +17,9 @@ class EnrollmentClass {
       this.name,
       this.compleatedAt,
       this.segments,
-      this.image});
+      this.image,
+      this.selfieDownloadUrl,
+      this.selfieThumbnailUrl});
 
   factory EnrollmentClass.fromJson(Map<String, dynamic> json) {
     return EnrollmentClass(
@@ -23,6 +27,8 @@ class EnrollmentClass {
         reference: json['reference'],
         name: json['name'],
         image: json['image'],
+        selfieDownloadUrl: json['selfie_download_url'],
+        selfieThumbnailUrl: json['selfie_thumbnail_url'],
         compleatedAt: json['compleated_at'],
         segments: json['segments'] == null
             ? null
@@ -35,6 +41,8 @@ class EnrollmentClass {
         'reference': reference,
         'name': name,
         'image': image,
+        'selfie_download_url': selfieDownloadUrl,
+        'selfie_thumbnail_url': selfieThumbnailUrl,
         'compleated_at': compleatedAt,
         'segments': segments == null
             ? null
