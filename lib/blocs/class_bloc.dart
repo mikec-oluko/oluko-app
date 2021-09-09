@@ -19,7 +19,7 @@ class GetByIdSuccess extends ClassState {
 }
 
 class Failure extends ClassState {
-  final Exception exception;
+  final dynamic exception;
 
   Failure({this.exception});
 }
@@ -37,10 +37,11 @@ class ClassBloc extends Cubit<ClassState> {
         stackTrace: stackTrace,
       );
       emit(Failure(exception: exception));
+      rethrow;
     }
   }
 
-    void get(String id) async {
+  void get(String id) async {
     try {
       Class classObj = await ClassRepository.get(id);
       emit(GetByIdSuccess(classObj: classObj));
@@ -50,6 +51,7 @@ class ClassBloc extends Cubit<ClassState> {
         stackTrace: stackTrace,
       );
       emit(Failure(exception: exception));
+      rethrow;
     }
   }
 }

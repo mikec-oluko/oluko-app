@@ -8,7 +8,7 @@ abstract class CourseEnrollmentListState {}
 class Loading extends CourseEnrollmentListState {}
 
 class Failure extends CourseEnrollmentListState {
-  final Exception exception;
+  final dynamic exception;
   Failure({this.exception});
 }
 
@@ -22,31 +22,29 @@ class CourseEnrollmentListBloc extends Cubit<CourseEnrollmentListState> {
 
   void getCourseEnrollmentsByUser(String userId) async {
     try {
-      List<CourseEnrollment> courseEnrollments =
-          await CourseEnrollmentRepository.getUserCourseEnrollments(userId);
-      emit(
-          CourseEnrollmentsByUserSuccess(courseEnrollments: courseEnrollments));
+      List<CourseEnrollment> courseEnrollments = await CourseEnrollmentRepository.getUserCourseEnrollments(userId);
+      emit(CourseEnrollmentsByUserSuccess(courseEnrollments: courseEnrollments));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
         stackTrace: stackTrace,
       );
       emit(Failure(exception: exception));
+      rethrow;
     }
   }
 
   void getCourseEnrollmentsByUserId(String userId) async {
     try {
-      List<CourseEnrollment> courseEnrollments =
-          await CourseEnrollmentRepository.getUserCourseEnrollments(userId);
-      emit(
-          CourseEnrollmentsByUserSuccess(courseEnrollments: courseEnrollments));
+      List<CourseEnrollment> courseEnrollments = await CourseEnrollmentRepository.getUserCourseEnrollments(userId);
+      emit(CourseEnrollmentsByUserSuccess(courseEnrollments: courseEnrollments));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
         stackTrace: stackTrace,
       );
       emit(Failure(exception: exception));
+      rethrow;
     }
   }
 }

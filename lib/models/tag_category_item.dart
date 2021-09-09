@@ -8,9 +8,9 @@ class TagCategoryItem {
   String id;
 
   TagCategoryItem.fromJson(Map json)
-      : reference = json['reference'],
-        index = json['index'],
-        id = json['id'];
+      : reference = json['reference'] as DocumentReference,
+        index = json['index'] as num,
+        id = json['id'].toString();
 
   Map<String, dynamic> toJson() => {
         'reference': reference,

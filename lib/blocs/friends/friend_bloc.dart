@@ -28,7 +28,7 @@ class GetFriendSuggestionSuccess extends FriendState {
 }
 
 class FriendFailure extends FriendState {
-  final Exception exception;
+  final dynamic exception;
 
   FriendFailure({this.exception});
 }
@@ -41,8 +41,7 @@ class FriendBloc extends Cubit<FriendState> {
       Friend friendData = await FriendRepository.getUserFriendsByUserId(userId);
       List<UserResponse> friendList;
       if (friendData != null) {
-        friendList = await Future.wait(friendData.friends
-            .map((friend) async => UserRepository().getById(friend.id)));
+        friendList = await Future.wait(friendData.friends.map((friend) async => UserRepository().getById(friend.id)));
       }
       emit(GetFriendsSuccess(friendData: friendData, friendUsers: friendList));
     } catch (exception, stackTrace) {
@@ -51,23 +50,19 @@ class FriendBloc extends Cubit<FriendState> {
         stackTrace: stackTrace,
       );
       emit(FriendFailure(exception: exception));
+      rethrow;
     }
   }
 
   void getUserFriendsRequestByUserId(String userId) async {
     try {
-      Friend friendInformation =
-          await FriendRepository.getUserFriendsRequestByUserId(userId);
+      Friend friendInformation = await FriendRepository.getUserFriendsRequestByUserId(userId);
 
       if (friendInformation != null) {
         List<UserResponse> friendRequestUsers = await Future.wait(
-            friendInformation.friendRequestReceived
-                .map((e) => UserRepository().getById(e.id))
-                .toList());
+            friendInformation.friendRequestReceived.map((e) => UserRepository().getById(e.id)).toList());
 
-        emit(GetFriendRequestsSuccess(
-            friendData: friendInformation,
-            friendRequestList: friendRequestUsers));
+        emit(GetFriendRequestsSuccess(friendData: friendInformation, friendRequestList: friendRequestUsers));
       } else {
         emit(GetFriendRequestsSuccess(friendData: null, friendRequestList: []));
       }
@@ -77,13 +72,13 @@ class FriendBloc extends Cubit<FriendState> {
         stackTrace: stackTrace,
       );
       emit(FriendFailure(exception: exception));
+      rethrow;
     }
   }
 
   void getUserFriendsSuggestionsByUserId(String userId) async {
     try {
-      List<User> friendsSuggestionList =
-          await FriendRepository.getUserFriendsSuggestionsByUserId(userId);
+      List<User> friendsSuggestionList = await FriendRepository.getUserFriendsSuggestionsByUserId(userId);
       emit(GetFriendSuggestionSuccess(friendSuggestionList: null));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -91,14 +86,13 @@ class FriendBloc extends Cubit<FriendState> {
         stackTrace: stackTrace,
       );
       emit(FriendFailure(exception: exception));
+      rethrow;
     }
   }
 
-  void removeRequestSent(
-      Friend currentUserFriend, String userRequestedId) async {
+  void removeRequestSent(Friend currentUserFriend, String userRequestedId) async {
     try {
-      await FriendRepository.removeRequestSent(
-          currentUserFriend, userRequestedId);
+      await FriendRepository.removeRequestSent(currentUserFriend, userRequestedId);
       // emit(GetFriendSuggestionSuccess(friendSuggestionList: null));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -106,14 +100,13 @@ class FriendBloc extends Cubit<FriendState> {
         stackTrace: stackTrace,
       );
       emit(FriendFailure(exception: exception));
+      rethrow;
     }
   }
 
-  void sendRequestOfConnect(
-      Friend currentUserFriend, String userRequestedId) async {
+  void sendRequestOfConnect(Friend currentUserFriend, String userRequestedId) async {
     try {
-      await FriendRepository.sendRequestOfConnectOnBothUsers(
-          currentUserFriend, userRequestedId);
+      await FriendRepository.sendRequestOfConnectOnBothUsers(currentUserFriend, userRequestedId);
       // emit(GetFriendSuggestionSuccess(friendSuggestionList: null));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -121,6 +114,7 @@ class FriendBloc extends Cubit<FriendState> {
         stackTrace: stackTrace,
       );
       emit(FriendFailure(exception: exception));
+      rethrow;
     }
   }
 }

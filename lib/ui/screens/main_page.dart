@@ -16,8 +16,7 @@ class MainPage extends StatefulWidget {
   _MainPageState createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage>
-    with SingleTickerProviderStateMixin {
+class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin {
   List<Widget> tabs = [
     //MyHomePage(),
     //TODO:Change to Home() when finished
@@ -60,7 +59,7 @@ class _MainPageState extends State<MainPage>
       bottomNavigationBar: OlukoBottomNavigationBar(
         selectedIndex: this.tabController.index,
         onPressed: (index) => this.setState(() {
-          this.tabController.animateTo(index);
+          this.tabController.animateTo(index as int);
         }),
       ),
     );

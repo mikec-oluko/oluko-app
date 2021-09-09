@@ -20,7 +20,7 @@ class CreateSuccess extends TaskReviewState {
 class UpdateSuccess extends TaskReviewState {}
 
 class Failure extends TaskReviewState {
-  final Exception exception;
+  final dynamic exception;
 
   Failure({this.exception});
 }
@@ -28,8 +28,7 @@ class Failure extends TaskReviewState {
 class TaskReviewBloc extends Cubit<TaskReviewState> {
   TaskReviewBloc() : super(Loading());
 
-  void createTaskReview(CollectionReference reference,
-      TaskSubmission taskSubmission, String assessmentAssignmentId) {
+  void createTaskReview(CollectionReference reference, TaskSubmission taskSubmission, String assessmentAssignmentId) {
     final DocumentReference taskSubmissionReference = FirebaseFirestore.instance
         .collection("projects")
         .doc(GlobalConfiguration().getValue("projectId"))
@@ -39,11 +38,9 @@ class TaskReviewBloc extends Cubit<TaskReviewState> {
         .doc(taskSubmission.id);
     try {
       TaskReview newTaskReview = TaskReview(
-          videoInfo:
-              VideoInfo(drawing: [], markers: [], events: [], video: Video()),
+          videoInfo: VideoInfo(drawing: [], markers: [], events: [], video: Video()),
           taskSubmissionReference: taskSubmissionReference);
-      newTaskReview =
-          TaskReviewRepository.createTaskReview(newTaskReview, reference);
+      newTaskReview = TaskReviewRepository.createTaskReview(newTaskReview, reference);
       emit(CreateSuccess(taskReviewId: newTaskReview.id));
     } catch (e, stackTrace) {
       Sentry.captureException(
@@ -51,14 +48,13 @@ class TaskReviewBloc extends Cubit<TaskReviewState> {
         stackTrace: stackTrace,
       );
       emit(Failure(exception: e));
+      rethrow;
     }
   }
 
-  void updateTaskReviewVideoInfo(
-      DocumentReference reference, VideoInfo videoInfo) async {
+  void updateTaskReviewVideoInfo(DocumentReference reference, VideoInfo videoInfo) async {
     try {
-      await TaskReviewRepository.updateTaskReviewVideoInfo(
-          videoInfo, reference);
+      await TaskReviewRepository.updateTaskReviewVideoInfo(videoInfo, reference);
       emit(UpdateSuccess());
     } catch (e, stackTrace) {
       await Sentry.captureException(
@@ -66,6 +62,7 @@ class TaskReviewBloc extends Cubit<TaskReviewState> {
         stackTrace: stackTrace,
       );
       emit(Failure(exception: e));
+      rethrow;
     }
   }
 }

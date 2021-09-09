@@ -5,19 +5,16 @@ import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 
 class TaskSubmissionRecordedVideo extends StatefulWidget {
-  TaskSubmissionRecordedVideo({this.videoUrl, this.task, key})
-      : super(key: key);
+  TaskSubmissionRecordedVideo({this.videoUrl, this.task, key}) : super(key: key as Key);
 
   final String videoUrl;
   final Task task;
 
   @override
-  _TaskSubmissionRecordedVideoState createState() =>
-      _TaskSubmissionRecordedVideoState();
+  _TaskSubmissionRecordedVideoState createState() => _TaskSubmissionRecordedVideoState();
 }
 
-class _TaskSubmissionRecordedVideoState
-    extends State<TaskSubmissionRecordedVideo> {
+class _TaskSubmissionRecordedVideoState extends State<TaskSubmissionRecordedVideo> {
   final _formKey = GlobalKey<FormState>();
   ChewieController _controller;
 
@@ -50,9 +47,7 @@ class _TaskSubmissionRecordedVideoState
                       child: Stack(
                         children: [
                           ConstrainedBox(
-                              constraints: BoxConstraints(
-                                  maxHeight:
-                                      MediaQuery.of(context).size.height / 1.5),
+                              constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height / 1.5),
                               child: Stack(children: showVideoPlayer()))
                         ],
                       ),
@@ -63,8 +58,7 @@ class _TaskSubmissionRecordedVideoState
     List<Widget> widgets = [];
     widgets.add(OlukoVideoPlayer(
         videoUrl: widget.videoUrl,
-        whenInitialized: (ChewieController chewieController) =>
-            this.setState(() {
+        whenInitialized: (ChewieController chewieController) => this.setState(() {
               _controller = chewieController;
             })));
     if (_controller == null) {

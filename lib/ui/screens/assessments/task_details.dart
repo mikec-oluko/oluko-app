@@ -166,7 +166,7 @@ class _TaskDetailsState extends State<TaskDetails> {
         ]));
   }
 
-  _content() {
+  Widget _content() {
     return BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
         builder: (context, state) {
       if (state is GetSuccess && state.taskSubmission != null) {
@@ -299,7 +299,7 @@ class _TaskDetailsState extends State<TaskDetails> {
     ];
   }
 
-  recordedVideos(TaskSubmission taskSubmission) {
+  Widget recordedVideos(TaskSubmission taskSubmission) {
     return Column(children: [
       Padding(
         padding: const EdgeInsets.symmetric(vertical: 15.0),

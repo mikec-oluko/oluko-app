@@ -4,13 +4,13 @@ import 'package:oluko_app/constants/theme.dart';
 
 class TableCellSettings extends StatelessWidget {
   final String title;
-  final Function onTap;
-  TableCellSettings({this.title, this.onTap});
+  final void Function() tap;
+  TableCellSettings({this.title, this.tap});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: tap,
       child: Padding(
         padding: const EdgeInsets.only(top: 16.0),
         child: Row(

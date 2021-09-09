@@ -35,14 +35,12 @@ class TaskSubmission extends Base {
 
   factory TaskSubmission.fromJson(Map<String, dynamic> json) {
     TaskSubmission taskSubmission = TaskSubmission(
-        video: json['video'] == null ? null : Video.fromJson(json['video']),
-        reviewReference: json['review_reference'],
-        task:
-            json['task'] == null ? null : ObjectSubmodel.fromJson(json['task']),
-        isPublic: json['is_public'],
-        videoState: json['video_state'] == null
-            ? null
-            : VideoState.fromJson(json['video_state']));
+        video: json['video'] == null ? null : Video.fromJson(json['video'] as Map<String, dynamic>),
+        reviewReference: json['review_reference'] as DocumentReference,
+        task: json['task'] == null ? null : ObjectSubmodel.fromJson(json['task'] as Map<String, dynamic>),
+        isPublic: json['is_public'] as bool,
+        videoState:
+            json['video_state'] == null ? null : VideoState.fromJson(json['video_state'] as Map<String, dynamic>));
     taskSubmission.setBase(json);
     return taskSubmission;
   }

@@ -10,7 +10,7 @@ class CardInfo extends StatelessWidget {
       this.tap = defaultFunc});
 
   final String img;
-  final Function tap;
+  final void Function() tap;
   final String title;
   final String mainText;
   final String subtitle;
