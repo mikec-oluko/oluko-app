@@ -217,4 +217,28 @@ class SegmentUtils {
     }
     return hasRest;
   }
+
+  static List<Widget> getJoinedLabel(List<String> labels) {
+    List<Widget> labelWidgets = [];
+    labels.forEach((label) {
+      labelWidgets.add(Text(label,
+          style: TextStyle(
+              fontSize: 20,
+              color: OlukoColors.white,
+              fontWeight: FontWeight.w300)));
+      labelWidgets.add(Divider(
+        height: 10,
+        color: OlukoColors.divider,
+        thickness: 0,
+        indent: 0,
+        endIndent: 0,
+      ));
+    });
+    return labelWidgets;
+  }
+
+  static List<Widget> getJoinedMovements(
+      Segment segment, BuildContext context) {
+    return getJoinedLabel(getMovements(segment, context));
+  }
 }

@@ -8,6 +8,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/oluko_image_bar.dart';
 import 'package:oluko_app/ui/components/movement_item_bubbles.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
@@ -88,7 +89,6 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
   void initState() {
     // tabController =
     //     TabController(initialIndex: 0, length: tabs.length, vsync: this);
-    referenceCourses.forEach((course) => coursesBookmarked[course.id] = false);
     super.initState();
   }
 
@@ -195,7 +195,12 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Column(
-              children: [Container(height: 100, child: Image.network(course.image))],
+              children: [
+                GestureDetector(
+                    onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
+                        arguments: {'course': course}),
+                    child: Container(height: 100, child: Image.network(course.image)))
+              ],
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -224,7 +229,9 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Icon(
-                            this.coursesBookmarked[course.id] ? Icons.bookmark : Icons.bookmark_border,
+                            this.coursesBookmarked[course.id] != null && this.coursesBookmarked[course.id] == true
+                                ? Icons.bookmark
+                                : Icons.bookmark_border,
                             size: 20,
                             color: Colors.white,
                           ),
@@ -298,7 +305,12 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    MovementItemBubbles(content: this.referenceMovements, width: ScreenUtils.width(context) / 1.2),
+                    MovementItemBubbles(
+                        onPressed: (context, movement) => Navigator.pushNamed(
+                            context, routeLabels[RouteEnum.movementIntro],
+                            arguments: {'movement': movement}),
+                        content: this._movementInfoSuccess.relatedMovements,
+                        width: ScreenUtils.width(context) / 1.2),
                   ],
                 ),
               ),
@@ -314,7 +326,9 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                   ),
                 ],
               ),
-              Column(children: referenceCourses.map((Course course) => courseRow(course)).toList()),
+              Column(
+                  children:
+                      this._movementInfoSuccess.relatedCourses.map((Course course) => courseRow(course)).toList()),
             ],
           ),
         )

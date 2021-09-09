@@ -59,13 +59,10 @@ class EncodingProvider {
     assert(await File(videoPath).exists());
     var imagePath = videoPath;
     if (videoPath.toString().contains('.mp4')) {
-      imagePath = (videoPath
-          .toString()
-          .substring(0, (videoPath.toString().length) - 4));
+      imagePath = (videoPath.toString().substring(0, (videoPath.toString().length) - 4));
     }
     final String outPath = '$imagePath.jpg';
-    var arguments =
-        '-y -i $videoPath -vframes 1 -an -s ${width}x${height} -ss 1 $outPath';
+    var arguments = '-y -i $videoPath -vframes 1 -an -s ${width}x${height} -ss 1 $outPath';
     int rc = await _encoder.execute(arguments);
     assert(rc == 0);
     assert(await File(outPath).exists());
@@ -93,19 +90,5 @@ class EncodingProvider {
 
   static void enableLogCallback(void Function(Log log) logCallback) {
     _config.enableLogCallback(logCallback);
-  }
-
-  static Future<String> getImageThumb(String imagePath, width, height) async {
-    assert(File(imagePath).existsSync());
-
-    final String outPath = '$imagePath';
-    final arguments =
-        '-y -i $imagePath -vframes 1 -an -s ${width}x$height $outPath';
-
-    final int rc = await _encoder.execute(arguments);
-    assert(rc == 0);
-    assert(File(outPath).existsSync());
-
-    return outPath;
   }
 }

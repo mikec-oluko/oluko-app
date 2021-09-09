@@ -81,17 +81,12 @@ class CourseEnrollmentRepository {
   }
 
   static Future<CourseEnrollment> create(User user, Course course) async {
-    CollectionReference reference = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
-        .collection('courseEnrollments');
-    DocumentReference courseReference = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
-        .collection('courses')
-        .doc(course.id);
+    DocumentReference projectReference =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue("projectId"));
+    CollectionReference reference = projectReference.collection('courseEnrollments');
+    DocumentReference courseReference = projectReference.collection('courses').doc(course.id);
     final DocumentReference docRef = reference.doc();
-    DocumentReference userReference = FirebaseFirestore.instance.collection('users').doc(user.uid);
+    DocumentReference userReference = projectReference.collection('users').doc(user.uid);
     ObjectSubmodel courseSubmodel =
         ObjectSubmodel(id: course.id, reference: courseReference, name: course.name, image: course.image);
     CourseEnrollment courseEnrollment =
