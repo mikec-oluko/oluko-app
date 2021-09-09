@@ -48,7 +48,7 @@ class TransformationJourneyRepository {
         e,
         stackTrace: stackTrace,
       );
-      throw e;
+      rethrow;
     }
   }
 
@@ -105,7 +105,7 @@ class TransformationJourneyRepository {
         e,
         stackTrace: stackTrace,
       );
-      throw e;
+      rethrow;
     }
   }
 

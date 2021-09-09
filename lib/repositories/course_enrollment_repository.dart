@@ -168,7 +168,7 @@ class CourseEnrollmentRepository {
         e,
         stackTrace: stackTrace,
       );
-      throw e;
+      rethrow;
     }
     return courseEnrollmentList;
   }
@@ -187,13 +187,10 @@ class CourseEnrollmentRepository {
       return [];
     }
     try {
-      var futures = <Future>[];
       for (var courseEnrollment in courseEnrollments) {
-        futures.add(await getChallengesFromCourseEnrollment(
-            courseEnrollment, challengeList));
+        await getChallengesFromCourseEnrollment(
+            courseEnrollment, challengeList);
       }
-      futures
-          .forEach((element) => element != null ? Future.wait(futures) : null);
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,

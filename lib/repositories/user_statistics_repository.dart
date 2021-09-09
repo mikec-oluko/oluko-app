@@ -24,6 +24,10 @@ class UserStatisticsRepository {
     if (doc != null) {
       return UserStatistics.fromJson(ds.data());
     }
-    return null;
+    return UserStatistics(
+        completedChallenges: 0,
+        completedClasses: 0,
+        completedCourses: 0,
+        completedSegments: 0);
   }
 }

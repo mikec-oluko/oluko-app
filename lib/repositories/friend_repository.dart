@@ -37,7 +37,7 @@ class FriendRepository {
         e,
         stackTrace: stackTrace,
       );
-      throw e;
+      rethrow;
     }
   }
 
@@ -62,7 +62,7 @@ class FriendRepository {
         e,
         stackTrace: stackTrace,
       );
-      throw e;
+      rethrow;
     }
   }
 
@@ -89,7 +89,7 @@ class FriendRepository {
         e,
         stackTrace: stackTrace,
       );
-      throw e;
+      rethrow;
     }
   }
 
@@ -131,7 +131,7 @@ class FriendRepository {
         e,
         stackTrace: stackTrace,
       );
-      throw e;
+      rethrow;
     }
   }
 
@@ -154,7 +154,7 @@ class FriendRepository {
         e,
         stackTrace: stackTrace,
       );
-      throw e;
+      rethrow;
     }
   }
 
@@ -182,7 +182,7 @@ class FriendRepository {
         e,
         stackTrace: stackTrace,
       );
-      throw e;
+      rethrow;
     }
   }
 
@@ -203,7 +203,7 @@ class FriendRepository {
         e,
         stackTrace: stackTrace,
       );
-      throw e;
+      rethrow;
     }
   }
 
@@ -224,7 +224,7 @@ class FriendRepository {
         e,
         stackTrace: stackTrace,
       );
-      throw e;
+      rethrow;
     }
   }
 
@@ -247,7 +247,7 @@ class FriendRepository {
         e,
         stackTrace: stackTrace,
       );
-      throw e;
+      rethrow;
     }
   }
 
@@ -277,7 +277,7 @@ class FriendRepository {
         e,
         stackTrace: stackTrace,
       );
-      throw e;
+      rethrow;
     }
   }
 
@@ -300,7 +300,7 @@ class FriendRepository {
         e,
         stackTrace: stackTrace,
       );
-      throw e;
+      rethrow;
     }
   }
 
@@ -327,7 +327,7 @@ class FriendRepository {
         e,
         stackTrace: stackTrace,
       );
-      throw e;
+      rethrow;
     }
   }
 
@@ -344,7 +344,7 @@ class FriendRepository {
         e,
         stackTrace: stackTrace,
       );
-      throw e;
+      rethrow;
     }
   }
 
@@ -367,7 +367,7 @@ class FriendRepository {
         e,
         stackTrace: stackTrace,
       );
-      throw e;
+      rethrow;
     }
   }
 }
