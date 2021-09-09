@@ -252,7 +252,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ])))),
       ]),
-      // TODO Enable Signup
+      // TODO: Signup
       // InkWell(
       //   onTap: () => Navigator.pushNamed(context, '/sign-up-with-email'),
       //   child: Padding(

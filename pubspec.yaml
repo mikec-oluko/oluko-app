@@ -67,6 +67,7 @@ dependencies:
   drag_and_drop_gridview: ^1.0.8
   sentry_flutter: ^5.1.0
   sliding_up_panel: ^2.0.0+1
+  flutter_image_compress: ^1.1.0
 
 dev_dependencies:
   flutter_launcher_icons: "^0.9.0"
@@ -74,6 +75,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   mockito: ^3.0.0
+  lint: ^1.0.0
 
 flutter_icons:
   android: "launcher_icon"

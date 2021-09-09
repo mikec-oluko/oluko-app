@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:html';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -31,13 +30,10 @@ void main() {
 
       MockClient mockClient = MockClient();
 
-      when(mockClient.post(any, body: request.toJson())).thenAnswer((_) =>
-          Future.value(http.Response(
-              '{"statusCode": 200, "data": {"accessToken":"testtest22"}}',
-              200)));
+      when(mockClient.post(any, body: request.toJson())).thenAnswer(
+          (_) => Future.value(http.Response('{"statusCode": 200, "data": {"accessToken":"testtest22"}}', 200)));
 
-      final response =
-          await AuthRepository.test(http: mockClient).signUp(request);
+      final response = await AuthRepository.test(http: mockClient).signUp(request);
 
       expect(response, isNotNull);
       expect(response.statusCode, 200);
@@ -54,13 +50,10 @@ void main() {
       when(mockFirebaseAuth.signInWithCustomToken('testtest22'))
           .thenAnswer((realInvocation) => Future.value(MockUserCredentials()));
       MockClient mockClient = MockClient();
-      when(mockClient.post(any, body: request.toJson())).thenAnswer((_) =>
-          Future.value(http.Response(
-              '{"statusCode": 200, "data": {"accessToken":"testtest22"}}',
-              200)));
-      final response = await AuthRepository.test(
-              http: mockClient, firebaseAuthInstance: mockFirebaseAuth)
-          .login(request);
+      when(mockClient.post(any, body: request.toJson())).thenAnswer(
+          (_) => Future.value(http.Response('{"statusCode": 200, "data": {"accessToken":"testtest22"}}', 200)));
+      final response =
+          await AuthRepository.test(http: mockClient, firebaseAuthInstance: mockFirebaseAuth).login(request);
       expect(response, isNotNull);
       expect(response.statusCode, 200);
       expect(response.error, isNull);
@@ -76,8 +69,7 @@ void main() {
     });
 
     test('user should be retrieved', () async {
-      final UserResponse request =
-          UserResponse(id: 'awo2j5t1o', email: 'testEmail@gmail.com');
+      final UserResponse request = UserResponse(id: 'awo2j5t1o', email: 'testEmail@gmail.com');
 
       await AuthRepository().storeLoginData(request);
       final retrieveResponse = await AuthRepository().retrieveLoginData();
@@ -90,15 +82,11 @@ void main() {
       final request = VerifyTokenRequest(tokenId: 'myToken');
       MockClient mockClient = MockClient();
       ApiResponse httpMockResponse = ApiResponse(
-          statusCode: 200,
-          data: {'accessToken': 'testtest22'},
-          error: null,
-          message: ['Retrieved Successfully']);
-      when(mockClient.post(any, body: request.toJson())).thenAnswer((_) =>
-          Future.value(http.Response(jsonEncode(httpMockResponse), 200)));
+          statusCode: 200, data: {'accessToken': 'testtest22'}, error: null, message: 'Retrieved Successfully');
+      when(mockClient.post(any, body: request.toJson()))
+          .thenAnswer((_) => Future.value(http.Response(jsonEncode(httpMockResponse), 200)));
 
-      final response =
-          await AuthRepository.test(http: mockClient).verifyToken(request);
+      final response = await AuthRepository.test(http: mockClient).verifyToken(request);
       expect(response, isNotNull);
       expect(response.data, isNotNull);
       expect(response.data['accessToken'], isA<String>());

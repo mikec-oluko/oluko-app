@@ -22,7 +22,7 @@ class TagCategoryRepository {
         .get();
     List<TagCategory> response = [];
     docRef.docs.forEach((doc) {
-      final Map<String, dynamic> element = doc.data();
+      final Map<String, dynamic> element = doc.data() as Map<String, dynamic>;
       response.add(TagCategory.fromJson(element));
     });
     return response;

@@ -25,12 +25,10 @@ class ProfileTransformationJourneyPage extends StatefulWidget {
   final UserResponse userRequested;
   ProfileTransformationJourneyPage({this.userRequested});
   @override
-  _ProfileTransformationJourneyPageState createState() =>
-      _ProfileTransformationJourneyPageState();
+  _ProfileTransformationJourneyPageState createState() => _ProfileTransformationJourneyPageState();
 }
 
-class _ProfileTransformationJourneyPageState
-    extends State<ProfileTransformationJourneyPage> {
+class _ProfileTransformationJourneyPageState extends State<ProfileTransformationJourneyPage> {
   bool isCurrenUser = false;
   UserResponse userToUse;
   int _variableSet = 0;
@@ -70,8 +68,7 @@ class _ProfileTransformationJourneyPageState
         showSearchBar: false,
       ),
       body: _contentGallery == null
-          ? Container(
-              color: Colors.black, child: OlukoCircularProgressIndicator())
+          ? Container(color: Colors.black, child: OlukoCircularProgressIndicator())
           : Container(
               constraints: BoxConstraints.expand(),
               color: OlukoColors.black,
@@ -109,17 +106,13 @@ class _ProfileTransformationJourneyPageState
                                 ? EdgeInsets.fromLTRB(10, 100, 10, 10)
                                 : EdgeInsets.fromLTRB(10, 20, 10, 20),
                             child: Text(
-                              getTitleForContent(
-                                  uploadListContent:
-                                      _transformationJourneyContent),
+                              getTitleForContent(uploadListContent: _transformationJourneyContent),
                               style: OlukoFonts.olukoBigFont(),
                             ),
                           ),
                         )
                       : SizedBox(),
-                  _contentGallery.length != 0
-                      ? dragAndDropGridView(context)
-                      : SizedBox(),
+                  _contentGallery.length != 0 ? dragAndDropGridView(context) : SizedBox(),
                   slidingUpPanelComponent(context),
                 ]),
               ),
@@ -127,14 +120,11 @@ class _ProfileTransformationJourneyPageState
     );
   }
 
-  BlocListener<TransformationJourneyContentBloc,
-          TransformationJourneyContentState>
-      slidingUpPanelComponent(BuildContext context) {
-    return BlocListener<TransformationJourneyContentBloc,
-        TransformationJourneyContentState>(
+  BlocListener<TransformationJourneyContentBloc, TransformationJourneyContentState> slidingUpPanelComponent(
+      BuildContext context) {
+    return BlocListener<TransformationJourneyContentBloc, TransformationJourneyContentState>(
       listener: (context, state) {
-        if (state is TransformationJourneyContentDefault ||
-            state is TransformationJourneyContentOpen) {
+        if (state is TransformationJourneyContentDefault || state is TransformationJourneyContentOpen) {
           _statePanelMaxHeight = 100;
         } else {
           _statePanelMaxHeight = 300;
@@ -147,8 +137,7 @@ class _ProfileTransformationJourneyPageState
           });
         },
         onPanelClosed: () {
-          BlocProvider.of<TransformationJourneyContentBloc>(context)
-            ..emitDefaultState();
+          BlocProvider.of<TransformationJourneyContentBloc>(context)..emitDefaultState();
         },
         backdropEnabled: true,
         isDraggable: false,
@@ -162,8 +151,8 @@ class _ProfileTransformationJourneyPageState
         collapsed: SizedBox(),
         defaultPanelState: PanelState.CLOSED,
         controller: _panelController,
-        panel: BlocBuilder<TransformationJourneyContentBloc,
-            TransformationJourneyContentState>(builder: (context, state) {
+        panel:
+            BlocBuilder<TransformationJourneyContentBloc, TransformationJourneyContentState>(builder: (context, state) {
           Widget _contentForPanel = SizedBox();
           if (state is TransformationJourneyContentOpen) {
             _panelController.open();
@@ -177,12 +166,10 @@ class _ProfileTransformationJourneyPageState
             _contentForPanel = SizedBox();
           }
           if (state is TransformationJourneyContentLoading) {
-            _contentForPanel =
-                UploadingModalLoader(UploadFrom.transformationJourney);
+            _contentForPanel = UploadingModalLoader(UploadFrom.transformationJourney);
           }
           if (state is TransformationJourneyContentSuccess) {
-            _contentForPanel = UploadingModalSuccess(
-                goToPage: UploadFrom.transformationJourney);
+            _contentForPanel = UploadingModalSuccess(goToPage: UploadFrom.transformationJourney);
           }
           if (state is TransformationJourneyContentFailure) {
             _panelController.close();
@@ -307,16 +294,14 @@ class _ProfileTransformationJourneyPageState
     );
   }
 
-  BlocBuilder<TransformationJourneyBloc, TransformationJourneyState>
-      transformationJourneyView() {
+  BlocBuilder<TransformationJourneyBloc, TransformationJourneyState> transformationJourneyView() {
     return BlocBuilder<TransformationJourneyBloc, TransformationJourneyState>(
       builder: (context, state) {
         if (state is TransformationJourneySuccess) {
           _transformationJourneyContent = state.contentFromUser;
-          _contentGallery =
-              TransformListOfItemsToWidget.getWidgetListFromContent(
-                  tansformationJourneyData: _transformationJourneyContent,
-                  requestedFromRoute: ActualProfileRoute.transformationJourney);
+          _contentGallery = TransformListOfItemsToWidget.getWidgetListFromContent(
+              tansformationJourneyData: _transformationJourneyContent,
+              requestedFromRoute: ActualProfileRoute.transformationJourney);
         }
         if (state is TransformationJourneyFailure ||
             state is TransformationJourneyDefault) {
@@ -328,12 +313,10 @@ class _ProfileTransformationJourneyPageState
     );
   }
 
-  String getTitleForContent(
-      {List<TransformationJourneyUpload> uploadListContent}) {
+  String getTitleForContent({List<TransformationJourneyUpload> uploadListContent}) {
     int _videos = 0;
     int _images = 0;
-    uploadListContent.forEach((content) =>
-        content.type == FileTypeEnum.video ? _videos += 1 : _images += 1);
+    uploadListContent.forEach((content) => content.type == FileTypeEnum.video ? _videos += 1 : _images += 1);
     return "Uploaded $_images Images & $_videos Videos";
   }
 }

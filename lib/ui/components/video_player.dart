@@ -43,13 +43,11 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
         _controller = null;
       }
     }
-    var controls;
+    Widget controls;
     if (Platform.isAndroid) {
       controls = OlukoMaterialControls();
     } else if (Platform.isIOS) {
-      controls = CupertinoControls(
-          backgroundColor: Colors.grey[100].withOpacity(0.2),
-          iconColor: Colors.black);
+      controls = CupertinoControls(backgroundColor: Colors.grey[100].withOpacity(0.2), iconColor: Colors.black);
     }
     if (_controller != null) {
       _controller

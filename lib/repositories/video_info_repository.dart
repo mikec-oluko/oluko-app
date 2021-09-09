@@ -28,7 +28,7 @@ class VideoInfoRepository {
 
   static List<VideoInfo> mapQueryToVideoInfo(QuerySnapshot qs) {
     return qs.docs.map((DocumentSnapshot ds) {
-      return VideoInfo.fromJson(ds.data());
+      return VideoInfo.fromJson(ds.data() as Map<String, dynamic>);
     }).toList();
   }
 
@@ -43,10 +43,10 @@ class VideoInfoRepository {
     });
   }
 
-  static addMarkerToVideoInfo(
+  static Future<double> addMarkerToVideoInfo(
       double marker, DocumentReference reference) async {
     final ds = await reference.get();
-    VideoInfo videoInfo = VideoInfo.fromJson(ds.data());
+    VideoInfo videoInfo = VideoInfo.fromJson(ds.data() as Map<String, dynamic>);
     List<double> markers = videoInfo.markers;
     if (!markers.contains(marker)) {
       markers.add(marker);

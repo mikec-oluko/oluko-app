@@ -5,8 +5,8 @@ class InfoDialog {
   String title;
 
   InfoDialog.fromJson(Map json)
-      : content = json['content'],
-        title = json['title'];
+      : content = json['content'].toString(),
+        title = json['title'].toString();
 
   Map<String, dynamic> toJson() => {
         'content': content,

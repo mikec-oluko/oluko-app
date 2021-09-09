@@ -43,19 +43,19 @@ class SegmentSubmission extends Base {
 
   factory SegmentSubmission.fromJson(Map<String, dynamic> json) {
     SegmentSubmission segmentSubmission = SegmentSubmission(
-        userId: json['user_id'],
-        userReference: json['user_reference'],
-        segmentId: json['segment_id'],
-        segmentReference: json['segment_reference'],
-        coachId: json['coach_id'],
-        coachReference: json['coach_reference'],
-        courseEnrollmentId: json['course_enrollment_id'],
-        courseEnrollmentReference: json['course_enrollment_reference'],
-        seenAt: json['seen_at'],
+        userId: json['user_id'].toString(),
+        userReference: json['user_reference'] as DocumentReference,
+        segmentId: json['segment_id'].toString(),
+        segmentReference: json['segment_reference'] as DocumentReference,
+        coachId: json['coach_id'].toString(),
+        coachReference: json['coach_reference'] as DocumentReference,
+        courseEnrollmentId: json['course_enrollment_id'].toString(),
+        courseEnrollmentReference: json['course_enrollment_reference'] as DocumentReference,
+        seenAt: json['seen_at'] as Timestamp,
         movementSubmissions: json['movement_submissions'] == null
             ? null
-            : List<ObjectSubmodel>.from(json['movement_submissions']
-                .map((movement) => ObjectSubmodel.fromJson(movement))));
+            : List<ObjectSubmodel>.from((json['movement_submissions'] as Iterable)
+                .map((movement) => ObjectSubmodel.fromJson(movement as Map<String, dynamic>))));
     segmentSubmission.setBase(json);
     return segmentSubmission;
   }
@@ -73,8 +73,7 @@ class SegmentSubmission extends Base {
       'seen_at': seenAt,
       'movement_submissions': movementSubmissions == null
           ? null
-          : List<dynamic>.from(
-              movementSubmissions.map((movement) => movement.toJson()))
+          : List<dynamic>.from(movementSubmissions.map((movement) => movement.toJson()))
     };
     segmentSubmissionJson.addEntries(super.toJson().entries);
     return segmentSubmissionJson;

@@ -24,7 +24,7 @@ class ClassRepository {
     }
     for (ObjectSubmodel classObj in course.classes) {
       DocumentSnapshot ds = await classObj.reference.get();
-      Class retrievedClass = Class.fromJson(ds.data());
+      Class retrievedClass = Class.fromJson(ds.data() as Map<String, dynamic>);
       classes.add(retrievedClass);
     }
     return classes;
@@ -50,7 +50,7 @@ class ClassRepository {
   static Future<void> updateSegments(
       SegmentSubmodel segment, DocumentReference reference) async {
     DocumentSnapshot ds = await reference.get();
-    Class classObj = Class.fromJson(ds.data());
+    Class classObj = Class.fromJson(ds.data() as Map<String, dynamic>);
     List<SegmentSubmodel> segments;
     if (classObj.segments == null) {
       segments = [];
@@ -71,6 +71,6 @@ class ClassRepository {
         .collection('classes')
         .doc(id);
     DocumentSnapshot ds = await reference.get();
-    return Class.fromJson(ds.data());
+    return Class.fromJson(ds.data() as Map<String, dynamic>);
   }
 }

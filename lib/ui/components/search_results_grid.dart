@@ -14,11 +14,7 @@ class SearchResultsGrid<T> extends StatefulWidget {
   final double childAspectRatio;
   final int crossAxisCount;
 
-  SearchResultsGrid(
-      {this.textInput,
-      this.itemList,
-      this.childAspectRatio,
-      this.crossAxisCount});
+  SearchResultsGrid({this.textInput, this.itemList, this.childAspectRatio, this.crossAxisCount});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -37,18 +33,14 @@ class _State extends State<SearchResultsGrid> {
                   child: Container(
                       child: GestureDetector(
                     //TODO: not generic, depends on T being course only
-                    onTap: () => Navigator.pushNamed(
-                        context, routeLabels[RouteEnum.courseMarketing],
+                    onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
                         arguments: {'course': e as Course}),
                     child: _getCourseCard(
                       Image.network(
-                        e.image,
+                        e.image as String,
                         fit: BoxFit.cover,
-                        frameBuilder: (BuildContext context, Widget child,
-                                int frame, bool wasSynchronouslyLoaded) =>
-                            ImageUtils.frameBuilder(
-                                context, child, frame, wasSynchronouslyLoaded,
-                                height: 120),
+                        frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
+                            ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 120),
                       ),
                     ),
                   )),
@@ -56,8 +48,7 @@ class _State extends State<SearchResultsGrid> {
             .toList());
   }
 
-  CourseCard _getCourseCard(Image image,
-      {double progress, double width, double height}) {
+  CourseCard _getCourseCard(Image image, {double progress, double width, double height}) {
     return CourseCard(
       width: width,
       height: height,

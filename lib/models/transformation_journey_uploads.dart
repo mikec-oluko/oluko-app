@@ -19,20 +19,19 @@ class TransformationJourneyUpload extends Base {
   bool isHidden;
 
   factory TransformationJourneyUpload.fromJson(Map<String, dynamic> json) {
-    TransformationJourneyUpload transformationJourneyUpload =
-        TransformationJourneyUpload(
-            name: json['name'],
-            from: json['from'],
-            description: json['description'],
-            index: json['index'],
-            type: getFileTypeEnumFromString(json['type']),
-            file: json['file'],
-            isPublic: json['isPublic'],
-            thumbnail: json['thumbnail'],
-            createdAt: json['createdAt'],
-            createdBy: json['createdBy'],
-            updatedAt: json['updatedAt'],
-            updatedBy: json['updatedBy']);
+    TransformationJourneyUpload transformationJourneyUpload = TransformationJourneyUpload(
+        name: json['name'].toString(),
+        from: json['from'] as Timestamp,
+        description: json['description'].toString(),
+        index: json['index'] as int,
+        type: getFileTypeEnumFromString(json['type'].toString()),
+        file: json['file'].toString(),
+        isPublic: json['isPublic'] as bool,
+        thumbnail: json['thumbnail'].toString(),
+        createdAt: json['createdAt'] as Timestamp,
+        createdBy: json['createdBy'].toString(),
+        updatedAt: json['updatedAt'] as Timestamp,
+        updatedBy: json['updatedBy'].toString());
 
     transformationJourneyUpload.setBase(json);
     return transformationJourneyUpload;

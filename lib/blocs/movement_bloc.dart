@@ -19,7 +19,7 @@ class GetAllSuccess extends MovementState {
 }
 
 class Failure extends MovementState {
-  final Exception exception;
+  final dynamic exception;
 
   Failure({this.exception});
 }
@@ -37,6 +37,7 @@ class MovementBloc extends Cubit<MovementState> {
         stackTrace: stackTrace,
       );
       emit(Failure(exception: exception));
+      rethrow;
     }
   }
 
@@ -50,6 +51,7 @@ class MovementBloc extends Cubit<MovementState> {
         stackTrace: stackTrace,
       );
       emit(Failure(exception: exception));
+      rethrow;
     }
   }
 }

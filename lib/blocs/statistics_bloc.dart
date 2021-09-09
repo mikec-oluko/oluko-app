@@ -14,7 +14,7 @@ class StatisticsSuccess extends StatisticsState {
 }
 
 class StatisticsFailure extends StatisticsState {
-  final Exception exception;
+  final dynamic exception;
   StatisticsFailure({this.exception});
 }
 
@@ -26,8 +26,7 @@ class StatisticsBloc extends Cubit<StatisticsState> {
       emit(StatisticsLoading());
     }
     try {
-      CourseStatistics courseStatistics =
-          await CourseRepository.getStatistics(reference);
+      CourseStatistics courseStatistics = await CourseRepository.getStatistics(reference);
       emit(StatisticsSuccess(courseStatistics: courseStatistics));
     } catch (e, stackTrace) {
       await Sentry.captureException(
@@ -36,6 +35,7 @@ class StatisticsBloc extends Cubit<StatisticsState> {
       );
       print(e.toString());
       emit(StatisticsFailure(exception: e));
+      rethrow;
     }
   }
 }

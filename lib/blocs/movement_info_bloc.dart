@@ -18,15 +18,11 @@ class MovementInfoSuccess extends MovementInfoState {
   List<Course> relatedCourses;
   List<Movement> relatedMovements;
   MovementInfoSuccess(
-      {this.movement,
-      this.movementVariants,
-      this.movementRelation,
-      this.relatedMovements,
-      this.relatedCourses});
+      {this.movement, this.movementVariants, this.movementRelation, this.relatedMovements, this.relatedCourses});
 }
 
 class MovementInfoFailure extends MovementInfoState {
-  final Exception exception;
+  final dynamic exception;
 
   MovementInfoFailure({this.exception});
 }
@@ -37,26 +33,20 @@ class MovementInfoBloc extends Cubit<MovementInfoState> {
   void get(String movementId) async {
     try {
       List<Movement> movements = await MovementRepository.get(movementId);
-      List<Movement> movementVariants =
-          await MovementRepository.getVariants(movementId);
+      List<Movement> movementVariants = await MovementRepository.getVariants(movementId);
 
-      MovementRelation movementRelation =
-          await MovementRepository.getRelations(movementId);
+      MovementRelation movementRelation = await MovementRepository.getRelations(movementId);
 
       List<List<Movement>> relatedMovementsData = await Future.wait(
-          movementRelation.relatedMovements.map((movementSubmodel) =>
-              MovementRepository.get(movementSubmodel.id)));
+          movementRelation.relatedMovements.map((movementSubmodel) => MovementRepository.get(movementSubmodel.id)));
 
-      List<Course> relatedCourses = await Future.wait(movementRelation
-          .relatedCourses
-          .map((courseSubmodel) => CourseRepository.get(courseSubmodel.id)));
+      List<Course> relatedCourses = await Future.wait(
+          movementRelation.relatedCourses.map((courseSubmodel) => CourseRepository.get(courseSubmodel.id)));
 
       List<Movement> relatedMovements = [];
 
-      relatedMovementsData.forEach((List<Movement> movementList) =>
-          movementList.length > 0
-              ? relatedMovements.add(movementList[0])
-              : null);
+      relatedMovementsData.forEach(
+          (List<Movement> movementList) => movementList.length > 0 ? relatedMovements.add(movementList[0]) : null);
 
       emit(MovementInfoSuccess(
           movement: movements[0],
@@ -70,6 +60,7 @@ class MovementInfoBloc extends Cubit<MovementInfoState> {
         stackTrace: stackTrace,
       );
       emit(MovementInfoFailure(exception: exception));
+      rethrow;
     }
   }
 }

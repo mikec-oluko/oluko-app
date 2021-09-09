@@ -20,7 +20,7 @@ class ProfileUploadDefault extends ProfileState {
 }
 
 class ProfileFailure extends ProfileState {
-  final Exception exception;
+  final dynamic exception;
 
   ProfileFailure({this.exception});
 }
@@ -32,8 +32,7 @@ class ProfileBloc extends Cubit<ProfileState> {
 
   ProfileRepository _profileRepository = ProfileRepository();
 
-  void uploadImageForProfile(
-      {DeviceContentFrom uploadedFrom, UploadFrom contentFor}) async {
+  void uploadImageForProfile({DeviceContentFrom uploadedFrom, UploadFrom contentFor}) async {
     PickedFile _image;
 
     try {
@@ -46,21 +45,18 @@ class ProfileBloc extends Cubit<ProfileState> {
       }
 
       if (_image == null) {
-        emit(
-            ProfileFailure(exception: new Exception("Profile upload aborted")));
+        emit(ProfileFailure(exception: new Exception("Profile upload aborted")));
         return;
       }
 
       emit(ProfileLoading());
 
       if (contentFor == UploadFrom.profileCoverImage) {
-        UserResponse userUpdatedCoverImage =
-            await _profileRepository.uploadProfileCoverImage(_image);
+        UserResponse userUpdatedCoverImage = await _profileRepository.uploadProfileCoverImage(_image);
         emit(ProfileUploadSuccess(userUpdated: userUpdatedCoverImage));
       }
       if (contentFor == UploadFrom.profileImage) {
-        UserResponse userUpdated =
-            await _profileRepository.updateProfileAvatar(_image);
+        UserResponse userUpdated = await _profileRepository.updateProfileAvatar(_image);
         emit(ProfileUploadSuccess(userUpdated: userUpdated));
       }
     } catch (exception, stackTrace) {
@@ -69,20 +65,20 @@ class ProfileBloc extends Cubit<ProfileState> {
         stackTrace: stackTrace,
       );
       emit(ProfileFailure(exception: exception));
+      rethrow;
     }
   }
 
-  void updateSettingsPreferences(UserResponse userToUpdate, int privacyIndex,
-      bool notificationValue) async {
+  void updateSettingsPreferences(UserResponse userToUpdate, int privacyIndex, bool notificationValue) async {
     try {
-      await _profileRepository.updateUserPreferences(
-          userToUpdate, privacyIndex, notificationValue);
+      await _profileRepository.updateUserPreferences(userToUpdate, privacyIndex, notificationValue);
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
         stackTrace: stackTrace,
       );
       emit(ProfileFailure(exception: exception));
+      rethrow;
     }
   }
 
