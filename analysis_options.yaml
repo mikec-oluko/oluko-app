@@ -38,3 +38,4 @@ linter:
 
     implicit-cast: false
     argument_type_not_assignable: false
+    public_member_api_docs: false
