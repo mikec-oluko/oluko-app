@@ -89,12 +89,8 @@ class TaskSubmissionRepository {
     }
 
     try {
-      var futures = <Future>[];
       for (var asessmentId in _assessmentsIdList) {
-        futures.add(getTaskSubmissionsByAssessmentId(userId, asessmentId, response));
-      }
-      if (futures.length != 0 && futures != null) {
-        Future.wait(futures);
+        await getTaskSubmissionsByAssessmentId(userId, asessmentId, response);
       }
     } catch (e, stackTrace) {
       await Sentry.captureException(
@@ -131,7 +127,7 @@ class TaskSubmissionRepository {
       }
     } catch (e) {
       print(e.toString());
-      throw e;
+      rethrow;
     }
   }
 }

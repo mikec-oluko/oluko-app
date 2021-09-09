@@ -157,11 +157,10 @@ class CourseEnrollmentRepository {
       return [];
     }
     try {
-      var futures = <Future>[];
       for (var courseEnrollment in courseEnrollments) {
-        futures.add(getChallengesFromCourseEnrollment(courseEnrollment, challengeList));
+        await getChallengesFromCourseEnrollment(
+            courseEnrollment, challengeList);
       }
-      Future.wait(futures);
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,
