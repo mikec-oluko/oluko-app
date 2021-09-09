@@ -11,7 +11,8 @@ class MovementUtils {
   static Text movementTitle(String title) {
     return Text(
       title,
-      style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
+      textAlign: TextAlign.center,
+      style: OlukoFonts.olukoSubtitleFont(custoFontWeight: FontWeight.bold),
     );
   }
 
