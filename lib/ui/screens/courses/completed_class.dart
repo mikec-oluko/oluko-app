@@ -9,6 +9,7 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -73,7 +74,12 @@ class _CompletedClassState extends State<CompletedClass> {
                   child: Row(mainAxisSize: MainAxisSize.max, children: [
                     OlukoPrimaryButton(
                         title: OlukoLocalizations.of(context).find('done'),
-                        onPressed: () {})
+                        onPressed: () {
+                          Navigator.popUntil(
+                              context,
+                              ModalRoute.withName(
+                                  routeLabels[RouteEnum.insideClass]));
+                        })
                   ])),
               SizedBox(height: 20),
             ])));
@@ -114,18 +120,16 @@ class _CompletedClassState extends State<CompletedClass> {
                 padding: const EdgeInsets.only(bottom: 30, left: 10),
                 child: RotationTransition(
                     turns: AlwaysStoppedAnimation(-0.01),
-                    child: RotatedBox(
-                        quarterTurns: 1,
-                        child: Container(
-                          height: 153,
-                          width: 153,
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              fit: BoxFit.fill,
-                              image: NetworkImage(_imageUrl),
-                            ),
-                          ),
-                        )))),
+                    child: Container(
+                      height: 153,
+                      width: 153,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          fit: BoxFit.fill,
+                          image: NetworkImage(_imageUrl),
+                        ),
+                      ),
+                    ))),
             Image.asset(
               'assets/courses/empty_frame.png',
               scale: 3,

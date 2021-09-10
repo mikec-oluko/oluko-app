@@ -112,6 +112,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
   double progress = 0.0;
   bool isThereError = false;
 
+  bool shareDone = false;
+
   @override
   void initState() {
     _setupCameras();
@@ -253,48 +255,70 @@ class _SegmentClocksState extends State<SegmentClocks> {
       children: [
         _timerSection(this.workoutType, this.workState),
         _lowerSection(this.workoutType, this.workState),
-        workState == WorkState.finished
-            ? Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    OlukoOutlinedButton(
-                        title: 'Go To Class',
-                        thinPadding: true,
-                        onPressed: () => Navigator.popUntil(
-                            context,
-                            ModalRoute.withName(
-                                routeLabels[RouteEnum.insideClass]))),
-                    SizedBox(
-                      width: 15,
-                    ),
-                    OlukoPrimaryButton(
-                      title: 'Next Segment',
-                      thinPadding: true,
-                      onPressed: () {
-                        widget.segmentIndex < widget.segments.length - 1
-                            ? Navigator.pushNamed(
-                                context, routeLabels[RouteEnum.segmentClocks],
-                                arguments: {
-                                    'segmentIndex': widget.segmentIndex + 1,
-                                    'classIndex': widget.classIndex,
-                                    'courseEnrollment': widget.courseEnrollment,
-                                    'workoutType': workoutType,
-                                    'segments': widget.segments,
-                                  })
-                            : Navigator.popUntil(
-                                context,
-                                ModalRoute.withName(
-                                    routeLabels[RouteEnum.insideClass]));
-                      },
-                    ),
-                  ],
-                ),
-              )
-            : SizedBox(),
+        workState == WorkState.finished ? showFinishedButtons() : SizedBox(),
       ],
     ));
+  }
+
+  Widget showFinishedButtons() {
+    if (this.workoutType == WorkoutType.segmentWithRecording && !shareDone) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            OlukoPrimaryButton(
+              title: OlukoLocalizations.of(context).find('done'),
+              thinPadding: true,
+              onPressed: () {
+                setState(() {
+                  shareDone = true;
+                });
+              },
+            ),
+          ],
+        ),
+      );
+    } else {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            OlukoOutlinedButton(
+                title: OlukoLocalizations.of(context).find('goToClass'),
+                thinPadding: true,
+                onPressed: () => Navigator.popUntil(context,
+                    ModalRoute.withName(routeLabels[RouteEnum.insideClass]))),
+            SizedBox(
+              width: 15,
+            ),
+            OlukoPrimaryButton(
+              title: OlukoLocalizations.of(context).find('nextSegment'),
+              thinPadding: true,
+              onPressed: () {
+                widget.segmentIndex < widget.segments.length - 1
+                    ? Navigator.pushNamed(
+                        context, routeLabels[RouteEnum.segmentClocks],
+                        arguments: {
+                            'segmentIndex': widget.segmentIndex + 1,
+                            'classIndex': widget.classIndex,
+                            'courseEnrollment': widget.courseEnrollment,
+                            'workoutType': workoutType,
+                            'segments': widget.segments,
+                          })
+                    : Navigator.pushNamed(
+                        context, routeLabels[RouteEnum.completedClass],
+                        arguments: {
+                            'classIndex': widget.classIndex,
+                            'courseEnrollment': widget.courseEnrollment,
+                          });
+              },
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   /*
@@ -846,7 +870,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                   widget.segments[widget.segmentIndex], context)),
           Padding(
               padding: const EdgeInsets.symmetric(vertical: 20.0),
-              child: workoutType == WorkoutType.segment
+              child: workoutType == WorkoutType.segment || shareDone
                   ? FeedbackCard()
                   : ShareCard()),
         ],
