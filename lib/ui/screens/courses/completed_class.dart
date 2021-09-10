@@ -52,7 +52,7 @@ class _CompletedClassState extends State<CompletedClass> {
     });
   }
 
-  form() {
+  Widget form() {
     return Scaffold(
         appBar: OlukoAppBar(
           showDivider: false,
@@ -156,7 +156,7 @@ class _CompletedClassState extends State<CompletedClass> {
                             textAlign: TextAlign.start,
                           )
                         ]),
-                    SizedBox(width: 50),  
+                    SizedBox(width: 50),
                     getCameraIcon()
                   ]))),
         ]));

@@ -24,7 +24,7 @@ class Tag extends Base {
 
   factory Tag.fromJson(Map<String, dynamic> json) {
     Tag courseCategory = Tag(
-      name: json['name'],
+      name: json['name'].toString(),
     );
     courseCategory.setBase(json);
     return courseCategory;

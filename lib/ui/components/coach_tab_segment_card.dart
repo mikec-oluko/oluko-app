@@ -14,9 +14,11 @@ class _CoachTabSegmentCardState extends State<CoachTabSegmentCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      decoration: BoxDecoration(
+          color: OlukoColors.challengesGreyBackground,
+          borderRadius: BorderRadius.all(Radius.circular(5))),
       height: 100,
       width: 150,
-      color: OlukoColors.challengesGreyBackground,
       child: Wrap(
         children: [
           Row(
@@ -25,6 +27,8 @@ class _CoachTabSegmentCardState extends State<CoachTabSegmentCard> {
                   padding: const EdgeInsets.all(5),
                   child: Container(
                     decoration: BoxDecoration(
+                      color: OlukoColors.challengesGreyBackground,
+                      borderRadius: BorderRadius.all(Radius.circular(5)),
                       image: DecorationImage(
                         image: NetworkImage(widget.segment.classImage),
                         fit: BoxFit.cover,
@@ -32,7 +36,6 @@ class _CoachTabSegmentCardState extends State<CoachTabSegmentCard> {
                           return Text('Your error widget...');
                         },
                       ),
-                      color: OlukoColors.white,
                     ),
                     width: 60,
                     height: 90,

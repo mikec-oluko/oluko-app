@@ -103,7 +103,7 @@ class MovementSubmissionRepository {
   static List<MovementSubmission> mapQueryToMovementSubmission(
       QuerySnapshot qs) {
     return qs.docs.map((DocumentSnapshot ds) {
-      dynamic movementSubmissionData = ds.data();
+      Map<String, dynamic> movementSubmissionData = ds.data() as Map<String, dynamic>;
       return MovementSubmission.fromJson(movementSubmissionData);
     }).toList();
   }

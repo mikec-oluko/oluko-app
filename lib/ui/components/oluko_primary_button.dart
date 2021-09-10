@@ -34,26 +34,19 @@ class _State extends State<OlukoPrimaryButton> {
     }
     return widget.icon == null
         ? Expanded(
-            child: ElevatedButton(
-                style: _buttonStyle(),
-                onPressed: () => widget.onPressed(),
-                child: _textLabel()),
+            child: ElevatedButton(style: _buttonStyle(), onPressed: () => widget.onPressed(), child: _textLabel()),
           )
         : Expanded(
             child: ElevatedButton.icon(
-                style: _buttonStyle(),
-                onPressed: () => widget.onPressed(),
-                icon: widget.icon,
-                label: _textLabel()),
+                style: _buttonStyle(), onPressed: () => widget.onPressed(), icon: widget.icon, label: _textLabel()),
           );
   }
 
-  _buttonStyle() {
-    return ElevatedButton.styleFrom(
-        primary: buttonColor, side: BorderSide(color: buttonColor));
+  ButtonStyle _buttonStyle() {
+    return ElevatedButton.styleFrom(primary: buttonColor, side: BorderSide(color: buttonColor));
   }
 
-  _textLabel() {
+  Widget _textLabel() {
     if (widget.thinPadding) {
       return Padding(
           padding: const EdgeInsets.symmetric(vertical: 15),

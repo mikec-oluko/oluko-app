@@ -11,7 +11,7 @@ abstract class CourseEnrollmentUpdateState {}
 class Loading extends CourseEnrollmentUpdateState {}
 
 class Failure extends CourseEnrollmentUpdateState {
-  final Exception exception;
+  final dynamic exception;
   Failure({this.exception});
 }
 
@@ -25,8 +25,8 @@ class SaveSelfieSuccess extends CourseEnrollmentUpdateState {
 class CourseEnrollmentUpdateBloc extends Cubit<CourseEnrollmentUpdateState> {
   CourseEnrollmentUpdateBloc() : super(Loading());
 
-  void saveMovementCounter(CourseEnrollment courseEnrollment, int segmentIndex,
-      int classIndex, MovementSubmodel movement, Counter counter) async {
+  void saveMovementCounter(CourseEnrollment courseEnrollment, int segmentIndex, int classIndex,
+      MovementSubmodel movement, Counter counter) async {
     try {
       await CourseEnrollmentRepository.saveMovementCounter(
           courseEnrollment, segmentIndex, classIndex, movement, counter);
@@ -37,6 +37,7 @@ class CourseEnrollmentUpdateBloc extends Cubit<CourseEnrollmentUpdateState> {
         stackTrace: stackTrace,
       );
       emit(Failure(exception: exception));
+      rethrow;
     }
   }
 

@@ -15,7 +15,7 @@ class FavoriteFriendSuccess extends FavoriteFriendState {
 }
 
 class FavoriteFriendFailure extends FavoriteFriendState {
-  final Exception exception;
+  final dynamic exception;
 
   FavoriteFriendFailure({this.exception});
 }
@@ -23,11 +23,9 @@ class FavoriteFriendFailure extends FavoriteFriendState {
 class FavoriteFriendBloc extends Cubit<FavoriteFriendState> {
   FavoriteFriendBloc() : super(FavoriteFriendLoading());
 
-  void favoriteFriend(
-      BuildContext context, Friend friend, FriendModel friendModel) async {
+  void favoriteFriend(BuildContext context, Friend friend, FriendModel friendModel) async {
     try {
-      FriendModel updatedFriendModel =
-          await FriendRepository.markFriendAsFavorite(friend, friendModel);
+      FriendModel updatedFriendModel = await FriendRepository.markFriendAsFavorite(friend, friendModel);
       emit(FavoriteFriendSuccess(friendModel: updatedFriendModel));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -35,6 +33,7 @@ class FavoriteFriendBloc extends Cubit<FavoriteFriendState> {
         stackTrace: stackTrace,
       );
       emit(FavoriteFriendFailure(exception: exception));
+      rethrow;
     }
   }
 }

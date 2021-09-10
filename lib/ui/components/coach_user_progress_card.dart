@@ -43,11 +43,11 @@ class _CoachUserProgressCardState extends State<CoachUserProgressCard> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     CoachUserProgressComponent(
-                        progressValue: widget.userStats.completedClasses,
+                        progressValue: widget.userStats != null ? widget.userStats.completedClasses : 0,
                         nameOfField: OlukoLocalizations.of(context)
                             .find('classesCompleted')),
                     CoachUserProgressComponent(
-                        progressValue: widget.userStats.completedChallenges,
+                        progressValue: widget.userStats != null ? widget.userStats.completedChallenges : 0,
                         nameOfField: OlukoLocalizations.of(context)
                             .find('challengesCompleted')),
                     TextButton(
@@ -69,7 +69,7 @@ class _CoachUserProgressCardState extends State<CoachUserProgressCard> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     CoachUserProgressComponent(
-                        progressValue: widget.userStats.completedCourses,
+                        progressValue: widget.userStats != null ? widget.userStats.completedCourses : 0,
                         nameOfField: OlukoLocalizations.of(context)
                             .find('coursesCompleted')),
                     CoachUserProgressComponent(

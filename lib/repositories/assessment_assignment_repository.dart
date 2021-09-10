@@ -42,7 +42,8 @@ class AssessmentAssignmentRepository {
         .get();
 
     if (docRef.docs.length > 0) {
-      return AssessmentAssignment.fromJson(docRef.docs[0].data());
+      return AssessmentAssignment.fromJson(
+          docRef.docs[0].data() as Map<String, dynamic>);
     } else {
       return null;
     }

@@ -52,13 +52,7 @@ class _CoachProfileState extends State<CoachProfile> {
               height: MediaQuery.of(context).size.height,
               child: Stack(
                 clipBehavior: Clip.none,
-                children: [
-                  coachCover(context),
-                  coachInformationComponent(context),
-                  uploadCoverButton(context),
-                  coachGallery(context),
-                  askCoachComponent(context)
-                ],
+                children: [coachCover(context), coachInformationComponent(context), uploadCoverButton(context), coachGallery(context), askCoachComponent(context)],
               ),
             ),
           ],
@@ -83,7 +77,7 @@ class _CoachProfileState extends State<CoachProfile> {
     );
   }
 
-  askCoachComponent(BuildContext context) {
+  Widget askCoachComponent(BuildContext context) {
     return Align(
       alignment: Alignment.bottomCenter,
       child: Container(
@@ -107,8 +101,7 @@ class _CoachProfileState extends State<CoachProfile> {
                             padding: const EdgeInsets.symmetric(horizontal: 10),
                             child: IntrinsicHeight(
                               child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Row(
                                     children: [
@@ -117,8 +110,7 @@ class _CoachProfileState extends State<CoachProfile> {
                                         scale: 5,
                                       ),
                                       Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 10),
+                                        padding: const EdgeInsets.symmetric(horizontal: 10),
                                         child: Image.asset(
                                           'assets/courses/coach_audio.png',
                                           width: 150,
@@ -130,11 +122,9 @@ class _CoachProfileState extends State<CoachProfile> {
                                   ),
                                   VerticalDivider(color: OlukoColors.grayColor),
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 5),
+                                    padding: const EdgeInsets.symmetric(horizontal: 5),
                                     child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         Image.asset(
                                           'assets/courses/coach_delete.png',
@@ -164,9 +154,7 @@ class _CoachProfileState extends State<CoachProfile> {
                         children: [
                           Text(
                             "Ask your coach",
-                            style: OlukoFonts.olukoMediumFont(
-                                customColor: OlukoColors.white,
-                                custoFontWeight: FontWeight.w500),
+                            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                           ),
                           Container(
                             clipBehavior: Clip.none,
@@ -190,7 +178,7 @@ class _CoachProfileState extends State<CoachProfile> {
     );
   }
 
-  coachGallery(BuildContext context) {
+  Widget coachGallery(BuildContext context) {
     return Align(
       alignment: Alignment.center,
       child: Padding(
@@ -206,9 +194,7 @@ class _CoachProfileState extends State<CoachProfile> {
                 padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
                 child: Text(
                   "View All",
-                  style: OlukoFonts.olukoMediumFont(
-                      customColor: OlukoColors.primary,
-                      custoFontWeight: FontWeight.w500),
+                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
                 ),
               ),
               GridView.count(
@@ -280,9 +266,7 @@ class _CoachProfileState extends State<CoachProfile> {
           clipBehavior: Clip.none,
           width: 40,
           height: 40,
-          child: TextButton(
-              onPressed: () {},
-              child: Image.asset('assets/profile/uploadImage.png')),
+          child: TextButton(onPressed: () {}, child: Image.asset('assets/profile/uploadImage.png')),
         ),
       ),
     );
@@ -318,13 +302,8 @@ class _CoachProfileState extends State<CoachProfile> {
                                   backgroundImage: Image.network(
                                     widget.coachUser.avatarThumbnail,
                                     fit: BoxFit.contain,
-                                    frameBuilder: (BuildContext context,
-                                            Widget child,
-                                            int frame,
-                                            bool wasSynchronouslyLoaded) =>
-                                        ImageUtils.frameBuilder(context, child,
-                                            frame, wasSynchronouslyLoaded,
-                                            height: 30, width: 30),
+                                    frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
+                                        ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 30, width: 30),
                                     height: 30,
                                     width: 30,
                                   ).image,
@@ -344,32 +323,30 @@ class _CoachProfileState extends State<CoachProfile> {
                             children: [
                               Text(
                                 OlukoLocalizations.of(context).find('coach'),
-                                style: OlukoFonts.olukoBigFont(
-                                    customColor: OlukoColors.primary,
-                                    custoFontWeight: FontWeight.w500),
+                                style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
                               ),
                               SizedBox(
                                 width: 5.0,
                               ),
-                              Text(
-                                // widget.coachUser.lastName,
-                                widget.coachUser.firstName,
-                                style: OlukoFonts.olukoBigFont(
-                                    customColor: OlukoColors.primary,
-                                    custoFontWeight: FontWeight.w500),
-                              ),
+                              widget.coachUser != null
+                                  ? Text(
+                                      // widget.coachUser.lastName,
+                                      widget.coachUser.firstName,
+                                      style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
+                                    )
+                                  : Container(),
                             ],
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10.0),
-                          child: Text(
-                            _userLocation,
-                            style: OlukoFonts.olukoMediumFont(
-                                customColor: OlukoColors.grayColor,
-                                custoFontWeight: FontWeight.w300),
-                          ),
-                        )
+                        _userLocation != null
+                            ? Padding(
+                                padding: const EdgeInsets.only(left: 10.0),
+                                child: Text(
+                                  _userLocation,
+                                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300),
+                                ),
+                              )
+                            : Container()
                       ],
                     )
                   ],
@@ -381,7 +358,7 @@ class _CoachProfileState extends State<CoachProfile> {
   }
 
   String getUserLocation(UserResponse user) {
-    String userLocationContent;
+    String userLocationContent = '';
     if (user.city != null && (user.state != null && user.country != null)) {
       userLocationContent = "${user.city}, ${user.state} ${user.country}";
     }

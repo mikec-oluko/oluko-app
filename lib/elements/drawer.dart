@@ -35,7 +35,7 @@ class OlukoDrawer extends StatelessWidget {
             children: [
               DrawerTile(
                   icon: Icons.home,
-                  onTap: () {
+                  tap: () {
                     if (currentPage != "Home")
                       Navigator.pushReplacementNamed(context, '/home');
                   },
@@ -44,7 +44,7 @@ class OlukoDrawer extends StatelessWidget {
                   isSelected: currentPage == "Home" ? true : false),
               DrawerTile(
                   icon: Icons.pie_chart,
-                  onTap: () {
+                  tap: () {
                     if (currentPage != "Profile")
                       Navigator.pushReplacementNamed(context, '/profile');
                   },
@@ -53,7 +53,7 @@ class OlukoDrawer extends StatelessWidget {
                   isSelected: currentPage == "Profile" ? true : false),
               DrawerTile(
                   icon: Icons.account_circle,
-                  onTap: () {
+                  tap: () {
                     if (currentPage != "Account")
                       Navigator.pushReplacementNamed(context, '/account');
                   },
@@ -62,7 +62,7 @@ class OlukoDrawer extends StatelessWidget {
                   isSelected: currentPage == "Account" ? true : false),
               DrawerTile(
                   icon: Icons.settings_input_component,
-                  onTap: () {
+                  tap: () {
                     if (currentPage != "Elements")
                       Navigator.pushReplacementNamed(context, '/elements');
                   },
@@ -71,7 +71,7 @@ class OlukoDrawer extends StatelessWidget {
                   isSelected: currentPage == "Elements" ? true : false),
               DrawerTile(
                   icon: Icons.apps,
-                  onTap: () {
+                  tap: () {
                     if (currentPage != "Articles")
                       Navigator.pushReplacementNamed(context, '/articles');
                   },

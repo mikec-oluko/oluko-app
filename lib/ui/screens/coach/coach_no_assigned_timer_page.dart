@@ -57,7 +57,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
   Widget build(BuildContext context) {
     final difference = _auction.difference(_now);
     return Scaffold(
-      appBar: OlukoAppBar(title: OlukoLocalizations.of(context).find('coach')),
+      appBar: OlukoAppBar(title: OlukoLocalizations.of(context).find('coach'), showBackButton: false,),
       body: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,

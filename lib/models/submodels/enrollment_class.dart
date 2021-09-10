@@ -23,17 +23,18 @@ class EnrollmentClass {
 
   factory EnrollmentClass.fromJson(Map<String, dynamic> json) {
     return EnrollmentClass(
-        id: json['id'],
-        reference: json['reference'],
-        name: json['name'],
-        image: json['image'],
-        selfieDownloadUrl: json['selfie_download_url'],
-        selfieThumbnailUrl: json['selfie_thumbnail_url'],
-        compleatedAt: json['compleated_at'],
+        id: json['id'].toString(),
+        reference: json['reference'] as DocumentReference,
+        name: json['name'].toString(),
+        image: json['image'].toString(),
+        compleatedAt: json['compleated_at'] as Timestamp,
+        selfieDownloadUrl: json['selfie_download_url'].toString(),
+        selfieThumbnailUrl: json['selfie_thumbnail_url'].toString(),
         segments: json['segments'] == null
             ? null
-            : List<EnrollmentSegment>.from(json['segments']
-                .map((segment) => EnrollmentSegment.fromJson(segment))));
+            : List<EnrollmentSegment>.from((json['segments'] as Iterable).map(
+                (segment) => EnrollmentSegment.fromJson(
+                    segment as Map<String, dynamic>))));
   }
 
   Map<String, dynamic> toJson() => {

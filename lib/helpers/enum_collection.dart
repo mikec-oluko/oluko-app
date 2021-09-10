@@ -39,7 +39,7 @@ enum ErrorTypeOption { noConnection, noContent }
 
 enum OlukoPanelAction { open, close, hide, show, loading, error, success }
 
-enum UserConnectStatus { connected, noConnected, requestPending }
+enum UserConnectStatus { connected, notConnected, requestPending }
 
 enum CoachContentSection {
   sentVideos,
