@@ -31,7 +31,7 @@ class CourseEnrollmentRepository {
   static Future<CourseEnrollment> get(Course course, User user) async {
     CollectionReference reference = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('courseEnrollments');
 
     final QuerySnapshot qs =
