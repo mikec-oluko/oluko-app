@@ -152,7 +152,7 @@ class CourseEnrollmentRepository {
           .collection('projects')
           .doc(GlobalConfiguration().getValue("projectId"))
           .collection('courseEnrollments')
-          .where('created_by', isEqualTo: userId)
+          .where('created_by', isEqualTo: userId).orderBy('created_at', descending: true)
           .get();
 
       if (docRef.docs.isEmpty) {
