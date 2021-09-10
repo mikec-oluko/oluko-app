@@ -8,19 +8,18 @@ class EnrollmentSegment {
   Timestamp compleatedAt;
   List<EnrollmentMovement> movements;
 
-  EnrollmentSegment(
-      {this.id, this.reference, this.name, this.compleatedAt, this.movements});
+  EnrollmentSegment({this.id, this.reference, this.name, this.compleatedAt, this.movements});
 
   factory EnrollmentSegment.fromJson(Map<String, dynamic> json) {
     return EnrollmentSegment(
-        id: json['id'],
-        reference: json['reference'],
-        name: json['name'],
-        compleatedAt: json['compleated_at'],
+        id: json['id'].toString(),
+        reference: json['reference'] as DocumentReference,
+        name: json['name'].toString(),
+        compleatedAt: json['compleated_at'] as Timestamp,
         movements: json['movements'] == null
             ? null
-            : List<EnrollmentMovement>.from(json['movements']
-                .map((movement) => EnrollmentMovement.fromJson(movement))));
+            : List<EnrollmentMovement>.from((json['movements'] as Iterable)
+                .map((movement) => EnrollmentMovement.fromJson(movement as Map<String, dynamic>))));
   }
 
   Map<String, dynamic> toJson() => {
@@ -28,8 +27,6 @@ class EnrollmentSegment {
         'reference': reference,
         'name': name,
         'compleated_at': compleatedAt,
-        'movements': movements == null
-            ? null
-            : List<dynamic>.from(movements.map((movement) => movement.toJson()))
+        'movements': movements == null ? null : List<dynamic>.from(movements.map((movement) => movement.toJson()))
       };
 }

@@ -33,14 +33,14 @@ class Movement extends Base {
 
   factory Movement.fromJson(Map<String, dynamic> json) {
     Movement movement = Movement(
-        name: json['name'],
-        video: json['video'],
-        description: json['description'],
-        iconImage: json['icon_image'],
+        name: json['name'].toString(),
+        video: json['video'].toString(),
+        description: json['description'].toString(),
+        iconImage: json['icon_image'].toString(),
         tags: json['tags'] == null
             ? null
-            : json['tags']
-                .map<ObjectSubmodel>((tag) => ObjectSubmodel.fromJson(tag))
+            : (json['tags'] as Iterable)
+                .map<ObjectSubmodel>((tag) => ObjectSubmodel.fromJson(tag as Map<String, dynamic>))
                 .toList());
     movement.setBase(json);
     return movement;

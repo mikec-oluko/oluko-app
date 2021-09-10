@@ -22,12 +22,7 @@ class PlayerResponse extends StatefulWidget {
   final VideoInfo videoInfo;
   final OnCameraCallBack onCamera;
 
-  const PlayerResponse(
-      {Key key,
-      @required this.parentVideoInfo,
-      this.videoInfo,
-      this.videoReference,
-      this.onCamera})
+  const PlayerResponse({Key key, @required this.parentVideoInfo, this.videoInfo, this.videoReference, this.onCamera})
       : super(key: key);
 
   @override
@@ -96,8 +91,7 @@ class _PlayerResponseState extends State<PlayerResponse> {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           double markerPosition = getCurrentVideoPosition();
-          BlocProvider.of<VideoInfoBloc>(context)
-            ..addMarkerToVideoInfo(markerPosition, this.widget.videoReference);
+          BlocProvider.of<VideoInfoBloc>(context)..addMarkerToVideoInfo(markerPosition, this.widget.videoReference);
           setState(() {
             _markers.add(markerPosition);
           });
@@ -122,31 +116,21 @@ class _PlayerResponseState extends State<PlayerResponse> {
                             height: MediaQuery.of(context).size.height,
                             child: NetworkPlayerLifeCycle(
                               widget.parentVideoInfo.video.url,
-                              (BuildContext context,
-                                  VideoPlayerController controller) {
+                              (BuildContext context, VideoPlayerController controller) {
                                 this.videoParentController = controller;
-                                this.contents['videoParentController'] =
-                                    controller;
+                                this.contents['videoParentController'] = controller;
                                 //addVideoControllerListener(controller);
                                 return AspectRatioVideo(controller);
                               },
                             ))),
                     Positioned(
-                        bottom: this.videoController != null &&
-                                this.videoController.value.aspectRatio < 1
-                            ? 110
-                            : 60,
-                        right: this.videoController != null &&
-                                this.videoController.value.aspectRatio < 1
-                            ? -100
-                            : 0,
+                        bottom: this.videoController != null && this.videoController.value.aspectRatio < 1 ? 110 : 60,
+                        right: this.videoController != null && this.videoController.value.aspectRatio < 1 ? -100 : 0,
                         child: Container(
                             height: MediaQuery.of(context).size.height / 3,
                             width: MediaQuery.of(context).size.width,
-                            child: NetworkPlayerLifeCycle(
-                                widget.videoInfo.video.url,
-                                (BuildContext context,
-                                    VideoPlayerController controller) {
+                            child: NetworkPlayerLifeCycle(widget.videoInfo.video.url,
+                                (BuildContext context, VideoPlayerController controller) {
                               this.videoController = controller;
                               this.contents['videoController'] = controller;
                               this.videoController.value.aspectRatio;
@@ -173,104 +157,72 @@ class _PlayerResponseState extends State<PlayerResponse> {
               child: Visibility(
                   visible: !openCanvas,
                   child: Padding(
-                    padding: openCanvas
-                        ? EdgeInsets.only(
-                            top: 8, left: 8, right: 8, bottom: 200.0)
-                        : EdgeInsets.all(8.0),
+                    padding:
+                        openCanvas ? EdgeInsets.only(top: 8, left: 8, right: 8, bottom: 200.0) : EdgeInsets.all(8.0),
                     child: Container(
                         padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20.0),
-                            color: Colors.green),
+                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(20.0), color: Colors.green),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 8.0, horizontal: 8.0),
+                          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
                               Visibility(
                                 visible: true,
-                                child: Stack(
-                                    alignment:
-                                        AlignmentDirectional.bottomCenter,
-                                    children: <Widget>[
-                                      Container(
-                                        height: 25,
-                                        child: Slider.adaptive(
-                                          activeColor:
-                                              Colors.lightGreen.shade200,
-                                          inactiveColor: Colors.teal.shade700,
-                                          value: getCurrentVideoPosition(),
-                                          max: getSliderMac().toDouble(),
-                                          min: 0.0,
-                                          onChanged: (val) async {
-                                            await Future.wait([
-                                              videoParentController.seekTo(
-                                                  Duration(
-                                                      milliseconds:
-                                                          val.toInt())),
-                                              videoController.seekTo(Duration(
-                                                  milliseconds: val.toInt()))
-                                            ]);
-                                            // await pauseContents();
-                                            setState(() {});
-                                          },
-                                          onChangeEnd: (val) async {
-                                            // await Future.wait([
-                                            //   videoParentController.seekTo(Duration(
-                                            //       milliseconds: val.toInt())),
-                                            //   videoController.seekTo(
-                                            //       Duration(milliseconds: val.toInt()))
-                                            // ]);
-                                            // await pauseContents();
-                                            this.ended = contentsEnded();
-                                            this.lastPosition = val.toInt();
-                                            List<DrawPoint>
-                                                pointsUntilTimeStamp =
-                                                getPointsUntilTimestamp(
-                                                    this
-                                                        .videoParentController
-                                                        .value
-                                                        .position
-                                                        .inMilliseconds,
-                                                    this.canvasPointsRecording);
-                                            List<DrawingPoints>
-                                                drawingPointsUntilTimestamp =
-                                                [];
-                                            pointsUntilTimeStamp
-                                                .forEach((element) {
-                                              drawingPointsUntilTimestamp
-                                                  .add(element.point);
-                                            });
-                                            this
-                                                .canvasKey
-                                                .currentState
-                                                .setPoints(
-                                                    drawingPointsUntilTimestamp);
-                                            this._autoPlay = true;
+                                child: Stack(alignment: AlignmentDirectional.bottomCenter, children: <Widget>[
+                                  Container(
+                                    height: 25,
+                                    child: Slider.adaptive(
+                                      activeColor: Colors.lightGreen.shade200,
+                                      inactiveColor: Colors.teal.shade700,
+                                      value: getCurrentVideoPosition(),
+                                      max: getSliderMac().toDouble(),
+                                      min: 0.0,
+                                      onChanged: (val) async {
+                                        await Future.wait([
+                                          videoParentController.seekTo(Duration(milliseconds: val.toInt())),
+                                          videoController.seekTo(Duration(milliseconds: val.toInt()))
+                                        ]);
+                                        // await pauseContents();
+                                        setState(() {});
+                                      },
+                                      onChangeEnd: (val) async {
+                                        // await Future.wait([
+                                        //   videoParentController.seekTo(Duration(
+                                        //       milliseconds: val.toInt())),
+                                        //   videoController.seekTo(
+                                        //       Duration(milliseconds: val.toInt()))
+                                        // ]);
+                                        // await pauseContents();
+                                        this.ended = contentsEnded();
+                                        this.lastPosition = val.toInt();
+                                        List<DrawPoint> pointsUntilTimeStamp = getPointsUntilTimestamp(
+                                            this.videoParentController.value.position.inMilliseconds,
+                                            this.canvasPointsRecording);
+                                        List<DrawingPoints> drawingPointsUntilTimestamp = [];
+                                        pointsUntilTimeStamp.forEach((element) {
+                                          drawingPointsUntilTimestamp.add(element.point);
+                                        });
+                                        this.canvasKey.currentState.setPoints(drawingPointsUntilTimestamp);
+                                        this._autoPlay = true;
 
-                                            setState(() {});
-                                          },
-                                        ),
-                                      ),
-                                      Container(
-                                          height: 55,
-                                          child: _markersStack(
-                                              widget.videoInfo.markers)),
-                                    ]),
+                                        setState(() {});
+                                      },
+                                    ),
+                                  ),
+                                  Container(height: 55, child: _markersStack(widget.videoInfo.markers)),
+                                ]),
                               ),
                               Container(
                                   height: 40,
                                   child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: <Widget>[
                                       IconButton(
                                           color: Colors.white,
                                           icon: Icon(Icons.arrow_back),
                                           onPressed: () {
-                                            setState(
-                                                () => Navigator.pop(context));
+                                            setState(() => Navigator.pop(context));
                                           }),
                                       IconButton(
                                           color: Colors.white,
@@ -299,13 +251,10 @@ class _PlayerResponseState extends State<PlayerResponse> {
                                           color: Colors.white,
                                           icon: Icon(Icons.save),
                                           onPressed: () {
-                                            BlocProvider.of<VideoInfoBloc>(
-                                                context)
+                                            BlocProvider.of<VideoInfoBloc>(context)
                                               ..addDrawingToVideoInfo(
-                                                  this.canvasPointsRecording,
-                                                  widget.videoReference);
-                                            widget.videoInfo.drawing =
-                                                this.canvasPointsRecording;
+                                                  this.canvasPointsRecording, widget.videoReference);
+                                            widget.videoInfo.drawing = this.canvasPointsRecording;
                                           }),
                                       // IconButton(
                                       //     icon: Icon(Icons.color_lens),
@@ -327,24 +276,19 @@ class _PlayerResponseState extends State<PlayerResponse> {
     _markers = markers;
     List<Widget> markerWidgets = [];
     _markers.forEach((marker) {
-      markerWidgets.add(buildMarkerTag(marker,
-          icon: Icons.add_location_rounded, color: Colors.yellow));
+      markerWidgets.add(buildMarkerTag(marker, icon: Icons.add_location_rounded, color: Colors.yellow));
     });
     return Stack(children: markerWidgets);
   }
 
   double getCurrentVideoPosition() {
     double position = 0;
-    if (videoParentController != null &&
-        videoParentController.value.position != null) {
+    if (videoParentController != null && videoParentController.value.position != null) {
       if (videoParentController.value.duration != null &&
-          videoParentController.value.duration <
-              videoParentController.value.position) {
-        position =
-            videoParentController.value.duration.inMilliseconds.toDouble();
+          videoParentController.value.duration < videoParentController.value.position) {
+        position = videoParentController.value.duration.inMilliseconds.toDouble();
       } else {
-        position =
-            videoParentController.value.position.inMilliseconds.toDouble();
+        position = videoParentController.value.position.inMilliseconds.toDouble();
       }
     }
     return position;
@@ -356,8 +300,7 @@ class _PlayerResponseState extends State<PlayerResponse> {
       //Plays the recorded drawings on screen
       playBackCanvas();
     }
-    await Future.wait(
-        [this.videoController.play(), this.videoParentController.play()]);
+    await Future.wait([this.videoController.play(), this.videoParentController.play()]);
   }
 
   Future<void> pauseContents() async {
@@ -393,28 +336,23 @@ class _PlayerResponseState extends State<PlayerResponse> {
     return allContentsEnded;
   }
 
-  videoControllerEnded(videoController) {
-    if (videoController == null ||
-        videoController.value.position == null ||
-        videoController.value.duration == null) {
+  bool videoControllerEnded(VideoPlayerController videoController) {
+    if (videoController == null || videoController.value.position == null || videoController.value.duration == null) {
       return false;
     }
-    int controllerPosition =
-        roundedTimestamp(videoController.value.position.inMilliseconds);
-    int controllerDuration =
-        roundedTimestamp(videoController.value.duration.inMilliseconds);
+    int controllerPosition = roundedTimestamp(videoController.value.position.inMilliseconds);
+    int controllerDuration = roundedTimestamp(videoController.value.duration.inMilliseconds);
 
     bool ended = controllerPosition >= controllerDuration;
     return ended;
   }
 
-  allContentsReady() {
+  bool allContentsReady() {
     bool created = allContentsCreated();
     bool initialized = allVideosInitialized();
     bool buffered = true;
     //allVideosBuffered();
-    bool stopped = !videoParentController.value.isPlaying &&
-        !videoController.value.isPlaying;
+    bool stopped = !videoParentController.value.isPlaying && !videoController.value.isPlaying;
     bool contentsReady = created && initialized && buffered && stopped;
     return contentsReady;
   }
@@ -434,10 +372,8 @@ class _PlayerResponseState extends State<PlayerResponse> {
 
       num con1PositionMs = videoParentController.value.position.inMilliseconds;
       num con2PositionMs = videoController.value.position.inMilliseconds;
-      bool isDesync = ((con1PositionMs == this.lastPosition &&
-              con2PositionMs > this.lastPosition) ||
-          (con1PositionMs > this.lastPosition &&
-              con2PositionMs == this.lastPosition));
+      bool isDesync = ((con1PositionMs == this.lastPosition && con2PositionMs > this.lastPosition) ||
+          (con1PositionMs > this.lastPosition && con2PositionMs == this.lastPosition));
       if (isDesync) {
         print('<==== FIXING DESYNC ====>');
         if (playerState != PlayerState.WAITING) {
@@ -459,12 +395,9 @@ class _PlayerResponseState extends State<PlayerResponse> {
           con2PositionMs > this.lastPosition) {
         print('[START] Started after buffering...');
         playerState = PlayerState.RUNNING;
-        if (videoParentController.value.isPlaying &&
-            videoController.value.isPlaying) {
-          await Future.wait(
-              [this.videoParentController.play(), this.videoController.play()]);
-        } else if (!videoParentController.value.isPlaying &&
-            videoController.value.isPlaying) {
+        if (videoParentController.value.isPlaying && videoController.value.isPlaying) {
+          await Future.wait([this.videoParentController.play(), this.videoController.play()]);
+        } else if (!videoParentController.value.isPlaying && videoController.value.isPlaying) {
           await videoParentController.play();
         } else {
           await videoController.play();
@@ -488,11 +421,10 @@ class _PlayerResponseState extends State<PlayerResponse> {
 
   //Drawing Functions
   controllerCanvasListener() {
-    if (this.videoParentController.value.position == null ||
-        canvasListenerRunning == false) return;
+    if (this.videoParentController.value.position == null || canvasListenerRunning == false) return;
     DrawPoint canvasObj = DrawPoint(
         point: this.canvasPoints[this.canvasPoints.length - 1],
-        timeStamp: this.videoParentController.value.position.inMilliseconds);
+        miliseconds: this.videoParentController.value.position.inMilliseconds);
     canvasPointsRecording.add(canvasObj);
   }
 
@@ -500,15 +432,12 @@ class _PlayerResponseState extends State<PlayerResponse> {
     this.canvasListenerRunning = false;
 
     List<DrawPoint> drawingsUntilTimeStamp = getDrawingsUntilTimestamp(
-        this.videoParentController.value.position.inMilliseconds,
-        List.from(this.canvasPointsRecording));
+        this.videoParentController.value.position.inMilliseconds, List.from(this.canvasPointsRecording));
     List<DrawPoint> drawingsAfterTimeStamp = getDrawingsAfterTimestamp(
-        this.videoParentController.value.position.inMilliseconds,
-        List.from(this.canvasPointsRecording));
+        this.videoParentController.value.position.inMilliseconds, List.from(this.canvasPointsRecording));
 
     List<DrawingPoints> pointsToSet = [];
-    if (videoParentController != null &&
-        videoParentController.value.position.inMilliseconds == 0) {
+    if (videoParentController != null && videoParentController.value.position.inMilliseconds == 0) {
       pointsToSet = [];
     } else {
       pointsToSet = drawingsUntilTimeStamp.map((e) => e.point).toList();
@@ -517,13 +446,11 @@ class _PlayerResponseState extends State<PlayerResponse> {
     this.canvasKey.currentState.setPoints(pointsToSet);
     List<DrawPoint> recPoints = drawingsAfterTimeStamp;
 
-    this.playbackTimer =
-        Timer.periodic(new Duration(milliseconds: 10), (timer) {
+    this.playbackTimer = Timer.periodic(new Duration(milliseconds: 10), (timer) {
       if (recPoints.length == 0) {
         return;
       }
-      bool isAheadOfTime = recPoints[0].timeStamp >
-          this.videoParentController.value.position.inMilliseconds;
+      bool isAheadOfTime = recPoints[0].miliseconds > this.videoParentController.value.position.inMilliseconds;
       if (isAheadOfTime) {
         return;
       }
@@ -533,18 +460,16 @@ class _PlayerResponseState extends State<PlayerResponse> {
     });
   }
 
-  List<DrawPoint> getPointsUntilTimestamp(
-      num timeStamp, List<DrawPoint> canvasPoints) {
+  List<DrawPoint> getPointsUntilTimestamp(int miliseconds, List<DrawPoint> canvasPoints) {
     for (var i = 0; i < canvasPoints.length; i++) {
-      if (canvasPoints[i].timeStamp > timeStamp) {
+      if (canvasPoints[i].miliseconds > miliseconds) {
         return canvasPoints.getRange(0, i).toList();
       }
     }
     return [];
   }
 
-  List<DrawPoint> getDrawingsUntilTimestamp(
-      num timeStamp, List<DrawPoint> canvasPoints) {
+  List<DrawPoint> getDrawingsUntilTimestamp(num timeStamp, List<DrawPoint> canvasPoints) {
     if (this.canvasKey.currentState.points.length == 0) {
       return [];
     }
@@ -556,8 +481,7 @@ class _PlayerResponseState extends State<PlayerResponse> {
     return canvasPoints;
   }
 
-  List<DrawPoint> getDrawingsAfterTimestamp(
-      num timeStamp, List<DrawPoint> canvasPoints) {
+  List<DrawPoint> getDrawingsAfterTimestamp(num timeStamp, List<DrawPoint> canvasPoints) {
     if (this.canvasKey.currentState.points.length == 0) {
       return canvasPoints;
     }
@@ -576,7 +500,7 @@ class _PlayerResponseState extends State<PlayerResponse> {
     }
   }
 
-  setCanvas() {
+  Widget setCanvas() {
     canvasInstance = Draw(
       key: canvasKey,
       onChanges: (DrawingPoints point) {
@@ -591,44 +515,38 @@ class _PlayerResponseState extends State<PlayerResponse> {
   }
 
   //Video controller check functions
-  allContentIsPlaying() {
-    return this.videoParentController.value.isPlaying ||
-        this.videoController.value.isPlaying;
+  bool allContentIsPlaying() {
+    return this.videoParentController.value.isPlaying || this.videoController.value.isPlaying;
   }
 
-  allContentsCreated() {
+  bool allContentsCreated() {
     return videoParentController != null && videoController != null;
   }
 
-  allVideosInitialized() {
-    return videoParentController.value.initialized &&
-        videoController.value.initialized;
+  bool allVideosInitialized() {
+    return videoParentController.value.initialized && videoController.value.initialized;
   }
 
   allVideosBuffered() {
     return this.videoParentController.value.buffered.length > 0 &&
-        this.videoParentController.value.buffered.last.end >=
-            Duration(milliseconds: 1) &&
+        this.videoParentController.value.buffered.last.end >= Duration(milliseconds: 1) &&
         this.videoController.value.buffered.length > 0 &&
-        this.videoController.value.buffered.last.end >=
-            Duration(milliseconds: 1);
+        this.videoController.value.buffered.last.end >= Duration(milliseconds: 1);
   }
 
   //Other functions
-  num roundedTimestamp(num timeStamp) {
-    const num division = 20;
-    return (timeStamp / division).ceil();
+  int roundedTimestamp(int miliseconds) {
+    const int division = 20;
+    return (miliseconds / division).ceil();
   }
 
   num getSliderMac() {
-    return videoParentController != null &&
-            videoParentController.value.duration != null
+    return videoParentController != null && videoParentController.value.duration != null
         ? videoParentController.value.duration.inMilliseconds.toDouble()
         : 100;
   }
 
-  Container buildMarkerTag(num markerValue,
-      {IconData icon = Icons.location_on, Color color = Colors.black}) {
+  Container buildMarkerTag(num markerValue, {IconData icon = Icons.location_on, Color color = Colors.black}) {
     return Container(
       child: Align(
           alignment: FractionalOffset(markerValue / getSliderMac(), 0),
@@ -644,10 +562,8 @@ class _PlayerResponseState extends State<PlayerResponse> {
               focusColor: Colors.white,
               onPressed: () async {
                 await Future.wait([
-                  videoParentController
-                      .seekTo(Duration(milliseconds: markerValue.round())),
-                  videoController
-                      .seekTo(Duration(milliseconds: markerValue.round()))
+                  videoParentController.seekTo(Duration(milliseconds: markerValue.round())),
+                  videoController.seekTo(Duration(milliseconds: markerValue.round()))
                 ]);
                 this.playBackCanvas();
               },

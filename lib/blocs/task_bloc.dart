@@ -14,7 +14,7 @@ class TaskSuccess extends TaskState {
 }
 
 class TaskFailure extends TaskState {
-  final Exception exception;
+  final dynamic exception;
 
   TaskFailure({this.exception});
 }
@@ -36,6 +36,7 @@ class TaskBloc extends Cubit<TaskState> {
       );
       print(e.toString());
       emit(TaskFailure(exception: e));
+      rethrow;
     }
   }
 }

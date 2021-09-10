@@ -77,7 +77,7 @@ class _CoachProfileState extends State<CoachProfile> {
     );
   }
 
-  askCoachComponent(BuildContext context) {
+  Widget askCoachComponent(BuildContext context) {
     return Align(
       alignment: Alignment.bottomCenter,
       child: Container(
@@ -178,7 +178,7 @@ class _CoachProfileState extends State<CoachProfile> {
     );
   }
 
-  coachGallery(BuildContext context) {
+  Widget coachGallery(BuildContext context) {
     return Align(
       alignment: Alignment.center,
       child: Padding(

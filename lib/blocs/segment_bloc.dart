@@ -14,7 +14,7 @@ class GetSegmentsSuccess extends SegmentState {
 }
 
 class Failure extends SegmentState {
-  final Exception exception;
+  final dynamic exception;
 
   Failure({this.exception});
 }
@@ -32,6 +32,7 @@ class SegmentBloc extends Cubit<SegmentState> {
         stackTrace: stackTrace,
       );
       emit(Failure(exception: exception));
+      rethrow;
     }
   }
 }

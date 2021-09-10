@@ -83,7 +83,7 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
     });
   }
 
-  Widget _appBar() {
+  PreferredSizeWidget _appBar() {
     return OlukoAppBar(
       showBackButton: true,
       title: ' ',

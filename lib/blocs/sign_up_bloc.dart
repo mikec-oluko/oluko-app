@@ -20,7 +20,7 @@ class SignupSuccess extends UserState {
 class SignupLoading extends UserState {}
 
 class SignupFailure extends UserState {
-  final Exception exception;
+  final dynamic exception;
   SignupFailure({this.exception});
 }
 
@@ -29,7 +29,7 @@ class SignupBloc extends Cubit<UserState> {
 
   final _repository = AuthRepository();
 
-  Future<void> signUp(context, SignUpRequest request) async {
+  Future<void> signUp(BuildContext context, SignUpRequest request) async {
     if (request.password.contains(request.username)) {
       AppMessages.showSnackbar(
           context,

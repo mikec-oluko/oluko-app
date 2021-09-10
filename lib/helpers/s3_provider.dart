@@ -17,21 +17,18 @@ class S3Provider {
 
   S3Provider();
   //{this.accessKeyId, this.secretKeyId, this.endpoint, this.region}
-  void postFile(accessKeyId, secretKeyId) async {
+  void postFile(String accessKeyId, String secretKeyId) async {
     final file = File(path.join('/path/to/file', 'square-cinnamon.jpg'));
     final stream = http.ByteStream(DelegatingStream.typed(file.openRead()));
     final length = await file.length();
 
     final uri = Uri.parse(endpoint);
     final req = http.MultipartRequest("POST", uri);
-    final multipartFile = http.MultipartFile('file', stream, length,
-        filename: path.basename(file.path));
+    final multipartFile = http.MultipartFile('file', stream, length, filename: path.basename(file.path));
 
-    final policy = Policy.fromS3PresignedPost(
-        'uploaded/square-cinnamon.jpg', 'bucketname', accessKeyId, 15, length,
+    final policy = Policy.fromS3PresignedPost('uploaded/square-cinnamon.jpg', 'bucketname', accessKeyId, 15, length,
         region: region);
-    final key =
-        SigV4.calculateSigningKey(secretKeyId, policy.datetime, region, 's3');
+    final key = SigV4.calculateSigningKey(secretKeyId, policy.datetime, region, 's3');
     final signature = SigV4.calculateSignature(key, policy.encode());
 
     req.files.add(multipartFile);
@@ -54,6 +51,7 @@ class S3Provider {
         stackTrace: stackTrace,
       );
       print(e.toString());
+      rethrow;
     }
   }
 
@@ -68,17 +66,16 @@ class S3Provider {
         stackTrace: stackTrace,
       );
       print(e.toString());
+      rethrow;
     }
   }
 
-  Future<String> putFile(
-      Uint8List bodyBytes, String path, String fileName) async {
+  Future<String> putFile(Uint8List bodyBytes, String path, String fileName) async {
     final uri = Uri.parse('$endpoint/$path/$fileName');
     http.Response res;
 
     try {
-      res = await http.put(uri,
-          body: bodyBytes, headers: {'x-amz-acl': 'bucket-owner-full-control'});
+      res = await http.put(uri, body: bodyBytes, headers: {'x-amz-acl': 'bucket-owner-full-control'});
       return res.request.url.toString();
     } catch (e, stackTrace) {
       await Sentry.captureException(
@@ -86,6 +83,7 @@ class S3Provider {
         stackTrace: stackTrace,
       );
       print(e.toString());
+      rethrow;
     }
   }
 }

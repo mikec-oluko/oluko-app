@@ -14,7 +14,7 @@ class CourseCategorySuccess extends CourseCategoryState {
 }
 
 class CourseCategoryFailure extends CourseCategoryState {
-  final Exception exception;
+  final dynamic exception;
 
   CourseCategoryFailure({this.exception});
 }
@@ -35,6 +35,7 @@ class CourseCategoryBloc extends Cubit<CourseCategoryState> {
         stackTrace: stackTrace,
       );
       emit(CourseCategoryFailure(exception: exception));
+      rethrow;
     }
   }
 }

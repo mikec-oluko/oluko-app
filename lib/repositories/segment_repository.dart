@@ -22,13 +22,15 @@ class SegmentRepository {
     List<Segment> segments = [];
     for (SegmentSubmodel segment in classObj.segments) {
       DocumentSnapshot ds = await segment.reference.get();
-      Segment retrievedSegment = Segment.fromJson(ds.data());
+      Segment retrievedSegment =
+          Segment.fromJson(ds.data() as Map<String, dynamic>);
       segments.add(retrievedSegment);
     }
     return segments;
   }
 
-  static Future<Segment> create(Segment segment, DocumentReference classReference) async{
+  static Future<Segment> create(
+      Segment segment, DocumentReference classReference) async {
     CollectionReference reference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"))
@@ -46,14 +48,14 @@ class SegmentRepository {
 
   static List<Segment> mapQueryToSegment(QuerySnapshot qs) {
     return qs.docs.map((DocumentSnapshot ds) {
-      return Segment.fromJson(ds.data());
+      return Segment.fromJson(ds.data() as Map<String, dynamic>);
     }).toList();
   }
 
-    static Future<void> updateMovements(
+  static Future<void> updateMovements(
       MovementSubmodel movement, DocumentReference reference) async {
     DocumentSnapshot ds = await reference.get();
-    Segment segment = Segment.fromJson(ds.data());
+    Segment segment = Segment.fromJson(ds.data() as Map<String, dynamic>);
     List<MovementSubmodel> movements;
     if (segment.movements == null) {
       movements = [];

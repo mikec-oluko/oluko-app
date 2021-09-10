@@ -11,16 +11,11 @@ class EnrollmentMovement {
 
   factory EnrollmentMovement.fromJson(Map<String, dynamic> json) {
     return EnrollmentMovement(
-        id: json['id'],
-        reference: json['reference'],
-        name: json['name'],
-        counter: Counter.fromJson(json['counter']));
+        id: json['id'].toString(),
+        reference: json['reference'] as DocumentReference,
+        name: json['name'].toString(),
+        counter: Counter.fromJson(json['counter'] as Map<String, dynamic>));
   }
 
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'reference': reference,
-        'name': name,
-        'counter': counter.toJson()
-      };
+  Map<String, dynamic> toJson() => {'id': id, 'reference': reference, 'name': name, 'counter': counter.toJson()};
 }

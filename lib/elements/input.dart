@@ -5,8 +5,8 @@ class Input extends StatelessWidget {
   final String placeholder;
   final Widget suffixIcon;
   final Widget prefixIcon;
-  final Function onTap;
-  final Function onChanged;
+  final void Function() tap;
+  final void Function(String) onChanged;
   final TextEditingController controller;
   final bool autofocus;
   final Color borderColor;
@@ -15,7 +15,7 @@ class Input extends StatelessWidget {
       {this.placeholder,
       this.suffixIcon,
       this.prefixIcon,
-      this.onTap,
+      this.tap,
       this.onChanged,
       this.autofocus = false,
       this.borderColor = OlukoColors.border,
@@ -25,7 +25,7 @@ class Input extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextField(
         cursorColor: OlukoColors.muted,
-        onTap: onTap,
+        onTap: tap,
         onChanged: onChanged,
         controller: controller,
         autofocus: autofocus,

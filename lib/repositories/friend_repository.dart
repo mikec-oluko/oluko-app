@@ -29,7 +29,7 @@ class FriendRepository {
       if (docRef.docs.length == 0) {
         return null;
       }
-      var document = docRef.docs[0].data();
+      var document = docRef.docs[0].data() as Map<String, dynamic>;
       Friend friendData = Friend.fromJson(document);
       return friendData;
     } catch (e, stackTrace) {
@@ -37,7 +37,7 @@ class FriendRepository {
         e,
         stackTrace: stackTrace,
       );
-      throw e;
+      rethrow;
     }
   }
 
@@ -52,7 +52,7 @@ class FriendRepository {
           .get();
       if (docRef.docs.isNotEmpty) {
         List<Friend> listOfFriendRequests =
-            docRef.docs.map((doc) => Friend.fromJson(doc.data())).toList();
+            docRef.docs.map((doc) => Friend.fromJson(doc.data() as Map<String, dynamic>)).toList();
         return listOfFriendRequests[0];
       } else {
         return null;
@@ -62,12 +62,11 @@ class FriendRepository {
         e,
         stackTrace: stackTrace,
       );
-      throw e;
+      rethrow;
     }
   }
 
-  static Future<List<User>> getUserFriendsSuggestionsByUserId(
-      String userId) async {
+  static Future<List<User>> getUserFriendsSuggestionsByUserId(String userId) async {
     //TODO: Get user suggestions for UserId
     try {
       QuerySnapshot docRef = await FirebaseFirestore.instance
@@ -78,7 +77,7 @@ class FriendRepository {
           .get();
       List<User> listOfFriendSuggestions = [];
       docRef.docs.forEach((doc) {
-        final Map<String, dynamic> element = doc.data();
+        final Map<String, dynamic> element = doc.data() as Map<String, dynamic>;
         // listOfFriendSuggestions.add(userFriendClass.fromJson(element));
       });
       // return listOfFriendSuggestions;
@@ -89,12 +88,11 @@ class FriendRepository {
         e,
         stackTrace: stackTrace,
       );
-      throw e;
+      rethrow;
     }
   }
 
-  static Future<FriendModel> confirmFriendRequest(
-      Friend friend, FriendRequestModel friendRequest) async {
+  static Future<FriendModel> confirmFriendRequest(Friend friend, FriendRequestModel friendRequest) async {
     try {
       //Generate user reference from friend request
       var friendUserDocument = await FirebaseFirestore.instance
@@ -105,14 +103,11 @@ class FriendRepository {
           .get();
 
       //Friend model to add as a friend
-      FriendModel friendModel = FriendModel(
-          id: friendRequest.id,
-          isFavorite: false,
-          reference: friendUserDocument.reference);
+      FriendModel friendModel =
+          FriendModel(id: friendRequest.id, isFavorite: false, reference: friendUserDocument.reference);
 
       //Remove friend request
-      friend.friendRequestReceived
-          .removeWhere((element) => element.id == friendModel.id);
+      friend.friendRequestReceived.removeWhere((element) => element.id == friendModel.id);
       friend.friends.add(friendModel);
 
       await FirebaseFirestore.instance
@@ -127,16 +122,14 @@ class FriendRepository {
         e,
         stackTrace: stackTrace,
       );
-      throw e;
+      rethrow;
     }
   }
 
-  static Future<FriendRequestModel> ignoreFriendRequest(
-      Friend friend, FriendRequestModel friendRequest) async {
+  static Future<FriendRequestModel> ignoreFriendRequest(Friend friend, FriendRequestModel friendRequest) async {
     try {
       //Remove friend request
-      friend.friendRequestReceived
-          .removeWhere((element) => element.id == friendRequest.id);
+      friend.friendRequestReceived.removeWhere((element) => element.id == friendRequest.id);
 
       await FirebaseFirestore.instance
           .collection('projects')
@@ -150,14 +143,12 @@ class FriendRepository {
         e,
         stackTrace: stackTrace,
       );
-      throw e;
+      rethrow;
     }
   }
 
-  static Future<FriendModel> markFriendAsFavorite(
-      Friend friend, FriendModel friendModel) async {
-    friendModel.isFavorite =
-        friendModel.isFavorite == null ? false : friendModel.isFavorite;
+  static Future<FriendModel> markFriendAsFavorite(Friend friend, FriendModel friendModel) async {
+    friendModel.isFavorite = friendModel.isFavorite == null ? false : friendModel.isFavorite;
     friend.friends = friend.friends.map((friend) {
       if (friend.id == friendModel.id) {
         friend.isFavorite = friendModel.isFavorite;
@@ -178,12 +169,11 @@ class FriendRepository {
         e,
         stackTrace: stackTrace,
       );
-      throw e;
+      rethrow;
     }
   }
 
-  static Future<User> connectFriendSuggestion(
-      String userId, User friendToConnect) async {
+  static Future<User> connectFriendSuggestion(String userId, User friendToConnect) async {
     //TODO: Connect with friendToConnect
     try {
       QuerySnapshot docRef = await FirebaseFirestore.instance
@@ -203,8 +193,7 @@ class FriendRepository {
     }
   }
 
-  static Future<User> sendHiFiveToFriend(
-      String userId, User friendToGreet) async {
+  static Future<User> sendHiFiveToFriend(String userId, User friendToGreet) async {
     //TODO: Send a HiFive action to friendToGreet
     try {
       QuerySnapshot docRef = await FirebaseFirestore.instance
@@ -220,16 +209,14 @@ class FriendRepository {
         e,
         stackTrace: stackTrace,
       );
-      throw e;
+      rethrow;
     }
   }
 
-  static Future<FriendRequestModel> cancelFriendRequestSend(
-      Friend friend, FriendRequestModel friendRequest) async {
+  static Future<FriendRequestModel> cancelFriendRequestSend(Friend friend, FriendRequestModel friendRequest) async {
     try {
       //Remove friend request sent
-      friend.friendRequestSent
-          .removeWhere((element) => element.id == friendRequest.id);
+      friend.friendRequestSent.removeWhere((element) => element.id == friendRequest.id);
 
       await FirebaseFirestore.instance
           .collection('projects')
@@ -243,43 +230,36 @@ class FriendRepository {
         e,
         stackTrace: stackTrace,
       );
-      throw e;
+      rethrow;
     }
   }
 
   //Remove request sent from currentUser.sent and UserToConnect.received
-  static removeRequestSent(
-      Friend currentUserFriend, String userRequestedId) async {
+  static removeRequestSent(Friend currentUserFriend, String userRequestedId) async {
     try {
       //CREO EL FRIENDREQUESTMODEL PARA USERREQUESTED
-      FriendRequestModel userRequestedAsRequestModel =
-          FriendRequestModel(id: userRequestedId);
+      FriendRequestModel userRequestedAsRequestModel = FriendRequestModel(id: userRequestedId);
 
       //CREO EL FRIENDREQUESTMODEL PARA CURRENTUSER
-      FriendRequestModel currentUserAsRequestModel =
-          FriendRequestModel(id: currentUserFriend.id);
+      FriendRequestModel currentUserAsRequestModel = FriendRequestModel(id: currentUserFriend.id);
 
       //ELIMINO USERREQUESTED DE MIS FRIEND REQUEST SENT
-      await cancelFriendRequestSend(
-          currentUserFriend, userRequestedAsRequestModel);
+      await cancelFriendRequestSend(currentUserFriend, userRequestedAsRequestModel);
       //PIDO EL MODELO FRIEND DE USERREQUESTED
-      Friend userRequestedAsFriend =
-          await getUserFriendsByUserId(userRequestedId);
+      Friend userRequestedAsFriend = await getUserFriendsByUserId(userRequestedId);
 
-      await ignoreFriendRequest(
-          userRequestedAsFriend, currentUserAsRequestModel);
+      await ignoreFriendRequest(userRequestedAsFriend, currentUserAsRequestModel);
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,
         stackTrace: stackTrace,
       );
-      throw e;
+      rethrow;
     }
   }
 
   //add on currentUser request sent to UserToConnect
-  static Future<FriendRequestModel> addUserRequestToSent(
-      Friend friend, FriendRequestModel friendRequest) async {
+  static Future<FriendRequestModel> addUserRequestToSent(Friend friend, FriendRequestModel friendRequest) async {
     try {
       friend.friendRequestSent.add(friendRequest);
 
@@ -296,13 +276,12 @@ class FriendRepository {
         e,
         stackTrace: stackTrace,
       );
-      throw e;
+      rethrow;
     }
   }
 
   //add on UserToConnect the request on received
-  static Future<FriendRequestModel> addUserRequestToReceived(
-      String userRequestedId, String currentUserId) async {
+  static Future<FriendRequestModel> addUserRequestToReceived(String userRequestedId, String currentUserId) async {
     try {
       FriendRequestModel userToConnect = FriendRequestModel(id: currentUserId);
 
@@ -323,15 +302,13 @@ class FriendRepository {
         e,
         stackTrace: stackTrace,
       );
-      throw e;
+      rethrow;
     }
   }
 
-  static sendRequestOfConnectOnBothUsers(
-      Friend currentUserFriend, String userRequestedId) async {
+  static sendRequestOfConnectOnBothUsers(Friend currentUserFriend, String userRequestedId) async {
     try {
-      FriendRequestModel userRequestedAsRequestModel =
-          FriendRequestModel(id: userRequestedId);
+      FriendRequestModel userRequestedAsRequestModel = FriendRequestModel(id: userRequestedId);
 
       addUserRequestToSent(currentUserFriend, userRequestedAsRequestModel);
       addUserRequestToReceived(userRequestedId, currentUserFriend.id);
@@ -340,7 +317,7 @@ class FriendRepository {
         e,
         stackTrace: stackTrace,
       );
-      throw e;
+      rethrow;
     }
   }
 }

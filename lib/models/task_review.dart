@@ -29,7 +29,8 @@ class TaskReview extends Base {
   factory TaskReview.fromJson(Map<String, dynamic> json) {
     TaskReview taskReview = TaskReview(
       videoInfo: VideoInfo.fromJson(json['video_info']),
-      taskSubmissionReference: json['task_submission_reference'],
+      taskSubmissionReference:
+          json['task_submission_reference'] as DocumentReference,
     );
     taskReview.setBase(json);
     return taskReview;

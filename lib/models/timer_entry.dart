@@ -8,10 +8,10 @@ class TimerEntry {
   WorkState workState;
   String label;
   List<String> labels;
-  num setNumber;
-  num roundNumber;
-  num time;
-  num reps;
+  int setNumber;
+  int roundNumber;
+  int time;
+  int reps;
   CounterEnum counter;
 
   TimerEntry(

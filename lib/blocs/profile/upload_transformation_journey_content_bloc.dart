@@ -9,31 +9,23 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class TransformationJourneyContentState {}
 
-class TransformationJourneyContentLoading
-    extends TransformationJourneyContentState {}
+class TransformationJourneyContentLoading extends TransformationJourneyContentState {}
 
-class TransformationJourneyContentDefault
-    extends TransformationJourneyContentState {}
+class TransformationJourneyContentDefault extends TransformationJourneyContentState {}
 
-class TransformationJourneyContentOpen
-    extends TransformationJourneyContentState {}
+class TransformationJourneyContentOpen extends TransformationJourneyContentState {}
 
-class TransformationJourneyContentSuccess
-    extends TransformationJourneyContentState {}
+class TransformationJourneyContentSuccess extends TransformationJourneyContentState {}
 
-class TransformationJourneyContentFailure
-    extends TransformationJourneyContentState {
-  Exception exception;
+class TransformationJourneyContentFailure extends TransformationJourneyContentState {
+  dynamic exception;
   TransformationJourneyContentFailure({this.exception});
 }
 
-class TransformationJourneyContentBloc
-    extends Cubit<TransformationJourneyContentState> {
-  TransformationJourneyContentBloc()
-      : super(TransformationJourneyContentDefault());
+class TransformationJourneyContentBloc extends Cubit<TransformationJourneyContentState> {
+  TransformationJourneyContentBloc() : super(TransformationJourneyContentDefault());
 
-  void uploadTransformationJourneyContent(
-      {DeviceContentFrom uploadedFrom, int indexForContent}) async {
+  void uploadTransformationJourneyContent({DeviceContentFrom uploadedFrom, int indexForContent}) async {
     PickedFile _image;
     try {
       final imagePicker = ImagePicker();
@@ -60,6 +52,7 @@ class TransformationJourneyContentBloc
         stackTrace: stackTrace,
       );
       emit(TransformationJourneyContentFailure(exception: e));
+      rethrow;
     }
   }
 

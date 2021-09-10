@@ -187,7 +187,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: taskState.values.length,
                 shrinkWrap: true,
-                itemBuilder: (context, num index) {
+                itemBuilder: (context, int index) {
                   Task task = taskState.values[index];
                   TaskSubmission taskSubmission =
                       TaskSubmissionService.getTaskSubmissionOfTask(

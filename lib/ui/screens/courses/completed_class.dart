@@ -15,8 +15,7 @@ class CompletedClass extends StatefulWidget {
   final CourseEnrollment courseEnrollment;
   final int classIndex;
 
-  CompletedClass({Key key, this.courseEnrollment, this.classIndex})
-      : super(key: key);
+  CompletedClass({Key key, this.courseEnrollment, this.classIndex}) : super(key: key);
 
   @override
   _CompletedClassState createState() => _CompletedClassState();
@@ -42,7 +41,7 @@ class _CompletedClassState extends State<CompletedClass> {
     });
   }
 
-  form() {
+  Widget form() {
     return Scaffold(
         appBar: OlukoAppBar(
           showDivider: false,
@@ -61,9 +60,7 @@ class _CompletedClassState extends State<CompletedClass> {
               Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 80),
                   child: Row(mainAxisSize: MainAxisSize.max, children: [
-                    OlukoPrimaryButton(
-                        title: OlukoLocalizations.of(context).find('done'),
-                        onPressed: () {})
+                    OlukoPrimaryButton(title: OlukoLocalizations.of(context).find('done'), onPressed: () {})
                   ])),
               SizedBox(height: 20),
             ])));
@@ -84,8 +81,7 @@ class _CompletedClassState extends State<CompletedClass> {
                       decoration: BoxDecoration(
                         image: new DecorationImage(
                           fit: BoxFit.cover,
-                          image: new AssetImage(
-                              'assets/assessment/task_response_thumbnail.png'),
+                          image: new AssetImage('assets/assessment/task_response_thumbnail.png'),
                         ),
                       ),
                     ))),
@@ -100,10 +96,7 @@ class _CompletedClassState extends State<CompletedClass> {
                   turns: AlwaysStoppedAnimation(-0.01),
                   child: Text(
                     OlukoLocalizations.of(context).find('addYourSelfie'),
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        color: OlukoColors.black),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: OlukoColors.black),
                     textAlign: TextAlign.start,
                   ))),
         ]));
@@ -112,12 +105,9 @@ class _CompletedClassState extends State<CompletedClass> {
   Widget getClassCard() {
     return Container(
       height: 210,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-          color: OlukoColors.listGrayColor),
+      decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: OlukoColors.listGrayColor),
       child: Padding(
-        padding:
-            const EdgeInsets.only(left: 15, right: 15, bottom: 13, top: 17),
+        padding: const EdgeInsets.only(left: 15, right: 15, bottom: 13, top: 17),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -133,8 +123,7 @@ class _CompletedClassState extends State<CompletedClass> {
                       color: OlukoColors.challengeLockedFilterColor,
                       image: new DecorationImage(
                         fit: BoxFit.cover,
-                        image: new NetworkImage(widget
-                            .courseEnrollment.classes[widget.classIndex].image),
+                        image: new NetworkImage(widget.courseEnrollment.classes[widget.classIndex].image),
                       ),
                     ),
                   ),
@@ -148,21 +137,16 @@ class _CompletedClassState extends State<CompletedClass> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            widget.courseEnrollment.classes[widget.classIndex]
-                                .name,
-                            style: OlukoFonts.olukoBigFont(
-                                custoFontWeight: FontWeight.bold),
+                            widget.courseEnrollment.classes[widget.classIndex].name,
+                            style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.bold),
                             textAlign: TextAlign.start,
                           ),
                           SizedBox(height: 11),
                           Text(
                             TimeConverter.toClassProgress(
-                                widget.classIndex,
-                                widget.courseEnrollment.classes.length,
-                                context),
+                                widget.classIndex, widget.courseEnrollment.classes.length, context),
                             style: OlukoFonts.olukoMediumFont(
-                                custoFontWeight: FontWeight.normal,
-                                customColor: OlukoColors.white),
+                                custoFontWeight: FontWeight.normal, customColor: OlukoColors.white),
                           ),
                           Image.asset(
                             'assets/courses/completed_logo.png',
@@ -182,15 +166,12 @@ class _CompletedClassState extends State<CompletedClass> {
   }
 
   Widget getCompletedSegments() {
-    return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20),
-        child: Column(children: getSegments()));
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 20), child: Column(children: getSegments()));
   }
 
   List<Widget> getSegments() {
     List<Widget> segments = [];
-    widget.courseEnrollment.classes[widget.classIndex].segments
-        .forEach((segment) {
+    widget.courseEnrollment.classes[widget.classIndex].segments.forEach((segment) {
       segments.add(Row(children: [
         Image.asset(
           'assets/self_recording/completed_tick.png',
