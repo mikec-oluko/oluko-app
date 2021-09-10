@@ -135,6 +135,11 @@ class _ProfilePageState extends State<ProfilePage> {
                               context, routeLabels[RouteEnum.profileSettings],
                               arguments: {'profileInfo': profileInfo})
                           .then((value) => onGoBack());
+                    } else if (option.option ==
+                        ProfileOptionsTitle.transformationJourney) {
+                      Navigator.pushNamed(context,
+                          routeLabels[RouteEnum.profileTransformationJourney],
+                          arguments: {'profileInfo': profileInfo});
                     } else {
                       Navigator.pushNamed(context,
                           ProfileRoutes.returnRouteName(option.option));

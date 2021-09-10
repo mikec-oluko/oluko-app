@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
@@ -56,7 +57,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
   Widget build(BuildContext context) {
     final difference = _auction.difference(_now);
     return Scaffold(
-      appBar: OlukoAppBar(title: OlukoLocalizations.of(context).find('coach')),
+      appBar: OlukoAppBar(title: OlukoLocalizations.of(context).find('coach'), showBackButton: false,),
       body: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
@@ -68,11 +69,30 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
               Container(
                 child: Column(
                   children: [
-                    Image.asset(
-                      'assets/courses/coach.png',
-                      color: OlukoColors.primary,
-                      height: 100,
-                      width: 100,
+                    // TextButton(
+                    //   onPressed: () {
+                    //     Navigator.pushNamed(
+                    //         context, routeLabels[RouteEnum.coach2]);
+                    //   },
+                    //   child: Text(
+                    //     OlukoLocalizations.of(context).find('coach'),
+                    //     textAlign: TextAlign.center,
+                    //     style: OlukoFonts.olukoMediumFont(
+                    //         customColor: OlukoColors.primary,
+                    //         custoFontWeight: FontWeight.w500),
+                    //   ),
+                    // ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(
+                            context, routeLabels[RouteEnum.coach2]);
+                      },
+                      child: Image.asset(
+                        'assets/courses/coach.png',
+                        color: OlukoColors.primary,
+                        height: 100,
+                        width: 100,
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
@@ -200,7 +220,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                     ],
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),

@@ -11,7 +11,8 @@ class MovementUtils {
   static Text movementTitle(String title) {
     return Text(
       title,
-      style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
+      textAlign: TextAlign.center,
+      style: OlukoFonts.olukoSubtitleFont(custoFontWeight: FontWeight.bold),
     );
   }
 
@@ -41,10 +42,7 @@ class MovementUtils {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-            segment.rounds != null && segment.rounds > 1
-                ? SegmentUtils.getRoundTitle(
-                    segment, context, OlukoColors.white)
-                : SizedBox(),
+            SegmentUtils.getRoundTitle(segment, context, OlukoColors.white)
           ] +
           workoutWidgets,
     );

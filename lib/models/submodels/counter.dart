@@ -7,9 +7,9 @@ class Counter {
 
   factory Counter.fromJson(Map<String, dynamic> json) {
     return Counter(
-      round: json['round'],
-      set: json['set'],
-      counter: json['counter'],
+      round: int.tryParse(json['round'].toString()),
+      set: int.tryParse(json['set'].toString()),
+      counter: int.tryParse(json['counter'].toString()),
     );
   }
 

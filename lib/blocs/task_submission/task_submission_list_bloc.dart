@@ -14,7 +14,7 @@ class GetTaskSubmissionSuccess extends TaskSubmissionListState {
 }
 
 class Failure extends TaskSubmissionListState {
-  final Exception exception;
+  final dynamic exception;
 
   Failure({this.exception});
 }
@@ -24,9 +24,7 @@ class TaskSubmissionListBloc extends Cubit<TaskSubmissionListState> {
 
   void get(AssessmentAssignment assessmentAssignment) async {
     try {
-      List<TaskSubmission> taskSubmissions =
-          await TaskSubmissionRepository.getTaskSubmissions(
-              assessmentAssignment);
+      List<TaskSubmission> taskSubmissions = await TaskSubmissionRepository.getTaskSubmissions(assessmentAssignment);
       emit(GetTaskSubmissionSuccess(taskSubmissions: taskSubmissions));
     } catch (e, stackTrace) {
       await Sentry.captureException(
@@ -34,6 +32,7 @@ class TaskSubmissionListBloc extends Cubit<TaskSubmissionListState> {
         stackTrace: stackTrace,
       );
       emit(Failure(exception: e));
+      rethrow;
     }
   }
 }

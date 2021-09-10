@@ -56,8 +56,7 @@ class _MyAppState extends State<MyApp> {
         primarySwatch: Colors.grey,
       ),
       initialRoute: widget.initialRoute,
-      onGenerateRoute: (RouteSettings settings) =>
-          routes.getRouteView(settings.name, settings.arguments),
+      onGenerateRoute: (RouteSettings settings) => routes.getRouteView(settings.name, settings.arguments),
       localizationsDelegates: [
         const OlukoLocalizationsDelegate(),
         GlobalMaterialLocalizations.delegate,

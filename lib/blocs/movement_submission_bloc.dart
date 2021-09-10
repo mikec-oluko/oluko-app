@@ -27,7 +27,7 @@ class EncodedMovementSubmissionSuccess extends MovementSubmissionState {}
 class ErrorMovementSubmissionSuccess extends MovementSubmissionState {}
 
 class Failure extends MovementSubmissionState {
-  final Exception exception;
+  final dynamic exception;
 
   Failure({this.exception});
 }
@@ -35,20 +35,18 @@ class Failure extends MovementSubmissionState {
 class MovementSubmissionBloc extends Cubit<MovementSubmissionState> {
   MovementSubmissionBloc() : super(Loading());
 
-  void create(SegmentSubmission segmentSubmission, MovementSubmodel movement,
-      String videoPath) async {
+  void create(SegmentSubmission segmentSubmission, MovementSubmodel movement, String videoPath) async {
     try {
       MovementSubmission movementSubmission =
-          await MovementSubmissionRepository.create(
-              segmentSubmission, movement, videoPath);
-      emit(CreateMovementSubmissionSuccess(
-          movementSubmission: movementSubmission));
+          await MovementSubmissionRepository.create(segmentSubmission, movement, videoPath);
+      emit(CreateMovementSubmissionSuccess(movementSubmission: movementSubmission));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
         stackTrace: stackTrace,
       );
       emit(Failure(exception: exception));
+      rethrow;
     }
   }
 
@@ -62,13 +60,13 @@ class MovementSubmissionBloc extends Cubit<MovementSubmissionState> {
         stackTrace: stackTrace,
       );
       emit(Failure(exception: exception));
+      rethrow;
     }
   }
 
   void updateStateToEncoded(MovementSubmission movementSubmission) async {
     try {
-      await MovementSubmissionRepository.updateStateToEncoded(
-          movementSubmission);
+      await MovementSubmissionRepository.updateStateToEncoded(movementSubmission);
       emit(EncodedMovementSubmissionSuccess());
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -76,6 +74,7 @@ class MovementSubmissionBloc extends Cubit<MovementSubmissionState> {
         stackTrace: stackTrace,
       );
       emit(Failure(exception: exception));
+      rethrow;
     }
   }
 
@@ -89,21 +88,21 @@ class MovementSubmissionBloc extends Cubit<MovementSubmissionState> {
         stackTrace: stackTrace,
       );
       emit(Failure(exception: exception));
+      rethrow;
     }
   }
 
   void get(SegmentSubmission segmentSubmission) async {
     try {
-      List<MovementSubmission> movementSubmissions =
-          await MovementSubmissionRepository.get(segmentSubmission);
-      emit(GetMovementSubmissionSuccess(
-          movementSubmissions: movementSubmissions));
+      List<MovementSubmission> movementSubmissions = await MovementSubmissionRepository.get(segmentSubmission);
+      emit(GetMovementSubmissionSuccess(movementSubmissions: movementSubmissions));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
         stackTrace: stackTrace,
       );
       emit(Failure(exception: exception));
+      rethrow;
     }
   }
 }

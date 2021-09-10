@@ -107,7 +107,7 @@ class _AppPlansState extends State<AppPlans> {
                     onPressed: () {},
                     child: Stack(children: [
                       Align(
-                        child: Text('Get Started'),
+                        child: const Text('Get Started'),
                       )
                     ])))),
       ];
@@ -116,7 +116,7 @@ class _AppPlansState extends State<AppPlans> {
     }
   }
 
-  showWaitlist(context, InfoDialog infoDialog) {
+  showWaitlist(BuildContext context, InfoDialog infoDialog) {
     showDialog(
         context: context,
         builder: (context2) {

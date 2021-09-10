@@ -24,7 +24,7 @@ class AuthSuccess extends AuthState {
 }
 
 class AuthFailure extends AuthState {
-  final Exception exception;
+  final dynamic exception;
   AuthFailure({this.exception});
 }
 
@@ -40,7 +40,7 @@ class AuthBloc extends Cubit<AuthState> {
   final _authRepository = AuthRepository();
   final _userRepository = UserRepository();
 
-  Future<void> login(context, LoginRequest request) async {
+  Future<void> login(BuildContext context, LoginRequest request) async {
     ApiResponse apiResponse = await _authRepository.login(request);
     if (apiResponse.statusCode != 200) {
       AppLoader.stopLoading();
@@ -61,8 +61,7 @@ class AuthBloc extends Cubit<AuthState> {
       await firebaseUser.updateEmail(user.email);
       firebaseUser.sendEmailVerification();
       FirebaseAuth.instance.signOut();
-      AppMessages.showSnackbar(
-          context, 'Please check your Email for account confirmation.');
+      AppMessages.showSnackbar(context, 'Please check your Email for account confirmation.');
       emit(AuthGuest());
     } else {
       AuthRepository().storeLoginData(user);
@@ -72,10 +71,10 @@ class AuthBloc extends Cubit<AuthState> {
     }
   }
 
-  Future<void> loginWithGoogle(context) async {
+  Future<void> loginWithGoogle(BuildContext context) async {
     UserCredential result = await _authRepository.signInWithGoogle();
     User firebaseUser = result.user;
-    dynamic userResponse = await UserRepository().get(firebaseUser.email);
+    UserResponse userResponse = await UserRepository().get(firebaseUser.email);
 
     //TODO (Not implemented in MVP) If Firebase user document not found, create one.
 
@@ -94,8 +93,7 @@ class AuthBloc extends Cubit<AuthState> {
     if (!firebaseUser.emailVerified) {
       //TODO: trigger to send another email
       FirebaseAuth.instance.signOut();
-      AppMessages.showSnackbar(
-          context, 'Please check your Email for account confirmation.');
+      AppMessages.showSnackbar(context, 'Please check your Email for account confirmation.');
       emit(AuthGuest());
       return;
     }
@@ -103,8 +101,7 @@ class AuthBloc extends Cubit<AuthState> {
     //If there is no associated user for this account
     if (userResponse == null) {
       FirebaseAuth.instance.signOut();
-      AppMessages.showSnackbar(
-          context, 'User for this account not found. Please sign up.');
+      AppMessages.showSnackbar(context, 'User for this account not found. Please sign up.');
       emit(AuthGuest());
       return;
     }
@@ -114,7 +111,7 @@ class AuthBloc extends Cubit<AuthState> {
     await AppNavigator().returnToHome(context);
   }
 
-  Future<void> loginWithFacebook(context) async {
+  Future<void> loginWithFacebook(BuildContext context) async {
     UserCredential result = await _authRepository.signInWithFacebook();
     User firebaseUser = result.user;
     UserResponse user = UserResponse();
@@ -146,7 +143,7 @@ class AuthBloc extends Cubit<AuthState> {
     }
   }
 
-  Future<void> logout(context) async {
+  Future<void> logout(BuildContext context) async {
     final success = await AuthRepository().removeLoginData();
     if (success == true) {
       Navigator.pushNamedAndRemoveUntil(context, '/sign-up', (route) => false);
@@ -154,12 +151,10 @@ class AuthBloc extends Cubit<AuthState> {
     }
   }
 
-  Future<void> sendPasswordResetEmail(
-      context, LoginRequest loginRequest) async {
+  Future<void> sendPasswordResetEmail(BuildContext context, LoginRequest loginRequest) async {
     //TODO: unused variable final success =
     await AuthRepository().sendPasswordResetEmail(loginRequest.email);
-    AppMessages.showSnackbar(
-        context, 'Please check your email for instructions.');
+    AppMessages.showSnackbar(context, 'Please check your email for instructions.');
   }
 
   String getRandString(int len) {

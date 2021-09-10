@@ -20,22 +20,16 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
       appBar: AppBar(
         title: Text(
           OlukoLocalizations.of(context).find('mentoredVideos'),
-          style: OlukoFonts.olukoTitleFont(
-              customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+          style: OlukoFonts.olukoTitleFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
         ),
         actions: [
           Row(
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 5),
-                child: IconButton(
-                    icon: Icon(Icons.sort, color: OlukoColors.grayColor),
-                    onPressed: () {}),
+                child: IconButton(icon: Icon(Icons.sort, color: OlukoColors.grayColor), onPressed: () {}),
               ),
-              IconButton(
-                  icon:
-                      Icon(Icons.favorite_border, color: OlukoColors.grayColor),
-                  onPressed: () {}),
+              IconButton(icon: Icon(Icons.favorite_border, color: OlukoColors.grayColor), onPressed: () {}),
             ],
           )
         ],
@@ -54,13 +48,12 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
       body: Container(
         width: MediaQuery.of(context).size.width,
         color: OlukoColors.black,
-        child: ListView(
-            children: segmentCard(taskSubmissions: widget.taskSubmissions)),
+        child: ListView(children: segmentCard(taskSubmissions: widget.taskSubmissions)),
       ),
     );
   }
 
-  segmentCard({List<TaskSubmission> taskSubmissions}) {
+  List<Widget> segmentCard({List<TaskSubmission> taskSubmissions}) {
     List<Widget> contentForSection = [];
 
     taskSubmissions.forEach((taskSubmitted) {
@@ -70,7 +63,7 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
     return contentForSection;
   }
 
-  returnCardForSegment(TaskSubmission taskSubmitted) {
+  Widget returnCardForSegment(TaskSubmission taskSubmitted) {
     Widget contentForReturn = SizedBox();
     contentForReturn = Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -78,11 +71,11 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Container(
           decoration: BoxDecoration(
-              color: OlukoColors.primary,
+              color: OlukoColors.listGrayColor,
               borderRadius: BorderRadius.all(Radius.circular(6.0)),
               image: DecorationImage(
-                image: NetworkImage(taskSubmitted.video.thumbUrl),
-                fit: BoxFit.cover,
+                image: getImage(taskSubmitted),
+                fit: BoxFit.fitWidth,
                 onError: (exception, stackTrace) {
                   return Text('Your error widget...');
                 },
@@ -95,13 +88,10 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
                   alignment: Alignment.center,
                   child: TextButton(
                       onPressed: () {
-                        Navigator.pushNamed(
-                            context, routeLabels[RouteEnum.coachShowVideo],
-                            arguments: {
-                              'videoUrl': taskSubmitted.video.url,
-                              'titleForView': OlukoLocalizations.of(context)
-                                  .find('mentoredVideos')
-                            });
+                        Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
+                          'videoUrl': taskSubmitted.video.url,
+                          'titleForView': OlukoLocalizations.of(context).find('mentoredVideos')
+                        });
                       },
                       child: Image.asset(
                         'assets/assessment/play.png',
@@ -124,18 +114,15 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
                               Text(
                                 OlukoLocalizations.of(context).find('date'),
                                 style: OlukoFonts.olukoMediumFont(
-                                    customColor: OlukoColors.grayColor,
-                                    custoFontWeight: FontWeight.w500),
+                                    customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
                               ),
                               SizedBox(
                                 height: 5,
                               ),
                               Text(
-                                DateFormat.yMMMd()
-                                    .format(taskSubmitted.createdAt.toDate()),
+                                DateFormat.yMMMd().format(taskSubmitted.createdAt.toDate()),
                                 style: OlukoFonts.olukoMediumFont(
-                                    customColor: OlukoColors.grayColor,
-                                    custoFontWeight: FontWeight.w500),
+                                    customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
                               )
                             ],
                           ),
@@ -149,5 +136,11 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
       ),
     );
     return contentForReturn;
+  }
+
+  ImageProvider getImage(TaskSubmission taskSubmitted) {
+    return taskSubmitted.video.thumbUrl != null
+        ? NetworkImage(taskSubmitted.video.thumbUrl)
+        : AssetImage("assets/home/mvt.png") as ImageProvider;
   }
 }

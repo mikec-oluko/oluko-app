@@ -20,8 +20,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class VideosHome extends StatefulWidget {
-  VideosHome({Key key, this.title, this.parentVideoInfo, this.parentVideoReference})
-      : super(key: key);
+  VideosHome({Key key, this.title, this.parentVideoInfo, this.parentVideoReference}) : super(key: key);
 
   String title;
   VideoInfo parentVideoInfo;
@@ -44,18 +43,14 @@ class _VideosHomeState extends State<VideosHome> {
       if (state is AuthSuccess) {
         this.user = state.firebaseUser;
         return BlocProvider(
-            create: (context) => _videoInfoBloc
-              ..getVideosInfo(this.user, widget.parentVideoReference),
+            create: (context) => _videoInfoBloc..getVideosInfo(this.user, widget.parentVideoReference),
             child: Scaffold(
                 appBar: AppBar(
                   title: Text(widget.title),
                 ),
-                body: Center(child: BlocBuilder<VideoInfoBloc, VideoInfoState>(
-                    builder: (context, state) {
+                body: Center(child: BlocBuilder<VideoInfoBloc, VideoInfoState>(builder: (context, state) {
                   if (state is TakeVideoSuccess) {
-                    return ProgressBar(
-                                  processPhase: state.processPhase,
-                                  progress: state.progress);
+                    return ProgressBar(processPhase: state.processPhase, progress: state.progress);
                   } else if (state is VideoInfoSuccess) {
                     return _getListView(state.videosInfo);
                   } else {
@@ -66,8 +61,7 @@ class _VideosHomeState extends State<VideosHome> {
                     );
                   }
                 })),
-                floatingActionButton:
-                    Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+                floatingActionButton: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
                   FloatingActionButton(
                     child:
                         /*_processing
@@ -79,9 +73,7 @@ class _VideosHomeState extends State<VideosHome> {
                         Icon(Icons.camera),
                     onPressed: () async {
                       if (widget.parentVideoInfo == null) {
-                        _videoInfoBloc
-                          ..takeVideo(user, ImageSource.camera,
-                              widget.parentVideoReference, true);
+                        _videoInfoBloc..takeVideo(user, ImageSource.camera, widget.parentVideoReference, true);
                       } else {
                         Navigator.push(
                           context,
@@ -90,8 +82,7 @@ class _VideosHomeState extends State<VideosHome> {
                                 value: _videoInfoBloc,
                                 child: RecordingResponse(
                                   user: user,
-                                  parentVideoReference:
-                                      widget.parentVideoReference,
+                                  parentVideoReference: widget.parentVideoReference,
                                   parentVideoInfo: widget.parentVideoInfo,
                                   onCamera: () => _videoInfoBloc
                                     ..takeVideo(
@@ -127,7 +118,7 @@ class _VideosHomeState extends State<VideosHome> {
     EncodingProvider.enableStatisticsCallback((Statistics stats) {});
   }
 
-  _getListView(List<VideoInfo> videosInfo) {
+  Widget _getListView(List<VideoInfo> videosInfo) {
     _videosInfo = videosInfo;
     return ListView.builder(
         padding: const EdgeInsets.all(8),
@@ -160,8 +151,7 @@ class _VideosHomeState extends State<VideosHome> {
                                 Container(
                                   width: 100.0,
                                   height: 150.0,
-                                  child: Center(
-                                      child: CircularProgressIndicator()),
+                                  child: Center(child: CircularProgressIndicator()),
                                 ),
                                 ClipRRect(
                                   borderRadius: new BorderRadius.circular(8.0),
@@ -186,16 +176,13 @@ class _VideosHomeState extends State<VideosHome> {
                                           'Uploaded ${videoInfo.createdAt == null ? timeago.format(DateTime.now()) : timeago.format(fromTimestampToDate(videoInfo.createdAt))}'),
                                     ),
                                     ElevatedButton(
-                                        onPressed: () => Navigator.pushNamed(
-                                                context, '/videos',
-                                                arguments: {
-                                                  'title': 'Responses',
-                                                  'parentVideoInfo': videoInfo,
-                                                  'parentVideoReference': widget
-                                                      .parentVideoReference
-                                                      .doc(videoInfo.id)
-                                                      .collection('videosInfo'),
-                                                }),
+                                        onPressed: () => Navigator.pushNamed(context, '/videos', arguments: {
+                                              'title': 'Responses',
+                                              'parentVideoInfo': videoInfo,
+                                              'parentVideoReference': widget.parentVideoReference
+                                                  .doc(videoInfo.id)
+                                                  .collection('videosInfo'),
+                                            }),
                                         child: Text("View responses"))
                                   ],
                                 ),
@@ -211,18 +198,13 @@ class _VideosHomeState extends State<VideosHome> {
         });
   }
 
-  _player(BuildContext context, VideoInfo videoInfo) {
+  Widget _player(BuildContext context, VideoInfo videoInfo) {
     if (widget.parentVideoInfo == null) {
       return PlayerSingle(
           videoInfo: videoInfo,
           onCamera: () => _videoInfoBloc
-            ..takeVideo(
-                user,
-                ImageSource.camera,
-                widget.parentVideoReference
-                    .doc(videoInfo.id)
-                    .collection('videosInfo'),
-                false));
+            ..takeVideo(user, ImageSource.camera,
+                widget.parentVideoReference.doc(videoInfo.id).collection('videosInfo'), false));
     } else {
       return BlocProvider.value(
           value: _videoInfoBloc,
@@ -231,30 +213,25 @@ class _VideosHomeState extends State<VideosHome> {
             parentVideoInfo: widget.parentVideoInfo,
             videoInfo: videoInfo,
             onCamera: () => _videoInfoBloc
-              ..takeVideo(
-                  user,
-                  ImageSource.camera,
-                  widget.parentVideoReference
-                      .doc(videoInfo.id)
-                      .collection('videosInfo'),
-                  false),
+              ..takeVideo(user, ImageSource.camera,
+                  widget.parentVideoReference.doc(videoInfo.id).collection('videosInfo'), false),
           ));
     }
   }
 
   _setUpParameters() {
-    final Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;
+    final Map<String, dynamic> args = ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
     if (args == null) {
       return;
     }
     if (args['title'] != null) {
-      widget.title = args['title'];
+      widget.title = args['title'] as String;
     }
     if (args['parentVideoInfo'] != null) {
-      widget.parentVideoInfo = args['parentVideoInfo'];
+      widget.parentVideoInfo = args['parentVideoInfo'] as VideoInfo;
     }
     if (args['parentVideoReference'] != null) {
-      widget.parentVideoReference = args['parentVideoReference'];
+      widget.parentVideoReference = args['parentVideoReference'] as CollectionReference<Object>;
     }
   }
 }

@@ -20,6 +20,14 @@ class UserStatisticsRepository {
         .collection('userStatistics')
         .doc(userId);
     DocumentSnapshot ds = await docRef.get();
-    return UserStatistics.fromJson(ds.data());
+    var doc = ds.data() as Map<String, dynamic>;
+    if (doc != null) {
+      return UserStatistics.fromJson(ds.data() as Map<String, dynamic>);
+    }
+    return UserStatistics(
+        completedChallenges: 0,
+        completedClasses: 0,
+        completedCourses: 0,
+        completedSegments: 0);
   }
 }

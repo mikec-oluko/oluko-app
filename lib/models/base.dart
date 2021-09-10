@@ -28,22 +28,26 @@ class Base {
   bool isHidden = false;
 
   Base.fromJson(Map json)
-      : id = json['id'],
-        createdAt = json['created_at'],
-        createdBy = json['created_by'],
-        updatedAt = json['updated_at'],
-        updatedBy = json['updated_by'],
-        isDeleted = json['is_deleted'],
-        isHidden = json['is_hidden'];
+      : id = json['id'].toString(),
+        createdAt = json['created_at'] as Timestamp,
+        createdBy = json['created_by'].toString(),
+        updatedAt = json['updated_at'] as Timestamp,
+        updatedBy = json['updated_by'].toString(),
+        isDeleted = json['is_deleted'] as bool,
+        isHidden = json['is_hidden'] as bool;
 
   setBase(Map<String, dynamic> json) {
-    id = json['id'];
-    createdAt = json['created_at'] is FieldValue ? null : json['created_at'];
-    createdBy = json['created_by'];
-    updatedAt = json['updated_at'] is FieldValue ? null : json['created_at'];
-    updatedBy = json['updated_by'];
-    isDeleted = json['is_deleted'];
-    isHidden = json['is_hidden'];
+    id = json['id'].toString();
+    createdAt = json['created_at'] is FieldValue
+        ? null
+        : json['created_at'] as Timestamp;
+    createdBy = json['created_by'].toString();
+    updatedAt = json['updated_at'] is FieldValue
+        ? null
+        : json['created_at'] as Timestamp;
+    updatedBy = json['updated_by'].toString();
+    isDeleted = json['is_deleted'] as bool;
+    isHidden = json['is_hidden'] as bool;
   }
 
   cleanBase() {

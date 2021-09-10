@@ -106,11 +106,15 @@ class _HomeState extends State<Home> {
   List<Widget> courseSectionList() {
     List<Widget> widgets = [];
     for (var i = 0; i < _courseEnrollments.length; i++) {
-      widgets.add(CourseSection(
-          qtyCourses: _courses.length,
-          courseIndex: i,
-          course: _courses[i],
-          courseEnrollment: _courseEnrollments[i]));
+      if (_courses.length - 1 < i) {
+        // do nothing
+      } else {
+        widgets.add(CourseSection(
+            qtyCourses: _courses.length,
+            courseIndex: i,
+            course: _courses[i],
+            courseEnrollment: _courseEnrollments[i]));
+      }
     }
     return widgets;
   }
