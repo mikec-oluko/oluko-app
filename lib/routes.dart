@@ -270,6 +270,11 @@ class Routes {
       case RouteEnum.friends:
         providers = [
           BlocProvider<FriendBloc>.value(value: _friendBloc),
+          BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
+          BlocProvider<TransformationJourneyBloc>.value(
+              value: _transformationJourneyBloc),
+          BlocProvider<CourseEnrollmentBloc>.value(
+              value: _courseEnrollmentBloc),
           BlocProvider<ConfirmFriendBloc>.value(value: _confirmFriendBloc)
         ];
         newRouteView = FriendsPage();
@@ -318,6 +323,7 @@ class Routes {
           BlocProvider<ProfileCoverImageBloc>.value(value: _profileCoverImageBloc),
           BlocProvider<ProfileAvatarBloc>.value(value: _profileAvatarBloc),
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
+          BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
         ];
         final Map<String, UserResponse> argumentsToAdd = arguments as Map<String, UserResponse>;
         newRouteView = UserProfilePage(userRequested: argumentsToAdd['userRequested']);
@@ -337,7 +343,9 @@ class Routes {
           BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
           BlocProvider<TransformationJourneyContentBloc>.value(value: _transformationJourneyContentBloc),
         ];
-        newRouteView = ProfileTransformationJourneyPage();
+        final Map<String, UserResponse> argumentsToAdd = arguments;
+        newRouteView = ProfileTransformationJourneyPage(
+            userRequested: argumentsToAdd['profileInfo']);
         break;
       case RouteEnum.profileAssessmentVideos:
         providers = [

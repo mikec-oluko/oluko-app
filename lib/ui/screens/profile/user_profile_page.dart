@@ -54,6 +54,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   bool _isFollow = false;
   UserConnectStatus connectStatus;
   Friend friendData;
+  FriendModel friendModel;
   List<UserResponse> friendUsers = [];
 
   String _connectButtonTitle = "";
@@ -317,8 +318,12 @@ class _UserProfilePageState extends State<UserProfilePage> {
                               children: [
                                 TextButton(
                                   onPressed: () {
-                                    _isFollow ? null : BlocProvider.of<FavoriteFriendBloc>(context)
-                                      ..favoriteFriend(context, friendData, FriendModel(id: userRequested.id));
+                                    setState(() {
+                                      friendModel.isFavorite = !_isFollow;
+                                    });
+                                    BlocProvider.of<FavoriteFriendBloc>(context)
+                                      ..favoriteFriend(
+                                          context, friendData, friendModel);
                                     setState(() {
                                       _isFollow = !_isFollow;
                                     });
@@ -331,8 +336,11 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                       onPressed: () {
                                         switch (connectStatus) {
                                           case UserConnectStatus.connected:
+                                            BlocProvider.of<FriendBloc>(context)
+                                              ..removeFriend(
+                                                  friendData, userRequested.id);
                                             break;
-                                          case UserConnectStatus.noConnected:
+                                          case UserConnectStatus.notConnected:
                                             BlocProvider.of<FriendBloc>(context)
                                               ..sendRequestOfConnect(friendData, userRequested.id);
                                             break;
@@ -357,11 +365,16 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
                       return _assessmentVideosContent.length != 0
                           ? _buildCarouselSection(
-                              titleForSection: OlukoLocalizations.of(context).find('assessmentVideos'),
-                              routeForSection: routeLabels[RouteEnum.profileAssessmentVideos],
-                              contentForSection: TransformListOfItemsToWidget.getWidgetListFromContent(
-                                  assessmentVideoData: _assessmentVideosContent,
-                                  requestedFromRoute: ActualProfileRoute.userProfile))
+                              titleForSection: OlukoLocalizations.of(context)
+                                  .find('assessmentVideos'),
+                              routeForSection:
+                                  RouteEnum.profileAssessmentVideos,
+                              contentForSection: TransformListOfItemsToWidget
+                                  .getWidgetListFromContent(
+                                      assessmentVideoData:
+                                          _assessmentVideosContent,
+                                      requestedFromRoute:
+                                          ActualProfileRoute.userProfile))
                           : SizedBox();
                     }),
                     BlocBuilder<TransformationJourneyBloc, TransformationJourneyState>(
@@ -371,11 +384,16 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         }
                         return _transformationJourneyContent.length != 0
                             ? _buildCarouselSection(
-                                titleForSection: OlukoLocalizations.of(context).find('transformationJourney'),
-                                routeForSection: routeLabels[RouteEnum.profileTransformationJourney],
-                                contentForSection: TransformListOfItemsToWidget.getWidgetListFromContent(
-                                    tansformationJourneyData: _transformationJourneyContent,
-                                    requestedFromRoute: ActualProfileRoute.userProfile))
+                                titleForSection: OlukoLocalizations.of(context)
+                                    .find('transformationJourney'),
+                                routeForSection:
+                                    RouteEnum.profileTransformationJourney,
+                                contentForSection: TransformListOfItemsToWidget
+                                    .getWidgetListFromContent(
+                                        tansformationJourneyData:
+                                            _transformationJourneyContent,
+                                        requestedFromRoute:
+                                            ActualProfileRoute.userProfile))
                             : SizedBox();
                       },
                     ),
@@ -404,11 +422,14 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         }
                         return _activeChallenges.length != 0
                             ? _buildCarouselSection(
-                                titleForSection: OlukoLocalizations.of(context).find('upcomingChallenges'),
-                                routeForSection: routeLabels[RouteEnum.profileChallenges],
-                                contentForSection: TransformListOfItemsToWidget.getWidgetListFromContent(
-                                    upcomingChallenges: _activeChallenges,
-                                    requestedFromRoute: ActualProfileRoute.userProfile))
+                                titleForSection: OlukoLocalizations.of(context)
+                                    .find('upcomingChallenges'),
+                                routeForSection: RouteEnum.profileChallenges,
+                                contentForSection: TransformListOfItemsToWidget
+                                    .getWidgetListFromContent(
+                                        upcomingChallenges: _activeChallenges,
+                                        requestedFromRoute:
+                                            ActualProfileRoute.userProfile))
                             : SizedBox();
                       },
                     ),
@@ -460,12 +481,16 @@ class _UserProfilePageState extends State<UserProfilePage> {
     );
   }
 
-  Padding _buildCarouselSection({String routeForSection, String titleForSection, List<Widget> contentForSection}) {
+  Padding _buildCarouselSection(
+      {RouteEnum routeForSection,
+      String titleForSection,
+      List<Widget> contentForSection}) {
     return Padding(
         padding: const EdgeInsets.only(top: 25),
         child: CarouselSmallSection(
             routeToGo: routeForSection,
             title: titleForSection,
+            userToGetData: _userProfileToDisplay,
             children: contentForSection.length != 0
                 ? contentForSection
                 : [
@@ -511,45 +536,75 @@ class _UserProfilePageState extends State<UserProfilePage> {
   }
 
   checkConnectionStatus(UserResponse userRequested, Friend friendData) {
-    friendData.friends.forEach((friend) {
-      if (friend.id == userRequested.id) {
-        if (friend.isFavorite) {
-          setState(() {
-            _isFollow = true;
-          });
+    if (friendData.friends.length != 0) {
+      friendData.friends.forEach((friendFromList) {
+        if (friendFromList.id == userRequested.id) {
+          if (friendFromList.isFavorite) {
+            setState(() {
+              _isFollow = true;
+              connectStatus = UserConnectStatus.connected;
+              _connectButtonTitle = returnTitleForConnectButton(connectStatus);
+            });
+          } else {
+            setState(() {
+              connectStatus = UserConnectStatus.connected;
+              _connectButtonTitle = returnTitleForConnectButton(connectStatus);
+            });
+          }
+        } else {
+          if (friendData.friendRequestSent.length != 0) {
+            friendData.friendRequestSent.forEach((friendRequestSent) {
+              if (friendRequestSent.id == userRequested.id) {
+                setState(() {
+                  connectStatus = UserConnectStatus.requestPending;
+                  _connectButtonTitle =
+                      returnTitleForConnectButton(connectStatus);
+                });
+              } else {
+                setState(() {
+                  connectStatus = UserConnectStatus.notConnected;
+                  _connectButtonTitle =
+                      returnTitleForConnectButton(connectStatus);
+                });
+              }
+            });
+          } else {
+            setState(() {
+              connectStatus = UserConnectStatus.notConnected;
+              _connectButtonTitle = returnTitleForConnectButton(connectStatus);
+            });
+          }
         }
-        setState(() {
-          connectStatus = UserConnectStatus.connected;
-          _connectButtonTitle = returnTitleForConnectButton(connectStatus);
+      });
+    } else {
+      if (friendData.friendRequestSent.length != 0) {
+        friendData.friendRequestSent.forEach((friendRequestSent) {
+          if (friendRequestSent.id == userRequested.id) {
+            setState(() {
+              connectStatus = UserConnectStatus.requestPending;
+              _connectButtonTitle = returnTitleForConnectButton(connectStatus);
+            });
+          } else {
+            setState(() {
+              connectStatus = UserConnectStatus.notConnected;
+              _connectButtonTitle = returnTitleForConnectButton(connectStatus);
+            });
+          }
         });
       } else {
         setState(() {
-          connectStatus = UserConnectStatus.noConnected;
+          connectStatus = UserConnectStatus.notConnected;
           _connectButtonTitle = returnTitleForConnectButton(connectStatus);
         });
       }
-    });
-
-    friendData.friendRequestSent.forEach((request) {
-      if (request.id == userRequested.id) {
-        setState(() {
-          connectStatus = UserConnectStatus.requestPending;
-          _connectButtonTitle = returnTitleForConnectButton(connectStatus);
-        });
-      } else {
-        setState(() {
-          connectStatus = UserConnectStatus.noConnected;
-          _connectButtonTitle = returnTitleForConnectButton(connectStatus);
-        });
-      }
-    });
+    }
   }
 
   String returnTitleForConnectButton(UserConnectStatus connectStatus) {
     switch (connectStatus) {
       case UserConnectStatus.connected:
         return "remove";
-      case UserConnectStatus.noConnected:
+      case UserConnectStatus.notConnected:
         return "connect";
       case UserConnectStatus.requestPending:
         return "cancelConnectionRequested";

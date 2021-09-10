@@ -106,4 +106,8 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
       rethrow;
     }
   }
+
+  void setCourseEnrollmentChallengesDefaultValue() {
+    emit(GetCourseEnrollmentChallenge(challenges: []));
+  }
 }

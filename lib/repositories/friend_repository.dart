@@ -107,7 +107,11 @@ class FriendRepository {
           FriendModel(id: friendRequest.id, isFavorite: false, reference: friendUserDocument.reference);
 
       //Remove friend request
-      friend.friendRequestReceived.removeWhere((element) => element.id == friendModel.id);
+      friend.friendRequestReceived
+          .removeWhere((element) => element.id == friendModel.id);
+
+      friend.friendRequestSent
+          .removeWhere((element) => element.id == friendModel.id);
       friend.friends.add(friendModel);
 
       await FirebaseFirestore.instance
@@ -189,7 +193,7 @@ class FriendRepository {
         e,
         stackTrace: stackTrace,
       );
-      throw e;
+      rethrow;
     }
   }
 
@@ -312,6 +316,29 @@ class FriendRepository {
 
       addUserRequestToSent(currentUserFriend, userRequestedAsRequestModel);
       addUserRequestToReceived(userRequestedId, currentUserFriend.id);
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
+      rethrow;
+    }
+  }
+
+  static Future<Friend> removeFriendFromList(
+      Friend friend, String friendToRemoveId) async {
+    try {
+      //Remove friend request
+      friend.friends.removeWhere(
+          (friendFromList) => friendFromList.id == friendToRemoveId);
+
+      await FirebaseFirestore.instance
+          .collection('projects')
+          .doc(GlobalConfiguration().getValue("projectId"))
+          .collection('friends')
+          .doc(friend.id)
+          .set(friend.toJson());
+      return friend;
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,

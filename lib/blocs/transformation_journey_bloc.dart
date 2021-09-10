@@ -11,6 +11,11 @@ class TransformationJourneyLoading extends TransformationJourneyState {}
 
 class TransformationJourneyDefault extends TransformationJourneyState {}
 
+class TransformationJourneyDefaultValue extends TransformationJourneyState {
+  final List<TransformationJourneyUpload> contentFromUser;
+  TransformationJourneyDefaultValue({this.contentFromUser});
+}
+
 class TransformationJourneySuccess extends TransformationJourneyState {
   final List<TransformationJourneyUpload> contentFromUser;
   TransformationJourneySuccess({this.contentFromUser});
@@ -68,9 +73,11 @@ class TransformationJourneyBloc extends Cubit<TransformationJourneyState> {
     }
   }
 
-  void emitTransformationJourneyDefault() {
+  void emitTransformationJourneyDefault({bool noValues = false}) {
     try {
-      emit(TransformationJourneyDefault());
+      noValues
+          ? emit(TransformationJourneyDefaultValue(contentFromUser: []))
+          : emit(TransformationJourneyDefault());
     } catch (e, stackTrace) {
       Sentry.captureException(
         e,

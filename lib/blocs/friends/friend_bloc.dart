@@ -117,4 +117,17 @@ class FriendBloc extends Cubit<FriendState> {
       rethrow;
     }
   }
+
+  void removeFriend(Friend currentUserFriend, String userToRemoveId) async {
+    try {
+      await FriendRepository.removeFriendFromList(
+          currentUserFriend, userToRemoveId);
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(FriendFailure(exception: exception));
+    }
+  }
 }
