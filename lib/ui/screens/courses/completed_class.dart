@@ -102,13 +102,18 @@ class _CompletedClassState extends State<CompletedClass> {
   Widget getCameraIcon() {
     return Padding(
         padding: EdgeInsets.only(right: 5),
-        child: Stack(alignment: Alignment.center, children: [
-          Image.asset(
-            'assets/courses/green_circle.png',
-            scale: 8,
-          ),
-          Icon(Icons.camera_alt_outlined, size: 18, color: OlukoColors.black)
-        ]));
+        child: GestureDetector(
+            onTap: () async {
+              showCameraAndSaveSelfie();
+            },
+            child: Stack(alignment: Alignment.center, children: [
+              Image.asset(
+                'assets/courses/green_circle.png',
+                scale: 8,
+              ),
+              Icon(Icons.camera_alt_outlined,
+                  size: 18, color: OlukoColors.black)
+            ])));
   }
 
   Widget getPhotoFrame() {
@@ -166,12 +171,16 @@ class _CompletedClassState extends State<CompletedClass> {
         ]));
   }
 
+  showCameraAndSaveSelfie() async {
+    _image = await imagePicker.getImage(source: ImageSource.camera);
+    BlocProvider.of<CourseEnrollmentUpdateBloc>(context)
+      ..saveSelfie(widget.courseEnrollment, widget.classIndex, _image);
+  }
+
   Widget getAddPhotoFrame() {
     return GestureDetector(
         onTap: () async {
-          _image = await imagePicker.getImage(source: ImageSource.camera);
-          BlocProvider.of<CourseEnrollmentUpdateBloc>(context)
-            ..saveSelfie(widget.courseEnrollment, widget.classIndex, _image);
+          showCameraAndSaveSelfie();
         },
         child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 15),
