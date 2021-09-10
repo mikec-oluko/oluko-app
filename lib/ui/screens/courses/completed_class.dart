@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -46,18 +45,7 @@ class _CompletedClassState extends State<CompletedClass> {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
         _user = authState.firebaseUser;
-        return /*BlocListener<CourseEnrollmentUpdateBloc,
-                CourseEnrollmentUpdateState>(
-            listener: (context, courseEnrollmentUpdateState) {
-              if (courseEnrollmentUpdateState is SaveSelfieSuccess) {
-                setState(() {
-                  _imageUrl = courseEnrollmentUpdateState.courseEnrollment
-                      .classes[widget.classIndex].selfieThumbnailUrl;
-                });
-              }
-            },
-            child:*/
-            form();
+        return form();
       } else {
         return SizedBox();
       }
@@ -105,6 +93,18 @@ class _CompletedClassState extends State<CompletedClass> {
     });
   }
 
+  Widget getCameraIcon() {
+    return Padding(
+        padding: EdgeInsets.only(right: 5),
+        child: Stack(alignment: Alignment.center, children: [
+          Image.asset(
+            'assets/courses/green_circle.png',
+            scale: 8,
+          ),
+          Icon(Icons.camera_alt_outlined, size: 18, color: OlukoColors.black)
+        ]));
+  }
+
   Widget getPhotoFrame() {
     return Padding(
         padding: const EdgeInsets.symmetric(vertical: 15),
@@ -132,31 +132,33 @@ class _CompletedClassState extends State<CompletedClass> {
             )
           ]),
           Padding(
-              padding: const EdgeInsets.only(bottom: 29),
+              padding: const EdgeInsets.only(bottom: 31, left: 116),
               child: RotationTransition(
                   turns: AlwaysStoppedAnimation(-0.01),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          DateFormat('yyyy/MM/dd').format(_date).toString() +
-                              '              ',
-                          style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: OlukoColors.black),
-                          textAlign: TextAlign.start,
-                        ),
-                        Text(
-                          DateFormat('hh:mm a').format(_date).toString() +
-                              '              ',
-                          style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                              color: OlukoColors.black),
-                          textAlign: TextAlign.start,
-                        )
-                      ]))),
+                  child: Row(children: [
+                    Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            DateFormat('MM/dd/yyyy').format(_date).toString(),
+                            style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: OlukoColors.black),
+                            textAlign: TextAlign.start,
+                          ),
+                          Text(
+                            DateFormat('hh:mm a').format(_date).toString(),
+                            style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w400,
+                                color: OlukoColors.black),
+                            textAlign: TextAlign.start,
+                          )
+                        ]),
+                    SizedBox(width: 50),  
+                    getCameraIcon()
+                  ]))),
         ]));
   }
 

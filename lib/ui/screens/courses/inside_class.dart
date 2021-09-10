@@ -138,13 +138,13 @@ class _InsideClassesState extends State<InsideClass> {
           title: OlukoLocalizations.of(context).find('start'),
           onPressed: () {
             //TODO: Remove this
-            Navigator.pushNamed(context, routeLabels[RouteEnum.completedClass],
+            /*Navigator.pushNamed(context, routeLabels[RouteEnum.completedClass],
                 arguments: {
                   'classIndex': widget.classIndex,
                   'courseEnrollment': widget.courseEnrollment,
-                });
+                });*/
 
-            /*int segmentIndex =
+            int segmentIndex =
                 CourseEnrollmentService.getFirstUncompletedSegmentIndex(
                     widget.courseEnrollment.classes[widget.classIndex]);
             if (segmentIndex == -1) {
@@ -155,7 +155,7 @@ class _InsideClassesState extends State<InsideClass> {
                   'segmentIndex': segmentIndex,
                   'classIndex': widget.classIndex,
                   'courseEnrollment': widget.courseEnrollment,
-                });*/
+                });
           },
         ),
       ],
