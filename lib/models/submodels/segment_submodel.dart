@@ -20,7 +20,7 @@ class SegmentSubmodel {
         id: json['id'].toString(),
         reference: json['reference'] as DocumentReference,
         name: json['name'].toString(),
-        challengeImage: json['challenge_image'].toString(),
+        challengeImage: json['challenge_image'],
         movements: json['movements'] == null
             ? null
             : List<ObjectSubmodel>.from((json['movements'] as Iterable).map(

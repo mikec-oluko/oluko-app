@@ -20,7 +20,7 @@ class FriendModel {
 
   factory FriendModel.fromJson(Map<String, dynamic> json) {
     FriendModel favorite = FriendModel(
-        reference: json['reference'].toString() as DocumentReference,
+        reference: json['reference'] as DocumentReference,
         isMuted: json['is_muted'] as bool,
         isMutedUntil:
             json['is_muted_until'] as DateTime, //TODO: update me to Timestamp
