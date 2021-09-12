@@ -23,7 +23,7 @@ class _State extends State<ShareCard> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(5)),
+          borderRadius: BorderRadius.all(Radius.circular(10)),
           color: OlukoColors.listGrayColor),
       child: Padding(
         padding: const EdgeInsets.only(

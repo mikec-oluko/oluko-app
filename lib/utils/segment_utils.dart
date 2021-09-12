@@ -26,7 +26,7 @@ class SegmentUtils {
       return Text(
         segment.totalTime.toString() +
             " " +
-            OlukoLocalizations.of(context).find('minutes') +
+            OlukoLocalizations.of(context).find('seconds').toLowerCase() +
             " " +
             "AMRAP",
         style: OlukoFonts.olukoBigFont(

@@ -106,8 +106,8 @@ class SearchState<T> extends State<SearchBar> {
   void updateSearchResults(String newQuery) {
     setState(() {
       searchQuery = newQuery;
-      List<T> suggestedItems = widget.suggestionMethod(searchQuery, widget.items);
-      List<T> searchResults = widget.searchMethod(searchQuery, widget.items);
+      List<T> suggestedItems = widget.suggestionMethod(searchQuery, widget.items) as List<T>;
+      List<T> searchResults = widget.searchMethod(searchQuery, widget.items) as List<T>;
       widget.onSearchSubmit(SearchResults<T>(
           query: newQuery, suggestedItems: suggestedItems as List<T>, searchResults: searchResults as List<T>));
     });

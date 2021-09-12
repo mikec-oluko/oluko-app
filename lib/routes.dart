@@ -278,6 +278,10 @@ class Routes {
         newRouteView = SignUpPage();
         break;
       case RouteEnum.completedClass:
+        providers = [
+          BlocProvider<CourseEnrollmentUpdateBloc>.value(
+              value: _courseEnrollmentUpdateBloc)
+        ];
         final Map<String, dynamic> argumentsToAdd =
             arguments as Map<String, dynamic>;
         newRouteView = CompletedClass(
@@ -379,7 +383,7 @@ class Routes {
           BlocProvider<TransformationJourneyContentBloc>.value(
               value: _transformationJourneyContentBloc),
         ];
-        final Map<String, UserResponse> argumentsToAdd = arguments;
+        final Map<String, UserResponse> argumentsToAdd = arguments as Map<String, UserResponse>;
         newRouteView = ProfileTransformationJourneyPage(
             userRequested: argumentsToAdd['profileInfo']);
         break;

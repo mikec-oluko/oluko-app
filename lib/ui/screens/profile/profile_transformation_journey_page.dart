@@ -203,7 +203,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
                   ),
                   itemCount: _transformationJourneyContent.length,
                   controller: _scrollController,
-                  onWillAccept: (oldIndex, newIndex) {
+                  onWillAccept: (int oldIndex, int newIndex) {
                     setState(
                       () {
                         _position = newIndex;
@@ -211,7 +211,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
                     );
                     return true;
                   },
-                  onReorder: (oldIndex, newIndex) {
+                  onReorder: (int oldIndex, int newIndex) {
                     if (isCurrenUser) {
                       BlocProvider.of<TransformationJourneyBloc>(context)
                         ..changeContentOrder(
