@@ -7,14 +7,14 @@ class Movement extends Base {
   String description;
   String video;
   List<ObjectSubmodel> tags;
-  String iconImage;
+  String image;
 
   Movement(
       {this.name,
       this.video,
       this.description,
       this.tags,
-      this.iconImage,
+      this.image,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -36,7 +36,7 @@ class Movement extends Base {
         name: json['name'].toString(),
         video: json['video'].toString(),
         description: json['description'].toString(),
-        iconImage: json['icon_image'].toString(),
+        image: json['iamge'].toString(),
         tags: json['tags'] == null
             ? null
             : (json['tags'] as Iterable)
@@ -51,7 +51,7 @@ class Movement extends Base {
       'name': name,
       'video': video,
       'description': description,
-      'icon_image': iconImage,
+      'image': image,
       'tags': tags == null ? null : List<dynamic>.from(tags),
     };
     movementJson.addEntries(super.toJson().entries);
