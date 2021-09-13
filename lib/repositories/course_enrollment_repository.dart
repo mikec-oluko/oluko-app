@@ -235,8 +235,8 @@ class CourseEnrollmentRepository {
     return courseEnrollment;
   }
 
-  static Future<String> _uploadFile(filePath, folderName) async {
-    final file = new File(filePath);
+  static Future<String> _uploadFile(String filePath, String folderName) async {
+    final file = File(filePath);
     final basename = p.basename(filePath);
 
     final S3Provider s3Provider = S3Provider();
