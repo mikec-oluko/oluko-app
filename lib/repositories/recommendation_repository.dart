@@ -21,7 +21,7 @@ class RecommendationRepository {
         .get();
     List<Recommendation> response = [];
     docRef.docs.forEach((doc) {
-      final Map<String, dynamic> element = doc.data();
+      final Map<String, dynamic> element = doc.data() as Map<String, dynamic>;
       response.add(Recommendation.fromJson(element));
     });
     return response;
@@ -36,7 +36,7 @@ class RecommendationRepository {
         .get();
     List<Recommendation> response = [];
     docRef.docs.forEach((doc) {
-      final Map<String, dynamic> element = doc.data();
+      final Map<String, dynamic> element = doc.data() as Map<String, dynamic>;
       response.add(Recommendation.fromJson(element));
     });
     return response;

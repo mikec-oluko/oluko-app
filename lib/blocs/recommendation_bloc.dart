@@ -16,7 +16,7 @@ class RecommendationSuccess extends RecommendationState {
 }
 
 class Failure extends RecommendationState {
-  final Exception exception;
+  final dynamic exception;
 
   Failure({this.exception});
 }
@@ -26,8 +26,7 @@ class RecommendationBloc extends Cubit<RecommendationState> {
 
   void getAll() async {
     try {
-      List<Recommendation> recommendations =
-          await RecommendationRepository().getAll();
+      List<Recommendation> recommendations = await RecommendationRepository().getAll();
       emit(RecommendationSuccess(recommendations: recommendations));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -35,13 +34,13 @@ class RecommendationBloc extends Cubit<RecommendationState> {
         stackTrace: stackTrace,
       );
       emit(Failure(exception: exception));
+      rethrow;
     }
   }
 
   void getByDestinationUser(String userId) async {
     try {
-      List<Recommendation> recommendations =
-          await RecommendationRepository().getByDestinationUser(userId);
+      List<Recommendation> recommendations = await RecommendationRepository().getByDestinationUser(userId);
       emit(RecommendationSuccess(recommendations: recommendations));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -49,75 +48,61 @@ class RecommendationBloc extends Cubit<RecommendationState> {
         stackTrace: stackTrace,
       );
       emit(Failure(exception: exception));
+      rethrow;
     }
   }
 
   void getRecommendedCoursesByUser(String userId) async {
     try {
-      List<Recommendation> recommendations =
-          await RecommendationRepository().getByDestinationUser(userId);
+      List<Recommendation> recommendations = await RecommendationRepository().getByDestinationUser(userId);
 
       //Filter recommendations by Course recommendations
       List<Recommendation> courseRecommendations = recommendations
-          .where((Recommendation element) =>
-              element.typeId == RecommendationEntityType.course.index)
+          .where((Recommendation element) => element.typeId == RecommendationEntityType.course.index)
           .toList();
 
       //Get a Map of Courses and their recommender user ids (Map<CourseId, List<UserId>>)
-      Map<String, List<String>> coursesRecommendedByUserIds =
-          _getCoursesRecommendedByUsers(courseRecommendations);
+      Map<String, List<String>> coursesRecommendedByUserIds = _getCoursesRecommendedByUsers(courseRecommendations);
 
       //Get a List of unique recommender user ids
-      List<String> recommendationUserIds =
-          courseRecommendations.map((e) => e.originUserId).toList();
+      List<String> recommendationUserIds = courseRecommendations.map((e) => e.originUserId).toList();
       recommendationUserIds = _removeDuplicates(recommendationUserIds);
 
       //Retrieve user information for recommenders to get their avatars
       //TODO Repository method to only retrieve basic & public information from users
-      List<UserResponse> recommendationUsers =
-          await Future.wait(recommendationUserIds.map((String userId) async {
+      List<UserResponse> recommendationUsers = await Future.wait(recommendationUserIds.map((String userId) async {
         return UserRepository().getById(userId);
       }).toList());
 
       //Get a Map of Courses and their recommender users (Map<CourseId, List<UserResponse>)
       Map<String, List<UserResponse>> coursesRecommendedByUsers = {};
-      coursesRecommendedByUserIds.entries.forEach(
-          (MapEntry<String, List<String>> coursesRecommendedByIdsEntry) {
-        MapEntry<String, List<UserResponse>> coursesRecommendedByUserEntry =
-            MapEntry(
-                coursesRecommendedByIdsEntry.key,
-                coursesRecommendedByIdsEntry.value
-                    .map((String userId) => recommendationUsers
-                        .where((user) => user.id == userId)
-                        .toList()[0])
-                    .toList());
-        coursesRecommendedByUsers[coursesRecommendedByUserEntry.key] =
-            coursesRecommendedByUserEntry.value;
+      coursesRecommendedByUserIds.entries.forEach((MapEntry<String, List<String>> coursesRecommendedByIdsEntry) {
+        MapEntry<String, List<UserResponse>> coursesRecommendedByUserEntry = MapEntry(
+            coursesRecommendedByIdsEntry.key,
+            coursesRecommendedByIdsEntry.value
+                .map((String userId) => recommendationUsers.where((user) => user.id == userId).toList()[0])
+                .toList());
+        coursesRecommendedByUsers[coursesRecommendedByUserEntry.key] = coursesRecommendedByUserEntry.value;
       });
 
-      emit(RecommendationSuccess(
-          recommendations: recommendations,
-          recommendationsByUsers: coursesRecommendedByUsers));
+      emit(RecommendationSuccess(recommendations: recommendations, recommendationsByUsers: coursesRecommendedByUsers));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
         stackTrace: stackTrace,
       );
       emit(Failure(exception: exception));
+      rethrow;
     }
   }
 
-  Map<String, List<String>> _getCoursesRecommendedByUsers(
-      List<Recommendation> recommendations) {
+  Map<String, List<String>> _getCoursesRecommendedByUsers(List<Recommendation> recommendations) {
     Map<String, List<String>> recommendationsByCourses = {};
     recommendations.forEach((Recommendation recommendation) {
       if (recommendationsByCourses[recommendation.entityId] == null) {
-        recommendationsByCourses[recommendation.entityId] = [
-          recommendation.originUserId
-        ];
+        recommendationsByCourses[recommendation.entityId] = [recommendation.originUserId];
       } else {
-        recommendationsByCourses[recommendation.entityId]
-            .add(recommendation.originUserId);
+        recommendationsByCourses[recommendation.entityId].add(recommendation.originUserId);
       }
     });
 

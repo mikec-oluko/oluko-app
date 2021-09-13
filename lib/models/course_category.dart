@@ -27,11 +27,11 @@ class CourseCategory extends Base {
 
   factory CourseCategory.fromJson(Map<String, dynamic> json) {
     CourseCategory courseCategory = CourseCategory(
-      name: json['name'],
+      name: json['name'].toString(),
       courses: json['courses'] != null
-          ? json['courses']
-              .map<CourseCategoryItem>(
-                  (item) => CourseCategoryItem.fromJson(item))
+          ? (json['courses'] as Iterable)
+              .map<CourseCategoryItem>((item) =>
+                  CourseCategoryItem.fromJson(item as Map<String, dynamic>))
               .toList()
           : [],
     );

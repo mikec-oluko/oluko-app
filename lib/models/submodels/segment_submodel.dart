@@ -17,14 +17,15 @@ class SegmentSubmodel {
 
   factory SegmentSubmodel.fromJson(Map<String, dynamic> json) {
     return SegmentSubmodel(
-        id: json['id'],
-        reference: json['reference'],
-        name: json['name'],
+        id: json['id'].toString(),
+        reference: json['reference'] as DocumentReference,
+        name: json['name'].toString(),
         challengeImage: json['challenge_image'],
         movements: json['movements'] == null
             ? null
-            : List<ObjectSubmodel>.from(json['movements']
-                .map((movement) => ObjectSubmodel.fromJson(movement))));
+            : List<ObjectSubmodel>.from((json['movements'] as Iterable).map(
+                (movement) => ObjectSubmodel.fromJson(
+                    movement as Map<String, dynamic>))));
   }
 
   Map<String, dynamic> toJson() => {

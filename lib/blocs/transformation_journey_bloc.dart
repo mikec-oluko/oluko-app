@@ -11,13 +11,18 @@ class TransformationJourneyLoading extends TransformationJourneyState {}
 
 class TransformationJourneyDefault extends TransformationJourneyState {}
 
+class TransformationJourneyDefaultValue extends TransformationJourneyState {
+  final List<TransformationJourneyUpload> contentFromUser;
+  TransformationJourneyDefaultValue({this.contentFromUser});
+}
+
 class TransformationJourneySuccess extends TransformationJourneyState {
   final List<TransformationJourneyUpload> contentFromUser;
   TransformationJourneySuccess({this.contentFromUser});
 }
 
 class TransformationJourneyFailure extends TransformationJourneyState {
-  final Exception exception;
+  final dynamic exception;
 
   TransformationJourneyFailure({this.exception});
 }
@@ -28,8 +33,7 @@ class TransformationJourneyBloc extends Cubit<TransformationJourneyState> {
   void getContentByUserId(String userId) async {
     try {
       List<TransformationJourneyUpload> contentUploaded =
-          await TransformationJourneyRepository()
-              .getUploadedContentByUserId(userId);
+          await TransformationJourneyRepository().getUploadedContentByUserId(userId);
       emit(TransformationJourneySuccess(contentFromUser: contentUploaded));
     } catch (e, stackTrace) {
       await Sentry.captureException(
@@ -37,61 +41,60 @@ class TransformationJourneyBloc extends Cubit<TransformationJourneyState> {
         stackTrace: stackTrace,
       );
       emit(TransformationJourneyFailure(exception: e));
+      rethrow;
     }
   }
 
-  Future<void> createTransformationJourneyUpload(FileTypeEnum type,
-      PickedFile file, String userId, int indexForContent) async {
+  Future<void> createTransformationJourneyUpload(
+      FileTypeEnum type, PickedFile file, String userId, int indexForContent) async {
     try {
       TransformationJourneyUpload transformationJourneyUpload =
-          await TransformationJourneyRepository
-              .createTransformationJourneyUpload(
-                  type, file, userId, indexForContent);
+          await TransformationJourneyRepository.createTransformationJourneyUpload(type, file, userId, indexForContent);
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,
         stackTrace: stackTrace,
       );
       emit(TransformationJourneyFailure(exception: e));
+      rethrow;
     }
   }
 
   void emitTransformationJourneyFailure() {
     try {
-      emit(TransformationJourneyFailure(
-          exception: new Exception("Upload Aborted")));
+      emit(TransformationJourneyFailure(exception: new Exception("Upload Aborted")));
     } catch (e, stackTrace) {
       Sentry.captureException(
         e,
         stackTrace: stackTrace,
       );
       emit(TransformationJourneyFailure(exception: e));
+      rethrow;
     }
   }
 
-  void emitTransformationJourneyDefault() {
+  void emitTransformationJourneyDefault({bool noValues = false}) {
     try {
-      emit(TransformationJourneyDefault());
+      noValues
+          ? emit(TransformationJourneyDefaultValue(contentFromUser: []))
+          : emit(TransformationJourneyDefault());
     } catch (e, stackTrace) {
       Sentry.captureException(
         e,
         stackTrace: stackTrace,
       );
       emit(TransformationJourneyFailure(exception: e));
+      rethrow;
     }
   }
 
-  Future<void> changeContentOrder(TransformationJourneyUpload elementMoved,
-      TransformationJourneyUpload elementReplaced, String userId) async {
-    final bool isUpdated =
-        await TransformationJourneyRepository.reorderElementsIndex(
-            elementMoved: elementMoved,
-            elementReplaced: elementReplaced,
-            userId: userId);
+  Future<void> changeContentOrder(
+      TransformationJourneyUpload elementMoved, TransformationJourneyUpload elementReplaced, String userId) async {
+    final bool isUpdated = await TransformationJourneyRepository.reorderElementsIndex(
+        elementMoved: elementMoved, elementReplaced: elementReplaced, userId: userId);
     if (isUpdated) {
       List<TransformationJourneyUpload> contentUploaded =
-          await TransformationJourneyRepository()
-              .getUploadedContentByUserId(userId);
+          await TransformationJourneyRepository().getUploadedContentByUserId(userId);
       emit(TransformationJourneySuccess(contentFromUser: contentUploaded));
     } else {
       return;

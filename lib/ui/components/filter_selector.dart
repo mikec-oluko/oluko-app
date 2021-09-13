@@ -14,13 +14,7 @@ class FilterSelector<T extends Base> extends StatefulWidget {
   final Function() onClosed;
   List<Base> selectedTags;
 
-  FilterSelector(
-      {this.textInput,
-      this.itemList,
-      this.onPressed,
-      this.onSubmit,
-      this.onClosed,
-      this.selectedTags});
+  FilterSelector({this.textInput, this.itemList, this.onPressed, this.onSubmit, this.onClosed, this.selectedTags});
 
   @override
   State<StatefulWidget> createState() => _State<T>();
@@ -59,8 +53,7 @@ class _State<T extends Base> extends State<FilterSelector> {
                     SizedBox(
                       width: 15,
                     ),
-                    OlukoOutlinedButton(
-                        title: 'Close', onPressed: () => widget.onClosed())
+                    OlukoOutlinedButton(title: 'Close', onPressed: () => widget.onClosed())
                   ],
                 ))),
       ],
@@ -79,8 +72,7 @@ class _State<T extends Base> extends State<FilterSelector> {
     );
   }
 
-  List<Widget> _getFilterCategory(
-      MapEntry<String, Map<Base, String>> filterEntry) {
+  List<Widget> _getFilterCategory(MapEntry<String, Map<Base, String>> filterEntry) {
     return [
       Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -88,7 +80,7 @@ class _State<T extends Base> extends State<FilterSelector> {
       ),
       SearchFilters<T>(
           itemList: Map<T, String>.fromIterable(filterEntry.value.keys,
-              key: (item) => item, value: (item) => item.name),
+              key: (item) => item as T, value: (item) => item.name as String),
           selectedTags: _getSelectedItemList(),
           onPressed: _loadTagsFromSearchFilter)
     ];
@@ -96,8 +88,7 @@ class _State<T extends Base> extends State<FilterSelector> {
 
   void _loadTagsFromSearchFilter(Map<String, bool> selectedItems) {
     this.setState(() {
-      selectedItems.entries.forEach(
-          (MapEntry<String, bool> entry) => _selected[entry.key] = entry.value);
+      selectedItems.entries.forEach((MapEntry<String, bool> entry) => _selected[entry.key] = entry.value);
       if (widget.onPressed != null) {
         widget.onPressed(_getSelectedItemList());
       }
@@ -105,37 +96,33 @@ class _State<T extends Base> extends State<FilterSelector> {
   }
 
   List<Base> _getSelectedItemList() {
-    List<MapEntry<String, bool>> selectedEntries =
-        _selected.entries.where((element) => element.value == true).toList();
+    List<MapEntry<String, bool>> selectedEntries = _selected.entries.where((element) => element.value == true).toList();
 
     List<T> allItems =
-        _getAllValuesFromCategories(widget.itemList.entries.toList())
+        _getAllValuesFromCategories(widget.itemList.entries.toList() as List<MapEntry<String, Map<T, String>>>)
             .map((item) => item.key)
             .toList();
 
-    return selectedEntries
-        .map((entry) => allItems.firstWhere((item) => item.id == entry.key))
-        .toList();
+    return selectedEntries.map((entry) => allItems.firstWhere((item) => item.id == entry.key)).toList();
   }
 
-  List<MapEntry<T, String>> _getAllValuesFromCategories(
-      List<MapEntry<String, Map<T, String>>> itemsInCategories) {
+  List<MapEntry<T, String>> _getAllValuesFromCategories(List<MapEntry<String, Map<T, String>>> itemsInCategories) {
     List<MapEntry<T, String>> allItems = [];
 
-    itemsInCategories.forEach((MapEntry<String, Map<T, String>> entry) =>
-        entry.value.entries.forEach((item) => allItems.add(item)));
+    itemsInCategories
+        .forEach((MapEntry<String, Map<T, String>> entry) => entry.value.entries.forEach((item) => allItems.add(item)));
     return allItems;
   }
 
   //Populate selected items array for first time at widget init
   void initializeSelectedItems() {
     List<MapEntry<T, String>> allItems =
-        _getAllValuesFromCategories(widget.itemList.entries.toList()).toList();
+        _getAllValuesFromCategories(widget.itemList.entries.toList() as List<MapEntry<String, Map<T, String>>>)
+            .toList();
 
     _selected = Map.fromIterable(allItems,
-        key: (item) => item.key.id,
-        value: (item) =>
-            widget.selectedTags.map((tag) => tag.id).contains(item.key.id));
+        key: (item) => item.key.id as String,
+        value: (item) => widget.selectedTags.map((tag) => tag.id).contains(item.key.id));
   }
 
   void submit() {

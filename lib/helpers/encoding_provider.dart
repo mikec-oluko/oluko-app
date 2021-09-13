@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
 import 'package:flutter_ffmpeg/log.dart';
 import 'package:flutter_ffmpeg/media_information.dart';
+import 'package:flutter_ffmpeg/statistics.dart';
 
 removeExtension(String path) {
   final str = path.substring(0, path.length - 4);
@@ -13,7 +14,7 @@ class EncodingProvider {
   static final FlutterFFprobe _probe = FlutterFFprobe();
   static final FlutterFFmpegConfig _config = FlutterFFmpegConfig();
 
-  static Future<String> encodeHLS(videoPath, outDirPath) async {
+  static Future<String> encodeHLS(String videoPath, String outDirPath) async {
     assert(File(videoPath).existsSync());
 
     // final arguments = '-y -i $videoPath ' +
@@ -48,23 +49,20 @@ class EncodingProvider {
 
   static double getAspectRatio(Map<dynamic, dynamic> info) {
     //TODO Support Gallery
-    final int width = info['streams'][0]['width'];
-    final int height = info['streams'][0]['height'];
+    final int width = int.tryParse(info['streams'][0]['width'].toString());
+    final int height = int.tryParse(info['streams'][0]['height'].toString());
     final double aspect = height / width;
     return aspect;
   }
 
-  static Future<String> getThumb(videoPath, width, height) async {
+  static Future<String> getThumb(String videoPath, width, height) async {
     assert(await File(videoPath).exists());
     var imagePath = videoPath;
     if (videoPath.toString().contains('.mp4')) {
-      imagePath = (videoPath
-          .toString()
-          .substring(0, (videoPath.toString().length) - 4));
+      imagePath = (videoPath.toString().substring(0, (videoPath.toString().length) - 4));
     }
     final String outPath = '$imagePath.jpg';
-    var arguments =
-        '-y -i $videoPath -vframes 1 -an -s ${width}x${height} -ss 1 $outPath';
+    var arguments = '-y -i $videoPath -vframes 1 -an -s ${width}x${height} -ss 1 $outPath';
     int rc = await _encoder.execute(arguments);
     assert(rc == 0);
     assert(await File(outPath).exists());
@@ -72,7 +70,7 @@ class EncodingProvider {
     return outPath;
   }
 
-  static void enableStatisticsCallback(Function cb) {
+  static void enableStatisticsCallback(void Function(Statistics) cb) {
     return _config.enableStatisticsCallback(cb);
   }
 
@@ -87,24 +85,10 @@ class EncodingProvider {
   }
 
   static double getDuration(Map<dynamic, dynamic> info) {
-    return double.parse(info['duration']);
+    return double.parse(info['duration'].toString());
   }
 
   static void enableLogCallback(void Function(Log log) logCallback) {
     _config.enableLogCallback(logCallback);
-  }
-
-  static Future<String> getImageThumb(imagePath, width, height) async {
-    assert(File(imagePath).existsSync());
-
-    final String outPath = '$imagePath';
-    final arguments =
-        '-y -i $imagePath -vframes 1 -an -s ${width}x$height $outPath';
-
-    final int rc = await _encoder.execute(arguments);
-    assert(rc == 0);
-    assert(File(outPath).existsSync());
-
-    return outPath;
   }
 }

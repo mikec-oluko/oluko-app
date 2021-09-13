@@ -15,9 +15,11 @@ class _CoachTabChallengeCardState extends State<CoachTabChallengeCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      decoration: BoxDecoration(
+          color: OlukoColors.challengesGreyBackground,
+          borderRadius: BorderRadius.all(Radius.circular(5))),
       height: 100,
       width: 150,
-      color: OlukoColors.challengesGreyBackground,
       child: Wrap(
         children: [
           Row(
@@ -33,7 +35,7 @@ class _CoachTabChallengeCardState extends State<CoachTabChallengeCard> {
                           return Text('Your error widget...');
                         },
                       ),
-                      color: OlukoColors.white,
+                      color: OlukoColors.warning,
                       borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(10),
                           bottomRight: Radius.circular(10))),

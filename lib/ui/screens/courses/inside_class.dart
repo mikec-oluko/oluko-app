@@ -25,6 +25,7 @@ import 'package:oluko_app/ui/screens/courses/class_detail_section.dart';
 import 'package:oluko_app/ui/screens/courses/course_info_section.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/time_converter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class InsideClass extends StatefulWidget {
@@ -136,6 +137,13 @@ class _InsideClassesState extends State<InsideClass> {
         OlukoPrimaryButton(
           title: OlukoLocalizations.of(context).find('start'),
           onPressed: () {
+            //TODO: Remove this
+            /*Navigator.pushNamed(context, routeLabels[RouteEnum.completedClass],
+                arguments: {
+                  'classIndex': widget.classIndex,
+                  'courseEnrollment': widget.courseEnrollment,
+                });*/
+
             int segmentIndex =
                 CourseEnrollmentService.getFirstUncompletedSegmentIndex(
                     widget.courseEnrollment.classes[widget.classIndex]);
@@ -234,13 +242,8 @@ class _InsideClassesState extends State<InsideClass> {
                     Padding(
                       padding: const EdgeInsets.only(top: 10.0, right: 10),
                       child: Text(
-                        OlukoLocalizations.of(context).find('class') +
-                            " " +
-                            (widget.classIndex + 1).toString() +
-                            " " +
-                            OlukoLocalizations.of(context).find('of') +
-                            " " +
-                            widget.courseEnrollment.classes.length.toString(),
+                        TimeConverter.toClassProgress(widget.classIndex,
+                            widget.courseEnrollment.classes.length, context),
                         style: OlukoFonts.olukoBigFont(
                             custoFontWeight: FontWeight.normal,
                             customColor: OlukoColors.primary),

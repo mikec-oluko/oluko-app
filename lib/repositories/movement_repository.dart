@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/models/movement.dart';
+import 'package:oluko_app/models/movement_relation.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
@@ -63,8 +64,19 @@ class MovementRepository {
     return items;
   }
 
-  static Future<Movement> create(
-      Movement movement, DocumentReference segmentReference) async {
+  static Future<MovementRelation> getRelations(String id) async {
+    DocumentSnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue("projectId"))
+        .collection('movementRelations')
+        .doc(id)
+        .get();
+
+    MovementRelation movementRelation = MovementRelation.fromJson(querySnapshot.data() as Map<String, dynamic>);
+    return movementRelation;
+  }
+
+  static Future<Movement> create(Movement movement, DocumentReference segmentReference) async {
     CollectionReference reference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"))
@@ -72,17 +84,15 @@ class MovementRepository {
     final DocumentReference docRef = reference.doc();
     movement.id = docRef.id;
     docRef.set(movement.toJson());
-    MovementSubmodel movementObj = MovementSubmodel(
-        id: movement.id,
-        reference: reference.doc(movement.id),
-        name: movement.name);
+    MovementSubmodel movementObj =
+        MovementSubmodel(id: movement.id, reference: reference.doc(movement.id), name: movement.name);
     await SegmentRepository.updateMovements(movementObj, segmentReference);
     return movement;
   }
 
   static List<Movement> mapQueryToMovement(QuerySnapshot qs) {
     return qs.docs.map((DocumentSnapshot ds) {
-      dynamic movementData = ds.data();
+      Map<String, dynamic> movementData = ds.data() as Map<String, dynamic>;
       return Movement.fromJson(movementData);
     }).toList();
   }

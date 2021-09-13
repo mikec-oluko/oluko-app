@@ -8,6 +8,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/oluko_image_bar.dart';
 import 'package:oluko_app/ui/components/movement_item_bubbles.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
@@ -25,45 +26,43 @@ class MovementIntro extends StatefulWidget {
   _MovementIntroState createState() => _MovementIntroState();
 }
 
-class _MovementIntroState extends State<MovementIntro>
-    with TickerProviderStateMixin {
+class _MovementIntroState extends State<MovementIntro> with TickerProviderStateMixin {
   final toolbarHeight = kToolbarHeight * 2;
   final tabs = ['Intro'];
   Map<String, bool> coursesBookmarked = {};
 
   //TODO Make Dynamic
   Movement movement2 = Movement(
-      iconImage:
+      image:
           'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/Airsquats.jpg?alt=media&token=641c2dff-ac0e-4b22-8a8d-aee9adbca3a1',
       video:
           'https://oluko-mvt.s3.us-west-1.amazonaws.com/assessments/85b2f81c1fe74f9cb5e804c57db30137/85b2f81c1fe74f9cb5e804c57db30137_2.mp4',
       description:
           'Learn practical exercises to gain confidence in yourself, improve your core and focus on strengthening and toning your midsection. You wont regret after these 6 weeks and everybody will notice your effort and your selflove. ',
       name: "Airsquats");
-  String backgroundImageUrl =
-      'https://c0.wallpaperflare.com/preview/26/779/700/fitness-men-sports-gym.jpg';
+  String backgroundImageUrl = 'https://c0.wallpaperflare.com/preview/26/779/700/fitness-men-sports-gym.jpg';
   String _secondTabVideoUrl =
       'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/production%20ID_4701508.mp4?alt=media&token=815819a5-72f9-4bec-bee0-59064c634c03';
   List<Movement> referenceMovements = [
     Movement(
         name: 'Airsquats',
-        iconImage:
+        image:
             'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/Airsquats.jpg?alt=media&token=641c2dff-ac0e-4b22-8a8d-aee9adbca3a1'),
     Movement(
         name: 'Body Building',
-        iconImage:
+        image:
             'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_16.png?alt=media&token=2528a228-cabf-49f1-a606-433b83508f42'),
     Movement(
         name: 'Triceps',
-        iconImage:
+        image:
             'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_17.png?alt=media&token=89e4809d-7cc8-40ac-88e0-eebac4ccc93a'),
     Movement(
         name: 'Yoga',
-        iconImage:
+        image:
             'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_3.png?alt=media&token=8918da2d-5f50-45a7-992e-41e3112678f6'),
     Movement(
         name: 'Body Building',
-        iconImage:
+        image:
             'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_16.png?alt=media&token=2528a228-cabf-49f1-a606-433b83508f42'),
   ];
   List<Course> referenceCourses = [
@@ -90,23 +89,18 @@ class _MovementIntroState extends State<MovementIntro>
   void initState() {
     // tabController =
     //     TabController(initialIndex: 0, length: tabs.length, vsync: this);
-    referenceCourses.forEach((course) => coursesBookmarked[course.id] = false);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: OlukoImageBar(
-          actions: [],
-          movements: [widget.movement],
-          onPressedMovement: (context, movement) => {}),
+      appBar: OlukoImageBar(actions: [], movements: [widget.movement], onPressedMovement: (context, movement) => {}),
       backgroundColor: Colors.black,
       body: Container(
         decoration: BoxDecoration(
             image: DecorationImage(
-                colorFilter: ColorFilter.mode(
-                    Colors.black.withOpacity(0.94), BlendMode.darken),
+                colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.94), BlendMode.darken),
                 fit: BoxFit.cover,
                 image: NetworkImage(backgroundImageUrl))),
         width: ScreenUtils.width(context),
@@ -117,10 +111,8 @@ class _MovementIntroState extends State<MovementIntro>
   }
 
   Widget _viewBody() {
-    return BlocBuilder<MovementInfoBloc, MovementInfoState>(
-        builder: (context, movementInfoState) {
-      if (_movementInfoSuccess == null &&
-          !(movementInfoState is MovementInfoSuccess)) {
+    return BlocBuilder<MovementInfoBloc, MovementInfoState>(builder: (context, movementInfoState) {
+      if (_movementInfoSuccess == null && !(movementInfoState is MovementInfoSuccess)) {
         BlocProvider.of<MovementInfoBloc>(context).get(widget.movement.id);
       }
       if (movementInfoState is MovementInfoSuccess) {
@@ -129,8 +121,7 @@ class _MovementIntroState extends State<MovementIntro>
           movementInfoState.movementVariants.forEach((element) {
             tabs.add(element.name);
           });
-          tabController =
-              TabController(initialIndex: 0, length: tabs.length, vsync: this);
+          tabController = TabController(initialIndex: 0, length: tabs.length, vsync: this);
         }
         return Container(
           child: ListView(
@@ -149,8 +140,7 @@ class _MovementIntroState extends State<MovementIntro>
                             children: [
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: MovementUtils.movementTitle(
-                                    widget.movement.name),
+                                child: MovementUtils.movementTitle(widget.movement.name),
                               ),
                               SizedBox(height: 25),
                               Column(
@@ -158,9 +148,7 @@ class _MovementIntroState extends State<MovementIntro>
                                   Container(
                                     width: ScreenUtils.width(context),
                                     decoration: BoxDecoration(
-                                        border: Border.symmetric(
-                                            horizontal: BorderSide(
-                                                color: Colors.white))),
+                                        border: Border.symmetric(horizontal: BorderSide(color: Colors.white))),
                                     child: TabBar(
                                       isScrollable: true,
                                       onTap: (index) => this.setState(() {
@@ -170,8 +158,7 @@ class _MovementIntroState extends State<MovementIntro>
                                       }),
                                       controller: tabController,
                                       indicatorSize: TabBarIndicatorSize.tab,
-                                      indicator:
-                                          BoxDecoration(color: Colors.white),
+                                      indicator: BoxDecoration(color: Colors.white),
                                       tabs: _getTabs(),
                                     ),
                                   ),
@@ -181,9 +168,7 @@ class _MovementIntroState extends State<MovementIntro>
                                 if (tabController.index == 0) {
                                   return _firstTab(widget.movement);
                                 } else {
-                                  return _firstTab(
-                                      movementInfoState.movementVariants[
-                                          tabController.index - 1]);
+                                  return _firstTab(movementInfoState.movementVariants[tabController.index - 1]);
                                 }
                               })
                             ],
@@ -211,7 +196,10 @@ class _MovementIntroState extends State<MovementIntro>
           children: [
             Column(
               children: [
-                Container(height: 100, child: Image.network(course.image))
+                GestureDetector(
+                    onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
+                        arguments: {'course': course}),
+                    child: Container(height: 100, child: Image.network(course.image)))
               ],
             ),
             Padding(
@@ -233,8 +221,7 @@ class _MovementIntroState extends State<MovementIntro>
                   ),
                   GestureDetector(
                     onTap: () => this.setState(() {
-                      coursesBookmarked[course.id] =
-                          !coursesBookmarked[course.id];
+                      coursesBookmarked[course.id] = !coursesBookmarked[course.id];
                     }),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -242,7 +229,7 @@ class _MovementIntroState extends State<MovementIntro>
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Icon(
-                            this.coursesBookmarked[course.id]
+                            this.coursesBookmarked[course.id] != null && this.coursesBookmarked[course.id] == true
                                 ? Icons.bookmark
                                 : Icons.bookmark_border,
                             size: 20,
@@ -265,15 +252,14 @@ class _MovementIntroState extends State<MovementIntro>
     );
   }
 
-  List<Widget> _videoPlayer(String videoUrl, num index) {
+  List<Widget> _videoPlayer(String videoUrl, int index) {
     _clearUnusedVideoControllers(index);
     List<Widget> widgets = [];
     widgets.add(OlukoVideoPlayer(
         key: _videoKeys[index],
         videoUrl: videoUrl,
         autoPlay: false,
-        whenInitialized: (ChewieController chewieController) =>
-            this.setState(() {
+        whenInitialized: (ChewieController chewieController) => this.setState(() {
               _videoControllers[index] = chewieController;
             })));
     if (_videoControllers[index] == null) {
@@ -290,13 +276,10 @@ class _MovementIntroState extends State<MovementIntro>
     }
   }
 
-  _firstTab(Movement movement) {
+  Widget _firstTab(Movement movement) {
     return Container(
       child: Column(children: [
-        Container(
-            height: 200,
-            child: Stack(
-                children: _videoPlayer(movement.video, tabController.index))),
+        Container(height: 200, child: Stack(children: _videoPlayer(movement.video, tabController.index))),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -323,7 +306,10 @@ class _MovementIntroState extends State<MovementIntro>
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     MovementItemBubbles(
-                        content: this.referenceMovements,
+                        onPressed: (context, movement) => Navigator.pushNamed(
+                            context, routeLabels[RouteEnum.movementIntro],
+                            arguments: {'movement': movement}),
+                        content: this._movementInfoSuccess.relatedMovements,
                         width: ScreenUtils.width(context) / 1.2),
                   ],
                 ),
@@ -341,9 +327,8 @@ class _MovementIntroState extends State<MovementIntro>
                 ],
               ),
               Column(
-                  children: referenceCourses
-                      .map((Course course) => courseRow(course))
-                      .toList()),
+                  children:
+                      this._movementInfoSuccess.relatedCourses.map((Course course) => courseRow(course)).toList()),
             ],
           ),
         )
@@ -354,9 +339,7 @@ class _MovementIntroState extends State<MovementIntro>
   _secondTab() {
     return Container(
       child: Column(children: [
-        Container(
-            height: 200,
-            child: Stack(children: _videoPlayer(_secondTabVideoUrl, 1))),
+        Container(height: 200, child: Stack(children: _videoPlayer(_secondTabVideoUrl, 1))),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -382,9 +365,7 @@ class _MovementIntroState extends State<MovementIntro>
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    MovementItemBubbles(
-                        content: this.referenceMovements,
-                        width: ScreenUtils.width(context) / 1.2),
+                    MovementItemBubbles(content: this.referenceMovements, width: ScreenUtils.width(context) / 1.2),
                   ],
                 ),
               ),
@@ -400,10 +381,7 @@ class _MovementIntroState extends State<MovementIntro>
                   ),
                 ],
               ),
-              Column(
-                  children: referenceCourses
-                      .map((Course course) => courseRow(course))
-                      .toList()),
+              Column(children: referenceCourses.map((Course course) => courseRow(course)).toList()),
             ],
           ),
         )

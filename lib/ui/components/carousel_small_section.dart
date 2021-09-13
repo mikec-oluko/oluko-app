@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
@@ -8,14 +10,16 @@ class CarouselSmallSection extends StatefulWidget {
   final List<Widget> children;
   final Function() onOptionTap;
   final String optionLabel;
-  final String routeToGo;
+  final RouteEnum routeToGo;
+  final UserResponse userToGetData;
 
   CarouselSmallSection(
       {this.title,
       this.children,
       this.onOptionTap,
       this.optionLabel,
-      this.routeToGo});
+      this.routeToGo,
+      this.userToGetData});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -38,7 +42,9 @@ class _State extends State<CarouselSmallSection> {
             Padding(
               padding: const EdgeInsets.only(right: 5),
               child: TextButton(
-                onPressed: () => Navigator.pushNamed(context, widget.routeToGo),
+                onPressed: () {
+                  goToRoute(widget.routeToGo);
+                },
                 child: Text(
                   OlukoLocalizations.of(context).find('viewAll'),
                   style: TextStyle(color: OlukoColors.primary),
@@ -69,5 +75,23 @@ class _State extends State<CarouselSmallSection> {
         )
       ]),
     );
+  }
+
+  goToRoute(RouteEnum routeToGo) {
+    switch (routeToGo) {
+      case RouteEnum.profileTransformationJourney:
+        Navigator.pushNamed(
+            context, routeLabels[RouteEnum.profileTransformationJourney],
+            arguments: {'profileInfo': widget.userToGetData});
+        break;
+      case RouteEnum.profileAssessmentVideos:
+        Navigator.pushNamed(
+            context, routeLabels[RouteEnum.profileAssessmentVideos]);
+        break;
+      case RouteEnum.profileChallenges:
+        Navigator.pushNamed(context, routeLabels[RouteEnum.profileChallenges]);
+        break;
+      default:
+    }
   }
 }

@@ -8,12 +8,7 @@ class PrivacyOptions {
   SettingsPrivacyOptions option;
   bool showSubtitle;
   bool isSwitch;
-  PrivacyOptions(
-      {this.title,
-      this.subtitle,
-      this.option,
-      this.showSubtitle = true,
-      this.isSwitch = false});
+  PrivacyOptions({this.title, this.subtitle, this.option, this.showSubtitle = true, this.isSwitch = false});
 
   static List<PrivacyOptions> privacyOptionsList = [
     PrivacyOptions(
@@ -30,48 +25,37 @@ class PrivacyOptions {
         option: SettingsPrivacyOptions.anonymous),
   ];
 
-  static SettingsPrivacyOptions getPrivacyValue(num optionSelected) =>
+  static SettingsPrivacyOptions getPrivacyValue(int optionSelected) =>
       privacyOptionsList.elementAt(optionSelected).option;
 
   SettingsPrivacyOptions currentUserPrivacyOption(UserResponse currentUser) {
     return PrivacyOptions.privacyOptionsList[currentUser.privacy].option;
   }
 
-  SettingsPrivacyOptions userRequestedPrivacyOption(
-      UserResponse userToDisplayInformation) {
-    return PrivacyOptions
-        .privacyOptionsList[userToDisplayInformation.privacy].option;
+  SettingsPrivacyOptions userRequestedPrivacyOption(UserResponse userToDisplayInformation) {
+    return PrivacyOptions.privacyOptionsList[userToDisplayInformation.privacy].option;
   }
 
-  canShowDetails(
-      {bool isOwner,
-      UserResponse currentUser,
-      UserResponse userRequested,
-      UserConnectStatus connectStatus}) {
-    final _currentUserPrivacyOption =
-        this.currentUserPrivacyOption(currentUser);
-    final _userRequestedPrivacyOption =
-        this.userRequestedPrivacyOption(userRequested);
+  bool canShowDetails(
+      {bool isOwner, UserResponse currentUser, UserResponse userRequested, UserConnectStatus connectStatus}) {
+    final _currentUserPrivacyOption = this.currentUserPrivacyOption(currentUser);
+    final _userRequestedPrivacyOption = this.userRequestedPrivacyOption(userRequested);
     if (isOwner) {
       return true;
     }
     switch (_currentUserPrivacyOption) {
       case SettingsPrivacyOptions.public:
         if (_userRequestedPrivacyOption == SettingsPrivacyOptions.public ||
-            ((_userRequestedPrivacyOption ==
-                        SettingsPrivacyOptions.restricted ||
-                    _userRequestedPrivacyOption ==
-                        SettingsPrivacyOptions.anonymous) &&
+            ((_userRequestedPrivacyOption == SettingsPrivacyOptions.restricted ||
+                    _userRequestedPrivacyOption == SettingsPrivacyOptions.anonymous) &&
                 connectStatus == UserConnectStatus.connected)) {
           return true;
         }
         return false;
       case SettingsPrivacyOptions.restricted:
         if (_userRequestedPrivacyOption == SettingsPrivacyOptions.public ||
-            ((_userRequestedPrivacyOption ==
-                        SettingsPrivacyOptions.restricted ||
-                    _userRequestedPrivacyOption ==
-                        SettingsPrivacyOptions.anonymous) &&
+            ((_userRequestedPrivacyOption == SettingsPrivacyOptions.restricted ||
+                    _userRequestedPrivacyOption == SettingsPrivacyOptions.anonymous) &&
                 connectStatus == UserConnectStatus.connected)) {
           return true;
         }

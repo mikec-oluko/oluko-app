@@ -15,8 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthRepository {
   Client http;
   FirebaseAuth firebaseAuthInstance;
-  final String url =
-      GlobalConfiguration().getValue("firebaseFunctions") + '/auth';
+  final String url = GlobalConfiguration().getValue('firebaseFunctions').toString() + '/auth';
 
   AuthRepository.test({Client http, FirebaseAuth firebaseAuthInstance}) {
     this.http = http;
@@ -37,17 +36,15 @@ class AuthRepository {
       List<String> messageList = [loginResponseBody['message'].toString()];
       loginResponseBody['message'] = messageList;
     }
-    ApiResponse apiResponse = ApiResponse.fromJson(loginResponseBody);
+    ApiResponse apiResponse = ApiResponse.fromJson(loginResponseBody as Map<String, dynamic>);
     if (apiResponse.statusCode == 200) {
-      await firebaseAuthInstance
-          .signInWithCustomToken(apiResponse.data['accessToken']);
+      await firebaseAuthInstance.signInWithCustomToken(apiResponse.data['accessToken'] as String);
     }
     return apiResponse;
   }
 
   Future<void> sendEmailVerification(SignUpRequest signUpRequest) async {
-    await firebaseAuthInstance.signInWithEmailAndPassword(
-        email: signUpRequest.email, password: signUpRequest.password);
+    await firebaseAuthInstance.signInWithEmailAndPassword(email: signUpRequest.email, password: signUpRequest.password);
     final currentUser = firebaseAuthInstance.currentUser;
     await currentUser.sendEmailVerification();
     await firebaseAuthInstance.signOut();
@@ -55,15 +52,13 @@ class AuthRepository {
 
   Future<ApiResponse> verifyToken(VerifyTokenRequest verifyTokenRequest) async {
     Map<String, dynamic> body = verifyTokenRequest.toJson();
-    Response response =
-        await http.post(Uri.parse("$url/token/verify"), body: body);
+    Response response = await http.post(Uri.parse("$url/token/verify"), body: body);
     var responseBody = jsonDecode(response.body);
-    if (responseBody['message'] != null &&
-        responseBody['message'].length == null) {
-      List<String> messageList = [responseBody['message']];
+    if (responseBody['message'] != null && responseBody['message'].length == null) {
+      List<String> messageList = [responseBody['message'].toString()];
       responseBody['message'] = messageList;
     }
-    ApiResponse apiResponse = ApiResponse.fromJson(responseBody);
+    ApiResponse apiResponse = ApiResponse.fromJson(responseBody as Map<String, dynamic>);
     return apiResponse;
   }
 
@@ -72,8 +67,7 @@ class AuthRepository {
     final GoogleSignInAccount googleUser = await GoogleSignIn().signIn();
 
     // Obtain the auth details from the request
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
+    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
     // Create a new credential
     final credential = GoogleAuthProvider.credential(
@@ -87,17 +81,14 @@ class AuthRepository {
 
   Future<UserCredential> signInWithFacebook() async {
     // Trigger the sign-in flow
-    final result = await FacebookAuth.instance
-        .login(permissions: ["public_profile", "email"]);
+    final result = await FacebookAuth.instance.login(permissions: ["public_profile", "email"]);
 
     if (result.accessToken != null) {
       // Create a credential from the access token
-      final facebookAuthCredential =
-          FacebookAuthProvider.credential(result.accessToken.token);
+      final facebookAuthCredential = FacebookAuthProvider.credential(result.accessToken.token);
 
       // Once signed in, return the UserCredential
-      return await FirebaseAuth.instance
-          .signInWithCredential(facebookAuthCredential);
+      return await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
     } else {
       return null;
     }
@@ -107,17 +98,16 @@ class AuthRepository {
     var body2 = signUpRequest.toDTOJson();
     Response response = await http.post(Uri.parse("$url/signup"), body: body2);
     var signUpResponseBody = jsonDecode(response.body);
-    if (signUpResponseBody['message'] != null &&
-        signUpResponseBody['message'] is String) {
+    if (signUpResponseBody['message'] != null && signUpResponseBody['message'] is String) {
       signUpResponseBody['message'] = [signUpResponseBody['message']];
     }
-    ApiResponse apiResponse = ApiResponse.fromJson(signUpResponseBody);
+    ApiResponse apiResponse = ApiResponse.fromJson(signUpResponseBody as Map<String, dynamic>);
     return apiResponse;
   }
 
   Future<bool> storeLoginData(UserResponse loginResponse) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    UserResponse loginInfo = loginResponse.cleanBase();
+    UserResponse loginInfo = loginResponse.cleanBase() as UserResponse;
     String encodedJson = jsonEncode(loginInfo);
     bool loginSaved = await prefs.setString('login-data', encodedJson);
     print('Saved login info.');
@@ -131,7 +121,7 @@ class AuthRepository {
       return null;
     }
     dynamic decodedJson = jsonDecode(savedData);
-    UserResponse loginResponse = UserResponse.fromJson(decodedJson);
+    UserResponse loginResponse = UserResponse.fromJson(decodedJson as Map<String, dynamic>);
     print('Retrieved login info.');
     return loginResponse;
   }

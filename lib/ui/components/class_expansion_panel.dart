@@ -8,6 +8,8 @@ import 'package:oluko_app/services/class_service.dart';
 import 'package:oluko_app/ui/components/challenge_section.dart';
 import 'package:oluko_app/ui/components/class_section.dart';
 import 'package:oluko_app/ui/components/course_segment_section.dart';
+import 'package:oluko_app/ui/components/title_body.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ClassExpansionPanel extends StatefulWidget {
   final List<Class> classes;
@@ -36,37 +38,40 @@ class _State extends State<ClassExpansionPanel> {
   @override
   Widget build(BuildContext context) {
     _classItems = generateClassItems();
-    return ExpansionPanelList(
-      expansionCallback: (int index, bool isExpanded) {
-        if (_classItems.length > 0) {
-          setState(() {
-            _classItems[index].expanded = !_classItems[index].expanded;
-          });
-        }
-      },
-      children: _classItems.map<ExpansionPanel>((ClassItem item) {
-        return ExpansionPanel(
-          canTapOnHeader: true,
-          backgroundColor: OlukoColors.black,
-          headerBuilder: (BuildContext context, bool isExpanded) {
-            return ListTile(
-              horizontalTitleGap: 0,
-              contentPadding: EdgeInsets.all(0),
-              title: ClassSection(
-                index: _classItems.indexOf(item),
-                total: _classItems.length,
-                classObj: item.classObj,
-                onPressed: () {},
-              ),
-            );
-          },
-          body: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: getClassWidgets(_classItems.indexOf(item))),
-          isExpanded: item.expanded,
+    return _classItems.length > 0
+        ? ExpansionPanelList(
+            expansionCallback: (int index, bool isExpanded) {
+              setState(() {
+                _classItems[index].expanded = !_classItems[index].expanded;
+              });
+            },
+            children: _classItems.map<ExpansionPanel>((ClassItem item) {
+              return ExpansionPanel(
+                canTapOnHeader: true,
+                backgroundColor: OlukoColors.black,
+                headerBuilder: (BuildContext context, bool isExpanded) {
+                  return ListTile(
+                    horizontalTitleGap: 0,
+                    contentPadding: EdgeInsets.all(0),
+                    title: ClassSection(
+                      index: _classItems.indexOf(item),
+                      total: _classItems.length,
+                      classObj: item.classObj,
+                      onPressed: () {},
+                    ),
+                  );
+                },
+                body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: getClassWidgets(_classItems.indexOf(item))),
+                isExpanded: item.expanded,
+              );
+            }).toList(),
+          )
+        : Center(
+          child: Padding(
+              padding: EdgeInsets.only(top: 10),
+              child: TitleBody(OlukoLocalizations.of(context).find("noClasses")),
+            ),
         );
-      }).toList(),
-    );
   }
 
   List<ClassItem> generateClassItems() {
@@ -85,16 +90,10 @@ class _State extends State<ClassExpansionPanel> {
     }
     Class classObj = widget.classes[classIndex];
     classObj.segments.forEach((segment) {
-      List<Movement> movements = ClassService.getClassSegmentMovements(
-          segment.movements, widget.movements);
+      List<Movement> movements = ClassService.getClassSegmentMovements(segment.movements, widget.movements);
       widgets.add(ListTile(
-        title: CourseSegmentSection(
-            segmentName: segment.name,
-            movements: movements,
-            onPressedMovement: widget.onPressedMovement),
-        subtitle: segment.challengeImage != null
-            ? ChallengeSection(challenges: [segment])
-            : SizedBox(),
+        title: CourseSegmentSection(segmentName: segment.name, movements: movements, onPressedMovement: widget.onPressedMovement),
+        subtitle: segment.challengeImage != null ? ChallengeSection(challenges: [segment]) : SizedBox(),
       ));
     });
     return widgets;

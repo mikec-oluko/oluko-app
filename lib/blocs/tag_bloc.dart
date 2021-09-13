@@ -17,7 +17,7 @@ class TagSuccess extends TagState {
 }
 
 class TagFailure extends TagState {
-  final Exception exception;
+  final dynamic exception;
 
   TagFailure({this.exception});
 }
@@ -38,6 +38,7 @@ class TagBloc extends Cubit<TagState> {
         stackTrace: stackTrace,
       );
       emit(TagFailure(exception: e));
+      rethrow;
     }
   }
 
@@ -48,8 +49,7 @@ class TagBloc extends Cubit<TagState> {
     try {
       List<Tag> tags = await TagRepository().getAll();
       List<TagCategory> tagCategories = await TagCategoryRepository().getAll();
-      Map<TagCategory, List<Tag>> mappedTags =
-          TagUtils.mapTagsByCategories(tags, tagCategories);
+      Map<TagCategory, List<Tag>> mappedTags = TagUtils.mapTagsByCategories(tags, tagCategories);
       emit(TagSuccess(values: tags, tagsByCategories: mappedTags));
     } catch (e, stackTrace) {
       await Sentry.captureException(
@@ -57,6 +57,7 @@ class TagBloc extends Cubit<TagState> {
         stackTrace: stackTrace,
       );
       emit(TagFailure(exception: e));
+      rethrow;
     }
   }
 }

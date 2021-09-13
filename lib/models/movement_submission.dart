@@ -42,16 +42,15 @@ class MovementSubmission extends Base {
 
   factory MovementSubmission.fromJson(Map<String, dynamic> json) {
     MovementSubmission movementSubmission = MovementSubmission(
-        userId: json['user_id'],
-        userReference: json['user_reference'],
-        segmentSubmissionId: json['segment_submission_id'],
-        segmentSubmissionReference: json['segment_submission_reference'],
-        movementId: json['movement_id'],
-        movementReference: json['movement_reference'],
-        video: json['video'] == null ? null : Video.fromJson(json['video']),
-        videoState: json['video_state'] == null
-            ? null
-            : VideoState.fromJson(json['video_state']));
+        userId: json['user_id'].toString(),
+        userReference: json['user_reference'] as DocumentReference,
+        segmentSubmissionId: json['segment_submission_id'].toString(),
+        segmentSubmissionReference: json['segment_submission_reference'] as DocumentReference,
+        movementId: json['movement_id'].toString(),
+        movementReference: json['movement_reference'] as DocumentReference,
+        video: json['video'] == null ? null : Video.fromJson(json['video'] as Map<String, dynamic>),
+        videoState:
+            json['video_state'] == null ? null : VideoState.fromJson(json['video_state'] as Map<String, dynamic>));
     movementSubmission.setBase(json);
     return movementSubmission;
   }
