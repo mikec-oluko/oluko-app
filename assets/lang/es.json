@@ -187,5 +187,12 @@
     "activityStats": "Estadísticas de actividad",
     "recomendedVideos": "Videos Recomendados",
     "voiceMessages": "Mensajes de voz",
-    "addYourSelfie": "Agrega Tu Selfie..."
+    "addYourSelfie": "Agrega Tu Selfie...",
+    "timelineMentoredVideo": "Video de Mentor: ",
+    "timelineRecommendedCourse": "Curso Recomendado: ",
+    "timelineRecommendedClass": "Clase Recomendada: ",
+    "timelineRecommendedMovement": "Movimiento Recomendado: ",
+    "timelineFaqVideo": "FAQ Video: ",
+    "timelineCourse": "Curso: ",
+    "timelineDuration": "Duración: "
 }

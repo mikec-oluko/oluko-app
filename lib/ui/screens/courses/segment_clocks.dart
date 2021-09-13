@@ -710,7 +710,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
           ),
           Padding(
               padding: EdgeInsets.only(top: 1),
-              child: Icon(Icons.circle_outlined, size: 12, color: OlukoColors.primary))
+              child: Icon(Icons.circle, size: 12, color: OlukoColors.primary))
         ]));
   }
 
@@ -726,7 +726,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                 textAlign: TextAlign.start,
               ),
               SizedBox(width: 4),
-              Icon(Icons.upload, color: Colors.white)
+              Icon(Icons.upload_file, color: Colors.white)
             ])));
   }
 

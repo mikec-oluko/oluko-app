@@ -35,15 +35,14 @@ class Assessment extends Base {
 
   factory Assessment.fromJson(Map<String, dynamic> json) {
     Assessment assessment = Assessment(
-      name: json['name'].toString(),
-      video: json['video'].toString(),
-      coverImage: json['cover_image'].toString(),
-      thumbnailImage: json['thumbnail_image'].toString(),
-      description: json['description'].toString(),
+      name: json['name'] as String,
+      video: json['video'] as String,
+      coverImage: json['cover_image'] as String,
+      thumbnailImage: json['thumbnail_image'] as String,
+      description: json['description'] as String,
       tasks: json['tasks'] != null
           ? (json['tasks'] as Iterable).map<AssessmentTask>((task) {
-              AssessmentTask assessmentTask =
-                  AssessmentTask.fromJson(task as Map<dynamic, dynamic>);
+              AssessmentTask assessmentTask = AssessmentTask.fromJson(task as Map<dynamic, dynamic>);
               return assessmentTask;
             }).toList()
           : [],
