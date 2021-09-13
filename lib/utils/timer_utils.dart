@@ -143,8 +143,7 @@ class TimerUtils {
     ]);
   }
 
-  static Widget completedTimer(
-      double progressValue, String duration, BuildContext context) {
+  static Widget completedTimer(BuildContext context) {
     return Container(
         child: SizedBox(
             height: 180,

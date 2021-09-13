@@ -480,6 +480,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
     bool isRepsTask = timerEntries[timerTaskIndex].reps != null;
     bool isTimedTask = timerEntries[timerTaskIndex].time != null;
 
+    if (workState == WorkState.finished) {
+      return TimerUtils.completedTimer(context);
+    }
+
     if (workState != WorkState.paused && isRepsTask) {
       return TimerUtils.repsTimer(
           () => this.setState(() {
@@ -497,11 +501,6 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
     double circularProgressIndicatorValue =
         (actualTime.inSeconds / timerEntries[timerTaskIndex].time);
-
-    if (workState == WorkState.finished) {
-      return TimerUtils.completedTimer(circularProgressIndicatorValue,
-          TimeConverter.durationToString(this.timeLeft), context);
-    }
 
     if (workState == WorkState.paused) {
       return TimerUtils.pausedTimer(
@@ -732,6 +731,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   void _finishWorkout() {
     workState = WorkState.finished;
+
     print('Workout finished');
     BlocProvider.of<CourseEnrollmentBloc>(context)
       ..markSegmentAsCompleated(
