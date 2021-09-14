@@ -51,8 +51,7 @@ class _LoginPageState extends State<LoginPage> {
     return Container(
         width: MediaQuery.of(context).size.width,
         height: 400,
-        child:
-            Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+        child: Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
           Column(children: formFields()),
         ]));
   }
@@ -64,8 +63,7 @@ class _LoginPageState extends State<LoginPage> {
           Text(
             OlukoLocalizations.of(context).find('welcomeBack'),
             textAlign: TextAlign.start,
-            style: TextStyle(
-                fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
+            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
           ),
           SizedBox(
             height: 10,
@@ -189,14 +187,11 @@ class _LoginPageState extends State<LoginPage> {
                               email: _requestData.email,
                               password: _requestData.password,
                               userName: _requestData.userName,
-                              projectId:
-                                  GlobalConfiguration().getValue("projectId")));
+                              projectId: GlobalConfiguration().getValue("projectId")));
                   },
                   child: Stack(children: [
                     Align(
-                      child: Text(OlukoLocalizations.of(context)
-                          .find('login')
-                          .toUpperCase()),
+                      child: Text(OlukoLocalizations.of(context).find('login').toUpperCase()),
                     )
                   ])))),
       Padding(
@@ -214,19 +209,14 @@ class _LoginPageState extends State<LoginPage> {
                 width: MediaQuery.of(context).size.width / 2.2,
                 child: OutlinedButton(
                     onPressed: () {
-                      BlocProvider.of<AuthBloc>(context)
-                        ..loginWithGoogle(context);
+                      BlocProvider.of<AuthBloc>(context)..loginWithGoogle(context);
                     },
                     style: OutlinedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        side: BorderSide(color: Colors.grey)),
+                        backgroundColor: Colors.transparent, side: BorderSide(color: Colors.grey)),
                     child: Stack(children: [
                       Align(
                         alignment: Alignment.center,
-                        child: Image.network(
-                          'https://img.icons8.com/color/452/google-logo.png',
-                          width: 30,
-                        ),
+                        child: Image.asset('assets/login/google-logo.png', width: 30),
                       ),
                     ])))),
         Padding(
@@ -236,20 +226,17 @@ class _LoginPageState extends State<LoginPage> {
                 width: MediaQuery.of(context).size.width / 2.2,
                 child: OutlinedButton(
                     onPressed: () {
-                      BlocProvider.of<AuthBloc>(context)
-                        ..loginWithFacebook(context);
+                      BlocProvider.of<AuthBloc>(context)..loginWithFacebook(context);
                     },
                     style: OutlinedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        side: BorderSide(color: Colors.grey)),
+                        backgroundColor: Colors.transparent, side: BorderSide(color: Colors.grey)),
                     child: Stack(children: [
                       Align(
-                        alignment: Alignment.center,
-                        child: Image.network(
-                          'https://cdn.icon-icons.com/icons2/1826/PNG/512/4202110facebooklogosocialsocialmedia-115707_115594.png',
-                          width: 30,
-                        ),
-                      ),
+                          alignment: Alignment.center,
+                          child: Image.asset(
+                            'assets/login/facebook-logo.png',
+                            width: 30,
+                          )),
                     ])))),
       ]),
       // TODO: Signup
