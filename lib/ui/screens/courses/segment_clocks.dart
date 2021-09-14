@@ -70,8 +70,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
   WorkoutType workoutType;
 
   //Imported from Timer POC Models
-  WorkState workState = WorkState.initial;
-  WorkState lastWorkStateBeforePause = WorkState.initial;
+  WorkState workState;
+  WorkState lastWorkStateBeforePause;
 
   //Current task running on Countdown Timer
   int timerTaskIndex = 0;
