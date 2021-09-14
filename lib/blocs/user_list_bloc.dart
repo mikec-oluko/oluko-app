@@ -33,7 +33,7 @@ class UserListBloc extends Cubit<UserListState> {
         stackTrace: stackTrace,
       );
       print(e.toString());
-      emit(UserListFailure(exception: e));
+      emit(UserListFailure(exception: e as Exception));
     }
   }
 }

@@ -63,7 +63,7 @@ class UserRepository {
       return null;
     }
     List<UserResponse> response =
-        docRef.docs.map((doc) => UserResponse.fromJson(doc.data())).toList();
+        docRef.docs.map((doc) => UserResponse.fromJson(doc.data() as Map<String, dynamic>)).toList();
     return response;
   }
 
