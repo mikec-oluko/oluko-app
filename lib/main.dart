@@ -24,6 +24,7 @@ Future<void> main() async {
     (options) {
       options.dsn = GlobalConfiguration().getValue("sentryDsn");
       options.environment = GlobalConfiguration().getValue("environment");
+      options.reportSilentFlutterErrors = true;
     },
     appRunner: () => runApp(myApp),
   );
