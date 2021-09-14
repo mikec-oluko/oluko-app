@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:oluko_app/constants/theme.dart';
 
 class CoachHorizontalCarousel extends StatefulWidget {
   final bool isForVideoContent;
   final bool isAssessmentContent;
   final List<Widget> contentToDisplay;
   const CoachHorizontalCarousel(
-      {this.contentToDisplay,
-      this.isForVideoContent = false,
-      this.isAssessmentContent = false});
+      {this.contentToDisplay, this.isForVideoContent = false, this.isAssessmentContent = false});
 
   @override
-  _CoachHorizontalCarouselState createState() =>
-      _CoachHorizontalCarouselState();
+  _CoachHorizontalCarouselState createState() => _CoachHorizontalCarouselState();
 }
 
 class _CoachHorizontalCarouselState extends State<CoachHorizontalCarousel> {
@@ -20,7 +18,7 @@ class _CoachHorizontalCarouselState extends State<CoachHorizontalCarousel> {
     Widget contentToReturn;
     if (widget.isForVideoContent) {
       contentToReturn = Container(
-        color: Colors.black,
+        color: OlukoColors.black,
         width: MediaQuery.of(context).size.width,
         height: 150,
         child: ListView(
@@ -29,7 +27,8 @@ class _CoachHorizontalCarouselState extends State<CoachHorizontalCarousel> {
             Padding(
               padding: const EdgeInsets.only(top: 10),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: widget.contentToDisplay,
               ),
             )
@@ -41,27 +40,19 @@ class _CoachHorizontalCarouselState extends State<CoachHorizontalCarousel> {
           color: Colors.black,
           width: MediaQuery.of(context).size.width,
           height: 200,
-          child: ListView(
-              padding: EdgeInsets.zero,
-              shrinkWrap: true,
-              scrollDirection: Axis.horizontal,
-              children: [
-                Wrap(
-                  children: widget.contentToDisplay,
-                )
-              ]));
+          child: ListView(padding: EdgeInsets.zero, shrinkWrap: true, scrollDirection: Axis.horizontal, children: [
+            Wrap(
+              children: widget.contentToDisplay,
+            )
+          ]));
     } else {
       contentToReturn = Container(
           color: Colors.black,
           width: MediaQuery.of(context).size.width,
           height: 120,
-          child: ListView(
-              padding: EdgeInsets.zero,
-              shrinkWrap: true,
-              scrollDirection: Axis.horizontal,
-              children: [
-                Wrap(children: widget.contentToDisplay),
-              ]));
+          child: ListView(padding: EdgeInsets.zero, shrinkWrap: true, scrollDirection: Axis.horizontal, children: [
+            Wrap(children: widget.contentToDisplay),
+          ]));
     }
     return contentToReturn;
   }

@@ -14,6 +14,26 @@ class SentVideosPage extends StatefulWidget {
 }
 
 class _SentVideosPageState extends State<SentVideosPage> {
+  List<TaskSubmission> content = [];
+  List<TaskSubmission> orderContent;
+
+  @override
+  void initState() {
+    setState(() {
+      content = widget.taskSubmissions;
+    });
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    setState(() {
+      content = [];
+    });
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,9 +47,19 @@ class _SentVideosPageState extends State<SentVideosPage> {
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 5),
-                child: IconButton(icon: Icon(Icons.sort, color: OlukoColors.grayColor), onPressed: () {}),
+                child: IconButton(
+                    icon: Icon(Icons.sort, color: OlukoColors.grayColor),
+                    onPressed: () {
+                      setState(() {
+                        content.sort((a, b) => a.createdAt.toDate().compareTo(b.createdAt.toDate()));
+                      });
+                    }),
               ),
-              IconButton(icon: Icon(Icons.favorite_border, color: OlukoColors.grayColor), onPressed: () {}),
+              IconButton(
+                  icon: Icon(Icons.favorite_border, color: OlukoColors.grayColor),
+                  onPressed: () {
+                    //sort List items favorite = true;
+                  }),
             ],
           )
         ],
@@ -48,7 +78,7 @@ class _SentVideosPageState extends State<SentVideosPage> {
       body: Container(
         width: MediaQuery.of(context).size.width,
         color: OlukoColors.black,
-        child: ListView(children: segmentCard(taskSubmissions: widget.taskSubmissions)),
+        child: ListView(children: segmentCard(taskSubmissions: content)),
       ),
     );
   }
@@ -65,28 +95,24 @@ class _SentVideosPageState extends State<SentVideosPage> {
 
   Widget returnCardForSegment(TaskSubmission taskSubmitted) {
     //TODO: repeated code 1 from Mentored Video
-    Widget contentForReturn = SizedBox();
+    Widget contentForReturn = const SizedBox();
     contentForReturn = Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 5),
+      padding: EdgeInsets.symmetric(horizontal: 5),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10),
+        padding: EdgeInsets.symmetric(vertical: 10),
         child: Container(
           decoration: BoxDecoration(
               color: OlukoColors.listGrayColor,
-              borderRadius: BorderRadius.all(Radius.circular(6.0)),
+              borderRadius: const BorderRadius.all(Radius.circular(6.0)),
               image: DecorationImage(
                 image: getImage(taskSubmitted),
                 fit: BoxFit.fitWidth,
-                onError: (exception, stackTrace) {
-                  return Text('Your error widget...');
-                },
               )),
           width: MediaQuery.of(context).size.width,
           height: 200,
           child: Stack(
             children: [
               Align(
-                  alignment: Alignment.center,
                   child: TextButton(
                       onPressed: () {
                         Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
@@ -95,18 +121,21 @@ class _SentVideosPageState extends State<SentVideosPage> {
                         });
                       },
                       child: Image.asset(
-                        'assets/assessment/play.png',
-                        scale: 5,
+                        'assets/self_recording/play_button.png',
+                        color: Colors.white,
+                        height: 40,
+                        width: 40,
                       ))),
               Align(
                   alignment: Alignment.bottomCenter,
                   child: Container(
                     color: OlukoColors.blackColorSemiTransparent,
                     width: MediaQuery.of(context).size.width,
-                    height: 70,
+                    height: 60,
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Column(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -115,7 +144,7 @@ class _SentVideosPageState extends State<SentVideosPage> {
                               Text(
                                 OlukoLocalizations.of(context).find('date'),
                                 style: OlukoFonts.olukoMediumFont(
-                                    customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+                                    customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                               ),
                               SizedBox(
                                 height: 5,
@@ -123,10 +152,11 @@ class _SentVideosPageState extends State<SentVideosPage> {
                               Text(
                                 DateFormat.yMMMd().format(taskSubmitted.createdAt.toDate()),
                                 style: OlukoFonts.olukoMediumFont(
-                                    customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+                                    customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                               )
                             ],
                           ),
+                          IconButton(icon: Icon(Icons.favorite, color: OlukoColors.white), onPressed: () {})
                         ],
                       ),
                     ),
@@ -142,6 +172,6 @@ class _SentVideosPageState extends State<SentVideosPage> {
   ImageProvider getImage(TaskSubmission taskSubmitted) {
     return taskSubmitted.video.thumbUrl != null
         ? NetworkImage(taskSubmitted.video.thumbUrl)
-        : AssetImage("assets/home/mvt.png") as ImageProvider;
+        : AssetImage('assets/home/mvt.png') as ImageProvider;
   }
 }

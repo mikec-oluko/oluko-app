@@ -40,9 +40,9 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Singl
             isScrollable: true,
             controller: _tabController,
             tabs: widget.courseEnrollmentList
-                .map((e) => Tab(
+                .map((courseEnrollment) => Tab(
                       child: Container(
-                        child: Text(e.course.name.toUpperCase(),
+                        child: Text(courseEnrollment.course.name.toUpperCase(),
                             style: OlukoFonts.olukoMediumFont(
                                 customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
                       ),

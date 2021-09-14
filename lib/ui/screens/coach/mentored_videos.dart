@@ -94,18 +94,21 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
                         });
                       },
                       child: Image.asset(
-                        'assets/assessment/play.png',
-                        scale: 5,
+                        'assets/self_recording/play_button.png',
+                        color: Colors.white,
+                        height: 40,
+                        width: 40,
                       ))),
               Align(
                   alignment: Alignment.bottomCenter,
                   child: Container(
                     color: OlukoColors.blackColorSemiTransparent,
                     width: MediaQuery.of(context).size.width,
-                    height: 70,
+                    height: 60,
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Column(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -114,7 +117,7 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
                               Text(
                                 OlukoLocalizations.of(context).find('date'),
                                 style: OlukoFonts.olukoMediumFont(
-                                    customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+                                    customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                               ),
                               SizedBox(
                                 height: 5,
@@ -122,10 +125,11 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
                               Text(
                                 DateFormat.yMMMd().format(taskSubmitted.createdAt.toDate()),
                                 style: OlukoFonts.olukoMediumFont(
-                                    customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+                                    customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                               )
                             ],
                           ),
+                          IconButton(icon: Icon(Icons.favorite, color: OlukoColors.white), onPressed: () {})
                         ],
                       ),
                     ),
