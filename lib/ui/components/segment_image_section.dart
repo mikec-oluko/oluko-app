@@ -5,6 +5,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/ui/components/segment_step_section.dart';
 import 'package:oluko_app/utils/movement_utils.dart';
+import 'package:oluko_app/utils/segment_utils.dart';
 
 class SegmentImageSection extends StatefulWidget {
   final Segment segment;
@@ -62,7 +63,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                   totalSegmentStep: widget.totalSegmentStep),
               Padding(
                   padding: EdgeInsets.symmetric(vertical: 40),
-                  child: MovementUtils.workout(widget.segment, context)),
+                  child: SegmentUtils.workouts(widget.segment, context)),
             ],
           ))
     ]);

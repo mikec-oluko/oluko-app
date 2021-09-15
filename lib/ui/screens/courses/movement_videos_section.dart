@@ -13,7 +13,8 @@ class MovementVideosSection extends StatefulWidget {
   final Function(BuildContext, Movement) onPressedMovement;
   final Widget action;
 
-  MovementVideosSection({this.segment, this.movements, this.onPressedMovement, this.action});
+  MovementVideosSection(
+      {this.segment, this.movements, this.onPressedMovement, this.action});
 
   @override
   _State createState() => _State();
@@ -37,12 +38,16 @@ class _State extends State<MovementVideosSection> {
               image: AssetImage('assets/courses/gray_background.png'),
               fit: BoxFit.cover,
             ),
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20), topRight: Radius.circular(20))),
         child: Column(children: [
           SizedBox(height: 15),
           Row(children: [
             Text(OlukoLocalizations.of(context).find('movementVideos'),
-                style: TextStyle(fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold)),
+                style: TextStyle(
+                    fontSize: 22,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold)),
             SizedBox(width: 10),
             Icon(Icons.directions_run, color: Colors.white, size: 30),
             Expanded(child: SizedBox()),
@@ -66,8 +71,12 @@ class _State extends State<MovementVideosSection> {
   List<Movement> getSegmentMovements() {
     List<String> movementIds = [];
     List<Movement> movements = [];
-    widget.segment.movements.forEach((MovementSubmodel movement) {
-      movementIds.add(movement.id);
+    widget.segment.sections.forEach((section) {
+      section.movements.forEach((MovementSubmodel movement) {
+        if (movement.name != 'Rest') {
+          movementIds.add(movement.id);
+        }
+      });
     });
     widget.movements.forEach((movement) {
       if (movementIds.contains(movement.id)) {
