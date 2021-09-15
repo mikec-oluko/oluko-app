@@ -524,7 +524,7 @@ class _PlayerResponseState extends State<PlayerResponse> {
   }
 
   bool allVideosInitialized() {
-    return videoParentController.value.initialized && videoController.value.initialized;
+    return videoParentController.value.isInitialized && videoController.value.isInitialized;
   }
 
   allVideosBuffered() {
