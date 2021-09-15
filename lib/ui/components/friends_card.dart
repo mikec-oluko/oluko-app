@@ -115,26 +115,29 @@ class _FriendCardState extends State<FriendCard> {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              IconButton(
-                  icon: Icon(
-                    widget.friend != null &&
-                            widget.friend.isFavorite != null &&
-                            widget.friend.isFavorite
-                        ? Icons.star
-                        : Icons.star_outline,
-                    color: OlukoColors.primary,
-                  ),
-                  onPressed: () {
-                    this.setState(() {
-                      if (widget.friend != null) {
-                        if (widget.friend.isFavorite == null) {
-                          widget.friend.isFavorite = false;
-                        }
-                        widget.friend.isFavorite = !widget.friend.isFavorite;
-                        widget.onFavoriteToggle(widget.friend);
-                      }
-                    });
-                  }),
+              widget.friend != null
+                  ? IconButton(
+                      icon: Icon(
+                        widget.friend != null &&
+                                widget.friend.isFavorite != null &&
+                                widget.friend.isFavorite
+                            ? Icons.star
+                            : Icons.star_outline,
+                        color: OlukoColors.primary,
+                      ),
+                      onPressed: () {
+                        this.setState(() {
+                          if (widget.friend != null) {
+                            if (widget.friend.isFavorite == null) {
+                              widget.friend.isFavorite = false;
+                            }
+                            widget.friend.isFavorite =
+                                !widget.friend.isFavorite;
+                            widget.onFavoriteToggle(widget.friend);
+                          }
+                        });
+                      })
+                  : SizedBox(),
             ],
           )
         ]),
