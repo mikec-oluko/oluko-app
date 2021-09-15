@@ -1,14 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Base {
-  Base(
-      {this.id,
-      this.createdAt,
-      this.createdBy,
-      this.updatedAt,
-      this.updatedBy,
-      this.isDeleted,
-      this.isHidden}) {
+  Base({this.id, this.createdAt, this.createdBy, this.updatedAt, this.updatedBy, this.isDeleted, this.isHidden}) {
     if (this.createdAt == null) {
       this.createdAtSentinel = FieldValue.serverTimestamp();
     }
@@ -38,13 +31,9 @@ class Base {
 
   setBase(Map<String, dynamic> json) {
     id = json['id'].toString();
-    createdAt = json['created_at'] is FieldValue
-        ? null
-        : json['created_at'] as Timestamp;
+    createdAt = json['created_at'] is FieldValue ? null : json['created_at'] as Timestamp;
     createdBy = json['created_by'].toString();
-    updatedAt = json['updated_at'] is FieldValue
-        ? null
-        : json['created_at'] as Timestamp;
+    updatedAt = json['updated_at'] is FieldValue ? null : json['created_at'] as Timestamp;
     updatedBy = json['updated_by'].toString();
     isDeleted = json['is_deleted'] as bool;
     isHidden = json['is_hidden'] as bool;
@@ -53,8 +42,8 @@ class Base {
   cleanBase() {
     this.createdAtSentinel = null;
     this.updatedAtSentinel = null;
-    this.createdAt = null;
-    this.updatedAt = null;
+    // this.createdAt = null;
+    // this.updatedAt = null;
     return this;
   }
 

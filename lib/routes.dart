@@ -72,8 +72,10 @@ import 'package:oluko_app/ui/screens/profile/profile_subscription_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_transformation_journey_page.dart';
 import 'package:oluko_app/ui/screens/profile/transformation_journey_post.dart';
 import 'package:oluko_app/ui/screens/courses/segment_detail.dart';
+import 'blocs/coach/coach_assignment_bloc.dart';
 import 'blocs/movement_info_bloc.dart';
 import 'models/task.dart';
+import 'ui/screens/coach/coach_main_page.dart';
 import 'ui/screens/courses/segment_clocks.dart';
 import 'package:oluko_app/ui/screens/authentication/sign_up.dart';
 import 'package:oluko_app/ui/screens/authentication/sign_up_with_email.dart';
@@ -224,6 +226,7 @@ class Routes {
   final UserStatisticsBloc _userStatisticsBloc = UserStatisticsBloc();
   final CourseEnrollmentUpdateBloc _courseEnrollmentUpdateBloc = CourseEnrollmentUpdateBloc();
   final UserListBloc _userListBloc = UserListBloc();
+  final CoachAssignmentBloc _coachAssignmentBloc = CoachAssignmentBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -255,6 +258,7 @@ class Routes {
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
           BlocProvider<UserListBloc>.value(value: _userListBloc),
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
+          BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
         ];
         newRouteView = MainPage();
         break;
@@ -566,8 +570,9 @@ class Routes {
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
           BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
+          BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
         ];
-        newRouteView = CoachAssignedCountDown();
+        newRouteView = CoachMainPage();
         break;
       case RouteEnum.coach2:
         providers = [
@@ -579,6 +584,7 @@ class Routes {
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
           BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
+          BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
         ];
         newRouteView = CoachPage();
         break;
