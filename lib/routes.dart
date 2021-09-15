@@ -28,6 +28,7 @@ import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
+import 'package:oluko_app/blocs/user_list_bloc.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
@@ -222,6 +223,7 @@ class Routes {
   final ProfileCoverImageBloc _profileCoverImageBloc = ProfileCoverImageBloc();
   final UserStatisticsBloc _userStatisticsBloc = UserStatisticsBloc();
   final CourseEnrollmentUpdateBloc _courseEnrollmentUpdateBloc = CourseEnrollmentUpdateBloc();
+  final UserListBloc _userListBloc = UserListBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -251,6 +253,7 @@ class Routes {
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
           BlocProvider<TaskBloc>.value(value: _taskBloc),
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
+          BlocProvider<UserListBloc>.value(value: _userListBloc),
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
         ];
         newRouteView = MainPage();
@@ -259,6 +262,7 @@ class Routes {
         newRouteView = SignUpPage();
         break;
       case RouteEnum.completedClass:
+        providers = [BlocProvider<CourseEnrollmentUpdateBloc>.value(value: _courseEnrollmentUpdateBloc)];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = CompletedClass(
             courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
@@ -270,6 +274,7 @@ class Routes {
       case RouteEnum.friends:
         providers = [
           BlocProvider<FriendBloc>.value(value: _friendBloc),
+          BlocProvider<UserListBloc>.value(value: _userListBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
           BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
           BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),

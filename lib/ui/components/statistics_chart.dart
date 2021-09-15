@@ -57,12 +57,11 @@ class _State extends State<StatisticChart> {
                           ),
                           Row(
                             children: [
-                              Text(
-                                OlukoLocalizations.of(context)
-                                    .find('areDoingThisCourse'),
-                                style: OlukoFonts.olukoMediumFont(
-                                    customColor: OlukoColors.grayColor),
-                              )
+                              Flexible(
+                                  child: Text(
+                                OlukoLocalizations.of(context).find('areDoingThisCourse'),
+                                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor),
+                              ))
                             ],
                           ),
                           Row(

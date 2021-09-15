@@ -337,6 +337,11 @@ PODS:
   - flutter_ffmpeg/min-gpl (0.4.0):
     - Flutter
     - mobile-ffmpeg-min-gpl (= 4.4)
+  - flutter_image_compress (0.0.1):
+    - Flutter
+    - Mantle
+    - SDWebImage
+    - SDWebImageWebPCoder
   - google_sign_in (0.0.1):
     - Flutter
     - GoogleSignIn (~> 5.0)
@@ -413,6 +418,18 @@ PODS:
   - in_app_purchase_ios (0.0.1):
     - Flutter
   - leveldb-library (1.22.1)
+  - libwebp (1.2.0):
+    - libwebp/demux (= 1.2.0)
+    - libwebp/mux (= 1.2.0)
+    - libwebp/webp (= 1.2.0)
+  - libwebp/demux (1.2.0):
+    - libwebp/webp
+  - libwebp/mux (1.2.0):
+    - libwebp/demux
+  - libwebp/webp (1.2.0)
+  - Mantle (2.1.6):
+    - Mantle/extobjc (= 2.1.6)
+  - Mantle/extobjc (2.1.6)
   - mobile-ffmpeg-min-gpl (4.4)
   - nanopb (2.30908.0):
     - nanopb/decode (= 2.30908.0)
@@ -424,6 +441,12 @@ PODS:
   - path_provider (0.0.1):
     - Flutter
   - PromisesObjC (1.2.12)
+  - SDWebImage (5.11.1):
+    - SDWebImage/Core (= 5.11.1)
+  - SDWebImage/Core (5.11.1)
+  - SDWebImageWebPCoder (0.8.4):
+    - libwebp (~> 1.0)
+    - SDWebImage/Core (~> 5.10)
   - Sentry (7.1.4):
     - Sentry/Core (= 7.1.4)
   - Sentry/Core (7.1.4)
@@ -450,6 +473,7 @@ DEPENDENCIES:
   - Flutter (from `Flutter`)
   - flutter_facebook_auth (from `.symlinks/plugins/flutter_facebook_auth/ios`)
   - flutter_ffmpeg/min-gpl (from `.symlinks/plugins/flutter_ffmpeg/ios`)
+  - flutter_image_compress (from `.symlinks/plugins/flutter_image_compress/ios`)
   - google_sign_in (from `.symlinks/plugins/google_sign_in/ios`)
   - image_picker (from `.symlinks/plugins/image_picker/ios`)
   - in_app_purchase_ios (from `.symlinks/plugins/in_app_purchase_ios/ios`)
@@ -486,9 +510,13 @@ SPEC REPOS:
     - GTMAppAuth
     - GTMSessionFetcher
     - leveldb-library
+    - libwebp
+    - Mantle
     - mobile-ffmpeg-min-gpl
     - nanopb
     - PromisesObjC
+    - SDWebImage
+    - SDWebImageWebPCoder
     - Sentry
 
 EXTERNAL SOURCES:
@@ -508,6 +536,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_facebook_auth/ios"
   flutter_ffmpeg:
     :path: ".symlinks/plugins/flutter_ffmpeg/ios"
+  flutter_image_compress:
+    :path: ".symlinks/plugins/flutter_image_compress/ios"
   google_sign_in:
     :path: ".symlinks/plugins/google_sign_in/ios"
   image_picker:
@@ -552,6 +582,7 @@ SPEC CHECKSUMS:
   Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
   flutter_facebook_auth: abc044072738b7baa90d80583dabdb1211614f0d
   flutter_ffmpeg: bc8496ea20331e486cd29a03a3c6ff10d32db565
+  flutter_image_compress: fd2b476345226e1a10ea352fa306af95704642c1
   google_sign_in: 6bd214b9c154f881422f5fe27b66aaa7bbd580cc
   GoogleAppMeasurement: c6bbc9753d046b5456dd4f940057fbad2c28419e
   GoogleDataTransport: 04c3e9a480bbcaa2ec3f5d27f1cdeb6a92f20c8d
@@ -564,11 +595,15 @@ SPEC CHECKSUMS:
   image_picker: 50e7c7ff960e5f58faa4d1f4af84a771c671bc4a
   in_app_purchase_ios: 18c65275991b8a28b2a47634a7797fb23d5d773e
   leveldb-library: 50c7b45cbd7bf543c81a468fe557a16ae3db8729
+  libwebp: e90b9c01d99205d03b6bb8f2c8c415e5a4ef66f0
+  Mantle: 4c0ed6ce47c96eccc4dc3bb071deb3def0e2c3be
   mobile-ffmpeg-min-gpl: 123f47d1bd9ec498688627a5be2621bcd6e88a01
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   package_info_plus: 6c92f08e1f853dc01228d6f553146438dafcd14e
   path_provider: f96fff6166a8867510d2c25fdcc346327cc4b259
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
+  SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
+  SDWebImageWebPCoder: f93010f3f6c031e2f8fb3081ca4ee6966c539815
   Sentry: 1d3eb1a25f8c5333c88dd5603904a6d461cd9fcf
   sentry_flutter: f20d4f199442900fbdab2b8496f1d2091d8b94d9
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
@@ -578,4 +613,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 8887f19bbf3371013d6703010ae980e7df1e4bc2
 
-COCOAPODS: 1.10.1
+COCOAPODS: 1.10.2

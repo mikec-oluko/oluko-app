@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as p;
+import 'package:oluko_app/helpers/s3_provider.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course.dart';
@@ -15,6 +19,7 @@ import 'package:oluko_app/models/submodels/object_submodel.dart';
 import 'package:oluko_app/models/submodels/segment_submodel.dart';
 import 'package:oluko_app/repositories/course_repository.dart';
 import 'package:oluko_app/services/course_enrollment_service.dart';
+import 'package:oluko_app/utils/image_utils.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 class CourseEnrollmentRepository {
@@ -31,7 +36,7 @@ class CourseEnrollmentRepository {
   static Future<CourseEnrollment> get(Course course, User user) async {
     CollectionReference reference = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('courseEnrollments');
 
     final QuerySnapshot qs =
@@ -124,6 +129,7 @@ class CourseEnrollmentRepository {
           .doc(GlobalConfiguration().getValue("projectId"))
           .collection('courseEnrollments')
           .where('created_by', isEqualTo: userId)
+          .orderBy('created_at', descending: true)
           .get();
 
       if (docRef.docs.isEmpty) {
@@ -158,8 +164,7 @@ class CourseEnrollmentRepository {
     }
     try {
       for (var courseEnrollment in courseEnrollments) {
-        await getChallengesFromCourseEnrollment(
-            courseEnrollment, challengeList);
+        await getChallengesFromCourseEnrollment(courseEnrollment, challengeList);
       }
     } catch (e, stackTrace) {
       await Sentry.captureException(
@@ -204,5 +209,37 @@ class CourseEnrollmentRepository {
     classes[classIndex].segments[segmentIndex].movements.add(enrollmentMovement);
 
     reference.update({'classes': List<dynamic>.from(classes.map((c) => c.toJson()))});
+  }
+
+  static Future<CourseEnrollment> updateSelfie(
+      CourseEnrollment courseEnrollment, int classIndex, PickedFile file) async {
+    DocumentReference reference = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue("projectId"))
+        .collection('courseEnrollments')
+        .doc(courseEnrollment.id);
+
+    final thumbnail = await ImageUtils().getThumbnailForImage(file, 250);
+    final thumbnailUrl = await _uploadFile(thumbnail, '${reference.path}/class' + classIndex.toString());
+    final downloadUrl = await _uploadFile(file.path, reference.path);
+
+    courseEnrollment.classes[classIndex].selfieDownloadUrl = downloadUrl;
+    courseEnrollment.classes[classIndex].selfieThumbnailUrl = thumbnailUrl;
+
+    reference.update({
+      'classes': List<dynamic>.from(courseEnrollment.classes.map((c) => c.toJson())),
+    });
+
+    return courseEnrollment;
+  }
+
+  static Future<String> _uploadFile(String filePath, String folderName) async {
+    final file = new File(filePath);
+    final basename = p.basename(filePath);
+
+    final S3Provider s3Provider = S3Provider();
+    String downloadUrl = await s3Provider.putFile(file.readAsBytesSync(), folderName, basename);
+
+    return downloadUrl;
   }
 }

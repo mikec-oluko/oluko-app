@@ -194,5 +194,7 @@
     "timelineRecommendedMovement": "Movimiento Recomendado: ",
     "timelineFaqVideo": "FAQ Video: ",
     "timelineCourse": "Curso: ",
-    "timelineDuration": "Duración: "
+    "timelineDuration": "Duración: ",
+    "goToClass": "Ir a la clase",
+    "nextSegment": "Próximo Segmento"
 }
