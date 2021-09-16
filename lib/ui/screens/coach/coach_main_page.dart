@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_assignment_bloc.dart';
+import 'package:oluko_app/helpers/coach_assignment_status.dart';
+import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/coach_assignment.dart';
 import 'package:oluko_app/models/user_response.dart';
 
@@ -31,7 +33,9 @@ class _CoachMainPageState extends State<CoachMainPage> {
             if (state is CoachAssignmentResponse) {
               _coachAssignment = state.coachAssignmentResponse;
             }
-            return _coachAssignment != null
+            return _coachAssignment != null &&
+                    CoachAssignmentStatus.getCoachAssignmentStatus(_coachAssignment.coachAssignmentStatus as int) ==
+                        CoachAssignmentStatusEnum.approved
                 ? CoachPage()
                 : CoachAssignedCountDown(
                     currentUser: _currentUser,

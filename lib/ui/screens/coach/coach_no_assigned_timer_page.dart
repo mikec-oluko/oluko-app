@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -25,36 +24,12 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
   Timer _timer;
   Timestamp _userCreatedDate;
   bool _isTimeExpired = false;
+  Duration _oneDayLimit = const Duration(days: 1);
 
   @override
   void initState() {
     super.initState();
-    _userCreatedDate = widget.currentUser.createdAt;
-    _now = DateTime.now();
-    _difference = _now.difference(_userCreatedDate.toDate());
-
-    _auction = _now.add(Duration(days: 1));
-
-    if (_difference.inHours > 24) {
-      _isTimeExpired = true;
-    } else {
-      _auction = _now.add(Duration(days: 1) - _difference);
-    }
-
-    _timer = Timer.periodic(
-      Duration(
-        seconds: 1,
-      ),
-      (timer) {
-        setState(() {
-          _now = DateTime.now();
-
-          if (_auction.isBefore(_now)) {
-            timer.cancel();
-          }
-        });
-      },
-    );
+    startWatchCountdown();
   }
 
   void dispose() {
@@ -83,19 +58,6 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
               Container(
                 child: Column(
                   children: [
-                    // TextButton(
-                    //   onPressed: () {
-                    //     Navigator.pushNamed(
-                    //         context, routeLabels[RouteEnum.coach2]);
-                    //   },
-                    //   child: Text(
-                    //     OlukoLocalizations.of(context).find('coach'),
-                    //     textAlign: TextAlign.center,
-                    //     style: OlukoFonts.olukoMediumFont(
-                    //         customColor: OlukoColors.primary,
-                    //         custoFontWeight: FontWeight.w500),
-                    //   ),
-                    // ),
                     GestureDetector(
                       onTap: () {
                         Navigator.pushNamed(context, routeLabels[RouteEnum.coach2]);
@@ -130,9 +92,22 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
               SizedBox(
                 height: 100,
               ),
-              _isTimeExpired ? SizedBox() : countDownWatch(context, difference),
+              _isTimeExpired ? timeExpiredContent(context) : countDownWatch(context, difference),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  SizedBox timeExpiredContent(BuildContext context) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      height: 250,
+      child: Center(
+        child: Text(
+          'Time Expired...',
+          style: OlukoFonts.olukoBiggestFont(customColor: OlukoColors.error, custoFontWeight: FontWeight.w500),
         ),
       ),
     );
@@ -142,93 +117,143 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
     return Container(
       width: MediaQuery.of(context).size.width,
       height: 300,
-      child: IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                children: [
-                  Text(
-                    difference.inHours.toString(),
+      child: Column(
+        children: [
+          IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                    children: [
+                      Text(
+                        difference.inHours.toString(),
+                        style: OlukoFonts.olukoBiggestFont(
+                            customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Text(
+                        OlukoLocalizations.of(context).find('hours'),
+                        textAlign: TextAlign.center,
+                        style: OlukoFonts.olukoMediumFont(
+                            customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 5),
+                  child: Text(
+                    OlukoLocalizations.of(context).find('twoDots'),
+                    textAlign: TextAlign.center,
                     style:
                         OlukoFonts.olukoBiggestFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                   ),
-                  SizedBox(
-                    height: 20,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                    children: [
+                      Text(
+                        difference.inMinutes.remainder(60).toString(),
+                        style: OlukoFonts.olukoBiggestFont(
+                            customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Text(
+                        OlukoLocalizations.of(context).find('minute'),
+                        textAlign: TextAlign.center,
+                        style: OlukoFonts.olukoMediumFont(
+                            customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
+                      ),
+                    ],
                   ),
-                  Text(
-                    OlukoLocalizations.of(context).find('hours'),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 5),
+                  child: Text(
+                    OlukoLocalizations.of(context).find('twoDots'),
                     textAlign: TextAlign.center,
-                    style:
-                        OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 5),
-              child: Text(
-                OlukoLocalizations.of(context).find('twoDots'),
-                textAlign: TextAlign.center,
-                style: OlukoFonts.olukoBiggestFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                children: [
-                  Text(
-                    difference.inMinutes.remainder(60).toString(),
                     style:
                         OlukoFonts.olukoBiggestFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                   ),
-                  SizedBox(
-                    height: 20,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                    children: [
+                      Text(
+                        difference.inSeconds.remainder(60).toString(),
+                        style: OlukoFonts.olukoBiggestFont(
+                            customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Text(
+                        OlukoLocalizations.of(context).find('second'),
+                        textAlign: TextAlign.center,
+                        style: OlukoFonts.olukoMediumFont(
+                            customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
+                      ),
+                    ],
                   ),
-                  Text(
-                    OlukoLocalizations.of(context).find('minute'),
-                    textAlign: TextAlign.center,
-                    style:
-                        OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 5),
-              child: Text(
-                OlukoLocalizations.of(context).find('twoDots'),
-                textAlign: TextAlign.center,
-                style: OlukoFonts.olukoBiggestFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
-              ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 25),
+            child: LinearProgressIndicator(
+              value: 1 - (difference.inHours / _oneDayLimit.inHours),
+              valueColor: const AlwaysStoppedAnimation<Color>(OlukoColors.primary),
+              backgroundColor: Colors.white24,
+              minHeight: 5,
             ),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                children: [
-                  Text(
-                    difference.inSeconds.remainder(60).toString(),
-                    style:
-                        OlukoFonts.olukoBiggestFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Text(
-                    OlukoLocalizations.of(context).find('second'),
-                    textAlign: TextAlign.center,
-                    style:
-                        OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          )
+        ],
       ),
+    );
+  }
+
+  void startWatchCountdown() {
+    _userCreatedDate = widget.currentUser.createdAt;
+    _now = DateTime.now();
+    _difference = _now.difference(_userCreatedDate.toDate());
+
+    _auction = _now.add(_oneDayLimit);
+
+    if (_difference.inHours > 24) {
+      setState(() {
+        _isTimeExpired = true;
+      });
+    } else {
+      _auction = _now.add(_oneDayLimit - _difference);
+      if (_auction.isBefore(_now)) {
+        _isTimeExpired = true;
+      }
+    }
+
+    _timer = Timer.periodic(
+      Duration(
+        seconds: 1,
+      ),
+      (timer) {
+        setState(() {
+          _now = DateTime.now();
+          //time expired
+          if (_auction.isBefore(_now)) {
+            _isTimeExpired = true;
+            timer.cancel();
+          }
+        });
+      },
     );
   }
 }

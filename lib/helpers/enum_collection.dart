@@ -34,3 +34,5 @@ enum CoachFileTypeEnum {
   recommendedMovement,
   faqVideo,
 }
+
+enum CoachAssignmentStatusEnum { requested, approved, rejected }
