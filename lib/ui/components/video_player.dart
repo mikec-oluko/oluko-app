@@ -2,6 +2,7 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:oluko_app/utils/chewieMaterialControls/oluko_material_controls.dart';
 import 'package:video_player/video_player.dart';
 import 'dart:io';
 
@@ -44,8 +45,7 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
     }
     Widget controls;
     if (Platform.isAndroid) {
-      // controls = OlukoMaterialControls();
-      controls = MaterialControls();
+      controls = OlukoMaterialControls();
     } else if (Platform.isIOS) {
       controls = CupertinoControls(backgroundColor: Colors.grey[100].withOpacity(0.2), iconColor: Colors.black);
     }

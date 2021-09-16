@@ -41,7 +41,7 @@ class _OlukoUserInfoWidgetState extends State<OlukoUserInfoWidget> {
                   Padding(
                     padding: const EdgeInsets.only(left: 10.0),
                     child: Text(
-                      widget.value != 'null' ? widget.value : '-',
+                      widget.value,
                       style: OlukoFonts.olukoBigFont(
                         custoFontWeight: FontWeight.w500,
                       ),

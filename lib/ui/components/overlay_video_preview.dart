@@ -88,7 +88,7 @@ class _OverlayVideoPreviewState extends State<OverlayVideoPreview> {
                   widget.image,
                   fit: BoxFit.cover,
                 )),
-      if (widget.video != null && widget.video != "null")
+      if (widget.video != null)
         Padding(
             padding: const EdgeInsets.only(bottom: 16),
             child: GestureDetector(

@@ -1,173 +1,173 @@
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:mockito/mockito.dart';
-// import 'package:flutter_test/flutter_test.dart';
-// import 'package:oluko_app/models/submodels/video.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mockito/mockito.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:oluko_app/models/submodels/video.dart';
 
-// class MockDocumentReference extends Mock implements DocumentReference {}
+class MockDocumentReference extends Mock implements DocumentReference {}
 
-// class MockFirestore extends Mock implements FirebaseFirestore {}
+class MockFirestore extends Mock implements FirebaseFirestore {}
 
-// class MockCollectionReference extends Mock implements CollectionReference {}
+class MockCollectionReference extends Mock implements CollectionReference {}
 
-// class MockQuerySnapshot extends Mock implements QuerySnapshot {}
+class MockQuerySnapshot extends Mock implements QuerySnapshot {}
 
-// class MockDocumentSnapshot extends Mock implements DocumentSnapshot {}
+class MockDocumentSnapshot extends Mock implements DocumentSnapshot {}
 
-// class MockQuery extends Mock implements Query {}
+class MockQuery extends Mock implements Query {}
 
-// void main() {
-//   group('Firestore Repository ', () {
-//     /*test('should get firebase collection', () async {
-//       Firestore firestoreInstance = MockFirestore();
-//       CollectionReference collectionReference = MockCollectionReference();
-//       QuerySnapshot querySnapshot = MockQuerySnapshot();
+void main() {
+  group('Firestore Repository ', () {
+    /*test('should get firebase collection', () async {
+      Firestore firestoreInstance = MockFirestore();
+      CollectionReference collectionReference = MockCollectionReference();
+      QuerySnapshot querySnapshot = MockQuerySnapshot();
 
-//       when(collectionReference.get())
-//           .thenAnswer((_) => Future.value(querySnapshot));
-//       when(firestoreInstance.collection(any)).thenReturn(collectionReference);
+      when(collectionReference.get())
+          .thenAnswer((_) => Future.value(querySnapshot));
+      when(firestoreInstance.collection(any)).thenReturn(collectionReference);
 
-//       FirestoreRepository firestoreProvider = FirestoreRepository.test(
-//           collection: 'videos', firestoreInstance: firestoreInstance);
+      FirestoreRepository firestoreProvider = FirestoreRepository.test(
+          collection: 'videos', firestoreInstance: firestoreInstance);
 
-//       final response = await firestoreProvider.getAll();
+      final response = await firestoreProvider.getAll();
 
-//       expect(response, isA<QuerySnapshot>());
-//     });
+      expect(response, isA<QuerySnapshot>());
+    });
 
-//     test('should get firebase document', () async {
-//       FirebaseFirestore firestoreInstance = MockFirestore();
-//       CollectionReference collectionReference = MockCollectionReference();
-//       DocumentReference documentReference = MockDocumentReference();
-//       DocumentSnapshot documentSnapshot = MockDocumentSnapshot();
-//       String key = 'testKey';
-//       when(documentReference.get())
-//           .thenAnswer((realInvocation) => Future.value(documentSnapshot));
-//       when(collectionReference.doc(any)).thenReturn(documentReference);
-//       when(firestoreInstance.collection(any)).thenReturn(collectionReference);
+    test('should get firebase document', () async {
+      FirebaseFirestore firestoreInstance = MockFirestore();
+      CollectionReference collectionReference = MockCollectionReference();
+      DocumentReference documentReference = MockDocumentReference();
+      DocumentSnapshot documentSnapshot = MockDocumentSnapshot();
+      String key = 'testKey';
+      when(documentReference.get())
+          .thenAnswer((realInvocation) => Future.value(documentSnapshot));
+      when(collectionReference.doc(any)).thenReturn(documentReference);
+      when(firestoreInstance.collection(any)).thenReturn(collectionReference);
 
-//       FirestoreRepository firestoreProvider = FirestoreRepository.test(
-//           collection: 'videos', firestoreInstance: firestoreInstance);
-//       final response = await firestoreProvider.get(key);
-//       expect(response, isA<DocumentSnapshot>());
-//     });
+      FirestoreRepository firestoreProvider = FirestoreRepository.test(
+          collection: 'videos', firestoreInstance: firestoreInstance);
+      final response = await firestoreProvider.get(key);
+      expect(response, isA<DocumentSnapshot>());
+    });
 
-//     test('should get firebase child document', () async {
-//       FirebaseFirestore firestoreInstance = MockFirestore();
-//       CollectionReference collectionReference = MockCollectionReference();
-//       DocumentReference documentReference = MockDocumentReference();
-//       QuerySnapshot querySnapshot = MockQuerySnapshot();
+    test('should get firebase child document', () async {
+      FirebaseFirestore firestoreInstance = MockFirestore();
+      CollectionReference collectionReference = MockCollectionReference();
+      DocumentReference documentReference = MockDocumentReference();
+      QuerySnapshot querySnapshot = MockQuerySnapshot();
 
-//       String key = 'testKey';
+      String key = 'testKey';
 
-//       FirestoreRepository firestoreProvider = FirestoreRepository.test(
-//           collection: 'videos', firestoreInstance: firestoreInstance);
-//       when(firestoreInstance.collection(any)).thenReturn(collectionReference);
-//       when(collectionReference.doc(any)).thenReturn(documentReference);
-//       when(documentReference.collection(any)).thenReturn(collectionReference);
-//       when(collectionReference.get())
-//           .thenAnswer((realInvocation) => Future.value(querySnapshot));
+      FirestoreRepository firestoreProvider = FirestoreRepository.test(
+          collection: 'videos', firestoreInstance: firestoreInstance);
+      when(firestoreInstance.collection(any)).thenReturn(collectionReference);
+      when(collectionReference.doc(any)).thenReturn(documentReference);
+      when(documentReference.collection(any)).thenReturn(collectionReference);
+      when(collectionReference.get())
+          .thenAnswer((realInvocation) => Future.value(querySnapshot));
 
-//       final response = await firestoreProvider.getChild(key, 'childCollection');
-//       expect(response, isA<QuerySnapshot>());
-//     });*/
+      final response = await firestoreProvider.getChild(key, 'childCollection');
+      expect(response, isA<QuerySnapshot>());
+    });*/
 
-//     /*test('should get firebase child with path', () async {
-//       FirebaseFirestore firestoreInstance = MockFirestore();
-//       CollectionReference collectionReference = MockCollectionReference();
-//       DocumentReference documentReference = MockDocumentReference();
-//       QuerySnapshot querySnapshot = MockQuerySnapshot();
+    /*test('should get firebase child with path', () async {
+      FirebaseFirestore firestoreInstance = MockFirestore();
+      CollectionReference collectionReference = MockCollectionReference();
+      DocumentReference documentReference = MockDocumentReference();
+      QuerySnapshot querySnapshot = MockQuerySnapshot();
 
-//       String key = 'testKey';
-//       String childCollection = 'childCollection';
-//       String pathCollection = 'pathCollection';
+      String key = 'testKey';
+      String childCollection = 'childCollection';
+      String pathCollection = 'pathCollection';
 
-//       FirestoreRepository firestoreProvider = FirestoreRepository.test(
-//           collection: 'videos', firestoreInstance: firestoreInstance);
-//       when(firestoreInstance.collection(any)).thenReturn(collectionReference);
-//       when(collectionReference.doc(any)).thenReturn(documentReference);
-//       when(documentReference.collection(any)).thenReturn(collectionReference);
-//       when(collectionReference.get())
-//           .thenAnswer((realInvocation) => Future.value(querySnapshot));
+      FirestoreRepository firestoreProvider = FirestoreRepository.test(
+          collection: 'videos', firestoreInstance: firestoreInstance);
+      when(firestoreInstance.collection(any)).thenReturn(collectionReference);
+      when(collectionReference.doc(any)).thenReturn(documentReference);
+      when(documentReference.collection(any)).thenReturn(collectionReference);
+      when(collectionReference.get())
+          .thenAnswer((realInvocation) => Future.value(querySnapshot));
 
-//       final response = await firestoreProvider.getChildWithPath(
-//           key, childCollection, pathCollection);
-//       expect(response, isA<QuerySnapshot>());
-//     });*/
+      final response = await firestoreProvider.getChildWithPath(
+          key, childCollection, pathCollection);
+      expect(response, isA<QuerySnapshot>());
+    });*/
 
-//     /*test('should add video response', () async {
-//       Firestore firestoreInstance = MockFirestore();
-//       CollectionReference collectionReference = MockCollectionReference();
-//       DocumentReference documentReference = MockDocumentReference();
+    /*test('should add video response', () async {
+      Firestore firestoreInstance = MockFirestore();
+      CollectionReference collectionReference = MockCollectionReference();
+      DocumentReference documentReference = MockDocumentReference();
 
-//       String documentId = 'testDocumentId';
-//       String parentVideoKey = 'testKey';
-//       Video videoResponse = Video(videoUrl: 'testVideourl');
-//       String keyPath = 'pathCollection';
+      String documentId = 'testDocumentId';
+      String parentVideoKey = 'testKey';
+      Video videoResponse = Video(videoUrl: 'testVideourl');
+      String keyPath = 'pathCollection';
 
-//       FirestoreProvider firestoreProvider = FirestoreProvider.test(
-//           collection: 'videos', firestoreInstance: firestoreInstance);
-//       when(firestoreInstance.collection(any)).thenReturn(collectionReference);
-//       when(collectionReference.doc(any)).thenReturn(documentReference);
-//       when(documentReference.collection(any)).thenReturn(collectionReference);
-//       when(collectionReference.doc()).thenReturn(documentReference);
-//       when(documentReference.id).thenReturn(documentId);
+      FirestoreProvider firestoreProvider = FirestoreProvider.test(
+          collection: 'videos', firestoreInstance: firestoreInstance);
+      when(firestoreInstance.collection(any)).thenReturn(collectionReference);
+      when(collectionReference.doc(any)).thenReturn(documentReference);
+      when(documentReference.collection(any)).thenReturn(collectionReference);
+      when(collectionReference.doc()).thenReturn(documentReference);
+      when(documentReference.id).thenReturn(documentId);
 
-//       final response = await firestoreProvider.addVideoResponse(
-//           parentVideoKey, videoResponse, keyPath);
-//       expect(response, isA<String>());
-//       expect(response, documentId);
-//     });
+      final response = await firestoreProvider.addVideoResponse(
+          parentVideoKey, videoResponse, keyPath);
+      expect(response, isA<String>());
+      expect(response, documentId);
+    });
 
-//     test('should add entity', () async {
-//       FirebaseFirestore firestoreInstance = MockFirestore();
-//       CollectionReference collectionReference = MockCollectionReference();
-//       DocumentReference documentReference = MockDocumentReference();
+    test('should add entity', () async {
+      FirebaseFirestore firestoreInstance = MockFirestore();
+      CollectionReference collectionReference = MockCollectionReference();
+      DocumentReference documentReference = MockDocumentReference();
 
-//       Video videoResponse = Video(url: 'testVideourl');
+      Video videoResponse = Video(url: 'testVideourl');
 
-//       FirestoreRepository firestoreProvider = FirestoreRepository.test(
-//           collection: 'videos', firestoreInstance: firestoreInstance);
-//       when(firestoreInstance.collection(any)).thenReturn(collectionReference);
-//       when(collectionReference.add(any))
-//           .thenAnswer((realInvocation) => Future.value(documentReference));
+      FirestoreRepository firestoreProvider = FirestoreRepository.test(
+          collection: 'videos', firestoreInstance: firestoreInstance);
+      when(firestoreInstance.collection(any)).thenReturn(collectionReference);
+      when(collectionReference.add(any))
+          .thenAnswer((realInvocation) => Future.value(documentReference));
 
-//       final response = await firestoreProvider.add(videoResponse.toJson());
-//       expect(response, isA<DocumentReference>());
-//     });
+      final response = await firestoreProvider.add(videoResponse.toJson());
+      expect(response, isA<DocumentReference>());
+    });
 
-//     test('should set entity', () async {
-//       FirebaseFirestore firestoreInstance = MockFirestore();
-//       CollectionReference collectionReference = MockCollectionReference();
-//       DocumentReference documentReference = MockDocumentReference();
+    test('should set entity', () async {
+      FirebaseFirestore firestoreInstance = MockFirestore();
+      CollectionReference collectionReference = MockCollectionReference();
+      DocumentReference documentReference = MockDocumentReference();
 
-//       Video videoResponse = Video(url: 'testVideourl');
-//       String key = 'testKey';
-//       Map<String, dynamic> entity = videoResponse.toJson();
+      Video videoResponse = Video(url: 'testVideourl');
+      String key = 'testKey';
+      Map<String, dynamic> entity = videoResponse.toJson();
 
-//       FirestoreRepository firestoreProvider = FirestoreRepository.test(
-//           collection: 'videos', firestoreInstance: firestoreInstance);
-//       when(firestoreInstance.collection(any)).thenReturn(collectionReference);
-//       when(collectionReference.doc(any)).thenReturn(documentReference);
+      FirestoreRepository firestoreProvider = FirestoreRepository.test(
+          collection: 'videos', firestoreInstance: firestoreInstance);
+      when(firestoreInstance.collection(any)).thenReturn(collectionReference);
+      when(collectionReference.doc(any)).thenReturn(documentReference);
 
-//       await firestoreProvider.set(id: key, entity: entity);
-//     });
+      await firestoreProvider.set(id: key, entity: entity);
+    });
 
-//     test('should listen snapshots', () async {
-//       FirebaseFirestore firestoreInstance = MockFirestore();
-//       CollectionReference collectionReference = MockCollectionReference();
-//       QuerySnapshot querySnapshot = MockQuerySnapshot();
+    test('should listen snapshots', () async {
+      FirebaseFirestore firestoreInstance = MockFirestore();
+      CollectionReference collectionReference = MockCollectionReference();
+      QuerySnapshot querySnapshot = MockQuerySnapshot();
 
-//       Video videoResponse = Video(url: 'testVideourl');
-//       Map<String, dynamic> entity = videoResponse.toJson();
+      Video videoResponse = Video(url: 'testVideourl');
+      Map<String, dynamic> entity = videoResponse.toJson();
 
-//       FirestoreRepository firestoreProvider = FirestoreRepository.test(
-//           collection: 'videos', firestoreInstance: firestoreInstance);
-//       when(firestoreInstance.collection(any)).thenReturn(collectionReference);
-//       when(collectionReference.snapshots())
-//           .thenAnswer((_) => Stream.value(querySnapshot));
+      FirestoreRepository firestoreProvider = FirestoreRepository.test(
+          collection: 'videos', firestoreInstance: firestoreInstance);
+      when(firestoreInstance.collection(any)).thenReturn(collectionReference);
+      when(collectionReference.snapshots())
+          .thenAnswer((_) => Stream.value(querySnapshot));
 
-//       Stream<QuerySnapshot> response = firestoreProvider.listenAll();
-//       expect(response, isA<Stream<QuerySnapshot>>());
-//     });*/
-//   });
-// }
+      Stream<QuerySnapshot> response = firestoreProvider.listenAll();
+      expect(response, isA<Stream<QuerySnapshot>>());
+    });*/
+  });
+}

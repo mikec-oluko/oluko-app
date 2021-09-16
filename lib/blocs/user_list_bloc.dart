@@ -16,7 +16,7 @@ class UserListSuccess extends UserListState {
 }
 
 class UserListFailure extends UserListState {
-  final Error exception;
+  final Exception exception;
   UserListFailure({this.exception});
 }
 
@@ -33,8 +33,7 @@ class UserListBloc extends Cubit<UserListState> {
         stackTrace: stackTrace,
       );
       print(e.toString());
-      emit(UserListFailure(exception: e as Error));
-      rethrow;
+      emit(UserListFailure(exception: e as Exception));
     }
   }
 }

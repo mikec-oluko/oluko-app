@@ -24,8 +24,8 @@ class AspectRatioVideoState extends State<AspectRatioVideo> {
       if (!mounted) {
         return;
       }
-      if (initialized != controller.value.isInitialized) {
-        initialized = controller.value.isInitialized;
+      if (initialized != controller.value.initialized) {
+        initialized = controller.value.initialized;
         if (mounted) {
           setState(() {});
         }
@@ -41,7 +41,10 @@ class AspectRatioVideoState extends State<AspectRatioVideo> {
         child: Padding(
           padding: const EdgeInsets.all(20),
           child: Text(controller.value.errorDescription,
-              style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold)),
         ),
       );
     }

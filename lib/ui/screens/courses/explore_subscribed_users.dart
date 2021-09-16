@@ -94,7 +94,7 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
   Widget usersGrid(List<UserResponse> users) {
     return users.length > 0
         ? GridView.count(
-            childAspectRatio: 0.7,
+            childAspectRatio: 0.8,
             crossAxisCount: 4,
             physics: new NeverScrollableScrollPhysics(),
             shrinkWrap: true,
