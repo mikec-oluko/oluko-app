@@ -8,12 +8,7 @@ class SegmentSubmodel {
   String challengeImage;
   List<ObjectSubmodel> movements;
 
-  SegmentSubmodel(
-      {this.id,
-      this.reference,
-      this.challengeImage,
-      this.name,
-      this.movements});
+  SegmentSubmodel({this.id, this.reference, this.challengeImage, this.name, this.movements});
 
   factory SegmentSubmodel.fromJson(Map<String, dynamic> json) {
     return SegmentSubmodel(
@@ -23,9 +18,8 @@ class SegmentSubmodel {
         challengeImage: json['challenge_image'].toString(),
         movements: json['movements'] == null
             ? null
-            : List<ObjectSubmodel>.from((json['movements'] as Iterable).map(
-                (movement) => ObjectSubmodel.fromJson(
-                    movement as Map<String, dynamic>))));
+            : List<ObjectSubmodel>.from((json['movements'] as Iterable)
+                .map((movement) => ObjectSubmodel.fromJson(movement as Map<String, dynamic>))));
   }
 
   Map<String, dynamic> toJson() => {
@@ -33,9 +27,6 @@ class SegmentSubmodel {
         'reference': reference,
         'name': name,
         'challenge_image': challengeImage,
-        'movements': movements == null
-            ? null
-            : List<dynamic>.from(
-                movements.map((movement) => movement.toJson())),
+        'movements': movements == null ? null : List<dynamic>.from(movements.map((movement) => movement.toJson())),
       };
 }

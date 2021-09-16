@@ -1,74 +1,74 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:mockito/mockito.dart';
-import 'package:flutter_test/flutter_test.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:mockito/mockito.dart';
+// import 'package:flutter_test/flutter_test.dart';
 
-class MockDocumentReference extends Mock implements DocumentReference {}
+// class MockDocumentReference extends Mock implements DocumentReference {}
 
-class MockFirestore extends Mock implements FirebaseFirestore {}
+// class MockFirestore extends Mock implements FirebaseFirestore {}
 
-class MockCollectionReference extends Mock implements CollectionReference {}
+// class MockCollectionReference extends Mock implements CollectionReference {}
 
-class MockQuerySnapshot extends Mock implements QuerySnapshot {}
+// class MockQuerySnapshot extends Mock implements QuerySnapshot {}
 
-class MockDocumentSnapshot extends Mock implements DocumentSnapshot {}
+// class MockDocumentSnapshot extends Mock implements DocumentSnapshot {}
 
-class MockQuery extends Mock implements Query {}
+// class MockQuery extends Mock implements Query {}
 
-void main() {
-  group('Marker Repository ', () {
-    /*test('should create marker ', () async {
-      Firestore firestoreInstance = MockFirestore();
-      CollectionReference collectionReference = MockCollectionReference();
-      DocumentReference documentReference = MockDocumentReference();
+// void main() {
+//   group('Marker Repository ', () {
+//     /*test('should create marker ', () async {
+//       Firestore firestoreInstance = MockFirestore();
+//       CollectionReference collectionReference = MockCollectionReference();
+//       DocumentReference documentReference = MockDocumentReference();
 
-      when(firestoreInstance.collection(any)).thenReturn(collectionReference);
-      when(collectionReference.document(any)).thenReturn(documentReference);
-      when(documentReference.collection(any)).thenReturn(collectionReference);
-      when(documentReference.setData(any))
-          .thenAnswer((realInvocation) => Future.value(null));
-      when(documentReference.id).thenReturn('testId');
+//       when(firestoreInstance.collection(any)).thenReturn(collectionReference);
+//       when(collectionReference.document(any)).thenReturn(documentReference);
+//       when(documentReference.collection(any)).thenReturn(collectionReference);
+//       when(documentReference.setData(any))
+//           .thenAnswer((realInvocation) => Future.value(null));
+//       when(documentReference.id).thenReturn('testId');
 
-      MarkerRepository markerRepository =
-          MarkerRepository.test(firestoreInstance: firestoreInstance);
+//       MarkerRepository markerRepository =
+//           MarkerRepository.test(firestoreInstance: firestoreInstance);
 
-      final testMarker = Marker(id: 'testId', position: 2.32);
-      final parentVideoId = 'parentTest';
+//       final testMarker = Marker(id: 'testId', position: 2.32);
+//       final parentVideoId = 'parentTest';
 
-      final response =
-          await markerRepository.createMarker(parentVideoId, testMarker);
+//       final response =
+//           await markerRepository.createMarker(parentVideoId, testMarker);
 
-      expect(response, isA<Marker>());
-      expect(response.id, testMarker.id);
-    });
+//       expect(response, isA<Marker>());
+//       expect(response.id, testMarker.id);
+//     });
 
-    test('should get markers ', () async {
-      Firestore firestoreInstance = MockFirestore();
-      CollectionReference collectionReference = MockCollectionReference();
-      DocumentReference documentReference = MockDocumentReference();
-      QuerySnapshot querySnapshot = MockQuerySnapshot();
-      DocumentSnapshot documentSnapshot = MockDocumentSnapshot();
-      final testMarker = Marker(id: 'testId', position: 2.32);
+//     test('should get markers ', () async {
+//       Firestore firestoreInstance = MockFirestore();
+//       CollectionReference collectionReference = MockCollectionReference();
+//       DocumentReference documentReference = MockDocumentReference();
+//       QuerySnapshot querySnapshot = MockQuerySnapshot();
+//       DocumentSnapshot documentSnapshot = MockDocumentSnapshot();
+//       final testMarker = Marker(id: 'testId', position: 2.32);
 
-      when(firestoreInstance.collection(any)).thenReturn(collectionReference);
-      when(collectionReference.doc(any)).thenReturn(documentReference);
-      when(documentReference.collection(any)).thenReturn(collectionReference);
-      when(documentSnapshot.documentID).thenReturn(testMarker.id);
-      when(documentSnapshot.data).thenReturn(testMarker.toJson());
-      when(querySnapshot.documents).thenReturn([documentSnapshot]);
+//       when(firestoreInstance.collection(any)).thenReturn(collectionReference);
+//       when(collectionReference.doc(any)).thenReturn(documentReference);
+//       when(documentReference.collection(any)).thenReturn(collectionReference);
+//       when(documentSnapshot.documentID).thenReturn(testMarker.id);
+//       when(documentSnapshot.data).thenReturn(testMarker.toJson());
+//       when(querySnapshot.documents).thenReturn([documentSnapshot]);
 
-      when(collectionReference.getDocuments())
-          .thenAnswer((realInvocation) => Future.value(querySnapshot));
-      when(documentReference.documentID).thenReturn('testId');
+//       when(collectionReference.getDocuments())
+//           .thenAnswer((realInvocation) => Future.value(querySnapshot));
+//       when(documentReference.documentID).thenReturn('testId');
 
-      MarkerRepository markerRepository =
-          MarkerRepository.test(firestoreInstance: firestoreInstance);
+//       MarkerRepository markerRepository =
+//           MarkerRepository.test(firestoreInstance: firestoreInstance);
 
-      final parentVideoId = 'parentTest';
+//       final parentVideoId = 'parentTest';
 
-      final response = await markerRepository.getVideoMarkers(parentVideoId);
+//       final response = await markerRepository.getVideoMarkers(parentVideoId);
 
-      expect(response, isA<List<Marker>>());
-      expect(response.length, 1);
-    });*/
-  });
-}
+//       expect(response, isA<List<Marker>>());
+//       expect(response.length, 1);
+//     });*/
+//   });
+// }

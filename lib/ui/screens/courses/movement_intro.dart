@@ -33,7 +33,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
 
   //TODO Make Dynamic
   Movement movement2 = Movement(
-      iconImage:
+      image:
           'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/Airsquats.jpg?alt=media&token=641c2dff-ac0e-4b22-8a8d-aee9adbca3a1',
       video:
           'https://oluko-mvt.s3.us-west-1.amazonaws.com/assessments/85b2f81c1fe74f9cb5e804c57db30137/85b2f81c1fe74f9cb5e804c57db30137_2.mp4',
@@ -46,23 +46,23 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
   List<Movement> referenceMovements = [
     Movement(
         name: 'Airsquats',
-        iconImage:
+        image:
             'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/Airsquats.jpg?alt=media&token=641c2dff-ac0e-4b22-8a8d-aee9adbca3a1'),
     Movement(
         name: 'Body Building',
-        iconImage:
+        image:
             'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_16.png?alt=media&token=2528a228-cabf-49f1-a606-433b83508f42'),
     Movement(
         name: 'Triceps',
-        iconImage:
+        image:
             'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_17.png?alt=media&token=89e4809d-7cc8-40ac-88e0-eebac4ccc93a'),
     Movement(
         name: 'Yoga',
-        iconImage:
+        image:
             'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_3.png?alt=media&token=8918da2d-5f50-45a7-992e-41e3112678f6'),
     Movement(
         name: 'Body Building',
-        iconImage:
+        image:
             'https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/course_sample_images%2Fcourse_sample_16.png?alt=media&token=2528a228-cabf-49f1-a606-433b83508f42'),
   ];
   List<Course> referenceCourses = [
