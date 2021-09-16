@@ -4,35 +4,35 @@ import 'package:oluko_app/models/chat.dart';
 import 'package:oluko_app/repositories/chat_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
-abstract class ChatState {}
+abstract class HiFiveSendState {}
 
-class IgnoreFriendRequestLoading extends ChatState {}
+class HiFiveSendLoading extends HiFiveSendState {}
 
-class ChatSuccess extends ChatState {
+class HiFiveSendSuccess extends HiFiveSendState {
   List<Chat> chat;
-  ChatSuccess({this.chat});
+  HiFiveSendSuccess({this.chat});
 }
 
-class ChatFailure extends ChatState {
+class HiFiveSendFailure extends HiFiveSendState {
   final dynamic exception;
 
-  ChatFailure({this.exception});
+  HiFiveSendFailure({this.exception});
 }
 
-class ChatBloc extends Cubit<ChatState> {
-  ChatBloc() : super(IgnoreFriendRequestLoading());
+class HiFiveSendBloc extends Cubit<HiFiveSendState> {
+  HiFiveSendBloc() : super(HiFiveSendLoading());
 
   void get(BuildContext context, String userId) async {
     try {
       //Get chat and message info from Chat repository
       List<Chat> chat = await ChatRepository().getByUserId(userId);
-      emit(ChatSuccess(chat: chat));
+      emit(HiFiveSendSuccess(chat: chat));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
         stackTrace: stackTrace,
       );
-      emit(ChatFailure(exception: exception));
+      emit(HiFiveSendFailure(exception: exception));
       rethrow;
     }
   }

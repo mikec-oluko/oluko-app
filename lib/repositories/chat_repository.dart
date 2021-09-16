@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/models/chat.dart';
 import 'package:oluko_app/models/favorite.dart';
+import 'package:oluko_app/models/message.dart';
 
 class ChatRepository {
   FirebaseFirestore firestoreInstance;
@@ -24,13 +25,12 @@ class ChatRepository {
         .get();
     List<Chat> response = [];
     docRef.docs.forEach((doc) {
-      final Map<String, dynamic> element = doc.data() as Map<String, dynamic>;
-      response.add(Chat.fromJson(element));
+      response.add(Chat.fromJson(doc.data() as Map<String, dynamic>));
     });
     return response;
   }
 
-  Future<List<Chat>> getMessages(String userId, String targetUserId) async {
+  Future<List<Message>> getMessages(String userId, String targetUserId) async {
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
@@ -43,13 +43,13 @@ class ChatRepository {
     //TODO Get messages from inside chat document
 
     if (docRef.docs.length > 1) {
-      var messages = docRef.docs[0].reference.collection('messages').get();
+      var messagesData =
+          await docRef.docs[0].reference.collection('messages').get();
+      List<Message> messages =
+          messagesData.docs.map((e) => Message.fromJson(e.data())).toList();
+      return messages;
+    } else {
+      return [];
     }
-    List<Chat> response = [];
-    docRef.docs.forEach((doc) {
-      final Map<String, dynamic> element = doc.data() as Map<String, dynamic>;
-      response.add(Chat.fromJson(element));
-    });
-    return response;
   }
 }
