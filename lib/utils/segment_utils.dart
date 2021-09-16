@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/enums/counter_enum.dart';
 import 'package:oluko_app/models/enums/parameter_enum.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
@@ -8,20 +9,27 @@ import 'package:oluko_app/models/timer_entry.dart';
 import 'oluko_localizations.dart';
 
 class SegmentUtils {
-  static List<Widget> getSegmentSummary(Segment segment, BuildContext context) {
-    List<Widget> workoutWidgets = getWorkouts(segment);
-    return [
-          getRoundTitle(segment, context, OlukoColors.grayColor),
-          SizedBox(height: 12.0)
-        ] +
+  static List<Widget> getSegmentSummary(
+      Segment segment, BuildContext context, Color color) {
+    List<Widget> workoutWidgets = getWorkouts(segment, color);
+    return [getRoundTitle(segment, context, color), SizedBox(height: 12.0)] +
         workoutWidgets;
+  }
+
+  static bool isEMOM(Segment segment) {
+    return segment.sections.length == 1 &&
+        segment.sections[0].totalTime != null;
+  }
+
+  static bool isAMRAP(Segment segment) {
+    return segment.rounds == null;
   }
 
   static Widget getRoundTitle(
       Segment segment, BuildContext context, Color color) {
-    if (segment.sections.length == 1 && segment.sections[0].totalTime == null) {
+    if (isEMOM(segment)) {
       return getEMOMTitle(segment, context, color);
-    } else if (segment.rounds == null) {
+    } else if (isAMRAP(segment)) {
       return Text(
         segment.totalTime.toString() +
             " " +
@@ -54,15 +62,15 @@ class SegmentUtils {
           " " +
           OlukoLocalizations.of(context).find('in') +
           " " +
-          segment.totalTime.toString() +
+          (segment.sections[0].totalTime * segment.rounds).toString() +
           " " +
-          OlukoLocalizations.of(context).find('minutes'),
+          OlukoLocalizations.of(context).find('seconds'),
       style: OlukoFonts.olukoBigFont(
           customColor: color, custoFontWeight: FontWeight.bold),
     );
   }
 
-  static List<Widget> getWorkouts(Segment segment) {
+  static List<Widget> getWorkouts(Segment segment, Color color) {
     List<Widget> workouts = [];
     for (var sectionIndex = 0;
         sectionIndex < segment.sections.length;
@@ -72,20 +80,19 @@ class SegmentUtils {
           movementIndex++) {
         MovementSubmodel movement =
             segment.sections[sectionIndex].movements[movementIndex];
-        workouts.add(getTextWidget(getLabel(movement)));
+        workouts.add(getTextWidget(getLabel(movement), color));
       }
     }
     return workouts;
   }
 
-  static Widget getTextWidget(String text) {
+  static Widget getTextWidget(String text, Color color) {
     return Padding(
         padding: EdgeInsets.only(bottom: 12.0),
         child: Text(
           text,
           style: OlukoFonts.olukoBigFont(
-              custoFontWeight: FontWeight.w400,
-              customColor: OlukoColors.grayColor),
+              custoFontWeight: FontWeight.w400, customColor: color),
         ));
   }
 
@@ -94,35 +101,46 @@ class SegmentUtils {
   static List<TimerEntry> getExercisesList(Segment segment) {
     List<TimerEntry> entries = [];
     for (var roundIndex = 0; roundIndex < segment.rounds; roundIndex++) {
-      for (var sectionIndex = 0;
-          sectionIndex < segment.sections.length;
-          sectionIndex++) {
-        bool hasMultipleMovements =
-            segment.sections[sectionIndex].movements.length > 1;
-        if (hasMultipleMovements) {
-          for (var movementIndex = 0;
-              movementIndex < segment.sections[sectionIndex].movements.length;
-              movementIndex++) {
+      if (isEMOM(segment)) {
+        MovementSubmodel movementSubmodel = segment.sections[0].movements[0];
+        entries.add(TimerEntry(
+            movement: movementSubmodel,
+            parameter: ParameterEnum.duration,
+            quantity: segment.sections[0].totalTime,
+            round: roundIndex + 1,
+            counter: CounterEnum.none,
+            labels: getLabels(segment.sections[0].movements)));
+      } else {
+        for (var sectionIndex = 0;
+            sectionIndex < segment.sections.length;
+            sectionIndex++) {
+          bool hasMultipleMovements =
+              segment.sections[sectionIndex].movements.length > 1;
+          if (hasMultipleMovements) {
+            for (var movementIndex = 0;
+                movementIndex < segment.sections[sectionIndex].movements.length;
+                movementIndex++) {
+              MovementSubmodel movementSubmodel =
+                  segment.sections[sectionIndex].movements[movementIndex];
+              entries.add(TimerEntry(
+                  movement: movementSubmodel,
+                  parameter: movementSubmodel.parameter,
+                  quantity: movementSubmodel.quantity,
+                  round: roundIndex + 1,
+                  counter: movementSubmodel.counter,
+                  labels: getLabels(segment.sections[sectionIndex].movements)));
+            }
+          } else {
             MovementSubmodel movementSubmodel =
-                segment.sections[sectionIndex].movements[movementIndex];
+                segment.sections[sectionIndex].movements[0];
             entries.add(TimerEntry(
                 movement: movementSubmodel,
                 parameter: movementSubmodel.parameter,
                 quantity: movementSubmodel.quantity,
                 round: roundIndex + 1,
                 counter: movementSubmodel.counter,
-                labels: getLabels(segment.sections[sectionIndex].movements)));
+                labels: [getLabel(movementSubmodel)]));
           }
-        } else {
-          MovementSubmodel movementSubmodel =
-              segment.sections[sectionIndex].movements[0];
-          entries.add(TimerEntry(
-              movement: movementSubmodel,
-              parameter: movementSubmodel.parameter,
-              quantity: movementSubmodel.quantity,
-              round: roundIndex + 1,
-              counter: movementSubmodel.counter,
-              labels: [getLabel(movementSubmodel)]));
         }
       }
     }
@@ -170,8 +188,8 @@ class SegmentUtils {
     return labelWidgets;
   }
 
-  static Column workouts(Segment segment, BuildContext context) {
-    List<Widget> workoutWidgets = getWorkouts(segment);
+  static Column workouts(Segment segment, BuildContext context, Color color) {
+    List<Widget> workoutWidgets = getWorkouts(segment, color);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children:

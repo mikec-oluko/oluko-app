@@ -62,8 +62,11 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                   currentSegmentStep: widget.currentSegmentStep,
                   totalSegmentStep: widget.totalSegmentStep),
               Padding(
-                  padding: EdgeInsets.symmetric(vertical: 40),
-                  child: SegmentUtils.workouts(widget.segment, context)),
+                  padding: EdgeInsets.symmetric(vertical: 20),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: SegmentUtils.getSegmentSummary(
+                          widget.segment, context, OlukoColors.white))),
             ],
           ))
     ]);

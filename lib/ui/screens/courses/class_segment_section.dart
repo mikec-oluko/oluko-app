@@ -87,6 +87,6 @@ class _State extends State<ClassSegmentSection> {
   Widget getSegmentSummary() {
     return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: SegmentUtils.getSegmentSummary(widget.segment, context));
+        children: SegmentUtils.getSegmentSummary(widget.segment, context, OlukoColors.grayColor));
   }
 }
