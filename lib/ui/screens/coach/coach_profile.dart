@@ -359,7 +359,7 @@ class _CoachProfileState extends State<CoachProfile> {
 
   String getUserLocation(UserResponse user) {
     String userLocationContent = '';
-    if (user.city != null && (user.state != null && user.country != null)) {
+    if ((user.city != null && user.city != 'null') && ((user.state != null && user.state != 'null') && (user.country != null && user.country != 'null'))) {
       userLocationContent = "${user.city}, ${user.state} ${user.country}";
     }
     return userLocationContent;
