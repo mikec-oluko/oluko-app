@@ -64,9 +64,9 @@ class UserRepository {
     if (docRef.docs == null || docRef.docs.length == 0) {
       return null;
     }
-    List<UserResponse> response = docRef.docs
-        .map((doc) => UserResponse.fromJson(doc.data() as Map<String, dynamic>))
-        .toList();
+    List<UserResponse> response =
+        docRef.docs.map((doc) => UserResponse.fromJson(doc.data() as Map<String, dynamic>)).toList();
+
     return response;
   }
 

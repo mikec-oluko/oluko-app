@@ -128,7 +128,8 @@ class CourseEnrollmentRepository {
           .collection('projects')
           .doc(GlobalConfiguration().getValue("projectId"))
           .collection('courseEnrollments')
-          .where('created_by', isEqualTo: userId).orderBy('created_at', descending: true)
+          .where('created_by', isEqualTo: userId)
+          .orderBy('created_at', descending: true)
           .get();
 
       if (docRef.docs.isEmpty) {
@@ -163,8 +164,7 @@ class CourseEnrollmentRepository {
     }
     try {
       for (var courseEnrollment in courseEnrollments) {
-        await getChallengesFromCourseEnrollment(
-            courseEnrollment, challengeList);
+        await getChallengesFromCourseEnrollment(courseEnrollment, challengeList);
       }
     } catch (e, stackTrace) {
       await Sentry.captureException(
@@ -211,8 +211,8 @@ class CourseEnrollmentRepository {
     reference.update({'classes': List<dynamic>.from(classes.map((c) => c.toJson()))});
   }
 
-  static Future<CourseEnrollment> updateSelfie(CourseEnrollment courseEnrollment, int classIndex,
-      PickedFile file) async {
+  static Future<CourseEnrollment> updateSelfie(
+      CourseEnrollment courseEnrollment, int classIndex, PickedFile file) async {
     DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"))
@@ -220,16 +220,14 @@ class CourseEnrollmentRepository {
         .doc(courseEnrollment.id);
 
     final thumbnail = await ImageUtils().getThumbnailForImage(file, 250);
-    final thumbnailUrl = await _uploadFile(
-        thumbnail, '${reference.path}/class' + classIndex.toString());
+    final thumbnailUrl = await _uploadFile(thumbnail, '${reference.path}/class' + classIndex.toString());
     final downloadUrl = await _uploadFile(file.path, reference.path);
 
     courseEnrollment.classes[classIndex].selfieDownloadUrl = downloadUrl;
     courseEnrollment.classes[classIndex].selfieThumbnailUrl = thumbnailUrl;
 
     reference.update({
-      'classes':
-          List<dynamic>.from(courseEnrollment.classes.map((c) => c.toJson())),
+      'classes': List<dynamic>.from(courseEnrollment.classes.map((c) => c.toJson())),
     });
 
     return courseEnrollment;
@@ -237,11 +235,11 @@ class CourseEnrollmentRepository {
 
   static Future<String> _uploadFile(String filePath, String folderName) async {
     final file = File(filePath);
+
     final basename = p.basename(filePath);
 
     final S3Provider s3Provider = S3Provider();
-    String downloadUrl =
-        await s3Provider.putFile(file.readAsBytesSync(), folderName, basename);
+    String downloadUrl = await s3Provider.putFile(file.readAsBytesSync(), folderName, basename);
 
     return downloadUrl;
   }
