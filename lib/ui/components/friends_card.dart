@@ -37,8 +37,7 @@ class _FriendCardState extends State<FriendCard> {
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.center,
-      decoration: BoxDecoration(
-          color: OlukoColors.black, border: Border(bottom: BorderSide(width: 1.0, color: OlukoColors.grayColor))),
+      decoration: BoxDecoration(color: OlukoColors.black, border: Border(bottom: BorderSide(width: 1.0, color: OlukoColors.grayColor))),
       height: 100,
       child: Padding(
         padding: const EdgeInsets.only(left: 5),
@@ -70,7 +69,10 @@ class _FriendCardState extends State<FriendCard> {
                         ? Text(
                             OlukoLocalizations.of(context).find('errorLoadingImage'),
                             style: OlukoFonts.olukoSmallFont(
-                                customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                              customColor: OlukoColors.white,
+                              custoFontWeight: FontWeight.w500,
+                            ),
+                            textAlign: TextAlign.center,
                           )
                         : null
                     // this._loadImageError
@@ -123,9 +125,7 @@ class _FriendCardState extends State<FriendCard> {
             children: [
               IconButton(
                   icon: Icon(
-                    widget.friend != null && widget.friend.isFavorite != null && widget.friend.isFavorite
-                        ? Icons.star
-                        : Icons.star_outline,
+                    widget.friend != null && widget.friend.isFavorite != null && widget.friend.isFavorite ? Icons.star : Icons.star_outline,
                     color: OlukoColors.primary,
                   ),
                   onPressed: () {
