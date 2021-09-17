@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_profile_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
@@ -33,8 +34,8 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class CoachPage extends StatefulWidget {
-  const CoachPage();
-
+  const CoachPage({this.coachId});
+  final String coachId;
   @override
   _CoachPageState createState() => _CoachPageState();
 }
@@ -42,6 +43,7 @@ class CoachPage extends StatefulWidget {
 List<Challenge> _activeChallenges = [];
 List<CourseEnrollment> _courseEnrollmentList = [];
 UserResponse _currentAuthUser;
+UserResponse _coachUser;
 List<InfoForSegments> _toDoSegments = [];
 List<CoachSegmentContent> actualSegmentsToDisplay = [];
 List<TaskSubmission> _assessmentVideosContent = [];
@@ -52,27 +54,42 @@ ChewieController _controller;
 
 class _CoachPageState extends State<CoachPage> {
   @override
+  void initState() {
+    // TODO: implement initState
+    BlocProvider.of<CoachProfileBloc>(context).getCoachProfile(widget.coachId);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         if (state is AuthSuccess) {
           _currentAuthUser = state.user;
           requestCurrentUserData(context);
-          return Scaffold(
-            appBar: CoachAppBar(
-              coachUser: _currentAuthUser,
-            ),
-            body: BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(
-              builder: (context, state) {
-                if (state is CourseEnrollmentsByUserSuccess) {
-                  _courseEnrollmentList = state.courseEnrollments;
-                }
-                return CoachSlidingUpPanel(
-                  content: coachViewPageContent(context),
-                  courseEnrollmentList: _courseEnrollmentList,
-                );
-              },
-            ),
+          return BlocBuilder<CoachProfileBloc, CoachProfileState>(
+            builder: (context, state) {
+              if (state is CoachProfileDataSuccess) {
+                _coachUser = state.coachProfile;
+              }
+
+              return Scaffold(
+                appBar: CoachAppBar(
+                  coachUser: _coachUser,
+                ),
+                body: BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(
+                  builder: (context, state) {
+                    if (state is CourseEnrollmentsByUserSuccess) {
+                      _courseEnrollmentList = state.courseEnrollments;
+                    }
+                    return CoachSlidingUpPanel(
+                      content: coachViewPageContent(context),
+                      courseEnrollmentList: _courseEnrollmentList,
+                    );
+                  },
+                ),
+              );
+            },
           );
         } else {
           return Container(

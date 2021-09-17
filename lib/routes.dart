@@ -73,6 +73,7 @@ import 'package:oluko_app/ui/screens/profile/profile_transformation_journey_page
 import 'package:oluko_app/ui/screens/profile/transformation_journey_post.dart';
 import 'package:oluko_app/ui/screens/courses/segment_detail.dart';
 import 'blocs/coach/coach_assignment_bloc.dart';
+import 'blocs/coach/coach_profile_bloc.dart';
 import 'blocs/movement_info_bloc.dart';
 import 'models/task.dart';
 import 'ui/screens/coach/coach_main_page.dart';
@@ -227,6 +228,7 @@ class Routes {
   final CourseEnrollmentUpdateBloc _courseEnrollmentUpdateBloc = CourseEnrollmentUpdateBloc();
   final UserListBloc _userListBloc = UserListBloc();
   final CoachAssignmentBloc _coachAssignmentBloc = CoachAssignmentBloc();
+  final CoachProfileBloc _coachProfileBloc = CoachProfileBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -259,6 +261,7 @@ class Routes {
           BlocProvider<UserListBloc>.value(value: _userListBloc),
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
           BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
+          BlocProvider<CoachProfileBloc>.value(value: _coachProfileBloc),
         ];
         newRouteView = MainPage();
         break;
@@ -571,6 +574,7 @@ class Routes {
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
           BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
           BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
+          BlocProvider<CoachProfileBloc>.value(value: _coachProfileBloc),
         ];
         newRouteView = CoachMainPage();
         break;
@@ -585,6 +589,7 @@ class Routes {
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
           BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
           BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
+          BlocProvider<CoachProfileBloc>.value(value: _coachProfileBloc),
         ];
         newRouteView = CoachPage();
         break;
