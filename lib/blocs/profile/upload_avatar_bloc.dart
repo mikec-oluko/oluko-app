@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/helpers/permissions.dart';
 import 'package:oluko_app/repositories/profile_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -20,6 +21,8 @@ class ProfileAvatarFailure extends ProfileAvatarState {
   dynamic exception;
   ProfileAvatarFailure({this.exception});
 }
+
+class ProfileAvatarRequirePermissions extends ProfileAvatarState {}
 
 class ProfileAvatarBloc extends Cubit<ProfileAvatarState> {
   ProfileAvatarBloc() : super(ProfileAvatarDefault());
@@ -48,9 +51,20 @@ class ProfileAvatarBloc extends Cubit<ProfileAvatarState> {
         exception,
         stackTrace: stackTrace,
       );
+
+      if (!await requiredAvatarPermissionsEnabled(uploadedFrom)) return;
+
       emit(ProfileAvatarFailure(exception: exception));
       rethrow;
     }
+  }
+
+  Future<bool> requiredAvatarPermissionsEnabled(DeviceContentFrom uploadedFrom) async {
+    if (!await Permissions.requiredPermissionsEnabled(uploadedFrom)) {
+      emit(ProfileAvatarRequirePermissions());
+      return false;
+    }
+    return true;
   }
 
   void emitDefaultState() {

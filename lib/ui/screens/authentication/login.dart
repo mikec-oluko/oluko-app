@@ -175,7 +175,12 @@ class _LoginPageState extends State<LoginPage> {
                     AppLoader.startLoading(context);
                     BlocProvider.of<AuthBloc>(context)
                       ..login(
-                          context, LoginRequest(email: _requestData.email, password: _requestData.password, userName: _requestData.userName, projectId: GlobalConfiguration().getValue('projectId')));
+                          context,
+                          LoginRequest(
+                              email: _requestData.email,
+                              password: _requestData.password,
+                              userName: _requestData.userName,
+                              projectId: GlobalConfiguration().getValue("projectId")));
                   },
                   child: Stack(children: [
                     Align(
@@ -199,7 +204,8 @@ class _LoginPageState extends State<LoginPage> {
                     onPressed: () {
                       BlocProvider.of<AuthBloc>(context)..loginWithGoogle(context);
                     },
-                    style: OutlinedButton.styleFrom(backgroundColor: Colors.transparent, side: BorderSide(color: Colors.grey)),
+                    style: OutlinedButton.styleFrom(
+                        backgroundColor: Colors.transparent, side: BorderSide(color: Colors.grey)),
                     child: Stack(children: [
                       Align(
                         alignment: Alignment.center,
