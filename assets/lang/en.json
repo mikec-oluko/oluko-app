@@ -189,5 +189,7 @@
     "voiceMessages": "Voice Messages",
     "addYourSelfie": "Add Your Selfie...",
     "requiredPermitsTitle": "Required permits",
-    "requiredPermitsBody": "You need to enable app permissions"
+    "requiredPermitsBody": "You need to enable app permissions",
+    "goToClass": "Go To Class",
+    "nextSegment": "Next Segment"
 }

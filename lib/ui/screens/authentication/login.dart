@@ -209,10 +209,7 @@ class _LoginPageState extends State<LoginPage> {
                     child: Stack(children: [
                       Align(
                         alignment: Alignment.center,
-                        child: Image.network(
-                          'https://img.icons8.com/color/452/google-logo.png',
-                          width: 30,
-                        ),
+                        child: Image.asset('assets/login/google-logo.png', width: 30),
                       ),
                     ])))),
         Padding(
@@ -224,15 +221,16 @@ class _LoginPageState extends State<LoginPage> {
                     onPressed: () {
                       BlocProvider.of<AuthBloc>(context)..loginWithFacebook(context);
                     },
-                    style: OutlinedButton.styleFrom(backgroundColor: Colors.transparent, side: BorderSide(color: Colors.grey)),
+
+                    style: OutlinedButton.styleFrom(
+                        backgroundColor: Colors.transparent, side: BorderSide(color: Colors.grey)),
                     child: Stack(children: [
                       Align(
-                        alignment: Alignment.center,
-                        child: Image.network(
-                          'https://cdn.icon-icons.com/icons2/1826/PNG/512/4202110facebooklogosocialsocialmedia-115707_115594.png',
-                          width: 30,
-                        ),
-                      ),
+                          alignment: Alignment.center,
+                          child: Image.asset(
+                            'assets/login/facebook-logo.png',
+                            width: 30,
+                          )),
                     ])))),
       ]),
       // TODO: Signup

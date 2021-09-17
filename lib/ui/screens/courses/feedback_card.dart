@@ -13,6 +13,7 @@ class FeedbackCard extends StatefulWidget {
 
 class _State extends State<FeedbackCard> {
   List<Movement> segmentMovements;
+  bool like = true;
 
   @override
   void initState() {
@@ -22,8 +23,9 @@ class _State extends State<FeedbackCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: 145,
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(5)),
+          borderRadius: BorderRadius.all(Radius.circular(10)),
           color: OlukoColors.listGrayColor),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -40,31 +42,54 @@ class _State extends State<FeedbackCard> {
                 textAlign: TextAlign.center,
               ),
             ),
+            SizedBox(height: 5),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 10),
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'assets/courses/like.png',
-                        scale: 5,
+                GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        like = true;
+                      });
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: Column(
+                        children: [
+                          like
+                              ? Image.asset(
+                                  'assets/courses/like-painted.png',
+                                  scale: 4,
+                                )
+                              : Image.asset(
+                                  'assets/courses/like.png',
+                                  scale: 5,
+                                ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'assets/courses/dislike.png',
-                        scale: 5,
+                    )),
+                GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        like = false;
+                      });
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          like
+                              ? Image.asset(
+                                  'assets/courses/dislike.png',
+                                  scale: 5,
+                                )
+                              : Image.asset(
+                                  'assets/courses/dislike-painted.png',
+                                  scale: 4,
+                                ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
+                    )),
               ],
             )
           ],
