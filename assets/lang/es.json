@@ -189,5 +189,6 @@
     "voiceMessages": "Mensajes de voz",
     "addYourSelfie": "Agrega Tu Selfie...",
     "goToClass": "Ir a la clase",
-    "nextSegment": "Próximo Segmento"
+    "nextSegment": "Próximo Segmento",
+    "errorLoadingImage":"Error cargando imagen!"
 }

@@ -74,10 +74,14 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
                             key: searchKey,
                             items: searchResultItems,
                             whenInitialized: (TextEditingController controller) => whenSearchBarInitialized(controller),
-                            onSearchSubmit: (SearchResults<T> searchResults) => onSearchSubmit(searchResults),
-                            onSearchResults: (SearchResults<T> searchResults) => onSearchResults(searchResults),
-                            searchMethod: (String query, List<T> collection) => searchMethod(query, collection),
-                            suggestionMethod: (String query, List<T> collection) => suggestionMethod(query, collection),
+                            onSearchSubmit: (SearchResults<dynamic> searchResults) =>
+                                onSearchSubmit(searchResults as SearchResults<T>),
+                            onSearchResults: (SearchResults<dynamic> searchResults) =>
+                                onSearchResults(searchResults as SearchResults<T>),
+                            searchMethod: (String query, List<dynamic> collection) =>
+                                searchMethod(query, collection as List<T>),
+                            suggestionMethod: (String query, List<dynamic> collection) =>
+                                suggestionMethod(query, collection as List<T>),
                           )),
                       Divider(
                         height: 1,
