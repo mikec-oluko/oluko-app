@@ -75,6 +75,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   double _panelMaxHeight = 100.0;
   double _statePanelMaxHeight = 100.0;
   bool _isNewCoverImage = false;
+  bool _friendsRequested = false;
 
   @override
   void initState() {
@@ -98,8 +99,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
         }
         _requestContentForUser(context: context, userRequested: _userProfileToDisplay);
 
-        _isCurrentUser == false ? BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_currentAuthUser.id) : null;
-
+        if (_isCurrentUser == false && _friendsRequested == false) {
+          BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_currentAuthUser.id);
+          _friendsRequested = true;
+        }
         return _buildUserProfileView(context: context, authUser: _currentAuthUser, userRequested: widget.userRequested, isOwnProfile: _isCurrentUser);
       } else {
         return Container(
