@@ -112,8 +112,7 @@ class SearchState<T> extends State<SearchBar> {
       searchQuery = newQuery;
       var suggestedItems = widget.suggestionMethod(searchQuery, widget.items);
       List<T> searchResults = widget.searchMethod(searchQuery, widget.items) as List<T>;
-      widget.onSearchResults(
-          SearchResults<T>(query: newQuery, suggestedItems: suggestedItems as List<T>, searchResults: searchResults));
+      widget.onSearchResults(SearchResults<T>(query: newQuery, suggestedItems: suggestedItems as List<T>, searchResults: searchResults));
     });
   }
 
@@ -123,8 +122,7 @@ class SearchState<T> extends State<SearchBar> {
       List<T> suggestedItems = widget.suggestionMethod(searchQuery, widget.items) as List<T>;
       List<T> searchResults = widget.searchMethod(searchQuery, widget.items) as List<T>;
       widget.onSearchSubmit(
-        SearchResults<T>(
-            query: newQuery, suggestedItems: suggestedItems as List<T>, searchResults: searchResults as List<T>),
+        SearchResults<T>(query: newQuery, suggestedItems: suggestedItems as List<T>, searchResults: searchResults as List<T>),
       );
     });
   }

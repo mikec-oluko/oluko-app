@@ -99,8 +99,8 @@ class _State extends State<Courses> {
                                         ? _mainPage(context, courseState)
                                         : showSearchSuggestions
                                             ? CourseUtils.searchSuggestions(searchResults, searchKey)
-                                            : CourseUtils.searchResults(context, searchResults, cardsAspectRatio,
-                                                searchResultsPortrait, searchResultsLandscape),
+                                            : CourseUtils.searchResults(
+                                                context, searchResults, cardsAspectRatio, searchResultsPortrait, searchResultsLandscape),
                               );
                             }),
                           )
@@ -122,9 +122,7 @@ class _State extends State<Courses> {
         ? OlukoAppBar<Course>(
             showBackButton: false,
             searchKey: searchKey,
-            title: showFilterSelector
-                ? OlukoLocalizations.of(context).find('filters')
-                : OlukoLocalizations.of(context).find('courses'),
+            title: showFilterSelector ? OlukoLocalizations.of(context).find('filters') : OlukoLocalizations.of(context).find('courses'),
             actions: [_filterWidget()],
             onSearchSubmit: (SearchResults<Course> results) => this.setState(() {
               showSearchSuggestions = false;
@@ -132,8 +130,7 @@ class _State extends State<Courses> {
             }),
             onSearchResults: (SearchResults results) => this.setState(() {
               showSearchSuggestions = true;
-              searchResults = SearchResults<Course>(
-                  query: results.query, suggestedItems: List<Course>.from(results.suggestedItems));
+              searchResults = SearchResults<Course>(query: results.query, suggestedItems: List<Course>.from(results.suggestedItems));
             }),
             suggestionMethod: CourseUtils.suggestionMethod,
             searchMethod: CourseUtils.searchMethod,
@@ -159,10 +156,8 @@ class _State extends State<Courses> {
               itemBuilder: (context, index) {
                 final List<Course> coursesList = courseState.coursesByCategories.values.elementAt(index);
                 return CarouselSection(
-                  onOptionTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.viewAll], arguments: {
-                    'courses': coursesList,
-                    'title': courseState.coursesByCategories.keys.elementAt(index).name
-                  }),
+                  onOptionTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.viewAll],
+                      arguments: {'courses': coursesList, 'title': courseState.coursesByCategories.keys.elementAt(index).name}),
                   height: carouselSectionHeight,
                   title: courseState.coursesByCategories.keys.elementAt(index).name,
                   optionLabel: OlukoLocalizations.of(context).find('viewAll'),
@@ -170,8 +165,8 @@ class _State extends State<Courses> {
                       .map((course) => Padding(
                             padding: const EdgeInsets.only(right: 8.0),
                             child: GestureDetector(
-                              onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
-                                  arguments: {'course': course}),
+                              onTap: () =>
+                                  Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing], arguments: {'course': course}),
                               child: _getCourseCard(_generateImageCourse(course.image),
                                   width: ScreenUtils.width(context) / (0.2 + _cardsToShow())),
                             ),
@@ -184,14 +179,9 @@ class _State extends State<Courses> {
     );
   }
 
-  CourseCard _getCourseCard(Image image,
-      {double progress, double width, double height, List<String> userRecommendationsAvatarUrls}) {
+  CourseCard _getCourseCard(Image image, {double progress, double width, double height, List<String> userRecommendationsAvatarUrls}) {
     return CourseCard(
-        width: width,
-        height: height,
-        imageCover: image,
-        progress: progress,
-        userRecommendationsAvatarUrls: userRecommendationsAvatarUrls);
+        width: width, height: height, imageCover: image, progress: progress, userRecommendationsAvatarUrls: userRecommendationsAvatarUrls);
   }
 
   Widget _filterWidget() {
@@ -245,8 +235,7 @@ class _State extends State<Courses> {
                   ? CarouselSection(
                       title: OlukoLocalizations.of(context).find('friendsRecommended'),
                       height: carouselSectionHeight + 10,
-                      children: recommendationState.recommendationsByUsers.entries
-                          .map((MapEntry<String, List<UserResponse>> courseEntry) {
+                      children: recommendationState.recommendationsByUsers.entries.map((MapEntry<String, List<UserResponse>> courseEntry) {
                         final course = courseState.values.where((element) => element.id == courseEntry.key).toList()[0];
 
                         final List<String> userRecommendationAvatars =
@@ -255,8 +244,8 @@ class _State extends State<Courses> {
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: GestureDetector(
-                            onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
-                                arguments: {'course': course}),
+                            onTap: () =>
+                                Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing], arguments: {'course': course}),
                             child: _getCourseCard(_generateImageCourse(course.image),
                                 width: ScreenUtils.width(context) / (0.2 + _cardsToShow()),
                                 userRecommendationsAvatarUrls: userRecommendationAvatars),
@@ -286,14 +275,13 @@ class _State extends State<Courses> {
                       title: OlukoLocalizations.of(context).find('activeCourses'),
                       height: carouselSectionHeight + 10,
                       children: courseEnrollmentState.courseEnrollments.map((CourseEnrollment courseEnrollment) {
-                        final course =
-                            courseState.values.where((element) => element.id == courseEnrollment.course.id).toList()[0];
+                        final course = courseState.values.where((element) => element.id == courseEnrollment.course.id).toList()[0];
 
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: GestureDetector(
-                            onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
-                                arguments: {'course': course}),
+                            onTap: () =>
+                                Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing], arguments: {'course': course}),
                             child: _getCourseCard(
                               _generateImageCourse(course.image),
                               progress: courseEnrollment.completion,
@@ -318,15 +306,12 @@ class _State extends State<Courses> {
             ? BlocBuilder<FavoriteBloc, FavoriteState>(
                 bloc: BlocProvider.of<FavoriteBloc>(context)..getByUser(authState.user.id),
                 builder: (context, favoriteState) {
-                  return favoriteState is FavoriteSuccess &&
-                          courseState is CourseSuccess &&
-                          favoriteState.favorites.length > 0
+                  return favoriteState is FavoriteSuccess && courseState is CourseSuccess && favoriteState.favorites.length > 0
                       ? CarouselSection(
                           title: OlukoLocalizations.of(context).find('myList'),
                           height: carouselSectionHeight,
                           children: favoriteState.favorites.map((Favorite favorite) {
-                            Course favoriteCourse =
-                                courseState.values.where((course) => course.id == favorite.course.id).toList()[0];
+                            Course favoriteCourse = courseState.values.where((course) => course.id == favorite.course.id).toList()[0];
                             return Padding(
                                 padding: const EdgeInsets.only(right: 8.0),
                                 child: GestureDetector(

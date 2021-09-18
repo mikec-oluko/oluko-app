@@ -14,7 +14,15 @@ class OverlayVideoPreview extends StatefulWidget {
   //final Function() onHeartPressed;
   final List<Widget> bottomWidgets;
 
-  OverlayVideoPreview({this.video, this.image, this.showBackButton = false, this.showHeartButton = false, this.showShareButton = false, this.bottomWidgets, Key key}) : super(key: key);
+  OverlayVideoPreview(
+      {this.video,
+      this.image,
+      this.showBackButton = false,
+      this.showHeartButton = false,
+      this.showShareButton = false,
+      this.bottomWidgets,
+      Key key})
+      : super(key: key);
 
   @override
   _OverlayVideoPreviewState createState() => _OverlayVideoPreviewState();
@@ -30,7 +38,9 @@ class _OverlayVideoPreviewState extends State<OverlayVideoPreview> {
 
   @override
   Widget build(BuildContext context) {
-    return widget.bottomWidgets != null ? Stack(alignment: Alignment.bottomLeft, children: [videoWithButtons()] + widget.bottomWidgets) : videoWithButtons();
+    return widget.bottomWidgets != null
+        ? Stack(alignment: Alignment.bottomLeft, children: [videoWithButtons()] + widget.bottomWidgets)
+        : videoWithButtons();
   }
 
   Widget videoWithButtons() {
@@ -55,7 +65,9 @@ class _OverlayVideoPreviewState extends State<OverlayVideoPreview> {
         padding: EdgeInsets.only(top: 15),
         child: Row(
           children: [
-            widget.showBackButton ? IconButton(icon: Icon(Icons.chevron_left, size: 35, color: Colors.white), onPressed: () => Navigator.pop(context)) : SizedBox(),
+            widget.showBackButton
+                ? IconButton(icon: Icon(Icons.chevron_left, size: 35, color: Colors.white), onPressed: () => Navigator.pop(context))
+                : SizedBox(),
             Expanded(child: SizedBox()),
             widget.showShareButton
                 ? IconButton(

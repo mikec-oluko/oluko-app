@@ -12,12 +12,7 @@ class SegmentImageSection extends StatefulWidget {
   final int currentSegmentStep;
   final int totalSegmentStep;
 
-  SegmentImageSection(
-      {this.segment,
-      this.showBackButton = true,
-      this.currentSegmentStep,
-      this.totalSegmentStep,
-      Key key})
+  SegmentImageSection({this.segment, this.showBackButton = true, this.currentSegmentStep, this.totalSegmentStep, Key key})
       : super(key: key);
 
   @override
@@ -48,21 +43,15 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
             children: [
               Text(
                 widget.segment.name,
-                style:
-                    OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
+                style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
               ),
               SizedBox(height: 10),
               Text(
                 widget.segment.description,
-                style:
-                    OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400),
+                style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400),
               ),
-              SegmentStepSection(
-                  currentSegmentStep: widget.currentSegmentStep,
-                  totalSegmentStep: widget.totalSegmentStep),
-              Padding(
-                  padding: EdgeInsets.symmetric(vertical: 40),
-                  child: MovementUtils.workout(widget.segment, context)),
+              SegmentStepSection(currentSegmentStep: widget.currentSegmentStep, totalSegmentStep: widget.totalSegmentStep),
+              Padding(padding: EdgeInsets.symmetric(vertical: 40), child: MovementUtils.workout(widget.segment, context)),
             ],
           ))
     ]);
@@ -74,10 +63,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
         child: Row(
           children: [
             widget.showBackButton
-                ? IconButton(
-                    icon:
-                        Icon(Icons.chevron_left, size: 35, color: Colors.white),
-                    onPressed: () => Navigator.pop(context))
+                ? IconButton(icon: Icon(Icons.chevron_left, size: 35, color: Colors.white), onPressed: () => Navigator.pop(context))
                 : SizedBox(),
             Expanded(child: SizedBox()),
             Padding(
@@ -87,10 +73,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                     'assets/courses/outlined_camera.png',
                     scale: 3,
                   ),
-                  Padding(
-                      padding: EdgeInsets.only(top: 1),
-                      child: Icon(Icons.circle_outlined,
-                          size: 16, color: OlukoColors.primary))
+                  Padding(padding: EdgeInsets.only(top: 1), child: Icon(Icons.circle_outlined, size: 16, color: OlukoColors.primary))
                 ]))
           ],
         ));
