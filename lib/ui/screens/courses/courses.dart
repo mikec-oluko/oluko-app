@@ -266,7 +266,7 @@ class _State extends State<Courses> {
       if (authState is AuthSuccess) {
         AuthSuccess authSuccess = authState;
         return BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(
-            bloc: BlocProvider.of<CourseEnrollmentListBloc>(context)..getCourseEnrollmentsByUser(authSuccess.user.id),
+            bloc: BlocProvider.of<CourseEnrollmentListBloc>(context)..getCourseEnrollmentsByUser(authSuccess.user.id != null && authSuccess.user.id != 'null' ? authSuccess.user.id : authSuccess.user.firebaseId),
             builder: (context, courseEnrollmentState) {
               return courseEnrollmentState is CourseEnrollmentsByUserSuccess &&
                       courseState is CourseSuccess &&

@@ -32,12 +32,17 @@ import 'package:oluko_app/ui/components/course_card.dart';
 import 'package:oluko_app/ui/components/modal_upload_options.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
+import 'package:oluko_app/ui/components/oluko_primary_button.dart';
+import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/components/uploading_modal_loader.dart';
 import 'package:oluko_app/ui/components/uploading_modal_success.dart';
 import 'package:oluko_app/ui/components/user_profile_information.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
+import 'package:oluko_app/utils/app_messages.dart';
+import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class UserProfilePage extends StatefulWidget {
@@ -210,6 +215,11 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   if (state is ProfileCoverImageFailure) {
                     _panelController.close();
                   }
+                  if (state is ProfileCoverRequirePermissions) {
+                    _panelController
+                        .close()
+                        .then((value) => DialogUtils.getDialog(context, _showOpenSettingsDialogContent(context), showExitButton: false));
+                  }
                   return _contentForPanel;
                 })
               : BlocBuilder<ProfileAvatarBloc, ProfileAvatarState>(builder: (context, state) {
@@ -233,6 +243,11 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   }
                   if (state is ProfileAvatarFailure) {
                     _panelController.close();
+                  }
+                  if (state is ProfileAvatarRequirePermissions) {
+                    _panelController
+                        .close()
+                        .then((value) => DialogUtils.getDialog(context, _showOpenSettingsDialogContent(context), showExitButton: false));
                   }
                   return _contentForPanel;
                 }),
@@ -578,4 +593,35 @@ class _UserProfilePageState extends State<UserProfilePage> {
         return "fail";
     }
   }
+}
+
+List<Widget> _showOpenSettingsDialogContent(BuildContext context) {
+  return [
+    Padding(
+        padding: const EdgeInsets.only(bottom: 15.0),
+        child: TitleBody(OlukoLocalizations.of(context).find('requiredPermitsTitle'), bold: true)),
+    Text(OlukoLocalizations.of(context).find('requiredPermitsBody'), textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont()),
+    Padding(
+        padding: const EdgeInsets.only(top: 25.0),
+        child: Row(
+          children: [
+            OlukoPrimaryButton(
+              thinPadding: true,
+              title: OlukoLocalizations.of(context).find('ignore'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            const SizedBox(width: 10),
+            OlukoOutlinedButton(
+              thinPadding: true,
+              title: OlukoLocalizations.of(context).find('settings'),
+              onPressed: () {
+                Navigator.pop(context);
+                openAppSettings();
+              },
+            ),
+          ],
+        ))
+  ];
 }
