@@ -15,11 +15,7 @@ class ClassSegmentSection extends StatefulWidget {
   final bool showTopDivider;
   final Function(BuildContext, Movement) onPressedMovement;
 
-  ClassSegmentSection(
-      {this.movements,
-      this.onPressedMovement,
-      this.segment,
-      this.showTopDivider = true});
+  ClassSegmentSection({this.movements, this.onPressedMovement, this.segment, this.showTopDivider = true});
 
   @override
   _State createState() => _State();
@@ -47,9 +43,7 @@ class _State extends State<ClassSegmentSection> {
               padding: const EdgeInsets.only(bottom: 20.0),
               child: Text(
                 widget.segment.name,
-                style: OlukoFonts.olukoSuperBigFont(
-                    custoFontWeight: FontWeight.w500,
-                    customColor: OlukoColors.white),
+                style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.white),
               ),
             ),
             widget.segment.isChallenge
@@ -57,27 +51,17 @@ class _State extends State<ClassSegmentSection> {
                     padding: const EdgeInsets.only(bottom: 35.0),
                     child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ChallengeCard(image: widget.segment.image),
-                          SizedBox(width: 30.0),
-                          getSegmentSummary()
-                        ]))
+                        children: [ChallengeCard(image: widget.segment.image), SizedBox(width: 30.0), getSegmentSummary()]))
                 : SizedBox(),
             Stack(
               children: [
                 SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: MovementItemBubbles(
-                        onPressed: widget.onPressedMovement,
-                        content: widget.movements,
-                        width: ScreenUtils.width(context) / 1)),
+                        onPressed: widget.onPressedMovement, content: widget.movements, width: ScreenUtils.width(context) / 1)),
               ],
             ),
-            !widget.segment.isChallenge
-                ? Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
-                    child: getSegmentSummary())
-                : SizedBox()
+            !widget.segment.isChallenge ? Padding(padding: const EdgeInsets.only(top: 10.0), child: getSegmentSummary()) : SizedBox()
           ],
         ),
       ),
@@ -85,8 +69,6 @@ class _State extends State<ClassSegmentSection> {
   }
 
   Widget getSegmentSummary() {
-    return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: SegmentUtils.getSegmentSummary(widget.segment, context));
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: SegmentUtils.getSegmentSummary(widget.segment, context));
   }
 }

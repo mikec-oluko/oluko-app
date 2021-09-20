@@ -89,9 +89,8 @@ class _SegmentDetailState extends State<SegmentDetail> {
                 action: downButton(),
                 segment: _segments[widget.segmentIndex],
                 movements: _movements,
-                onPressedMovement: (BuildContext context, Movement movement) => Navigator.pushNamed(
-                    context, routeLabels[RouteEnum.movementIntro],
-                    arguments: {'movement': movement})),
+                onPressedMovement: (BuildContext context, Movement movement) =>
+                    Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement})),
             body: _viewBody()),
       ),
     );
@@ -141,9 +140,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
     return Container(
       child: ListView(children: [
         SegmentImageSection(
-            segment: _segments[widget.segmentIndex],
-            currentSegmentStep: currentSegmentStep,
-            totalSegmentStep: totalSegmentStep),
+            segment: _segments[widget.segmentIndex], currentSegmentStep: currentSegmentStep, totalSegmentStep: totalSegmentStep),
         _menuOptions()
       ]),
     );
@@ -225,8 +222,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
               Image.asset('assets/courses/photo_ellipse.png', scale: 4)
             ]),
             SizedBox(height: 15),
-            Text("Coach Mike",
-                textAlign: TextAlign.center, style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold)),
+            Text("Coach Mike", textAlign: TextAlign.center, style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold)),
             SizedBox(height: 20),
             Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 50),

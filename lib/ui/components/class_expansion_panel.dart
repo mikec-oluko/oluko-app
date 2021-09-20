@@ -67,11 +67,11 @@ class _State extends State<ClassExpansionPanel> {
             }).toList(),
           )
         : Center(
-          child: Padding(
+            child: Padding(
               padding: EdgeInsets.only(top: 10),
               child: TitleBody(OlukoLocalizations.of(context).find("noClasses")),
             ),
-        );
+          );
   }
 
   List<ClassItem> generateClassItems() {

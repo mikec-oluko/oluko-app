@@ -83,16 +83,15 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
     return Container(
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
-        border: Border(
-            top: BorderSide(width: 1.0, color: OlukoColors.grayColor),
-            bottom: BorderSide(width: 1.0, color: OlukoColors.grayColor)),
+        border:
+            Border(top: BorderSide(width: 1.0, color: OlukoColors.grayColor), bottom: BorderSide(width: 1.0, color: OlukoColors.grayColor)),
         color: OlukoColors.black,
       ),
       child: MergeSemantics(
         child: ListTile(
             contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-            title: Text(ProfileViewConstants.profileSettingsNotification,
-                style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor)),
+            title:
+                Text(ProfileViewConstants.profileSettingsNotification, style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor)),
             trailing: Switch(
               value: _notificationNewValue,
               onChanged: (bool value) => _setValueForNotifications(value),
@@ -144,14 +143,12 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
       setState(() {
         _privacyNewValue = index;
       });
-      BlocProvider.of<ProfileBloc>(context)
-          .updateSettingsPreferences(_authUser, _privacyNewValue, _notificationNewValue);
+      BlocProvider.of<ProfileBloc>(context).updateSettingsPreferences(_authUser, _privacyNewValue, _notificationNewValue);
     } else if (_notificationNewValue != _authUser.notification) {
       if (index == null) {
         index = _privacyNewValue;
       }
-      BlocProvider.of<ProfileBloc>(context)
-          .updateSettingsPreferences(_authUser, _privacyNewValue, _notificationNewValue);
+      BlocProvider.of<ProfileBloc>(context).updateSettingsPreferences(_authUser, _privacyNewValue, _notificationNewValue);
     }
   }
 
