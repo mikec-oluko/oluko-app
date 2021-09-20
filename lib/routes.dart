@@ -7,6 +7,9 @@ import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
+import 'package:oluko_app/blocs/friends/chat_bloc.dart';
+import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
+import 'package:oluko_app/blocs/friends/message_bloc.dart';
 import 'package:oluko_app/blocs/gallery_video_bloc.dart';
 import 'package:oluko_app/blocs/movement_submission_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
@@ -72,6 +75,7 @@ import 'package:oluko_app/ui/screens/profile/profile_subscription_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_transformation_journey_page.dart';
 import 'package:oluko_app/ui/screens/profile/transformation_journey_post.dart';
 import 'package:oluko_app/ui/screens/courses/segment_detail.dart';
+import 'blocs/friends/hi_five_send_bloc.dart';
 import 'blocs/movement_info_bloc.dart';
 import 'models/task.dart';
 import 'ui/screens/courses/segment_clocks.dart';
@@ -234,6 +238,10 @@ class Routes {
   final CourseEnrollmentUpdateBloc _courseEnrollmentUpdateBloc =
       CourseEnrollmentUpdateBloc();
   final UserListBloc _userListBloc = UserListBloc();
+  final ChatBloc _chatBloc = ChatBloc();
+  final MessageBloc _messageBloc = MessageBloc();
+  final HiFiveReceivedBloc _hiFiveReceivedBloc = HiFiveReceivedBloc();
+  final HiFiveSendBloc _hiFiveSendBloc = HiFiveSendBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -357,6 +365,18 @@ class Routes {
           BlocProvider<ProfileAvatarBloc>.value(value: _profileAvatarBloc),
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
           BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
+          BlocProvider<ChatBloc>.value(
+            value: _chatBloc,
+          ),
+          BlocProvider<MessageBloc>.value(
+            value: _messageBloc,
+          ),
+          BlocProvider<HiFiveReceivedBloc>.value(
+            value: _hiFiveReceivedBloc,
+          ),
+          BlocProvider<HiFiveSendBloc>.value(
+            value: _hiFiveSendBloc,
+          )
         ];
         final Map<String, UserResponse> argumentsToAdd =
             arguments as Map<String, UserResponse>;
@@ -383,7 +403,8 @@ class Routes {
           BlocProvider<TransformationJourneyContentBloc>.value(
               value: _transformationJourneyContentBloc),
         ];
-        final Map<String, UserResponse> argumentsToAdd = arguments as Map<String, UserResponse>;
+        final Map<String, UserResponse> argumentsToAdd =
+            arguments as Map<String, UserResponse>;
         newRouteView = ProfileTransformationJourneyPage(
             userRequested: argumentsToAdd['profileInfo']);
         break;
