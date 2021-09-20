@@ -13,7 +13,7 @@ class SectionSubmodel {
           : List<MovementSubmodel>.from((json['movements'] as Iterable).map(
               (movement) =>
                   MovementSubmodel.fromJson(movement as Map<String, dynamic>))),
-      totalTime: json['total_time'] as int,
+      totalTime: json['total_time'] == null ? null : json['total_time'] as int,
     );
   }
 

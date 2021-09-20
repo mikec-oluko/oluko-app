@@ -185,8 +185,7 @@ class _InsideClassesState extends State<InsideClass> {
   }
 
   Widget classMovementSection() {
-    _classMovements = ClassService.getClassSegmentMovements(
-        ClassService.getClassMovements(_class), _movements);
+    _classMovements = ClassService.getClassMovements(_class, _movements);
     return ClassMovementSection(
       panelController: panelController,
       movements: _classMovements,

@@ -90,7 +90,7 @@ class _State extends State<ClassExpansionPanel> {
     }
     Class classObj = widget.classes[classIndex];
     classObj.segments.forEach((segment) {
-      List<Movement> movements = ClassService.getClassSegmentMovements(segment.movements, widget.movements);
+      List<Movement> movements = ClassService.getClassSegmentMovements(segment.sections, widget.movements);
       widgets.add(ListTile(
         title: CourseSegmentSection(segmentName: segment.name, movements: movements, onPressedMovement: widget.onPressedMovement),
         subtitle: segment.challengeImage != null ? ChallengeSection(challenges: [segment]) : SizedBox(),
