@@ -80,4 +80,29 @@ class ChatRepository {
 
     return Message.fromJson(createdMessage.data() as Map<String, dynamic>);
   }
+
+  Future<bool> removeHiFive(String userId, String targetUserId) async {
+    Message messageToSend = Message(message: Message().hifiveMessageCode);
+
+    QuerySnapshot messages = await FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('users')
+        .doc(userId)
+        .collection('chat')
+        .doc(targetUserId)
+        .collection('messages')
+        .orderBy('created_at')
+        .get();
+
+    Message lastMessage =
+        Message.fromJson(messages.docs[0].data() as Map<String, dynamic>);
+
+    if (lastMessage.message == Message().hifiveMessageCode) {
+      messages.docs[0].reference.delete();
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
