@@ -229,17 +229,16 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                                           padding: EdgeInsets.zero,
                                         ),
                                         onPressed: () {
-                                          if (HiFiveReceivedState.hiFive ==
-                                              false) {
-                                            BlocProvider.of<HiFiveSendBloc>(
-                                                    context)
-                                                .set(
-                                                    context,
-                                                    _authState.user.id,
-                                                    widget
-                                                        .userToDisplayInformation
-                                                        .id);
-                                          }
+                                          BlocProvider.of<HiFiveSendBloc>(
+                                                  context)
+                                              .set(
+                                                  context,
+                                                  _authState.user.id,
+                                                  widget
+                                                      .userToDisplayInformation
+                                                      .id,
+                                                  hiFive: !_hiFiveReceivedState
+                                                      .hiFive);
                                         },
                                         child: Image.asset(
                                           HiFiveReceivedState.hiFive
