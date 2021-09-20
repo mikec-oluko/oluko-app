@@ -28,4 +28,23 @@ class CoachRepository {
     final coachAssignmentResponse = CoachAssignment.fromJson(response);
     return coachAssignmentResponse;
   }
+
+  Future<CoachAssignment> updateIntroductionStatus(CoachAssignment coachAssignment) async {
+    try {
+      coachAssignment.introductionCompleted = true;
+      await FirebaseFirestore.instance
+          .collection('projects')
+          .doc(GlobalConfiguration().getValue('projectId'))
+          .collection('coachAssignment')
+          .doc(coachAssignment.userId)
+          .set(coachAssignment.toJson());
+      return coachAssignment;
+    } on Exception catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
+      rethrow;
+    }
+  }
 }

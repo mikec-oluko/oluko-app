@@ -7,6 +7,7 @@ class CoachAssignment extends Base {
       this.coachId,
       this.coachReference,
       this.coachAssignmentStatus,
+      this.introductionCompleted,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -26,13 +27,16 @@ class CoachAssignment extends Base {
   String userId, coachId;
   DocumentReference coachReference;
   num coachAssignmentStatus;
+  bool introductionCompleted;
 
   factory CoachAssignment.fromJson(Map<String, dynamic> json) {
     CoachAssignment coachAssignmentObject = CoachAssignment(
-        userId: json['id'] as String,
-        coachId: json['coach_id'] as String,
-        coachReference: json['coach_reference'] as DocumentReference,
-        coachAssignmentStatus: json['status'] as num);
+      userId: json['id'] as String,
+      coachId: json['coach_id'] as String,
+      coachReference: json['coach_reference'] as DocumentReference,
+      coachAssignmentStatus: json['status'] as num,
+      introductionCompleted: json['introduction_completed'] == null ? false : json['introduction_completed'] as bool,
+    );
     coachAssignmentObject.setBase(json);
     return coachAssignmentObject;
   }
@@ -42,7 +46,8 @@ class CoachAssignment extends Base {
       'id': userId,
       'coach_id': coachId,
       'coach_reference': coachReference,
-      'status': coachAssignmentStatus
+      'status': coachAssignmentStatus,
+      'introduction_completed': introductionCompleted ?? false
     };
     coachAssignmentJson.addEntries(super.toJson().entries);
     return coachAssignmentJson;

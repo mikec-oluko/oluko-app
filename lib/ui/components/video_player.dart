@@ -11,6 +11,7 @@ class OlukoVideoPlayer extends StatefulWidget {
   final bool autoPlay;
   final String filePath;
   final Function(ChewieController chewieController) whenInitialized;
+  final Function() onVideoFinished;
 
   OlukoVideoPlayer(
       {this.videoUrl =
@@ -20,6 +21,7 @@ class OlukoVideoPlayer extends StatefulWidget {
       this.autoPlay = true,
       this.filePath,
       this.whenInitialized,
+      this.onVideoFinished,
       Key key})
       : super(key: key);
 
@@ -33,6 +35,7 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
   @override
   void initState() {
     super.initState();
+
     if (widget.filePath != null) {
       _controller = VideoPlayerController.file(File(widget.filePath));
     } else {
@@ -42,6 +45,14 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
         _controller = null;
       }
     }
+    if (widget.onVideoFinished != null) {
+      _controller.addListener(() {
+        if (_controller.value.position == _controller.value.duration) {
+          widget.onVideoFinished();
+        }
+      });
+    }
+
     Widget controls;
     if (Platform.isAndroid) {
       // controls = OlukoMaterialControls();

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_assignment_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_profile_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
@@ -16,6 +17,7 @@ import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/list_of_items_to_widget.dart';
 import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/challenge.dart';
+import 'package:oluko_app/models/coach_assignment.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
@@ -34,8 +36,10 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class CoachPage extends StatefulWidget {
-  const CoachPage({this.coachId});
+  const CoachPage({this.coachId, this.coachAssignment});
   final String coachId;
+  final CoachAssignment coachAssignment;
+
   @override
   _CoachPageState createState() => _CoachPageState();
 }
@@ -50,7 +54,6 @@ List<TaskSubmission> _assessmentVideosContent = [];
 UserStatistics _userStats;
 Assessment _assessment;
 List<Task> _tasks = [];
-ChewieController _controller;
 
 class _CoachPageState extends State<CoachPage> {
   @override
@@ -123,7 +126,13 @@ class _CoachPageState extends State<CoachPage> {
           BlocProvider.of<TaskBloc>(context).get(_assessment);
           return ListView(
             children: [
-              CoachCarouselSliderSection(contentForCarousel: listOfContentForUser(carousel: true)),
+              CoachCarouselSliderSection(
+                contentForCarousel: listOfContentForUser(carousel: true),
+                introductionCompleted: widget.coachAssignment.introductionCompleted,
+                introductionVideo: _assessment.video,
+                onVideoFinished: () =>
+                    BlocProvider.of<CoachAssignmentBloc>(context).updateIntroductionVideoState(widget.coachAssignment),
+              ),
               userProgressSection(),
               CoachHorizontalCarousel(contentToDisplay: listOfContentForUser(carousel: false), isForVideoContent: true),
               carouselToDoSection(context),
@@ -266,28 +275,5 @@ class _CoachPageState extends State<CoachPage> {
               isForCarousel: isForCarousel,
               needTitle: false);
     });
-  }
-
-  Widget showVideoPlayer(String videoUrl) {
-    List<Widget> widgets = [];
-    if (_controller == null) {
-      widgets.add(const Center(child: CircularProgressIndicator()));
-    }
-    widgets.add(OlukoVideoPlayer(
-        videoUrl: videoUrl,
-        autoPlay: false,
-        whenInitialized: (ChewieController chewieController) => setState(() {
-              _controller = chewieController;
-            })));
-
-    return ConstrainedBox(
-        constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).orientation == Orientation.portrait
-                ? ScreenUtils.height(context) / 4
-                : ScreenUtils.height(context) / 1.5,
-            minHeight: MediaQuery.of(context).orientation == Orientation.portrait
-                ? ScreenUtils.height(context) / 4
-                : ScreenUtils.height(context) / 1.5),
-        child: SizedBox(height: 400, child: Stack(children: widgets)));
   }
 }

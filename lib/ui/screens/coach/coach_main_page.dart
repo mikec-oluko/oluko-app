@@ -36,7 +36,7 @@ class _CoachMainPageState extends State<CoachMainPage> {
             return _coachAssignment != null &&
                     CoachAssignmentStatus.getCoachAssignmentStatus(_coachAssignment.coachAssignmentStatus as int) ==
                         CoachAssignmentStatusEnum.approved
-                ? CoachPage(coachId: _coachAssignment.coachId)
+                ? CoachPage(coachId: _coachAssignment.coachId, coachAssignment: _coachAssignment)
                 : CoachAssignedCountDown(
                     currentUser: _currentUser,
                     coachAssignment: _coachAssignment,
