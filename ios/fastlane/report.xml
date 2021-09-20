@@ -5,12 +5,12 @@
     
     
       
-      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000344">
+      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000229">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="1: is_ci" time="7.3e-05">
+      <testcase classname="fastlane.lanes" name="1: is_ci" time="7.6e-05">
         
       </testcase>
     
@@ -20,19 +20,22 @@
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="3: match" time="12.333265">
+      <testcase classname="fastlane.lanes" name="3: match" time="159.679701">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="4: increment_build_number" time="1.035005">
+      <testcase classname="fastlane.lanes" name="4: increment_build_number" time="0.820884">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="5: build_app" time="328.389755">
+      <testcase classname="fastlane.lanes" name="5: build_app" time="343.857726">
         
-          <failure message="/Users/joaquincayrus/.gem/ruby/3.0.1/gems/fastlane-2.193.1/fastlane/lib/fastlane/actions/actions_helper.rb:67:in `execute_action&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/fastlane-2.193.1/fastlane/lib/fastlane/runner.rb:255:in `block in execute_action&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/fastlane-2.193.1/fastlane/lib/fastlane/runner.rb:229:in `chdir&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/fastlane-2.193.1/fastlane/lib/fastlane/runner.rb:229:in `execute_action&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/fastlane-2.193.1/fastlane/lib/fastlane/runner.rb:157:in `trigger_action_by_name&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/fastlane-2.193.1/fastlane/lib/fastlane/fast_file.rb:159:in `method_missing&apos;&#10;Fastfile:45:in `block (2 levels) in parsing_binding&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/fastlane-2.193.1/fastlane/lib/fastlane/lane.rb:33:in `call&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/fastlane-2.193.1/fastlane/lib/fastlane/runner.rb:49:in `block in execute&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/fastlane-2.193.1/fastlane/lib/fastlane/runner.rb:45:in `chdir&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/fastlane-2.193.1/fastlane/lib/fastlane/runner.rb:45:in `execute&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/fastlane-2.193.1/fastlane/lib/fastlane/lane_manager.rb:47:in `cruise_lane&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/fastlane-2.193.1/fastlane/lib/fastlane/command_line_handler.rb:36:in `handle&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/fastlane-2.193.1/fastlane/lib/fastlane/commands_generator.rb:109:in `block (2 levels) in run&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/commander-4.6.0/lib/commander/command.rb:187:in `call&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/commander-4.6.0/lib/commander/command.rb:157:in `run&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/commander-4.6.0/lib/commander/runner.rb:444:in `run_active_command&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/fastlane-2.193.1/fastlane_core/lib/fastlane_core/ui/fastlane_runner.rb:117:in `run!&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/commander-4.6.0/lib/commander/delegates.rb:18:in `run!&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/fastlane-2.193.1/fastlane/lib/fastlane/commands_generator.rb:353:in `run&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/fastlane-2.193.1/fastlane/lib/fastlane/commands_generator.rb:42:in `start&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/fastlane-2.193.1/fastlane/lib/fastlane/cli_tools_distributor.rb:122:in `take_off&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/gems/fastlane-2.193.1/bin/fastlane:23:in `&lt;top (required)&gt;&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/bin/fastlane:23:in `load&apos;&#10;/Users/joaquincayrus/.gem/ruby/3.0.1/bin/fastlane:23:in `&lt;top (required)&gt;&apos;&#10;/Users/joaquincayrus/.rubies/ruby-3.0.1/lib/ruby/3.0.0/bundler/cli/exec.rb:63:in `load&apos;&#10;/Users/joaquincayrus/.rubies/ruby-3.0.1/lib/ruby/3.0.0/bundler/cli/exec.rb:63:in `kernel_load&apos;&#10;/Users/joaquincayrus/.rubies/ruby-3.0.1/lib/ruby/3.0.0/bundler/cli/exec.rb:28:in `run&apos;&#10;/Users/joaquincayrus/.rubies/ruby-3.0.1/lib/ruby/3.0.0/bundler/cli.rb:494:in `exec&apos;&#10;/Users/joaquincayrus/.rubies/ruby-3.0.1/lib/ruby/3.0.0/bundler/vendor/thor/lib/thor/command.rb:27:in `run&apos;&#10;/Users/joaquincayrus/.rubies/ruby-3.0.1/lib/ruby/3.0.0/bundler/vendor/thor/lib/thor/invocation.rb:127:in `invoke_command&apos;&#10;/Users/joaquincayrus/.rubies/ruby-3.0.1/lib/ruby/3.0.0/bundler/vendor/thor/lib/thor.rb:392:in `dispatch&apos;&#10;/Users/joaquincayrus/.rubies/ruby-3.0.1/lib/ruby/3.0.0/bundler/cli.rb:30:in `dispatch&apos;&#10;/Users/joaquincayrus/.rubies/ruby-3.0.1/lib/ruby/3.0.0/bundler/vendor/thor/lib/thor/base.rb:485:in `start&apos;&#10;/Users/joaquincayrus/.rubies/ruby-3.0.1/lib/ruby/3.0.0/bundler/cli.rb:24:in `start&apos;&#10;/Users/joaquincayrus/.rubies/ruby-3.0.1/lib/ruby/gems/3.0.0/gems/bundler-2.2.15/libexec/bundle:49:in `block in &lt;top (required)&gt;&apos;&#10;/Users/joaquincayrus/.rubies/ruby-3.0.1/lib/ruby/3.0.0/bundler/friendly_errors.rb:130:in `with_friendly_errors&apos;&#10;/Users/joaquincayrus/.rubies/ruby-3.0.1/lib/ruby/gems/3.0.0/gems/bundler-2.2.15/libexec/bundle:37:in `&lt;top (required)&gt;&apos;&#10;/Users/joaquincayrus/.rubies/ruby-3.0.1/bin/bundle:23:in `load&apos;&#10;/Users/joaquincayrus/.rubies/ruby-3.0.1/bin/bundle:23:in `&lt;main&gt;&apos;&#10;&#10;Error building the application - see the log above" />
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="6: upload_to_testflight" time="2227.699638">
         
       </testcase>
     
