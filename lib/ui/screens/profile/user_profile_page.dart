@@ -32,12 +32,17 @@ import 'package:oluko_app/ui/components/course_card.dart';
 import 'package:oluko_app/ui/components/modal_upload_options.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
+import 'package:oluko_app/ui/components/oluko_primary_button.dart';
+import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/components/uploading_modal_loader.dart';
 import 'package:oluko_app/ui/components/uploading_modal_success.dart';
 import 'package:oluko_app/ui/components/user_profile_information.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
+import 'package:oluko_app/utils/app_messages.dart';
+import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class UserProfilePage extends StatefulWidget {
@@ -70,6 +75,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   double _panelMaxHeight = 100.0;
   double _statePanelMaxHeight = 100.0;
   bool _isNewCoverImage = false;
+  bool _friendsRequested = false;
 
   @override
   void initState() {
@@ -93,13 +99,12 @@ class _UserProfilePageState extends State<UserProfilePage> {
         }
         _requestContentForUser(context: context, userRequested: _userProfileToDisplay);
 
-        _isCurrentUser == false ? BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_currentAuthUser.id) : null;
-
+        if (_isCurrentUser == false && _friendsRequested == false) {
+          BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_currentAuthUser.id);
+          _friendsRequested = true;
+        }
         return _buildUserProfileView(
-            context: context,
-            authUser: _currentAuthUser,
-            userRequested: widget.userRequested,
-            isOwnProfile: _isCurrentUser);
+            context: context, authUser: _currentAuthUser, userRequested: widget.userRequested, isOwnProfile: _isCurrentUser);
       } else {
         return Container(
           color: OlukoColors.black,
@@ -115,8 +120,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
     return authUser.id == userRequested.id;
   }
 
-  Widget _buildUserProfileView(
-      {BuildContext context, UserResponse authUser, UserResponse userRequested, bool isOwnProfile}) {
+  Widget _buildUserProfileView({BuildContext context, UserResponse authUser, UserResponse userRequested, bool isOwnProfile}) {
     return Scaffold(
       extendBody: true,
       backgroundColor: Colors.transparent,
@@ -206,11 +210,15 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     _contentForPanel = UploadingModalLoader(UploadFrom.profileCoverImage);
                   }
                   if (state is ProfileCoverSuccess) {
-                    _contentForPanel =
-                        UploadingModalSuccess(goToPage: UploadFrom.profileImage, userRequested: _userProfileToDisplay);
+                    _contentForPanel = UploadingModalSuccess(goToPage: UploadFrom.profileImage, userRequested: _userProfileToDisplay);
                   }
                   if (state is ProfileCoverImageFailure) {
                     _panelController.close();
+                  }
+                  if (state is ProfileCoverRequirePermissions) {
+                    _panelController
+                        .close()
+                        .then((value) => DialogUtils.getDialog(context, _showOpenSettingsDialogContent(context), showExitButton: false));
                   }
                   return _contentForPanel;
                 })
@@ -231,11 +239,15 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     _contentForPanel = UploadingModalLoader(UploadFrom.profileImage);
                   }
                   if (state is ProfileAvatarSuccess) {
-                    _contentForPanel =
-                        UploadingModalSuccess(goToPage: UploadFrom.profileImage, userRequested: _userProfileToDisplay);
+                    _contentForPanel = UploadingModalSuccess(goToPage: UploadFrom.profileImage, userRequested: _userProfileToDisplay);
                   }
                   if (state is ProfileAvatarFailure) {
                     _panelController.close();
+                  }
+                  if (state is ProfileAvatarRequirePermissions) {
+                    _panelController
+                        .close()
+                        .then((value) => DialogUtils.getDialog(context, _showOpenSettingsDialogContent(context), showExitButton: false));
                   }
                   return _contentForPanel;
                 }),
@@ -321,32 +333,25 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                     setState(() {
                                       friendModel.isFavorite = !_isFollow;
                                     });
-                                    BlocProvider.of<FavoriteFriendBloc>(context)
-                                      ..favoriteFriend(
-                                          context, friendData, friendModel);
+                                    BlocProvider.of<FavoriteFriendBloc>(context)..favoriteFriend(context, friendData, friendModel);
                                     setState(() {
                                       _isFollow = !_isFollow;
                                     });
                                   },
-                                  child: Icon(_isFollow ? Icons.favorite : Icons.favorite_border,
-                                      color: OlukoColors.primary),
+                                  child: Icon(_isFollow ? Icons.favorite : Icons.favorite_border, color: OlukoColors.primary),
                                 ),
                                 Container(
                                   child: OlukoOutlinedButton(
                                       onPressed: () {
                                         switch (connectStatus) {
                                           case UserConnectStatus.connected:
-                                            BlocProvider.of<FriendBloc>(context)
-                                              ..removeFriend(
-                                                  friendData, userRequested.id);
+                                            BlocProvider.of<FriendBloc>(context)..removeFriend(friendData, userRequested.id);
                                             break;
                                           case UserConnectStatus.notConnected:
-                                            BlocProvider.of<FriendBloc>(context)
-                                              ..sendRequestOfConnect(friendData, userRequested.id);
+                                            BlocProvider.of<FriendBloc>(context)..sendRequestOfConnect(friendData, userRequested.id);
                                             break;
                                           case UserConnectStatus.requestPending:
-                                            BlocProvider.of<FriendBloc>(context)
-                                              ..removeRequestSent(friendData, userRequested.id);
+                                            BlocProvider.of<FriendBloc>(context)..removeRequestSent(friendData, userRequested.id);
                                             break;
                                           default:
                                         }
@@ -365,16 +370,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
                       return _assessmentVideosContent.length != 0
                           ? _buildCarouselSection(
-                              titleForSection: OlukoLocalizations.of(context)
-                                  .find('assessmentVideos'),
-                              routeForSection:
-                                  RouteEnum.profileAssessmentVideos,
-                              contentForSection: TransformListOfItemsToWidget
-                                  .getWidgetListFromContent(
-                                      assessmentVideoData:
-                                          _assessmentVideosContent,
-                                      requestedFromRoute:
-                                          ActualProfileRoute.userProfile))
+                              titleForSection: OlukoLocalizations.of(context).find('assessmentVideos'),
+                              routeForSection: RouteEnum.profileAssessmentVideos,
+                              contentForSection: TransformListOfItemsToWidget.getWidgetListFromContent(
+                                  assessmentVideoData: _assessmentVideosContent, requestedFromRoute: ActualProfileRoute.userProfile))
                           : SizedBox();
                     }),
                     BlocBuilder<TransformationJourneyBloc, TransformationJourneyState>(
@@ -384,16 +383,11 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         }
                         return _transformationJourneyContent.length != 0
                             ? _buildCarouselSection(
-                                titleForSection: OlukoLocalizations.of(context)
-                                    .find('transformationJourney'),
-                                routeForSection:
-                                    RouteEnum.profileTransformationJourney,
-                                contentForSection: TransformListOfItemsToWidget
-                                    .getWidgetListFromContent(
-                                        tansformationJourneyData:
-                                            _transformationJourneyContent,
-                                        requestedFromRoute:
-                                            ActualProfileRoute.userProfile))
+                                titleForSection: OlukoLocalizations.of(context).find('transformationJourney'),
+                                routeForSection: RouteEnum.profileTransformationJourney,
+                                contentForSection: TransformListOfItemsToWidget.getWidgetListFromContent(
+                                    tansformationJourneyData: _transformationJourneyContent,
+                                    requestedFromRoute: ActualProfileRoute.userProfile))
                             : SizedBox();
                       },
                     ),
@@ -405,8 +399,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                           }
                         }
                         return _coursesToUse.length != 0
-                            ? buildCourseSection(
-                                context: context, contentForCourse: returnCoursesWidget(listOfCourses: _coursesToUse))
+                            ? buildCourseSection(context: context, contentForCourse: returnCoursesWidget(listOfCourses: _coursesToUse))
                             : SizedBox();
                       },
                     ),
@@ -422,14 +415,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         }
                         return _activeChallenges.length != 0
                             ? _buildCarouselSection(
-                                titleForSection: OlukoLocalizations.of(context)
-                                    .find('upcomingChallenges'),
+                                titleForSection: OlukoLocalizations.of(context).find('upcomingChallenges'),
                                 routeForSection: RouteEnum.profileChallenges,
-                                contentForSection: TransformListOfItemsToWidget
-                                    .getWidgetListFromContent(
-                                        upcomingChallenges: _activeChallenges,
-                                        requestedFromRoute:
-                                            ActualProfileRoute.userProfile))
+                                contentForSection: TransformListOfItemsToWidget.getWidgetListFromContent(
+                                    upcomingChallenges: _activeChallenges, requestedFromRoute: ActualProfileRoute.userProfile))
                             : SizedBox();
                       },
                     ),
@@ -445,10 +434,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   void _requestContentForUser({BuildContext context, UserResponse userRequested}) {
     if (PrivacyOptions().canShowDetails(
-        isOwner: _isCurrentUser,
-        currentUser: _currentAuthUser,
-        userRequested: _userProfileToDisplay,
-        connectStatus: connectStatus)) {
+        isOwner: _isCurrentUser, currentUser: _currentAuthUser, userRequested: _userProfileToDisplay, connectStatus: connectStatus)) {
       BlocProvider.of<CourseEnrollmentListBloc>(context).getCourseEnrollmentsByUserId(userRequested.id);
 
       BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionByUserId(userRequested.id);
@@ -481,10 +467,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
     );
   }
 
-  Padding _buildCarouselSection(
-      {RouteEnum routeForSection,
-      String titleForSection,
-      List<Widget> contentForSection}) {
+  Padding _buildCarouselSection({RouteEnum routeForSection, String titleForSection, List<Widget> contentForSection}) {
     return Padding(
         padding: const EdgeInsets.only(top: 25),
         child: CarouselSmallSection(
@@ -557,14 +540,12 @@ class _UserProfilePageState extends State<UserProfilePage> {
               if (friendRequestSent.id == userRequested.id) {
                 setState(() {
                   connectStatus = UserConnectStatus.requestPending;
-                  _connectButtonTitle =
-                      returnTitleForConnectButton(connectStatus);
+                  _connectButtonTitle = returnTitleForConnectButton(connectStatus);
                 });
               } else {
                 setState(() {
                   connectStatus = UserConnectStatus.notConnected;
-                  _connectButtonTitle =
-                      returnTitleForConnectButton(connectStatus);
+                  _connectButtonTitle = returnTitleForConnectButton(connectStatus);
                 });
               }
             });
@@ -612,4 +593,35 @@ class _UserProfilePageState extends State<UserProfilePage> {
         return "fail";
     }
   }
+}
+
+List<Widget> _showOpenSettingsDialogContent(BuildContext context) {
+  return [
+    Padding(
+        padding: const EdgeInsets.only(bottom: 15.0),
+        child: TitleBody(OlukoLocalizations.of(context).find('requiredPermitsTitle'), bold: true)),
+    Text(OlukoLocalizations.of(context).find('requiredPermitsBody'), textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont()),
+    Padding(
+        padding: const EdgeInsets.only(top: 25.0),
+        child: Row(
+          children: [
+            OlukoPrimaryButton(
+              thinPadding: true,
+              title: OlukoLocalizations.of(context).find('ignore'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            const SizedBox(width: 10),
+            OlukoOutlinedButton(
+              thinPadding: true,
+              title: OlukoLocalizations.of(context).find('settings'),
+              onPressed: () {
+                Navigator.pop(context);
+                openAppSettings();
+              },
+            ),
+          ],
+        ))
+  ];
 }

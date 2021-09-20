@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/search_results.dart';
 
 class SearchBar<T> extends StatefulWidget {
@@ -10,7 +11,7 @@ class SearchBar<T> extends StatefulWidget {
   final List<T> Function(String, List<T>) searchMethod;
   final List<T> items;
   final GlobalKey<SearchState> searchKey;
-  SearchBar(
+  const SearchBar(
       {Key key,
       this.onSearchResults,
       this.suggestionMethod,
@@ -26,8 +27,8 @@ class SearchBar<T> extends StatefulWidget {
 }
 
 class SearchState<T> extends State<SearchBar> {
-  TextEditingController _searchQueryController = TextEditingController();
-  String searchQuery = "Search query";
+  final TextEditingController _searchQueryController = TextEditingController();
+  String searchQuery = 'Search query';
 
   @override
   void initState() {
@@ -38,16 +39,20 @@ class SearchState<T> extends State<SearchBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        decoration: BoxDecoration(color: Colors.white10, borderRadius: BorderRadius.all(Radius.circular(5))),
-        child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15),
-            child: Row(children: [
-              _cancelIcon(),
-              Expanded(
-                child: _buildSearchField(),
-              ),
-              _searchIcon()
-            ])));
+      decoration: BoxDecoration(color: Colors.white10, borderRadius: BorderRadius.all(Radius.circular(5))),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 15),
+        child: Row(
+          children: [
+            _cancelIcon(),
+            Expanded(
+              child: _buildSearchField(),
+            ),
+            _searchIcon()
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _searchIcon() {
@@ -105,10 +110,10 @@ class SearchState<T> extends State<SearchBar> {
   void updateSearchQuery(String newQuery) {
     setState(() {
       searchQuery = newQuery;
-      List<T> suggestedItems = widget.suggestionMethod(searchQuery, widget.items) as List<T>;
+      var suggestedItems = widget.suggestionMethod(searchQuery, widget.items);
       List<T> searchResults = widget.searchMethod(searchQuery, widget.items) as List<T>;
       widget.onSearchResults(
-          SearchResults<T>(query: newQuery, suggestedItems: suggestedItems, searchResults: searchResults));
+          SearchResults<T>(query: newQuery, suggestedItems: suggestedItems as List<T>, searchResults: searchResults));
     });
   }
 
@@ -117,8 +122,10 @@ class SearchState<T> extends State<SearchBar> {
       searchQuery = newQuery;
       List<T> suggestedItems = widget.suggestionMethod(searchQuery, widget.items) as List<T>;
       List<T> searchResults = widget.searchMethod(searchQuery, widget.items) as List<T>;
-      widget.onSearchSubmit(SearchResults<T>(
-          query: newQuery, suggestedItems: suggestedItems as List<T>, searchResults: searchResults as List<T>));
+      widget.onSearchSubmit(
+        SearchResults<T>(
+            query: newQuery, suggestedItems: suggestedItems as List<T>, searchResults: searchResults as List<T>),
+      );
     });
   }
 }

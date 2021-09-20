@@ -82,7 +82,7 @@ class TimerUtils {
                   aspectRatio: 1,
                   child: CircularProgressIndicator(
                       value: progressValue,
-                      // color: OlukoColors.coral,
+                      color: OlukoColors.coral,
                       backgroundColor: OlukoColors.grayColorSemiTransparent)),
               Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Text(duration,
@@ -247,7 +247,7 @@ class TimerUtils {
                       aspectRatio: 1,
                       child: CircularProgressIndicator(
                           value: progressValue,
-                          // color: OlukoColors.coral,
+                          color: OlukoColors.coral,
                           backgroundColor: OlukoColors.grayColorSemiTransparent)),
                   Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                     Text(duration,

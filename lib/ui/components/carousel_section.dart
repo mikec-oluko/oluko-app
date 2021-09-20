@@ -10,13 +10,7 @@ class CarouselSection extends StatefulWidget {
   final double height;
   final double width;
 
-  CarouselSection(
-      {this.title,
-      this.children,
-      this.onOptionTap,
-      this.optionLabel,
-      this.height,
-      this.width});
+  CarouselSection({this.title, this.children, this.onOptionTap, this.optionLabel, this.height, this.width});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -42,8 +36,7 @@ class _State extends State<CarouselSection> {
                         padding: const EdgeInsets.only(top: 3.0),
                         child: Text(
                           widget.optionLabel != null ? widget.optionLabel : '',
-                          style: TextStyle(
-                              color: OlukoColors.primary, fontSize: 18),
+                          style: TextStyle(color: OlukoColors.primary, fontSize: 18),
                         ),
                       )
                     : SizedBox(),

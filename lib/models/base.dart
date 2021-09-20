@@ -37,7 +37,9 @@ class Base {
             ? json['created_at'] as Timestamp
             : json['created_at'] is Map
                 ? Timestamp(json['created_at']['_seconds'] as int, json['created_at']['_nanoseconds'] as int)
-                : null;
+                : json['created_at'] is int
+                    ? Timestamp.fromMillisecondsSinceEpoch(json['created_at'] as int)
+                    : null;
     createdBy = json['created_by'].toString();
     updatedAt = json['updated_at'] is FieldValue
         ? null
@@ -45,7 +47,9 @@ class Base {
             ? json['updated_at'] as Timestamp
             : json['updated_at'] is Map
                 ? Timestamp(json['updated_at']['_seconds'] as int, json['updated_at']['_nanoseconds'] as int)
-                : null;
+                : json['updated_at'] is int
+                    ? Timestamp.fromMillisecondsSinceEpoch(json['updated_at'] as int)
+                    : null;
     updatedBy = json['updated_by'].toString();
     isDeleted = json['is_deleted'] as bool;
     isHidden = json['is_hidden'] as bool;

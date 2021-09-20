@@ -71,15 +71,9 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
               placeholder: Center(child: CircularProgressIndicator()),
               deviceOrientationsAfterFullScreen: [DeviceOrientation.portraitUp],
               cupertinoProgressColors: ChewieProgressColors(
-                  handleColor: Colors.black,
-                  backgroundColor: Colors.black,
-                  bufferedColor: Colors.black,
-                  playedColor: Colors.black),
+                  handleColor: Colors.black, backgroundColor: Colors.black, bufferedColor: Colors.black, playedColor: Colors.black),
               materialProgressColors: ChewieProgressColors(
-                  handleColor: Colors.black,
-                  backgroundColor: Colors.black,
-                  bufferedColor: Colors.black,
-                  playedColor: Colors.black));
+                  handleColor: Colors.black, backgroundColor: Colors.black, bufferedColor: Colors.black, playedColor: Colors.black));
           if (widget.whenInitialized != null) {
             widget.whenInitialized(chewieController);
           }

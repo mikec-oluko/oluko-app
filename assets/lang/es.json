@@ -195,6 +195,9 @@
     "timelineFaqVideo": "FAQ Video: ",
     "timelineCourse": "Curso: ",
     "timelineDuration": "Duración: ",
+    "requiredPermitsTitle": "Permisos requeridos",
+    "requiredPermitsBody": "Necesitas habilitar los permisos de la app",
     "goToClass": "Ir a la clase",
-    "nextSegment": "Próximo Segmento"
+    "nextSegment": "Próximo Segmento",
+    "errorLoadingImage": "Error cargando imagen!"
 }
