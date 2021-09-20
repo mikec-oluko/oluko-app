@@ -11,7 +11,8 @@ class HiFiveSendLoading extends HiFiveSendState {}
 
 class HiFiveSendSuccess extends HiFiveSendState {
   Message message;
-  HiFiveSendSuccess({this.message});
+  bool hiFive;
+  HiFiveSendSuccess({this.hiFive, this.message});
 }
 
 class HiFiveSendFailure extends HiFiveSendState {
@@ -23,12 +24,18 @@ class HiFiveSendFailure extends HiFiveSendState {
 class HiFiveSendBloc extends Cubit<HiFiveSendState> {
   HiFiveSendBloc() : super(HiFiveSendLoading());
 
-  void set(BuildContext context, String userId, String targetUserId) async {
+  void set(BuildContext context, String userId, String targetUserId,
+      {bool hiFive = true}) async {
     try {
-      //Get chat and message info from Chat repository
-      final Message messageCreated =
-          await ChatRepository().sendHiFive(userId, targetUserId);
-      emit(HiFiveSendSuccess(message: messageCreated));
+      Message messageCreated;
+      if (hiFive == true) {
+        messageCreated =
+            await ChatRepository().sendHiFive(userId, targetUserId);
+      } else {
+        await ChatRepository().removeHiFive(userId, targetUserId);
+      }
+
+      emit(HiFiveSendSuccess(message: messageCreated, hiFive: true));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
