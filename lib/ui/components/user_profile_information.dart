@@ -10,6 +10,7 @@ import 'package:oluko_app/helpers/privacy_options.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/user_statistics.dart';
 import 'package:oluko_app/ui/components/user_profile_progress.dart';
+import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/container_grediant.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -212,6 +213,15 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                     ? Container(
                         child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
                           listener: (context, hiFiveSendState) {
+                            if (hiFiveSendState is HiFiveSendSuccess) {
+                              AppMessages.showSnackbar(
+                                  context,
+                                  hiFiveSendState.hiFive
+                                      ? OlukoLocalizations.of(context)
+                                          .find('hiFiveSent')
+                                      : OlukoLocalizations.of(context)
+                                          .find('hiFiveRemoved'));
+                            }
                             BlocProvider.of<HiFiveReceivedBloc>(context).get(
                                 context,
                                 _authState.user.id,

@@ -35,7 +35,7 @@ class HiFiveSendBloc extends Cubit<HiFiveSendState> {
         await ChatRepository().removeHiFive(userId, targetUserId);
       }
 
-      emit(HiFiveSendSuccess(message: messageCreated, hiFive: true));
+      emit(HiFiveSendSuccess(message: messageCreated, hiFive: hiFive));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
