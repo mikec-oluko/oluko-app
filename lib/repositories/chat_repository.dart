@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/models/chat.dart';
 import 'package:oluko_app/models/favorite.dart';
@@ -31,25 +32,52 @@ class ChatRepository {
   }
 
   Future<List<Message>> getMessages(String userId, String targetUserId) async {
-    QuerySnapshot docRef = await FirebaseFirestore.instance
+    DocumentSnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
         .collection('users')
         .doc(userId)
         .collection('chat')
-        .where('id', isEqualTo: targetUserId)
+        .doc(targetUserId)
         .get();
 
     //TODO Get messages from inside chat document
 
-    if (docRef.docs.length > 1) {
-      var messagesData =
-          await docRef.docs[0].reference.collection('messages').get();
-      List<Message> messages =
-          messagesData.docs.map((e) => Message.fromJson(e.data())).toList();
-      return messages;
-    } else {
-      return [];
-    }
+    var messagesData = await docRef.reference.collection('messages').get();
+    List<Message> messages =
+        messagesData.docs.map((e) => Message.fromJson(e.data())).toList();
+    return messages;
+  }
+
+  Future<Message> sendHiFive(String userId, String targetUserId) async {
+    Message messageToSend = Message(message: Message().hifiveMessageCode);
+
+    DocumentReference createdMessageDocument = await FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('users')
+        .doc(userId)
+        .collection('chat')
+        .doc(targetUserId)
+        .collection('messages')
+        .add({});
+
+    messageToSend.id = createdMessageDocument.id;
+
+    Map<String, dynamic> messageToSendJson = messageToSend.toJson();
+    createdMessageDocument.set(messageToSendJson);
+
+    DocumentSnapshot createdMessage = await FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('users')
+        .doc(userId)
+        .collection('chat')
+        .doc(targetUserId)
+        .collection('messages')
+        .doc(messageToSend.id)
+        .get();
+
+    return Message.fromJson(createdMessage.data() as Map<String, dynamic>);
   }
 }
