@@ -13,12 +13,7 @@ class ClassSection extends StatefulWidget {
   final double classProgresss;
   final Function() onPressed;
 
-  ClassSection(
-      {this.classObj,
-      this.index,
-      this.total,
-      this.classProgresss,
-      this.onPressed});
+  ClassSection({this.classObj, this.index, this.total, this.classProgresss, this.onPressed});
 
   @override
   _State createState() => _State();
@@ -60,28 +55,21 @@ class _State extends State<ClassSection> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Padding(
-                            padding: const EdgeInsets.only(
-                                left: 15.0, top: 0, bottom: 10),
+                            padding: const EdgeInsets.only(left: 15.0, top: 0, bottom: 10),
                             child: Text(
                               widget.classObj.name,
-                              style: OlukoFonts.olukoBigFont(
-                                  custoFontWeight: FontWeight.w500,
-                                  customColor: OlukoColors.grayColor),
+                              style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
                             ),
                           ),
                           Padding(
                               padding: const EdgeInsets.only(left: 15.0),
                               child: Text(
-                                OlukoLocalizations.of(context)
-                                        .find('class')
-                                        .toUpperCase() +
+                                OlukoLocalizations.of(context).find('class').toUpperCase() +
                                     " " +
                                     (widget.index + 1).toString() +
                                     "/" +
                                     widget.total.toString(),
-                                style: OlukoFonts.olukoSmallFont(
-                                    custoFontWeight: FontWeight.bold,
-                                    customColor: OlukoColors.white),
+                                style: OlukoFonts.olukoSmallFont(custoFontWeight: FontWeight.bold, customColor: OlukoColors.white),
                               )),
                           /*widget.classProgresss > 0
                               ? Padding(
@@ -103,13 +91,10 @@ class _State extends State<ClassSection> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(
-                              top: 16.0, bottom: 0, right: 10),
+                          padding: const EdgeInsets.only(top: 16.0, bottom: 0, right: 10),
                           child: Text(
                             widget.classObj.description,
-                            style: OlukoFonts.olukoMediumFont(
-                                custoFontWeight: FontWeight.normal,
-                                customColor: OlukoColors.grayColor),
+                            style: OlukoFonts.olukoMediumFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
                           ),
                         ),
                       ],

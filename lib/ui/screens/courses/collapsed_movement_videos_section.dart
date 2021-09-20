@@ -26,18 +26,14 @@ class _State extends State<CollapsedMovementVideosSection> {
               image: AssetImage('assets/courses/gray_background.png'),
               fit: BoxFit.cover,
             ),
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
         child: Column(children: [
           SizedBox(height: 15),
           Row(children: [
             Padding(
                 padding: EdgeInsets.only(left: 20),
                 child: Text(OlukoLocalizations.of(context).find('movementVideos'),
-                    style: TextStyle(
-                        fontSize: 22,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold))),
+                    style: TextStyle(fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold))),
             SizedBox(width: 10),
             Icon(Icons.directions_run, color: Colors.white, size: 30),
             Expanded(child: SizedBox()),

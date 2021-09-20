@@ -6,12 +6,10 @@ class CoachContentSectionCard extends StatefulWidget {
   final String title;
   final bool needTitle;
   final bool isForCarousel;
-  const CoachContentSectionCard(
-      {this.title, this.needTitle = true, this.isForCarousel});
+  const CoachContentSectionCard({this.title, this.needTitle = true, this.isForCarousel});
 
   @override
-  _CoachContentSectionCardState createState() =>
-      _CoachContentSectionCardState();
+  _CoachContentSectionCardState createState() => _CoachContentSectionCardState();
 }
 
 class _CoachContentSectionCardState extends State<CoachContentSectionCard> {
@@ -29,16 +27,12 @@ class _CoachContentSectionCardState extends State<CoachContentSectionCard> {
               child: widget.needTitle
                   ? Text(
                       widget.title,
-                      style: OlukoFonts.olukoMediumFont(
-                          customColor: OlukoColors.grayColor,
-                          custoFontWeight: FontWeight.w500),
+                      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
                     )
                   : SizedBox(),
             ),
             Padding(
-              padding: widget.isForCarousel
-                  ? const EdgeInsets.all(0)
-                  : const EdgeInsets.all(0.0),
+              padding: widget.isForCarousel ? const EdgeInsets.all(0) : const EdgeInsets.all(0.0),
               child: !widget.isForCarousel
                   ? Container(
                       decoration: BoxDecoration(
@@ -50,9 +44,7 @@ class _CoachContentSectionCardState extends State<CoachContentSectionCard> {
                       child: Center(
                         child: Text(
                           OlukoLocalizations.of(context).find('noContent'),
-                          style: OlukoFonts.olukoMediumFont(
-                              customColor: OlukoColors.primary,
-                              custoFontWeight: FontWeight.w500),
+                          style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
                         ),
                       ),
                     )
@@ -68,9 +60,7 @@ class _CoachContentSectionCardState extends State<CoachContentSectionCard> {
                           child: Center(
                             child: Text(
                               OlukoLocalizations.of(context).find('noContent'),
-                              style: OlukoFonts.olukoMediumFont(
-                                  customColor: OlukoColors.primary,
-                                  custoFontWeight: FontWeight.w500),
+                              style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
                             ),
                           ),
                         ),

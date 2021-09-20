@@ -113,16 +113,14 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
                             children: [
                               Text(
                                 OlukoLocalizations.of(context).find('date'),
-                                style: OlukoFonts.olukoMediumFont(
-                                    customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+                                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
                               ),
                               SizedBox(
                                 height: 5,
                               ),
                               Text(
                                 DateFormat.yMMMd().format(taskSubmitted.createdAt.toDate()),
-                                style: OlukoFonts.olukoMediumFont(
-                                    customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+                                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
                               )
                             ],
                           ),

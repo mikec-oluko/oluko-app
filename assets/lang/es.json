@@ -188,6 +188,9 @@
     "recomendedVideos": "Videos Recomendados",
     "voiceMessages": "Mensajes de voz",
     "addYourSelfie": "Agrega Tu Selfie...",
+    "requiredPermitsTitle": "Permisos requeridos",
+    "requiredPermitsBody": "Necesitas habilitar los permisos de la app",
     "goToClass": "Ir a la clase",
-    "nextSegment": "Próximo Segmento"
+    "nextSegment": "Próximo Segmento",
+    "errorLoadingImage":"Error cargando imagen!"
 }

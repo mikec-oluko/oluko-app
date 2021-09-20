@@ -53,9 +53,7 @@ class _State extends State<MovementVideosSection> {
               child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: MovementItemBubbles(
-                      onPressed: widget.onPressedMovement,
-                      content: segmentMovements,
-                      width: ScreenUtils.width(context) / 1))),
+                      onPressed: widget.onPressedMovement, content: segmentMovements, width: ScreenUtils.width(context) / 1))),
           Image.asset(
             'assets/courses/horizontal_vector.png',
             scale: 2,

@@ -77,14 +77,11 @@ class _State extends State<SelfRecording> {
                   child: ListView(
                     children: [
                       ConstrainedBox(
-                          constraints: BoxConstraints(
-                              maxHeight: MediaQuery.of(context).size.height),
+                          constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height),
                           child: (!_isReady)
                               ? Container()
                               : Stack(alignment: Alignment.topRight, children: [
-                                  AspectRatio(
-                                      aspectRatio: 3.0 / 4.0,
-                                      child: CameraPreview(cameraController)),
+                                  AspectRatio(aspectRatio: 3.0 / 4.0, child: CameraPreview(cameraController)),
                                   Padding(
                                       padding: EdgeInsets.all(10),
                                       child: IconButton(
@@ -113,9 +110,7 @@ class _State extends State<SelfRecording> {
                   padding: EdgeInsets.symmetric(horizontal: 10),
                   child: Text(
                     _task.stepsTitle,
-                    style: OlukoFonts.olukoSuperBigFont(
-                        customColor: OlukoColors.grayColor,
-                        custoFontWeight: FontWeight.normal),
+                    style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.normal),
                   ))
               : SizedBox(),
         ),
@@ -124,9 +119,7 @@ class _State extends State<SelfRecording> {
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 child: Text(
                   '${_task.stepsDescription.replaceAll('\\n', '\n')}',
-                  style: OlukoFonts.olukoSuperBigFont(
-                      customColor: OlukoColors.white,
-                      custoFontWeight: FontWeight.normal),
+                  style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.normal),
                 ))
             : SizedBox(),
         SizedBox(height: 50)
@@ -138,8 +131,7 @@ class _State extends State<SelfRecording> {
     int cameraPos = isCameraFront ? 0 : 1;
     try {
       cameras = await availableCameras();
-      cameraController =
-          new CameraController(cameras[cameraPos], ResolutionPreset.medium);
+      cameraController = new CameraController(cameras[cameraPos], ResolutionPreset.medium);
       await cameraController.initialize();
     } on CameraException catch (_) {}
     if (!mounted) return;
@@ -180,13 +172,11 @@ class _State extends State<SelfRecording> {
                   XFile videopath = await cameraController.stopVideoRecording();
                   String path = videopath.path;
                   Navigator.pop(context);
-                  Navigator.pushNamed(
-                      context, routeLabels[RouteEnum.selfRecordingPreview],
-                      arguments: {
-                        'taskIndex': widget.taskIndex,
-                        'filePath': path,
-                        'isPublic': widget.isPublic,
-                      });
+                  Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecordingPreview], arguments: {
+                    'taskIndex': widget.taskIndex,
+                    'filePath': path,
+                    'isPublic': widget.isPublic,
+                  });
                 } else {
                   await cameraController.startVideoRecording();
                 }
@@ -200,19 +190,16 @@ class _State extends State<SelfRecording> {
                 listener: (context, state) {
                   if (state is Success && state.pickedFile != null) {
                     Navigator.pop(context);
-                    Navigator.pushNamed(
-                        context, routeLabels[RouteEnum.selfRecordingPreview],
-                        arguments: {
-                          'taskIndex': widget.taskIndex,
-                          'filePath': state.pickedFile.path,
-                          'isPublic': widget.isPublic,
-                        });
+                    Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecordingPreview], arguments: {
+                      'taskIndex': widget.taskIndex,
+                      'filePath': state.pickedFile.path,
+                      'isPublic': widget.isPublic,
+                    });
                   }
                 },
                 child: GestureDetector(
                   onTap: () {
-                    BlocProvider.of<GalleryVideoBloc>(context)
-                      ..getVideoFromGallery();
+                    BlocProvider.of<GalleryVideoBloc>(context)..getVideoFromGallery();
                   },
                   child: Icon(
                     Icons.file_upload,

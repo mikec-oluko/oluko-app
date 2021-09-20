@@ -7,6 +7,7 @@ import 'package:http/http.dart' show Client, Response;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:oluko_app/models/dto/user_dto.dart';
 import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/dto/verify_token_request.dart';
@@ -107,8 +108,8 @@ class AuthRepository {
 
   Future<bool> storeLoginData(UserResponse loginResponse) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    UserResponse loginInfo = loginResponse.cleanBase() as UserResponse;
-    String encodedJson = jsonEncode(loginInfo);
+    UserDto userDto = UserDto.fromUserResponse(loginResponse);
+    String encodedJson = jsonEncode(userDto);
     bool loginSaved = await prefs.setString('login-data', encodedJson);
     print('Saved login info.');
     return loginSaved;

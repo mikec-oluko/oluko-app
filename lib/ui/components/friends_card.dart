@@ -8,6 +8,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/submodels/friend_model.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/user_utils.dart';
 
 class FriendCard extends StatefulWidget {
@@ -30,41 +31,57 @@ class FriendCard extends StatefulWidget {
  */
 
 class _FriendCardState extends State<FriendCard> {
+  bool _loadImageError = false;
+
   @override
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.center,
-      decoration: BoxDecoration(
-          color: OlukoColors.black,
-          border: Border(
-              bottom: BorderSide(width: 1.0, color: OlukoColors.grayColor))),
+      decoration: BoxDecoration(color: OlukoColors.black, border: Border(bottom: BorderSide(width: 1.0, color: OlukoColors.grayColor))),
       height: 100,
       child: Padding(
         padding: const EdgeInsets.only(left: 5),
-        child:
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           Row(
             children: [
               GestureDetector(
                 onTap: () {
-                  BlocProvider.of<TransformationJourneyBloc>(context)
-                      .emitTransformationJourneyDefault(noValues: true);
-                  BlocProvider.of<TaskSubmissionBloc>(context)
-                      .setTaskSubmissionDefaultState();
-                  BlocProvider.of<CourseEnrollmentBloc>(context)
-                      .setCourseEnrollmentChallengesDefaultValue();
-                  Navigator.pushNamed(
-                      context, routeLabels[RouteEnum.profileViewOwnProfile],
+                  BlocProvider.of<TransformationJourneyBloc>(context).emitTransformationJourneyDefault(noValues: true);
+                  BlocProvider.of<TaskSubmissionBloc>(context).setTaskSubmissionDefaultState();
+                  BlocProvider.of<CourseEnrollmentBloc>(context).setCourseEnrollmentChallengesDefaultValue();
+                  Navigator.pushNamed(context, routeLabels[RouteEnum.profileViewOwnProfile],
                       arguments: {'userRequested': widget.friendUser});
                 },
                 child: CircleAvatar(
-                  // backgroundImage: NetworkImage(widget.userData.photoURL),
-                  backgroundImage: NetworkImage(widget.friendUser.avatar != null
-                      ? widget.friendUser.avatar
-                      : UserUtils().defaultAvatarImageUrl),
-                  backgroundColor: Colors.red,
-                  radius: 30,
-                ),
+                    // backgroundImage: NetworkImage(widget.userData.photoURL),
+                    backgroundImage: _loadImageError ? null : (NetworkImage(widget.friendUser.avatar)),
+                    onBackgroundImageError: _loadImageError
+                        ? null
+                        : (dynamic exception, StackTrace stackTrace) {
+                            print("Error loading image! " + exception.toString());
+                            setState(() {
+                              _loadImageError = true;
+                            });
+                          },
+                    backgroundColor: OlukoColors.grayColorSemiTransparent,
+                    radius: 30,
+                    child: _loadImageError
+                        ? Text(
+                            OlukoLocalizations.of(context).find('errorLoadingImage'),
+                            style: OlukoFonts.olukoSmallFont(
+                              customColor: OlukoColors.white,
+                              custoFontWeight: FontWeight.w500,
+                            ),
+                            textAlign: TextAlign.center,
+                          )
+                        : null
+                    // this._loadImageError
+                    //     ? Image.asset(
+                    //         UserUtils().defaultAvatarImageAsset,
+                    //         scale: 2,
+                    //       )
+                    //     : null,
+                    ),
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 10),
@@ -79,31 +96,22 @@ class _FriendCardState extends State<FriendCard> {
                           children: [
                             Text(
                               // widget.userToDisplay.firstName,
-                              widget.friendUser.firstName != null
-                                  ? widget.friendUser.firstName
-                                  : ' ',
+                              widget.friendUser.firstName != null ? widget.friendUser.firstName : ' ',
                               style: OlukoFonts.olukoMediumFont(),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(left: 5),
                               // child: Text(widget.userToDisplay.lastName,
                               //     style: OlukoFonts.olukoMediumFont()),
-                              child: Text(
-                                  widget.friendUser.lastName != null
-                                      ? widget.friendUser.lastName
-                                      : ' ',
+                              child: Text(widget.friendUser.lastName != null ? widget.friendUser.lastName : ' ',
                                   style: OlukoFonts.olukoMediumFont()),
                             ),
                           ],
                         ),
                       ],
                     ),
-                    Text(
-                        widget.friendUser.username != null
-                            ? widget.friendUser.username
-                            : ' ',
-                        style: OlukoFonts.olukoMediumFont(
-                            customColor: OlukoColors.grayColor)),
+                    Text(widget.friendUser.username != null ? widget.friendUser.username : ' ',
+                        style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor)),
                     // Text(widget.userData.displayName,
                     //     style: OlukoFonts.olukoMediumFont(
                     //         customColor: OlukoColors.grayColor)),
@@ -118,9 +126,7 @@ class _FriendCardState extends State<FriendCard> {
               widget.friend != null
                   ? IconButton(
                       icon: Icon(
-                        widget.friend != null &&
-                                widget.friend.isFavorite != null &&
-                                widget.friend.isFavorite
+                        widget.friend != null && widget.friend.isFavorite != null && widget.friend.isFavorite
                             ? Icons.star
                             : Icons.star_outline,
                         color: OlukoColors.primary,
@@ -131,8 +137,7 @@ class _FriendCardState extends State<FriendCard> {
                             if (widget.friend.isFavorite == null) {
                               widget.friend.isFavorite = false;
                             }
-                            widget.friend.isFavorite =
-                                !widget.friend.isFavorite;
+                            widget.friend.isFavorite = !widget.friend.isFavorite;
                             widget.onFavoriteToggle(widget.friend);
                           }
                         });
