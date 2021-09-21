@@ -3,7 +3,6 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/user_statistics.dart';
 import 'package:oluko_app/utils/container_grediant.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
-
 import 'coach_user_progress_component.dart';
 
 class CoachUserProgressCard extends StatefulWidget {
@@ -25,8 +24,7 @@ class _CoachUserProgressCardState extends State<CoachUserProgressCard> {
       children: [
         Text(
           OlukoLocalizations.of(context).find('activityStats'),
-          style: OlukoFonts.olukoMediumFont(
-              customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+          style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
         ),
         AnimatedContainer(
           decoration: ContainerGradient.getContainerGradientDecoration(),
@@ -44,22 +42,17 @@ class _CoachUserProgressCardState extends State<CoachUserProgressCard> {
                   children: [
                     CoachUserProgressComponent(
                         progressValue: widget.userStats != null ? widget.userStats.completedClasses : 0,
-                        nameOfField: OlukoLocalizations.of(context)
-                            .find('classesCompleted')),
+                        nameOfField: OlukoLocalizations.of(context).find('classesCompleted')),
                     CoachUserProgressComponent(
                         progressValue: widget.userStats != null ? widget.userStats.completedChallenges : 0,
-                        nameOfField: OlukoLocalizations.of(context)
-                            .find('challengesCompleted')),
+                        nameOfField: OlukoLocalizations.of(context).find('challengesCompleted')),
                     TextButton(
                         onPressed: () {
                           setState(() {
-                            _isUserStatisticExpanded =
-                                !_isUserStatisticExpanded;
+                            _isUserStatisticExpanded = !_isUserStatisticExpanded;
                           });
                         },
-                        child: _isUserStatisticExpanded
-                            ? Icon(Icons.arrow_drop_up)
-                            : Icon(Icons.arrow_drop_down)),
+                        child: _isUserStatisticExpanded ? Icon(Icons.arrow_drop_up) : Icon(Icons.arrow_drop_down)),
                   ],
                 ),
               ),
@@ -70,12 +63,10 @@ class _CoachUserProgressCardState extends State<CoachUserProgressCard> {
                   children: [
                     CoachUserProgressComponent(
                         progressValue: widget.userStats != null ? widget.userStats.completedCourses : 0,
-                        nameOfField: OlukoLocalizations.of(context)
-                            .find('coursesCompleted')),
+                        nameOfField: OlukoLocalizations.of(context).find('coursesCompleted')),
                     CoachUserProgressComponent(
                       progressValue: 0,
-                      nameOfField:
-                          OlukoLocalizations.of(context).find('appCompleted'),
+                      nameOfField: OlukoLocalizations.of(context).find('appCompleted'),
                       needPercentage: true,
                     ),
                     Container(

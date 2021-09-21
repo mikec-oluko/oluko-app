@@ -40,7 +40,7 @@ class CourseEnrollmentRepository {
         .collection('courseEnrollments');
 
     final QuerySnapshot qs =
-        await reference.where("course.id", isEqualTo: course.id).where("created_by", isEqualTo: user.uid).get();
+        await reference.where('course.id', isEqualTo: course.id).where('created_by', isEqualTo: user.uid).get();
 
     if (qs.docs.length > 0) {
       return CourseEnrollment.fromJson(qs.docs[0].data() as Map<String, dynamic>);
@@ -48,13 +48,13 @@ class CourseEnrollmentRepository {
     return null;
   }
 
-  static Future<List<CourseEnrollment>> getByCourse(String courseId) async {
+  static Future<List<CourseEnrollment>> getByCourse(String courseId, String userId) async {
     CollectionReference reference = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('courseEnrollments');
 
-    final QuerySnapshot qs = await reference.where("course.id", isEqualTo: courseId).get();
+    final QuerySnapshot qs = await reference.where('course.id', isEqualTo: courseId).where('created_by', isNotEqualTo: userId).get();
 
     if (qs.docs.length > 0) {
       return qs.docs.map((courseData) {
@@ -69,7 +69,7 @@ class CourseEnrollmentRepository {
       CourseEnrollment courseEnrollment, int segmentIndex, int classIndex) async {
     DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('courseEnrollments')
         .doc(courseEnrollment.id);
     List<EnrollmentClass> classes = courseEnrollment.classes;
@@ -87,7 +87,7 @@ class CourseEnrollmentRepository {
 
   static Future<CourseEnrollment> create(User user, Course course) async {
     DocumentReference projectReference =
-        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue("projectId"));
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId'));
     CollectionReference reference = projectReference.collection('courseEnrollments');
     DocumentReference courseReference = projectReference.collection('courses').doc(course.id);
     final DocumentReference docRef = reference.doc();
@@ -126,7 +126,7 @@ class CourseEnrollmentRepository {
     try {
       QuerySnapshot docRef = await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue("projectId"))
+          .doc(GlobalConfiguration().getValue('projectId'))
           .collection('courseEnrollments')
           .where('created_by', isEqualTo: userId)
           .orderBy('created_at', descending: true)
@@ -179,7 +179,7 @@ class CourseEnrollmentRepository {
   Future getChallengesFromCourseEnrollment(CourseEnrollment courseEnrollment, List<Challenge> challenges) async {
     QuerySnapshot query = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('challenges')
         // .where('course_enrollment_id', isEqualTo: courseEnrollment.id)
         .get();
@@ -193,7 +193,7 @@ class CourseEnrollmentRepository {
       int classIndex, MovementSubmodel movement, Counter counter) async {
     DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('courseEnrollments')
         .doc(courseEnrollment.id);
 
@@ -202,7 +202,7 @@ class CourseEnrollmentRepository {
     List<EnrollmentClass> classes = courseEnrollment.classes;
     List<EnrollmentMovement> movements = classes[classIndex].segments[segmentIndex].movements;
 
-    if (movements == null || counter.round == 1 && counter.set == null || counter.round == 1 && counter.set == 1) {
+    if (movements == null || counter.round == 1) {
       classes[classIndex].segments[segmentIndex].movements = [];
     }
 
@@ -234,7 +234,8 @@ class CourseEnrollmentRepository {
   }
 
   static Future<String> _uploadFile(String filePath, String folderName) async {
-    final file = new File(filePath);
+    final file = File(filePath);
+
     final basename = p.basename(filePath);
 
     final S3Provider s3Provider = S3Provider();

@@ -29,7 +29,7 @@ class SubscribedCourseUsersBloc extends Cubit<SubscribedCourseUsersState> {
   void get(String courseId, String userId) async {
     try {
       //Fetch enrollments for this course. And retrieve all users that are already enrolled.
-      List<CourseEnrollment> courseEnrollmentList = await CourseEnrollmentRepository.getByCourse(courseId);
+      List<CourseEnrollment> courseEnrollmentList = await CourseEnrollmentRepository.getByCourse(courseId, userId);
 
       List<UserResponse> uniqueUserList = [];
       List<String> uniqueUserIds = [];

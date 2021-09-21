@@ -67,11 +67,11 @@ class _State extends State<ClassExpansionPanel> {
             }).toList(),
           )
         : Center(
-          child: Padding(
+            child: Padding(
               padding: EdgeInsets.only(top: 10),
               child: TitleBody(OlukoLocalizations.of(context).find("noClasses")),
             ),
-        );
+          );
   }
 
   List<ClassItem> generateClassItems() {
@@ -90,7 +90,7 @@ class _State extends State<ClassExpansionPanel> {
     }
     Class classObj = widget.classes[classIndex];
     classObj.segments.forEach((segment) {
-      List<Movement> movements = ClassService.getClassSegmentMovements(segment.movements, widget.movements);
+      List<Movement> movements = ClassService.getClassSegmentMovements(segment.sections, widget.movements);
       widgets.add(ListTile(
         title: CourseSegmentSection(segmentName: segment.name, movements: movements, onPressedMovement: widget.onPressedMovement),
         subtitle: segment.challengeImage != null ? ChallengeSection(challenges: [segment]) : SizedBox(),

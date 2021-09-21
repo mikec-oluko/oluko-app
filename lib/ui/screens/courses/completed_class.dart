@@ -19,8 +19,7 @@ class CompletedClass extends StatefulWidget {
   final CourseEnrollment courseEnrollment;
   final int classIndex;
 
-  CompletedClass({Key key, this.courseEnrollment, this.classIndex})
-      : super(key: key);
+  CompletedClass({Key key, this.courseEnrollment, this.classIndex}) : super(key: key);
 
   @override
   _CompletedClassState createState() => _CompletedClassState();
@@ -75,10 +74,7 @@ class _CompletedClassState extends State<CompletedClass> {
                     OlukoPrimaryButton(
                         title: OlukoLocalizations.of(context).find('done'),
                         onPressed: () {
-                          Navigator.popUntil(
-                              context,
-                              ModalRoute.withName(
-                                  routeLabels[RouteEnum.insideClass]));
+                          Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.insideClass]));
                         })
                   ])),
               SizedBox(height: 20),
@@ -86,11 +82,9 @@ class _CompletedClassState extends State<CompletedClass> {
   }
 
   Widget showPhotoFrame() {
-    return BlocBuilder<CourseEnrollmentUpdateBloc, CourseEnrollmentUpdateState>(
-        builder: (context, courseEnrollmentUpdateState) {
+    return BlocBuilder<CourseEnrollmentUpdateBloc, CourseEnrollmentUpdateState>(builder: (context, courseEnrollmentUpdateState) {
       if (courseEnrollmentUpdateState is SaveSelfieSuccess) {
-        _imageUrl = courseEnrollmentUpdateState
-            .courseEnrollment.classes[widget.classIndex].selfieThumbnailUrl;
+        _imageUrl = courseEnrollmentUpdateState.courseEnrollment.classes[widget.classIndex].selfieThumbnailUrl;
         _date = DateTime.now();
         return getPhotoFrame();
       } else {
@@ -111,8 +105,7 @@ class _CompletedClassState extends State<CompletedClass> {
                 'assets/courses/green_circle.png',
                 scale: 8,
               ),
-              Icon(Icons.camera_alt_outlined,
-                  size: 18, color: OlukoColors.black)
+              Icon(Icons.camera_alt_outlined, size: 18, color: OlukoColors.black)
             ])));
   }
 
@@ -145,26 +138,18 @@ class _CompletedClassState extends State<CompletedClass> {
               child: RotationTransition(
                   turns: AlwaysStoppedAnimation(-0.01),
                   child: Row(children: [
-                    Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            DateFormat('MM/dd/yyyy').format(_date).toString(),
-                            style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: OlukoColors.black),
-                            textAlign: TextAlign.start,
-                          ),
-                          Text(
-                            DateFormat('hh:mm a').format(_date).toString(),
-                            style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w400,
-                                color: OlukoColors.black),
-                            textAlign: TextAlign.start,
-                          )
-                        ]),
+                    Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Text(
+                        DateFormat('MM/dd/yyyy').format(_date).toString(),
+                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: OlukoColors.black),
+                        textAlign: TextAlign.start,
+                      ),
+                      Text(
+                        DateFormat('hh:mm a').format(_date).toString(),
+                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: OlukoColors.black),
+                        textAlign: TextAlign.start,
+                      )
+                    ]),
                     SizedBox(width: 50),
                     getCameraIcon()
                   ]))),
@@ -173,8 +158,7 @@ class _CompletedClassState extends State<CompletedClass> {
 
   showCameraAndSaveSelfie() async {
     _image = await imagePicker.getImage(source: ImageSource.camera);
-    BlocProvider.of<CourseEnrollmentUpdateBloc>(context)
-      ..saveSelfie(widget.courseEnrollment, widget.classIndex, _image);
+    BlocProvider.of<CourseEnrollmentUpdateBloc>(context)..saveSelfie(widget.courseEnrollment, widget.classIndex, _image);
   }
 
   Widget getAddPhotoFrame() {
@@ -197,10 +181,7 @@ class _CompletedClassState extends State<CompletedClass> {
                       turns: AlwaysStoppedAnimation(-0.01),
                       child: Text(
                         OlukoLocalizations.of(context).find('addYourSelfie'),
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                            color: OlukoColors.black),
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: OlukoColors.black),
                         textAlign: TextAlign.start,
                       ))),
             ])));
@@ -209,12 +190,9 @@ class _CompletedClassState extends State<CompletedClass> {
   Widget getClassCard() {
     return Container(
       height: 210,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-          color: OlukoColors.listGrayColor),
+      decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: OlukoColors.listGrayColor),
       child: Padding(
-        padding:
-            const EdgeInsets.only(left: 15, right: 15, bottom: 13, top: 17),
+        padding: const EdgeInsets.only(left: 15, right: 15, bottom: 13, top: 17),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -230,8 +208,7 @@ class _CompletedClassState extends State<CompletedClass> {
                       color: OlukoColors.challengeLockedFilterColor,
                       image: new DecorationImage(
                         fit: BoxFit.cover,
-                        image: new NetworkImage(widget
-                            .courseEnrollment.classes[widget.classIndex].image),
+                        image: new NetworkImage(widget.courseEnrollment.classes[widget.classIndex].image),
                       ),
                     ),
                   ),
@@ -245,21 +222,14 @@ class _CompletedClassState extends State<CompletedClass> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            widget.courseEnrollment.classes[widget.classIndex]
-                                .name,
-                            style: OlukoFonts.olukoBigFont(
-                                custoFontWeight: FontWeight.bold),
+                            widget.courseEnrollment.classes[widget.classIndex].name,
+                            style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.bold),
                             textAlign: TextAlign.start,
                           ),
                           SizedBox(height: 11),
                           Text(
-                            TimeConverter.toClassProgress(
-                                widget.classIndex,
-                                widget.courseEnrollment.classes.length,
-                                context),
-                            style: OlukoFonts.olukoMediumFont(
-                                custoFontWeight: FontWeight.normal,
-                                customColor: OlukoColors.white),
+                            TimeConverter.toClassProgress(widget.classIndex, widget.courseEnrollment.classes.length, context),
+                            style: OlukoFonts.olukoMediumFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.white),
                           ),
                           Image.asset(
                             'assets/courses/completed_logo.png',
@@ -279,15 +249,12 @@ class _CompletedClassState extends State<CompletedClass> {
   }
 
   Widget getCompletedSegments() {
-    return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20),
-        child: Column(children: getSegments()));
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 20), child: Column(children: getSegments()));
   }
 
   List<Widget> getSegments() {
     List<Widget> segments = [];
-    widget.courseEnrollment.classes[widget.classIndex].segments
-        .forEach((segment) {
+    widget.courseEnrollment.classes[widget.classIndex].segments.forEach((segment) {
       segments.add(Row(children: [
         Image.asset(
           'assets/self_recording/completed_tick.png',

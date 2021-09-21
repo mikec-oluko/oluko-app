@@ -16,12 +16,10 @@ class ProfileAssessmentVideosPage extends StatefulWidget {
   const ProfileAssessmentVideosPage();
 
   @override
-  _ProfileAssessmentVideosPageState createState() =>
-      _ProfileAssessmentVideosPageState();
+  _ProfileAssessmentVideosPageState createState() => _ProfileAssessmentVideosPageState();
 }
 
-class _ProfileAssessmentVideosPageState
-    extends State<ProfileAssessmentVideosPage> {
+class _ProfileAssessmentVideosPageState extends State<ProfileAssessmentVideosPage> {
   List<Widget> _contentGallery;
   UserResponse _profileInfo;
   List<TaskSubmission> _assessmentVideoContent = [];
@@ -35,11 +33,8 @@ class _ProfileAssessmentVideosPageState
           builder: (context, state) {
             if (state is GetUserTaskSubmissionSuccess) {
               _assessmentVideoContent = state.taskSubmissions;
-              _contentGallery =
-                  TransformListOfItemsToWidget.getWidgetListFromContent(
-                      assessmentVideoData: _assessmentVideoContent,
-                      requestedFromRoute:
-                          ActualProfileRoute.userAssessmentVideos);
+              _contentGallery = TransformListOfItemsToWidget.getWidgetListFromContent(
+                  assessmentVideoData: _assessmentVideoContent, requestedFromRoute: ActualProfileRoute.userAssessmentVideos);
             }
             return page(context, _profileInfo);
           },
@@ -57,8 +52,7 @@ class _ProfileAssessmentVideosPageState
           showSearchBar: false,
         ),
         body: _contentGallery == null
-            ? Container(
-                color: Colors.black, child: OlukoCircularProgressIndicator())
+            ? Container(color: Colors.black, child: OlukoCircularProgressIndicator())
             : Container(
                 constraints: BoxConstraints.expand(),
                 color: OlukoColors.black,
