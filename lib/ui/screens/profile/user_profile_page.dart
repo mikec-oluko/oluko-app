@@ -62,7 +62,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   FriendModel friendModel;
   List<UserResponse> friendUsers = [];
 
-  String _connectButtonTitle = "";
+  String _connectButtonTitle = '';
 
   List<TransformationJourneyUpload> _transformationJourneyContent = [];
   List<TaskSubmission> _assessmentVideosContent = [];
@@ -104,7 +104,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
           _friendsRequested = true;
         }
         return _buildUserProfileView(
-            context: context, authUser: _currentAuthUser, userRequested: widget.userRequested, isOwnProfile: _isCurrentUser);
+            profileViewContext: context, authUser: _currentAuthUser, userRequested: widget.userRequested, isOwnProfile: _isCurrentUser);
       } else {
         return Container(
           color: OlukoColors.black,
@@ -120,7 +120,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
     return authUser.id == userRequested.id;
   }
 
-  Widget _buildUserProfileView({BuildContext context, UserResponse authUser, UserResponse userRequested, bool isOwnProfile}) {
+  Widget _buildUserProfileView({BuildContext profileViewContext, UserResponse authUser, UserResponse userRequested, bool isOwnProfile}) {
     return Scaffold(
       extendBody: true,
       backgroundColor: Colors.transparent,
@@ -179,8 +179,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
             setState(() {
               _isNewCoverImage = false;
             });
-            BlocProvider.of<ProfileAvatarBloc>(context)..emitDefaultState();
-            BlocProvider.of<ProfileCoverImageBloc>(context)..emitDefaultState();
+            BlocProvider.of<ProfileAvatarBloc>(context).emitDefaultState();
+            BlocProvider.of<ProfileCoverImageBloc>(context).emitDefaultState();
           },
           backdropEnabled: true,
           isDraggable: false,
@@ -218,7 +218,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   if (state is ProfileCoverRequirePermissions) {
                     _panelController
                         .close()
-                        .then((value) => DialogUtils.getDialog(context, _showOpenSettingsDialogContent(context), showExitButton: false));
+                        .then((value) => DialogUtils.getDialog(profileViewContext, _showOpenSettingsDialogContent(profileViewContext), showExitButton: false));
                   }
                   return _contentForPanel;
                 })
@@ -247,15 +247,15 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   if (state is ProfileAvatarRequirePermissions) {
                     _panelController
                         .close()
-                        .then((value) => DialogUtils.getDialog(context, _showOpenSettingsDialogContent(context), showExitButton: false));
+                        .then((value) => DialogUtils.getDialog(profileViewContext, _showOpenSettingsDialogContent(profileViewContext), showExitButton: false));
                   }
                   return _contentForPanel;
                 }),
           body: Container(
-            constraints: BoxConstraints.expand(),
+            constraints: const BoxConstraints.expand(),
             child: ListView(
               clipBehavior: Clip.none,
-              padding: EdgeInsets.all(0),
+              padding: const EdgeInsets.all(0),
               shrinkWrap: true,
               children: [
                 Container(
@@ -268,7 +268,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         width: MediaQuery.of(context).size.width,
                         height: MediaQuery.of(context).size.height / 3,
                         child: _userProfileToDisplay.coverImage == null
-                            ? SizedBox()
+                            ? const SizedBox()
                             : Image.network(
                                 _userProfileToDisplay.coverImage,
                                 fit: BoxFit.cover,
@@ -312,7 +312,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                   setState(() {
                                     _isNewCoverImage = true;
                                   });
-                                  BlocProvider.of<ProfileCoverImageBloc>(context)..openPanel();
+                                  BlocProvider.of<ProfileCoverImageBloc>(context).openPanel();
                                 },
                                 child: Image.asset('assets/profile/uploadImage.png')),
                           ),
@@ -333,7 +333,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                     setState(() {
                                       friendModel.isFavorite = !_isFollow;
                                     });
-                                    BlocProvider.of<FavoriteFriendBloc>(context)..favoriteFriend(context, friendData, friendModel);
+                                    BlocProvider.of<FavoriteFriendBloc>(context).favoriteFriend(context, friendData, friendModel);
                                     setState(() {
                                       _isFollow = !_isFollow;
                                     });
@@ -345,13 +345,13 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                       onPressed: () {
                                         switch (connectStatus) {
                                           case UserConnectStatus.connected:
-                                            BlocProvider.of<FriendBloc>(context)..removeFriend(friendData, userRequested.id);
+                                            BlocProvider.of<FriendBloc>(context).removeFriend(friendData, userRequested.id);
                                             break;
                                           case UserConnectStatus.notConnected:
-                                            BlocProvider.of<FriendBloc>(context)..sendRequestOfConnect(friendData, userRequested.id);
+                                            BlocProvider.of<FriendBloc>(context).sendRequestOfConnect(friendData, userRequested.id);
                                             break;
                                           case UserConnectStatus.requestPending:
-                                            BlocProvider.of<FriendBloc>(context)..removeRequestSent(friendData, userRequested.id);
+                                            BlocProvider.of<FriendBloc>(context).removeRequestSent(friendData, userRequested.id);
                                             break;
                                           default:
                                         }
@@ -362,7 +362,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                               ],
                             ),
                           )
-                        : SizedBox(),
+                        : const SizedBox(),
                     BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(builder: (context, state) {
                       if (state is GetUserTaskSubmissionSuccess) {
                         _assessmentVideosContent = state.taskSubmissions;
@@ -374,7 +374,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                               routeForSection: RouteEnum.profileAssessmentVideos,
                               contentForSection: TransformListOfItemsToWidget.getWidgetListFromContent(
                                   assessmentVideoData: _assessmentVideosContent, requestedFromRoute: ActualProfileRoute.userProfile))
-                          : SizedBox();
+                          : const SizedBox();
                     }),
                     BlocBuilder<TransformationJourneyBloc, TransformationJourneyState>(
                       builder: (context, state) {
@@ -388,7 +388,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                 contentForSection: TransformListOfItemsToWidget.getWidgetListFromContent(
                                     tansformationJourneyData: _transformationJourneyContent,
                                     requestedFromRoute: ActualProfileRoute.userProfile))
-                            : SizedBox();
+                            : const SizedBox();
                       },
                     ),
                     BlocBuilder<CourseBloc, CourseState>(
@@ -400,7 +400,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         }
                         return _coursesToUse.length != 0
                             ? buildCourseSection(context: context, contentForCourse: returnCoursesWidget(listOfCourses: _coursesToUse))
-                            : SizedBox();
+                            : const SizedBox();
                       },
                     ),
                     BlocBuilder<CourseEnrollmentBloc, CourseEnrollmentState>(
@@ -419,7 +419,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                 routeForSection: RouteEnum.profileChallenges,
                                 contentForSection: TransformListOfItemsToWidget.getWidgetListFromContent(
                                     upcomingChallenges: _activeChallenges, requestedFromRoute: ActualProfileRoute.userProfile))
-                            : SizedBox();
+                            : const SizedBox();
                       },
                     ),
                   ],
@@ -584,13 +584,13 @@ class _UserProfilePageState extends State<UserProfilePage> {
   String returnTitleForConnectButton(UserConnectStatus connectStatus) {
     switch (connectStatus) {
       case UserConnectStatus.connected:
-        return "remove";
+        return 'remove';
       case UserConnectStatus.notConnected:
-        return "connect";
+        return 'connect';
       case UserConnectStatus.requestPending:
-        return "cancelConnectionRequested";
+        return 'cancelConnectionRequested';
       default:
-        return "fail";
+        return 'fail';
     }
   }
 }
