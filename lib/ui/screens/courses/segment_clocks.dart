@@ -710,9 +710,6 @@ class _SegmentClocksState extends State<SegmentClocks> {
   }
 
   void _playCountdown() {
-    /*if (timerTaskIndex == 0) {
-      timeLeft = Duration(seconds: timerEntries[0].time);
-    }*/
     countdownTimer = Timer.periodic(Duration(seconds: 1), (Timer timer) {
       if (timeLeft.inSeconds == 0) {
         _pauseCountdown();
