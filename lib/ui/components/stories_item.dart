@@ -8,8 +8,7 @@ class StoriesItem extends StatefulWidget {
   final double maxRadius;
   final double progressValue;
 
-  StoriesItem(
-      {this.imageUrl, this.name, this.maxRadius = 35, this.progressValue = 0});
+  StoriesItem({this.imageUrl, this.name, this.maxRadius = 35, this.progressValue = 0});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -31,8 +30,7 @@ class _State extends State<StoriesItem> {
               child: CircularProgressIndicator(
                 value: widget.progressValue,
                 strokeWidth: 5,
-                valueColor:
-                    new AlwaysStoppedAnimation<Color>(OlukoColors.primary),
+                valueColor: new AlwaysStoppedAnimation<Color>(OlukoColors.primary),
               ),
             ),
             widget.imageUrl != null

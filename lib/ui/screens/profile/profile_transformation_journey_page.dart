@@ -84,13 +84,9 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
                                 child: Row(
                                   children: [
                                     OlukoOutlinedButton(
-                                        title: OlukoLocalizations.of(context)
-                                            .find('tapToUpload'),
+                                        title: OlukoLocalizations.of(context).find('tapToUpload'),
                                         onPressed: () {
-                                          BlocProvider.of<
-                                                      TransformationJourneyContentBloc>(
-                                                  context)
-                                              .openPanel();
+                                          BlocProvider.of<TransformationJourneyContentBloc>(context).openPanel();
                                         }),
                                   ],
                                 ),
@@ -102,9 +98,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
                       ? Align(
                           alignment: Alignment.topCenter,
                           child: Padding(
-                            padding: isCurrenUser
-                                ? EdgeInsets.fromLTRB(10, 100, 10, 10)
-                                : EdgeInsets.fromLTRB(10, 20, 10, 20),
+                            padding: isCurrenUser ? EdgeInsets.fromLTRB(10, 100, 10, 10) : EdgeInsets.fromLTRB(10, 20, 10, 20),
                             child: Text(
                               getTitleForContent(uploadListContent: _transformationJourneyContent),
                               style: OlukoFonts.olukoBigFont(),
@@ -120,8 +114,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
     );
   }
 
-  BlocListener<TransformationJourneyContentBloc, TransformationJourneyContentState> slidingUpPanelComponent(
-      BuildContext context) {
+  BlocListener<TransformationJourneyContentBloc, TransformationJourneyContentState> slidingUpPanelComponent(BuildContext context) {
     return BlocListener<TransformationJourneyContentBloc, TransformationJourneyContentState>(
       listener: (context, state) {
         if (state is TransformationJourneyContentDefault || state is TransformationJourneyContentOpen) {
@@ -151,8 +144,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
         collapsed: SizedBox(),
         defaultPanelState: PanelState.CLOSED,
         controller: _panelController,
-        panel:
-            BlocBuilder<TransformationJourneyContentBloc, TransformationJourneyContentState>(builder: (context, state) {
+        panel: BlocBuilder<TransformationJourneyContentBloc, TransformationJourneyContentState>(builder: (context, state) {
           Widget _contentForPanel = SizedBox();
           if (state is TransformationJourneyContentOpen) {
             _panelController.open();
@@ -184,8 +176,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
     return Align(
       alignment: Alignment.center,
       child: Padding(
-        padding:
-            isCurrenUser ? EdgeInsets.only(top: 150) : EdgeInsets.only(top: 20),
+        padding: isCurrenUser ? EdgeInsets.only(top: 150) : EdgeInsets.only(top: 20),
         child: Container(
           height: MediaQuery.of(context).size.height / 1.4,
           child: isCurrenUser
@@ -215,14 +206,10 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
                     if (isCurrenUser) {
                       BlocProvider.of<TransformationJourneyBloc>(context)
                         ..changeContentOrder(
-                            _transformationJourneyContent[oldIndex],
-                            _transformationJourneyContent[newIndex],
-                            _profileInfo.id);
+                            _transformationJourneyContent[oldIndex], _transformationJourneyContent[newIndex], _profileInfo.id);
 
-                      final elementMoved =
-                          _transformationJourneyContent[oldIndex];
-                      _transformationJourneyContent[oldIndex] =
-                          _transformationJourneyContent[newIndex];
+                      final elementMoved = _transformationJourneyContent[oldIndex];
+                      _transformationJourneyContent[oldIndex] = _transformationJourneyContent[newIndex];
 
                       _transformationJourneyContent[newIndex] = elementMoved;
 
@@ -250,18 +237,11 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
                             _variableSet++;
                           }
                           return ImageAndVideoContainer(
-                            backgroundImage:
-                                _transformationJourneyContent[index].thumbnail,
-                            isContentVideo:
-                                _transformationJourneyContent[index].type ==
-                                        FileTypeEnum.video
-                                    ? true
-                                    : false,
+                            backgroundImage: _transformationJourneyContent[index].thumbnail,
+                            isContentVideo: _transformationJourneyContent[index].type == FileTypeEnum.video ? true : false,
                             videoUrl: _transformationJourneyContent[index].file,
-                            displayOnViewNamed:
-                                ActualProfileRoute.transformationJourney,
-                            originalContent:
-                                _transformationJourneyContent[index],
+                            displayOnViewNamed: ActualProfileRoute.transformationJourney,
+                            originalContent: _transformationJourneyContent[index],
                           );
                         },
                       ),
@@ -276,16 +256,10 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
                   itemBuilder: (context, index) => Card(
                       color: Colors.transparent,
                       child: ImageAndVideoContainer(
-                        backgroundImage:
-                            _transformationJourneyContent[index].thumbnail,
-                        isContentVideo:
-                            _transformationJourneyContent[index].type ==
-                                    FileTypeEnum.video
-                                ? true
-                                : false,
+                        backgroundImage: _transformationJourneyContent[index].thumbnail,
+                        isContentVideo: _transformationJourneyContent[index].type == FileTypeEnum.video ? true : false,
                         videoUrl: _transformationJourneyContent[index].file,
-                        displayOnViewNamed:
-                            ActualProfileRoute.transformationJourney,
+                        displayOnViewNamed: ActualProfileRoute.transformationJourney,
                         originalContent: _transformationJourneyContent[index],
                       )),
                 ),
@@ -300,13 +274,10 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
         if (state is TransformationJourneySuccess) {
           _transformationJourneyContent = state.contentFromUser;
           _contentGallery = TransformListOfItemsToWidget.getWidgetListFromContent(
-              tansformationJourneyData: _transformationJourneyContent,
-              requestedFromRoute: ActualProfileRoute.transformationJourney);
+              tansformationJourneyData: _transformationJourneyContent, requestedFromRoute: ActualProfileRoute.transformationJourney);
         }
-        if (state is TransformationJourneyFailure ||
-            state is TransformationJourneyDefault) {
-          BlocProvider.of<TransformationJourneyBloc>(context)
-            ..getContentByUserId(userToUse.id);
+        if (state is TransformationJourneyFailure || state is TransformationJourneyDefault) {
+          BlocProvider.of<TransformationJourneyBloc>(context)..getContentByUserId(userToUse.id);
         }
         return page(context, _profileInfo);
       },

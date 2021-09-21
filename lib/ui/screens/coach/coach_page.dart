@@ -164,8 +164,8 @@ class _CoachPageState extends State<CoachPage> {
     );
   }
 
-  List<Widget> toDoContent() => TransformListOfItemsToWidget.coachChallengesAndSegments(
-      challenges: _activeChallenges, segments: actualSegmentsToDisplay);
+  List<Widget> toDoContent() =>
+      TransformListOfItemsToWidget.coachChallengesAndSegments(challenges: _activeChallenges, segments: actualSegmentsToDisplay);
 
   Widget assessmentSection(BuildContext context) {
     return BlocBuilder<TaskBloc, TaskState>(
@@ -174,8 +174,7 @@ class _CoachPageState extends State<CoachPage> {
           _tasks = state.values;
         }
         return CoachHorizontalCarousel(
-          contentToDisplay:
-              TransformListOfItemsToWidget.getAssessmentCards(tasks: _tasks, tasksSubmitted: _assessmentVideosContent),
+          contentToDisplay: TransformListOfItemsToWidget.getAssessmentCards(tasks: _tasks, tasksSubmitted: _assessmentVideosContent),
           isAssessmentContent: true,
         );
       },
@@ -238,9 +237,7 @@ class _CoachPageState extends State<CoachPage> {
               videoContent: _assessmentVideosContent,
               isForCarousel: isForCarousel)
           : CoachContentSectionCard(
-              title: OlukoLocalizations.of(context).find('mentoredVideos'),
-              isForCarousel: isForCarousel,
-              needTitle: false);
+              title: OlukoLocalizations.of(context).find('mentoredVideos'), isForCarousel: isForCarousel, needTitle: false);
     });
   }
 

@@ -18,8 +18,7 @@ class UserProfileInformation extends StatefulWidget {
   final UserConnectStatus connectStatus;
   final UserStatistics userStats;
 
-  const UserProfileInformation(
-      {this.userToDisplayInformation, this.actualRoute, this.currentUser, this.connectStatus, this.userStats})
+  const UserProfileInformation({this.userToDisplayInformation, this.actualRoute, this.currentUser, this.connectStatus, this.userStats})
       : super();
 
   @override
@@ -62,7 +61,8 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
 
   String getUserLocation(UserResponse user) {
     String userLocationContent;
-    if ((user.city != null && user.city != 'null') && ((user.state != null && user.state != 'null') && (user.country != null && user.country != 'null'))) {
+    if ((user.city != null && user.city != 'null') &&
+        ((user.state != null && user.state != 'null') && (user.country != null && user.country != 'null'))) {
       userLocationContent = "${user.city}, ${user.state} ${user.country}";
     }
     return userLocationContent;
@@ -88,10 +88,8 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                             backgroundImage: Image.network(
                               widget.userToDisplayInformation.avatarThumbnail,
                               fit: BoxFit.contain,
-                              frameBuilder:
-                                  (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
-                                      ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded,
-                                          height: 30, width: 30),
+                              frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
+                                  ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 30, width: 30),
                               height: 30,
                               width: 30,
                             ).image,
@@ -191,13 +189,9 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                 userRequested: widget.userToDisplayInformation,
                 connectStatus: widget.connectStatus)
             ? UserProfileProgress(
-                challengesCompleted: widget.userStats != null
-                    ? widget.userStats.completedChallenges.toString()
-                    : _archivementsDefaultValue,
-                coursesCompleted:
-                    widget.userStats != null ? widget.userStats.completedCourses.toString() : _archivementsDefaultValue,
-                classesCompleted:
-                    widget.userStats != null ? widget.userStats.completedClasses.toString() : _archivementsDefaultValue,
+                challengesCompleted: widget.userStats != null ? widget.userStats.completedChallenges.toString() : _archivementsDefaultValue,
+                coursesCompleted: widget.userStats != null ? widget.userStats.completedCourses.toString() : _archivementsDefaultValue,
+                classesCompleted: widget.userStats != null ? widget.userStats.completedClasses.toString() : _archivementsDefaultValue,
               )
             : UserProfileProgress(
                 challengesCompleted: _archivementsDefaultValue,
@@ -251,8 +245,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
               width: 150,
               height: 25,
               child: Text(OlukoLocalizations.of(context).find('privateProfile'),
-                  style:
-                      OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300)),
+                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300)),
             )
           ],
         )
@@ -297,8 +290,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
               children: [
                 Text(
                   this.widget.userToDisplayInformation.username ?? '',
-                  style:
-                      OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300),
+                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 3),
@@ -307,8 +299,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                 _userLocation != null
                     ? Text(
                         location,
-                        style: OlukoFonts.olukoMediumFont(
-                            customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300),
+                        style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300),
                       )
                     : SizedBox(),
               ],

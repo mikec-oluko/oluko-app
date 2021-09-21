@@ -68,7 +68,7 @@ class VideoBloc extends Cubit<VideoState> {
 
     Video video = Video(name: videoName, aspectRatio: aspectRatio);
 
-    _processPhase = "";
+    _processPhase = '';
     _progress = 0.0;
     emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
 

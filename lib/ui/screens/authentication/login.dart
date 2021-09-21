@@ -36,14 +36,7 @@ class _LoginPageState extends State<LoginPage> {
                   Padding(
                       padding: EdgeInsets.symmetric(horizontal: 15),
                       child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          child: Column(children: [
-                            SizedBox(height: 20),
-                            SizedBox(height: 20),
-                            titleSection(),
-                            SizedBox(height: 50),
-                            formSection()
-                          ])))
+                          width: MediaQuery.of(context).size.width, child: Column(children: [SizedBox(height: 20), SizedBox(height: 20), titleSection(), SizedBox(height: 50), formSection()])))
                 ]))));
   }
 
@@ -76,7 +69,7 @@ class _LoginPageState extends State<LoginPage> {
       //Text Fields
       TextFormField(
         style: TextStyle(color: Colors.white),
-        decoration: new InputDecoration(
+        decoration: InputDecoration(
             focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Colors.grey),
               borderRadius: BorderRadius.circular(10),
@@ -106,12 +99,12 @@ class _LoginPageState extends State<LoginPage> {
           }
         },
       ),
-      SizedBox(
+      const SizedBox(
         height: 10,
       ),
       TextFormField(
-        style: TextStyle(color: Colors.white),
-        decoration: new InputDecoration(
+        style: const TextStyle(color: Colors.white),
+        decoration: InputDecoration(
             focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Colors.grey),
               borderRadius: BorderRadius.circular(10),
@@ -127,9 +120,9 @@ class _LoginPageState extends State<LoginPage> {
                       })
                     }),
             filled: false,
-            errorStyle: TextStyle(height: 0.5),
-            hintStyle: new TextStyle(color: Colors.grey[800]),
-            labelStyle: new TextStyle(color: Colors.grey[800]),
+            errorStyle: const TextStyle(height: 0.5),
+            hintStyle: TextStyle(color: Colors.grey[800]),
+            labelStyle: TextStyle(color: Colors.grey[800]),
             hintText: "8 ${OlukoLocalizations.of(context).find('maxChars')}",
             labelText: OlukoLocalizations.of(context).find('password'),
             fillColor: Colors.white70),
@@ -171,7 +164,7 @@ class _LoginPageState extends State<LoginPage> {
               ))),
       //Login button
       Padding(
-          padding: EdgeInsets.symmetric(vertical: 10),
+          padding: const EdgeInsets.symmetric(vertical: 10),
           child: SizedBox(
               width: double.infinity,
               height: 50,
@@ -195,10 +188,10 @@ class _LoginPageState extends State<LoginPage> {
                     )
                   ])))),
       Padding(
-          padding: EdgeInsets.symmetric(vertical: 15),
+          padding: const EdgeInsets.symmetric(vertical: 15),
           child: Text(
             '- ${OlukoLocalizations.of(context).find('or')} -',
-            style: TextStyle(color: Colors.grey),
+            style: const TextStyle(color: Colors.grey),
           )),
       //Login with SSO
       Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
@@ -228,6 +221,7 @@ class _LoginPageState extends State<LoginPage> {
                     onPressed: () {
                       BlocProvider.of<AuthBloc>(context)..loginWithFacebook(context);
                     },
+
                     style: OutlinedButton.styleFrom(
                         backgroundColor: Colors.transparent, side: BorderSide(color: Colors.grey)),
                     child: Stack(children: [

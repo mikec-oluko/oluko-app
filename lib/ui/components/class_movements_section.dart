@@ -15,11 +15,7 @@ class ClassMovementSection extends StatefulWidget {
   final Function(BuildContext, Movement) onPressedMovement;
   final PanelController panelController;
 
-  ClassMovementSection(
-      {this.classObj,
-      this.onPressedMovement,
-      this.movements,
-      this.panelController});
+  ClassMovementSection({this.classObj, this.onPressedMovement, this.movements, this.panelController});
 
   @override
   _State createState() => _State();
@@ -41,18 +37,14 @@ class _State extends State<ClassMovementSection> {
       Row(children: [
         Text(
           OlukoLocalizations.of(context).find('movesInThisClass'),
-          style: OlukoFonts.olukoBigFont(
-              custoFontWeight: FontWeight.w500,
-              customColor: OlukoColors.grayColor),
+          style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
         ),
         Expanded(child: SizedBox()),
         GestureDetector(
             onTap: () => widget.panelController.open(),
             child: Text(
               OlukoLocalizations.of(context).find('viewDetails'),
-              style: OlukoFonts.olukoBigFont(
-                  custoFontWeight: FontWeight.w500,
-                  customColor: OlukoColors.primary),
+              style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.primary),
             ))
       ]),
       buildMovementBubbles(),
@@ -63,9 +55,6 @@ class _State extends State<ClassMovementSection> {
     return Padding(
         padding: const EdgeInsets.only(top: 25.0),
         child: MovementItemBubbles(
-            showAsGrid: true,
-            onPressed: widget.onPressedMovement,
-            content: widget.movements,
-            width: ScreenUtils.width(context) / 1));
+            showAsGrid: true, onPressed: widget.onPressedMovement, content: widget.movements, width: ScreenUtils.width(context) / 1));
   }
 }

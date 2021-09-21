@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/helpers/permissions.dart';
 import 'package:oluko_app/repositories/profile_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -20,6 +21,8 @@ class ProfileCoverImageFailure extends ProfileCoverImageState {
   dynamic exception;
   ProfileCoverImageFailure({this.exception});
 }
+
+class ProfileCoverRequirePermissions extends ProfileCoverImageState {}
 
 class ProfileCoverImageBloc extends Cubit<ProfileCoverImageState> {
   ProfileCoverImageBloc() : super(ProfileCoverImageDefault());
@@ -47,9 +50,20 @@ class ProfileCoverImageBloc extends Cubit<ProfileCoverImageState> {
         exception,
         stackTrace: stackTrace,
       );
+
+      if (!await requiredCoverPermissionsEnabled(uploadedFrom)) return;
+
       emit(ProfileCoverImageFailure(exception: exception));
       rethrow;
     }
+  }
+
+  Future<bool> requiredCoverPermissionsEnabled(DeviceContentFrom uploadedFrom) async {
+    if (!await Permissions.requiredPermissionsEnabled(uploadedFrom)) {
+      emit(ProfileCoverRequirePermissions());
+      return false;
+    }
+    return true;
   }
 
   void emitDefaultState() {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/search_results.dart';
 import 'package:oluko_app/ui/components/search_bar.dart';
@@ -43,9 +44,7 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
       child: AppBar(
           backgroundColor: Colors.black,
           leading: showBackButton
-              ? IconButton(
-                  icon: Icon(Icons.chevron_left, size: 35, color: Colors.white),
-                  onPressed: () => Navigator.pop(context))
+              ? IconButton(icon: Icon(Icons.chevron_left, size: 35, color: Colors.white), onPressed: () => Navigator.pop(context))
               : null,
           title: showLogo
               ? Align(
@@ -74,10 +73,10 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
                             key: searchKey,
                             items: searchResultItems,
                             whenInitialized: (TextEditingController controller) => whenSearchBarInitialized(controller),
-                            onSearchSubmit: (SearchResults<T> searchResults) => onSearchSubmit(searchResults),
-                            onSearchResults: (SearchResults<T> searchResults) => onSearchResults(searchResults),
-                            searchMethod: (String query, List<T> collection) => searchMethod(query, collection),
-                            suggestionMethod: (String query, List<T> collection) => suggestionMethod(query, collection),
+                            onSearchSubmit: (SearchResults<dynamic> searchResults) => onSearchSubmit(searchResults as SearchResults<T>),
+                            onSearchResults: (SearchResults<dynamic> searchResults) => onSearchResults(searchResults as SearchResults<T>),
+                            searchMethod: (String query, List<dynamic> collection) => searchMethod(query, collection as List<T>),
+                            suggestionMethod: (String query, List<dynamic> collection) => suggestionMethod(query, collection as List<T>),
                           )),
                       Divider(
                         height: 1,
@@ -107,6 +106,5 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize =>
-      showSearchBar == true ? new Size.fromHeight(kToolbarHeight * 2) : new Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => showSearchBar == true ? new Size.fromHeight(kToolbarHeight * 2) : new Size.fromHeight(kToolbarHeight);
 }

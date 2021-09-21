@@ -100,6 +100,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
                     Navigator.pushNamed(
                         context, routeLabels[RouteEnum.movementIntro],
                         arguments: {'movement': movement})),
+
             body: _viewBody()),
       ),
     );
@@ -149,9 +150,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
     return Container(
       child: ListView(children: [
         SegmentImageSection(
-            segment: _segments[widget.segmentIndex],
-            currentSegmentStep: currentSegmentStep,
-            totalSegmentStep: totalSegmentStep),
+            segment: _segments[widget.segmentIndex], currentSegmentStep: currentSegmentStep, totalSegmentStep: totalSegmentStep),
         _menuOptions()
       ]),
     );

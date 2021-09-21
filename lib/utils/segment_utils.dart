@@ -10,6 +10,7 @@ import 'package:oluko_app/models/timer_entry.dart';
 import 'oluko_localizations.dart';
 
 class SegmentUtils {
+
   static List<Widget> getSegmentSummary(
       Segment segment, BuildContext context, Color color) {
     List<Widget> workoutWidgets = getWorkouts(segment, color);
@@ -32,29 +33,20 @@ class SegmentUtils {
       return getEMOMTitle(segment, context, color);
     } else if (isAMRAP(segment)) {
       return Text(
-        segment.totalTime.toString() +
-            " " +
-            OlukoLocalizations.of(context).find('seconds').toLowerCase() +
-            " " +
-            "AMRAP",
-        style: OlukoFonts.olukoBigFont(
-            customColor: color, custoFontWeight: FontWeight.bold),
+        segment.totalTime.toString() + " " + OlukoLocalizations.of(context).find('seconds').toLowerCase() + " " + "AMRAP",
+        style: OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
       );
     } else {
       return segment.rounds > 1
           ? Text(
-              segment.rounds.toString() +
-                  " " +
-                  OlukoLocalizations.of(context).find('rounds'),
-              style: OlukoFonts.olukoBigFont(
-                  customColor: color, custoFontWeight: FontWeight.bold),
+              segment.rounds.toString() + " " + OlukoLocalizations.of(context).find('rounds'),
+              style: OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
             )
           : SizedBox();
     }
   }
 
-  static Widget getEMOMTitle(
-      Segment segment, BuildContext context, Color color) {
+  static Widget getEMOMTitle(Segment segment, BuildContext context, Color color) {
     return Text(
       "EMOM: " +
           segment.rounds.toString() +
@@ -92,6 +84,7 @@ class SegmentUtils {
         padding: EdgeInsets.only(bottom: 12.0),
         child: Text(
           text,
+
           style: OlukoFonts.olukoBigFont(
               custoFontWeight: FontWeight.w400, customColor: color),
         ));
@@ -128,19 +121,6 @@ class SegmentUtils {
             bool hasMultipleMovements =
                 segment.sections[sectionIndex].movements.length > 1;
             if (hasMultipleMovements) {
-              /*for (var movementIndex = 0;
-                movementIndex < segment.sections[sectionIndex].movements.length;
-                movementIndex++) {
-              MovementSubmodel movementSubmodel =
-                  segment.sections[sectionIndex].movements[movementIndex];
-              entries.add(TimerEntry(
-                  movement: movementSubmodel,
-                  parameter: movementSubmodel.parameter,
-                  value: movementSubmodel.value,
-                  round: roundIndex + 1,
-                  counter: movementSubmodel.counter,
-                  labels: getLabels(segment.sections[sectionIndex].movements)));
-            }*/
               MovementSubmodel movementSubmodel =
                   segment.sections[sectionIndex].movements[0];
               entries.add(TimerEntry(
@@ -184,8 +164,10 @@ class SegmentUtils {
 
   static List<String> getLabels(List<MovementSubmodel> movements) {
     List<String> movementStrings = [];
+
     movements.forEach((movement) {
       movementStrings.add(getLabel(movement));
+
     });
     return movementStrings;
   }
@@ -193,11 +175,7 @@ class SegmentUtils {
   static List<Widget> getJoinedLabel(List<String> labels) {
     List<Widget> labelWidgets = [];
     labels.forEach((label) {
-      labelWidgets.add(Text(label,
-          style: TextStyle(
-              fontSize: 20,
-              color: OlukoColors.white,
-              fontWeight: FontWeight.w300)));
+      labelWidgets.add(Text(label, style: TextStyle(fontSize: 20, color: OlukoColors.white, fontWeight: FontWeight.w300)));
       labelWidgets.add(Divider(
         height: 10,
         color: OlukoColors.divider,
