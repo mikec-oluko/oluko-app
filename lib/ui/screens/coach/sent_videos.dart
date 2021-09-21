@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/movement_submission.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class SentVideosPage extends StatefulWidget {
-  final List<TaskSubmission> taskSubmissions;
+  final List<MovementSubmission> taskSubmissions;
   const SentVideosPage({this.taskSubmissions});
 
   @override
@@ -14,8 +15,8 @@ class SentVideosPage extends StatefulWidget {
 }
 
 class _SentVideosPageState extends State<SentVideosPage> {
-  List<TaskSubmission> content = [];
-  List<TaskSubmission> orderContent;
+  List<MovementSubmission> content = [];
+  List<MovementSubmission> orderContent;
 
   @override
   void initState() {
@@ -83,7 +84,7 @@ class _SentVideosPageState extends State<SentVideosPage> {
     );
   }
 
-  List<Widget> segmentCard({List<TaskSubmission> taskSubmissions}) {
+  List<Widget> segmentCard({List<MovementSubmission> taskSubmissions}) {
     List<Widget> contentForSection = [];
 
     taskSubmissions.forEach((taskSubmitted) {
@@ -93,7 +94,7 @@ class _SentVideosPageState extends State<SentVideosPage> {
     return contentForSection;
   }
 
-  Widget returnCardForSegment(TaskSubmission taskSubmitted) {
+  Widget returnCardForSegment(MovementSubmission taskSubmitted) {
     //TODO: repeated code 1 from Mentored Video
     Widget contentForReturn = const SizedBox();
     contentForReturn = Padding(
@@ -169,7 +170,7 @@ class _SentVideosPageState extends State<SentVideosPage> {
     return contentForReturn;
   }
 
-  ImageProvider getImage(TaskSubmission taskSubmitted) {
+  ImageProvider getImage(MovementSubmission taskSubmitted) {
     return taskSubmitted.video.thumbUrl != null
         ? NetworkImage(taskSubmitted.video.thumbUrl)
         : AssetImage('assets/home/mvt.png') as ImageProvider;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/models/movement_submission.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import '../../routes.dart';
@@ -11,7 +12,7 @@ import 'image_and_video_container.dart';
 class CoachContentPreviewContent extends StatefulWidget {
   final CoachContentSection contentFor;
   final String titleForSection;
-  final List<TaskSubmission> videoContent;
+  final List<MovementSubmission> videoContent;
   final bool isForCarousel;
 
   const CoachContentPreviewContent(
@@ -86,7 +87,7 @@ class _CoachContentPreviewContentState extends State<CoachContentPreviewContent>
                         color: Colors.black,
                         child: widget.videoContent.length != 0
                             ? CoachVideoContent(
-                                videoThumbnail: widget.videoContent[1].video.thumbUrl,
+                                videoThumbnail: widget.videoContent[0].video.thumbUrl,
                                 isForGallery: widget.isForCarousel)
                             : CoachContentSectionCard(
                                 title: widget.titleForSection, isForCarousel: widget.isForCarousel, needTitle: false),
@@ -106,7 +107,7 @@ class _CoachContentPreviewContentState extends State<CoachContentPreviewContent>
             arguments: {'taskSubmissions': widget.videoContent});
       case CoachContentSection.sentVideos:
         return Navigator.pushNamed(context, routeLabels[RouteEnum.sentVideos],
-            arguments: {'taskSubmissions': widget.videoContent});
+            arguments: {'sentVideosContent': widget.videoContent});
       case CoachContentSection.recomendedVideos:
         return OlukoLocalizations.of(context).find('recomendedVideos');
       case CoachContentSection.voiceMessages:

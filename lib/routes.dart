@@ -74,7 +74,9 @@ import 'package:oluko_app/ui/screens/profile/transformation_journey_post.dart';
 import 'package:oluko_app/ui/screens/courses/segment_detail.dart';
 import 'blocs/coach/coach_assignment_bloc.dart';
 import 'blocs/coach/coach_profile_bloc.dart';
+import 'blocs/coach/coach_sent_videos_bloc.dart';
 import 'blocs/movement_info_bloc.dart';
+import 'models/movement_submission.dart';
 import 'models/task.dart';
 import 'ui/screens/coach/coach_main_page.dart';
 import 'ui/screens/courses/segment_clocks.dart';
@@ -229,6 +231,7 @@ class Routes {
   final UserListBloc _userListBloc = UserListBloc();
   final CoachAssignmentBloc _coachAssignmentBloc = CoachAssignmentBloc();
   final CoachProfileBloc _coachProfileBloc = CoachProfileBloc();
+  final CoachSentVideosBloc _coachSentVideosBloc = CoachSentVideosBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -262,6 +265,8 @@ class Routes {
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
           BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
           BlocProvider<CoachProfileBloc>.value(value: _coachProfileBloc),
+          BlocProvider<CoachSentVideosBloc>.value(value: _coachSentVideosBloc),
+          BlocProvider<MovementSubmissionBloc>.value(value: _movementSubmissionBloc),
         ];
         newRouteView = MainPage();
         break;
@@ -575,6 +580,8 @@ class Routes {
           BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
           BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
           BlocProvider<CoachProfileBloc>.value(value: _coachProfileBloc),
+          BlocProvider<CoachSentVideosBloc>.value(value: _coachSentVideosBloc),
+          BlocProvider<MovementSubmissionBloc>.value(value: _movementSubmissionBloc),
         ];
         newRouteView = CoachMainPage();
         break;
@@ -590,12 +597,14 @@ class Routes {
           BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
           BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
           BlocProvider<CoachProfileBloc>.value(value: _coachProfileBloc),
+          BlocProvider<CoachSentVideosBloc>.value(value: _coachSentVideosBloc),
+          BlocProvider<MovementSubmissionBloc>.value(value: _movementSubmissionBloc),
         ];
         newRouteView = CoachPage();
         break;
       case RouteEnum.sentVideos:
-        final Map<String, List<TaskSubmission>> argumentsToAdd = arguments as Map<String, List<TaskSubmission>>;
-        newRouteView = SentVideosPage(taskSubmissions: argumentsToAdd['taskSubmissions']);
+        final Map<String, List<MovementSubmission>> argumentsToAdd = arguments as Map<String, List<MovementSubmission>>;
+        newRouteView = SentVideosPage(taskSubmissions: argumentsToAdd['sentVideosContent']);
         break;
       case RouteEnum.mentoredVideos:
         final Map<String, List<TaskSubmission>> argumentsToAdd = arguments as Map<String, List<TaskSubmission>>;
