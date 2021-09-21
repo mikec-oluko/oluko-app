@@ -7,7 +7,7 @@ class TimerEntry {
       {this.movement,
       this.labels,
       this.parameter,
-      this.quantity,
+      this.value,
       this.round,
       this.counter});
 
@@ -15,6 +15,6 @@ class TimerEntry {
   List<String> labels;
   int round;
   ParameterEnum parameter;
-  int quantity;
+  int value;
   CounterEnum counter;
 }

@@ -2,9 +2,10 @@ import 'movement_submodel.dart';
 
 class SectionSubmodel {
   List<MovementSubmodel> movements;
-  int totalTime;
+  int estimatedTime;
+  bool stopwatch;
 
-  SectionSubmodel({this.movements, this.totalTime});
+  SectionSubmodel({this.movements, this.estimatedTime, this.stopwatch});
 
   factory SectionSubmodel.fromJson(Map<String, dynamic> json) {
     return SectionSubmodel(
@@ -13,12 +14,15 @@ class SectionSubmodel {
           : List<MovementSubmodel>.from((json['movements'] as Iterable).map(
               (movement) =>
                   MovementSubmodel.fromJson(movement as Map<String, dynamic>))),
-      totalTime: json['total_time'] == null ? null : json['total_time'] as int,
+      estimatedTime:
+          json['estimated_time'] == null ? null : json['estimated_time'] as int,
+      stopwatch: json['stopwatch'] == null ? null : json['stopwatch'] as bool,
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'total_time': totalTime,
+        'estimated_time': estimatedTime,
+        'stopwatch': stopwatch,
         'movements': movements == null
             ? null
             : List<dynamic>.from(movements.map((movement) => movement.toJson()))

@@ -357,7 +357,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
   }
 
   Widget getRoundsTimer() {
-    if (workState == WorkState.finished) {
+    if (SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) &&
+        workState == WorkState.finished) {
+      return TimerUtils.roundsTimer(AMRAPRound, AMRAPRound + 1);
+    } else if (workState == WorkState.finished) {
       return TimerUtils.roundsTimer(widget.segments[widget.segmentIndex].rounds,
           widget.segments[widget.segmentIndex].rounds + 1);
     } else if (SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex])) {
@@ -509,10 +512,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
     }
 
     Duration actualTime =
-        Duration(seconds: timerEntries[timerTaskIndex].quantity) - timeLeft;
+        Duration(seconds: timerEntries[timerTaskIndex].value) - timeLeft;
 
     double circularProgressIndicatorValue =
-        (actualTime.inSeconds / timerEntries[timerTaskIndex].quantity);
+        (actualTime.inSeconds / timerEntries[timerTaskIndex].value);
 
     if (workState == WorkState.paused) {
       return TimerUtils.pausedTimer(
@@ -755,7 +758,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
     }
     if (isCurrentTaskTimed()) {
       _playCountdown();
-      timeLeft = Duration(seconds: timerEntries[timerTaskIndex].quantity);
+      timeLeft = Duration(seconds: timerEntries[timerTaskIndex].value);
     }
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/enums/segment_type_enum.dart';
 import 'package:oluko_app/models/enums/counter_enum.dart';
 import 'package:oluko_app/models/enums/parameter_enum.dart';
 import 'package:oluko_app/models/segment.dart';
@@ -18,11 +19,11 @@ class SegmentUtils {
 
   static bool isEMOM(Segment segment) {
     return segment.sections.length == 1 &&
-        segment.sections[0].totalTime != null;
+        segment.type == SegmentTypeEnum.RoundsAndDuration;
   }
 
   static bool isAMRAP(Segment segment) {
-    return segment.rounds == null;
+    return segment.type == SegmentTypeEnum.Duration;
   }
 
   static Widget getRoundTitle(
@@ -62,7 +63,7 @@ class SegmentUtils {
           " " +
           OlukoLocalizations.of(context).find('in') +
           " " +
-          (segment.sections[0].totalTime * segment.rounds).toString() +
+          (segment.totalTime).toString() +
           " " +
           OlukoLocalizations.of(context).find('seconds'),
       style: OlukoFonts.olukoBigFont(
@@ -100,24 +101,34 @@ class SegmentUtils {
   //sets and rounds. Returns a timer entry list consumible by the timer.
   static List<TimerEntry> getExercisesList(Segment segment) {
     List<TimerEntry> entries = [];
-    for (var roundIndex = 0; roundIndex < segment.rounds; roundIndex++) {
-      if (isEMOM(segment)) {
-        MovementSubmodel movementSubmodel = segment.sections[0].movements[0];
-        entries.add(TimerEntry(
-            movement: movementSubmodel,
-            parameter: ParameterEnum.duration,
-            quantity: segment.sections[0].totalTime,
-            round: roundIndex + 1,
-            counter: CounterEnum.none,
-            labels: getLabels(segment.sections[0].movements)));
-      } else {
-        for (var sectionIndex = 0;
-            sectionIndex < segment.sections.length;
-            sectionIndex++) {
-          bool hasMultipleMovements =
-              segment.sections[sectionIndex].movements.length > 1;
-          if (hasMultipleMovements) {
-            for (var movementIndex = 0;
+    if (isAMRAP(segment)) {
+      MovementSubmodel movementSubmodel = segment.sections[0].movements[0];
+      entries.add(TimerEntry(
+          movement: movementSubmodel,
+          parameter: ParameterEnum.duration,
+          value: segment.totalTime,
+          round: null,
+          counter: CounterEnum.none,
+          labels: getLabels(segment.sections[0].movements)));
+    } else {
+      for (var roundIndex = 0; roundIndex < segment.rounds; roundIndex++) {
+        if (isEMOM(segment)) {
+          MovementSubmodel movementSubmodel = segment.sections[0].movements[0];
+          entries.add(TimerEntry(
+              movement: movementSubmodel,
+              parameter: ParameterEnum.duration,
+              value: (segment.totalTime / segment.rounds).toInt(),
+              round: roundIndex + 1,
+              counter: CounterEnum.none,
+              labels: getLabels(segment.sections[0].movements)));
+        } else {
+          for (var sectionIndex = 0;
+              sectionIndex < segment.sections.length;
+              sectionIndex++) {
+            bool hasMultipleMovements =
+                segment.sections[sectionIndex].movements.length > 1;
+            if (hasMultipleMovements) {
+              /*for (var movementIndex = 0;
                 movementIndex < segment.sections[sectionIndex].movements.length;
                 movementIndex++) {
               MovementSubmodel movementSubmodel =
@@ -125,21 +136,31 @@ class SegmentUtils {
               entries.add(TimerEntry(
                   movement: movementSubmodel,
                   parameter: movementSubmodel.parameter,
-                  quantity: movementSubmodel.quantity,
+                  value: movementSubmodel.value,
                   round: roundIndex + 1,
                   counter: movementSubmodel.counter,
                   labels: getLabels(segment.sections[sectionIndex].movements)));
+            }*/
+              MovementSubmodel movementSubmodel =
+                  segment.sections[sectionIndex].movements[0];
+              entries.add(TimerEntry(
+                  movement: movementSubmodel,
+                  parameter: movementSubmodel.parameter,
+                  value: movementSubmodel.value,
+                  round: roundIndex + 1,
+                  counter: movementSubmodel.counter,
+                  labels: getLabels(segment.sections[sectionIndex].movements)));
+            } else {
+              MovementSubmodel movementSubmodel =
+                  segment.sections[sectionIndex].movements[0];
+              entries.add(TimerEntry(
+                  movement: movementSubmodel,
+                  parameter: movementSubmodel.parameter,
+                  value: movementSubmodel.value,
+                  round: roundIndex + 1,
+                  counter: movementSubmodel.counter,
+                  labels: [getLabel(movementSubmodel)]));
             }
-          } else {
-            MovementSubmodel movementSubmodel =
-                segment.sections[sectionIndex].movements[0];
-            entries.add(TimerEntry(
-                movement: movementSubmodel,
-                parameter: movementSubmodel.parameter,
-                quantity: movementSubmodel.quantity,
-                round: roundIndex + 1,
-                counter: movementSubmodel.counter,
-                labels: [getLabel(movementSubmodel)]));
           }
         }
       }
@@ -148,7 +169,7 @@ class SegmentUtils {
   }
 
   static String getLabel(MovementSubmodel movement) {
-    String label = movement.quantity.toString();
+    String label = movement.value.toString();
     switch (movement.parameter) {
       case ParameterEnum.duration:
         label += "s";

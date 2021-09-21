@@ -224,7 +224,7 @@ class TimerUtils {
                   aspectRatio: 1,
                   child: CircularProgressIndicator(
                       value: progressValue,
-                      // color: OlukoColors.skyblue,
+                      color: OlukoColors.skyblue,
                       backgroundColor: OlukoColors.grayColorSemiTransparent)),
               Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Text(OlukoLocalizations.of(context).find('rest').toUpperCase(),
