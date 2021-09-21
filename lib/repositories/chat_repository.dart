@@ -49,6 +49,22 @@ class ChatRepository {
     return messages;
   }
 
+  Stream<QuerySnapshot<Map<String, dynamic>>> listenToChats(
+    String userId,
+  ) {
+    final Stream<QuerySnapshot<Map<String, dynamic>>> docRef = FirebaseFirestore
+        .instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('users')
+        .doc(userId)
+        .collection('chat')
+        .snapshots();
+
+    //TODO Get messages from inside chat document
+    return docRef;
+  }
+
   Future<Message> sendHiFive(String userId, String targetUserId) async {
     Message messageToSend = Message(message: Message().hifiveMessageCode);
 
