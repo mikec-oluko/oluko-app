@@ -21,7 +21,7 @@ class Message extends Base {
             isDeleted: isDeleted,
             isHidden: isHidden);
 
-  String hifiveMessageCode = '#HiFive';
+  String hifiveMessageCode = '✋';
   String message;
   String seenAt;
 
