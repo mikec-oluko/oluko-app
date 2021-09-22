@@ -41,12 +41,50 @@ class ChatRepository {
         .doc(targetUserId)
         .get();
 
-    //TODO Get messages from inside chat document
-
     var messagesData = await docRef.reference.collection('messages').get();
     List<Message> messages =
         messagesData.docs.map((e) => Message.fromJson(e.data())).toList();
     return messages;
+  }
+
+  Future<Map<Chat, List<Message>>> getChatsWithMessages(String userId) async {
+    QuerySnapshot<Map<String, dynamic>> chatRefs = await FirebaseFirestore
+        .instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('users')
+        .doc(userId)
+        .collection('chat')
+        .get();
+
+    //Chat List
+    List<Chat> chats =
+        chatRefs.docs.map((e) => Chat.fromJson(e.data())).toList();
+
+    //Get all message collection references
+    List<QuerySnapshot<Map<String, dynamic>>> messageCollectionRefs =
+        await Future.wait(
+      chatRefs.docs.map((e) => e.reference.collection('messages').get()),
+    );
+
+    //Get all message collections for all chats
+    List<List<Message>> messageLists = messageCollectionRefs
+        .map(
+          (messageCollection) => messageCollection.docs
+              .map(
+                (messageDoc) => Message.fromJson(messageDoc.data()),
+              )
+              .toList(),
+        )
+        .toList();
+
+    //Iterate over chats to generate a map of Chats with their corresponding message list
+    Map<Chat, List<Message>> chatsWithMessages = {};
+    for (var i = 0; i < chats.length; i++) {
+      chatsWithMessages[chats[i]] = messageLists[i];
+    }
+
+    return chatsWithMessages;
   }
 
   Stream<QuerySnapshot<Map<String, dynamic>>> listenToChats(
