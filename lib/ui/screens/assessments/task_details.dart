@@ -8,15 +8,18 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/oluko_permissions.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
+import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -38,6 +41,7 @@ class _TaskDetailsState extends State<TaskDetails> {
   AssessmentAssignment _assessmentAssignment;
   Task _task;
   List<Task> _tasks;
+  UserResponse _user;
 
   @override
   void initState() {
@@ -212,20 +216,32 @@ class _TaskDetailsState extends State<TaskDetails> {
               },
             ),
             SizedBox(width: 20),
-            OlukoPrimaryButton(
-              title: OlukoLocalizations.of(context).find('next'),
-              onPressed: () {
-                if (_controller != null) {
-                  _controller.pause();
-                }
-                if (widget.taskIndex < _tasks.length - 1) {
-                  Navigator.pop(context);
-                  return Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {'taskIndex': widget.taskIndex + 1});
-                } else {
-                  Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos]);
-                }
-              },
-            ),
+            BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
+              if (authState is AuthSuccess) {
+                _user = authState.user;
+                return OlukoPrimaryButton(
+                  isDisabled: OlukoPermissions.isAssessmentTaskDisabled(_user, widget.taskIndex + 1),
+                  title: OlukoLocalizations.of(context).find('next'),
+                  onPressed: () {
+                    if (OlukoPermissions.isAssessmentTaskDisabled(_user, widget.taskIndex + 1)) {
+                      AppMessages.showSnackbar(context, OlukoLocalizations.of(context).find('yourCurrentPlanDoesntIncludeAssessment'));
+                    } else {
+                      if (_controller != null) {
+                        _controller.pause();
+                      } else if (widget.taskIndex < _tasks.length - 1) {
+                        Navigator.pop(context);
+                        return Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails],
+                            arguments: {'taskIndex': widget.taskIndex + 1});
+                      } else {
+                        Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos]);
+                      }
+                    }
+                  },
+                );
+              } else {
+                return null;
+              }
+            })
           ],
         ));
   }

@@ -34,66 +34,58 @@ class CourseEnrollmentRepository {
   }
 
   static Future<CourseEnrollment> get(Course course, User user) async {
-    CollectionReference reference = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('courseEnrollments');
+    final CollectionReference reference =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('courseEnrollments');
 
-    final QuerySnapshot qs =
-        await reference.where('course.id', isEqualTo: course.id).where('created_by', isEqualTo: user.uid).get();
+    final QuerySnapshot qs = await reference.where('course.id', isEqualTo: course.id).where('created_by', isEqualTo: user.uid).get();
 
-    if (qs.docs.length > 0) {
+    if (qs.docs.isNotEmpty) {
       return CourseEnrollment.fromJson(qs.docs[0].data() as Map<String, dynamic>);
     }
     return null;
   }
 
   static Future<List<CourseEnrollment>> getByCourse(String courseId, String userId) async {
-    CollectionReference reference = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('courseEnrollments');
+    final CollectionReference reference =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('courseEnrollments');
 
     final QuerySnapshot qs = await reference.where('course.id', isEqualTo: courseId).where('created_by', isNotEqualTo: userId).get();
 
-    if (qs.docs.length > 0) {
+    if (qs.docs.isNotEmpty) {
       return qs.docs.map((courseData) {
-        var data = courseData.data() as Map<String, dynamic>;
+        final data = courseData.data() as Map<String, dynamic>;
         return CourseEnrollment.fromJson(data);
       }).toList();
     }
     return null;
   }
 
-  static Future<CourseEnrollment> markSegmentAsCompleted(
-      CourseEnrollment courseEnrollment, int segmentIndex, int classIndex) async {
-    DocumentReference reference = FirebaseFirestore.instance
+  static Future<CourseEnrollment> markSegmentAsCompleted(CourseEnrollment courseEnrollment, int segmentIndex, int classIndex) async {
+    final DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
         .collection('courseEnrollments')
         .doc(courseEnrollment.id);
-    List<EnrollmentClass> classes = courseEnrollment.classes;
+    final List<EnrollmentClass> classes = courseEnrollment.classes;
     classes[classIndex].segments[segmentIndex].compleatedAt = Timestamp.now();
 
-    bool isClassCompleted = CourseEnrollmentService.getFirstUncompletedSegmentIndex(classes[classIndex]) == -1;
+    final bool isClassCompleted = CourseEnrollmentService.getFirstUncompletedSegmentIndex(classes[classIndex]) == -1;
     if (isClassCompleted) {
-      double courseProgress = 1 / courseEnrollment.classes.length * (classIndex + 1);
+      final double courseProgress = 1 / courseEnrollment.classes.length * (classIndex + 1);
       classes[classIndex].compleatedAt = Timestamp.now();
       courseEnrollment.completion = courseProgress;
     }
-    reference.update(
-        {'classes': List<dynamic>.from(classes.map((c) => c.toJson())), 'completion': courseEnrollment.completion});
+    reference.update({'classes': List<dynamic>.from(classes.map((c) => c.toJson())), 'completion': courseEnrollment.completion});
   }
 
   static Future<CourseEnrollment> create(User user, Course course) async {
-    DocumentReference projectReference =
+    final DocumentReference projectReference =
         FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId'));
-    CollectionReference reference = projectReference.collection('courseEnrollments');
-    DocumentReference courseReference = projectReference.collection('courses').doc(course.id);
+    final CollectionReference reference = projectReference.collection('courseEnrollments');
+    final DocumentReference courseReference = projectReference.collection('courses').doc(course.id);
     final DocumentReference docRef = reference.doc();
-    DocumentReference userReference = projectReference.collection('users').doc(user.uid);
-    ObjectSubmodel courseSubmodel =
-        ObjectSubmodel(id: course.id, reference: courseReference, name: course.name, image: course.image);
+    final DocumentReference userReference = projectReference.collection('users').doc(user.uid);
+    final ObjectSubmodel courseSubmodel = ObjectSubmodel(id: course.id, reference: courseReference, name: course.name, image: course.image);
     CourseEnrollment courseEnrollment =
         CourseEnrollment(createdBy: user.uid, userReference: userReference, course: courseSubmodel, classes: []);
     courseEnrollment.id = docRef.id;
@@ -104,8 +96,8 @@ class CourseEnrollmentRepository {
 
   static Future<CourseEnrollment> setEnrollmentClasses(Course course, CourseEnrollment courseEnrollment) async {
     for (ObjectSubmodel classObj in course.classes) {
-      EnrollmentClass enrollmentClass = EnrollmentClass(
-          id: classObj.id, name: classObj.name, image: classObj.image, reference: classObj.reference, segments: []);
+      EnrollmentClass enrollmentClass =
+          EnrollmentClass(id: classObj.id, name: classObj.name, image: classObj.image, reference: classObj.reference, segments: []);
       enrollmentClass = await setEnrollmentSegments(enrollmentClass);
       courseEnrollment.classes.add(enrollmentClass);
     }
@@ -113,8 +105,8 @@ class CourseEnrollmentRepository {
   }
 
   static Future<EnrollmentClass> setEnrollmentSegments(EnrollmentClass enrollmentClass) async {
-    DocumentSnapshot qs = await enrollmentClass.reference.get();
-    Class classObj = Class.fromJson(qs.data() as Map<String, dynamic>);
+    final DocumentSnapshot qs = await enrollmentClass.reference.get();
+    final Class classObj = Class.fromJson(qs.data() as Map<String, dynamic>);
     classObj.segments.forEach((SegmentSubmodel segment) {
       enrollmentClass.segments.add(EnrollmentSegment(id: segment.id, name: segment.name, reference: segment.reference));
     });
@@ -122,9 +114,9 @@ class CourseEnrollmentRepository {
   }
 
   static Future<List<CourseEnrollment>> getUserCourseEnrollments(String userId) async {
-    List<CourseEnrollment> courseEnrollmentList = [];
+    final List<CourseEnrollment> courseEnrollmentList = [];
     try {
-      QuerySnapshot docRef = await FirebaseFirestore.instance
+      final QuerySnapshot docRef = await FirebaseFirestore.instance
           .collection('projects')
           .doc(GlobalConfiguration().getValue('projectId'))
           .collection('courseEnrollments')
@@ -151,13 +143,13 @@ class CourseEnrollmentRepository {
   }
 
   static getCourseByCourseEnrollmentId(String courseId) async {
-    Course curso = await CourseRepository.get(courseId);
+    final Course curso = await CourseRepository.get(courseId);
     return curso;
   }
 
   Future<List<Challenge>> getUserChallengesByUserId(String userId) async {
-    List<Challenge> challengeList = [];
-    List<CourseEnrollment> courseEnrollments = await getUserCourseEnrollments(userId);
+    final List<Challenge> challengeList = [];
+    final List<CourseEnrollment> courseEnrollments = await getUserCourseEnrollments(userId);
 
     if (courseEnrollments == null) {
       return [];
@@ -177,32 +169,32 @@ class CourseEnrollmentRepository {
   }
 
   Future getChallengesFromCourseEnrollment(CourseEnrollment courseEnrollment, List<Challenge> challenges) async {
-    QuerySnapshot query = await FirebaseFirestore.instance
+    final QuerySnapshot query = await FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
         .collection('challenges')
         // .where('course_enrollment_id', isEqualTo: courseEnrollment.id)
         .get();
     for (var challengeDoc in query.docs) {
-      Map<String, dynamic> challenge = challengeDoc.data() as Map<String, dynamic>;
+      final Map<String, dynamic> challenge = challengeDoc.data() as Map<String, dynamic>;
       challenges.add(Challenge.fromJson(challenge));
     }
   }
 
-  static Future<CourseEnrollment> saveMovementCounter(CourseEnrollment courseEnrollment, int segmentIndex,
-      int classIndex, MovementSubmodel movement, Counter counter) async {
-    DocumentReference reference = FirebaseFirestore.instance
+  static Future<CourseEnrollment> saveMovementCounter(
+      CourseEnrollment courseEnrollment, int segmentIndex, int classIndex, MovementSubmodel movement, Counter counter) async {
+    final DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
         .collection('courseEnrollments')
         .doc(courseEnrollment.id);
 
-    EnrollmentMovement enrollmentMovement =
+    final EnrollmentMovement enrollmentMovement =
         EnrollmentMovement(id: movement.id, reference: movement.reference, name: movement.name, counter: counter);
-    List<EnrollmentClass> classes = courseEnrollment.classes;
-    List<EnrollmentMovement> movements = classes[classIndex].segments[segmentIndex].movements;
+    final List<EnrollmentClass> classes = courseEnrollment.classes;
+    final List<EnrollmentMovement> movements = classes[classIndex].segments[segmentIndex].movements;
 
-    if (movements == null || counter.round == 1 && counter.set == null || counter.round == 1 && counter.set == 1) {
+    if (movements == null || counter.round == 1) {
       classes[classIndex].segments[segmentIndex].movements = [];
     }
 
@@ -211,9 +203,8 @@ class CourseEnrollmentRepository {
     reference.update({'classes': List<dynamic>.from(classes.map((c) => c.toJson()))});
   }
 
-  static Future<CourseEnrollment> updateSelfie(
-      CourseEnrollment courseEnrollment, int classIndex, PickedFile file) async {
-    DocumentReference reference = FirebaseFirestore.instance
+  static Future<CourseEnrollment> updateSelfie(CourseEnrollment courseEnrollment, int classIndex, PickedFile file) async {
+    final DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"))
         .collection('courseEnrollments')
@@ -234,11 +225,12 @@ class CourseEnrollmentRepository {
   }
 
   static Future<String> _uploadFile(String filePath, String folderName) async {
-    final file = new File(filePath);
+    final file = File(filePath);
+
     final basename = p.basename(filePath);
 
     final S3Provider s3Provider = S3Provider();
-    String downloadUrl = await s3Provider.putFile(file.readAsBytesSync(), folderName, basename);
+    final String downloadUrl = await s3Provider.putFile(file.readAsBytesSync(), folderName, basename);
 
     return downloadUrl;
   }

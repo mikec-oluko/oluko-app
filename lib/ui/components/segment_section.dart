@@ -56,21 +56,22 @@ class _State extends State<SegmentSection> {
                   ),
                 ],
               ),
-              for (var movement in widget.segment.movements)
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 5),
-                  child: Row(
-                    children: [
-                      OlukoPrimaryButton(
-                        title: movement.name,
-                        color: OlukoColors.listGrayColor,
-                        textColor: Colors.white,
-                        textAlign: TextAlign.start,
-                        onPressed: () => widget.onPressed(),
-                      ),
-                    ],
+              for (var section in widget.segment.sections)
+                for (var movement in section.movements)
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 5),
+                    child: Row(
+                      children: [
+                        OlukoPrimaryButton(
+                          title: movement.name,
+                          color: OlukoColors.listGrayColor,
+                          textColor: Colors.white,
+                          textAlign: TextAlign.start,
+                          onPressed: () => widget.onPressed(),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
             ],
           ),
         ),

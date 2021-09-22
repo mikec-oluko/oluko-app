@@ -8,6 +8,7 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/oluko_permissions.dart';
 import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
@@ -174,12 +175,12 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                         task: task,
                         isCompleted: taskSubmission != null,
                         isPublic: isPublic(taskSubmission),
-                        isDisabled: isTaskDisabled(index),
+                        isDisabled: OlukoPermissions.isAssessmentTaskDisabled(_user, index),
                         onPressed: () {
                           if (_controller != null) {
                             _controller.pause();
                           }
-                          if (isTaskDisabled(index)) {
+                          if (OlukoPermissions.isAssessmentTaskDisabled(_user, index)) {
                             AppMessages.showSnackbar(
                                 context, OlukoLocalizations.of(context).find('yourCurrentPlanDoesntIncludeAssessment'));
                           } else {
@@ -195,8 +196,6 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
       ],
     );
   }
-
-  bool isTaskDisabled(num index) => (_user.currentPlan != 1 || _user.currentPlan != 2) && index > 1;
 
   bool isPublic(TaskSubmission taskSubmission) {
     if (taskSubmission == null) {

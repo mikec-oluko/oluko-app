@@ -15,15 +15,17 @@ import 'package:oluko_app/ui/components/image_and_video_container.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/modal_upload_options.dart';
+import 'package:oluko_app/ui/components/open_settings_modal.dart';
 import 'package:oluko_app/ui/components/uploading_modal_loader.dart';
 import 'package:oluko_app/ui/components/uploading_modal_success.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
+import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class ProfileTransformationJourneyPage extends StatefulWidget {
   final UserResponse userRequested;
-  ProfileTransformationJourneyPage({this.userRequested});
+  const ProfileTransformationJourneyPage({this.userRequested});
   @override
   _ProfileTransformationJourneyPageState createState() => _ProfileTransformationJourneyPageState();
 }
@@ -39,7 +41,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
   List<Widget> _contentGallery;
   List<TransformationJourneyUpload> _transformationJourneyContent = [];
   UserResponse _profileInfo;
-  final PanelController _panelController = new PanelController();
+  final PanelController _panelController = PanelController();
   double _panelMaxHeight = 100.0;
   double _statePanelMaxHeight = 100.0;
 
@@ -74,8 +76,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
               color: OlukoColors.black,
               child: SafeArea(
                 child: Stack(children: [
-                  isCurrenUser
-                      ? Align(
+                  if (isCurrenUser) Align(
                           alignment: Alignment.topCenter,
                           child: Container(
                               width: MediaQuery.of(context).size.width,
@@ -90,24 +91,19 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
                                         }),
                                   ],
                                 ),
-                              )))
-                      : SizedBox(
+                              ))) else const SizedBox(
                           height: 0,
                         ),
-                  _contentGallery.length != 0
-                      ? Align(
+                  if (_contentGallery.length != 0) Align(
                           alignment: Alignment.topCenter,
                           child: Padding(
-                            padding: isCurrenUser
-                                ? EdgeInsets.fromLTRB(10, 100, 10, 10)
-                                : EdgeInsets.fromLTRB(10, 20, 10, 20),
+                            padding: isCurrenUser ? const EdgeInsets.fromLTRB(10, 100, 10, 10) : const EdgeInsets.fromLTRB(10, 20, 10, 20),
                             child: Text(
                               getTitleForContent(uploadListContent: _transformationJourneyContent),
                               style: OlukoFonts.olukoBigFont(),
                             ),
                           ),
-                        )
-                      : SizedBox(),
+                        ) else SizedBox(),
                   _contentGallery.length != 0 ? dragAndDropGridView(context) : SizedBox(),
                   slidingUpPanelComponent(context),
                 ]),
@@ -116,8 +112,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
     );
   }
 
-  BlocListener<TransformationJourneyContentBloc, TransformationJourneyContentState> slidingUpPanelComponent(
-      BuildContext context) {
+  BlocListener<TransformationJourneyContentBloc, TransformationJourneyContentState> slidingUpPanelComponent(BuildContext context) {
     return BlocListener<TransformationJourneyContentBloc, TransformationJourneyContentState>(
       listener: (context, state) {
         if (state is TransformationJourneyContentDefault || state is TransformationJourneyContentOpen) {
@@ -133,23 +128,20 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
           });
         },
         onPanelClosed: () {
-          BlocProvider.of<TransformationJourneyContentBloc>(context)..emitDefaultState();
+          BlocProvider.of<TransformationJourneyContentBloc>(context).emitDefaultState();
         },
         backdropEnabled: true,
         isDraggable: false,
-        margin: const EdgeInsets.all(0),
-        header: SizedBox(),
-        backdropTapClosesPanel: true,
+        margin: EdgeInsets.all(0),
+        header: const SizedBox(),
         padding: EdgeInsets.zero,
         color: OlukoColors.black,
         minHeight: 0.0,
         maxHeight: _panelMaxHeight,
-        collapsed: SizedBox(),
-        defaultPanelState: PanelState.CLOSED,
+        collapsed: const SizedBox(),
         controller: _panelController,
-        panel:
-            BlocBuilder<TransformationJourneyContentBloc, TransformationJourneyContentState>(builder: (context, state) {
-          Widget _contentForPanel = SizedBox();
+        panel: BlocBuilder<TransformationJourneyContentBloc, TransformationJourneyContentState>(builder: (context, state) {
+          Widget _contentForPanel = const SizedBox();
           if (state is TransformationJourneyContentOpen) {
             _panelController.open();
             _contentForPanel = ModalUploadOptions(
@@ -159,7 +151,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
           }
           if (state is TransformationJourneyContentDefault) {
             _panelController.isPanelOpen ? _panelController.close() : null;
-            _contentForPanel = SizedBox();
+            _contentForPanel = const SizedBox();
           }
           if (state is TransformationJourneyContentLoading) {
             _contentForPanel = UploadingModalLoader(UploadFrom.transformationJourney);
@@ -170,6 +162,9 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
           if (state is TransformationJourneyContentFailure) {
             _panelController.close();
           }
+          if (state is TransformationJourneyRequirePermissions) {
+            _panelController.close().then((value) => DialogUtils.getDialog(context, [OpenSettingsModal(context)], showExitButton: false));
+          }
           return _contentForPanel;
         }),
       ),
@@ -178,9 +173,8 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
 
   Align dragAndDropGridView(BuildContext context) {
     return Align(
-      alignment: Alignment.center,
       child: Padding(
-        padding: isCurrenUser ? EdgeInsets.only(top: 150) : EdgeInsets.only(top: 20),
+        padding: isCurrenUser ? const EdgeInsets.only(top: 150) : const EdgeInsets.only(top: 20),
         child: Container(
           height: MediaQuery.of(context).size.height / 1.4,
           child: isCurrenUser
@@ -190,7 +184,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
                     height: 50,
                     width: 50,
                     decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                        borderRadius: const BorderRadius.all(Radius.circular(10.0)),
                         border: Border.all(
                           width: 2.0,
                           color: OlukoColors.grayColor,
@@ -208,9 +202,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
                   },
                   onReorder: (int oldIndex, int newIndex) {
                     if (isCurrenUser) {
-                      BlocProvider.of<TransformationJourneyBloc>(context)
-                        ..changeContentOrder(_transformationJourneyContent[oldIndex],
-                            _transformationJourneyContent[newIndex], _profileInfo.id);
+                      BlocProvider.of<TransformationJourneyBloc>(context).changeContentOrder(_transformationJourneyContent[oldIndex], _transformationJourneyContent[newIndex], _profileInfo.id);
 
                       final elementMoved = _transformationJourneyContent[oldIndex];
                       _transformationJourneyContent[oldIndex] = _transformationJourneyContent[newIndex];
@@ -222,7 +214,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
                       });
                     }
                   },
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3,
                   ),
                   itemBuilder: (context, index) => Opacity(
@@ -242,8 +234,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
                           }
                           return ImageAndVideoContainer(
                             backgroundImage: _transformationJourneyContent[index].thumbnail,
-                            isContentVideo:
-                                _transformationJourneyContent[index].type == FileTypeEnum.video ? true : false,
+                            isContentVideo: _transformationJourneyContent[index].type == FileTypeEnum.video ? true : false,
                             videoUrl: _transformationJourneyContent[index].file,
                             displayOnViewNamed: ActualProfileRoute.transformationJourney,
                             originalContent: _transformationJourneyContent[index],
@@ -254,7 +245,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
                   ),
                 )
               : GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3,
                   ),
                   itemCount: _transformationJourneyContent.length,
@@ -278,12 +269,11 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
       builder: (context, state) {
         if (state is TransformationJourneySuccess) {
           _transformationJourneyContent = state.contentFromUser;
-          _contentGallery = TransformListOfItemsToWidget.getWidgetListFromContent(
-              tansformationJourneyData: _transformationJourneyContent,
-              requestedFromRoute: ActualProfileRoute.transformationJourney);
+          _contentGallery =
+              TransformListOfItemsToWidget.getWidgetListFromContent(tansformationJourneyData: _transformationJourneyContent, requestedFromRoute: ActualProfileRoute.transformationJourney);
         }
         if (state is TransformationJourneyFailure || state is TransformationJourneyDefault) {
-          BlocProvider.of<TransformationJourneyBloc>(context)..getContentByUserId(userToUse.id);
+          BlocProvider.of<TransformationJourneyBloc>(context).getContentByUserId(userToUse.id);
         }
         return page(context, _profileInfo);
       },
@@ -294,6 +284,6 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
     int _videos = 0;
     int _images = 0;
     uploadListContent.forEach((content) => content.type == FileTypeEnum.video ? _videos += 1 : _images += 1);
-    return "Uploaded $_images Images & $_videos Videos";
+    return 'Uploaded $_images Images & $_videos Videos';
   }
 }
