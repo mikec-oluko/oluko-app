@@ -104,7 +104,8 @@ class TimerUtils {
     ]);
   }
 
-  static Widget completedTimer(double progressValue, String duration, BuildContext context) {
+
+  static Widget completedTimer(BuildContext context) {
     return Container(
         child: SizedBox(
             height: 180,
@@ -169,7 +170,7 @@ class TimerUtils {
                   aspectRatio: 1,
                   child: CircularProgressIndicator(
                       value: progressValue,
-                      // color: OlukoColors.skyblue,
+                      color: OlukoColors.skyblue,
                       backgroundColor: OlukoColors.grayColorSemiTransparent)),
               Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Text(OlukoLocalizations.of(context).find('rest').toUpperCase(),

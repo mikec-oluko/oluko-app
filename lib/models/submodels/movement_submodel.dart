@@ -1,41 +1,40 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oluko_app/models/enums/counter_enum.dart';
+import 'package:oluko_app/models/enums/parameter_enum.dart';
 
 class MovementSubmodel {
   DocumentReference reference;
   String id;
   String name;
-  String timerType;
-  int timerWorkTime;
-  int timerRestTime;
-  int timerSets;
-  int timerReps;
+  ParameterEnum parameter;
+  int value;
   CounterEnum counter;
+  bool isRestTime;
 
   MovementSubmodel(
       {this.id,
       this.name,
       this.reference,
-      this.timerType,
-      this.timerWorkTime,
-      this.timerRestTime,
-      this.timerSets,
       this.counter,
-      this.timerReps});
+      this.parameter,
+      this.value,
+      this.isRestTime});
 
   factory MovementSubmodel.fromJson(Map<String, dynamic> json) {
     return MovementSubmodel(
       reference: json['reference'] as DocumentReference,
       id: json['id'].toString(),
       name: json['name'].toString(),
-      timerType: json['timer_type'].toString(),
-      timerWorkTime: json['timer_work_time'] as int,
-      timerRestTime: json['timer_rest_time'] as int,
-      timerSets: json['timer_sets'] as int,
-      timerReps: json['timer_reps'] as int,
+      value: json['value'] as int,
+            isRestTime: json['is_rest_time'] == null
+          ? null
+          : json['is_rest_time'] as bool,
       counter: json['counter'] == null
           ? null
           : CounterEnum.values[json['counter'] as int],
+      parameter: json['parameter'] == null
+          ? null
+          : ParameterEnum.values[json['parameter'] as int],
     );
   }
 
@@ -43,11 +42,9 @@ class MovementSubmodel {
         'reference': reference,
         'id': id,
         'name': name,
-        'timer_type': timerType,
-        'timer_work_time': timerWorkTime,
-        'timer_rest_time': timerRestTime,
-        'timer_sets': timerSets,
-        'timer_reps': timerReps,
+        'value': value,
         'counter': counter == null ? null : counter.index,
+        'parameter': parameter == null ? null : parameter.index,
+        'is_rest_time': isRestTime, 
       };
 }

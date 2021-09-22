@@ -202,7 +202,7 @@ class CourseEnrollmentRepository {
     List<EnrollmentClass> classes = courseEnrollment.classes;
     List<EnrollmentMovement> movements = classes[classIndex].segments[segmentIndex].movements;
 
-    if (movements == null || counter.round == 1 && counter.set == null || counter.round == 1 && counter.set == 1) {
+    if (movements == null || counter.round == 1) {
       classes[classIndex].segments[segmentIndex].movements = [];
     }
 
@@ -234,7 +234,8 @@ class CourseEnrollmentRepository {
   }
 
   static Future<String> _uploadFile(String filePath, String folderName) async {
-    final file = new File(filePath);
+    final file = File(filePath);
+
     final basename = p.basename(filePath);
 
     final S3Provider s3Provider = S3Provider();
