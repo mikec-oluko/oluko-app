@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/chat.dart';
@@ -29,10 +32,11 @@ class HiFiveReceivedBloc extends Cubit<HiFiveReceivedState> {
           await ChatRepository().getMessages(userId, targetUserId);
 
       bool hiFive = false;
-      messages.forEach((Message message) =>
-          message.message == Message().hifiveMessageCode
-              ? hiFive = true
-              : hiFive = false);
+      if (messages.isNotEmpty) {
+        messages[0].message == Message().hifiveMessageCode
+            ? hiFive = true
+            : hiFive = false;
+      }
       emit(HiFiveReceivedSuccess(hiFive: hiFive));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
