@@ -66,24 +66,30 @@ class ChatRepository {
   }
 
   Future<Message> sendHiFive(String userId, String targetUserId) async {
-    Message messageToSend = Message(message: Message().hifiveMessageCode);
-
-    DocumentReference createdMessageDocument = await FirebaseFirestore.instance
+    final CollectionReference chatCollection = await FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
         .collection('users')
         .doc(userId)
-        .collection('chat')
-        .doc(targetUserId)
-        .collection('messages')
-        .add({});
+        .collection('chat');
 
+    //Check if chat document exists. If not, create the base properties inside.
+    final DocumentSnapshot<Object> chat =
+        await chatCollection.doc(targetUserId).get();
+    if (!chat.exists) {
+      chat.reference.set(Chat(id: targetUserId).toJson());
+    }
+
+    //Create Message to send with HiFive code and store as a document
+    final Message messageToSend = Message(message: Message().hifiveMessageCode);
+    DocumentReference createdMessageDocument =
+        await chatCollection.doc(targetUserId).collection('messages').add({});
     messageToSend.id = createdMessageDocument.id;
-
-    Map<String, dynamic> messageToSendJson = messageToSend.toJson();
+    final Map<String, dynamic> messageToSendJson = messageToSend.toJson();
     createdMessageDocument.set(messageToSendJson);
 
-    DocumentSnapshot createdMessage = await FirebaseFirestore.instance
+    //Get message to return
+    final DocumentSnapshot createdMessage = await FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
         .collection('users')
