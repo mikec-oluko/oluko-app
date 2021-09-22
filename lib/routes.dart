@@ -60,6 +60,7 @@ import 'package:oluko_app/ui/screens/courses/inside_class.dart';
 import 'package:oluko_app/ui/screens/courses/segment_camera_preview.dart.dart';
 import 'package:oluko_app/ui/screens/friends/friends_page.dart';
 import 'package:oluko_app/ui/screens/authentication/login.dart';
+import 'package:oluko_app/ui/screens/hi_five_page.dart';
 import 'package:oluko_app/ui/screens/main_page.dart';
 import 'package:oluko_app/ui/screens/courses/movement_intro.dart';
 import 'package:oluko_app/ui/screens/profile/profile.dart';
@@ -77,6 +78,7 @@ import 'package:oluko_app/ui/screens/profile/transformation_journey_post.dart';
 import 'package:oluko_app/ui/screens/courses/segment_detail.dart';
 import 'blocs/friends/hi_five_send_bloc.dart';
 import 'blocs/movement_info_bloc.dart';
+import 'blocs/views_bloc/hi_five_bloc.dart';
 import 'models/task.dart';
 import 'ui/screens/courses/segment_clocks.dart';
 import 'package:oluko_app/ui/screens/authentication/sign_up.dart';
@@ -137,7 +139,8 @@ enum RouteEnum {
   mentoredVideos,
   coachShowVideo,
   coachProfile,
-  completedClass
+  completedClass,
+  hiFivePage
 }
 
 Map<RouteEnum, String> routeLabels = {
@@ -184,7 +187,8 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.mentoredVideos: '/coach-mentored-videos',
   RouteEnum.coachShowVideo: '/coach-show-video',
   RouteEnum.coachProfile: '/coach-profile',
-  RouteEnum.completedClass: '/completed-class'
+  RouteEnum.completedClass: '/completed-class',
+  RouteEnum.hiFivePage: '/hi-five-page'
 };
 
 RouteEnum getEnumFromRouteString(String route) {
@@ -242,6 +246,7 @@ class Routes {
   final MessageBloc _messageBloc = MessageBloc();
   final HiFiveReceivedBloc _hiFiveReceivedBloc = HiFiveReceivedBloc();
   final HiFiveSendBloc _hiFiveSendBloc = HiFiveSendBloc();
+  final HiFiveBloc _hiFiveBloc = HiFiveBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -712,6 +717,14 @@ class Routes {
         final Map<String, UserResponse> argumentsToAdd =
             arguments as Map<String, UserResponse>;
         newRouteView = CoachProfile(coachUser: argumentsToAdd['coachUser']);
+        break;
+      case RouteEnum.hiFivePage:
+        providers = [
+          BlocProvider<HiFiveBloc>.value(value: _hiFiveBloc),
+        ];
+        final Map<String, UserResponse> argumentsToAdd =
+            arguments as Map<String, UserResponse>;
+        newRouteView = const HiFivePage();
         break;
       default:
         newRouteView = MainPage();
