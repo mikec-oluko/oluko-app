@@ -24,16 +24,20 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
   Timer _timer;
   Timestamp _userCreatedDate;
   bool _isTimeExpired = false;
-  Duration _oneDayLimit = const Duration(days: 1);
+  final Duration _oneDayLimit = const Duration(days: 1);
+  final _spacerWidget = const SizedBox(
+    height: 20,
+  );
 
   @override
   void initState() {
     super.initState();
-    startWatchCountdown();
+    if (widget.currentUser != null) {
+      startWatchCountdown();
+    }
   }
 
   void dispose() {
-    // Cancels the timer when the page is disposed.
     _timer.cancel();
 
     super.dispose();
@@ -89,7 +93,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                   ],
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 100,
               ),
               _isTimeExpired ? timeExpiredContent(context) : countDownWatch(context, difference),
@@ -133,9 +137,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                         style: OlukoFonts.olukoBiggestFont(
                             customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                       ),
-                      SizedBox(
-                        height: 20,
-                      ),
+                      _spacerWidget,
                       Text(
                         OlukoLocalizations.of(context).find('hours'),
                         textAlign: TextAlign.center,
@@ -163,9 +165,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                         style: OlukoFonts.olukoBiggestFont(
                             customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                       ),
-                      SizedBox(
-                        height: 20,
-                      ),
+                      _spacerWidget,
                       Text(
                         OlukoLocalizations.of(context).find('minute'),
                         textAlign: TextAlign.center,
@@ -193,9 +193,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                         style: OlukoFonts.olukoBiggestFont(
                             customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                       ),
-                      SizedBox(
-                        height: 20,
-                      ),
+                      _spacerWidget,
                       Text(
                         OlukoLocalizations.of(context).find('second'),
                         textAlign: TextAlign.center,
@@ -241,7 +239,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
     }
 
     _timer = Timer.periodic(
-      Duration(
+      const Duration(
         seconds: 1,
       ),
       (timer) {
