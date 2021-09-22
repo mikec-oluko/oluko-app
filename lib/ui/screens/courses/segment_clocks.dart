@@ -579,7 +579,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   }
 
   bool isCurrentMovementRest() {
-    return timerEntries[timerTaskIndex].movement.name == 'Rest';
+    return timerEntries[timerTaskIndex].movement.isRestTime;
   }
 
   Widget pauseButton() {
