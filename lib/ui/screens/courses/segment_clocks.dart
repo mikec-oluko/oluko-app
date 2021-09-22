@@ -54,15 +54,20 @@ class SegmentClocks extends StatefulWidget {
   final int segmentIndex;
   final List<Segment> segments;
 
-  SegmentClocks({Key key, this.workoutType, this.classIndex, this.segmentIndex, this.courseEnrollment, this.segments}) : super(key: key);
+  SegmentClocks(
+      {Key key,
+      this.workoutType,
+      this.classIndex,
+      this.segmentIndex,
+      this.courseEnrollment,
+      this.segments})
+      : super(key: key);
 
   @override
   _SegmentClocksState createState() => _SegmentClocksState();
 }
 
 class _SegmentClocksState extends State<SegmentClocks> {
-  WorkoutType workoutType;
-
   //Imported from Timer POC Models
   WorkState workState;
   WorkState lastWorkStateBeforePause;
@@ -75,7 +80,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
   final toolbarHeight = kToolbarHeight * 2;
 
   //Flex proportions to display sections vertically in body.
-  List<num> flexProportions(WorkoutType workoutType) => workoutType == WorkoutType.segmentWithRecording ? [3, 7] : [8, 2];
+  List<num> flexProportions(WorkoutType workoutType) =>
+      isSegmentWithRecording() ? [3, 7] : [8, 2];
 
   //Camera
   List<CameraDescription> cameras;
@@ -87,30 +93,21 @@ class _SegmentClocksState extends State<SegmentClocks> {
   User _user;
   SegmentSubmission _segmentSubmission;
   List<Movement> _movements = [];
-
   bool isPlaying = true;
-
   PanelController panelController = new PanelController();
-
   TextEditingController textController = new TextEditingController();
-
   int AMRAPRound = 0;
-
   Widget topBarIcon;
-
-  int currentMovementSubmission = 1;
-  int totalMovementSubmissions;
-  List<MovementSubmission> _movementSubmissions;
   String processPhase = "";
   double progress = 0.0;
   bool isThereError = false;
-
   bool shareDone = false;
 
   @override
   void initState() {
-    _setupCameras();
-    workoutType = widget.workoutType;
+    if (isSegmentWithRecording()) {
+      _setupCameras();
+    }
     _startMovement();
     topBarIcon = topCameraIcon();
     super.initState();
@@ -121,34 +118,35 @@ class _SegmentClocksState extends State<SegmentClocks> {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
         _user = authState.firebaseUser;
-        return BlocBuilder<MovementBloc, MovementState>(builder: (context, movementState) {
+        return BlocBuilder<MovementBloc, MovementState>(
+            builder: (context, movementState) {
           if (movementState is GetAllSuccess) {
             _movements = movementState.movements;
-            return BlocListener<SegmentSubmissionBloc, SegmentSubmissionState>(
-                listener: (context, segmentSubmissionState) {
-                  if (segmentSubmissionState is CreateSuccess) {
-                    _segmentSubmission = segmentSubmissionState.segmentSubmission;
-                  }
+            return GestureDetector(
+                onTap: () {
+                  FocusScope.of(context).unfocus();
                 },
-                child: GestureDetector(
-                    onTap: () {
-                      FocusScope.of(context).unfocus();
+                child: BlocListener<VideoBloc, VideoState>(
+                    listener: (context, state) {
+                      updateSegment(state);
                     },
-                    child: BlocListener<VideoBloc, VideoState>(
+                    child: BlocListener<SegmentSubmissionBloc,
+                            SegmentSubmissionState>(
                         listener: (context, state) {
-                          saveMovement(state);
+                          if (state is CreateSuccess) {
+                            if (_segmentSubmission == null) {
+                              _segmentSubmission = state.segmentSubmission;
+                              BlocProvider.of<VideoBloc>(context)
+                                ..createVideo(
+                                    context,
+                                    File(_segmentSubmission
+                                        .videoState.stateInfo),
+                                    3.0 / 4.0,
+                                    _segmentSubmission.id);
+                            }
+                          }
                         },
-                        child: BlocListener<MovementSubmissionBloc, MovementSubmissionState>(
-                            listener: (context, state) {
-                              if (state is GetMovementSubmissionSuccess) {
-                                if (_movementSubmissions == null) {
-                                  totalMovementSubmissions = state.movementSubmissions.length;
-                                  _movementSubmissions = state.movementSubmissions;
-                                  processMovementSubmission();
-                                }
-                              }
-                            },
-                            child: form()))));
+                        child: form())));
           } else {
             return SizedBox();
           }
@@ -159,24 +157,29 @@ class _SegmentClocksState extends State<SegmentClocks> {
     });
   }
 
+  bool isSegmentWithRecording() {
+    return widget.workoutType == WorkoutType.segmentWithRecording;
+  }
+
   Widget form() {
-    if (widget.workoutType == WorkoutType.segmentWithRecording && _segmentSubmission == null) {
-      BlocProvider.of<SegmentSubmissionBloc>(context)..create(_user, widget.courseEnrollment, widget.segments[widget.segmentIndex]);
-    }
     return Scaffold(
       resizeToAvoidBottomInset: false,
       bottomNavigationBar:
-          widget.workoutType == WorkoutType.segmentWithRecording && workState == WorkState.paused ? resumeButton() : SizedBox(),
+          isSegmentWithRecording() && workState == WorkState.paused
+              ? resumeButton()
+              : SizedBox(),
       appBar: OlukoAppBar(
         showDivider: false,
         title: ' ',
         actions: [topBarIcon, audioIcon()],
       ),
       backgroundColor: Colors.black,
-      body: widget.workoutType == WorkoutType.segment && workState != WorkState.finished
+      body: widget.workoutType == WorkoutType.segment &&
+              workState != WorkState.finished
           ? SlidingUpPanel(
               controller: panelController,
-              borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20), topRight: Radius.circular(20)),
               minHeight: 90,
               maxHeight: 185,
               collapsed: CollapsedMovementVideosSection(action: getAction()),
@@ -184,8 +187,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
                   action: getAction(),
                   segment: widget.segments[widget.segmentIndex],
                   movements: _movements,
-                  onPressedMovement: (BuildContext context, Movement movement) =>
-                      Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement})),
+                  onPressedMovement:
+                      (BuildContext context, Movement movement) =>
+                          Navigator.pushNamed(
+                              context, routeLabels[RouteEnum.movementIntro],
+                              arguments: {'movement': movement})),
               body: _body())
           : _body(),
     );
@@ -216,7 +222,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
               isPlaying = !isPlaying;
             });
           },
-          child: Icon(isPlaying ? Icons.pause : Icons.play_arrow, color: Colors.white),
+          child: Icon(isPlaying ? Icons.pause : Icons.play_arrow,
+              color: Colors.white),
           style: OutlinedButton.styleFrom(
             padding: EdgeInsets.all(12),
             shape: CircleBorder(),
@@ -229,15 +236,15 @@ class _SegmentClocksState extends State<SegmentClocks> {
     return Container(
         child: ListView(
       children: [
-        _timerSection(workoutType, workState),
-        _lowerSection(workoutType, workState),
-        workState == WorkState.finished ? showFinishedButtons() : SizedBox(),
+        _timerSection(),
+        _lowerSection(),
+        isWorkStateFinished() ? showFinishedButtons() : SizedBox(),
       ],
     ));
   }
 
   Widget showFinishedButtons() {
-    if (workoutType == WorkoutType.segmentWithRecording && !shareDone) {
+    if (isSegmentWithRecording() && !shareDone) {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Row(
@@ -264,7 +271,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
             OlukoOutlinedButton(
                 title: OlukoLocalizations.of(context).find('goToClass'),
                 thinPadding: true,
-                onPressed: () => Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.insideClass]))),
+                onPressed: () => Navigator.popUntil(context,
+                    ModalRoute.withName(routeLabels[RouteEnum.insideClass]))),
             SizedBox(
               width: 15,
             ),
@@ -273,17 +281,21 @@ class _SegmentClocksState extends State<SegmentClocks> {
               thinPadding: true,
               onPressed: () {
                 widget.segmentIndex < widget.segments.length - 1
-                    ? Navigator.pushNamed(context, routeLabels[RouteEnum.segmentClocks], arguments: {
-                        'segmentIndex': widget.segmentIndex + 1,
-                        'classIndex': widget.classIndex,
-                        'courseEnrollment': widget.courseEnrollment,
-                        'workoutType': workoutType,
-                        'segments': widget.segments,
-                      })
-                    : Navigator.pushNamed(context, routeLabels[RouteEnum.completedClass], arguments: {
-                        'classIndex': widget.classIndex,
-                        'courseEnrollment': widget.courseEnrollment,
-                      });
+                    ? Navigator.pushNamed(
+                        context, routeLabels[RouteEnum.segmentClocks],
+                        arguments: {
+                            'segmentIndex': widget.segmentIndex + 1,
+                            'classIndex': widget.classIndex,
+                            'courseEnrollment': widget.courseEnrollment,
+                            'workoutType': widget.workoutType,
+                            'segments': widget.segments,
+                          })
+                    : Navigator.pushNamed(
+                        context, routeLabels[RouteEnum.completedClass],
+                        arguments: {
+                            'classIndex': widget.classIndex,
+                            'courseEnrollment': widget.courseEnrollment,
+                          });
               },
             ),
           ],
@@ -297,21 +309,27 @@ class _SegmentClocksState extends State<SegmentClocks> {
   */
 
   ///Countdown & movements information
-  Widget _timerSection(WorkoutType workoutType, WorkState workState) {
+  Widget _timerSection() {
     return Center(
         child: Column(
       children: [
         getSegmentLabel(),
         Padding(
             padding: const EdgeInsets.only(top: 3, bottom: 8),
-            child: Stack(alignment: Alignment.center, children: [getRoundsTimer(), _countdownSection(workState)])),
-        workState == WorkState.finished ? SizedBox() : _tasksSection()
+            child: Stack(
+                alignment: Alignment.center,
+                children: [getRoundsTimer(), _countdownSection()])),
+        isWorkStateFinished() ? SizedBox() : _tasksSection()
       ],
     ));
   }
 
+  bool isWorkStateFinished() {
+    return workState == WorkState.finished;
+  }
+
   Widget getSegmentLabel() {
-    if (workState == WorkState.finished) {
+    if (isWorkStateFinished()) {
       return SizedBox();
     }
 
@@ -326,9 +344,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   Widget getRoundsTimer() {
     if (SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) &&
-        workState == WorkState.finished) {
+        isWorkStateFinished()) {
       return TimerUtils.roundsTimer(AMRAPRound, AMRAPRound + 1);
-    } else if (workState == WorkState.finished) {
+    } else if (isWorkStateFinished()) {
       return TimerUtils.roundsTimer(widget.segments[widget.segmentIndex].rounds,
           widget.segments[widget.segmentIndex].rounds + 1);
     } else if (SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex])) {
@@ -350,7 +368,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
     bool hasMultipleLabels = timerEntries[timerTaskIndex].labels.length > 1;
     if (hasMultipleLabels) {
       return Padding(
-          padding: EdgeInsets.only(top: 25), child: Column(children: SegmentUtils.getJoinedLabel(timerEntries[timerTaskIndex].labels)));
+          padding: EdgeInsets.only(top: 25),
+          child: Column(
+              children: SegmentUtils.getJoinedLabel(
+                  timerEntries[timerTaskIndex].labels)));
     } else {
       String currentTask = timerEntries[timerTaskIndex].labels[0];
       String nextTask = timerTaskIndex < timerEntries.length - 1
@@ -377,7 +398,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
   }
 
   Widget getTextField() {
-    bool isCounterByReps = timerEntries[timerTaskIndex - 1].counter == CounterEnum.reps;
+    bool isCounterByReps =
+        timerEntries[timerTaskIndex - 1].counter == CounterEnum.reps;
     return Container(
         decoration: BoxDecoration(
             image: DecorationImage(
@@ -388,23 +410,36 @@ class _SegmentClocksState extends State<SegmentClocks> {
         child: Row(children: [
           SizedBox(width: 20),
           Text(OlukoLocalizations.of(context).find('enterScore'),
-              style: TextStyle(fontSize: 18, color: OlukoColors.white, fontWeight: FontWeight.w300)),
+              style: TextStyle(
+                  fontSize: 18,
+                  color: OlukoColors.white,
+                  fontWeight: FontWeight.w300)),
           SizedBox(width: 10),
           SizedBox(
               width: isCounterByReps ? 40 : 70,
               child: TextField(
                 controller: textController,
-                style: TextStyle(fontSize: 20, color: OlukoColors.white, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    fontSize: 20,
+                    color: OlukoColors.white,
+                    fontWeight: FontWeight.bold),
                 keyboardType: TextInputType.number,
               )),
           SizedBox(width: 10),
           isCounterByReps
               ? Text(timerEntries[timerTaskIndex].movement.name,
-                  style: TextStyle(fontSize: 18, color: OlukoColors.white, fontWeight: FontWeight.w300))
+                  style: TextStyle(
+                      fontSize: 18,
+                      color: OlukoColors.white,
+                      fontWeight: FontWeight.w300))
               : Text(OlukoLocalizations.of(context).find('meters'),
-                  style: TextStyle(fontSize: 18, color: OlukoColors.white, fontWeight: FontWeight.w300)),
+                  style: TextStyle(
+                      fontSize: 18,
+                      color: OlukoColors.white,
+                      fontWeight: FontWeight.w300)),
         ]));
   }
+
   Widget recordingTaskSection() {
     bool hasMultipleLabels = timerEntries[timerTaskIndex].labels.length > 1;
     if (hasMultipleLabels) {
@@ -434,7 +469,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
                       left: ScreenUtils.width(context) - 70,
                       child: Text(
                         nextTask,
-                        style: TextStyle(fontSize: 20, color: OlukoColors.grayColorSemiTransparent, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: OlukoColors.grayColorSemiTransparent,
+                            fontWeight: FontWeight.bold),
                       )),
                 ],
               )));
@@ -442,8 +480,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
   }
 
   ///Clock countdown label
-  Widget _countdownSection(WorkState workState) {
-    if (workState == WorkState.finished) {
+  Widget _countdownSection() {
+    if (isWorkStateFinished()) {
       return TimerUtils.completedTimer(context);
     }
 
@@ -495,7 +533,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
                 AMRAPRound++;
               }));
     }
-    String counter = timerEntries[timerTaskIndex].counter == CounterEnum.reps ? timerEntries[timerTaskIndex].movement.name : null;
+    String counter = timerEntries[timerTaskIndex].counter == CounterEnum.reps
+        ? timerEntries[timerTaskIndex].movement.name
+        : null;
     return TimerUtils.timeTimer(circularProgressIndicatorValue,
         TimeConverter.durationToString(timeLeft), context, counter);
   }
@@ -503,7 +543,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
   Widget currentTaskWidget(String currentTask, [bool smaller = false]) {
     return Text(
       currentTask,
-      style: TextStyle(fontSize: smaller ? 20 : 25, color: Colors.white, fontWeight: FontWeight.bold),
+      style: TextStyle(
+          fontSize: smaller ? 20 : 25,
+          color: Colors.white,
+          fontWeight: FontWeight.bold),
     );
   }
 
@@ -519,15 +562,20 @@ class _SegmentClocksState extends State<SegmentClocks> {
       blendMode: BlendMode.dstIn,
       child: Text(
         nextTask,
-        style: TextStyle(fontSize: 25, color: Color.fromRGBO(255, 255, 255, 0.25), fontWeight: FontWeight.bold),
+        style: TextStyle(
+            fontSize: 25,
+            color: Color.fromRGBO(255, 255, 255, 0.25),
+            fontWeight: FontWeight.bold),
       ),
     );
   }
 
   ///Lower half of the view
-  Widget _lowerSection(WorkoutType workoutType, WorkState workoutState) {
-    if (workoutState != WorkState.finished) {
-      return Container(color: Colors.black, child: workoutType == WorkoutType.segmentWithRecording ? _cameraSection() : SizedBox());
+  Widget _lowerSection() {
+    if (workState != WorkState.finished) {
+      return Container(
+          color: Colors.black,
+          child: isSegmentWithRecording() ? _cameraSection() : SizedBox());
     } else {
       return _segmentInfoSection();
     }
@@ -561,11 +609,19 @@ class _SegmentClocksState extends State<SegmentClocks> {
                     : Container(
                         decoration: BoxDecoration(
                             image: DecorationImage(
-                          image: AssetImage('assets/courses/camera_background.png'),
+                          image: AssetImage(
+                              'assets/courses/camera_background.png'),
                           fit: BoxFit.cover,
                         )),
-                        child: Center(child: AspectRatio(aspectRatio: 3.0 / 4.0, child: CameraPreview(cameraController)))),
-                Align(alignment: Alignment.bottomCenter, child: Padding(padding: const EdgeInsets.all(20.0), child: pauseButton())),
+                        child: Center(
+                            child: AspectRatio(
+                                aspectRatio: 3.0 / 4.0,
+                                child: CameraPreview(cameraController)))),
+                Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: pauseButton())),
               ],
             ));
   }
@@ -585,9 +641,6 @@ class _SegmentClocksState extends State<SegmentClocks> {
   Widget pauseButton() {
     return GestureDetector(
         onTap: () async {
-          if (!isCurrentMovementRest()) {
-            await cameraController.stopVideoRecording();
-          }
           setState(() {
             if (isCurrentTaskTimed()) {
               _pauseCountdown();
@@ -627,16 +680,22 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   //Timer Functions
   _saveLastStep(TimerEntry timerEntry) async {
-    if (widget.workoutType == WorkoutType.segmentWithRecording &&
-        !isCurrentMovementRest()) {
-
+    if (isSegmentWithRecording()) {
       XFile videopath = await cameraController.stopVideoRecording();
-      BlocProvider.of<MovementSubmissionBloc>(context)..create(_segmentSubmission, timerEntries[timerTaskIndex].movement, videopath.path);
+      BlocProvider.of<SegmentSubmissionBloc>(context)
+        ..create(_user, widget.courseEnrollment,
+            widget.segments[widget.segmentIndex], videopath.path);
     }
   }
 
   void _goToNextStep() {
-    _saveLastStep(timerEntries[timerTaskIndex]);
+    if (timerEntries[timerTaskIndex].round == 0) {
+      if (!SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) &&
+              timerTaskIndex == timerEntries.length ||
+          timerEntries[timerTaskIndex + 1].round == 1) {
+        _saveLastStep(timerEntries[timerTaskIndex]);
+      }
+    }
 
     _saveCounter();
 
@@ -658,8 +717,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
           round: timerEntries[timerTaskIndex].round,
           counter: int.parse(textController.text));
       BlocProvider.of<CourseEnrollmentUpdateBloc>(context)
-        ..saveMovementCounter(
-            widget.courseEnrollment, widget.segmentIndex, widget.classIndex, timerEntries[timerTaskIndex].movement, counter);
+        ..saveMovementCounter(widget.courseEnrollment, widget.segmentIndex,
+            widget.classIndex, timerEntries[timerTaskIndex].movement, counter);
     }
     textController.clear();
   }
@@ -675,12 +734,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
   _playTask() async {
     WorkState previousWorkState = workState;
     workState = getCurrentTaskWorkState();
-    if (widget.workoutType == WorkoutType.segmentWithRecording &&
-        workState == WorkState.exercising) {
+    /*if (isSegmentWithRecording() && workState == WorkState.exercising) {
       if (timerTaskIndex > 0 || previousWorkState == WorkState.paused) {
         await cameraController.startVideoRecording();
       }
-    }
+    }*/
     if (isCurrentTaskTimed()) {
       _playCountdown();
       timeLeft = Duration(seconds: timerEntries[timerTaskIndex].value);
@@ -692,11 +750,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
     print('Workout finished');
     BlocProvider.of<CourseEnrollmentBloc>(context)
-      ..markSegmentAsCompleated(widget.courseEnrollment, widget.segmentIndex, widget.classIndex);
+      ..markSegmentAsCompleated(
+          widget.courseEnrollment, widget.segmentIndex, widget.classIndex);
     setState(() {
       if (widget.workoutType == WorkoutType.segmentWithRecording) {
         topBarIcon = uploadingIcon();
-        BlocProvider.of<MovementSubmissionBloc>(context)..get(_segmentSubmission);
       }
     });
   }
@@ -746,7 +804,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
     int cameraPos = isCameraFront ? 0 : 1;
     try {
       cameras = await availableCameras();
-      cameraController = new CameraController(cameras[cameraPos], ResolutionPreset.medium);
+      cameraController =
+          new CameraController(cameras[cameraPos], ResolutionPreset.medium);
       await cameraController.initialize();
       await cameraController.startVideoRecording();
     } on CameraException catch (_) {}
@@ -765,7 +824,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
             'assets/courses/outlined_camera.png',
             scale: 4,
           ),
-          Padding(padding: EdgeInsets.only(top: 1), child: Icon(Icons.circle_outlined, size: 12, color: OlukoColors.primary))
+          Padding(
+              padding: EdgeInsets.only(top: 1),
+              child: Icon(Icons.circle_outlined,
+                  size: 12, color: OlukoColors.primary))
         ]));
   }
 
@@ -773,11 +835,13 @@ class _SegmentClocksState extends State<SegmentClocks> {
     return Padding(
         padding: EdgeInsets.only(right: 2),
         child: GestureDetector(
-            onTap: () => BottomDialogUtils.showBottomDialog(context: context, content: dialogContainer()),
+            onTap: () => BottomDialogUtils.showBottomDialog(
+                context: context, content: dialogContainer()),
             child: Row(children: [
               Text(
                 "Uploading",
-                style: OlukoFonts.olukoMediumFont(custoFontWeight: FontWeight.w400),
+                style: OlukoFonts.olukoMediumFont(
+                    custoFontWeight: FontWeight.w400),
                 textAlign: TextAlign.start,
               ),
               SizedBox(width: 4),
@@ -806,7 +870,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                MovementUtils.movementTitle(widget.segments[widget.segmentIndex].name),
+                MovementUtils.movementTitle(
+                    widget.segments[widget.segmentIndex].name),
               ],
             ),
           ),
@@ -814,70 +879,59 @@ class _SegmentClocksState extends State<SegmentClocks> {
           Column(
               children: SegmentUtils.getWorkouts(
                   widget.segments[widget.segmentIndex], OlukoColors.grayColor)),
-
           Padding(
               padding: const EdgeInsets.symmetric(vertical: 20.0),
-              child: workoutType == WorkoutType.segment || shareDone ? FeedbackCard() : ShareCard()),
+              child: widget.workoutType == WorkoutType.segment || shareDone
+                  ? FeedbackCard()
+                  : ShareCard()),
         ],
       ),
     );
   }
 
-  //video uploading methods
-  processMovementSubmission() {
-    MovementSubmission movementSubmission = _movementSubmissions[currentMovementSubmission - 1];
-    BlocProvider.of<VideoBloc>(context)
-      ..createVideo(context, File(movementSubmission.videoState.stateInfo), 3.0 / 4.0, movementSubmission.id);
-  }
-
-  void saveMovement(VideoState state) {
-    MovementSubmission ms = _movementSubmissions[currentMovementSubmission - 1];
+  void updateSegment(VideoState state) {
     if (state is VideoProcessing) {
       updateProgress(state);
     } else if (state is VideoEncoded) {
-      saveEncodedState(state, ms);
+      saveEncodedState(state);
     } else if (state is VideoSuccess || state is VideoFailure) {
       if (state is VideoSuccess) {
-        saveUploadedState(state, ms);
-      } else if (state is VideoFailure) {
-        saveErrorState(state, ms);
-      }
-      if (currentMovementSubmission < totalMovementSubmissions) {
-        setState(() {
-          currentMovementSubmission++;
-        });
-        processMovementSubmission();
-      } else {
+        saveUploadedState(state);
         showSegmentMessage();
+      } else if (state is VideoFailure) {
+        saveErrorState(state);
       }
     }
   }
 
-  void saveEncodedState(VideoEncoded state, MovementSubmission ms) {
+  void saveEncodedState(VideoEncoded state) {
     setState(() {
-      ms.videoState.state = SubmissionStateEnum.encoded;
-      ms.videoState.stateInfo = state.encodedFilesDir;
-      ms.video = state.video;
-      ms.videoState.stateExtraInfo = state.thumbFilePath;
+      _segmentSubmission.videoState.state = SubmissionStateEnum.encoded;
+      _segmentSubmission.videoState.stateInfo = state.encodedFilesDir;
+      _segmentSubmission.video = state.video;
+      _segmentSubmission.videoState.stateExtraInfo = state.thumbFilePath;
     });
-    BlocProvider.of<MovementSubmissionBloc>(context)..updateStateToEncoded(ms);
+    BlocProvider.of<SegmentSubmissionBloc>(context)
+      ..updateStateToEncoded(_segmentSubmission);
   }
 
-  void saveUploadedState(VideoSuccess state, MovementSubmission ms) {
+  void saveUploadedState(VideoSuccess state) {
     setState(() {
       processPhase = OlukoLocalizations.of(context).find('completed');
       progress = 1.0;
-      ms.video = state.video;
+      _segmentSubmission.video = state.video;
     });
-    BlocProvider.of<MovementSubmissionBloc>(context)..updateVideo(ms);
+    BlocProvider.of<SegmentSubmissionBloc>(context)
+      ..updateVideo(_segmentSubmission);
   }
 
-  void saveErrorState(VideoFailure state, MovementSubmission ms) {
+  void saveErrorState(VideoFailure state) {
     setState(() {
       isThereError = true;
-      ms.videoState.error = state.exceptionMessage;
+      _segmentSubmission.videoState.error = state.exceptionMessage;
     });
-    BlocProvider.of<MovementSubmissionBloc>(context)..updateStateToError(ms);
+    BlocProvider.of<SegmentSubmissionBloc>(context)
+      ..updateStateToError(_segmentSubmission);
   }
 
   void showSegmentMessage() {
@@ -907,25 +961,17 @@ class _SegmentClocksState extends State<SegmentClocks> {
           )),
           child: Column(children: [
             SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.only(top: 50.0),
-              child: totalMovementSubmissions != null
-                  ? Text(
-                      OlukoLocalizations.of(context).find('processingVideo') +
-                          " " +
-                          currentMovementSubmission.toString() +
-                          OlukoLocalizations.of(context).find('outOf') +
-                          totalMovementSubmissions.toString(),
-                      style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.bold, customColor: OlukoColors.white),
-                    )
-                  : SizedBox(),
-            ),
             SizedBox(height: 10),
-            Padding(padding: const EdgeInsets.all(40.0), child: ProgressBar(processPhase: processPhase, progress: progress)),
+            Padding(
+                padding: const EdgeInsets.all(40.0),
+                child: ProgressBar(
+                    processPhase: processPhase, progress: progress)),
           ])),
       Align(
           alignment: Alignment.topRight,
-          child: IconButton(icon: Icon(Icons.close, color: Colors.white), onPressed: () => Navigator.pop(context)))
+          child: IconButton(
+              icon: Icon(Icons.close, color: Colors.white),
+              onPressed: () => Navigator.pop(context)))
     ]);
   }
 }

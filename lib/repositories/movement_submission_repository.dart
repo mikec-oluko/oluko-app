@@ -41,8 +41,8 @@ class MovementSubmissionRepository {
     final DocumentReference docRef = reference.doc();
     movementSubmission.id = docRef.id;
     docRef.set(movementSubmission.toJson());
-    SegmentSubmissionRepository.updateSegmentSubmission(
-        segmentSubmission, movementSubmission);
+    //SegmentSubmissionRepository.updateSegmentSubmission(
+        //segmentSubmission, movementSubmission);
     return movementSubmission;
   }
 
