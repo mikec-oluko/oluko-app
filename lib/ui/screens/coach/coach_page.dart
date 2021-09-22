@@ -35,9 +35,7 @@ import 'package:oluko_app/ui/components/coach_horizontal_carousel_component.dart
 import 'package:oluko_app/ui/components/coach_sliding_up_panel.dart';
 import 'package:oluko_app/ui/components/coach_user_progress_card.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
-import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
-import 'package:oluko_app/utils/screen_utils.dart';
 
 class CoachPage extends StatefulWidget {
   const CoachPage({this.coachId, this.coachAssignment});
@@ -64,7 +62,6 @@ List<Task> _tasks = [];
 class _CoachPageState extends State<CoachPage> {
   @override
   void initState() {
-    // TODO: implement initState
     BlocProvider.of<CoachProfileBloc>(context).getCoachProfile(widget.coachId);
     super.initState();
   }
@@ -172,16 +169,7 @@ class _CoachPageState extends State<CoachPage> {
 
   SizedBox carouselToDoSection(BuildContext context) {
     return SizedBox(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            OlukoLocalizations.of(context).find('toDo'),
-            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
-          ),
-          toDoSection(context),
-        ],
-      ),
+      child: toDoSection(context),
     );
   }
 
@@ -200,7 +188,16 @@ class _CoachPageState extends State<CoachPage> {
                 _activeChallenges = state.challenges;
               }
             }
-            return CoachHorizontalCarousel(contentToDisplay: toDoContent());
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  OlukoLocalizations.of(context).find('toDo'),
+                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                ),
+                CoachHorizontalCarousel(contentToDisplay: toDoContent()),
+              ],
+            );
           },
         );
       },
@@ -296,9 +293,7 @@ class _CoachPageState extends State<CoachPage> {
           //         isForCarousel: isForCarousel)
           //     :
           CoachContentSectionCard(
-              title: OlukoLocalizations.of(context).find('mentoredVideos'),
-              isForCarousel: isForCarousel,
-              needTitle: false);
+              title: OlukoLocalizations.of(context).find('mentoredVideos'), isForCarousel: isForCarousel);
     });
   }
 }

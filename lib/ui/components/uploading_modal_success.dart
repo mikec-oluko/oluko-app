@@ -41,17 +41,14 @@ class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
                   child: CircleAvatar(
                     backgroundColor: OlukoColors.primary,
                     radius: 40.0,
-                    child: IconButton(
-                        icon: Icon(Icons.check, color: OlukoColors.black),
-                        onPressed: () {}),
+                    child: IconButton(icon: Icon(Icons.check, color: OlukoColors.black), onPressed: () {}),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: Text(
                     _successText,
-                    style: OlukoFonts.olukoTitleFont(
-                        custoFontWeight: FontWeight.w400),
+                    style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.w400),
                   ),
                 ),
                 Padding(
@@ -63,34 +60,20 @@ class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
                           OlukoOutlinedButton(
                               title: _doneButtonText,
                               onPressed: () {
-                                if (widget.goToPage ==
-                                    UploadFrom.transformationJourney) {
-                                  BlocProvider.of<
-                                      TransformationJourneyContentBloc>(context)
-                                    ..emitDefaultState();
-                                  BlocProvider.of<TransformationJourneyBloc>(
-                                      context)
+                                if (widget.goToPage == UploadFrom.transformationJourney) {
+                                  BlocProvider.of<TransformationJourneyContentBloc>(context)..emitDefaultState();
+                                  BlocProvider.of<TransformationJourneyBloc>(context)
                                     ..emitTransformationJourneyDefault();
                                   Navigator.popAndPushNamed(
-                                      context,
-                                      routeLabels[RouteEnum
-                                          .profileTransformationJourney]);
+                                      context, routeLabels[RouteEnum.profileTransformationJourney],
+                                      arguments: {'profileInfo': widget.userRequested});
                                 } else {
-                                  BlocProvider.of<ProfileAvatarBloc>(context)
-                                    ..emitDefaultState();
-                                  BlocProvider.of<ProfileCoverImageBloc>(
-                                      context)
-                                    ..emitDefaultState();
-                                  BlocProvider.of<AuthBloc>(context)
-                                    ..checkCurrentUser();
+                                  BlocProvider.of<ProfileAvatarBloc>(context)..emitDefaultState();
+                                  BlocProvider.of<ProfileCoverImageBloc>(context)..emitDefaultState();
+                                  BlocProvider.of<AuthBloc>(context)..checkCurrentUser();
 
-                                  Navigator.popAndPushNamed(
-                                      context,
-                                      routeLabels[
-                                          RouteEnum.profileViewOwnProfile],
-                                      arguments: {
-                                        'userRequested': widget.userRequested
-                                      });
+                                  Navigator.popAndPushNamed(context, routeLabels[RouteEnum.profileViewOwnProfile],
+                                      arguments: {'userRequested': widget.userRequested});
                                 }
                               }),
                         ],
