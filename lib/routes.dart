@@ -8,7 +8,6 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
 import 'package:oluko_app/blocs/gallery_video_bloc.dart';
-import 'package:oluko_app/blocs/movement_submission_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
@@ -223,8 +222,6 @@ class Routes {
   final GalleryVideoBloc _galleryVideoBloc = GalleryVideoBloc();
   final CourseEnrollmentListBloc _courseEnrollmentListBloc =
       CourseEnrollmentListBloc();
-  final MovementSubmissionBloc _movementSubmissionBloc =
-      MovementSubmissionBloc();
   final SegmentSubmissionBloc _segmentSubmissionBloc = SegmentSubmissionBloc();
   final TransformationJourneyContentBloc _transformationJourneyContentBloc =
       TransformationJourneyContentBloc();
@@ -451,8 +448,6 @@ class Routes {
           BlocProvider<MovementBloc>.value(value: _movementBloc),
           BlocProvider<SegmentSubmissionBloc>.value(
               value: _segmentSubmissionBloc),
-          BlocProvider<MovementSubmissionBloc>.value(
-              value: _movementSubmissionBloc),
           BlocProvider<VideoBloc>.value(value: _videoBloc),
           BlocProvider<CourseEnrollmentBloc>.value(
               value: _courseEnrollmentBloc),
@@ -474,8 +469,6 @@ class Routes {
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
           BlocProvider<SegmentSubmissionBloc>.value(
               value: _segmentSubmissionBloc),
-          BlocProvider<MovementSubmissionBloc>.value(
-              value: _movementSubmissionBloc),
           BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc)
         ];
         final Map<String, dynamic> argumentsToAdd =

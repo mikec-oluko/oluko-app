@@ -10,7 +10,6 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
-import 'package:oluko_app/blocs/movement_submission_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -19,9 +18,7 @@ import 'package:oluko_app/models/enums/counter_enum.dart';
 import 'package:oluko_app/models/enums/parameter_enum.dart';
 import 'package:oluko_app/models/enums/submission_state_enum.dart';
 import 'package:oluko_app/models/enums/timer_model.dart';
-import 'package:oluko_app/models/enums/timer_type_enum.dart';
 import 'package:oluko_app/models/movement.dart';
-import 'package:oluko_app/models/movement_submission.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/submodels/counter.dart';
@@ -525,13 +522,15 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
     if (timerEntries[timerTaskIndex].round == null) {
       //is AMRAP
-      return TimerUtils.AMRAPTimer(
-          circularProgressIndicatorValue,
-          TimeConverter.durationToString(timeLeft),
-          context,
-          () => setState(() {
-                AMRAPRound++;
-              }));
+      return TimerUtils.AMRAPTimer(circularProgressIndicatorValue,
+          TimeConverter.durationToString(timeLeft), context, () {
+        setState(() {
+          AMRAPRound++;
+        });
+        if (AMRAPRound == 1) {
+          _saveSegmentRound(timerEntries[timerTaskIndex]);
+        }
+      });
     }
     String counter = timerEntries[timerTaskIndex].counter == CounterEnum.reps
         ? timerEntries[timerTaskIndex].movement.name
@@ -679,7 +678,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   }
 
   //Timer Functions
-  _saveLastStep(TimerEntry timerEntry) async {
+  _saveSegmentRound(TimerEntry timerEntry) async {
     if (isSegmentWithRecording()) {
       XFile videopath = await cameraController.stopVideoRecording();
       BlocProvider.of<SegmentSubmissionBloc>(context)
@@ -689,11 +688,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
   }
 
   void _goToNextStep() {
-    if (timerEntries[timerTaskIndex].round == 0) {
-      if (!SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) &&
-              timerTaskIndex == timerEntries.length ||
+    if (!SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) &&
+        timerEntries[timerTaskIndex].round == 0) {
+      if (timerTaskIndex == timerEntries.length ||
           timerEntries[timerTaskIndex + 1].round == 1) {
-        _saveLastStep(timerEntries[timerTaskIndex]);
+        _saveSegmentRound(timerEntries[timerTaskIndex]);
       }
     }
 
