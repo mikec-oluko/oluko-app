@@ -262,6 +262,9 @@ class Routes {
     switch (routeEnum) {
       case RouteEnum.root:
         providers = [
+          BlocProvider<HiFiveReceivedBloc>.value(
+            value: _hiFiveReceivedBloc,
+          ),
           BlocProvider<CourseBloc>.value(value: _courseBloc),
           BlocProvider<ClassBloc>.value(value: _classBloc),
           BlocProvider<CourseEnrollmentListBloc>.value(
@@ -321,6 +324,9 @@ class Routes {
       case RouteEnum.profile:
         providers = [
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
+          BlocProvider<HiFiveReceivedBloc>.value(
+            value: _hiFiveReceivedBloc,
+          )
         ];
         newRouteView = ProfilePage();
         break;
@@ -335,6 +341,9 @@ class Routes {
         break;
       case RouteEnum.profileMyAccount:
         providers = [
+          BlocProvider<HiFiveReceivedBloc>.value(
+            value: _hiFiveReceivedBloc,
+          ),
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
           BlocProvider<PlanBloc>.value(value: _planBloc),
           BlocProvider<TransformationJourneyBloc>.value(
