@@ -26,7 +26,7 @@ class UserRepository {
   Future<UserResponse> get(String email) async {
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('users')
         .where('email', isEqualTo: email)
         .get();
@@ -34,15 +34,14 @@ class UserRepository {
       return null;
     }
     var response = docRef.docs[0].data() as Map<String, dynamic>;
-    var loginResponseBody =
-        UserResponse.fromJson(response as Map<String, dynamic>);
+    var loginResponseBody = UserResponse.fromJson(response as Map<String, dynamic>);
     return loginResponseBody;
   }
 
   Future<UserResponse> getById(String id) async {
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('users')
         .where('id', isEqualTo: id)
         .get();
@@ -50,36 +49,26 @@ class UserRepository {
       return null;
     }
     var response = docRef.docs[0].data() as Map<String, dynamic>;
-    var loginResponseBody =
-        UserResponse.fromJson(response as Map<String, dynamic>);
+    var loginResponseBody = UserResponse.fromJson(response as Map<String, dynamic>);
     return loginResponseBody;
   }
 
   Future<List<UserResponse>> getAll() async {
-    QuerySnapshot docRef = await FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
-        .collection('users')
-        .get();
+    QuerySnapshot docRef =
+        await FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users').get();
     if (docRef.docs == null || docRef.docs.length == 0) {
       return null;
     }
-    List<UserResponse> response =
-        docRef.docs.map((doc) => UserResponse.fromJson(doc.data() as Map<String, dynamic>)).toList();
+    List<UserResponse> response = docRef.docs.map((doc) => UserResponse.fromJson(doc.data() as Map<String, dynamic>)).toList();
 
     return response;
   }
 
   Future<UserResponse> createSSO(SignUpRequest signUpRequest) async {
-    CollectionReference reference = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
-        .collection('users');
+    CollectionReference reference =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users');
 
-    UserResponse user = UserResponse(
-        firstName: signUpRequest.firstName,
-        lastName: signUpRequest.lastName,
-        email: signUpRequest.email);
+    UserResponse user = UserResponse(firstName: signUpRequest.firstName, lastName: signUpRequest.lastName, email: signUpRequest.email);
     final DocumentReference docRef = reference.doc();
     user.id = docRef.id;
     user.username = docRef.id;
@@ -96,29 +85,25 @@ class UserRepository {
   }
 
   Future<UserResponse> getByUsername(String username) async {
-    QuerySnapshot<Map<String, dynamic>> docsRef = await FirebaseFirestore
-        .instance
+    QuerySnapshot<Map<String, dynamic>> docsRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('users')
         .where('username', isEqualTo: username)
         .get();
     if (docsRef.size > 0) {
       var response = docsRef.docs[0].data() as Map<String, dynamic>;
-      var loginResponseBody =
-          UserResponse.fromJson(response as Map<String, dynamic>);
+      var loginResponseBody = UserResponse.fromJson(response as Map<String, dynamic>);
       return loginResponseBody;
     }
     return null;
   }
 
-  Future<UserResponse> updateUserAvatar(
-      UserResponse user, PickedFile file) async {
+  Future<UserResponse> updateUserAvatar(UserResponse user, PickedFile file) async {
     DocumentReference<Object> userReference = getUserReference(user);
 
     final thumbnail = await ImageUtils().getThumbnailForImage(file, 250);
-    final thumbNailUrl =
-        await _uploadFile(thumbnail, '${userReference.path}/thumbnails');
+    final thumbNailUrl = await _uploadFile(thumbnail, '${userReference.path}/thumbnails');
 
     final downloadUrl = await _uploadFile(file.path, userReference.path);
     user.avatar = downloadUrl;
@@ -136,12 +121,10 @@ class UserRepository {
     }
   }
 
-  Future<UserResponse> updateUserCoverImage(
-      {UserResponse user, PickedFile coverImage}) async {
+  Future<UserResponse> updateUserCoverImage({UserResponse user, PickedFile coverImage}) async {
     DocumentReference<Object> userReference = getUserReference(user);
 
-    final coverDownloadImage =
-        await _uploadFile(coverImage.path, userReference.path);
+    final coverDownloadImage = await _uploadFile(coverImage.path, userReference.path);
     user.coverImage = coverDownloadImage;
     try {
       await userReference.update(user.toJson());
@@ -157,11 +140,8 @@ class UserRepository {
   }
 
   DocumentReference<Object> getUserReference(UserResponse user) {
-    DocumentReference userReference = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
-        .collection('users')
-        .doc(user.id);
+    DocumentReference userReference =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users').doc(user.id);
     return userReference;
   }
 
@@ -170,14 +150,12 @@ class UserRepository {
     final basename = p.basename(filePath);
 
     final S3Provider s3Provider = S3Provider();
-    String downloadUrl =
-        await s3Provider.putFile(file.readAsBytesSync(), folderName, basename);
+    String downloadUrl = await s3Provider.putFile(file.readAsBytesSync(), folderName, basename);
 
     return downloadUrl;
   }
 
-  Future<UserResponse> updateUserSettingsPreferences(
-      UserResponse user, int privacyIndex, bool notificationValue) async {
+  Future<UserResponse> updateUserSettingsPreferences(UserResponse user, int privacyIndex, bool notificationValue) async {
     DocumentReference<Object> userReference = getUserReference(user);
 
     user.notification = notificationValue;

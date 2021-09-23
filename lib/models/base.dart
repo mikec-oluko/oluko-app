@@ -78,7 +78,7 @@ class Base {
     }
     baseJson.addEntries([
       MapEntry("updated_by", updatedBy),
-      MapEntry("created_by", createdBy),
+      MapEntry('created_by', createdBy),
       MapEntry("id", id),
       MapEntry("is_deleted", isDeleted),
       MapEntry("is_hidden", isHidden)

@@ -20,7 +20,10 @@ class SegmentSubmissionRepository {
   }
 
   static Future<SegmentSubmission> create(
-      User user, CourseEnrollment courseEnrollment, Segment segment, String videoPath) async {
+      User user,
+      CourseEnrollment courseEnrollment,
+      Segment segment,
+      String videoPath) async {
     DocumentReference projectReference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"));
@@ -56,7 +59,7 @@ class SegmentSubmissionRepository {
     return segmentSubmission;
   }
 
-static Future<void> updateVideo(SegmentSubmission  segmentSubmission) async {
+  static Future<void> updateVideo(SegmentSubmission segmentSubmission) async {
     DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"))
@@ -64,23 +67,21 @@ static Future<void> updateVideo(SegmentSubmission  segmentSubmission) async {
         .doc(segmentSubmission.id);
     reference.update({
       'video': segmentSubmission.video.toJson(),
-      'video_state.state':
-          SubmissionStateEnum.uploaded.index,
+      'video_state.state': SubmissionStateEnum.uploaded.index,
       'video_state.state_info': "",
       'video_state.state_extra_info': ""
     });
   }
 
   static Future<void> updateStateToEncoded(
-      SegmentSubmission  segmentSubmission) async {
+      SegmentSubmission segmentSubmission) async {
     DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"))
         .collection('segmentSubmissions')
         .doc(segmentSubmission.id);
     reference.update({
-      'video_state.state':
-          segmentSubmission.videoState.state.index,
+      'video_state.state': segmentSubmission.videoState.state.index,
       'video_state.state_info': segmentSubmission.videoState.stateInfo,
       'video_state.state_extra_info':
           segmentSubmission.videoState.stateExtraInfo,
@@ -89,13 +90,12 @@ static Future<void> updateVideo(SegmentSubmission  segmentSubmission) async {
   }
 
   static Future<void> updateStateToError(
-      SegmentSubmission  segmentSubmission) async {
+      SegmentSubmission segmentSubmission) async {
     DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"))
         .collection('segmentSubmissions')
         .doc(segmentSubmission.id);
-    reference
-        .update({'video_state.error': segmentSubmission.videoState.error});
+    reference.update({'video_state.error': segmentSubmission.videoState.error});
   }
 }

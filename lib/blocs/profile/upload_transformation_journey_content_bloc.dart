@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/helpers/permissions.dart';
 import 'package:oluko_app/models/enums/file_type_enum.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
@@ -21,6 +22,7 @@ class TransformationJourneyContentFailure extends TransformationJourneyContentSt
   dynamic exception;
   TransformationJourneyContentFailure({this.exception});
 }
+class TransformationJourneyRequirePermissions extends TransformationJourneyContentState {}
 
 class TransformationJourneyContentBloc extends Cubit<TransformationJourneyContentState> {
   TransformationJourneyContentBloc() : super(TransformationJourneyContentDefault());
@@ -51,9 +53,20 @@ class TransformationJourneyContentBloc extends Cubit<TransformationJourneyConten
         e,
         stackTrace: stackTrace,
       );
+
+      if (!await requiredTJourneyPermissionsEnabled(uploadedFrom)) return;
+
       emit(TransformationJourneyContentFailure(exception: e));
       rethrow;
     }
+  }
+
+  Future<bool> requiredTJourneyPermissionsEnabled(DeviceContentFrom uploadedFrom) async {
+    if (!await Permissions.requiredPermissionsEnabled(uploadedFrom)) {
+      emit(TransformationJourneyRequirePermissions());
+      return false;
+    }
+    return true;
   }
 
   void emitDefaultState() {

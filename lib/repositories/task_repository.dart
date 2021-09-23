@@ -16,19 +16,14 @@ class TaskRepository {
   }
 
   static Future<List<Task>> getAll() async {
-    QuerySnapshot docRef = await FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
-        .collection('tasks')
-        .get();
+    QuerySnapshot docRef =
+        await FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('tasks').get();
     return mapQueryToTask(docRef);
   }
 
   static Future<List<Task>> getAllByAssessment(Assessment assessment) async {
     List<Task> tasks = await getAll();
-    List<String> taskIds = assessment.tasks
-        .map((AssessmentTask assessmentTask) => assessmentTask.taskId)
-        .toList();
+    List<String> taskIds = assessment.tasks.map((AssessmentTask assessmentTask) => assessmentTask.taskId).toList();
 
     List<Task> response = [];
     response.length = taskIds.length;
