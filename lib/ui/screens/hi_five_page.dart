@@ -48,10 +48,21 @@ class _HiFivePageState extends State<HiFivePage> {
             return BlocBuilder<HiFiveBloc, HiFiveState>(
                 bloc: BlocProvider.of<HiFiveBloc>(context)
                   ..get(context, authState.user.id),
-                builder: (context, snapshot) {
-                  return ListView(
-                    children: users.map((user) => _listItem(user, 5)).toList(),
-                  );
+                builder: (context, hiFiveState) {
+                  return hiFiveState is HiFiveSuccess
+                      ? ListView(
+                          children: hiFiveState.users
+                              .map(
+                                (user) => _listItem(
+                                  user,
+                                  hiFiveState.chat.values
+                                      .toList()[hiFiveState.users.indexOf(user)]
+                                      .length,
+                                ),
+                              )
+                              .toList(),
+                        )
+                      : const SizedBox();
                 });
           } else {
             return const SizedBox();
