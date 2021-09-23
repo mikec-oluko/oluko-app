@@ -53,6 +53,7 @@ class ChatRepository {
         .collection('users')
         .doc(userId)
         .collection('chat')
+        .orderBy('created_at')
         .get();
 
     //Chat List
@@ -60,7 +61,7 @@ class ChatRepository {
 
     //Get all message collection references
     List<QuerySnapshot<Map<String, dynamic>>> messageCollectionRefs = await Future.wait(
-      chatRefs.docs.map((e) => e.reference.collection('messages').get()),
+      chatRefs.docs.map((e) => e.reference.collection('messages').orderBy('created_at').get()),
     );
 
     //Get all message collections for all chats
@@ -183,17 +184,17 @@ class ChatRepository {
         .orderBy('created_at')
         .get();
 
-    Message lastMessage = Message.fromJson(messages.docs[0].data() as Map<String, dynamic>);
+    Message lastMessage = Message.fromJson(messages.docs.last.data() as Map<String, dynamic>);
     //TODO: Remove after trigger implementation.
-    Message targetUserLastMessage = Message.fromJson(targetUserMessages.docs[0].data() as Map<String, dynamic>);
+    Message targetUserLastMessage = Message.fromJson(targetUserMessages.docs.last.data() as Map<String, dynamic>);
 
     //TODO: Remove after trigger implementation
     if (targetUserLastMessage.message == Message().hifiveMessageCode) {
-      targetUserMessages.docs[0].reference.delete();
+      targetUserMessages.docs.last.reference.delete();
     }
 
     if (lastMessage.message == Message().hifiveMessageCode) {
-      messages.docs[0].reference.delete();
+      messages.docs.last.reference.delete();
       return true;
     } else {
       return false;
