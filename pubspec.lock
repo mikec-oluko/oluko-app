@@ -971,13 +971,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.1.0"
-  timelines:
+  timeline_tile:
     dependency: "direct main"
     description:
-      name: timelines
+      name: timeline_tile
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.0"
+    version: "2.0.0"
   transparent_image:
     dependency: "direct main"
     description:

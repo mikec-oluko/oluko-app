@@ -90,7 +90,7 @@ class _CoachPageState extends State<CoachPage> {
                     }
                     return CoachSlidingUpPanel(
                       content: coachViewPageContent(context),
-                      courseEnrollmentList: _courseEnrollmentList,
+                      contentForTesting: actualSegmentsToDisplay,
                     );
                   },
                 ),
@@ -272,7 +272,7 @@ class _CoachPageState extends State<CoachPage> {
               : CoachContentSectionCard(
                   title: OlukoLocalizations.of(context).find('sentVideos'),
                   isForCarousel: isForCarousel,
-                  needTitle: false);
+                );
         });
       },
     );
@@ -293,7 +293,9 @@ class _CoachPageState extends State<CoachPage> {
           //         isForCarousel: isForCarousel)
           //     :
           CoachContentSectionCard(
-              title: OlukoLocalizations.of(context).find('mentoredVideos'), isForCarousel: isForCarousel);
+        title: OlukoLocalizations.of(context).find('mentoredVideos'),
+        isForCarousel: isForCarousel,
+      );
     });
   }
 }

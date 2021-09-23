@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/coach_segment_content.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -7,9 +8,9 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'coach_timeline_panel.dart';
 
 class CoachSlidingUpPanel extends StatefulWidget {
-  const CoachSlidingUpPanel({this.content, this.courseEnrollmentList});
+  const CoachSlidingUpPanel({this.content, this.contentForTesting});
   final Widget content;
-  final List<CourseEnrollment> courseEnrollmentList;
+  final List<CoachSegmentContent> contentForTesting;
 
   @override
   _CoachSlidingUpPanelState createState() => _CoachSlidingUpPanelState();
@@ -54,7 +55,7 @@ class _CoachSlidingUpPanelState extends State<CoachSlidingUpPanel> {
         width: MediaQuery.of(context).size.width,
         height: 300,
         child: CoachTimelinePanel(
-          courseEnrollmentList: widget.courseEnrollmentList,
+          contentTest: widget.contentForTesting,
         ),
       ),
       controller: _panelController,
