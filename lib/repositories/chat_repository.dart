@@ -42,14 +42,12 @@ class ChatRepository {
         .get();
 
     var messagesData = await docRef.reference.collection('messages').get();
-    List<Message> messages =
-        messagesData.docs.map((e) => Message.fromJson(e.data())).toList();
+    List<Message> messages = messagesData.docs.map((e) => Message.fromJson(e.data())).toList();
     return messages;
   }
 
   Future<Map<Chat, List<Message>>> getChatsWithMessages(String userId) async {
-    QuerySnapshot<Map<String, dynamic>> chatRefs = await FirebaseFirestore
-        .instance
+    QuerySnapshot<Map<String, dynamic>> chatRefs = await FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
         .collection('users')
@@ -58,12 +56,10 @@ class ChatRepository {
         .get();
 
     //Chat List
-    List<Chat> chats =
-        chatRefs.docs.map((e) => Chat.fromJson(e.data())).toList();
+    List<Chat> chats = chatRefs.docs.map((e) => Chat.fromJson(e.data())).toList();
 
     //Get all message collection references
-    List<QuerySnapshot<Map<String, dynamic>>> messageCollectionRefs =
-        await Future.wait(
+    List<QuerySnapshot<Map<String, dynamic>>> messageCollectionRefs = await Future.wait(
       chatRefs.docs.map((e) => e.reference.collection('messages').get()),
     );
 
@@ -90,8 +86,7 @@ class ChatRepository {
   Stream<QuerySnapshot<Map<String, dynamic>>> listenToChats(
     String userId,
   ) {
-    final Stream<QuerySnapshot<Map<String, dynamic>>> docRef = FirebaseFirestore
-        .instance
+    final Stream<QuerySnapshot<Map<String, dynamic>>> docRef = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
         .collection('users')
@@ -104,27 +99,48 @@ class ChatRepository {
   }
 
   Future<Message> sendHiFive(String userId, String targetUserId) async {
-    final CollectionReference chatCollection = await FirebaseFirestore.instance
+    final CollectionReference userChatCollection = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
         .collection('users')
         .doc(userId)
         .collection('chat');
 
+    //TODO: Remove after trigger implementation.
+    final CollectionReference targetUserChatCollection = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('users')
+        .doc(targetUserId)
+        .collection('chat');
+
     //Check if chat document exists. If not, create the base properties inside.
-    final DocumentSnapshot<Object> chat =
-        await chatCollection.doc(targetUserId).get();
-    if (!chat.exists) {
-      chat.reference.set(Chat(id: targetUserId).toJson());
+    final DocumentSnapshot<Object> userChat = await userChatCollection.doc(targetUserId).get();
+    if (!userChat.exists) {
+      userChat.reference.set(Chat(id: targetUserId).toJson());
+    }
+
+    //TODO: Remove after trigger implementation.
+    //Check if chat document exists on Target User. If not, create the base properties inside.
+    final DocumentSnapshot<Object> targetUserChat = await targetUserChatCollection.doc(userId).get();
+    if (!targetUserChat.exists) {
+      targetUserChat.reference.set(Chat(id: userId).toJson());
     }
 
     //Create Message to send with HiFive code and store as a document
-    final Message messageToSend = Message(message: Message().hifiveMessageCode);
-    DocumentReference createdMessageDocument =
-        await chatCollection.doc(targetUserId).collection('messages').add({});
+    final Message messageToSend = Message(message: Message().hifiveMessageCode, createdBy: userId);
+    final DocumentReference createdMessageDocument = await userChatCollection.doc(targetUserId).collection('messages').add({});
     messageToSend.id = createdMessageDocument.id;
     final Map<String, dynamic> messageToSendJson = messageToSend.toJson();
     createdMessageDocument.set(messageToSendJson);
+
+    //TODO: Remove after trigger implementation
+    //Create Message to send with HiFive code and store as a document in target user collection
+    final Message messageToSendTarget = Message(message: Message().hifiveMessageCode, createdBy: userId);
+    final DocumentReference createdMessageDocumentTarget = await targetUserChatCollection.doc(userId).collection('messages').add({});
+    messageToSendTarget.id = createdMessageDocumentTarget.id;
+    final Map<String, dynamic> messageToSendJsonTarget = messageToSendTarget.toJson();
+    createdMessageDocumentTarget.set(messageToSendJsonTarget);
 
     //Get message to return
     final DocumentSnapshot createdMessage = await FirebaseFirestore.instance
@@ -155,8 +171,26 @@ class ChatRepository {
         .orderBy('created_at')
         .get();
 
-    Message lastMessage =
-        Message.fromJson(messages.docs[0].data() as Map<String, dynamic>);
+    //TODO: Remove after trigger implementation.
+    QuerySnapshot targetUserMessages = await FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('users')
+        .doc(userId)
+        .collection('chat')
+        .doc(targetUserId)
+        .collection('messages')
+        .orderBy('created_at')
+        .get();
+
+    Message lastMessage = Message.fromJson(messages.docs[0].data() as Map<String, dynamic>);
+    //TODO: Remove after trigger implementation.
+    Message targetUserLastMessage = Message.fromJson(targetUserMessages.docs[0].data() as Map<String, dynamic>);
+
+    //TODO: Remove after trigger implementation
+    if (targetUserLastMessage.message == Message().hifiveMessageCode) {
+      targetUserMessages.docs[0].reference.delete();
+    }
 
     if (lastMessage.message == Message().hifiveMessageCode) {
       messages.docs[0].reference.delete();
