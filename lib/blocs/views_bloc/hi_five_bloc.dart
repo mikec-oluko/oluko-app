@@ -2,7 +2,9 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/chat.dart';
 import 'package:oluko_app/models/message.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/chat_repository.dart';
+import 'package:oluko_app/repositories/user_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class HiFiveState {}
@@ -11,7 +13,8 @@ class HiFiveLoading extends HiFiveState {}
 
 class HiFiveSuccess extends HiFiveState {
   Map<Chat, List<Message>> chat;
-  HiFiveSuccess({this.chat});
+  List<UserResponse> users;
+  HiFiveSuccess({this.chat, this.users});
 }
 
 class HiFiveFailure extends HiFiveState {
@@ -43,7 +46,14 @@ class HiFiveBloc extends Cubit<HiFiveState> {
             messages == null || messages.isEmpty,
       );
 
-      emit(HiFiveSuccess(chat: chatsWithMessages));
+      //Get Users from Chats
+      final List<UserResponse> userList = await Future.wait(
+        chatsWithMessages.keys.map((Chat chat) {
+          return UserRepository().getById(chat.id);
+        }),
+      );
+
+      emit(HiFiveSuccess(chat: chatsWithMessages, users: userList));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
