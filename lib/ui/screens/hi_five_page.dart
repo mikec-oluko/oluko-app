@@ -16,24 +16,6 @@ class HiFivePage extends StatefulWidget {
 }
 
 class _HiFivePageState extends State<HiFivePage> {
-  List<UserResponse> users = [
-    UserResponse(
-        avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrpM3UTTyyqIwGsPYB1gCDhfl3XVv0Cex2Lw&usqp=CAU',
-        firstName: 'Elena',
-        username: 'Ele25_uy',
-        id: '2312321321'),
-    UserResponse(
-        avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrpM3UTTyyqIwGsPYB1gCDhfl3XVv0Cex2Lw&usqp=CAU',
-        firstName: 'Elena',
-        username: 'Ele25_uy',
-        id: '2312322'),
-    UserResponse(
-        avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrpM3UTTyyqIwGsPYB1gCDhfl3XVv0Cex2Lw&usqp=CAU',
-        firstName: 'Elena',
-        username: 'Ele25_uy',
-        id: '23123')
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
