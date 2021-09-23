@@ -16,6 +16,8 @@ class HiFivePage extends StatefulWidget {
 }
 
 class _HiFivePageState extends State<HiFivePage> {
+  HiFiveSuccess _hiFiveState;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,22 +26,27 @@ class _HiFivePageState extends State<HiFivePage> {
       body: BlocBuilder<AuthBloc, AuthState>(
         builder: (context, authState) {
           if (authState is AuthSuccess) {
-            return BlocBuilder<HiFiveBloc, HiFiveState>(
-                bloc: BlocProvider.of<HiFiveBloc>(context)..get(context, authState.user.id),
-                builder: (context, hiFiveState) {
-                  return hiFiveState is HiFiveSuccess
-                      ? ListView(
-                          children: hiFiveState.users
-                              .map(
-                                (user) => _listItem(
-                                  user,
-                                  hiFiveState.chat.values.toList()[hiFiveState.users.indexOf(user)].length,
-                                ),
-                              )
-                              .toList(),
-                        )
-                      : const SizedBox();
-                });
+            if (_hiFiveState == null) {
+              BlocProvider.of<HiFiveBloc>(context).get(authState.user.id);
+            }
+            return BlocBuilder<HiFiveBloc, HiFiveState>(builder: (context, hiFiveState) {
+              if (hiFiveState is HiFiveSuccess) {
+                _hiFiveState = hiFiveState;
+                return ListView(
+                  children: hiFiveState.users
+                      .map(
+                        (targetUser) => _listItem(
+                          authState.user,
+                          targetUser,
+                          hiFiveState.chat.values.toList()[hiFiveState.users.indexOf(targetUser)].length,
+                        ),
+                      )
+                      .toList(),
+                );
+              } else {
+                return SizedBox();
+              }
+            });
           } else {
             return const SizedBox();
           }
@@ -48,9 +55,16 @@ class _HiFivePageState extends State<HiFivePage> {
     );
   }
 
-  Widget _listItem(UserResponse user, num hiFives) {
+  Widget _listItem(UserResponse user, UserResponse targetUser, num hiFives) {
     return Dismissible(
-      key: ValueKey<String>(user.id),
+      key: ValueKey<String>(targetUser.id),
+      onDismissed: (DismissDirection dismissDirection) {
+        if (dismissDirection == DismissDirection.startToEnd) {
+          BlocProvider.of<HiFiveBloc>(context).sendHiFive(user.id, targetUser.id);
+        } else {
+          BlocProvider.of<HiFiveBloc>(context).ignoreHiFive(user.id, targetUser.id);
+        }
+      },
       background: Container(color: OlukoColors.primary),
       secondaryBackground: Container(
         color: Colors.red.shade100,
@@ -66,7 +80,7 @@ class _HiFivePageState extends State<HiFivePage> {
                   children: [
                     StoriesItem(
                       progressValue: 0.6,
-                      imageUrl: user.avatar,
+                      imageUrl: targetUser.avatar,
                       maxRadius: 30,
                     ),
                     Padding(
@@ -77,11 +91,11 @@ class _HiFivePageState extends State<HiFivePage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              user.firstName,
+                              targetUser.firstName,
                               style: const TextStyle(color: Colors.white, fontSize: 20),
                             ),
                             Text(
-                              user.username,
+                              targetUser.username,
                               style: const TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ],
@@ -103,12 +117,15 @@ class _HiFivePageState extends State<HiFivePage> {
                 ],
               ),
             ),
-            Image.asset(
-              'assets/profile/hiFive.png',
-              fit: BoxFit.cover,
-              colorBlendMode: BlendMode.lighten,
-              height: 60,
-              width: 60,
+            GestureDetector(
+              onTap: () => BlocProvider.of<HiFiveBloc>(context).sendHiFive(user.id, targetUser.id),
+              child: Image.asset(
+                'assets/profile/hiFive.png',
+                fit: BoxFit.cover,
+                colorBlendMode: BlendMode.lighten,
+                height: 60,
+                width: 60,
+              ),
             )
           ],
         ),
