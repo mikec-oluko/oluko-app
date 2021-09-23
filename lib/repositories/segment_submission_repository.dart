@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/enums/segment_submission_status_enum.dart';
 import 'package:oluko_app/models/enums/submission_state_enum.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
@@ -46,6 +47,7 @@ class SegmentSubmissionRepository {
         segmentReference: segmentReference,
         courseEnrollmentId: courseEnrollment.id,
         courseEnrollmentReference: courseEnrollmentReference,
+        status: SegmentSubmissionStatusEnum.created,
         videoState: VideoState(
             state: SubmissionStateEnum.recorded, stateInfo: videoPath));
 
