@@ -103,7 +103,7 @@
     "processingVideo": "Procesando video",
     "completed": "Completo",
     "uploadedWithErrors": "El segmento fue subido con errores",
-    "uploadedSuccessfully": "El segmento fue subido con éxito",
+    "segmentUploadedSuccessfully": "El segmento fue subido con éxito",
     "challengesCompleted": "Desafios Completados",
     "coursesCompleted": "Cursos Completados",
     "classesCompleted": "Clases Completadas",
@@ -198,5 +198,6 @@
     "welcome":"Bienvenido",
     "userForThisAccountNotFoundPleaseSignUp": "Usuario para esta cuenta no fue encontrado por favor registrarse.",
     "pleaseCheckYourEmailForInstructions":"Por favor checkea tu email para mas instrucciones.",
-    "errorGettingCurrentPlan": "Error al obtener el plan actual"
+    "errorGettingCurrentPlan": "Error al obtener el plan actual",
+    "uploadedSuccessfully": "Subido correctamente",
 }

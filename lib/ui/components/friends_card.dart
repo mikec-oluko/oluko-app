@@ -63,12 +63,12 @@ class _FriendCardState extends State<FriendCard> {
                               _loadImageError = true;
                             });
                           },
-                    backgroundColor: OlukoColors.grayColorSemiTransparent,
+                    backgroundColor: OlukoColors.randomColor(),
                     radius: 30,
                     child: _loadImageError
                         ? Text(
-                            OlukoLocalizations.of(context).find('errorLoadingImage'),
-                            style: OlukoFonts.olukoSmallFont(
+                            widget.friendUser.firstName.characters.first.toString().toUpperCase(),
+                            style: OlukoFonts.olukoBigFont(
                               customColor: OlukoColors.white,
                               custoFontWeight: FontWeight.w500,
                             ),
