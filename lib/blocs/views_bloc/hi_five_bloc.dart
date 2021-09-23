@@ -10,7 +10,7 @@ abstract class HiFiveState {}
 class HiFiveLoading extends HiFiveState {}
 
 class HiFiveSuccess extends HiFiveState {
-  List<Chat> chat;
+  Map<Chat, List<Message>> chat;
   HiFiveSuccess({this.chat});
 }
 
@@ -29,7 +29,21 @@ class HiFiveBloc extends Cubit<HiFiveState> {
       final Map<Chat, List<Message>> chatsWithMessages =
           await ChatRepository().getChatsWithMessages(userId);
 
-      emit(HiFiveSuccess(chat: null));
+      //Filter messages that are not HiFives
+      chatsWithMessages.updateAll((Chat chat, List<Message> messages) {
+        messages.removeWhere(
+          (message) => message.message != message.hifiveMessageCode,
+        );
+        return messages;
+      });
+
+      //Remove Chats with no HiFives
+      chatsWithMessages.removeWhere(
+        (Chat chat, List<Message> messages) =>
+            messages == null || messages.isEmpty,
+      );
+
+      emit(HiFiveSuccess(chat: chatsWithMessages));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
