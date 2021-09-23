@@ -161,10 +161,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
   Widget form() {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      bottomNavigationBar:
-          isSegmentWithRecording() && workState == WorkState.paused
-              ? resumeButton()
-              : SizedBox(),
+      bottomNavigationBar: isSegmentWithRecording() && isWorkStatePaused()
+          ? resumeButton()
+          : SizedBox(),
       appBar: OlukoAppBar(
         showDivider: false,
         title: ' ',
@@ -301,10 +300,6 @@ class _SegmentClocksState extends State<SegmentClocks> {
     }
   }
 
-  /*
-  View Sections
-  */
-
   ///Countdown & movements information
   Widget _timerSection() {
     return Center(
@@ -323,6 +318,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   bool isWorkStateFinished() {
     return workState == WorkState.finished;
+  }
+
+  bool isWorkStatePaused() {
+    return workState == WorkState.paused;
   }
 
   Widget getSegmentLabel() {
@@ -358,7 +357,12 @@ class _SegmentClocksState extends State<SegmentClocks> {
   Widget _tasksSection() {
     return widget.workoutType == WorkoutType.segment
         ? taskSectionWithoutRecording()
-        : recordingTaskSection();
+        : Column(children: [
+            SizedBox(height: 10),
+            recordingTaskSection(),
+            counterTextField(),
+            SizedBox(height: 20)
+          ]);
   }
 
   Widget taskSectionWithoutRecording() {
@@ -382,15 +386,19 @@ class _SegmentClocksState extends State<SegmentClocks> {
               SizedBox(height: 10),
               nextTaskWidget(nextTask),
               SizedBox(height: 15),
-              isCurrentMovementRest() &&
-                      (timerEntries[timerTaskIndex - 1].counter ==
-                              CounterEnum.reps ||
-                          timerEntries[timerTaskIndex - 1].counter ==
-                              CounterEnum.distance)
-                  ? getTextField()
-                  : SizedBox()
+              counterTextField()
             ],
           ));
+    }
+  }
+
+  Widget counterTextField() {
+    if (isCurrentMovementRest() &&
+        (timerEntries[timerTaskIndex - 1].counter == CounterEnum.reps ||
+            timerEntries[timerTaskIndex - 1].counter == CounterEnum.distance)) {
+      return getTextField();
+    } else {
+      return SizedBox();
     }
   }
 
@@ -482,7 +490,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
       return TimerUtils.completedTimer(context);
     }
 
-    if (workState != WorkState.paused && isCurrentTaskByReps()) {
+    if (isWorkStatePaused() && isCurrentTaskByReps()) {
       return TimerUtils.repsTimer(
           () => setState(() {
                 _goToNextStep();
@@ -490,7 +498,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
           context);
     }
 
-    if (workState == WorkState.paused && isCurrentTaskByReps()) {
+    if (isWorkStatePaused() && isCurrentTaskByReps()) {
       return TimerUtils.pausedTimer(context);
     }
 
@@ -500,7 +508,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
     double circularProgressIndicatorValue =
         (actualTime.inSeconds / timerEntries[timerTaskIndex].value);
 
-    if (workState == WorkState.paused) {
+    if (isWorkStatePaused()) {
       return TimerUtils.pausedTimer(
           context, TimeConverter.durationToString(timeLeft));
     }
@@ -596,7 +604,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   ///Camera recording section. Shows camera Input and start/stop buttons.
   Widget _cameraSection() {
-    return workState == WorkState.paused
+    return isWorkStatePaused()
         ? SizedBox()
         : SizedBox(
             height: ScreenUtils.height(context) / 2,
@@ -647,6 +655,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
               setPaused();
             }
           });
+          if (isSegmentWithRecording()) {
+            XFile videopath = await cameraController.stopVideoRecording();
+          }
+          /*Navigator.popUntil(
+              context, ModalRoute.withName(routeLabels[RouteEnum.insideClass]));*/
         },
         child: Stack(alignment: Alignment.center, children: [
           Image.asset(
@@ -733,11 +746,6 @@ class _SegmentClocksState extends State<SegmentClocks> {
   _playTask() async {
     WorkState previousWorkState = workState;
     workState = getCurrentTaskWorkState();
-    /*if (isSegmentWithRecording() && workState == WorkState.exercising) {
-      if (timerTaskIndex > 0 || previousWorkState == WorkState.paused) {
-        await cameraController.startVideoRecording();
-      }
-    }*/
     if (isCurrentTaskTimed()) {
       _playCountdown();
       timeLeft = Duration(seconds: timerEntries[timerTaskIndex].value);
