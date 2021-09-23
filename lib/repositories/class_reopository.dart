@@ -30,25 +30,18 @@ class ClassRepository {
     return classes;
   }
 
-  static Future<Class> create(
-      Class newClass, DocumentReference courseReference) async {
-    CollectionReference reference = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
-        .collection('classes');
+  static Future<Class> create(Class newClass, DocumentReference courseReference) async {
+    CollectionReference reference =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('classes');
     final DocumentReference docRef = reference.doc();
     newClass.id = docRef.id;
     docRef.set(newClass.toJson());
-    ObjectSubmodel classObj = ObjectSubmodel(
-        id: newClass.id,
-        reference: reference.doc(newClass.id),
-        name: newClass.name);
+    ObjectSubmodel classObj = ObjectSubmodel(id: newClass.id, reference: reference.doc(newClass.id), name: newClass.name);
     await CourseRepository.updateClasses(classObj, courseReference);
     return newClass;
   }
 
-  static Future<void> updateSegments(
-      SegmentSubmodel segment, DocumentReference reference) async {
+  static Future<void> updateSegments(SegmentSubmodel segment, DocumentReference reference) async {
     DocumentSnapshot ds = await reference.get();
     Class classObj = Class.fromJson(ds.data() as Map<String, dynamic>);
     List<SegmentSubmodel> segments;
@@ -58,18 +51,12 @@ class ClassRepository {
       segments = classObj.segments;
     }
     segments.add(segment);
-    reference.update({
-      'segments':
-          List<dynamic>.from(segments.map((segment) => segment.toJson()))
-    });
+    reference.update({'segments': List<dynamic>.from(segments.map((segment) => segment.toJson()))});
   }
 
   static Future<Class> get(String id) async {
-    DocumentReference reference = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
-        .collection('classes')
-        .doc(id);
+    DocumentReference reference =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('classes').doc(id);
     DocumentSnapshot ds = await reference.get();
     return Class.fromJson(ds.data() as Map<String, dynamic>);
   }

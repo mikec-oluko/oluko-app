@@ -206,7 +206,7 @@ class CourseEnrollmentRepository {
   static Future<CourseEnrollment> updateSelfie(CourseEnrollment courseEnrollment, int classIndex, PickedFile file) async {
     final DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('courseEnrollments')
         .doc(courseEnrollment.id);
 

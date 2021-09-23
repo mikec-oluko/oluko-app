@@ -20,24 +20,16 @@ class SegmentSubmissionRepository {
     this.firestoreInstance = firestoreInstance;
   }
 
-  static Future<SegmentSubmission> create(
-      User user, CourseEnrollment courseEnrollment, Segment segment) async {
-    DocumentReference projectReference = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"));
+  static Future<SegmentSubmission> create(User user, CourseEnrollment courseEnrollment, Segment segment) async {
+    DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId'));
 
-    DocumentReference courseEnrollmentReference = projectReference
-        .collection('courseEnrollments')
-        .doc(courseEnrollment.id);
+    DocumentReference courseEnrollmentReference = projectReference.collection('courseEnrollments').doc(courseEnrollment.id);
 
-    DocumentReference userReference =
-        projectReference.collection('users').doc(user.uid);
+    DocumentReference userReference = projectReference.collection('users').doc(user.uid);
 
-    CollectionReference segmentSubmissionReference =
-        projectReference.collection("segmentSubmissions");
+    CollectionReference segmentSubmissionReference = projectReference.collection("segmentSubmissions");
 
-    DocumentReference segmentReference =
-        projectReference.collection("segments").doc(segment.id);
+    DocumentReference segmentReference = projectReference.collection("segments").doc(segment.id);
 
     final DocumentReference docRef = segmentSubmissionReference.doc();
 
@@ -55,31 +47,19 @@ class SegmentSubmissionRepository {
     return segmentSubmission;
   }
 
-  static Future<void> updateSegmentSubmission(
-      SegmentSubmission segmentSubmission,
-      MovementSubmission movementSubmission) async {
-    DocumentReference projectReference = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"));
+  static Future<void> updateSegmentSubmission(SegmentSubmission segmentSubmission, MovementSubmission movementSubmission) async {
+    DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId'));
 
-    DocumentReference movementReference = projectReference
-        .collection('movementsSubmissions')
-        .doc(movementSubmission.id);
+    DocumentReference movementReference = projectReference.collection('movementsSubmissions').doc(movementSubmission.id);
 
-    ObjectSubmodel movementSubmodel =
-        ObjectSubmodel(id: movementSubmission.id, reference: movementReference);
+    ObjectSubmodel movementSubmodel = ObjectSubmodel(id: movementSubmission.id, reference: movementReference);
 
-    DocumentReference segmentReference = projectReference
-        .collection('segmentSubmissions')
-        .doc(segmentSubmission.id);
+    DocumentReference segmentReference = projectReference.collection('segmentSubmissions').doc(segmentSubmission.id);
 
     if (segmentSubmission.movementSubmissions == null) {
       segmentSubmission.movementSubmissions = [];
     }
     segmentSubmission.movementSubmissions.add(movementSubmodel);
-    segmentReference.update({
-      'movement_submissions': List<dynamic>.from(
-          segmentSubmission.movementSubmissions.map((m) => m.toJson()))
-    });
+    segmentReference.update({'movement_submissions': List<dynamic>.from(segmentSubmission.movementSubmissions.map((m) => m.toJson()))});
   }
 }

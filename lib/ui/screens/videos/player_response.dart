@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,8 +21,7 @@ class PlayerResponse extends StatefulWidget {
   final VideoInfo videoInfo;
   final OnCameraCallBack onCamera;
 
-  const PlayerResponse({Key key, @required this.parentVideoInfo, this.videoInfo, this.videoReference, this.onCamera})
-      : super(key: key);
+  const PlayerResponse({Key key, @required this.parentVideoInfo, this.videoInfo, this.videoReference, this.onCamera}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _PlayerResponseState();
@@ -157,8 +155,7 @@ class _PlayerResponseState extends State<PlayerResponse> {
               child: Visibility(
                   visible: !openCanvas,
                   child: Padding(
-                    padding:
-                        openCanvas ? EdgeInsets.only(top: 8, left: 8, right: 8, bottom: 200.0) : EdgeInsets.all(8.0),
+                    padding: openCanvas ? EdgeInsets.only(top: 8, left: 8, right: 8, bottom: 200.0) : EdgeInsets.all(8.0),
                     child: Container(
                         padding: const EdgeInsets.only(left: 8.0, right: 8.0),
                         decoration: BoxDecoration(borderRadius: BorderRadius.circular(20.0), color: Colors.green),
@@ -197,8 +194,7 @@ class _PlayerResponseState extends State<PlayerResponse> {
                                         this.ended = contentsEnded();
                                         this.lastPosition = val.toInt();
                                         List<DrawPoint> pointsUntilTimeStamp = getPointsUntilTimestamp(
-                                            this.videoParentController.value.position.inMilliseconds,
-                                            this.canvasPointsRecording);
+                                            this.videoParentController.value.position.inMilliseconds, this.canvasPointsRecording);
                                         List<DrawingPoints> drawingPointsUntilTimestamp = [];
                                         pointsUntilTimeStamp.forEach((element) {
                                           drawingPointsUntilTimestamp.add(element.point);
@@ -252,8 +248,7 @@ class _PlayerResponseState extends State<PlayerResponse> {
                                           icon: Icon(Icons.save),
                                           onPressed: () {
                                             BlocProvider.of<VideoInfoBloc>(context)
-                                              ..addDrawingToVideoInfo(
-                                                  this.canvasPointsRecording, widget.videoReference);
+                                              ..addDrawingToVideoInfo(this.canvasPointsRecording, widget.videoReference);
                                             widget.videoInfo.drawing = this.canvasPointsRecording;
                                           }),
                                       // IconButton(
@@ -284,8 +279,7 @@ class _PlayerResponseState extends State<PlayerResponse> {
   double getCurrentVideoPosition() {
     double position = 0;
     if (videoParentController != null && videoParentController.value.position != null) {
-      if (videoParentController.value.duration != null &&
-          videoParentController.value.duration < videoParentController.value.position) {
+      if (videoParentController.value.duration != null && videoParentController.value.duration < videoParentController.value.position) {
         position = videoParentController.value.duration.inMilliseconds.toDouble();
       } else {
         position = videoParentController.value.position.inMilliseconds.toDouble();
@@ -314,10 +308,8 @@ class _PlayerResponseState extends State<PlayerResponse> {
 
   Future<void> resetContents() async {
     this.ended = false;
-    await Future.wait([
-      this.videoParentController.seekTo(Duration(milliseconds: 0)),
-      this.videoController.seekTo(Duration(milliseconds: 0))
-    ]);
+    await Future.wait(
+        [this.videoParentController.seekTo(Duration(milliseconds: 0)), this.videoController.seekTo(Duration(milliseconds: 0))]);
     this.canvasKey.currentState.setPoints([]);
     this.contentInitialized = false;
     this.lastPosition = 0;
@@ -423,18 +415,17 @@ class _PlayerResponseState extends State<PlayerResponse> {
   controllerCanvasListener() {
     if (this.videoParentController.value.position == null || canvasListenerRunning == false) return;
     DrawPoint canvasObj = DrawPoint(
-        point: this.canvasPoints[this.canvasPoints.length - 1],
-        miliseconds: this.videoParentController.value.position.inMilliseconds);
+        point: this.canvasPoints[this.canvasPoints.length - 1], miliseconds: this.videoParentController.value.position.inMilliseconds);
     canvasPointsRecording.add(canvasObj);
   }
 
   playBackCanvas() async {
     this.canvasListenerRunning = false;
 
-    List<DrawPoint> drawingsUntilTimeStamp = getDrawingsUntilTimestamp(
-        this.videoParentController.value.position.inMilliseconds, List.from(this.canvasPointsRecording));
-    List<DrawPoint> drawingsAfterTimeStamp = getDrawingsAfterTimestamp(
-        this.videoParentController.value.position.inMilliseconds, List.from(this.canvasPointsRecording));
+    List<DrawPoint> drawingsUntilTimeStamp =
+        getDrawingsUntilTimestamp(this.videoParentController.value.position.inMilliseconds, List.from(this.canvasPointsRecording));
+    List<DrawPoint> drawingsAfterTimeStamp =
+        getDrawingsAfterTimestamp(this.videoParentController.value.position.inMilliseconds, List.from(this.canvasPointsRecording));
 
     List<DrawingPoints> pointsToSet = [];
     if (videoParentController != null && videoParentController.value.position.inMilliseconds == 0) {
