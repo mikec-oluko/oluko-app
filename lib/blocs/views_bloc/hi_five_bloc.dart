@@ -26,11 +26,11 @@ class HiFiveFailure extends HiFiveState {
 class HiFiveBloc extends Cubit<HiFiveState> {
   HiFiveBloc() : super(HiFiveLoading());
 
-  void get(BuildContext context, String userId) async {
+  HiFiveSuccess _lastState;
+  void get(String userId) async {
     try {
       //Get chat and message info from Chat repository
-      final Map<Chat, List<Message>> chatsWithMessages =
-          await ChatRepository().getChatsWithMessages(userId);
+      final Map<Chat, List<Message>> chatsWithMessages = await ChatRepository().getChatsWithMessages(userId);
 
       //Filter messages that are not HiFives
       chatsWithMessages.updateAll((Chat chat, List<Message> messages) {
@@ -42,9 +42,11 @@ class HiFiveBloc extends Cubit<HiFiveState> {
 
       //Remove Chats with no HiFives
       chatsWithMessages.removeWhere(
-        (Chat chat, List<Message> messages) =>
-            messages == null || messages.isEmpty,
+        (Chat chat, List<Message> messages) => messages == null || messages.isEmpty,
       );
+
+      //Remove HiFives sended by me
+      chatsWithMessages.removeWhere((Chat chat, List<Message> messages) => messages.last.createdBy == userId);
 
       //Get Users from Chats
       final List<UserResponse> userList = await Future.wait(
@@ -52,8 +54,8 @@ class HiFiveBloc extends Cubit<HiFiveState> {
           return UserRepository().getById(chat.id);
         }),
       );
-
-      emit(HiFiveSuccess(chat: chatsWithMessages, users: userList));
+      _lastState = HiFiveSuccess(chat: chatsWithMessages, users: userList);
+      emit(_lastState);
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
@@ -62,5 +64,32 @@ class HiFiveBloc extends Cubit<HiFiveState> {
       emit(HiFiveFailure(exception: exception));
       rethrow;
     }
+  }
+
+  void sendHiFive(String userId, String targetUserId) async {
+    Message hiFiveMessage = await ChatRepository().sendHiFive(userId, targetUserId);
+    if (_lastState != null && _chatExists(_lastState, targetUserId)) {
+      _lastState.chat.removeWhere((key, value) => key.id == targetUserId);
+      _lastState.users.removeWhere((element) => element.id == targetUserId);
+
+      emit(HiFiveSuccess(chat: _lastState.chat, users: _lastState.users));
+    } else {
+      get(userId);
+    }
+  }
+
+  void ignoreHiFive(String userId, String targetUserId) async {
+    bool hiFiveMessage = await ChatRepository().removeHiFive(userId, targetUserId);
+    if (_lastState != null && _chatExists(_lastState, targetUserId)) {
+      _lastState.chat.removeWhere((key, value) => key.id == targetUserId);
+      _lastState.users.removeWhere((element) => element.id == targetUserId);
+      emit(HiFiveSuccess(chat: _lastState.chat, users: _lastState.users));
+    } else {
+      get(userId);
+    }
+  }
+
+  bool _chatExists(HiFiveSuccess lastState, String targetUserId) {
+    return lastState.chat.keys.where((element) => element.id == targetUserId).toList().isNotEmpty;
   }
 }
