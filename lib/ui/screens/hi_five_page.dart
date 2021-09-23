@@ -18,20 +18,17 @@ class HiFivePage extends StatefulWidget {
 class _HiFivePageState extends State<HiFivePage> {
   List<UserResponse> users = [
     UserResponse(
-        avatar:
-            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrpM3UTTyyqIwGsPYB1gCDhfl3XVv0Cex2Lw&usqp=CAU',
+        avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrpM3UTTyyqIwGsPYB1gCDhfl3XVv0Cex2Lw&usqp=CAU',
         firstName: 'Elena',
         username: 'Ele25_uy',
         id: '2312321321'),
     UserResponse(
-        avatar:
-            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrpM3UTTyyqIwGsPYB1gCDhfl3XVv0Cex2Lw&usqp=CAU',
+        avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrpM3UTTyyqIwGsPYB1gCDhfl3XVv0Cex2Lw&usqp=CAU',
         firstName: 'Elena',
         username: 'Ele25_uy',
         id: '2312322'),
     UserResponse(
-        avatar:
-            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrpM3UTTyyqIwGsPYB1gCDhfl3XVv0Cex2Lw&usqp=CAU',
+        avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrpM3UTTyyqIwGsPYB1gCDhfl3XVv0Cex2Lw&usqp=CAU',
         firstName: 'Elena',
         username: 'Ele25_uy',
         id: '23123')
@@ -46,8 +43,7 @@ class _HiFivePageState extends State<HiFivePage> {
         builder: (context, authState) {
           if (authState is AuthSuccess) {
             return BlocBuilder<HiFiveBloc, HiFiveState>(
-                bloc: BlocProvider.of<HiFiveBloc>(context)
-                  ..get(context, authState.user.id),
+                bloc: BlocProvider.of<HiFiveBloc>(context)..get(context, authState.user.id),
                 builder: (context, hiFiveState) {
                   return hiFiveState is HiFiveSuccess
                       ? ListView(
@@ -55,9 +51,7 @@ class _HiFivePageState extends State<HiFivePage> {
                               .map(
                                 (user) => _listItem(
                                   user,
-                                  hiFiveState.chat.values
-                                      .toList()[hiFiveState.users.indexOf(user)]
-                                      .length,
+                                  hiFiveState.chat.values.toList()[hiFiveState.users.indexOf(user)].length,
                                 ),
                               )
                               .toList(),
@@ -95,20 +89,21 @@ class _HiFivePageState extends State<HiFivePage> {
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            user.firstName,
-                            style: const TextStyle(
-                                color: Colors.white, fontSize: 20),
-                          ),
-                          Text(
-                            user.username,
-                            style: const TextStyle(
-                                color: Colors.white, fontSize: 15),
-                          ),
-                        ],
+                      child: Container(
+                        width: MediaQuery.of(context).size.width / 3,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              user.firstName,
+                              style: const TextStyle(color: Colors.white, fontSize: 20),
+                            ),
+                            Text(
+                              user.username,
+                              style: const TextStyle(color: Colors.white, fontSize: 15),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
