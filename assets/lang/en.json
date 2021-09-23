@@ -192,5 +192,11 @@
     "requiredPermitsBody": "You need to enable app permissions",
     "goToClass": "Go To Class",
     "nextSegment": "Next Segment",
-    "errorLoadingImage":"Error loading image!"
+    "errorLoadingImage":"Error loading image!",
+    "pleaseCheckYourEmail":"Please check your Email for account confirmation.",
+    "pleaseSubscribeToAPlanBeforeUsingTheApp":"Please subscribe to a plan before using the App",
+    "welcome":"Welcome",
+    "userForThisAccountNotFoundPleaseSignUp": "User for this account not found. Please sign up.",
+    "pleaseCheckYourEmailForInstructions":"Please check your email for instructions.",
+    "errorGettingCurrentPlan": "Error getting current plan"
 }

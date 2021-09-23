@@ -192,5 +192,11 @@
     "requiredPermitsBody": "Necesitas habilitar los permisos de la app",
     "goToClass": "Ir a la clase",
     "nextSegment": "Próximo Segmento",
-    "errorLoadingImage":"Error cargando imagen!"
+    "errorLoadingImage":"Error cargando imagen!",
+    "pleaseCheckYourEmail":"Por favor checkea tu Email para confirmar tu cuenta.",
+    "pleaseSubscribeToAPlanBeforeUsingTheApp":"Por favor subscribase a un plan antes de utilzar la app",
+    "welcome":"Bienvenido",
+    "userForThisAccountNotFoundPleaseSignUp": "Usuario para esta cuenta no fue encontrado por favor registrarse.",
+    "pleaseCheckYourEmailForInstructions":"Por favor checkea tu email para mas instrucciones.",
+    "errorGettingCurrentPlan": "Error al obtener el plan actual"
 }
