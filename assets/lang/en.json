@@ -192,5 +192,7 @@
     "requiredPermitsBody": "You need to enable app permissions",
     "goToClass": "Go To Class",
     "nextSegment": "Next Segment",
-    "errorLoadingImage":"Error loading image!"
+    "errorLoadingImage":"Error loading image!",
+    "exitConfirmationTitle": "Are you Sure?",
+    "exitConfirmationBody": "Do you want to exit Oluko MVT?"
 }

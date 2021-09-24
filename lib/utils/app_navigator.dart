@@ -15,8 +15,8 @@ class AppNavigator {
           context: context,
           builder: (context) => AlertDialog(
             backgroundColor: Colors.black,
-            title: TitleBody('Are you Sure?'),
-            content: Text('Do you want to exit Oluko MVT?', style: OlukoFonts.olukoBigFont()),
+            title: TitleBody(OlukoLocalizations.of(context).find('exitConfirmationTitle')),
+            content: Text(OlukoLocalizations.of(context).find('exitConfirmationBody'), style: OlukoFonts.olukoBigFont()),
             actions: <Widget>[
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),

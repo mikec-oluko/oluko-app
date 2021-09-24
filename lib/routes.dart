@@ -5,32 +5,32 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
-import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
-import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
-import 'package:oluko_app/blocs/gallery_video_bloc.dart';
-import 'package:oluko_app/blocs/movement_submission_bloc.dart';
-import 'package:oluko_app/blocs/segment_submission_bloc.dart';
-import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
-import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
 import 'package:oluko_app/blocs/class_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
 import 'package:oluko_app/blocs/favorite_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/ignore_friend_request_bloc.dart';
+import 'package:oluko_app/blocs/gallery_video_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
+import 'package:oluko_app/blocs/movement_submission_bloc.dart';
 import 'package:oluko_app/blocs/plan_bloc.dart';
 import 'package:oluko_app/blocs/profile/profile_bloc.dart';
 import 'package:oluko_app/blocs/recommendation_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
+import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/statistics_bloc.dart';
+import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
+import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/blocs/user_list_bloc.dart';
-import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
+import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
@@ -40,7 +40,11 @@ import 'package:oluko_app/ui/screens/app_plans.dart';
 import 'package:oluko_app/ui/screens/assessments/assessment_videos.dart';
 import 'package:oluko_app/ui/screens/assessments/self_recording.dart';
 import 'package:oluko_app/ui/screens/assessments/self_recording_preview.dart';
+import 'package:oluko_app/ui/screens/assessments/task_details.dart';
 import 'package:oluko_app/ui/screens/assessments/task_submission_recorded_video.dart';
+import 'package:oluko_app/ui/screens/authentication/login.dart';
+import 'package:oluko_app/ui/screens/authentication/sign_up.dart';
+import 'package:oluko_app/ui/screens/authentication/sign_up_with_email.dart';
 import 'package:oluko_app/ui/screens/choose_plan_payment.dart';
 import 'package:oluko_app/ui/screens/coach/coach_no_assigned_timer_page.dart';
 import 'package:oluko_app/ui/screens/coach/coach_page.dart';
@@ -54,41 +58,38 @@ import 'package:oluko_app/ui/screens/courses/courses.dart';
 import 'package:oluko_app/ui/screens/courses/enrolled_class.dart';
 import 'package:oluko_app/ui/screens/courses/explore_subscribed_users.dart';
 import 'package:oluko_app/ui/screens/courses/inside_class.dart';
-import 'package:oluko_app/ui/screens/courses/segment_camera_preview.dart.dart';
-import 'package:oluko_app/ui/screens/friends/friends_page.dart';
-import 'package:oluko_app/ui/screens/authentication/login.dart';
-import 'package:oluko_app/ui/screens/main_page.dart';
 import 'package:oluko_app/ui/screens/courses/movement_intro.dart';
+import 'package:oluko_app/ui/screens/courses/segment_camera_preview.dart.dart';
+import 'package:oluko_app/ui/screens/courses/segment_detail.dart';
+import 'package:oluko_app/ui/screens/friends/friends_page.dart';
+import 'package:oluko_app/ui/screens/main_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile.dart';
 import 'package:oluko_app/ui/screens/profile/profile_assessment_videos_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_challenges_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_help_and_support_contact_us.dart';
 import 'package:oluko_app/ui/screens/profile/profile_help_and_support_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_my_account_page.dart';
-import 'package:oluko_app/ui/screens/profile/transformation_journey_content_detail.dart';
-import 'package:oluko_app/ui/screens/profile/user_profile_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_settings_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_subscription_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile_transformation_journey_page.dart';
+import 'package:oluko_app/ui/screens/profile/transformation_journey_content_detail.dart';
 import 'package:oluko_app/ui/screens/profile/transformation_journey_post.dart';
-import 'package:oluko_app/ui/screens/courses/segment_detail.dart';
-import 'blocs/movement_info_bloc.dart';
-import 'models/task.dart';
-import 'ui/screens/courses/segment_clocks.dart';
-import 'package:oluko_app/ui/screens/authentication/sign_up.dart';
-import 'package:oluko_app/ui/screens/authentication/sign_up_with_email.dart';
-import 'package:oluko_app/ui/screens/assessments/task_details.dart';
+import 'package:oluko_app/ui/screens/profile/user_profile_page.dart';
 import 'package:oluko_app/ui/screens/videos/videos_home.dart';
 import 'package:oluko_app/ui/screens/view_all.dart';
+
 import 'blocs/friends/confirm_friend_bloc.dart';
+import 'blocs/friends/favorite_friend_bloc.dart';
+import 'blocs/movement_info_bloc.dart';
 import 'blocs/oluko_panel_bloc.dart';
 import 'blocs/profile/upload_avatar_bloc.dart';
 import 'blocs/profile/upload_cover_image_bloc.dart';
 import 'blocs/profile/upload_transformation_journey_content_bloc.dart';
-import 'blocs/friends/favorite_friend_bloc.dart';
 import 'blocs/user_statistics_bloc.dart';
 import 'models/course.dart';
+import 'models/task.dart';
 import 'models/transformation_journey_uploads.dart';
+import 'ui/screens/courses/segment_clocks.dart';
 
 enum RouteEnum {
   root,
@@ -152,8 +153,7 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.profileTransformationJourney: '/profile-transformation-journey',
   RouteEnum.profileAssessmentVideos: '/profile-assessment-videos',
   RouteEnum.transformationJourneyPost: '/transformation-journey-post',
-  RouteEnum.transformationJournetContentDetails:
-      '/transformation-journey-content-details',
+  RouteEnum.transformationJournetContentDetails: '/transformation-journey-content-details',
   RouteEnum.transformationJourneyPostView: '/transformation-journey-post-view',
   RouteEnum.logIn: '/log-in',
   RouteEnum.appPlans: '/app-plans',
@@ -196,19 +196,15 @@ class Routes {
   final TagBloc _tagBloc = TagBloc();
   final FriendBloc _friendBloc = FriendBloc();
   final ConfirmFriendBloc _confirmFriendBloc = ConfirmFriendBloc();
-  final IgnoreFriendRequestBloc _ignoreFriendRequestBloc =
-      IgnoreFriendRequestBloc();
+  final IgnoreFriendRequestBloc _ignoreFriendRequestBloc = IgnoreFriendRequestBloc();
   final FavoriteFriendBloc _favoriteFriendBloc = FavoriteFriendBloc();
   final AssessmentBloc _assessmentBloc = AssessmentBloc();
-  final AssessmentAssignmentBloc _assessmentAssignmentBloc =
-      AssessmentAssignmentBloc();
+  final AssessmentAssignmentBloc _assessmentAssignmentBloc = AssessmentAssignmentBloc();
   final TaskSubmissionBloc _taskSubmissionBloc = TaskSubmissionBloc();
   final CourseEnrollmentBloc _courseEnrollmentBloc = CourseEnrollmentBloc();
-  final TransformationJourneyBloc _transformationJourneyBloc =
-      TransformationJourneyBloc();
+  final TransformationJourneyBloc _transformationJourneyBloc = TransformationJourneyBloc();
   final ClassBloc _classBloc = ClassBloc();
-  final SubscribedCourseUsersBloc _subscribedCourseUsersBloc =
-      SubscribedCourseUsersBloc();
+  final SubscribedCourseUsersBloc _subscribedCourseUsersBloc = SubscribedCourseUsersBloc();
   final StatisticsBloc _statisticsBloc = StatisticsBloc();
   final MovementBloc _movementBloc = MovementBloc();
   final MovementInfoBloc _movementInfoBloc = MovementInfoBloc();
@@ -218,21 +214,16 @@ class Routes {
   final FavoriteBloc _favoriteBloc = FavoriteBloc();
   final RecommendationBloc _recommendationBloc = RecommendationBloc();
   final PlanBloc _planBloc = PlanBloc();
-  final TaskSubmissionListBloc _taskSubmissionListBloc =
-      TaskSubmissionListBloc();
+  final TaskSubmissionListBloc _taskSubmissionListBloc = TaskSubmissionListBloc();
   final GalleryVideoBloc _galleryVideoBloc = GalleryVideoBloc();
-  final CourseEnrollmentListBloc _courseEnrollmentListBloc =
-      CourseEnrollmentListBloc();
-  final MovementSubmissionBloc _movementSubmissionBloc =
-      MovementSubmissionBloc();
+  final CourseEnrollmentListBloc _courseEnrollmentListBloc = CourseEnrollmentListBloc();
+  final MovementSubmissionBloc _movementSubmissionBloc = MovementSubmissionBloc();
   final SegmentSubmissionBloc _segmentSubmissionBloc = SegmentSubmissionBloc();
-  final TransformationJourneyContentBloc _transformationJourneyContentBloc =
-      TransformationJourneyContentBloc();
+  final TransformationJourneyContentBloc _transformationJourneyContentBloc = TransformationJourneyContentBloc();
   final ProfileAvatarBloc _profileAvatarBloc = ProfileAvatarBloc();
   final ProfileCoverImageBloc _profileCoverImageBloc = ProfileCoverImageBloc();
   final UserStatisticsBloc _userStatisticsBloc = UserStatisticsBloc();
-  final CourseEnrollmentUpdateBloc _courseEnrollmentUpdateBloc =
-      CourseEnrollmentUpdateBloc();
+  final CourseEnrollmentUpdateBloc _courseEnrollmentUpdateBloc = CourseEnrollmentUpdateBloc();
   final UserListBloc _userListBloc = UserListBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
@@ -241,9 +232,7 @@ class Routes {
     //Providers used for the new route.
     List<BlocProvider> providers = [];
     //Providers used across the whole app.
-    List<BlocProvider> commonProviders = [
-      BlocProvider<AuthBloc>.value(value: _authBloc)
-    ];
+    List<BlocProvider> commonProviders = [BlocProvider<AuthBloc>.value(value: _authBloc)];
 
     final RouteEnum routeEnum = getEnumFromRouteString(route);
     switch (routeEnum) {
@@ -251,19 +240,15 @@ class Routes {
         providers = [
           BlocProvider<CourseBloc>.value(value: _courseBloc),
           BlocProvider<ClassBloc>.value(value: _classBloc),
-          BlocProvider<CourseEnrollmentListBloc>.value(
-              value: _courseEnrollmentListBloc),
+          BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
           BlocProvider<TagBloc>.value(value: _tagBloc),
-          BlocProvider<CourseEnrollmentBloc>.value(
-              value: _courseEnrollmentBloc),
+          BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
           BlocProvider<FavoriteBloc>.value(value: _favoriteBloc),
           BlocProvider<RecommendationBloc>.value(value: _recommendationBloc),
-          BlocProvider<TransformationJourneyBloc>.value(
-              value: _transformationJourneyBloc),
+          BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
           BlocProvider<FriendBloc>.value(value: _friendBloc),
           BlocProvider<ConfirmFriendBloc>.value(value: _confirmFriendBloc),
-          BlocProvider<IgnoreFriendRequestBloc>.value(
-              value: _ignoreFriendRequestBloc),
+          BlocProvider<IgnoreFriendRequestBloc>.value(value: _ignoreFriendRequestBloc),
           BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
@@ -278,16 +263,9 @@ class Routes {
         newRouteView = SignUpPage();
         break;
       case RouteEnum.completedClass:
-        providers = [
-          BlocProvider<CourseEnrollmentUpdateBloc>.value(
-              value: _courseEnrollmentUpdateBloc)
-        ];
-        final Map<String, dynamic> argumentsToAdd =
-            arguments as Map<String, dynamic>;
-        newRouteView = CompletedClass(
-            courseEnrollment:
-                argumentsToAdd['courseEnrollment'] as CourseEnrollment,
-            classIndex: argumentsToAdd['classIndex'] as int);
+        providers = [BlocProvider<CourseEnrollmentUpdateBloc>.value(value: _courseEnrollmentUpdateBloc)];
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        newRouteView = CompletedClass(courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment, classIndex: argumentsToAdd['classIndex'] as int);
         break;
       case RouteEnum.signUpWithEmail:
         newRouteView = SignUpWithMailPage();
@@ -297,10 +275,8 @@ class Routes {
           BlocProvider<FriendBloc>.value(value: _friendBloc),
           BlocProvider<UserListBloc>.value(value: _userListBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
-          BlocProvider<TransformationJourneyBloc>.value(
-              value: _transformationJourneyBloc),
-          BlocProvider<CourseEnrollmentBloc>.value(
-              value: _courseEnrollmentBloc),
+          BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
+          BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
           BlocProvider<ConfirmFriendBloc>.value(value: _confirmFriendBloc)
         ];
         newRouteView = FriendsPage();
@@ -315,17 +291,14 @@ class Routes {
         providers = [
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
         ];
-        final Map<String, UserResponse> argumentsToAdd =
-            arguments as Map<String, UserResponse>;
-        newRouteView =
-            ProfileSettingsPage(profileInfo: argumentsToAdd['profileInfo']);
+        final Map<String, UserResponse> argumentsToAdd = arguments as Map<String, UserResponse>;
+        newRouteView = ProfileSettingsPage(profileInfo: argumentsToAdd['profileInfo']);
         break;
       case RouteEnum.profileMyAccount:
         providers = [
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
           BlocProvider<PlanBloc>.value(value: _planBloc),
-          BlocProvider<TransformationJourneyBloc>.value(
-              value: _transformationJourneyBloc)
+          BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc)
         ];
         newRouteView = ProfileMyAccountPage();
         break;
@@ -346,27 +319,19 @@ class Routes {
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
-          BlocProvider<CourseEnrollmentBloc>.value(
-              value: _courseEnrollmentBloc),
-          BlocProvider<CourseEnrollmentListBloc>.value(
-              value: _courseEnrollmentListBloc),
-          BlocProvider<TransformationJourneyBloc>.value(
-              value: _transformationJourneyBloc),
-          BlocProvider<ProfileCoverImageBloc>.value(
-              value: _profileCoverImageBloc),
+          BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
+          BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
+          BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
+          BlocProvider<ProfileCoverImageBloc>.value(value: _profileCoverImageBloc),
           BlocProvider<ProfileAvatarBloc>.value(value: _profileAvatarBloc),
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
           BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
         ];
-        final Map<String, UserResponse> argumentsToAdd =
-            arguments as Map<String, UserResponse>;
-        newRouteView =
-            UserProfilePage(userRequested: argumentsToAdd['userRequested']);
+        final Map<String, UserResponse> argumentsToAdd = arguments as Map<String, UserResponse>;
+        newRouteView = UserProfilePage(userRequested: argumentsToAdd['userRequested']);
         break;
       case RouteEnum.profileChallenges:
-        providers = [
-          BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc)
-        ];
+        providers = [BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc)];
         newRouteView = ProfileChallengesPage();
         break;
       case RouteEnum.profileTransformationJourney:
@@ -376,45 +341,36 @@ class Routes {
           BlocProvider<CourseBloc>.value(value: _courseBloc),
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
-          BlocProvider<CourseEnrollmentBloc>.value(
-              value: _courseEnrollmentBloc),
-          BlocProvider<TransformationJourneyBloc>.value(
-              value: _transformationJourneyBloc),
-          BlocProvider<TransformationJourneyContentBloc>.value(
-              value: _transformationJourneyContentBloc),
+          BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
+          BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
+          BlocProvider<TransformationJourneyContentBloc>.value(value: _transformationJourneyContentBloc),
         ];
         final Map<String, UserResponse> argumentsToAdd = arguments as Map<String, UserResponse>;
-        newRouteView = ProfileTransformationJourneyPage(
-            userRequested: argumentsToAdd['profileInfo']);
+        newRouteView = ProfileTransformationJourneyPage(userRequested: argumentsToAdd['profileInfo']);
         break;
       case RouteEnum.profileAssessmentVideos:
         providers = [
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
-          BlocProvider<TransformationJourneyBloc>.value(
-              value: _transformationJourneyBloc),
+          BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
         ];
         newRouteView = ProfileAssessmentVideosPage();
         break;
       case RouteEnum.transformationJourneyPost:
         providers = [
-          BlocProvider<TransformationJourneyBloc>.value(
-              value: _transformationJourneyBloc),
+          BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
         ];
         newRouteView = TransformationJourneyPostPage();
         break;
       case RouteEnum.transformationJourneyPostView:
         providers = [
-          BlocProvider<TransformationJourneyBloc>.value(
-              value: _transformationJourneyBloc),
+          BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
         ];
         newRouteView = TransformationJourneyPostPage();
         break;
       case RouteEnum.transformationJournetContentDetails:
-        final Map<String, TransformationJourneyUpload> argumentsToAdd =
-            arguments as Map<String, TransformationJourneyUpload>;
-        newRouteView = TransformationJourneyContentDetail(
-            contentToShow: argumentsToAdd['TransformationJourneyUpload']);
+        final Map<String, TransformationJourneyUpload> argumentsToAdd = arguments as Map<String, TransformationJourneyUpload>;
+        newRouteView = TransformationJourneyContentDetail(contentToShow: argumentsToAdd['TransformationJourneyUpload']);
         break;
       case RouteEnum.logIn:
         newRouteView = LoginPage();
@@ -427,20 +383,13 @@ class Routes {
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
           BlocProvider<MovementBloc>.value(value: _movementBloc),
         ];
-        final Map<String, dynamic> argumentsToAdd =
-            arguments as Map<String, dynamic>;
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SegmentDetail(
-            courseEnrollment:
-                argumentsToAdd['courseEnrollment'] as CourseEnrollment,
-            classIndex: argumentsToAdd['classIndex'] as int,
-            segmentIndex: argumentsToAdd['segmentIndex'] as int);
+            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment, classIndex: argumentsToAdd['classIndex'] as int, segmentIndex: argumentsToAdd['segmentIndex'] as int);
         break;
       case RouteEnum.movementIntro:
-        providers = [
-          BlocProvider<MovementInfoBloc>.value(value: _movementInfoBloc)
-        ];
-        final Map<String, Movement> argumentsToAdd =
-            arguments as Map<String, Movement>;
+        providers = [BlocProvider<MovementInfoBloc>.value(value: _movementInfoBloc)];
+        final Map<String, Movement> argumentsToAdd = arguments as Map<String, Movement>;
         newRouteView = MovementIntro(
           movement: argumentsToAdd['movement'],
         );
@@ -449,21 +398,15 @@ class Routes {
         providers = [
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
           BlocProvider<MovementBloc>.value(value: _movementBloc),
-          BlocProvider<SegmentSubmissionBloc>.value(
-              value: _segmentSubmissionBloc),
-          BlocProvider<MovementSubmissionBloc>.value(
-              value: _movementSubmissionBloc),
+          BlocProvider<SegmentSubmissionBloc>.value(value: _segmentSubmissionBloc),
+          BlocProvider<MovementSubmissionBloc>.value(value: _movementSubmissionBloc),
           BlocProvider<VideoBloc>.value(value: _videoBloc),
-          BlocProvider<CourseEnrollmentBloc>.value(
-              value: _courseEnrollmentBloc),
-          BlocProvider<CourseEnrollmentUpdateBloc>.value(
-              value: _courseEnrollmentUpdateBloc)
+          BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
+          BlocProvider<CourseEnrollmentUpdateBloc>.value(value: _courseEnrollmentUpdateBloc)
         ];
-        final Map<String, dynamic> argumentsToAdd =
-            arguments as Map<String, dynamic>;
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SegmentClocks(
-            courseEnrollment:
-                argumentsToAdd['courseEnrollment'] as CourseEnrollment,
+            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
             classIndex: argumentsToAdd['classIndex'] as int,
             segmentIndex: argumentsToAdd['segmentIndex'] as int,
             workoutType: argumentsToAdd['workoutType'] as WorkoutType,
@@ -472,17 +415,13 @@ class Routes {
       case RouteEnum.segmentCameraPreview:
         providers = [
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
-          BlocProvider<SegmentSubmissionBloc>.value(
-              value: _segmentSubmissionBloc),
-          BlocProvider<MovementSubmissionBloc>.value(
-              value: _movementSubmissionBloc),
+          BlocProvider<SegmentSubmissionBloc>.value(value: _segmentSubmissionBloc),
+          BlocProvider<MovementSubmissionBloc>.value(value: _movementSubmissionBloc),
           BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc)
         ];
-        final Map<String, dynamic> argumentsToAdd =
-            arguments as Map<String, dynamic>;
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SegmentCameraPreview(
-            courseEnrollment:
-                argumentsToAdd['courseEnrollment'] as CourseEnrollment,
+            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
             classIndex: argumentsToAdd['classIndex'] as int,
             segmentIndex: argumentsToAdd['segmentIndex'] as int,
             segments: argumentsToAdd['segments'] as List<Segment>);
@@ -491,27 +430,21 @@ class Routes {
         providers = [
           BlocProvider<ClassBloc>.value(value: _classBloc),
           BlocProvider<StatisticsBloc>.value(value: _statisticsBloc),
-          BlocProvider<CourseEnrollmentBloc>.value(
-              value: _courseEnrollmentBloc),
+          BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
           BlocProvider<MovementBloc>.value(value: _movementBloc),
-          BlocProvider<CourseEnrollmentListBloc>.value(
-              value: _courseEnrollmentListBloc),
-          BlocProvider<SubscribedCourseUsersBloc>.value(
-              value: _subscribedCourseUsersBloc)
+          BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
+          BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc)
         ];
-        final Map<String, Course> argumentsToAdd =
-            arguments as Map<String, Course>;
+        final Map<String, Course> argumentsToAdd = arguments as Map<String, Course>;
         newRouteView = CourseMarketing(course: argumentsToAdd['course']);
         break;
       case RouteEnum.enrolledClass:
         providers = [
           BlocProvider<ClassBloc>.value(value: _classBloc),
-          BlocProvider<CourseEnrollmentBloc>.value(
-              value: _courseEnrollmentBloc),
+          BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
           BlocProvider<MovementBloc>.value(value: _movementBloc),
         ];
-        final Map<String, Course> argumentsToAdd =
-            arguments as Map<String, Course>;
+        final Map<String, Course> argumentsToAdd = arguments as Map<String, Course>;
         newRouteView = EnrolledClass(course: argumentsToAdd['course']);
         break;
       case RouteEnum.insideClass:
@@ -520,19 +453,14 @@ class Routes {
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
           BlocProvider<MovementBloc>.value(value: _movementBloc),
         ];
-        final Map<String, dynamic> argumentsToAdd =
-            arguments as Map<String, dynamic>;
-        newRouteView = InsideClass(
-            courseEnrollment:
-                argumentsToAdd['courseEnrollment'] as CourseEnrollment,
-            classIndex: argumentsToAdd['classIndex'] as int);
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        newRouteView = InsideClass(courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment, classIndex: argumentsToAdd['classIndex'] as int);
         break;
       case RouteEnum.assessmentVideos:
         providers = [
-          BlocProvider<TaskSubmissionListBloc>.value(
-              value: _taskSubmissionListBloc),
-          BlocProvider<AssessmentAssignmentBloc>.value(
-              value: _assessmentAssignmentBloc),
+          BlocProvider<TaskSubmissionListBloc>.value(value: _taskSubmissionListBloc),
+          BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
+          BlocProvider<AssessmentAssignmentBloc>.value(value: _assessmentAssignmentBloc),
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
           BlocProvider<TaskBloc>.value(value: _taskBloc),
         ];
@@ -540,8 +468,7 @@ class Routes {
         break;
       case RouteEnum.taskDetails:
         providers = [
-          BlocProvider<AssessmentAssignmentBloc>.value(
-              value: _assessmentAssignmentBloc),
+          BlocProvider<AssessmentAssignmentBloc>.value(value: _assessmentAssignmentBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
           BlocProvider<TaskBloc>.value(value: _taskBloc),
           BlocProvider<GalleryVideoBloc>.value(value: _galleryVideoBloc),
@@ -556,8 +483,7 @@ class Routes {
           BlocProvider<TaskBloc>.value(value: _taskBloc),
           BlocProvider<GalleryVideoBloc>.value(value: _galleryVideoBloc),
         ];
-        final Map<String, dynamic> argumentsToAdd =
-            arguments as Map<String, dynamic>;
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SelfRecording(
           taskIndex: argumentsToAdd['taskIndex'] as int,
           isPublic: argumentsToAdd['isPublic'] as bool,
@@ -565,17 +491,14 @@ class Routes {
         break;
       case RouteEnum.selfRecordingPreview:
         providers = [
-          BlocProvider<AssessmentAssignmentBloc>.value(
-              value: _assessmentAssignmentBloc),
+          BlocProvider<AssessmentAssignmentBloc>.value(value: _assessmentAssignmentBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
           BlocProvider<TaskBloc>.value(value: _taskBloc),
           BlocProvider<VideoBloc>.value(value: _videoBloc),
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
-          BlocProvider<TaskSubmissionListBloc>.value(
-              value: _taskSubmissionListBloc),
+          BlocProvider<TaskSubmissionListBloc>.value(value: _taskSubmissionListBloc),
         ];
-        final Map<String, dynamic> argumentsToAdd =
-            arguments as Map<String, dynamic>;
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SelfRecordingPreview(
           filePath: argumentsToAdd['filePath'].toString(),
           taskIndex: argumentsToAdd['taskIndex'] as int,
@@ -583,8 +506,7 @@ class Routes {
         );
         break;
       case RouteEnum.taskSubmissionVideo:
-        final Map<String, dynamic> argumentsToAdd =
-            arguments as Map<String, dynamic>;
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = TaskSubmissionRecordedVideo(
           videoUrl: argumentsToAdd['videoUrl'].toString(),
           task: argumentsToAdd['task'] as Task,
@@ -597,8 +519,7 @@ class Routes {
         providers = [
           BlocProvider<FavoriteBloc>.value(value: _favoriteBloc),
           BlocProvider<CourseBloc>.value(value: _courseBloc),
-          BlocProvider<CourseEnrollmentBloc>.value(
-              value: _courseEnrollmentBloc),
+          BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
           BlocProvider<TagBloc>.value(value: _tagBloc),
           BlocProvider<RecommendationBloc>.value(value: _recommendationBloc),
         ];
@@ -622,32 +543,25 @@ class Routes {
         newRouteView = VideosHome(
           title: "Videos",
           parentVideoInfo: null,
-          parentVideoReference:
-              FirebaseFirestore.instance.collection("videosInfo"),
+          parentVideoReference: FirebaseFirestore.instance.collection("videosInfo"),
         );
         break;
       case RouteEnum.exploreSubscribedUsers:
         Map<String, dynamic> args = arguments as Map<String, dynamic>;
         String courseId = args['courseId'].toString();
-        providers = [
-          BlocProvider<SubscribedCourseUsersBloc>.value(
-              value: _subscribedCourseUsersBloc)
-        ];
+        providers = [BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc)];
         newRouteView = ExploreSubscribedUsers(courseId: courseId);
         break;
       case RouteEnum.coach:
         providers = [
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
-          BlocProvider<TransformationJourneyBloc>.value(
-              value: _transformationJourneyBloc),
-          BlocProvider<CourseEnrollmentListBloc>.value(
-              value: _courseEnrollmentListBloc),
+          BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
+          BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
           BlocProvider<TaskBloc>.value(value: _taskBloc),
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
-          BlocProvider<CourseEnrollmentBloc>.value(
-              value: _courseEnrollmentBloc),
+          BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
         ];
         newRouteView = CoachAssignedCountDown();
         break;
@@ -655,33 +569,25 @@ class Routes {
         providers = [
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
-          BlocProvider<TransformationJourneyBloc>.value(
-              value: _transformationJourneyBloc),
-          BlocProvider<CourseEnrollmentListBloc>.value(
-              value: _courseEnrollmentListBloc),
+          BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
+          BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
           BlocProvider<TaskBloc>.value(value: _taskBloc),
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
-          BlocProvider<CourseEnrollmentBloc>.value(
-              value: _courseEnrollmentBloc),
+          BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
         ];
         newRouteView = CoachPage();
         break;
       case RouteEnum.sentVideos:
-        final Map<String, List<TaskSubmission>> argumentsToAdd =
-            arguments as Map<String, List<TaskSubmission>>;
-        newRouteView =
-            SentVideosPage(taskSubmissions: argumentsToAdd['taskSubmissions']);
+        final Map<String, List<TaskSubmission>> argumentsToAdd = arguments as Map<String, List<TaskSubmission>>;
+        newRouteView = SentVideosPage(taskSubmissions: argumentsToAdd['taskSubmissions']);
         break;
       case RouteEnum.mentoredVideos:
-        final Map<String, List<TaskSubmission>> argumentsToAdd =
-            arguments as Map<String, List<TaskSubmission>>;
-        newRouteView = MentoredVideosPage(
-            taskSubmissions: argumentsToAdd['taskSubmissions']);
+        final Map<String, List<TaskSubmission>> argumentsToAdd = arguments as Map<String, List<TaskSubmission>>;
+        newRouteView = MentoredVideosPage(taskSubmissions: argumentsToAdd['taskSubmissions']);
         break;
       case RouteEnum.coachShowVideo:
-        final Map<String, dynamic> argumentsToAdd =
-            arguments as Map<String, dynamic>;
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
 
         newRouteView = CoachShowVideo(
           videoUrl: argumentsToAdd['videoUrl'].toString(),
@@ -689,8 +595,7 @@ class Routes {
         );
         break;
       case RouteEnum.coachProfile:
-        final Map<String, UserResponse> argumentsToAdd =
-            arguments as Map<String, UserResponse>;
+        final Map<String, UserResponse> argumentsToAdd = arguments as Map<String, UserResponse>;
         newRouteView = CoachProfile(coachUser: argumentsToAdd['coachUser']);
         break;
       default:

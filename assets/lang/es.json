@@ -192,5 +192,7 @@
     "requiredPermitsBody": "Necesitas habilitar los permisos de la app",
     "goToClass": "Ir a la clase",
     "nextSegment": "Próximo Segmento",
-    "errorLoadingImage":"Error cargando imagen!"
+    "errorLoadingImage":"Error cargando imagen!",
+    "exitConfirmationTitle": "¿Estas seguro?",
+    "exitConfirmationBody": "¿Quieres salir de Oluko MVT?"
 }
