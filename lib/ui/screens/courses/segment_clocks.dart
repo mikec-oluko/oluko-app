@@ -100,8 +100,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
   bool isThereError = false;
   bool shareDone = false;
 
+  WorkoutType workoutType;
+
   @override
   void initState() {
+    workoutType = widget.workoutType;
     if (isSegmentWithRecording()) {
       _setupCameras();
     }
@@ -155,23 +158,19 @@ class _SegmentClocksState extends State<SegmentClocks> {
   }
 
   bool isSegmentWithRecording() {
-    return widget.workoutType == WorkoutType.segmentWithRecording;
+    return workoutType == WorkoutType.segmentWithRecording;
   }
 
   Widget form() {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      bottomNavigationBar: isSegmentWithRecording() && isWorkStatePaused()
-          ? resumeButton()
-          : SizedBox(),
       appBar: OlukoAppBar(
         showDivider: false,
         title: ' ',
         actions: [topBarIcon, audioIcon()],
       ),
       backgroundColor: Colors.black,
-      body: widget.workoutType == WorkoutType.segment &&
-              workState != WorkState.finished
+      body: isSegmentWithoutRecording() && workState != WorkState.finished
           ? SlidingUpPanel(
               controller: panelController,
               borderRadius: BorderRadius.only(
@@ -191,6 +190,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
               body: _body())
           : _body(),
     );
+  }
+
+  bool isSegmentWithoutRecording() {
+    return workoutType == WorkoutType.segment;
   }
 
   Widget getAction() {
@@ -278,13 +281,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
               onPressed: () {
                 widget.segmentIndex < widget.segments.length - 1
                     ? Navigator.pushNamed(
-                        context, routeLabels[RouteEnum.segmentClocks],
+                        context, routeLabels[RouteEnum.segmentDetail],
                         arguments: {
                             'segmentIndex': widget.segmentIndex + 1,
                             'classIndex': widget.classIndex,
                             'courseEnrollment': widget.courseEnrollment,
-                            'workoutType': widget.workoutType,
-                            'segments': widget.segments,
                           })
                     : Navigator.pushNamed(
                         context, routeLabels[RouteEnum.completedClass],
@@ -355,7 +356,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   ///Current and next movement labels
   Widget _tasksSection() {
-    return widget.workoutType == WorkoutType.segment
+    return isSegmentWithoutRecording()
         ? taskSectionWithoutRecording()
         : Column(children: [
             SizedBox(height: 10),
@@ -490,7 +491,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
       return TimerUtils.completedTimer(context);
     }
 
-    if (isWorkStatePaused() && isCurrentTaskByReps()) {
+    if (!isWorkStatePaused() && isCurrentTaskByReps()) {
       return TimerUtils.repsTimer(
           () => setState(() {
                 _goToNextStep();
@@ -588,20 +589,6 @@ class _SegmentClocksState extends State<SegmentClocks> {
     }
   }
 
-  Widget resumeButton() {
-    return Padding(
-        padding: const EdgeInsets.all(10),
-        child: Row(children: [
-          OlukoPrimaryButton(
-              title: OlukoLocalizations.of(context).find('resume'),
-              onPressed: () {
-                setState(() {
-                  _playTask();
-                });
-              })
-        ]));
-  }
-
   ///Camera recording section. Shows camera Input and start/stop buttons.
   Widget _cameraSection() {
     return isWorkStatePaused()
@@ -658,8 +645,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
           if (isSegmentWithRecording()) {
             XFile videopath = await cameraController.stopVideoRecording();
           }
-          /*Navigator.popUntil(
-              context, ModalRoute.withName(routeLabels[RouteEnum.insideClass]));*/
+          setState(() {
+            workoutType = WorkoutType.segment;
+            isPlaying = false;
+          });
         },
         child: Stack(alignment: Alignment.center, children: [
           Image.asset(
@@ -694,6 +683,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
   _saveSegmentRound(TimerEntry timerEntry) async {
     if (isSegmentWithRecording()) {
       XFile videopath = await cameraController.stopVideoRecording();
+      setState(() {
+        workoutType = WorkoutType.segment;
+      });
       BlocProvider.of<SegmentSubmissionBloc>(context)
         ..create(_user, widget.courseEnrollment,
             widget.segments[widget.segmentIndex], videopath.path);
@@ -760,7 +752,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
       ..markSegmentAsCompleated(
           widget.courseEnrollment, widget.segmentIndex, widget.classIndex);
     setState(() {
-      if (widget.workoutType == WorkoutType.segmentWithRecording) {
+      if (_segmentSubmission != null &&
+          widget.workoutType == WorkoutType.segmentWithRecording) {
         topBarIcon = uploadingIcon();
       }
     });
@@ -888,7 +881,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                   widget.segments[widget.segmentIndex], OlukoColors.grayColor)),
           Padding(
               padding: const EdgeInsets.symmetric(vertical: 20.0),
-              child: widget.workoutType == WorkoutType.segment || shareDone
+              child: isSegmentWithoutRecording() || shareDone
                   ? FeedbackCard()
                   : ShareCard()),
         ],
