@@ -1,27 +1,20 @@
 import 'package:oluko_app/models/enums/counter_enum.dart';
+import 'package:oluko_app/models/enums/parameter_enum.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 
-import 'enums/timer_model.dart';
-
 class TimerEntry {
-  MovementSubmodel movement;
-  WorkState workState;
-  String label;
-  List<String> labels;
-  int setNumber;
-  int roundNumber;
-  int time;
-  int reps;
-  CounterEnum counter;
-
   TimerEntry(
       {this.movement,
-      this.workState,
-      this.label,
       this.labels,
-      this.setNumber,
-      this.roundNumber,
-      this.time,
-      this.reps,
+      this.parameter,
+      this.value,
+      this.round,
       this.counter});
+
+  MovementSubmodel movement;
+  List<String> labels;
+  int round;
+  ParameterEnum parameter;
+  int value;
+  CounterEnum counter;
 }

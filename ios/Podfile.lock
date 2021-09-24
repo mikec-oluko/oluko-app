@@ -351,7 +351,7 @@ PODS:
   - BoringSSL-GRPC/Interface (0.0.7)
   - camera (0.0.1):
     - Flutter
-  - cloud_firestore (2.5.2):
+  - cloud_firestore (2.2.2):
     - Firebase/Firestore (= 8.6.0)
     - firebase_core
     - Flutter
@@ -693,7 +693,7 @@ SPEC CHECKSUMS:
   AppAuth: 31bcec809a638d7bd2f86ea8a52bd45f6e81e7c7
   BoringSSL-GRPC: 8edf627ee524575e2f8d19d56f068b448eea3879
   camera: a0ca5080336f7af47b88436e5e26da3dee5568f0
-  cloud_firestore: 8a2843c34901ea2bc6aafcaa1c452f5b4f1ade37
+  cloud_firestore: eba7552ca23a5651cb29f1ded9306e9f4ab966e1
   FBAEMKit: 5c8a8d08e5b2c79628490784883e0fcc75b12615
   FBSDKCoreKit: 7ccb8b4bb2b5ee2ad94327b774dc23f03509675d
   FBSDKCoreKit_Basics: 8f978bce195845f609b0ec6b425949d0d24f525b
@@ -713,7 +713,7 @@ SPEC CHECKSUMS:
   flutter_facebook_auth: 528d51ea1324741b366fa87fa5dfd41016422364
   flutter_ffmpeg: 3ec3912c74649851e6c3b1885511eef78142ac4f
   flutter_image_compress: fd2b476345226e1a10ea352fa306af95704642c1
-  google_sign_in: de494e5e993986afae63e22a32441e30c35c9823
+  google_sign_in: 6bd214b9c154f881422f5fe27b66aaa7bbd580cc
   GoogleAppMeasurement: 2c0c6e2a7ab3fe730ade6379f732bdefb46f50b0
   GoogleDataTransport: 85fd18ff3019bb85d3f2c551d04c481dedf71fc9
   GoogleSignIn: 7137d297ddc022a7e0aa4619c86d72c909fa7213

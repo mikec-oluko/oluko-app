@@ -21,7 +21,7 @@ class FriendRepository {
     try {
       QuerySnapshot docRef = await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue("projectId"))
+          .doc(GlobalConfiguration().getValue('projectId'))
           .collection('friends')
           .where('id', isEqualTo: userId)
           .get();
@@ -46,13 +46,12 @@ class FriendRepository {
     try {
       QuerySnapshot docRef = await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue("projectId"))
+          .doc(GlobalConfiguration().getValue('projectId'))
           .collection('friends')
           .where('id', isEqualTo: userId)
           .get();
       if (docRef.docs.isNotEmpty) {
-        List<Friend> listOfFriendRequests =
-            docRef.docs.map((doc) => Friend.fromJson(doc.data() as Map<String, dynamic>)).toList();
+        List<Friend> listOfFriendRequests = docRef.docs.map((doc) => Friend.fromJson(doc.data() as Map<String, dynamic>)).toList();
         return listOfFriendRequests[0];
       } else {
         return null;
@@ -71,7 +70,7 @@ class FriendRepository {
     try {
       QuerySnapshot docRef = await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue("projectId"))
+          .doc(GlobalConfiguration().getValue('projectId'))
           .collection('users-friend-suggestion')
           .where('id', isEqualTo: userId)
           .get();
@@ -103,20 +102,17 @@ class FriendRepository {
           .get();
 
       //Friend model to add as a friend
-      FriendModel friendModel =
-          FriendModel(id: friendRequest.id, isFavorite: false, reference: friendUserDocument.reference);
+      FriendModel friendModel = FriendModel(id: friendRequest.id, isFavorite: false, reference: friendUserDocument.reference);
 
       //Remove friend request
-      friend.friendRequestReceived
-          .removeWhere((element) => element.id == friendModel.id);
+      friend.friendRequestReceived.removeWhere((element) => element.id == friendModel.id);
 
-      friend.friendRequestSent
-          .removeWhere((element) => element.id == friendModel.id);
+      friend.friendRequestSent.removeWhere((element) => element.id == friendModel.id);
       friend.friends.add(friendModel);
 
       await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue("projectId"))
+          .doc(GlobalConfiguration().getValue('projectId'))
           .collection('friends')
           .doc(friend.id)
           .set(friend.toJson());
@@ -137,7 +133,7 @@ class FriendRepository {
 
       await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue("projectId"))
+          .doc(GlobalConfiguration().getValue('projectId'))
           .collection('friends')
           .doc(friend.id)
           .set(friend.toJson());
@@ -163,7 +159,7 @@ class FriendRepository {
     try {
       await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue("projectId"))
+          .doc(GlobalConfiguration().getValue('projectId'))
           .collection('friends')
           .doc(friend.id)
           .set(friend.toJson());
@@ -182,7 +178,7 @@ class FriendRepository {
     try {
       QuerySnapshot docRef = await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue("projectId"))
+          .doc(GlobalConfiguration().getValue('projectId'))
           .collection('users-suggestion')
           .where('id', isEqualTo: userId)
           .get();
@@ -202,7 +198,7 @@ class FriendRepository {
     try {
       QuerySnapshot docRef = await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue("projectId"))
+          .doc(GlobalConfiguration().getValue('projectId'))
           .collection('users-friend-hifive')
           .where('id', isEqualTo: userId)
           .get();
@@ -224,7 +220,7 @@ class FriendRepository {
 
       await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue("projectId"))
+          .doc(GlobalConfiguration().getValue('projectId'))
           .collection('friends')
           .doc(friend.id)
           .set(friend.toJson());
@@ -243,10 +239,8 @@ class FriendRepository {
     try {
       //CREO EL FRIENDREQUESTMODEL PARA USERREQUESTED
       FriendRequestModel userRequestedAsRequestModel = FriendRequestModel(id: userRequestedId);
-
       //CREO EL FRIENDREQUESTMODEL PARA CURRENTUSER
       FriendRequestModel currentUserAsRequestModel = FriendRequestModel(id: currentUserFriend.id);
-
       //ELIMINO USERREQUESTED DE MIS FRIEND REQUEST SENT
       await cancelFriendRequestSend(currentUserFriend, userRequestedAsRequestModel);
       //PIDO EL MODELO FRIEND DE USERREQUESTED
@@ -269,7 +263,7 @@ class FriendRepository {
 
       await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue("projectId"))
+          .doc(GlobalConfiguration().getValue('projectId'))
           .collection('friends')
           .doc(friend.id)
           .set(friend.toJson());
@@ -295,7 +289,7 @@ class FriendRepository {
 
       await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue("projectId"))
+          .doc(GlobalConfiguration().getValue('projectId'))
           .collection('friends')
           .doc(friend.id)
           .set(friend.toJson());
@@ -325,16 +319,14 @@ class FriendRepository {
     }
   }
 
-  static Future<Friend> removeFriendFromList(
-      Friend friend, String friendToRemoveId) async {
+  static Future<Friend> removeFriendFromList(Friend friend, String friendToRemoveId) async {
     try {
       //Remove friend request
-      friend.friends.removeWhere(
-          (friendFromList) => friendFromList.id == friendToRemoveId);
+      friend.friends.removeWhere((friendFromList) => friendFromList.id == friendToRemoveId);
 
       await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue("projectId"))
+          .doc(GlobalConfiguration().getValue('projectId'))
           .collection('friends')
           .doc(friend.id)
           .set(friend.toJson());

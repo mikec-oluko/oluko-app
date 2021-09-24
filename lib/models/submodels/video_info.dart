@@ -13,6 +13,7 @@ class VideoInfo extends Base {
   VideoInfo({this.drawing, this.events, this.markers, this.video});
 
   //TODO: missing impl
+  // ignore: missing_return
   static VideoInfo fromJson(Object data) {}
 
   // factory VideoInfo.fromJson(Object json) {

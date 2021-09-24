@@ -26,7 +26,7 @@ class UserRepository {
   Future<UserResponse> get(String email) async {
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('users')
         .where('email', isEqualTo: email)
         .get();
@@ -41,7 +41,7 @@ class UserRepository {
   Future<UserResponse> getById(String id) async {
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('users')
         .where('id', isEqualTo: id)
         .get();
@@ -54,27 +54,21 @@ class UserRepository {
   }
 
   Future<List<UserResponse>> getAll() async {
-    QuerySnapshot docRef = await FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
-        .collection('users')
-        .get();
+    QuerySnapshot docRef =
+        await FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users').get();
     if (docRef.docs == null || docRef.docs.length == 0) {
       return null;
     }
-    List<UserResponse> response =
-        docRef.docs.map((doc) => UserResponse.fromJson(doc.data() as Map<String, dynamic>)).toList();
+    List<UserResponse> response = docRef.docs.map((doc) => UserResponse.fromJson(doc.data() as Map<String, dynamic>)).toList();
+
     return response;
   }
 
   Future<UserResponse> createSSO(SignUpRequest signUpRequest) async {
-    CollectionReference reference = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
-        .collection('users');
+    CollectionReference reference =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users');
 
-    UserResponse user =
-        UserResponse(firstName: signUpRequest.firstName, lastName: signUpRequest.lastName, email: signUpRequest.email);
+    UserResponse user = UserResponse(firstName: signUpRequest.firstName, lastName: signUpRequest.lastName, email: signUpRequest.email);
     final DocumentReference docRef = reference.doc();
     user.id = docRef.id;
     user.username = docRef.id;
@@ -93,7 +87,7 @@ class UserRepository {
   Future<UserResponse> getByUsername(String username) async {
     QuerySnapshot<Map<String, dynamic>> docsRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('users')
         .where('username', isEqualTo: username)
         .get();
@@ -146,11 +140,8 @@ class UserRepository {
   }
 
   DocumentReference<Object> getUserReference(UserResponse user) {
-    DocumentReference userReference = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
-        .collection('users')
-        .doc(user.id);
+    DocumentReference userReference =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users').doc(user.id);
     return userReference;
   }
 
@@ -164,8 +155,7 @@ class UserRepository {
     return downloadUrl;
   }
 
-  Future<UserResponse> updateUserSettingsPreferences(
-      UserResponse user, int privacyIndex, bool notificationValue) async {
+  Future<UserResponse> updateUserSettingsPreferences(UserResponse user, int privacyIndex, bool notificationValue) async {
     DocumentReference<Object> userReference = getUserReference(user);
 
     user.notification = notificationValue;

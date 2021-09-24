@@ -25,7 +25,9 @@ import 'package:oluko_app/utils/timer_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class SegmentDetail extends StatefulWidget {
-  SegmentDetail({this.courseEnrollment, this.segmentIndex, this.classIndex, Key key}) : super(key: key);
+  SegmentDetail(
+      {this.courseEnrollment, this.segmentIndex, this.classIndex, Key key})
+      : super(key: key);
 
   final CourseEnrollment courseEnrollment;
   final int segmentIndex;
@@ -47,7 +49,8 @@ class _SegmentDetailState extends State<SegmentDetail> {
   @override
   void initState() {
     currentSegmentStep = widget.segmentIndex + 1;
-    totalSegmentStep = widget.courseEnrollment.classes[widget.classIndex].segments.length;
+    totalSegmentStep =
+        widget.courseEnrollment.classes[widget.classIndex].segments.length;
     super.initState();
   }
 
@@ -56,9 +59,12 @@ class _SegmentDetailState extends State<SegmentDetail> {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
         _user = authState.firebaseUser;
-        return BlocBuilder<SegmentBloc, SegmentState>(builder: (context, segmentState) {
-          return BlocBuilder<MovementBloc, MovementState>(builder: (context, movementState) {
-            if (segmentState is GetSegmentsSuccess && movementState is GetAllSuccess) {
+        return BlocBuilder<SegmentBloc, SegmentState>(
+            builder: (context, segmentState) {
+          return BlocBuilder<MovementBloc, MovementState>(
+              builder: (context, movementState) {
+            if (segmentState is GetSegmentsSuccess &&
+                movementState is GetAllSuccess) {
               _segments = segmentState.segments;
               _movements = movementState.movements;
               return form();
@@ -81,7 +87,8 @@ class _SegmentDetailState extends State<SegmentDetail> {
         height: ScreenUtils.height(context),
         child: SlidingUpPanel(
             controller: panelController,
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20), topRight: Radius.circular(20)),
             minHeight: 90,
             maxHeight: 185,
             collapsed: CollapsedMovementVideosSection(action: getAction()),
@@ -90,7 +97,10 @@ class _SegmentDetailState extends State<SegmentDetail> {
                 segment: _segments[widget.segmentIndex],
                 movements: _movements,
                 onPressedMovement: (BuildContext context, Movement movement) =>
-                    Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement})),
+                    Navigator.pushNamed(
+                        context, routeLabels[RouteEnum.movementIntro],
+                        arguments: {'movement': movement})),
+
             body: _viewBody()),
       ),
     );
@@ -157,11 +167,8 @@ class _SegmentDetailState extends State<SegmentDetail> {
                 title: OlukoLocalizations.of(context).find('startWorkouts'),
                 color: OlukoColors.primary,
                 onPressed: () {
-                  if (hasNoRest()) {
-                    navigateToSegmentWithoutRecording();
-                  } else {
-                    BottomDialogUtils.showBottomDialog(context: context, content: dialogContainer());
-                  }
+                  BottomDialogUtils.showBottomDialog(
+                      context: context, content: dialogContainer());
                 })
           ]),
         ),
@@ -175,8 +182,10 @@ class _SegmentDetailState extends State<SegmentDetail> {
       Icon(Icons.warning_amber_rounded, color: Colors.white, size: 100),
       Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Text(OlukoLocalizations.of(context).find('coachRecommendsRecording'),
-            textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont()),
+        child: Text(
+            OlukoLocalizations.of(context).find('coachRecommendsRecording'),
+            textAlign: TextAlign.center,
+            style: OlukoFonts.olukoBigFont()),
       ),
       Padding(
         padding: const EdgeInsets.only(top: 16.0),
@@ -187,7 +196,8 @@ class _SegmentDetailState extends State<SegmentDetail> {
                 Navigator.of(context).pop(true);
               },
               color: Colors.white,
-              title: OlukoLocalizations.of(context).find('recordAndStartSegment'),
+              title:
+                  OlukoLocalizations.of(context).find('recordAndStartSegment'),
             ),
           ],
         ),
@@ -222,12 +232,17 @@ class _SegmentDetailState extends State<SegmentDetail> {
               Image.asset('assets/courses/photo_ellipse.png', scale: 4)
             ]),
             SizedBox(height: 15),
-            Text("Coach Mike", textAlign: TextAlign.center, style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold)),
+            Text("Coach Mike",
+                textAlign: TextAlign.center,
+                style: OlukoFonts.olukoSuperBigFont(
+                    custoFontWeight: FontWeight.bold)),
             SizedBox(height: 20),
             Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 50),
-                child: Text("Coach Mike has requested you to record the segment",
-                    textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont())),
+                child: Text(
+                    "Coach Mike has requested you to record the segment",
+                    textAlign: TextAlign.center,
+                    style: OlukoFonts.olukoBigFont())),
             SizedBox(height: 35),
             Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -252,22 +267,30 @@ class _SegmentDetailState extends State<SegmentDetail> {
           ]),
           Align(
               alignment: Alignment.topRight,
-              child: IconButton(icon: Icon(Icons.close, color: Colors.white), onPressed: () => Navigator.pop(context)))
+              child: IconButton(
+                  icon: Icon(Icons.close, color: Colors.white),
+                  onPressed: () => Navigator.pop(context)))
         ]));
   }
 
   navigateToSegmentWithRecording() {
-    Navigator.pushNamed(context, routeLabels[RouteEnum.segmentCameraPreview], arguments: {
-      'segmentIndex': widget.segmentIndex,
-      'classIndex': widget.classIndex,
-      'courseEnrollment': widget.courseEnrollment,
-      'segments': _segments,
-    });
+    Navigator.pushNamed(context, routeLabels[RouteEnum.segmentCameraPreview],
+        arguments: {
+          'segmentIndex': widget.segmentIndex,
+          'classIndex': widget.classIndex,
+          'courseEnrollment': widget.courseEnrollment,
+          'segments': _segments,
+        });
   }
 
   navigateToSegmentWithoutRecording() {
-    TimerUtils.startCountdown(WorkoutType.segment, context, getArguments(), _segments[widget.segmentIndex].initialTimer,
-        _segments[widget.segmentIndex].rounds, 1);
+    TimerUtils.startCountdown(
+        WorkoutType.segment,
+        context,
+        getArguments(),
+        _segments[widget.segmentIndex].initialTimer,
+        _segments[widget.segmentIndex].rounds,
+        1);
   }
 
   Object getArguments() {
@@ -278,16 +301,5 @@ class _SegmentDetailState extends State<SegmentDetail> {
       'workoutType': WorkoutType.segment,
       'segments': _segments,
     };
-  }
-
-//Condition to block the segments that don't work with recording yet.
-  bool hasNoRest() {
-    bool hasNoRest = false;
-    for (var i = 0; i < _segments[widget.segmentIndex].movements.length; i++) {
-      if (_segments[widget.segmentIndex].movements[i].timerRestTime == null) {
-        return true;
-      }
-    }
-    return hasNoRest;
   }
 }
