@@ -6,6 +6,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
+import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class HiFivePage extends StatefulWidget {
@@ -29,24 +30,31 @@ class _HiFivePageState extends State<HiFivePage> {
             if (_hiFiveState == null) {
               BlocProvider.of<HiFiveBloc>(context).get(authState.user.id);
             }
-            return BlocBuilder<HiFiveBloc, HiFiveState>(builder: (context, hiFiveState) {
-              if (hiFiveState is HiFiveSuccess) {
-                _hiFiveState = hiFiveState;
-                return ListView(
-                  children: hiFiveState.users
-                      .map(
-                        (targetUser) => _listItem(
-                          authState.user,
-                          targetUser,
-                          hiFiveState.chat.values.toList()[hiFiveState.users.indexOf(targetUser)].length,
-                        ),
-                      )
-                      .toList(),
-                );
-              } else {
-                return SizedBox();
-              }
-            });
+            return BlocListener<HiFiveBloc, HiFiveState>(
+              listener: (context, hiFiveState) {
+                if (hiFiveState is HiFiveSuccess && hiFiveState.alertMessage != null) {
+                  AppMessages.showSnackbar(context, hiFiveState.alertMessage);
+                }
+              },
+              child: BlocBuilder<HiFiveBloc, HiFiveState>(builder: (context, hiFiveState) {
+                if (hiFiveState is HiFiveSuccess) {
+                  _hiFiveState = hiFiveState;
+                  return ListView(
+                    children: hiFiveState.users
+                        .map(
+                          (targetUser) => _listItem(
+                            authState.user,
+                            targetUser,
+                            hiFiveState.chat.values.toList()[hiFiveState.users.indexOf(targetUser)].length,
+                          ),
+                        )
+                        .toList(),
+                  );
+                } else {
+                  return SizedBox();
+                }
+              }),
+            );
           } else {
             return const SizedBox();
           }
@@ -60,9 +68,9 @@ class _HiFivePageState extends State<HiFivePage> {
       key: ValueKey<String>(targetUser.id),
       onDismissed: (DismissDirection dismissDirection) {
         if (dismissDirection == DismissDirection.startToEnd) {
-          BlocProvider.of<HiFiveBloc>(context).sendHiFive(user.id, targetUser.id);
+          BlocProvider.of<HiFiveBloc>(context).sendHiFive(context, user.id, targetUser.id);
         } else {
-          BlocProvider.of<HiFiveBloc>(context).ignoreHiFive(user.id, targetUser.id);
+          BlocProvider.of<HiFiveBloc>(context).ignoreHiFive(context, user.id, targetUser.id);
         }
       },
       background: Container(
@@ -144,7 +152,7 @@ class _HiFivePageState extends State<HiFivePage> {
               ),
             ),
             GestureDetector(
-              onTap: () => BlocProvider.of<HiFiveBloc>(context).sendHiFive(user.id, targetUser.id),
+              onTap: () => BlocProvider.of<HiFiveBloc>(context).sendHiFive(context, user.id, targetUser.id),
               child: Image.asset(
                 'assets/profile/hiFive.png',
                 fit: BoxFit.cover,

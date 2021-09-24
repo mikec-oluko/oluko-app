@@ -5,6 +5,7 @@ import 'package:oluko_app/models/message.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/chat_repository.dart';
 import 'package:oluko_app/repositories/user_repository.dart';
+import 'package:oluko_app/utils/app_messages.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class HiFiveState {}
@@ -14,7 +15,8 @@ class HiFiveLoading extends HiFiveState {}
 class HiFiveSuccess extends HiFiveState {
   Map<Chat, List<Message>> chat;
   List<UserResponse> users;
-  HiFiveSuccess({this.chat, this.users});
+  String alertMessage;
+  HiFiveSuccess({this.chat, this.users, this.alertMessage});
 }
 
 class HiFiveFailure extends HiFiveState {
@@ -66,24 +68,23 @@ class HiFiveBloc extends Cubit<HiFiveState> {
     }
   }
 
-  void sendHiFive(String userId, String targetUserId) async {
+  void sendHiFive(BuildContext context, String userId, String targetUserId) async {
     Message hiFiveMessage = await ChatRepository().sendHiFive(userId, targetUserId);
     if (_lastState != null && _chatExists(_lastState, targetUserId)) {
       _lastState.chat.removeWhere((key, value) => key.id == targetUserId);
       _lastState.users.removeWhere((element) => element.id == targetUserId);
-
-      emit(HiFiveSuccess(chat: _lastState.chat, users: _lastState.users));
+      emit(HiFiveSuccess(chat: _lastState.chat, users: _lastState.users, alertMessage: 'Hi-Five sent'));
     } else {
       get(userId);
     }
   }
 
-  void ignoreHiFive(String userId, String targetUserId) async {
+  void ignoreHiFive(BuildContext context, String userId, String targetUserId) async {
     bool hiFiveMessage = await ChatRepository().removeHiFive(userId, targetUserId);
     if (_lastState != null && _chatExists(_lastState, targetUserId)) {
       _lastState.chat.removeWhere((key, value) => key.id == targetUserId);
       _lastState.users.removeWhere((element) => element.id == targetUserId);
-      emit(HiFiveSuccess(chat: _lastState.chat, users: _lastState.users));
+      emit(HiFiveSuccess(chat: _lastState.chat, users: _lastState.users, alertMessage: 'Hi-Five ignored'));
     } else {
       get(userId);
     }
