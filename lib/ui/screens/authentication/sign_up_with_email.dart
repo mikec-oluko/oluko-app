@@ -9,7 +9,6 @@ import 'package:oluko_app/utils/app_loader.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/utils/app_validators.dart';
 
-
 class SignUpWithMailPage extends StatefulWidget {
   SignUpWithMailPage({Key key}) : super(key: key);
 
@@ -20,8 +19,7 @@ class SignUpWithMailPage extends StatefulWidget {
 class _SignUpWithMailPageState extends State<SignUpWithMailPage> {
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-        create: (context) => SignupBloc(), child: SignUpWithMailContentPage());
+    return BlocProvider(create: (context) => SignupBloc(), child: SignUpWithMailContentPage());
   }
 }
 
@@ -29,21 +27,18 @@ class SignUpWithMailContentPage extends StatefulWidget {
   SignUpWithMailContentPage({Key key}) : super(key: key);
 
   @override
-  _SignUpWithMailContentPageState createState() =>
-      _SignUpWithMailContentPageState();
+  _SignUpWithMailContentPageState createState() => _SignUpWithMailContentPageState();
 }
 
 class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
   final _formKey = GlobalKey<FormState>();
-  SignUpRequest _requestData =
-      SignUpRequest(projectId: GlobalConfiguration().getValue("projectId"));
+  SignUpRequest _requestData = SignUpRequest(projectId: GlobalConfiguration().getValue('projectId'));
   PasswordStrength passwordStrength;
   bool _peekPassword = false;
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<SignupBloc, UserState>(
-        builder: (context, UserState state) {
+    return BlocBuilder<SignupBloc, UserState>(builder: (context, UserState state) {
       return signUpForm();
     });
   }
@@ -64,69 +59,48 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
                             titleSection(),
                             SizedBox(height: 30),
                             //Login with SSO
-                            Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 5),
-                                      child: SizedBox(
-                                          height: 50,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              2.2,
-                                          child: OutlinedButton(
-                                              onPressed: () {
-                                                BlocProvider.of<AuthBloc>(
-                                                    context)
-                                                  ..loginWithGoogle(context);
-                                              },
-                                              style: OutlinedButton.styleFrom(
-                                                  backgroundColor:
-                                                      Colors.transparent,
-                                                  side: BorderSide(
-                                                      color: Colors.grey)),
-                                              child: Stack(children: [
-                                                Align(
-                                                  alignment: Alignment.center,
-                                                  child: Image.network(
-                                                    'https://img.icons8.com/color/452/google-logo.png',
-                                                    width: 30,
-                                                  ),
-                                                ),
-                                              ])))),
-                                  Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 5),
-                                      child: SizedBox(
-                                          height: 50,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              2.2,
-                                          child: OutlinedButton(
-                                              onPressed: () {
-                                                BlocProvider.of<AuthBloc>(
-                                                    context)
-                                                  ..loginWithFacebook(context);
-                                              },
-                                              style: OutlinedButton.styleFrom(
-                                                  backgroundColor:
-                                                      Colors.transparent,
-                                                  side: BorderSide(
-                                                      color: Colors.grey)),
-                                              child: Stack(children: [
-                                                Align(
-                                                  alignment: Alignment.center,
-                                                  child: Image.network(
-                                                    'https://cdn.icon-icons.com/icons2/1826/PNG/512/4202110facebooklogosocialsocialmedia-115707_115594.png',
-                                                    width: 30,
-                                                  ),
-                                                ),
-                                              ])))),
-                                ]),
+                            Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+                              Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 5),
+                                  child: SizedBox(
+                                      height: 50,
+                                      width: MediaQuery.of(context).size.width / 2.2,
+                                      child: OutlinedButton(
+                                          onPressed: () {
+                                            BlocProvider.of<AuthBloc>(context)..loginWithGoogle(context);
+                                          },
+                                          style: OutlinedButton.styleFrom(
+                                              backgroundColor: Colors.transparent, side: BorderSide(color: Colors.grey)),
+                                          child: Stack(children: [
+                                            Align(
+                                              alignment: Alignment.center,
+                                              child: Image.network(
+                                                'https://img.icons8.com/color/452/google-logo.png',
+                                                width: 30,
+                                              ),
+                                            ),
+                                          ])))),
+                              Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 5),
+                                  child: SizedBox(
+                                      height: 50,
+                                      width: MediaQuery.of(context).size.width / 2.2,
+                                      child: OutlinedButton(
+                                          onPressed: () {
+                                            BlocProvider.of<AuthBloc>(context)..loginWithFacebook(context);
+                                          },
+                                          style: OutlinedButton.styleFrom(
+                                              backgroundColor: Colors.transparent, side: BorderSide(color: Colors.grey)),
+                                          child: Stack(children: [
+                                            Align(
+                                              alignment: Alignment.center,
+                                              child: Image.network(
+                                                'https://cdn.icon-icons.com/icons2/1826/PNG/512/4202110facebooklogosocialsocialmedia-115707_115594.png',
+                                                width: 30,
+                                              ),
+                                            ),
+                                          ])))),
+                            ]),
                             formSection()
                           ])))
                 ]))));
@@ -139,19 +113,13 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Container(
-                height: 350,
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: formFields())),
+            Container(height: 350, child: Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: formFields())),
             SizedBox(
                 width: double.infinity,
                 height: 50,
-                child: BlocBuilder<SignupBloc, UserState>(
-                    builder: (context, state) {
+                child: BlocBuilder<SignupBloc, UserState>(builder: (context, state) {
                   return ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          primary: OlukoColors.primary),
+                      style: ElevatedButton.styleFrom(primary: OlukoColors.primary),
                       onPressed: () async {
                         if (_formKey.currentState.validate()) {
                           _formKey.currentState.save();
@@ -174,9 +142,7 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
                       'Already a subscribed user?',
                       style: TextStyle(color: Colors.white),
                     ),
-                    Text('Log In',
-                        style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold))
+                    Text('Log In', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold))
                   ],
                 ),
               ),
@@ -192,8 +158,7 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
           Text(
             'Welcome',
             textAlign: TextAlign.start,
-            style: TextStyle(
-                fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
+            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
           ),
         ]));
   }
@@ -352,8 +317,7 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
       ),
       LinearProgressIndicator(
         value: getPasswordStrengthLength(passwordStrength),
-        valueColor: new AlwaysStoppedAnimation<Color>(
-            getPasswordStrengthColor(passwordStrength)),
+        valueColor: new AlwaysStoppedAnimation<Color>(getPasswordStrengthColor(passwordStrength)),
         backgroundColor: Colors.grey.shade700,
       ),
       Text(

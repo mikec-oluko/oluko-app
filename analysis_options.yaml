@@ -39,3 +39,5 @@ linter:
     implicit-cast: false
     argument_type_not_assignable: false
     directives_ordering: false
+    constant_identifier_names: false
+    use_build_context_synchronously: false

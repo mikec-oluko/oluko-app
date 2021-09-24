@@ -16,7 +16,7 @@ class RecommendationRepository {
   Future<List<Recommendation>> getAll() async {
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('recommendations')
         .get();
     List<Recommendation> response = [];
@@ -30,7 +30,7 @@ class RecommendationRepository {
   Future<List<Recommendation>> getByDestinationUser(userId) async {
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('recommendations')
         .where('destination_user_id', isEqualTo: userId)
         .get();

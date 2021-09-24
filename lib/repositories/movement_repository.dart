@@ -28,7 +28,7 @@ class MovementRepository {
     });
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('movements')
         .where("id", whereIn: segmentMovementsIds)
         .get();
@@ -38,7 +38,7 @@ class MovementRepository {
   static Future<List<Movement>> getAll() async {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('movements')
         .get();
     return mapQueryToMovement(querySnapshot);
@@ -47,7 +47,7 @@ class MovementRepository {
   static Future<List<Movement>> get(String id) async {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('movements')
         .where('id', isEqualTo: id)
         .get();
@@ -57,7 +57,7 @@ class MovementRepository {
   static Future<List<Movement>> getVariants(String id) async {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('movements')
         .doc(id)
         .collection('movementVariants')
@@ -70,13 +70,12 @@ class MovementRepository {
   static Future<MovementRelation> getRelations(String id) async {
     DocumentSnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('movementRelations')
         .doc(id)
         .get();
 
-    MovementRelation movementRelation =
-        MovementRelation.fromJson(querySnapshot.data() as Map<String, dynamic>);
+    MovementRelation movementRelation = MovementRelation.fromJson(querySnapshot.data() as Map<String, dynamic>);
     return movementRelation;
   }
 

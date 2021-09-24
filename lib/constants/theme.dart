@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui' show Color;
 
 import 'package:flutter/material.dart';
@@ -65,6 +66,10 @@ class OlukoColors {
 
   static const Color skyblue = Color.fromRGBO(171, 247, 233, 1);
 
+  static const Color purple = Color.fromRGBO(171, 147, 233, 1);
+
+  static const Color orange = Color.fromRGBO(251, 147, 133, 1);
+
   static const Color challengeLockedFilterColor = Color.fromRGBO(218, 5, 5, 0.2);
 
   static const Color grayColorSemiTransparent = Color.fromRGBO(148, 148, 148, 0.6);
@@ -74,6 +79,12 @@ class OlukoColors {
   static const Color taskCardBackgroundDisabled = Color.fromRGBO(30, 30, 30, 0.8);
 
   static const Color disabled = Color.fromRGBO(30, 30, 30, 0.8);
+
+  static Color randomColor() {
+    var list = [grayColorSemiTransparent, skyblue, coral, searchSuggestionsAlreadyWrittenText, inputError, purple, orange];
+    final _random = new Random();
+    return list[_random.nextInt(list.length)];
+  }
 }
 
 class OlukoFonts {

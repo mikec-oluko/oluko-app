@@ -19,12 +19,9 @@ class MovementSubmissionRepository {
     this.firestoreInstance = firestoreInstance;
   }
 
-  static Future<MovementSubmission> create(
-      SegmentSubmission segmentSubmission, MovementSubmodel movement, String videoPath) async {
-    DocumentReference projectReference =
-        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue("projectId"));
-    DocumentReference segmentSubmissionReference =
-        projectReference.collection('segmentSubmissions').doc(segmentSubmission.id);
+  static Future<MovementSubmission> create(SegmentSubmission segmentSubmission, MovementSubmodel movement, String videoPath) async {
+    DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId'));
+    DocumentReference segmentSubmissionReference = projectReference.collection('segmentSubmissions').doc(segmentSubmission.id);
     MovementSubmission movementSubmission = MovementSubmission(
         userId: segmentSubmission.userId,
         userReference: segmentSubmission.userReference,
@@ -44,7 +41,7 @@ class MovementSubmissionRepository {
   static Future<void> updateVideo(MovementSubmission movementSubmission) async {
     DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('movementSubmissions')
         .doc(movementSubmission.id);
     reference.update({
@@ -58,7 +55,7 @@ class MovementSubmissionRepository {
   static Future<void> updateStateToEncoded(MovementSubmission movementSubmission) async {
     DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('movementSubmissions')
         .doc(movementSubmission.id);
     reference.update({
@@ -72,17 +69,16 @@ class MovementSubmissionRepository {
   static Future<void> updateStateToError(MovementSubmission movementSubmission) async {
     DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('movementSubmissions')
         .doc(movementSubmission.id);
     reference.update({'video_state.error': movementSubmission.videoState.error});
   }
 
-  //TODO: Use this!!!!
   static Future<List<MovementSubmission>> get(SegmentSubmission segmentSubmission) async {
     QuerySnapshot qs = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('movementSubmissions')
         .where("segment_submission_id", isEqualTo: segmentSubmission.id)
         .get();
