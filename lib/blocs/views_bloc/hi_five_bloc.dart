@@ -6,6 +6,7 @@ import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/chat_repository.dart';
 import 'package:oluko_app/repositories/user_repository.dart';
 import 'package:oluko_app/utils/app_messages.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class HiFiveState {}
@@ -73,7 +74,7 @@ class HiFiveBloc extends Cubit<HiFiveState> {
     if (_lastState != null && _chatExists(_lastState, targetUserId)) {
       _lastState.chat.removeWhere((key, value) => key.id == targetUserId);
       _lastState.users.removeWhere((element) => element.id == targetUserId);
-      emit(HiFiveSuccess(chat: _lastState.chat, users: _lastState.users, alertMessage: 'Hi-Five sent'));
+      emit(HiFiveSuccess(chat: _lastState.chat, users: _lastState.users, alertMessage: OlukoLocalizations.of(context).find('hiFiveSent')));
     } else {
       get(userId);
     }
@@ -84,7 +85,7 @@ class HiFiveBloc extends Cubit<HiFiveState> {
     if (_lastState != null && _chatExists(_lastState, targetUserId)) {
       _lastState.chat.removeWhere((key, value) => key.id == targetUserId);
       _lastState.users.removeWhere((element) => element.id == targetUserId);
-      emit(HiFiveSuccess(chat: _lastState.chat, users: _lastState.users, alertMessage: 'Hi-Five ignored'));
+      emit(HiFiveSuccess(chat: _lastState.chat, users: _lastState.users, alertMessage: OlukoLocalizations.of(context).find('hiFiveRemoved')));
     } else {
       get(userId);
     }
