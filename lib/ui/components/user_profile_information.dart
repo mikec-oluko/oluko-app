@@ -146,9 +146,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                                 height: 40,
                                 child: TextButton(
                                     onPressed: () {
-                                      BlocProvider.of<ProfileAvatarBloc>(
-                                          context)
-                                        ..openPanel();
+                                      BlocProvider.of<ProfileAvatarBloc>(context).openPanel();
                                     },
                                     child: Image.asset(
                                         'assets/profile/uploadImage.png')),

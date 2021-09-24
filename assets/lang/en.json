@@ -106,7 +106,8 @@
     "processingVideo": "Processing video",
     "completed": "Completed",
     "uploadedWithErrors": "The segment was uploaded with errors",
-    "uploadedSuccessfully": "The segment was uploaded successfully",
+    "segmentUploadedSuccessfully": "The segment was uploaded successfully",
+    "uploadedSuccessfully": "Uploaded Successfully",
     "challengesCompleted": "Challenges Completed",
     "coursesCompleted": "Courses Completed",
     "classesCompleted": "Classes Completed",
@@ -195,5 +196,11 @@
     "requiredPermitsBody": "You need to enable app permissions",
     "goToClass": "Go To Class",
     "nextSegment": "Next Segment",
-    "errorLoadingImage":"Error loading image!"
+    "errorLoadingImage":"Error loading image!",
+    "pleaseCheckYourEmail":"Please check your Email for account confirmation.",
+    "pleaseSubscribeToAPlanBeforeUsingTheApp":"Please subscribe to a plan before using the App",
+    "welcome":"Welcome",
+    "userForThisAccountNotFoundPleaseSignUp": "User for this account not found. Please sign up.",
+    "pleaseCheckYourEmailForInstructions":"Please check your email for instructions.",
+    "errorGettingCurrentPlan": "Error getting current plan"
 }

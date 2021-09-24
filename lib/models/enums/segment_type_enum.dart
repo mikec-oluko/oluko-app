@@ -1,0 +1,1 @@
+enum SegmentTypeEnum { Rounds, Duration, RoundsAndDuration }

@@ -5,6 +5,7 @@ import 'package:oluko_app/models/movement_relation.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
+import 'package:oluko_app/models/submodels/section_submodel.dart';
 import 'package:oluko_app/repositories/segment_repository.dart';
 
 class MovementRepository {
@@ -20,12 +21,14 @@ class MovementRepository {
 
   static Future<List<Movement>> getBySegment(Segment segment) async {
     List<String> segmentMovementsIds = [];
-    segment.movements.forEach((MovementSubmodel movement) {
-      segmentMovementsIds.add(movement.id);
+    segment.sections.forEach((SectionSubmodel section) {
+      section.movements.forEach((MovementSubmodel movement) {
+        segmentMovementsIds.add(movement.id);
+      });
     });
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('movements')
         .where("id", whereIn: segmentMovementsIds)
         .get();
@@ -35,7 +38,7 @@ class MovementRepository {
   static Future<List<Movement>> getAll() async {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('movements')
         .get();
     return mapQueryToMovement(querySnapshot);
@@ -44,7 +47,7 @@ class MovementRepository {
   static Future<List<Movement>> get(String id) async {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('movements')
         .where('id', isEqualTo: id)
         .get();
@@ -54,7 +57,7 @@ class MovementRepository {
   static Future<List<Movement>> getVariants(String id) async {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('movements')
         .doc(id)
         .collection('movementVariants')
@@ -67,27 +70,13 @@ class MovementRepository {
   static Future<MovementRelation> getRelations(String id) async {
     DocumentSnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('movementRelations')
         .doc(id)
         .get();
 
     MovementRelation movementRelation = MovementRelation.fromJson(querySnapshot.data() as Map<String, dynamic>);
     return movementRelation;
-  }
-
-  static Future<Movement> create(Movement movement, DocumentReference segmentReference) async {
-    CollectionReference reference = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
-        .collection('movements');
-    final DocumentReference docRef = reference.doc();
-    movement.id = docRef.id;
-    docRef.set(movement.toJson());
-    MovementSubmodel movementObj =
-        MovementSubmodel(id: movement.id, reference: reference.doc(movement.id), name: movement.name);
-    await SegmentRepository.updateMovements(movementObj, segmentReference);
-    return movement;
   }
 
   static List<Movement> mapQueryToMovement(QuerySnapshot qs) {

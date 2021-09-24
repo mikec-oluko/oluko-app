@@ -16,7 +16,7 @@ class FavoriteRepository {
   Future<List<Favorite>> getAll() async {
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('favorites')
         .get();
     List<Favorite> response = [];
@@ -30,7 +30,7 @@ class FavoriteRepository {
   Future<List<Favorite>> getByUserId(userId) async {
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('favorites')
         .where('user_id', isEqualTo: userId)
         .get();

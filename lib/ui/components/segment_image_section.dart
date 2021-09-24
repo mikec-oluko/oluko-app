@@ -5,6 +5,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/ui/components/segment_step_section.dart';
 import 'package:oluko_app/utils/movement_utils.dart';
+import 'package:oluko_app/utils/segment_utils.dart';
 
 class SegmentImageSection extends StatefulWidget {
   final Segment segment;
@@ -50,8 +51,15 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                 widget.segment.description,
                 style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400),
               ),
-              SegmentStepSection(currentSegmentStep: widget.currentSegmentStep, totalSegmentStep: widget.totalSegmentStep),
-              Padding(padding: EdgeInsets.symmetric(vertical: 40), child: MovementUtils.workout(widget.segment, context)),
+              SegmentStepSection(
+                  currentSegmentStep: widget.currentSegmentStep,
+                  totalSegmentStep: widget.totalSegmentStep),
+              Padding(
+                  padding: EdgeInsets.symmetric(vertical: 20),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: SegmentUtils.getSegmentSummary(
+                          widget.segment, context, OlukoColors.white))),
             ],
           ))
     ]);
