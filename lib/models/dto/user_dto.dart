@@ -3,8 +3,8 @@ import 'package:oluko_app/models/user_response.dart';
 
 class UserDto {
   UserDto.fromUserResponse(UserResponse userReponse) {
-    createdAt = userReponse.createdAt?.seconds;
-    updatedAt = userReponse.updatedAt?.seconds;
+    createdAt = userReponse.createdAt?.millisecondsSinceEpoch;
+    updatedAt = userReponse.updatedAt?.millisecondsSinceEpoch;
     firstName = userReponse.firstName;
     lastName = userReponse.lastName;
     email = userReponse.email;
@@ -119,6 +119,7 @@ class UserDto {
       'privacy': privacy ?? 0,
       'current_plan': currentPlan,
       'updated_by': updatedBy,
+      'created_at': createdAt,
       'created_by': createdBy,
       'id': id,
       'is_deleted': isDeleted,
