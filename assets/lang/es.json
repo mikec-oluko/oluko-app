@@ -39,6 +39,7 @@
     "activeCourses": "Cursos Activos",
     "videos": "Videos",
     "viewAll": "Ver Todo",
+    "hiFives": "Hi-Fives",
     "hiFiveSent": "Hi Five enviado",
     "hiFiveRemoved": "Hi Five eliminado",
     "clearAll": "Limpiar Todo",
@@ -194,5 +195,5 @@
     "requiredPermitsBody": "Necesitas habilitar los permisos de la app",
     "goToClass": "Ir a la clase",
     "nextSegment": "Próximo Segmento",
-    "errorLoadingImage":"Error cargando imagen!"
+    "errorLoadingImage": "Error cargando imagen!"
 }
