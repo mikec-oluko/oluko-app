@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui' show Color;
 
 import 'package:flutter/material.dart';
@@ -47,8 +48,7 @@ class OlukoColors {
 
   static const Color searchSuggestionsText = Colors.white;
 
-  static const Color searchSuggestionsAlreadyWrittenText =
-      Color.fromRGBO(170, 176, 144, 1.0);
+  static const Color searchSuggestionsAlreadyWrittenText = Color.fromRGBO(170, 176, 144, 1.0);
 
   static const Color appBarIcon = Colors.white;
 
@@ -66,17 +66,25 @@ class OlukoColors {
 
   static const Color skyblue = Color.fromRGBO(171, 247, 233, 1);
 
-  static const Color challengeLockedFilterColor =
-      Color.fromRGBO(218, 5, 5, 0.2);
+  static const Color purple = Color.fromRGBO(171, 147, 233, 1);
 
-  static const Color grayColorSemiTransparent =
-      Color.fromRGBO(148, 148, 148, 0.6);
+  static const Color orange = Color.fromRGBO(251, 147, 133, 1);
 
-  static const Color blackColorSemiTransparent =
-      Color.fromRGBO(24, 24, 24, 0.6);
-  
-  static const Color taskCardBackgroundDisabled =
-      Color.fromRGBO(30, 30, 30, 0.8);
+  static const Color challengeLockedFilterColor = Color.fromRGBO(218, 5, 5, 0.2);
+
+  static const Color grayColorSemiTransparent = Color.fromRGBO(148, 148, 148, 0.6);
+
+  static const Color blackColorSemiTransparent = Color.fromRGBO(24, 24, 24, 0.6);
+
+  static const Color taskCardBackgroundDisabled = Color.fromRGBO(30, 30, 30, 0.8);
+
+  static const Color disabled = Color.fromRGBO(30, 30, 30, 0.8);
+
+  static Color randomColor() {
+    var list = [grayColorSemiTransparent, skyblue, coral, searchSuggestionsAlreadyWrittenText, inputError, purple, orange];
+    final _random = new Random();
+    return list[_random.nextInt(list.length)];
+  }
 }
 
 class OlukoFonts {
@@ -88,10 +96,7 @@ class OlukoFonts {
   static const double olukoSmallFontSize = 11.0;
   static const double olukoBiggestFontSize = 40.0;
 
-  static TextStyle olukoMediumFont(
-      {FontWeight custoFontWeight,
-      Color customColor,
-      TextDecoration decoration}) {
+  static TextStyle olukoMediumFont({FontWeight custoFontWeight, Color customColor, TextDecoration decoration}) {
     return TextStyle(
         fontSize: olukoMediumFontSize,
         fontWeight: custoFontWeight != null ? custoFontWeight : FontWeight.w500,
@@ -99,48 +104,42 @@ class OlukoFonts {
         decoration: decoration);
   }
 
-  static TextStyle olukoTitleFont(
-      {FontWeight custoFontWeight, Color customColor}) {
+  static TextStyle olukoTitleFont({FontWeight custoFontWeight, Color customColor}) {
     return TextStyle(
         fontSize: olukoTitleFontSize,
         fontWeight: custoFontWeight != null ? custoFontWeight : FontWeight.w500,
         color: customColor != null ? customColor : OlukoColors.white);
   }
 
-  static TextStyle olukoSubtitleFont(
-      {FontWeight custoFontWeight, Color customColor}) {
+  static TextStyle olukoSubtitleFont({FontWeight custoFontWeight, Color customColor}) {
     return TextStyle(
         fontSize: olukoSubtitleFontSize,
         fontWeight: custoFontWeight != null ? custoFontWeight : FontWeight.w500,
         color: customColor != null ? customColor : OlukoColors.white);
   }
 
-  static TextStyle olukoBigFont(
-      {FontWeight custoFontWeight, Color customColor}) {
+  static TextStyle olukoBigFont({FontWeight custoFontWeight, Color customColor}) {
     return TextStyle(
         fontSize: olukoBigFontSize,
         fontWeight: custoFontWeight != null ? custoFontWeight : FontWeight.w500,
         color: customColor != null ? customColor : OlukoColors.white);
   }
 
-  static TextStyle olukoSuperBigFont(
-      {FontWeight custoFontWeight, Color customColor}) {
+  static TextStyle olukoSuperBigFont({FontWeight custoFontWeight, Color customColor}) {
     return TextStyle(
         fontSize: olukoSuperBigFontSize,
         fontWeight: custoFontWeight != null ? custoFontWeight : FontWeight.w500,
         color: customColor != null ? customColor : OlukoColors.white);
   }
 
-  static TextStyle olukoSmallFont(
-      {FontWeight custoFontWeight, Color customColor}) {
+  static TextStyle olukoSmallFont({FontWeight custoFontWeight, Color customColor}) {
     return TextStyle(
         fontSize: olukoSmallFontSize,
         fontWeight: custoFontWeight != null ? custoFontWeight : FontWeight.w500,
         color: customColor != null ? customColor : OlukoColors.white);
   }
 
-  static TextStyle olukoBiggestFont(
-      {FontWeight custoFontWeight, Color customColor}) {
+  static TextStyle olukoBiggestFont({FontWeight custoFontWeight, Color customColor}) {
     return TextStyle(
         fontSize: olukoBiggestFontSize,
         fontWeight: custoFontWeight != null ? custoFontWeight : FontWeight.w500,

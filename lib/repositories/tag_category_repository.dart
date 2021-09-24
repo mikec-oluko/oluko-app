@@ -17,7 +17,7 @@ class TagCategoryRepository {
   Future<List<TagCategory>> getAll() async {
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('tagsCategories')
         .get();
     List<TagCategory> response = [];

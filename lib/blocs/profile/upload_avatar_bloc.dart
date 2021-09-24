@@ -40,7 +40,7 @@ class ProfileAvatarBloc extends Cubit<ProfileAvatarState> {
       }
 
       if (_image == null) {
-        emit(ProfileAvatarFailure(exception: new Exception()));
+        emit(ProfileAvatarFailure(exception: Exception()));
         return;
       }
       emit(ProfileAvatarLoading());

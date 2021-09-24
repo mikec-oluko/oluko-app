@@ -16,7 +16,7 @@ class CourseCategoryRepository {
   Future<List<CourseCategory>> getAll() async {
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('courseCategories')
         .get();
     List<CourseCategory> response = [];

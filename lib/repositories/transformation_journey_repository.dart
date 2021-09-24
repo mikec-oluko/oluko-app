@@ -14,7 +14,7 @@ class TransformationJourneyRepository {
   FirebaseFirestore firestoreInstance;
 
   static DocumentReference projectReference =
-      FirebaseFirestore.instance.collection("projects").doc(GlobalConfiguration().getValue("projectId"));
+      FirebaseFirestore.instance.collection("projects").doc(GlobalConfiguration().getValue('projectId'));
 
   TransformationJourneyRepository() {
     firestoreInstance = FirebaseFirestore.instance;
@@ -28,7 +28,7 @@ class TransformationJourneyRepository {
     try {
       QuerySnapshot docRef = await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue("projectId"))
+          .doc(GlobalConfiguration().getValue('projectId'))
           .collection('users')
           .doc(userId)
           .collection('transformationJourneyUploads')
@@ -70,8 +70,7 @@ class TransformationJourneyRepository {
           break;
       }
       if (type == FileTypeEnum.image) {
-        final thumbNaildownloadUrl =
-            await _uploadFile(thumbnail, '${transformationJourneyUploadsReference.path}/thumbnails');
+        final thumbNaildownloadUrl = await _uploadFile(thumbnail, '${transformationJourneyUploadsReference.path}/thumbnails');
 
         final downloadUrl = await _uploadFile(file.path, transformationJourneyUploadsReference.path);
 
@@ -127,16 +126,12 @@ class TransformationJourneyRepository {
   }
 
   static Future updateDocument(String userId, TransformationJourneyUpload elementToUpdate) async {
-    DocumentReference contentReference = projectReference
-        .collection('users')
-        .doc(userId)
-        .collection('transformationJourneyUploads')
-        .doc(elementToUpdate.id);
+    DocumentReference contentReference =
+        projectReference.collection('users').doc(userId).collection('transformationJourneyUploads').doc(elementToUpdate.id);
     await contentReference.update(elementToUpdate.toJson());
   }
 
-  static void updateIndexOfElements(
-      TransformationJourneyUpload elementMoved, TransformationJourneyUpload elementReplaced) {
+  static void updateIndexOfElements(TransformationJourneyUpload elementMoved, TransformationJourneyUpload elementReplaced) {
     final temptElement = elementMoved.index;
     elementMoved.index = elementReplaced.index;
     elementReplaced.index = temptElement;

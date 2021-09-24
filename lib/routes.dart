@@ -579,6 +579,7 @@ class Routes {
               value: _assessmentAssignmentBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
           BlocProvider<TaskBloc>.value(value: _taskBloc),
+          BlocProvider<GalleryVideoBloc>.value(value: _galleryVideoBloc),
         ];
         final Map<String, int> argumentsToAdd = arguments as Map<String, int>;
         newRouteView = TaskDetails(

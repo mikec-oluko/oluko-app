@@ -4,7 +4,7 @@ import 'package:permission_handler/permission_handler.dart';
 class Permissions {
   static Future<bool> requiredPermissionsEnabled(DeviceContentFrom uploadedFrom) async {
     if (uploadedFrom == DeviceContentFrom.gallery) {
-      if (await Permission.camera.status.isDenied || await Permission.camera.status.isPermanentlyDenied) {
+      if (await Permission.storage.status.isDenied || await Permission.storage.status.isPermanentlyDenied) {
         return false;
       }
     } else if (uploadedFrom == DeviceContentFrom.camera) {

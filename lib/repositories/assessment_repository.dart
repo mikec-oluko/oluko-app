@@ -16,7 +16,7 @@ class AssessmentRepository {
   Future<List<Assessment>> getAll() async {
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('assessments')
         .get();
     List<Assessment> response = [];
@@ -30,7 +30,7 @@ class AssessmentRepository {
   Future<Assessment> getById(String id) async {
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('assessments')
         .where('id', isEqualTo: id)
         .get();
