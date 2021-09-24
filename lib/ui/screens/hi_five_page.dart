@@ -65,9 +65,35 @@ class _HiFivePageState extends State<HiFivePage> {
           BlocProvider.of<HiFiveBloc>(context).ignoreHiFive(user.id, targetUser.id);
         }
       },
-      background: Container(color: OlukoColors.primary),
+      background: Container(
+        color: OlukoColors.primary,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(30.0),
+              child: Image.asset(
+                'assets/profile/hiFive_white.png',
+                scale: 0.3,
+              ),
+            ),
+          ],
+        ),
+      ),
       secondaryBackground: Container(
         color: Colors.red.shade100,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(30.0),
+              child: Text(
+                'Remove'.toUpperCase(),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        ),
       ),
       child: Padding(
         padding: const EdgeInsets.all(15.0),
