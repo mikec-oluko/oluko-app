@@ -196,6 +196,8 @@
     "goToClass": "Ir a la clase",
     "nextSegment": "Próximo Segmento",
     "errorLoadingImage":"Error cargando imagen!",
+    "exitConfirmationTitle": "¿Estas seguro?",
+    "exitConfirmationBody": "¿Quieres salir de Oluko MVT?",
     "pleaseCheckYourEmail":"Por favor checkea tu Email para confirmar tu cuenta.",
     "pleaseSubscribeToAPlanBeforeUsingTheApp":"Por favor subscribase a un plan antes de utilzar la app",
     "welcome":"Bienvenido",

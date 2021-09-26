@@ -23,14 +23,14 @@ class AssessmentAssignmentFailure extends AssessmentAssignmentState {
 class AssessmentAssignmentBloc extends Cubit<AssessmentAssignmentState> {
   AssessmentAssignmentBloc() : super(AssessmentAssignmentLoading());
 
-  void getOrCreate(User user, Assessment assessment) async {
+  void getOrCreate(String userId, Assessment assessment) async {
     if (!(state is AssessmentAssignmentSuccess)) {
       emit(AssessmentAssignmentLoading());
     }
     try {
-      AssessmentAssignment assessmentA = await AssessmentAssignmentRepository.getByUserId(user.uid);
+      AssessmentAssignment assessmentA = await AssessmentAssignmentRepository.getByUserId(userId);
       if (assessmentA == null) {
-        assessmentA = AssessmentAssignmentRepository.create(user, assessment);
+        assessmentA = AssessmentAssignmentRepository.create(userId, assessment);
       }
       emit(AssessmentAssignmentSuccess(assessmentAssignment: assessmentA));
     } catch (exception, stackTrace) {
