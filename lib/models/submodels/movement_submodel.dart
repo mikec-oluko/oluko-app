@@ -26,9 +26,8 @@ class MovementSubmodel {
       id: json['id'].toString(),
       name: json['name'].toString(),
       value: json['value'] as int,
-            isRestTime: json['is_rest_time'] == null
-          ? null
-          : json['is_rest_time'] as bool,
+      isRestTime:
+          json['is_rest_time'] == null ? false : json['is_rest_time'] as bool,
       counter: json['counter'] == null
           ? null
           : CounterEnum.values[json['counter'] as int],
@@ -45,6 +44,6 @@ class MovementSubmodel {
         'value': value,
         'counter': counter == null ? null : counter.index,
         'parameter': parameter == null ? null : parameter.index,
-        'is_rest_time': isRestTime, 
+        'is_rest_time': isRestTime,
       };
 }

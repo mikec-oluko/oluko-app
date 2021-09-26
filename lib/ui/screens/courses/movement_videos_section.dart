@@ -71,7 +71,7 @@ class _State extends State<MovementVideosSection> {
     List<Movement> movements = [];
     widget.segment.sections.forEach((section) {
       section.movements.forEach((MovementSubmodel movement) {
-        if (movement.name != 'Rest') {
+        if (!movement.isRestTime) {
           movementIds.add(movement.id);
         }
       });
