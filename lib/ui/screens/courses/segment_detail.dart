@@ -290,7 +290,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
         getArguments(),
         _segments[widget.segmentIndex].initialTimer,
         _segments[widget.segmentIndex].rounds,
-        1);
+        0);
   }
 
   Object getArguments() {

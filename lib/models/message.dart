@@ -21,14 +21,14 @@ class Message extends Base {
             isDeleted: isDeleted,
             isHidden: isHidden);
 
+  String hifiveMessageCode = '✋';
   String message;
   String seenAt;
 
   factory Message.fromJson(Map<String, dynamic> json) {
     Message chatJson = Message(
-      message: json['message'].toString(),
-      seenAt: json['seen_at'].toString(),
-    );
+        message: json['message'] != null ? json['message'] as String : null,
+        seenAt: json['seen_at'] != null ? json['seen_at'] as String : null);
     chatJson.setBase(json);
     return chatJson;
   }
@@ -36,6 +36,7 @@ class Message extends Base {
   Map<String, dynamic> toJson() {
     Map<String, dynamic> chatJson = {
       'last_connected': seenAt,
+      'message': message
     };
     chatJson.addEntries(super.toJson().entries);
     return chatJson;

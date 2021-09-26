@@ -5,6 +5,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
+import 'package:oluko_app/blocs/friends/chat_bloc.dart';
+import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
+import 'package:oluko_app/blocs/friends/message_bloc.dart';
+import 'package:oluko_app/blocs/gallery_video_bloc.dart';
+import 'package:oluko_app/blocs/segment_submission_bloc.dart';
+import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
+import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
 import 'package:oluko_app/blocs/class_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
@@ -62,6 +71,8 @@ import 'package:oluko_app/ui/screens/courses/movement_intro.dart';
 import 'package:oluko_app/ui/screens/courses/segment_camera_preview.dart.dart';
 import 'package:oluko_app/ui/screens/courses/segment_detail.dart';
 import 'package:oluko_app/ui/screens/friends/friends_page.dart';
+import 'package:oluko_app/ui/screens/authentication/login.dart';
+import 'package:oluko_app/ui/screens/hi_five_page.dart';
 import 'package:oluko_app/ui/screens/main_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile.dart';
 import 'package:oluko_app/ui/screens/profile/profile_assessment_videos_page.dart';
@@ -75,6 +86,15 @@ import 'package:oluko_app/ui/screens/profile/profile_transformation_journey_page
 import 'package:oluko_app/ui/screens/profile/transformation_journey_content_detail.dart';
 import 'package:oluko_app/ui/screens/profile/transformation_journey_post.dart';
 import 'package:oluko_app/ui/screens/profile/user_profile_page.dart';
+import 'package:oluko_app/ui/screens/courses/segment_detail.dart';
+import 'blocs/friends/hi_five_send_bloc.dart';
+import 'blocs/movement_info_bloc.dart';
+import 'blocs/views_bloc/hi_five_bloc.dart';
+import 'models/task.dart';
+import 'ui/screens/courses/segment_clocks.dart';
+import 'package:oluko_app/ui/screens/authentication/sign_up.dart';
+import 'package:oluko_app/ui/screens/authentication/sign_up_with_email.dart';
+import 'package:oluko_app/ui/screens/assessments/task_details.dart';
 import 'package:oluko_app/ui/screens/videos/videos_home.dart';
 import 'package:oluko_app/ui/screens/view_all.dart';
 
@@ -134,7 +154,8 @@ enum RouteEnum {
   mentoredVideos,
   coachShowVideo,
   coachProfile,
-  completedClass
+  completedClass,
+  hiFivePage
 }
 
 Map<RouteEnum, String> routeLabels = {
@@ -180,7 +201,8 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.mentoredVideos: '/coach-mentored-videos',
   RouteEnum.coachShowVideo: '/coach-show-video',
   RouteEnum.coachProfile: '/coach-profile',
-  RouteEnum.completedClass: '/completed-class'
+  RouteEnum.completedClass: '/completed-class',
+  RouteEnum.hiFivePage: '/hi-five-page'
 };
 
 RouteEnum getEnumFromRouteString(String route) {
@@ -225,6 +247,11 @@ class Routes {
   final UserStatisticsBloc _userStatisticsBloc = UserStatisticsBloc();
   final CourseEnrollmentUpdateBloc _courseEnrollmentUpdateBloc = CourseEnrollmentUpdateBloc();
   final UserListBloc _userListBloc = UserListBloc();
+  final ChatBloc _chatBloc = ChatBloc();
+  final MessageBloc _messageBloc = MessageBloc();
+  final HiFiveReceivedBloc _hiFiveReceivedBloc = HiFiveReceivedBloc();
+  final HiFiveSendBloc _hiFiveSendBloc = HiFiveSendBloc();
+  final HiFiveBloc _hiFiveBloc = HiFiveBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -238,6 +265,9 @@ class Routes {
     switch (routeEnum) {
       case RouteEnum.root:
         providers = [
+          BlocProvider<HiFiveReceivedBloc>.value(
+            value: _hiFiveReceivedBloc,
+          ),
           BlocProvider<CourseBloc>.value(value: _courseBloc),
           BlocProvider<ClassBloc>.value(value: _classBloc),
           BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
@@ -256,6 +286,7 @@ class Routes {
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
           BlocProvider<UserListBloc>.value(value: _userListBloc),
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
+          BlocProvider<HiFiveBloc>.value(value: _hiFiveBloc),
         ];
         newRouteView = MainPage();
         break;
@@ -284,6 +315,9 @@ class Routes {
       case RouteEnum.profile:
         providers = [
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
+          BlocProvider<HiFiveReceivedBloc>.value(
+            value: _hiFiveReceivedBloc,
+          )
         ];
         newRouteView = ProfilePage();
         break;
@@ -296,6 +330,9 @@ class Routes {
         break;
       case RouteEnum.profileMyAccount:
         providers = [
+          BlocProvider<HiFiveReceivedBloc>.value(
+            value: _hiFiveReceivedBloc,
+          ),
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
           BlocProvider<PlanBloc>.value(value: _planBloc),
           BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc)
@@ -326,6 +363,18 @@ class Routes {
           BlocProvider<ProfileAvatarBloc>.value(value: _profileAvatarBloc),
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
           BlocProvider<FavoriteFriendBloc>.value(value: _favoriteFriendBloc),
+          BlocProvider<ChatBloc>.value(
+            value: _chatBloc,
+          ),
+          BlocProvider<MessageBloc>.value(
+            value: _messageBloc,
+          ),
+          BlocProvider<HiFiveReceivedBloc>.value(
+            value: _hiFiveReceivedBloc,
+          ),
+          BlocProvider<HiFiveSendBloc>.value(
+            value: _hiFiveSendBloc,
+          )
         ];
         final Map<String, UserResponse> argumentsToAdd = arguments as Map<String, UserResponse>;
         newRouteView = UserProfilePage(userRequested: argumentsToAdd['userRequested']);
@@ -598,6 +647,13 @@ class Routes {
       case RouteEnum.coachProfile:
         final Map<String, UserResponse> argumentsToAdd = arguments as Map<String, UserResponse>;
         newRouteView = CoachProfile(coachUser: argumentsToAdd['coachUser']);
+        break;
+      case RouteEnum.hiFivePage:
+        providers = [
+          BlocProvider<HiFiveBloc>.value(value: _hiFiveBloc),
+        ];
+        final Map<String, UserResponse> argumentsToAdd = arguments as Map<String, UserResponse>;
+        newRouteView = const HiFivePage();
         break;
       default:
         newRouteView = MainPage();
