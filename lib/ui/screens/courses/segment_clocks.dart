@@ -196,8 +196,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
         padding: EdgeInsets.only(right: 10),
         child: OutlinedButton(
           onPressed: () {
-            bool isCurrentTaskTimed = timerEntries[timerTaskIndex].parameter ==
-                ParameterEnum.duration;
+            bool isCurrentTaskTimed = timerEntries[timerTaskIndex].parameter == ParameterEnum.duration;
             setState(() {
               if (isPlaying) {
                 panelController.open();
@@ -325,25 +324,20 @@ class _SegmentClocksState extends State<SegmentClocks> {
   }
 
   Widget getRoundsTimer() {
-    if (SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) &&
-        workState == WorkState.finished) {
+    if (SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) && workState == WorkState.finished) {
       return TimerUtils.roundsTimer(AMRAPRound, AMRAPRound + 1);
     } else if (workState == WorkState.finished) {
-      return TimerUtils.roundsTimer(widget.segments[widget.segmentIndex].rounds,
-          widget.segments[widget.segmentIndex].rounds + 1);
+      return TimerUtils.roundsTimer(widget.segments[widget.segmentIndex].rounds, widget.segments[widget.segmentIndex].rounds + 1);
     } else if (SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex])) {
       return TimerUtils.roundsTimer(AMRAPRound + 1, AMRAPRound);
     } else {
-      return TimerUtils.roundsTimer(widget.segments[widget.segmentIndex].rounds,
-          timerEntries[timerTaskIndex].round);
+      return TimerUtils.roundsTimer(widget.segments[widget.segmentIndex].rounds, timerEntries[timerTaskIndex].round);
     }
   }
 
   ///Current and next movement labels
   Widget _tasksSection() {
-    return widget.workoutType == WorkoutType.segment
-        ? taskSectionWithoutRecording()
-        : recordingTaskSection();
+    return widget.workoutType == WorkoutType.segment ? taskSectionWithoutRecording() : recordingTaskSection();
   }
 
   Widget taskSectionWithoutRecording() {
@@ -353,9 +347,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
           padding: EdgeInsets.only(top: 25), child: Column(children: SegmentUtils.getJoinedLabel(timerEntries[timerTaskIndex].labels)));
     } else {
       String currentTask = timerEntries[timerTaskIndex].labels[0];
-      String nextTask = timerTaskIndex < timerEntries.length - 1
-          ? timerEntries[timerTaskIndex + 1].labels[0]
-          : '';
+      String nextTask = timerTaskIndex < timerEntries.length - 1 ? timerEntries[timerTaskIndex + 1].labels[0] : '';
       return Padding(
           padding: EdgeInsets.only(top: 25),
           child: Column(
@@ -365,10 +357,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
               nextTaskWidget(nextTask),
               SizedBox(height: 15),
               isCurrentMovementRest() &&
-                      (timerEntries[timerTaskIndex - 1].counter ==
-                              CounterEnum.reps ||
-                          timerEntries[timerTaskIndex - 1].counter ==
-                              CounterEnum.distance)
+                      (timerEntries[timerTaskIndex - 1].counter == CounterEnum.reps ||
+                          timerEntries[timerTaskIndex - 1].counter == CounterEnum.distance)
                   ? getTextField()
                   : SizedBox()
             ],
@@ -405,23 +395,15 @@ class _SegmentClocksState extends State<SegmentClocks> {
                   style: TextStyle(fontSize: 18, color: OlukoColors.white, fontWeight: FontWeight.w300)),
         ]));
   }
+
   Widget recordingTaskSection() {
     bool hasMultipleLabels = timerEntries[timerTaskIndex].labels.length > 1;
     if (hasMultipleLabels) {
-      List<Widget> items =
-          SegmentUtils.getJoinedLabel(timerEntries[timerTaskIndex].labels);
-      return Container(
-          height: 45,
-          child: ListView(children: [
-            Padding(
-                padding: EdgeInsets.only(top: 10),
-                child: Column(children: items))
-          ]));
+      List<Widget> items = SegmentUtils.getJoinedLabel(timerEntries[timerTaskIndex].labels);
+      return Container(height: 45, child: ListView(children: [Padding(padding: EdgeInsets.only(top: 10), child: Column(children: items))]));
     } else {
       String currentTask = timerEntries[timerTaskIndex].labels[0];
-      String nextTask = timerTaskIndex < timerEntries.length - 1
-          ? timerEntries[timerTaskIndex + 1].labels[0]
-          : '';
+      String nextTask = timerTaskIndex < timerEntries.length - 1 ? timerEntries[timerTaskIndex + 1].labels[0] : '';
       return Container(
           width: ScreenUtils.width(context),
           child: Padding(
@@ -459,15 +441,12 @@ class _SegmentClocksState extends State<SegmentClocks> {
       return TimerUtils.pausedTimer(context);
     }
 
-    Duration actualTime =
-        Duration(seconds: timerEntries[timerTaskIndex].value) - timeLeft;
+    Duration actualTime = Duration(seconds: timerEntries[timerTaskIndex].value) - timeLeft;
 
-    double circularProgressIndicatorValue =
-        (actualTime.inSeconds / timerEntries[timerTaskIndex].value);
+    double circularProgressIndicatorValue = (actualTime.inSeconds / timerEntries[timerTaskIndex].value);
 
     if (workState == WorkState.paused) {
-      return TimerUtils.pausedTimer(
-          context, TimeConverter.durationToString(timeLeft));
+      return TimerUtils.pausedTimer(context, TimeConverter.durationToString(timeLeft));
     }
 
     //TODO: Fix end round timer
@@ -481,8 +460,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
     }*/
 
     if (workState == WorkState.resting) {
-      return TimerUtils.restTimer(circularProgressIndicatorValue,
-          TimeConverter.durationToString(timeLeft), context);
+      return TimerUtils.restTimer(circularProgressIndicatorValue, TimeConverter.durationToString(timeLeft), context);
     }
 
     if (timerEntries[timerTaskIndex].round == null) {
@@ -496,8 +474,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
               }));
     }
     String counter = timerEntries[timerTaskIndex].counter == CounterEnum.reps ? timerEntries[timerTaskIndex].movement.name : null;
-    return TimerUtils.timeTimer(circularProgressIndicatorValue,
-        TimeConverter.durationToString(timeLeft), context, counter);
+    return TimerUtils.timeTimer(circularProgressIndicatorValue, TimeConverter.durationToString(timeLeft), context, counter);
   }
 
   Widget currentTaskWidget(String currentTask, [bool smaller = false]) {
@@ -627,9 +604,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   //Timer Functions
   _saveLastStep(TimerEntry timerEntry) async {
-    if (widget.workoutType == WorkoutType.segmentWithRecording &&
-        !isCurrentMovementRest()) {
-
+    if (widget.workoutType == WorkoutType.segmentWithRecording && !isCurrentMovementRest()) {
       XFile videopath = await cameraController.stopVideoRecording();
       BlocProvider.of<MovementSubmissionBloc>(context)..create(_segmentSubmission, timerEntries[timerTaskIndex].movement, videopath.path);
     }
@@ -651,12 +626,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
   }
 
   _saveCounter() {
-    if (isCurrentMovementRest() &&
-        timerEntries[timerTaskIndex].movement.counter != null &&
-        textController.text != "") {
-      Counter counter = Counter(
-          round: timerEntries[timerTaskIndex].round,
-          counter: int.parse(textController.text));
+    if (isCurrentMovementRest() && timerEntries[timerTaskIndex].movement.counter != null && textController.text != "") {
+      Counter counter = Counter(round: timerEntries[timerTaskIndex].round, counter: int.parse(textController.text));
       BlocProvider.of<CourseEnrollmentUpdateBloc>(context)
         ..saveMovementCounter(
             widget.courseEnrollment, widget.segmentIndex, widget.classIndex, timerEntries[timerTaskIndex].movement, counter);
@@ -675,8 +646,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   _playTask() async {
     WorkState previousWorkState = workState;
     workState = getCurrentTaskWorkState();
-    if (widget.workoutType == WorkoutType.segmentWithRecording &&
-        workState == WorkState.exercising) {
+    if (widget.workoutType == WorkoutType.segmentWithRecording && workState == WorkState.exercising) {
       if (timerTaskIndex > 0 || previousWorkState == WorkState.paused) {
         await cameraController.startVideoRecording();
       }
@@ -704,8 +674,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   _startMovement() {
     //Reset countdown variables
     timerTaskIndex = 0;
-    timerEntries =
-        SegmentUtils.getExercisesList(widget.segments[widget.segmentIndex]);
+    timerEntries = SegmentUtils.getExercisesList(widget.segments[widget.segmentIndex]);
     _playTask();
   }
 
@@ -811,10 +780,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
             ),
           ),
           SizedBox(height: 15),
-          Column(
-              children: SegmentUtils.getWorkouts(
-                  widget.segments[widget.segmentIndex], OlukoColors.grayColor)),
-
+          Column(children: SegmentUtils.getWorkouts(widget.segments[widget.segmentIndex], OlukoColors.grayColor)),
           Padding(
               padding: const EdgeInsets.symmetric(vertical: 20.0),
               child: workoutType == WorkoutType.segment || shareDone ? FeedbackCard() : ShareCard()),
@@ -885,7 +851,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
     if (isThereError) {
       message = OlukoLocalizations.of(context).find('uploadedWithErrors');
     } else {
-      message = OlukoLocalizations.of(context).find('uploadedSuccessfully');
+      message = OlukoLocalizations.of(context).find('segmentUploadedSuccessfully');
     }
     AppMessages.showSnackbar(context, message);
   }
