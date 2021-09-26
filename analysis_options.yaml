@@ -21,7 +21,7 @@ linter:
     # ------------------------------------- #
 
     # Make constructors the first thing in every class
-    sort_constructors_first: true
+    sort_constructors_first: false
 
     # The new tabs vs. spaces. Choose wisely
     prefer_single_quotes: true
@@ -38,3 +38,6 @@ linter:
 
     implicit-cast: false
     argument_type_not_assignable: false
+    directives_ordering: false
+    constant_identifier_names: false
+    use_build_context_synchronously: false

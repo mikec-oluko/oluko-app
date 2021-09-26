@@ -10,6 +10,7 @@ class OlukoPrimaryButton extends StatefulWidget {
   final TextAlign textAlign;
   final Widget icon;
   final bool thinPadding;
+  final bool isDisabled;
 
   OlukoPrimaryButton({
     this.title,
@@ -19,6 +20,7 @@ class OlukoPrimaryButton extends StatefulWidget {
     this.textColor = Colors.black,
     this.textAlign = TextAlign.center,
     this.icon,
+    this.isDisabled = false,
   });
 
   @override
@@ -32,13 +34,15 @@ class _State extends State<OlukoPrimaryButton> {
     if (widget.color != null) {
       buttonColor = widget.color;
     }
+    if (widget.isDisabled) {
+      buttonColor = OlukoColors.disabled;
+    }
     return widget.icon == null
         ? Expanded(
             child: ElevatedButton(style: _buttonStyle(), onPressed: () => widget.onPressed(), child: _textLabel()),
           )
         : Expanded(
-            child: ElevatedButton.icon(
-                style: _buttonStyle(), onPressed: () => widget.onPressed(), icon: widget.icon, label: _textLabel()),
+            child: ElevatedButton.icon(style: _buttonStyle(), onPressed: () => widget.onPressed(), icon: widget.icon, label: _textLabel()),
           );
   }
 

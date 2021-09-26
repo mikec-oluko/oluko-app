@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/segment.dart';
+import 'package:oluko_app/ui/components/open_settings_modal.dart';
 import 'package:oluko_app/ui/screens/courses/segment_clocks.dart';
+import 'package:oluko_app/utils/dialog_utils.dart';
+import 'package:oluko_app/utils/exception_codes.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/timer_utils.dart';
@@ -75,7 +78,7 @@ class _State extends State<SegmentCameraPreview> {
                                       child: CameraPreview(cameraController)),
                                   Padding(
                                       padding:
-                                          EdgeInsets.only(right: 10, top: 15),
+                                          const EdgeInsets.only(right: 10, top: 15),
                                       child: Stack(
                                           alignment: Alignment.center,
                                           children: [
@@ -84,7 +87,7 @@ class _State extends State<SegmentCameraPreview> {
                                               scale: 4,
                                             ),
                                             IconButton(
-                                              icon: Icon(
+                                              icon: const Icon(
                                                 Icons.close,
                                                 size: 28,
                                                 color: Colors.grey,
@@ -97,7 +100,7 @@ class _State extends State<SegmentCameraPreview> {
                       Expanded(
                           child: Container(
                               width: ScreenUtils.width(context),
-                              decoration: BoxDecoration(
+                              decoration: const BoxDecoration(
                                   image: DecorationImage(
                                 image: AssetImage(
                                     'assets/courses/dialog_background.png'),
@@ -140,7 +143,7 @@ class _State extends State<SegmentCameraPreview> {
               getArguments(),
               widget.segments[widget.segmentIndex].initialTimer,
               widget.segments[widget.segmentIndex].rounds,
-              1);
+              0);
         },
         child: Stack(alignment: Alignment.center, children: [
           Image.asset(
@@ -171,7 +174,7 @@ class _State extends State<SegmentCameraPreview> {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 15.0),
           child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Text(
                 'title',
                 style: OlukoFonts.olukoSuperBigFont(
@@ -180,26 +183,32 @@ class _State extends State<SegmentCameraPreview> {
               )),
         ),
         Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Text(
               'description',
               style: OlukoFonts.olukoSuperBigFont(
                   customColor: OlukoColors.white,
                   custoFontWeight: FontWeight.normal),
             )),
-        SizedBox(height: 50)
+        const SizedBox(height: 50)
       ],
     );
   }
 
   Future<void> _setupCameras() async {
-    int cameraPos = isCameraFront ? 0 : 1;
+    final int cameraPos = isCameraFront ? 0 : 1;
     try {
       cameras = await availableCameras();
       cameraController =
-          new CameraController(cameras[cameraPos], ResolutionPreset.medium);
+          CameraController(cameras[cameraPos], ResolutionPreset.medium);
       await cameraController.initialize();
-    } on CameraException catch (_) {}
+    } on CameraException catch (e) {
+      if (e.code == ExceptionCodes.cameraPermissionError) {
+        Navigator.pop(context);
+        DialogUtils.getDialog(context, [OpenSettingsModal(context)], showExitButton: false);
+        return;
+      }
+    }
     if (!mounted) return;
     setState(() {
       _isReady = true;
@@ -226,7 +235,7 @@ class _State extends State<SegmentCameraPreview> {
                     'assets/assessment/camera.png',
                     scale: 4,
                   ),
-                  Icon(
+                  const Icon(
                     Icons.cached,
                     color: OlukoColors.grayColor,
                     size: 18,

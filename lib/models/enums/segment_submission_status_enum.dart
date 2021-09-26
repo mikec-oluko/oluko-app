@@ -1,0 +1,1 @@
+enum SegmentSubmissionStatusEnum { created, reviewed }

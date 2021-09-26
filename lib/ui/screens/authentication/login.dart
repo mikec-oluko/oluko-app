@@ -36,7 +36,9 @@ class _LoginPageState extends State<LoginPage> {
                   Padding(
                       padding: EdgeInsets.symmetric(horizontal: 15),
                       child: Container(
-                          width: MediaQuery.of(context).size.width, child: Column(children: [SizedBox(height: 20), SizedBox(height: 20), titleSection(), SizedBox(height: 50), formSection()])))
+                          width: MediaQuery.of(context).size.width,
+                          child: Column(
+                              children: [SizedBox(height: 20), SizedBox(height: 20), titleSection(), SizedBox(height: 50), formSection()])))
                 ]))));
   }
 
@@ -180,7 +182,7 @@ class _LoginPageState extends State<LoginPage> {
                               email: _requestData.email,
                               password: _requestData.password,
                               userName: _requestData.userName,
-                              projectId: GlobalConfiguration().getValue("projectId")));
+                              projectId: GlobalConfiguration().getValue('projectId')));
                   },
                   child: Stack(children: [
                     Align(
@@ -204,8 +206,7 @@ class _LoginPageState extends State<LoginPage> {
                     onPressed: () {
                       BlocProvider.of<AuthBloc>(context)..loginWithGoogle(context);
                     },
-                    style: OutlinedButton.styleFrom(
-                        backgroundColor: Colors.transparent, side: BorderSide(color: Colors.grey)),
+                    style: OutlinedButton.styleFrom(backgroundColor: Colors.transparent, side: BorderSide(color: Colors.grey)),
                     child: Stack(children: [
                       Align(
                         alignment: Alignment.center,
@@ -221,9 +222,7 @@ class _LoginPageState extends State<LoginPage> {
                     onPressed: () {
                       BlocProvider.of<AuthBloc>(context)..loginWithFacebook(context);
                     },
-
-                    style: OutlinedButton.styleFrom(
-                        backgroundColor: Colors.transparent, side: BorderSide(color: Colors.grey)),
+                    style: OutlinedButton.styleFrom(backgroundColor: Colors.transparent, side: BorderSide(color: Colors.grey)),
                     child: Stack(children: [
                       Align(
                           alignment: Alignment.center,

@@ -9,7 +9,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 class TaskSubmissionRepository {
   static DocumentReference projectReference =
-      FirebaseFirestore.instance.collection("projects").doc(GlobalConfiguration().getValue("projectId"));
+      FirebaseFirestore.instance.collection("projects").doc(GlobalConfiguration().getValue('projectId'));
 
   FirebaseFirestore firestoreInstance;
 
@@ -17,17 +17,14 @@ class TaskSubmissionRepository {
     this.firestoreInstance = FirebaseFirestore.instance;
   }
 
-  static Future<TaskSubmission> createTaskSubmission(
-      AssessmentAssignment assessmentAssignment, Task task, bool isPublic) async {
-    DocumentReference assessmentAReference =
-        projectReference.collection('assessmentAssignments').doc(assessmentAssignment.id);
+  static Future<TaskSubmission> createTaskSubmission(AssessmentAssignment assessmentAssignment, Task task, bool isPublic) async {
+    DocumentReference assessmentAReference = projectReference.collection('assessmentAssignments').doc(assessmentAssignment.id);
 
     DocumentReference taskReference = projectReference.collection("tasks").doc(task.id);
 
     ObjectSubmodel taskSubmodel = ObjectSubmodel(id: task.id, reference: taskReference, name: task.name);
 
-    TaskSubmission taskSubmission =
-        TaskSubmission(task: taskSubmodel, isPublic: isPublic, createdBy: assessmentAssignment.createdBy);
+    TaskSubmission taskSubmission = TaskSubmission(task: taskSubmodel, isPublic: isPublic, createdBy: assessmentAssignment.createdBy);
 
     CollectionReference reference = assessmentAReference.collection('taskSubmissions');
 
@@ -105,20 +102,17 @@ class TaskSubmissionRepository {
   static Future<QuerySnapshot<Object>> getAssessmentAssignmentsForUserId(String userId) async {
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('assessmentAssignments')
         .where('created_by', isEqualTo: userId)
         .get();
     return docRef;
   }
 
-  static Future getTaskSubmissionsByAssessmentId(
-      String userId, String assessmentId, List<TaskSubmission> response) async {
+  static Future getTaskSubmissionsByAssessmentId(String userId, String assessmentId, List<TaskSubmission> response) async {
     try {
-      CollectionReference reference =
-          projectReference.collection("assessmentAssignments").doc(assessmentId).collection('taskSubmissions');
-      final querySnapshot =
-          await reference.where('created_by', isEqualTo: userId).where('video', isNotEqualTo: null).get();
+      CollectionReference reference = projectReference.collection("assessmentAssignments").doc(assessmentId).collection('taskSubmissions');
+      final querySnapshot = await reference.where('created_by', isEqualTo: userId).where('video', isNotEqualTo: null).get();
 
       if (querySnapshot.docs.length > 0) {
         querySnapshot.docs.forEach((taskUploaded) {

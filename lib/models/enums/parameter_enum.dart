@@ -1,0 +1,1 @@
+enum ParameterEnum { duration, reps }

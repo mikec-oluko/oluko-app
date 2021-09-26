@@ -36,7 +36,7 @@ class Movement extends Base {
         name: json['name'].toString(),
         video: json['video'].toString(),
         description: json['description'].toString(),
-        image: json['iamge'].toString(),
+        image: json['image'] == null ? null : json['image'].toString(),
         tags: json['tags'] == null
             ? null
             : (json['tags'] as Iterable)

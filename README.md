@@ -10,6 +10,18 @@ For help getting started with Flutter, view our
 [online documentation](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 
+## Setup Development Environment
+
+1. Install Git
+    1. https://git-scm.com/  
+3. Install Flutter
+    1. https://flutter.dev/docs/get-started/install (This guide installs everything needed to run app)
+4. Install VS Code
+    1. https://code.visualstudio.com/download
+    2. add Flutter plugin 
+    3. add Dart plugin
+5. Ready! 
+
 ## Add languages
 
 main.dart file you need to add the extra language
