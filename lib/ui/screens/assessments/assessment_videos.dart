@@ -80,7 +80,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
         child: Scaffold(
             appBar: OlukoAppBar(
               title: OlukoLocalizations.of(context).find('assessment'),
-              actions: [skipButton()],
+              //TODO: show only for onboarding actions: [skipButton()],
             ),
             body: Container(
                 color: Colors.black,
