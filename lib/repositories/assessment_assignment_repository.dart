@@ -11,7 +11,7 @@ class AssessmentAssignmentRepository {
     this.firestoreInstance = FirebaseFirestore.instance;
   }
 
-  static AssessmentAssignment create(User user, Assessment assessment) {
+  static AssessmentAssignment create(String userId, Assessment assessment) {
     DocumentReference projectReference = FirebaseFirestore.instance.collection("projects").doc(GlobalConfiguration().getValue('projectId'));
 
     CollectionReference assessmentAssignmentReference = projectReference.collection("assessmentAssignments");
@@ -19,7 +19,7 @@ class AssessmentAssignmentRepository {
     DocumentReference assessmentReference = projectReference.collection("assessment").doc(assessment.id);
 
     AssessmentAssignment assessmentAssignment =
-        AssessmentAssignment(createdBy: user.uid, assessmentId: assessment.id, assessmentReference: assessmentReference);
+        AssessmentAssignment(createdBy: userId, assessmentId: assessment.id, assessmentReference: assessmentReference);
 
     final DocumentReference docRef = assessmentAssignmentReference.doc();
     assessmentAssignment.id = docRef.id;
@@ -42,14 +42,27 @@ class AssessmentAssignmentRepository {
     }
   }
 
-  static Future<bool> setAsCompleted(String id) async {
+  static Future<Timestamp> setAsCompleted(String id) async {
+    var compleatedAt = Timestamp.now();
     DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
         .collection('assessmentAssignments')
         .doc(id);
     reference.update({
-      'compleated_at': Timestamp.now(),
+      'compleated_at': compleatedAt,
+    });
+    return compleatedAt;
+  }
+
+  static Future<bool> setAsIncompleted(String id) async {
+    DocumentReference reference = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue("projectId"))
+        .collection('assessmentAssignments')
+        .doc(id);
+    reference.update({
+      'compleated_at': null,
     });
     return true;
   }

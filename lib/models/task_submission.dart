@@ -10,6 +10,8 @@ class TaskSubmission extends Base {
   ObjectSubmodel task;
   bool isPublic;
   VideoState videoState;
+  String coachId;
+  DocumentReference coachReference;
 
   TaskSubmission(
       {this.video,
@@ -17,6 +19,8 @@ class TaskSubmission extends Base {
       this.task,
       this.isPublic,
       this.videoState,
+      this.coachId,
+      this.coachReference,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -35,12 +39,19 @@ class TaskSubmission extends Base {
 
   factory TaskSubmission.fromJson(Map<String, dynamic> json) {
     TaskSubmission taskSubmission = TaskSubmission(
-        video: json['video'] == null ? null : Video.fromJson(json['video'] as Map<String, dynamic>),
+        video: json['video'] == null
+            ? null
+            : Video.fromJson(json['video'] as Map<String, dynamic>),
         reviewReference: json['review_reference'] as DocumentReference,
-        task: json['task'] == null ? null : ObjectSubmodel.fromJson(json['task'] as Map<String, dynamic>),
+        task: json['task'] == null
+            ? null
+            : ObjectSubmodel.fromJson(json['task'] as Map<String, dynamic>),
         isPublic: json['is_public'] as bool,
-        videoState:
-            json['video_state'] == null ? null : VideoState.fromJson(json['video_state'] as Map<String, dynamic>));
+        coachId: json['coach_id'].toString(),
+        coachReference: json['coach_reference'] as DocumentReference,
+        videoState: json['video_state'] == null
+            ? null
+            : VideoState.fromJson(json['video_state'] as Map<String, dynamic>));
     taskSubmission.setBase(json);
     return taskSubmission;
   }
@@ -51,6 +62,8 @@ class TaskSubmission extends Base {
       'review_reference': reviewReference,
       'task': task == null ? null : task.toJson(),
       'is_public': isPublic,
+      'coach_id': coachId,
+      'coach_reference': coachReference,
       'video_state': videoState == null ? null : videoState.toJson()
     };
     taskSubmissionJson.addEntries(super.toJson().entries);

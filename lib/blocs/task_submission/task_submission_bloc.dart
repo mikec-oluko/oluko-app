@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
@@ -131,6 +132,36 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
       );
       emit(Failure(exception: e));
       rethrow;
+    }
+  }
+
+  Future<Timestamp> setCompleted(String assessmentAssignmentId) async {
+    if (assessmentAssignmentId != null) {
+      try {
+        return AssessmentAssignmentRepository.setAsCompleted(assessmentAssignmentId);
+      } catch (e, stackTrace) {
+        await Sentry.captureException(
+          e,
+          stackTrace: stackTrace,
+        );
+        emit(Failure(exception: e));
+        rethrow;
+      }
+    }
+  }
+
+  void setIncompleted(String assessmentAssignmentId) async {
+    if (assessmentAssignmentId != null) {
+      try {
+        AssessmentAssignmentRepository.setAsIncompleted(assessmentAssignmentId);
+      } catch (e, stackTrace) {
+        await Sentry.captureException(
+          e,
+          stackTrace: stackTrace,
+        );
+        emit(Failure(exception: e));
+        rethrow;
+      }
     }
   }
 
