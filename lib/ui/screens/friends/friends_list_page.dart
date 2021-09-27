@@ -5,6 +5,7 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/user_list_bloc.dart';
+import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/submodels/friend_model.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -254,17 +255,26 @@ class _FriendsListPageState extends State<FriendsListPage> {
                 ],
               ),
               SizedBox(height: 20),
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 16.0),
-                    child: Container(width: 80, height: 80, child: Image.asset('assets/profile/hiFive.png')),
-                  ),
-                  profileAccomplishments(achievementTitle: 'Challenges completed', achievementValue: '07'),
-                  profileAccomplishments(achievementTitle: 'Courses completed', achievementValue: '10'),
-                  profileAccomplishments(achievementTitle: 'Courses completed', achievementValue: '10'),
-                ],
-              ),
+              BlocBuilder<UserStatisticsBloc, UserStatisticsState>(
+                  bloc: BlocProvider.of(context)..getUserStatistics(user.id),
+                  builder: (context, userStats) {
+                    return userStats is StatisticsSuccess
+                        ? Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(right: 16.0),
+                                child: Container(width: 80, height: 80, child: Image.asset('assets/profile/hiFive.png')),
+                              ),
+                              profileAccomplishments(
+                                  achievementTitle: 'Challenges completed', achievementValue: userStats.userStats.completedChallenges.toString()),
+                              profileAccomplishments(
+                                  achievementTitle: 'Courses completed', achievementValue: userStats.userStats.completedChallenges.toString()),
+                              profileAccomplishments(
+                                  achievementTitle: 'Courses completed', achievementValue: userStats.userStats.completedCourses.toString()),
+                            ],
+                          )
+                        : SizedBox();
+                  }),
               SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
