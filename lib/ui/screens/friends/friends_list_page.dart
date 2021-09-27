@@ -182,7 +182,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
             : userListState.users.map((user) {
                 return GestureDetector(
                   onTap: () {
-                    BottomDialogUtils.showBottomDialog(content: dialogContainer(), context: context);
+                    BottomDialogUtils.showBottomDialog(content: dialogContainer(user: user), context: context);
                   },
                   child: FriendCard(
                     friend: null,
@@ -215,8 +215,9 @@ class _FriendsListPageState extends State<FriendsListPage> {
     }
   }
 
-  Widget dialogContainer() {
+  Widget dialogContainer({UserResponse user}) {
     return Container(
+        height: 350,
         decoration: BoxDecoration(
             image: DecorationImage(
           image: AssetImage("assets/courses/dialog_background.png"),
@@ -229,21 +230,18 @@ class _FriendsListPageState extends State<FriendsListPage> {
               SizedBox(height: 30),
               Row(
                 children: [
-                  StoriesItem(
-                      maxRadius: 40,
-                      imageUrl:
-                          "https://firebasestorage.googleapis.com/v0/b/oluko-development.appspot.com/o/coach_mike.png?alt=media&token=ead25dbe-f6e5-4857-a2ed-9d77f146ee72"),
+                  StoriesItem(maxRadius: 40, imageUrl: user.avatar),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         TitleBody(
-                          'Hayley Allen',
+                          '${user.firstName} ${user.lastName}',
                           bold: true,
                         ),
                         Text(
-                          'Hayleybaby',
+                          user.username,
                           style: TextStyle(color: Colors.grey, fontSize: 15),
                         ),
                         Padding(
