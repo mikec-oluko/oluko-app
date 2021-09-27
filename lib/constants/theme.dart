@@ -85,6 +85,12 @@ class OlukoColors {
     final _random = new Random();
     return list[_random.nextInt(list.length)];
   }
+
+  static Color userColor(String firstName, String lastName) {
+    int index = firstName.codeUnitAt(0) + lastName.codeUnitAt(0);
+    var list = [grayColorSemiTransparent, skyblue, coral, searchSuggestionsAlreadyWrittenText, inputError, purple, orange];
+    return list[index % list.length];
+  }
 }
 
 class OlukoFonts {

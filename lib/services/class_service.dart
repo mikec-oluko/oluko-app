@@ -11,7 +11,7 @@ class ClassService {
     List<Movement> movements = [];
     for (SectionSubmodel section in sections) {
       for (MovementSubmodel movement in section.movements) {
-        if (movement.name != 'Rest') {
+        if (!movement.isRestTime) {
           movementIds.add(movement.id);
         }
       }
@@ -31,7 +31,7 @@ class ClassService {
     for (SegmentSubmodel segment in classObj.segments) {
       for (SectionSubmodel section in segment.sections) {
         for (MovementSubmodel movement in section.movements) {
-          if (movement.name != 'Rest') {
+          if (!movement.isRestTime) {
             movementIds.add(movement.id);
           }
         }

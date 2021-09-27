@@ -111,7 +111,7 @@ class SegmentUtils {
               movement: movementSubmodel,
               parameter: ParameterEnum.duration,
               value: (segment.totalTime / segment.rounds).toInt(),
-              round: roundIndex + 1,
+              round: roundIndex,
               counter: CounterEnum.none,
               labels: getLabels(segment.sections[0].movements)));
         } else {
@@ -127,7 +127,7 @@ class SegmentUtils {
                   movement: movementSubmodel,
                   parameter: movementSubmodel.parameter,
                   value: movementSubmodel.value,
-                  round: roundIndex + 1,
+                  round: roundIndex,
                   counter: movementSubmodel.counter,
                   labels: getLabels(segment.sections[sectionIndex].movements)));
             } else {
@@ -137,7 +137,7 @@ class SegmentUtils {
                   movement: movementSubmodel,
                   parameter: movementSubmodel.parameter,
                   value: movementSubmodel.value,
-                  round: roundIndex + 1,
+                  round: roundIndex,
                   counter: movementSubmodel.counter,
                   labels: [getLabel(movementSubmodel)]));
             }

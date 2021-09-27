@@ -10,6 +10,7 @@ import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class UploadingModalSuccess extends StatefulWidget {
   final UploadFrom goToPage;
@@ -21,10 +22,10 @@ class UploadingModalSuccess extends StatefulWidget {
 }
 
 class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
-  final _successText = "Uploaded Successfully";
-  final _doneButtonText = "Done";
   @override
   Widget build(BuildContext context) {
+    final _successText = OlukoLocalizations.of(context).find('uploadedSuccessfully');
+    final _doneButtonText = OlukoLocalizations.of(context).find('done');
     return Container(
       color: OlukoColors.black,
       width: MediaQuery.of(context).size.width,
