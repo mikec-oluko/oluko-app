@@ -10,8 +10,8 @@ class ProfileRoutes {
         return routeLabels[RouteEnum.assessmentVideos];
       case ProfileOptionsTitle.transformationJourney:
         return routeLabels[RouteEnum.profileTransformationJourney];
-      case ProfileOptionsTitle.subscription:
-        return routeLabels[RouteEnum.root];
+      // case ProfileOptionsTitle.subscription:
+      //   return routeLabels[RouteEnum.root];
       case ProfileOptionsTitle.settings:
         return routeLabels[RouteEnum.profileSettings];
       case ProfileOptionsTitle.helpAndSupport:
