@@ -223,7 +223,6 @@ class Routes {
   final TaskSubmissionListBloc _taskSubmissionListBloc = TaskSubmissionListBloc();
   final GalleryVideoBloc _galleryVideoBloc = GalleryVideoBloc();
   final CourseEnrollmentListBloc _courseEnrollmentListBloc = CourseEnrollmentListBloc();
-  final MovementSubmissionBloc _movementSubmissionBloc = MovementSubmissionBloc();
   final SegmentSubmissionBloc _segmentSubmissionBloc = SegmentSubmissionBloc();
   final TransformationJourneyContentBloc _transformationJourneyContentBloc = TransformationJourneyContentBloc();
   final ProfileAvatarBloc _profileAvatarBloc = ProfileAvatarBloc();
@@ -435,7 +434,6 @@ class Routes {
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
           BlocProvider<MovementBloc>.value(value: _movementBloc),
           BlocProvider<SegmentSubmissionBloc>.value(value: _segmentSubmissionBloc),
-          BlocProvider<MovementSubmissionBloc>.value(value: _movementSubmissionBloc),
           BlocProvider<VideoBloc>.value(value: _videoBloc),
           BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
           BlocProvider<CourseEnrollmentUpdateBloc>.value(value: _courseEnrollmentUpdateBloc)
@@ -452,7 +450,6 @@ class Routes {
         providers = [
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
           BlocProvider<SegmentSubmissionBloc>.value(value: _segmentSubmissionBloc),
-          BlocProvider<MovementSubmissionBloc>.value(value: _movementSubmissionBloc),
           BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
