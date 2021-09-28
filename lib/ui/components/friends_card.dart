@@ -44,67 +44,55 @@ class _FriendCardState extends State<FriendCard> {
         child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           Row(
             children: [
-              GestureDetector(
-                  onTap: () {
-                    BlocProvider.of<TransformationJourneyBloc>(context).emitTransformationJourneyDefault(noValues: true);
-                    BlocProvider.of<TaskSubmissionBloc>(context).setTaskSubmissionDefaultState();
-                    BlocProvider.of<CourseEnrollmentBloc>(context).setCourseEnrollmentChallengesDefaultValue();
-                    Navigator.pushNamed(context, routeLabels[RouteEnum.profileViewOwnProfile],
-                        arguments: {'userRequested': widget.friendUser});
-                  },
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                          backgroundImage: getUserImg(widget.friendUser.avatarThumbnail),
-                          onBackgroundImageError: _loadImageError
-                              ? null
-                              : (dynamic exception, StackTrace stackTrace) {
-                                  print("Error loading image! " + exception.toString());
-                                  setBackgroundImageAsError();
-                                },
-                          backgroundColor: OlukoColors.userColor(widget.friendUser.firstName, widget.friendUser.lastName),
-                          radius: 30,
-                          child: _loadImageError
-                              ? Text(
-                                  widget.friendUser.firstName.characters.first.toString().toUpperCase(),
-                                  style: OlukoFonts.olukoBigFont(
-                                    customColor: OlukoColors.white,
-                                    custoFontWeight: FontWeight.w500,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                )
-                              : const Text(' ')),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+              CircleAvatar(
+                  backgroundImage: getUserImg(widget.friendUser.avatarThumbnail),
+                  onBackgroundImageError: _loadImageError
+                      ? null
+                      : (dynamic exception, StackTrace stackTrace) {
+                          print("Error loading image! " + exception.toString());
+                          setBackgroundImageAsError();
+                        },
+                  backgroundColor: OlukoColors.userColor(widget.friendUser.firstName, widget.friendUser.lastName),
+                  radius: 30,
+                  child: _loadImageError
+                      ? Text(
+                          widget.friendUser.firstName.characters.first.toString().toUpperCase(),
+                          style: OlukoFonts.olukoBigFont(
+                            customColor: OlukoColors.white,
+                            custoFontWeight: FontWeight.w500,
+                          ),
+                          textAlign: TextAlign.center,
+                        )
+                      : const Text(' ')),
+              Padding(
+                padding: const EdgeInsets.only(left: 10),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Row(
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      widget.friendUser.firstName ?? ' ',
-                                      style: OlukoFonts.olukoMediumFont(),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 5),
-                                      // child: Text(widget.userToDisplay.lastName,
-                                      //     style: OlukoFonts.olukoMediumFont()),
-                                      child: Text(widget.friendUser.lastName ?? ' ', style: OlukoFonts.olukoMediumFont()),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                            Text(
+                              widget.friendUser.firstName ?? ' ',
+                              style: OlukoFonts.olukoMediumFont(),
                             ),
-                            Text(widget.friendUser.username ?? '', style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor)),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 5),
+                              // child: Text(widget.userToDisplay.lastName,
+                              //     style: OlukoFonts.olukoMediumFont()),
+                              child: Text(widget.friendUser.lastName ?? ' ', style: OlukoFonts.olukoMediumFont()),
+                            ),
                           ],
                         ),
-                      )
-                    ],
-                  )),
+                      ],
+                    ),
+                    Text(widget.friendUser.username ?? '', style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor)),
+                  ],
+                ),
+              )
             ],
           ),
           Row(
