@@ -17,13 +17,14 @@ class SentVideosPage extends StatefulWidget {
 
 class _SentVideosPageState extends State<SentVideosPage> {
   List<SegmentSubmission> content = [];
-  List<SegmentSubmission> orderContent;
+  List<SegmentSubmission> filteredContent;
   bool isFavoriteSelected = false;
-
+  bool isContentFilteredByDate = false;
   @override
   void initState() {
     setState(() {
       content = widget.segmentSubmissions;
+      filteredContent = widget.segmentSubmissions;
     });
 
     super.initState();
@@ -33,62 +34,76 @@ class _SentVideosPageState extends State<SentVideosPage> {
   void dispose() {
     setState(() {
       content = [];
+      filteredContent = [];
     });
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          OlukoLocalizations.of(context).find('sentVideos'),
-          style: OlukoFonts.olukoTitleFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
-        ),
-        actions: [
-          Row(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 5),
-                child: IconButton(
-                    icon: Icon(Icons.sort, color: OlukoColors.grayColor),
-                    onPressed: () {
-                      setState(() {
-                        content.sort((a, b) => a.createdAt.toDate().compareTo(b.createdAt.toDate()));
-                      });
-                    }),
-              ),
-              IconButton(
-                  icon: Icon(isFavoriteSelected ? Icons.favorite : Icons.favorite_border, color: OlukoColors.grayColor),
-                  onPressed: () {
-                    setState(() {
-                      isFavoriteSelected ? isFavoriteSelected = false : isFavoriteSelected = true;
-                      isFavoriteSelected
-                          ? content = content.where((element) => element.favorite == true).toList()
-                          : content = widget.segmentSubmissions;
-                    });
-                    //sort List items favorite = true;
-                  }),
+    return BlocBuilder<CoachSentVideosBloc, CoachSentVideosState>(
+      builder: (context, state) {
+        if (state is CoachSentVideosSuccess) {
+          content = state.sentVideos;
+        }
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(
+              OlukoLocalizations.of(context).find('sentVideos'),
+              style: OlukoFonts.olukoTitleFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+            ),
+            actions: [
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                    child: IconButton(
+                        icon: isContentFilteredByDate
+                            ? const Icon(Icons.sort, color: OlukoColors.white)
+                            : const Icon(Icons.sort, color: OlukoColors.grayColor),
+                        onPressed: () {
+                          setState(() {
+                            isContentFilteredByDate ? isContentFilteredByDate = false : isContentFilteredByDate = true;
+                            isContentFilteredByDate
+                                ? filteredContent.sort((a, b) => a.createdAt.toDate().compareTo(b.createdAt.toDate()))
+                                : filteredContent.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
+                          });
+                        }),
+                  ),
+                  IconButton(
+                      icon: Icon(isFavoriteSelected ? Icons.favorite : Icons.favorite_border,
+                          color: OlukoColors.grayColor),
+                      onPressed: () {
+                        setState(() {
+                          isFavoriteSelected ? isFavoriteSelected = false : isFavoriteSelected = true;
+                          isFavoriteSelected
+                              ? filteredContent = content.where((element) => element.favorite == true).toList()
+                              : filteredContent = widget.segmentSubmissions;
+                        });
+                        //sort List items favorite = true;
+                      }),
+                ],
+              )
             ],
-          )
-        ],
-        elevation: 0.0,
-        backgroundColor: OlukoColors.black,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-            color: Colors.white,
+            elevation: 0.0,
+            backgroundColor: OlukoColors.black,
+            leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
           ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
-      body: Container(
-        width: MediaQuery.of(context).size.width,
-        color: OlukoColors.black,
-        child: ListView(children: segmentCard(segmentSubmissions: content)),
-      ),
+          body: Container(
+            width: MediaQuery.of(context).size.width,
+            color: OlukoColors.black,
+            child: ListView(children: segmentCard(segmentSubmissions: filteredContent)),
+          ),
+        );
+      },
     );
   }
 
@@ -169,8 +184,8 @@ class _SentVideosPageState extends State<SentVideosPage> {
                               icon: Icon(segmentSubmitted.favorite ? Icons.favorite : Icons.favorite_outline,
                                   color: OlukoColors.white),
                               onPressed: () {
-                                BlocProvider.of<CoachSentVideosBloc>(context)
-                                    .updateSegmentSubmissionFavoriteValue(segmentSubmitted);
+                                BlocProvider.of<CoachSentVideosBloc>(context).updateSegmentSubmissionFavoriteValue(
+                                    segmentSubmitted: segmentSubmitted, currentSentVideosContent: content);
                               })
                         ],
                       ),

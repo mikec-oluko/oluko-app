@@ -34,10 +34,12 @@ class CoachSentVideosBloc extends Cubit<CoachSentVideosState> {
     }
   }
 
-  void updateSegmentSubmissionFavoriteValue(SegmentSubmission segmentSubmitted) async {
+  void updateSegmentSubmissionFavoriteValue(
+      {SegmentSubmission segmentSubmitted, List<SegmentSubmission> currentSentVideosContent}) async {
     try {
-      await CoachRepository().setSegmentSubmissionAsFavorite(segmentSubmitted);
-      // emit(CoachSentVideosSuccess(sentVideos: segmentsSubmitted));
+      final List<SegmentSubmission> sentVideosListUpdated = await CoachRepository().setSegmentSubmissionAsFavorite(
+          segmentSubmittedToUpdate: segmentSubmitted, currentSentVideosContent: currentSentVideosContent);
+      emit(CoachSentVideosSuccess(sentVideos: sentVideosListUpdated));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

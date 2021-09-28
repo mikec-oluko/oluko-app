@@ -87,12 +87,14 @@ import 'package:oluko_app/ui/screens/profile/transformation_journey_post.dart';
 import 'package:oluko_app/ui/screens/profile/user_profile_page.dart';
 import 'package:oluko_app/ui/screens/courses/segment_detail.dart';
 import 'blocs/coach/coach_assignment_bloc.dart';
+import 'blocs/coach/coach_mentored_videos_bloc.dart';
 import 'blocs/coach/coach_profile_bloc.dart';
 import 'blocs/coach/coach_sent_videos_bloc.dart';
 import 'blocs/movement_info_bloc.dart';
 import 'blocs/friends/hi_five_send_bloc.dart';
 import 'blocs/movement_info_bloc.dart';
 import 'blocs/views_bloc/hi_five_bloc.dart';
+import 'models/annotations.dart';
 import 'models/segment_submission.dart';
 import 'models/task.dart';
 import 'ui/screens/coach/coach_main_page.dart';
@@ -255,6 +257,7 @@ class Routes {
   final CoachAssignmentBloc _coachAssignmentBloc = CoachAssignmentBloc();
   final CoachProfileBloc _coachProfileBloc = CoachProfileBloc();
   final CoachSentVideosBloc _coachSentVideosBloc = CoachSentVideosBloc();
+  final CoachMentoredVideosBloc _coachMentoredVideosBloc = CoachMentoredVideosBloc();
   final ChatBloc _chatBloc = ChatBloc();
   final MessageBloc _messageBloc = MessageBloc();
   final HiFiveReceivedBloc _hiFiveReceivedBloc = HiFiveReceivedBloc();
@@ -297,6 +300,7 @@ class Routes {
           BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
           BlocProvider<CoachProfileBloc>.value(value: _coachProfileBloc),
           BlocProvider<CoachSentVideosBloc>.value(value: _coachSentVideosBloc),
+          BlocProvider<CoachMentoredVideosBloc>.value(value: _coachMentoredVideosBloc),
           // BlocProvider<MovementSubmissionBloc>.value(value: _movementSubmissionBloc),
           BlocProvider<HiFiveBloc>.value(value: _hiFiveBloc),
         ];
@@ -632,6 +636,7 @@ class Routes {
           BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
           BlocProvider<CoachProfileBloc>.value(value: _coachProfileBloc),
           BlocProvider<CoachSentVideosBloc>.value(value: _coachSentVideosBloc),
+          BlocProvider<CoachMentoredVideosBloc>.value(value: _coachMentoredVideosBloc),
         ];
         newRouteView = CoachMainPage();
         break;
@@ -648,6 +653,8 @@ class Routes {
           BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
           BlocProvider<CoachProfileBloc>.value(value: _coachProfileBloc),
           BlocProvider<CoachSentVideosBloc>.value(value: _coachSentVideosBloc),
+          BlocProvider<CoachMentoredVideosBloc>.value(value: _coachMentoredVideosBloc),
+
           // BlocProvider<MovementSubmissionBloc>.value(value: _movementSubmissionBloc),
         ];
         newRouteView = CoachPage();
@@ -660,8 +667,11 @@ class Routes {
         newRouteView = SentVideosPage(segmentSubmissions: argumentsToAdd['sentVideosContent']);
         break;
       case RouteEnum.mentoredVideos:
-        final Map<String, List<TaskSubmission>> argumentsToAdd = arguments as Map<String, List<TaskSubmission>>;
-        newRouteView = MentoredVideosPage(taskSubmissions: argumentsToAdd['taskSubmissions']);
+        providers = [
+          BlocProvider<CoachMentoredVideosBloc>.value(value: _coachMentoredVideosBloc),
+        ];
+        final Map<String, List<Annotation>> argumentsToAdd = arguments as Map<String, List<Annotation>>;
+        newRouteView = MentoredVideosPage(coachAnnotation: argumentsToAdd['coachAnnotation']);
         break;
       case RouteEnum.coachShowVideo:
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;

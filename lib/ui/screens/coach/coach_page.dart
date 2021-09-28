@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_assignment_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_mentored_videos_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_profile_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_sent_videos_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
@@ -16,6 +17,7 @@ import 'package:oluko_app/helpers/coach_segment_content.dart';
 import 'package:oluko_app/helpers/coach_segment_info.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/list_of_items_to_widget.dart';
+import 'package:oluko_app/models/annotations.dart';
 import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/coach_assignment.dart';
@@ -53,6 +55,7 @@ List<InfoForSegments> _toDoSegments = [];
 List<CoachSegmentContent> actualSegmentsToDisplay = [];
 List<TaskSubmission> _assessmentVideosContent = [];
 List<SegmentSubmission> _sentVideosContent = [];
+List<Annotation> _annotationVideosContent = [];
 UserStatistics _userStats;
 Assessment _assessment;
 List<Task> _tasks = [];
@@ -114,7 +117,7 @@ class _CoachPageState extends State<CoachPage> {
 
     BlocProvider.of<CourseEnrollmentBloc>(context).getChallengesForUser(_currentAuthUser.id);
 
-    BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionByUserId(_currentAuthUser.id);
+    BlocProvider.of<CoachMentoredVideosBloc>(context).getMentoredVideosByUserId(_currentAuthUser.id);
 
     BlocProvider.of<CoachSentVideosBloc>(context).getSentVideosByUserId(_currentAuthUser.id);
 
@@ -259,7 +262,7 @@ class _CoachPageState extends State<CoachPage> {
           ? CoachContentPreviewContent(
               contentFor: CoachContentSection.sentVideos,
               titleForSection: OlukoLocalizations.of(context).find('sentVideos'),
-              videoContent: _sentVideosContent,
+              segmentSubmissionContent: _sentVideosContent,
               isForCarousel: isForCarousel)
           : CoachContentSectionCard(
               title: OlukoLocalizations.of(context).find('sentVideos'),
@@ -268,24 +271,21 @@ class _CoachPageState extends State<CoachPage> {
     });
   }
 
-  BlocBuilder<TaskSubmissionBloc, TaskSubmissionState> mentoredVideos({bool isForCarousel}) {
-    return BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(builder: (context, state) {
-      if (state is GetUserTaskSubmissionSuccess) {
-        // _assessmentVideosContent = [];
-        _assessmentVideosContent = state.taskSubmissions;
+  BlocBuilder<CoachMentoredVideosBloc, CoachMentoredVideosState> mentoredVideos({bool isForCarousel}) {
+    return BlocBuilder<CoachMentoredVideosBloc, CoachMentoredVideosState>(builder: (context, state) {
+      if (state is CoachMentoredVideosSuccess) {
+        _annotationVideosContent = state.mentoredVideos;
       }
-      return
-          //  _assessmentVideosContent.length != null && _assessmentVideosContent.isNotEmpty
-          //     ? CoachContentPreviewContent(
-          //         contentFor: CoachContentSection.mentoredVideos,
-          //         titleForSection: OlukoLocalizations.of(context).find('mentoredVideos'),
-          //         videoContent: _movementSubmission,
-          //         isForCarousel: isForCarousel)
-          //     :
-          CoachContentSectionCard(
-        title: OlukoLocalizations.of(context).find('mentoredVideos'),
-        isForCarousel: isForCarousel,
-      );
+      return _annotationVideosContent != null && _annotationVideosContent.isNotEmpty
+          ? CoachContentPreviewContent(
+              contentFor: CoachContentSection.mentoredVideos,
+              titleForSection: OlukoLocalizations.of(context).find('mentoredVideos'),
+              coachAnnotationContent: _annotationVideosContent,
+              isForCarousel: isForCarousel)
+          : CoachContentSectionCard(
+              title: OlukoLocalizations.of(context).find('mentoredVideos'),
+              isForCarousel: isForCarousel,
+            );
     });
   }
 }

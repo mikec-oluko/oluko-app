@@ -1,0 +1,1 @@
+enum AnnotationStatusEnum { created, reviewed }

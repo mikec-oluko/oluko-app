@@ -1,70 +1,126 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:oluko_app/blocs/coach/coach_mentored_videos_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/annotations.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class MentoredVideosPage extends StatefulWidget {
-  final List<TaskSubmission> taskSubmissions;
-  const MentoredVideosPage({this.taskSubmissions});
+  final List<Annotation> coachAnnotation;
+  const MentoredVideosPage({this.coachAnnotation});
 
   @override
   _MentoredVideosPageState createState() => _MentoredVideosPageState();
 }
 
 class _MentoredVideosPageState extends State<MentoredVideosPage> {
+  List<Annotation> content = [];
+  List<Annotation> filteredContent;
+  bool isFavoriteSelected = false;
+  bool isContentFilteredByDate = false;
+
+  @override
+  void initState() {
+    setState(() {
+      content = widget.coachAnnotation;
+      filteredContent = widget.coachAnnotation;
+    });
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    setState(() {
+      content = [];
+      filteredContent = [];
+    });
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          OlukoLocalizations.of(context).find('mentoredVideos'),
-          style: OlukoFonts.olukoTitleFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
-        ),
-        actions: [
-          Row(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 5),
-                child: IconButton(icon: Icon(Icons.sort, color: OlukoColors.grayColor), onPressed: () {}),
-              ),
-              IconButton(icon: Icon(Icons.favorite_border, color: OlukoColors.grayColor), onPressed: () {}),
+    return BlocBuilder<CoachMentoredVideosBloc, CoachMentoredVideosState>(
+      builder: (context, state) {
+        if (state is CoachMentoredVideosSuccess) {
+          content = state.mentoredVideos;
+        }
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(
+              OlukoLocalizations.of(context).find('mentoredVideos'),
+              style: OlukoFonts.olukoTitleFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+            ),
+            actions: [
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                    child: IconButton(
+                        icon: isContentFilteredByDate
+                            ? const Icon(Icons.sort, color: OlukoColors.white)
+                            : const Icon(Icons.sort, color: OlukoColors.grayColor),
+                        onPressed: () {
+                          setState(() {
+                            isContentFilteredByDate ? isContentFilteredByDate = false : isContentFilteredByDate = true;
+                            isContentFilteredByDate
+                                ? filteredContent.sort((a, b) => a.createdAt.toDate().compareTo(b.createdAt.toDate()))
+                                : filteredContent.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
+                          });
+                        }),
+                  ),
+                  IconButton(
+                      icon: Icon(isFavoriteSelected ? Icons.favorite : Icons.favorite_border,
+                          color: OlukoColors.grayColor),
+                      onPressed: () {
+                        setState(() {
+                          isFavoriteSelected ? isFavoriteSelected = false : isFavoriteSelected = true;
+                          isFavoriteSelected
+                              ? filteredContent = content.where((element) => element.favorite == true).toList()
+                              : filteredContent = widget.coachAnnotation;
+                        });
+                        //sort List items favorite = true;
+                      }),
+                ],
+              )
             ],
-          )
-        ],
-        elevation: 0.0,
-        backgroundColor: OlukoColors.black,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-            color: Colors.white,
+            elevation: 0.0,
+            backgroundColor: OlukoColors.black,
+            leading: IconButton(
+              icon: const Icon(
+                Icons.arrow_back_ios,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
           ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
-      body: Container(
-        width: MediaQuery.of(context).size.width,
-        color: OlukoColors.black,
-        child: ListView(children: segmentCard(taskSubmissions: widget.taskSubmissions)),
-      ),
+          body: Container(
+            width: MediaQuery.of(context).size.width,
+            color: OlukoColors.black,
+            child: ListView(children: segmentCard(coachAnnotation: filteredContent)),
+          ),
+        );
+      },
     );
   }
 
-  List<Widget> segmentCard({List<TaskSubmission> taskSubmissions}) {
+  List<Widget> segmentCard({List<Annotation> coachAnnotation}) {
     List<Widget> contentForSection = [];
 
-    taskSubmissions.forEach((taskSubmitted) {
-      contentForSection.add(returnCardForSegment(taskSubmitted));
+    coachAnnotation.forEach((annotation) {
+      contentForSection.add(returnCardForSegment(annotation));
     });
 
     return contentForSection;
   }
 
-  Widget returnCardForSegment(TaskSubmission taskSubmitted) {
-    Widget contentForReturn = SizedBox();
+  Widget returnCardForSegment(Annotation coachAnnotation) {
+    Widget contentForReturn = const SizedBox();
     contentForReturn = Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5),
       child: Padding(
@@ -74,7 +130,7 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
               color: OlukoColors.listGrayColor,
               borderRadius: BorderRadius.all(Radius.circular(6.0)),
               image: DecorationImage(
-                image: getImage(taskSubmitted),
+                image: getImage(coachAnnotation),
                 fit: BoxFit.fitWidth,
                 onError: (exception, stackTrace) {
                   return Text('Your error widget...');
@@ -89,7 +145,7 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
                   child: TextButton(
                       onPressed: () {
                         Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
-                          'videoUrl': taskSubmitted.video.url,
+                          'videoUrl': coachAnnotation.video.url,
                           'titleForView': OlukoLocalizations.of(context).find('mentoredVideos')
                         });
                       },
@@ -123,13 +179,19 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
                                 height: 5,
                               ),
                               Text(
-                                DateFormat.yMMMd().format(taskSubmitted.createdAt.toDate()),
+                                DateFormat.yMMMd().format(coachAnnotation.createdAt.toDate()),
                                 style: OlukoFonts.olukoMediumFont(
                                     customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                               )
                             ],
                           ),
-                          IconButton(icon: Icon(Icons.favorite, color: OlukoColors.white), onPressed: () {})
+                          IconButton(
+                              icon: Icon(coachAnnotation.favorite ? Icons.favorite : Icons.favorite_outline,
+                                  color: OlukoColors.white),
+                              onPressed: () {
+                                BlocProvider.of<CoachMentoredVideosBloc>(context).updateCoachAnnotationFavoriteValue(
+                                    coachAnnotation: coachAnnotation, currentMentoredVideosContent: content);
+                              })
                         ],
                       ),
                     ),
@@ -142,9 +204,9 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
     return contentForReturn;
   }
 
-  ImageProvider getImage(TaskSubmission taskSubmitted) {
-    return taskSubmitted.video.thumbUrl != null
-        ? NetworkImage(taskSubmitted.video.thumbUrl)
+  ImageProvider getImage(Annotation coachAnnotation) {
+    return coachAnnotation.video.thumbUrl != null
+        ? NetworkImage(coachAnnotation.video.thumbUrl)
         : AssetImage("assets/home/mvt.png") as ImageProvider;
   }
 }
