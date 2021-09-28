@@ -112,7 +112,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
       _setupCameras();
     }
     _startMovement();
-    topBarIcon = topCameraIcon();
+    topBarIcon = SizedBox();
     scores =
         List<String>.filled(widget.segments[widget.segmentIndex].rounds, "-");
     super.initState();
@@ -923,14 +923,21 @@ class _SegmentClocksState extends State<SegmentClocks> {
   }
 
   List<Widget> getScoresByRound() {
+    bool isCounterByReps =
+        timerEntries[timerTaskIndex - 1].counter == CounterEnum.reps;
     List<Widget> widgets = [];
+    String totalText = OlukoLocalizations.of(context).find('total') +
+        ": " +
+        totalScore.toString() +
+        " ";
+    if (isCounterByReps) {
+      totalText += timerEntries[timerTaskIndex - 1].movement.name;
+    } else {
+      totalText += OlukoLocalizations.of(context).find('meters');
+    }
+
     widgets.add(Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-      Text(
-          OlukoLocalizations.of(context).find('total') +
-              ": " +
-              totalScore.toString() +
-              " " +
-              OlukoLocalizations.of(context).find('meters'),
+      Text(totalText,
           style: OlukoFonts.olukoSuperBigFont(
               custoFontWeight: FontWeight.w600,
               customColor: OlukoColors.primary)),
@@ -938,17 +945,22 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
     widgets.add(SizedBox(height: 15));
     for (int i = 0; i < scores.length; i++) {
-      widgets.add(Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-        Text(OlukoLocalizations.of(context).find('round') + " " + i.toString(),
-            style: OlukoFonts.olukoBigFont(
-                custoFontWeight: FontWeight.w600,
-                customColor: OlukoColors.white)),
-        Container(width: 60),
-        Text(scores[i],
-            style: OlukoFonts.olukoBigFont(
-                custoFontWeight: FontWeight.w400,
-                customColor: OlukoColors.white))
-      ]));
+      widgets.add(Padding(
+          padding: EdgeInsets.only(bottom: 10),
+          child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+            Text(
+                OlukoLocalizations.of(context).find('round') +
+                    " " +
+                    (i + 1).toString(),
+                style: OlukoFonts.olukoBigFont(
+                    custoFontWeight: FontWeight.w600,
+                    customColor: OlukoColors.white)),
+            Container(width: 60),
+            Text(scores[i],
+                style: OlukoFonts.olukoBigFont(
+                    custoFontWeight: FontWeight.w400,
+                    customColor: OlukoColors.white))
+          ])));
     }
     return widgets;
   }
