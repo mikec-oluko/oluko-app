@@ -4,7 +4,7 @@ import 'package:oluko_app/ui/components/stories_item.dart';
 class StoriesHeader extends StatefulWidget {
   final List<String> stories;
 
-  StoriesHeader(
+  const StoriesHeader(
       {this.stories = const [
         'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrpM3UTTyyqIwGsPYB1gCDhfl3XVv0Cex2Lw&usqp=CAU',
         'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlCzsqcGBluOOUtgQahXtISLTM3Wb2tkpsoeMqwurI2LEP6pCS0ZgCFLQGiv8BtfJ9p2A&usqp=CAU',

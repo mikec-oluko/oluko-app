@@ -20,7 +20,10 @@ class GetMovementSubmissionSuccess extends MovementSubmissionState {
   GetMovementSubmissionSuccess({this.movementSubmissions});
 }
 
-class UpdateMovementSubmissionSuccess extends MovementSubmissionState {}
+class UpdateMovementSubmissionSuccess extends MovementSubmissionState {
+  MovementSubmission movementSubmission;
+  UpdateMovementSubmissionSuccess({this.movementSubmission});
+}
 
 class EncodedMovementSubmissionSuccess extends MovementSubmissionState {}
 
@@ -37,8 +40,7 @@ class MovementSubmissionBloc extends Cubit<MovementSubmissionState> {
 
   void create(SegmentSubmission segmentSubmission, MovementSubmodel movement, String videoPath) async {
     try {
-      MovementSubmission movementSubmission =
-          await MovementSubmissionRepository.create(segmentSubmission, movement, videoPath);
+      MovementSubmission movementSubmission = await MovementSubmissionRepository.create(segmentSubmission, movement, videoPath);
       emit(CreateMovementSubmissionSuccess(movementSubmission: movementSubmission));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -53,7 +55,7 @@ class MovementSubmissionBloc extends Cubit<MovementSubmissionState> {
   void updateVideo(MovementSubmission movementSubmission) async {
     try {
       await MovementSubmissionRepository.updateVideo(movementSubmission);
-      emit(UpdateMovementSubmissionSuccess());
+      emit(UpdateMovementSubmissionSuccess(movementSubmission: movementSubmission));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
