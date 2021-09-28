@@ -5,11 +5,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/oluko_permissions.dart';
 import 'package:oluko_app/models/assessment.dart';
+import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -38,6 +40,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
   ChewieController _controller;
   Assessment _assessment;
   UserResponse _user;
+  AssessmentAssignment _assessmentAssignment;
 
   @override
   void initState() {
@@ -61,7 +64,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
             if (assessmentState is AssessmentSuccess) {
               _assessment = assessmentState.assessment;
               BlocProvider.of<TaskBloc>(context).get(_assessment);
-              BlocProvider.of<AssessmentAssignmentBloc>(context).getOrCreate(authState.firebaseUser, _assessment);
+              BlocProvider.of<AssessmentAssignmentBloc>(context).getOrCreate(_user.id, _assessment);
               return form();
             } else {
               return const SizedBox();
@@ -80,7 +83,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
         child: Scaffold(
             appBar: OlukoAppBar(
               title: OlukoLocalizations.of(context).find('assessment'),
-              actions: [skipButton()],
+              //TODO: show only for onboarding actions: [skipButton()],
             ),
             body: Container(
                 color: Colors.black,
@@ -102,30 +105,55 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                               _assessment.description,
                               style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white),
                             )),
-                        BlocBuilder<TaskSubmissionListBloc, TaskSubmissionListState>(builder: (context, taskSubmissionListState) {
-                          if (taskSubmissionListState is GetTaskSubmissionSuccess) {
-                            return taskCardsSection(taskSubmissionListState.taskSubmissions);
-                          } else {
-                            return const Padding(padding: EdgeInsets.only(top: 30), child: CircularProgressIndicator());
+                        BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(builder: (context, assessmentAssignmentState) {
+                          if (assessmentAssignmentState is AssessmentAssignmentSuccess) {
+                            _assessmentAssignment = assessmentAssignmentState.assessmentAssignment;
+                            return Column(
+                              children: [
+                                BlocBuilder<TaskSubmissionListBloc, TaskSubmissionListState>(builder: (context, taskSubmissionListState) {
+                                  if (taskSubmissionListState is GetTaskSubmissionSuccess) {
+                                    final completedTask = taskSubmissionListState.taskSubmissions.length;
+                                    var enabledTask = 0;
+                                    for (var i = 0; i < _assessment.tasks.length; i++) {
+                                      if (!OlukoPermissions.isAssessmentTaskDisabled(_user, i)) {
+                                        enabledTask++;
+                                      }
+                                    }
+                                    if (completedTask == enabledTask && _assessmentAssignment.compleatedAt == null) {
+                                      BlocProvider.of<TaskSubmissionBloc>(context)
+                                          .setCompleted(_assessmentAssignment.id)
+                                          .then((value) => {_assessmentAssignment.compleatedAt = value, BlocProvider.of<AssessmentAssignmentBloc>(context).getOrCreate(_user.id, _assessment)});
+                                    } else if (completedTask != enabledTask && _assessmentAssignment.compleatedAt != null) {
+                                      BlocProvider.of<TaskSubmissionBloc>(context).setIncompleted(_assessmentAssignment.id);
+                                      _assessmentAssignment.compleatedAt = null;
+                                    }
+                                    return taskCardsSection(taskSubmissionListState.taskSubmissions);
+                                  } else {
+                                    return const Padding(padding: EdgeInsets.only(top: 30), child: CircularProgressIndicator());
+                                  }
+                                }),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                if (assessmentAssignmentState.assessmentAssignment.compleatedAt != null)
+                                  Row(children: [
+                                    OlukoPrimaryButton(
+                                      title: OlukoLocalizations.of(context).find('done'),
+                                      onPressed: () {
+                                        DialogUtils.getDialog(context, _confirmDialogContent(), showExitButton: false);
+                                      },
+                                    )
+                                  ])
+                                else
+                                  const SizedBox()
+                              ],
+                            );
                           }
+                          return const SizedBox();
                         }),
                         const SizedBox(
                           height: 10,
                         ),
-                        BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(builder: (context, assessmentAssignmentState) {
-                          if (assessmentAssignmentState is AssessmentAssignmentSuccess && assessmentAssignmentState.assessmentAssignment.compleatedAt != null) {
-                            return Row(children: [
-                              OlukoPrimaryButton(
-                                title: OlukoLocalizations.of(context).find('done'),
-                                onPressed: () {
-                                  DialogUtils.getDialog(context, _confirmDialogContent(), showExitButton: false);
-                                },
-                              )
-                            ]);
-                          } else {
-                            return SizedBox();
-                          }
-                        }),
                         const SizedBox(
                           height: 50,
                         ),
@@ -162,7 +190,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                 itemCount: taskState.values.length,
                 shrinkWrap: true,
                 itemBuilder: (context, int index) {
-                  Task task = taskState.values[index];
+                  final Task task = taskState.values[index];
                   TaskSubmission taskSubmission = TaskSubmissionService.getTaskSubmissionOfTask(task, taskSubmissions);
                   return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10.0),
