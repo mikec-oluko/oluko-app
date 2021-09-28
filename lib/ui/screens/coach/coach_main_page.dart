@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_assignment_bloc.dart';
-import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/coach_assignment_status.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/coach_assignment.dart';
@@ -47,7 +45,11 @@ class _CoachMainPageState extends State<CoachMainPage> {
                 );
               }
             } else {
-              return Container(color: OlukoColors.black, child: OlukoCircularProgressIndicator());
+              // return Container(color: OlukoColors.black, child: OlukoCircularProgressIndicator());
+              return CoachAssignedCountDown(
+                currentUser: _currentUser,
+                coachAssignment: _coachAssignment,
+              );
             }
           },
         );

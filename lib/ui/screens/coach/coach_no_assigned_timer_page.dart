@@ -96,7 +96,8 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
               const SizedBox(
                 height: 100,
               ),
-              _isTimeExpired ? timeExpiredContent(context) : countDownWatch(context, difference),
+              countDownWatch(context, difference),
+              // _isTimeExpired ? timeExpiredContent(context) : countDownWatch(context, difference),
             ],
           ),
         ),
@@ -133,7 +134,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                   child: Column(
                     children: [
                       Text(
-                        difference.inHours.toString(),
+                        _isTimeExpired ? '00' : difference.inHours.toString(),
                         style: OlukoFonts.olukoBiggestFont(
                             customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                       ),
@@ -161,7 +162,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                   child: Column(
                     children: [
                       Text(
-                        difference.inMinutes.remainder(60).toString(),
+                        _isTimeExpired ? '00' : difference.inMinutes.remainder(60).toString(),
                         style: OlukoFonts.olukoBiggestFont(
                             customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                       ),
@@ -189,7 +190,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                   child: Column(
                     children: [
                       Text(
-                        difference.inSeconds.remainder(60).toString(),
+                        _isTimeExpired ? '00' : difference.inSeconds.remainder(60).toString() ,
                         style: OlukoFonts.olukoBiggestFont(
                             customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                       ),
@@ -209,7 +210,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 25),
             child: LinearProgressIndicator(
-              value: 1 - (difference.inHours / _oneDayLimit.inHours),
+              value: _isTimeExpired ? 1 : 1 - (difference.inHours / _oneDayLimit.inHours),
               valueColor: const AlwaysStoppedAnimation<Color>(OlukoColors.primary),
               backgroundColor: Colors.white24,
               minHeight: 5,
@@ -236,22 +237,22 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
       if (_auction.isBefore(_now)) {
         _isTimeExpired = true;
       }
-    }
 
-    _timer = Timer.periodic(
-      const Duration(
-        seconds: 1,
-      ),
-      (timer) {
-        setState(() {
-          _now = DateTime.now();
-          //time expired
-          if (_auction.isBefore(_now)) {
-            _isTimeExpired = true;
-            timer.cancel();
-          }
-        });
-      },
-    );
+      _timer = Timer.periodic(
+        const Duration(
+          seconds: 1,
+        ),
+        (timer) {
+          setState(() {
+            _now = DateTime.now();
+            //time expired
+            if (_auction.isBefore(_now)) {
+              _isTimeExpired = true;
+              timer.cancel();
+            }
+          });
+        },
+      );
+    }
   }
 }
