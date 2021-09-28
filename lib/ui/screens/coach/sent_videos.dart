@@ -1,27 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:oluko_app/blocs/coach/coach_sent_videos_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/models/movement_submission.dart';
-import 'package:oluko_app/models/task_submission.dart';
+import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class SentVideosPage extends StatefulWidget {
-  final List<MovementSubmission> taskSubmissions;
-  const SentVideosPage({this.taskSubmissions});
+  final List<SegmentSubmission> segmentSubmissions;
+  const SentVideosPage({this.segmentSubmissions});
 
   @override
   _SentVideosPageState createState() => _SentVideosPageState();
 }
 
 class _SentVideosPageState extends State<SentVideosPage> {
-  List<MovementSubmission> content = [];
-  List<MovementSubmission> orderContent;
+  List<SegmentSubmission> content = [];
+  List<SegmentSubmission> orderContent;
+  bool isFavoriteSelected = false;
 
   @override
   void initState() {
     setState(() {
-      content = widget.taskSubmissions;
+      content = widget.segmentSubmissions;
     });
 
     super.initState();
@@ -57,8 +59,14 @@ class _SentVideosPageState extends State<SentVideosPage> {
                     }),
               ),
               IconButton(
-                  icon: Icon(Icons.favorite_border, color: OlukoColors.grayColor),
+                  icon: Icon(isFavoriteSelected ? Icons.favorite : Icons.favorite_border, color: OlukoColors.grayColor),
                   onPressed: () {
+                    setState(() {
+                      isFavoriteSelected ? isFavoriteSelected = false : isFavoriteSelected = true;
+                      isFavoriteSelected
+                          ? content = content.where((element) => element.favorite == true).toList()
+                          : content = widget.segmentSubmissions;
+                    });
                     //sort List items favorite = true;
                   }),
             ],
@@ -79,22 +87,22 @@ class _SentVideosPageState extends State<SentVideosPage> {
       body: Container(
         width: MediaQuery.of(context).size.width,
         color: OlukoColors.black,
-        child: ListView(children: segmentCard(taskSubmissions: content)),
+        child: ListView(children: segmentCard(segmentSubmissions: content)),
       ),
     );
   }
 
-  List<Widget> segmentCard({List<MovementSubmission> taskSubmissions}) {
+  List<Widget> segmentCard({List<SegmentSubmission> segmentSubmissions}) {
     List<Widget> contentForSection = [];
 
-    taskSubmissions.forEach((taskSubmitted) {
-      contentForSection.add(returnCardForSegment(taskSubmitted));
+    segmentSubmissions.forEach((segmentSubmitted) {
+      contentForSection.add(returnCardForSegment(segmentSubmitted));
     });
 
     return contentForSection;
   }
 
-  Widget returnCardForSegment(MovementSubmission taskSubmitted) {
+  Widget returnCardForSegment(SegmentSubmission segmentSubmitted) {
     //TODO: repeated code 1 from Mentored Video
     Widget contentForReturn = const SizedBox();
     contentForReturn = Padding(
@@ -106,7 +114,7 @@ class _SentVideosPageState extends State<SentVideosPage> {
               color: OlukoColors.listGrayColor,
               borderRadius: const BorderRadius.all(Radius.circular(6.0)),
               image: DecorationImage(
-                image: getImage(taskSubmitted),
+                image: getImage(segmentSubmitted),
                 fit: BoxFit.fitWidth,
               )),
           width: MediaQuery.of(context).size.width,
@@ -117,7 +125,7 @@ class _SentVideosPageState extends State<SentVideosPage> {
                   child: TextButton(
                       onPressed: () {
                         Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
-                          'videoUrl': taskSubmitted.video.url,
+                          'videoUrl': segmentSubmitted.video.url,
                           'titleForView': OlukoLocalizations.of(context).find('sentVideos')
                         });
                       },
@@ -151,13 +159,19 @@ class _SentVideosPageState extends State<SentVideosPage> {
                                 height: 5,
                               ),
                               Text(
-                                DateFormat.yMMMd().format(taskSubmitted.createdAt.toDate()),
+                                DateFormat.yMMMd().format(segmentSubmitted.createdAt.toDate()),
                                 style: OlukoFonts.olukoMediumFont(
                                     customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                               )
                             ],
                           ),
-                          IconButton(icon: Icon(Icons.favorite, color: OlukoColors.white), onPressed: () {})
+                          IconButton(
+                              icon: Icon(segmentSubmitted.favorite ? Icons.favorite : Icons.favorite_outline,
+                                  color: OlukoColors.white),
+                              onPressed: () {
+                                BlocProvider.of<CoachSentVideosBloc>(context)
+                                    .updateSegmentSubmissionFavoriteValue(segmentSubmitted);
+                              })
                         ],
                       ),
                     ),
@@ -170,9 +184,9 @@ class _SentVideosPageState extends State<SentVideosPage> {
     return contentForReturn;
   }
 
-  ImageProvider getImage(MovementSubmission taskSubmitted) {
-    return taskSubmitted.video.thumbUrl != null
-        ? NetworkImage(taskSubmitted.video.thumbUrl)
+  ImageProvider getImage(SegmentSubmission segmentSubmitted) {
+    return segmentSubmitted.video.thumbUrl != null
+        ? NetworkImage(segmentSubmitted.video.thumbUrl)
         : AssetImage('assets/home/mvt.png') as ImageProvider;
   }
 }

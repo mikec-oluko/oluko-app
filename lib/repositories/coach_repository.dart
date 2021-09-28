@@ -19,7 +19,7 @@ class CoachRepository {
     final QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('coachAssignment')
+        .collection('coachAssignments')
         .where('id', isEqualTo: userId)
         .get();
     if (docRef.docs == null || docRef.docs.isEmpty) {
@@ -36,7 +36,7 @@ class CoachRepository {
       await FirebaseFirestore.instance
           .collection('projects')
           .doc(GlobalConfiguration().getValue('projectId'))
-          .collection('coachAssignment')
+          .collection('coachAssignments')
           .doc(coachAssignment.userId)
           .set(coachAssignment.toJson());
       return coachAssignment;
@@ -64,6 +64,25 @@ class CoachRepository {
       });
       return contentUploaded;
     } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
+      rethrow;
+    }
+  }
+
+  Future<SegmentSubmission> setSegmentSubmissionAsFavorite(SegmentSubmission segmentSubmitted) async {
+    try {
+      segmentSubmitted.favorite = !segmentSubmitted.favorite;
+      await FirebaseFirestore.instance
+          .collection('projects')
+          .doc(GlobalConfiguration().getValue('projectId'))
+          .collection('segmentSubmissions')
+          .doc(segmentSubmitted.id)
+          .set(segmentSubmitted.toJson());
+      return segmentSubmitted;
+    } on Exception catch (e, stackTrace) {
       await Sentry.captureException(
         e,
         stackTrace: stackTrace,

@@ -90,10 +90,10 @@ import 'blocs/coach/coach_assignment_bloc.dart';
 import 'blocs/coach/coach_profile_bloc.dart';
 import 'blocs/coach/coach_sent_videos_bloc.dart';
 import 'blocs/movement_info_bloc.dart';
-// import 'models/movement_submission.dart';
 import 'blocs/friends/hi_five_send_bloc.dart';
 import 'blocs/movement_info_bloc.dart';
 import 'blocs/views_bloc/hi_five_bloc.dart';
+import 'models/segment_submission.dart';
 import 'models/task.dart';
 import 'ui/screens/coach/coach_main_page.dart';
 import 'ui/screens/courses/segment_clocks.dart';
@@ -632,7 +632,6 @@ class Routes {
           BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
           BlocProvider<CoachProfileBloc>.value(value: _coachProfileBloc),
           BlocProvider<CoachSentVideosBloc>.value(value: _coachSentVideosBloc),
-          // BlocProvider<MovementSubmissionBloc>.value(value: _movementSubmissionBloc),
         ];
         newRouteView = CoachMainPage();
         break;
@@ -654,9 +653,11 @@ class Routes {
         newRouteView = CoachPage();
         break;
       case RouteEnum.sentVideos:
-        //TODO: CHECK HERE
-        // final Map<String, List<MovementSubmission>> argumentsToAdd = arguments as Map<String, List<MovementSubmission>>;
-        // newRouteView = SentVideosPage(taskSubmissions: argumentsToAdd['sentVideosContent']);
+        providers = [
+          BlocProvider<CoachSentVideosBloc>.value(value: _coachSentVideosBloc),
+        ];
+        final Map<String, List<SegmentSubmission>> argumentsToAdd = arguments as Map<String, List<SegmentSubmission>>;
+        newRouteView = SentVideosPage(segmentSubmissions: argumentsToAdd['sentVideosContent']);
         break;
       case RouteEnum.mentoredVideos:
         final Map<String, List<TaskSubmission>> argumentsToAdd = arguments as Map<String, List<TaskSubmission>>;

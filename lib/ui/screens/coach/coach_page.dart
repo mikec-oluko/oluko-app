@@ -8,7 +8,6 @@ import 'package:oluko_app/blocs/coach/coach_profile_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_sent_videos_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
-import 'package:oluko_app/blocs/movement_submission_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
@@ -21,7 +20,7 @@ import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/coach_assignment.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
-import 'package:oluko_app/models/movement_submission.dart';
+// import 'package:oluko_app/models/movement_submission.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
@@ -54,7 +53,6 @@ List<InfoForSegments> _toDoSegments = [];
 List<CoachSegmentContent> actualSegmentsToDisplay = [];
 List<TaskSubmission> _assessmentVideosContent = [];
 List<SegmentSubmission> _sentVideosContent = [];
-List<MovementSubmission> _movementSubmission = [];
 UserStatistics _userStats;
 Assessment _assessment;
 List<Task> _tasks = [];
@@ -247,35 +245,27 @@ class _CoachPageState extends State<CoachPage> {
   }
 
   BlocBuilder<CoachSentVideosBloc, CoachSentVideosState> sentVideos({bool isForCarousel}) {
-    return BlocBuilder<CoachSentVideosBloc, CoachSentVideosState>(
-      builder: (context, state) {
-        if (state is CoachSentVideosSuccess) {
-          _sentVideosContent = state.sentVideos;
-          _sentVideosContent.forEach((segmentSubmission) {
-            BlocProvider.of<MovementSubmissionBloc>(context).get(segmentSubmission);
-          });
-        }
-        return BlocBuilder<MovementSubmissionBloc, MovementSubmissionState>(builder: (context, state) {
-          if (state is GetMovementSubmissionSuccess) {
-            if (_movementSubmission.isEmpty) {
-              _movementSubmission.addAll(state.movementSubmissions);
-              // _movementSubmission = state.movementSubmissions;
-            }
-          }
+    return BlocBuilder<CoachSentVideosBloc, CoachSentVideosState>(builder: (context, state) {
+      if (state is CoachSentVideosSuccess) {
+        _sentVideosContent = state.sentVideos;
+        // _sentVideosContent.forEach((segmentSubmission) {
+        //                                     //TODO: CHECK HERE
 
-          return _movementSubmission.length != null && _movementSubmission.isNotEmpty
-              ? CoachContentPreviewContent(
-                  contentFor: CoachContentSection.sentVideos,
-                  titleForSection: OlukoLocalizations.of(context).find('sentVideos'),
-                  videoContent: _movementSubmission,
-                  isForCarousel: isForCarousel)
-              : CoachContentSectionCard(
-                  title: OlukoLocalizations.of(context).find('sentVideos'),
-                  isForCarousel: isForCarousel,
-                );
-        });
-      },
-    );
+        //   // BlocProvider.of<MovementSubmissionBloc>(context).get(segmentSubmission);
+        // });
+      }
+
+      return _sentVideosContent.length != null && _sentVideosContent.isNotEmpty
+          ? CoachContentPreviewContent(
+              contentFor: CoachContentSection.sentVideos,
+              titleForSection: OlukoLocalizations.of(context).find('sentVideos'),
+              videoContent: _sentVideosContent,
+              isForCarousel: isForCarousel)
+          : CoachContentSectionCard(
+              title: OlukoLocalizations.of(context).find('sentVideos'),
+              isForCarousel: isForCarousel,
+            );
+    });
   }
 
   BlocBuilder<TaskSubmissionBloc, TaskSubmissionState> mentoredVideos({bool isForCarousel}) {

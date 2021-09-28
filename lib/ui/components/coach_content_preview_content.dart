@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
-import 'package:oluko_app/models/movement_submission.dart';
-import 'package:oluko_app/models/task_submission.dart';
+import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import '../../routes.dart';
 import 'coach_content_section_card.dart';
 import 'coach_video_content.dart';
-import 'image_and_video_container.dart';
 
 class CoachContentPreviewContent extends StatefulWidget {
   final CoachContentSection contentFor;
   final String titleForSection;
-  final List<MovementSubmission> videoContent;
+  final List<SegmentSubmission> videoContent;
   final bool isForCarousel;
 
   const CoachContentPreviewContent(
@@ -24,20 +22,6 @@ class CoachContentPreviewContent extends StatefulWidget {
 
 class _CoachContentPreviewContentState extends State<CoachContentPreviewContent> {
   Widget imageAndVideoContainer;
-
-  @override
-  void initState() {
-    setState(() {
-      imageAndVideoContainer = ImageAndVideoContainer(
-          backgroundImage: widget.videoContent[0].video.thumbUrl,
-          isContentVideo: true,
-          videoUrl: widget.videoContent[0].video.url,
-          originalContent: widget.videoContent[0],
-          isCoach: true,
-          isForCarousel: widget.isForCarousel);
-    });
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
