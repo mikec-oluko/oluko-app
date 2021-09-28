@@ -55,7 +55,7 @@ class _FriendCardState extends State<FriendCard> {
                   child: Row(
                     children: [
                       CircleAvatar(
-                          backgroundImage: getUserImg(widget.friendUser.avatar),
+                          backgroundImage: getUserImg(widget.friendUser.avatarThumbnail),
                           onBackgroundImageError: _loadImageError
                               ? null
                               : (dynamic exception, StackTrace stackTrace) {
