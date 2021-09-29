@@ -3,6 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
@@ -42,11 +43,11 @@ class _HomeState extends State<Home> {
             BlocProvider.of<CourseBloc>(context)..getByCourseEnrollments(_courseEnrollments);
             return form();
           } else {
-            return SizedBox();
+            return nil;
           }
         });
       } else {
-        return SizedBox();
+        return nil;
       }
     });
   }
@@ -107,7 +108,8 @@ class _HomeState extends State<Home> {
       if (_courses.length - 1 < i) {
         // do nothing
       } else {
-        widgets.add(CourseSection(qtyCourses: _courses.length, courseIndex: i, course: _courses[i], courseEnrollment: _courseEnrollments[i]));
+        widgets
+            .add(CourseSection(qtyCourses: _courses.length, courseIndex: i, course: _courses[i], courseEnrollment: _courseEnrollments[i]));
       }
     }
     return widgets;
