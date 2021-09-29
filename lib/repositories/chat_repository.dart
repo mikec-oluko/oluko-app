@@ -41,7 +41,7 @@ class ChatRepository {
         .doc(targetUserId)
         .get();
 
-    var messagesData = await docRef.reference.collection('messages').get();
+    var messagesData = await docRef.reference.collection('messages').orderBy('created_at').get();
     List<Message> messages = messagesData.docs.map((e) => Message.fromJson(e.data())).toList();
     return messages;
   }

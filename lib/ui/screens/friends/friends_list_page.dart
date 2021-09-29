@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
+import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
+import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
 import 'package:oluko_app/blocs/user_list_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -255,25 +257,48 @@ class _FriendsListPageState extends State<FriendsListPage> {
                 ],
               ),
               SizedBox(height: 20),
-              BlocBuilder<UserStatisticsBloc, UserStatisticsState>(
-                  bloc: BlocProvider.of(context)..getUserStatistics(user.id),
-                  builder: (context, userStats) {
-                    return userStats is StatisticsSuccess
-                        ? Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(right: 16.0),
-                                child: Container(width: 80, height: 80, child: Image.asset('assets/profile/hiFive.png')),
-                              ),
-                              profileAccomplishments(
-                                  achievementTitle: 'Challenges completed', achievementValue: userStats.userStats.completedChallenges.toString()),
-                              profileAccomplishments(
-                                  achievementTitle: 'Courses completed', achievementValue: userStats.userStats.completedChallenges.toString()),
-                              profileAccomplishments(
-                                  achievementTitle: 'Courses completed', achievementValue: userStats.userStats.completedCourses.toString()),
-                            ],
-                          )
-                        : SizedBox();
+              BlocBuilder<HiFiveReceivedBloc, HiFiveReceivedState>(
+                  bloc: BlocProvider.of<HiFiveReceivedBloc>(context)..get(context, _authStateData.user.id, user.id),
+                  builder: (hiFiveReceivedContext, hiFiveReceivedState) {
+                    return BlocBuilder<UserStatisticsBloc, UserStatisticsState>(
+                        bloc: BlocProvider.of(context)..getUserStatistics(user.id),
+                        builder: (userStatisticsContext, userStats) {
+                          return userStats is StatisticsSuccess
+                              ? Row(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 16.0),
+                                      child: GestureDetector(
+                                          onTap: () {
+                                            BlocProvider.of<HiFiveSendBloc>(context).set(context, _authStateData.user.id, user.id,
+                                                hiFive: !(hiFiveReceivedState is HiFiveReceivedSuccess && hiFiveReceivedState.hiFive == true));
+                                          },
+                                          child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
+                                            bloc: BlocProvider.of(context),
+                                            listener: (hiFiveSendContext, hiFiveSendState) {
+                                              if (hiFiveSendState is HiFiveSendSuccess) {
+                                                BlocProvider.of<HiFiveReceivedBloc>(context).get(context, _authStateData.user.id, user.id);
+                                              }
+                                            },
+                                            child: Container(
+                                                width: 80,
+                                                height: 80,
+                                                child: Image.asset(hiFiveReceivedState is HiFiveReceivedSuccess && hiFiveReceivedState.hiFive == true
+                                                    ? 'assets/profile/hiFive_selected.png'
+                                                    : 'assets/profile/hiFive.png')),
+                                          )),
+                                    ),
+                                    profileAccomplishments(
+                                        achievementTitle: 'Challenges completed',
+                                        achievementValue: userStats.userStats.completedChallenges.toString()),
+                                    profileAccomplishments(
+                                        achievementTitle: 'Courses completed', achievementValue: userStats.userStats.completedChallenges.toString()),
+                                    profileAccomplishments(
+                                        achievementTitle: 'Courses completed', achievementValue: userStats.userStats.completedCourses.toString()),
+                                  ],
+                                )
+                              : SizedBox();
+                        });
                   }),
               SizedBox(height: 20),
               Row(
