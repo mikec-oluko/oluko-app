@@ -174,7 +174,7 @@ class _LoginPageState extends State<LoginPage> {
                   style: ElevatedButton.styleFrom(primary: OlukoColors.primary),
                   onPressed: () {
                     _formKey.currentState.save();
-                    AppLoader.startLoading(context);
+
                     BlocProvider.of<AuthBloc>(context)
                       ..login(
                           context,

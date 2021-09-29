@@ -42,10 +42,26 @@ class AuthBloc extends Cubit<AuthState> {
   final _userRepository = UserRepository();
 
   Future<void> login(BuildContext context, LoginRequest request) async {
-    ApiResponse apiResponse = await _authRepository.login(request);
+    if (request.email == null && request.userName.isEmpty && request.password.isEmpty) {
+      AppMessages.showSnackbarTranslated(context, 'invalidUsernameOrPw');
+      return;
+    }
+
+    if (request.email == null && request.userName.isEmpty) {
+      AppMessages.showSnackbarTranslated(context, 'emailUsernameRequired');
+      return;
+    }
+
+    if (request.password.isEmpty) {
+      AppMessages.showSnackbarTranslated(context, 'passwordRequired');
+      return;
+    }
+    AppLoader.startLoading(context);
+    final ApiResponse apiResponse = await _authRepository.login(request);
+    AppLoader.stopLoading();
     if (apiResponse.statusCode != 200) {
-      AppLoader.stopLoading();
-      AppMessages.showSnackbar(context, apiResponse.message[0]);
+      //TODO: response should bring key apiResponse.message
+      AppMessages.showSnackbarTranslated(context, 'invalidUsernameOrPw');
       emit(AuthFailure(exception: Exception(apiResponse.message)));
       return;
     }
@@ -55,11 +71,11 @@ class AuthBloc extends Cubit<AuthState> {
     } else {
       user = await _userRepository.get(request.email);
     }
-    AppLoader.stopLoading();
+
     final firebaseUser = FirebaseAuth.instance.currentUser;
     if (user.currentPlan == -100) {
       FirebaseAuth.instance.signOut();
-      AppMessages.showSnackbar(context, OlukoLocalizations.of(context).find('pleaseSubscribeToAPlanBeforeUsingTheApp'));
+      AppMessages.showSnackbarTranslated(context, 'pleaseSubscribeToAPlanBeforeUsingTheApp');
       emit(AuthGuest());
       return;
     } else if (!firebaseUser.emailVerified) {
@@ -67,7 +83,7 @@ class AuthBloc extends Cubit<AuthState> {
       await firebaseUser.updateEmail(user.email);
       firebaseUser.sendEmailVerification();
       FirebaseAuth.instance.signOut();
-      AppMessages.showSnackbar(context, OlukoLocalizations.of(context).find('pleaseCheckYourEmail'));
+      AppMessages.showSnackbarTranslated(context, 'pleaseCheckYourEmail');
       emit(AuthGuest());
     } else {
       AuthRepository().storeLoginData(user);

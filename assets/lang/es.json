@@ -206,5 +206,8 @@
     "pleaseCheckYourEmailForInstructions":"Por favor checkea tu email para mas instrucciones.",
     "errorGettingCurrentPlan": "Error al obtener el plan actual",
     "uploadedSuccessfully": "Subido correctamente",
-    "total": "Total"
+    "total": "Total",
+    "invalidUsernameOrPw":"Usuario/email o password inválido.",
+    "passwordRequired":"Password es requerido.",
+    "emailUsernameRequired":"Email/Username es requerido."
 }
