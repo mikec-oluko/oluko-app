@@ -277,6 +277,13 @@ class _FriendsListPageState extends State<FriendsListPage> {
                                             bloc: BlocProvider.of(context),
                                             listener: (hiFiveSendContext, hiFiveSendState) {
                                               if (hiFiveSendState is HiFiveSendSuccess) {
+                                                AppMessages.showSnackbar(
+                                                    userStatisticsContext,
+                                                    hiFiveSendState.hiFive
+                                                        ? OlukoLocalizations.of(context).find('hiFiveSent')
+                                                        : OlukoLocalizations.of(context).find('hiFiveRemoved'));
+                                              }
+                                              if (hiFiveSendState is HiFiveSendSuccess) {
                                                 BlocProvider.of<HiFiveReceivedBloc>(context).get(context, _authStateData.user.id, user.id);
                                               }
                                             },
