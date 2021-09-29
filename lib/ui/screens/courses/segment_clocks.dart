@@ -101,7 +101,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   WorkoutType workoutType;
 
-  List<String> scores;
+  List<String> scores = [];
   int totalScore = 0;
   bool counter = false;
 
@@ -113,8 +113,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
     }
     _startMovement();
     topBarIcon = SizedBox();
-    scores =
-        List<String>.filled(widget.segments[widget.segmentIndex].rounds, "-");
+
+    if (widget.segments[widget.segmentIndex].rounds != null) {
+      scores =
+          List<String>.filled(widget.segments[widget.segmentIndex].rounds, "-");
+    }
     super.initState();
   }
 
@@ -172,6 +175,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
       appBar: OlukoAppBar(
         showDivider: false,
         title: ' ',
+        showBackButton: false,
         actions: [topBarIcon, audioIcon()],
       ),
       backgroundColor: Colors.black,
@@ -275,8 +279,12 @@ class _SegmentClocksState extends State<SegmentClocks> {
             OlukoOutlinedButton(
                 title: OlukoLocalizations.of(context).find('goToClass'),
                 thinPadding: true,
-                onPressed: () => Navigator.popUntil(context,
-                    ModalRoute.withName(routeLabels[RouteEnum.insideClass]))),
+                onPressed: () => Navigator.pushNamed(
+                        context, routeLabels[RouteEnum.insideClass],
+                        arguments: {
+                          'courseEnrollment': widget.courseEnrollment,
+                          'classIndex': widget.classIndex
+                        })),
             SizedBox(
               width: 15,
             ),
@@ -864,8 +872,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
     return Padding(
         padding: EdgeInsets.only(right: 2),
         child: GestureDetector(
-            onTap: () => BottomDialogUtils.showBottomDialog(
-                context: context, content: dialogContainer()),
+            onTap: () {}/*=> BottomDialogUtils.showBottomDialog(
+                context: context, content: dialogContainer())*/,
             child: Row(children: [
               Text(
                 "Uploading",
@@ -974,6 +982,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
       if (state is VideoSuccess) {
         saveUploadedState(state);
         showSegmentMessage();
+        setState(() {
+          topBarIcon = SizedBox();
+        });
       } else if (state is VideoFailure) {
         saveErrorState(state);
       }
