@@ -16,6 +16,8 @@ samples, guidance on mobile development, and a full API reference.
     1. https://git-scm.com/  
 3. Install Flutter
     1. https://flutter.dev/docs/get-started/install (This guide installs everything needed to run app)
+    2. After running flutter doctor you'll need to install to android studio this: https://pineapplelabcom.sharepoint.com/sites/41891282-MichaelChaney/Shared%20Documents/MichaelChaney/installAndroid.png
+
 4. Install VS Code
     1. https://code.visualstudio.com/download
     2. add Flutter plugin 
