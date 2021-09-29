@@ -50,7 +50,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
           width: MediaQuery.of(context).size.width,
           color: OlukoColors.black,
           child: Column(
-            children: [buildUserInformationFields(), subscriptionSection(), logoutButton()],
+            children: [buildUserInformationFields()],
           ),
         ),
       ),
@@ -116,24 +116,5 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
       subscriptionCard.onHintPressed = userPlan.infoDialog != null ? () {} : null;
     }
     return [subscriptionCard];
-  }
-
-  Align logoutButton() {
-    return Align(
-      alignment: Alignment.bottomLeft,
-      child: Padding(
-        padding: const EdgeInsets.only(left: 5.0),
-        child: TextButton(
-          child: Text(OlukoLocalizations.of(context).find('logout'), style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary)),
-          onPressed: () {
-            BlocProvider.of<AuthBloc>(context).logout(context);
-            AppMessages.showSnackbar(context, 'Logged out.');
-            Navigator.pushNamed(context, '/');
-
-            setState(() {});
-          },
-        ),
-      ),
-    );
   }
 }

@@ -53,6 +53,7 @@
     "password": "Password",
     "forgotPassword": "Forgot password?",
     "login": "Login",
+    "loggedOut":"Logged out.",
     "or": "Or",
     "welcomeBack": "Welcome back",
     "passwordShouldNotContainUsername": "Password should not contain your username",
@@ -204,5 +205,6 @@
     "welcome":"Welcome",
     "userForThisAccountNotFoundPleaseSignUp": "User for this account not found. Please sign up.",
     "pleaseCheckYourEmailForInstructions":"Please check your email for instructions.",
-    "errorGettingCurrentPlan": "Error getting current plan"
+    "errorGettingCurrentPlan": "Error getting current plan",
+    "total": "Total"
 }

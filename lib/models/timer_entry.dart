@@ -9,6 +9,7 @@ class TimerEntry {
       this.parameter,
       this.value,
       this.round,
+      this.sectionIndex,
       this.counter});
 
   MovementSubmodel movement;
@@ -17,4 +18,5 @@ class TimerEntry {
   ParameterEnum parameter;
   int value;
   CounterEnum counter;
+  int sectionIndex;
 }
