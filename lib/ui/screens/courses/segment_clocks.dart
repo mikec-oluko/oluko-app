@@ -821,7 +821,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
                 style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w600, customColor: OlukoColors.white)),
             Container(width: 60),
             Container(
-                width: 50, child: Text(scores[i], style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400, customColor: OlukoColors.white)))
+                width: 50,
+                child: Text(scores[i],
+                    textAlign: TextAlign.end, style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400, customColor: OlukoColors.white)))
           ])));
     }
     return widgets;
