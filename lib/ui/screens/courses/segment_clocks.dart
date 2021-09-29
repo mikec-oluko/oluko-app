@@ -252,7 +252,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   }
 
   Widget showFinishedButtons() {
-    if (isSegmentWithRecording() && !shareDone) {
+    if (widget.workoutType == WorkoutType.segmentWithRecording && !shareDone) {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Row(
@@ -922,7 +922,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
           SizedBox(height: 10),
           Padding(
               padding: const EdgeInsets.symmetric(vertical: 20.0),
-              child: isSegmentWithoutRecording() || shareDone
+              child: widget.workoutType == WorkoutType.segment || shareDone
                   ? FeedbackCard()
                   : ShareCard()),
         ],
