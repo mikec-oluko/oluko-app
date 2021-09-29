@@ -285,6 +285,9 @@ class Routes {
           BlocProvider<UserListBloc>.value(value: _userListBloc),
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
           BlocProvider<HiFiveBloc>.value(value: _hiFiveBloc),
+          BlocProvider<HiFiveSendBloc>.value(
+            value: _hiFiveSendBloc,
+          )
         ];
         newRouteView = MainPage();
         break;
@@ -294,8 +297,8 @@ class Routes {
       case RouteEnum.completedClass:
         providers = [BlocProvider<CourseEnrollmentUpdateBloc>.value(value: _courseEnrollmentUpdateBloc)];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
-        newRouteView = CompletedClass(
-            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment, classIndex: argumentsToAdd['classIndex'] as int);
+        newRouteView =
+            CompletedClass(courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment, classIndex: argumentsToAdd['classIndex'] as int);
         break;
       case RouteEnum.signUpWithEmail:
         newRouteView = SignUpWithMailPage();
@@ -502,8 +505,8 @@ class Routes {
           BlocProvider<MovementBloc>.value(value: _movementBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
-        newRouteView = InsideClass(
-            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment, classIndex: argumentsToAdd['classIndex'] as int);
+        newRouteView =
+            InsideClass(courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment, classIndex: argumentsToAdd['classIndex'] as int);
         break;
       case RouteEnum.assessmentVideos:
         providers = [
