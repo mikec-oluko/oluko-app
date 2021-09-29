@@ -3,6 +3,7 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class AppMessages {
   static void showSnackbar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(message),
     ));
