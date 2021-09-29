@@ -53,6 +53,7 @@
     "password": "Password",
     "forgotPassword": "Forgot password?",
     "login": "Login",
+    "loggedOut":"Logged out.",
     "or": "Or",
     "welcomeBack": "Welcome back",
     "passwordShouldNotContainUsername": "Password should not contain your username",

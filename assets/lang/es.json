@@ -53,6 +53,7 @@
     "password": "Contraseña",
     "forgotPassword": "Olvidó su contraseña?",
     "login": "Ingresar",
+    "loggedOut":"Usuario Desconectado.",
     "or": "O",
     "welcomeBack": "Bienvenido",
     "passwordShouldNotContainUsername": "La contraseña no puede contener tu nombre de usuario",
@@ -204,5 +205,5 @@
     "userForThisAccountNotFoundPleaseSignUp": "Usuario para esta cuenta no fue encontrado por favor registrarse.",
     "pleaseCheckYourEmailForInstructions":"Por favor checkea tu email para mas instrucciones.",
     "errorGettingCurrentPlan": "Error al obtener el plan actual",
-    "uploadedSuccessfully": "Subido correctamente",
+    "uploadedSuccessfully": "Subido correctamente"
 }
