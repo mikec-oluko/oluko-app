@@ -11,6 +11,7 @@ import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/submodels/friend_model.dart';
 import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/friends_card.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
@@ -333,7 +334,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                     thinPadding: true,
                     title: 'View full profile',
                     onPressed: () {
-                      // navigateToSegmentWithRecording();
+                      Navigator.pushNamed(context, routeLabels[RouteEnum.profileViewOwnProfile], arguments: {'userRequested': user});
                     },
                   )
                 ],
