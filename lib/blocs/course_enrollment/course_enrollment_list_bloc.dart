@@ -22,8 +22,10 @@ class CourseEnrollmentListBloc extends Cubit<CourseEnrollmentListState> {
 
   void getCourseEnrollmentsByUser(String userId) async {
     try {
-      List<CourseEnrollment> courseEnrollments = await CourseEnrollmentRepository.getUserCourseEnrollments(userId);
-      emit(CourseEnrollmentsByUserSuccess(courseEnrollments: courseEnrollments));
+      List<CourseEnrollment> courseEnrollments =
+          await CourseEnrollmentRepository.getUserCourseEnrollments(userId);
+      emit(
+          CourseEnrollmentsByUserSuccess(courseEnrollments: courseEnrollments));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
@@ -36,8 +38,10 @@ class CourseEnrollmentListBloc extends Cubit<CourseEnrollmentListState> {
 
   void getCourseEnrollmentsByUserId(String userId) async {
     try {
-      List<CourseEnrollment> courseEnrollments = await CourseEnrollmentRepository.getUserCourseEnrollments(userId);
-      emit(CourseEnrollmentsByUserSuccess(courseEnrollments: courseEnrollments));
+      List<CourseEnrollment> courseEnrollments =
+          await CourseEnrollmentRepository.getUserCourseEnrollments(userId);
+      emit(
+          CourseEnrollmentsByUserSuccess(courseEnrollments: courseEnrollments));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
