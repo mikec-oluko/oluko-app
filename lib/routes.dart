@@ -87,6 +87,7 @@ import 'package:oluko_app/ui/screens/profile/transformation_journey_post.dart';
 import 'package:oluko_app/ui/screens/profile/user_profile_page.dart';
 import 'package:oluko_app/ui/screens/courses/segment_detail.dart';
 import 'blocs/coach/coach_assignment_bloc.dart';
+import 'blocs/coach/coach_interaction_timeline_bloc.dart';
 import 'blocs/coach/coach_mentored_videos_bloc.dart';
 import 'blocs/coach/coach_profile_bloc.dart';
 import 'blocs/coach/coach_sent_videos_bloc.dart';
@@ -258,6 +259,7 @@ class Routes {
   final CoachProfileBloc _coachProfileBloc = CoachProfileBloc();
   final CoachSentVideosBloc _coachSentVideosBloc = CoachSentVideosBloc();
   final CoachMentoredVideosBloc _coachMentoredVideosBloc = CoachMentoredVideosBloc();
+  final CoachTimelineItemsBloc _coachTimelineItemsBloc = CoachTimelineItemsBloc();
   final ChatBloc _chatBloc = ChatBloc();
   final MessageBloc _messageBloc = MessageBloc();
   final HiFiveReceivedBloc _hiFiveReceivedBloc = HiFiveReceivedBloc();
@@ -301,7 +303,7 @@ class Routes {
           BlocProvider<CoachProfileBloc>.value(value: _coachProfileBloc),
           BlocProvider<CoachSentVideosBloc>.value(value: _coachSentVideosBloc),
           BlocProvider<CoachMentoredVideosBloc>.value(value: _coachMentoredVideosBloc),
-          // BlocProvider<MovementSubmissionBloc>.value(value: _movementSubmissionBloc),
+          BlocProvider<CoachTimelineItemsBloc>.value(value: _coachTimelineItemsBloc),
           BlocProvider<HiFiveBloc>.value(value: _hiFiveBloc),
         ];
         newRouteView = MainPage();
@@ -637,6 +639,7 @@ class Routes {
           BlocProvider<CoachProfileBloc>.value(value: _coachProfileBloc),
           BlocProvider<CoachSentVideosBloc>.value(value: _coachSentVideosBloc),
           BlocProvider<CoachMentoredVideosBloc>.value(value: _coachMentoredVideosBloc),
+          BlocProvider<CoachTimelineItemsBloc>.value(value: _coachTimelineItemsBloc),
         ];
         newRouteView = CoachMainPage();
         break;
@@ -654,8 +657,7 @@ class Routes {
           BlocProvider<CoachProfileBloc>.value(value: _coachProfileBloc),
           BlocProvider<CoachSentVideosBloc>.value(value: _coachSentVideosBloc),
           BlocProvider<CoachMentoredVideosBloc>.value(value: _coachMentoredVideosBloc),
-
-          // BlocProvider<MovementSubmissionBloc>.value(value: _movementSubmissionBloc),
+          BlocProvider<CoachTimelineItemsBloc>.value(value: _coachTimelineItemsBloc),
         ];
         newRouteView = CoachPage();
         break;

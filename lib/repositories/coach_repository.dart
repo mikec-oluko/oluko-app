@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/models/annotations.dart';
 import 'package:oluko_app/models/coach_assignment.dart';
+import 'package:oluko_app/models/coach_timeline_item.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -137,6 +138,47 @@ class CoachRepository {
         coachAnnotations.add(Annotation.fromJson(content));
       });
       return coachAnnotations;
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
+      rethrow;
+    }
+  }
+
+  Future<List<CoachTimelineItem>> getTimelineContent(String userId) async {
+    try {
+      // QuerySnapshot docRef = await FirebaseFirestore.instance
+      //     .collection('projects')
+      //     .doc(GlobalConfiguration().getValue('projectId'))
+      //     .collection('users')
+      //     .doc(userId)
+      //     .collection('interactionTimelineItems')
+      //     // .where('is_deleted', isNotEqualTo: true)
+      //     .get();
+
+      List<CoachTimelineItem> coachTimelineContent = [];
+
+      // if (docRef.docs.isEmpty) {
+      QuerySnapshot docRef = await FirebaseFirestore.instance
+          .collection('projects')
+          .doc(GlobalConfiguration().getValue('projectId'))
+          .collection('interactionTimelineItems')
+          // .where('user_id', isEqualTo: userId)
+          .get();
+      // List<CoachTimelineItem> coachTimelineContent = [];
+      docRef.docs.forEach((doc) {
+        final Map<String, dynamic> content = doc.data() as Map<String, dynamic>;
+        coachTimelineContent.add(CoachTimelineItem.fromJson(content));
+      });
+      // } else {
+      //   docRef.docs.forEach((doc) {
+      //     final Map<String, dynamic> content = doc.data() as Map<String, dynamic>;
+      //     coachTimelineContent.add(CoachTimelineItem.fromJson(content));
+      // });
+      // }
+      return coachTimelineContent;
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,

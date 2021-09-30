@@ -1,28 +1,29 @@
-import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_assignment_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_interaction_timeline_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_mentored_videos_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_profile_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_sent_videos_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
-import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/coach_content_for_timeline_panel.dart';
 import 'package:oluko_app/helpers/coach_segment_content.dart';
 import 'package:oluko_app/helpers/coach_segment_info.dart';
+import 'package:oluko_app/helpers/coach_timeline_content.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/list_of_items_to_widget.dart';
 import 'package:oluko_app/models/annotations.dart';
 import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/coach_assignment.dart';
+import 'package:oluko_app/models/coach_timeline_item.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
-// import 'package:oluko_app/models/movement_submission.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
@@ -56,6 +57,7 @@ List<CoachSegmentContent> actualSegmentsToDisplay = [];
 List<TaskSubmission> _assessmentVideosContent = [];
 List<SegmentSubmission> _sentVideosContent = [];
 List<Annotation> _annotationVideosContent = [];
+List<CoachTimelineItem> _timelineItemsContent = [];
 UserStatistics _userStats;
 Assessment _assessment;
 List<Task> _tasks = [];
@@ -89,9 +91,24 @@ class _CoachPageState extends State<CoachPage> {
                     if (state is CourseEnrollmentsByUserSuccess) {
                       _courseEnrollmentList = state.courseEnrollments;
                     }
-                    return CoachSlidingUpPanel(
-                      content: coachViewPageContent(context),
-                      contentForTesting: actualSegmentsToDisplay,
+                    return BlocBuilder<CoachTimelineItemsBloc, CoachTimelineItemsState>(
+                      builder: (context, state) {
+                        List<CoachTimelineGroup> timelinePanelContent = [];
+                        List<String> listOfCourseId = [];
+                        List<CoachTimelineItem> contentSameCourse = [];
+                        List<CoachTimelineItem> contentEachCourse = [];
+
+                        if (state is CoachTimelineItemsSuccess) {
+                          _timelineItemsContent = state.timelineItems;
+                          timelinePanelContent = buildContentForTimelinePanel(listOfCourseId, contentSameCourse,
+                              contentEachCourse, timelinePanelContent, _timelineItemsContent);
+                        }
+                        print(timelinePanelContent);
+                        return CoachSlidingUpPanel(
+                          content: coachViewPageContent(context),
+                          timelineItemsContent: _timelineItemsContent,
+                        );
+                      },
                     );
                   },
                 ),
@@ -111,6 +128,8 @@ class _CoachPageState extends State<CoachPage> {
   }
 
   void requestCurrentUserData(BuildContext context) {
+    BlocProvider.of<CoachTimelineItemsBloc>(context).getTimelineItemsForUser(_currentAuthUser.id);
+
     BlocProvider.of<UserStatisticsBloc>(context).getUserStatistics(_currentAuthUser.id);
 
     BlocProvider.of<CourseEnrollmentListBloc>(context).getCourseEnrollmentsByUserId(_currentAuthUser.id);
@@ -251,11 +270,6 @@ class _CoachPageState extends State<CoachPage> {
     return BlocBuilder<CoachSentVideosBloc, CoachSentVideosState>(builder: (context, state) {
       if (state is CoachSentVideosSuccess) {
         _sentVideosContent = state.sentVideos;
-        // _sentVideosContent.forEach((segmentSubmission) {
-        //                                     //TODO: CHECK HERE
-
-        //   // BlocProvider.of<MovementSubmissionBloc>(context).get(segmentSubmission);
-        // });
       }
 
       return _sentVideosContent.length != null && _sentVideosContent.isNotEmpty

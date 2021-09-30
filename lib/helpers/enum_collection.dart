@@ -36,3 +36,6 @@ enum CoachFileTypeEnum {
 }
 
 enum CoachAssignmentStatusEnum { requested, approved, rejected }
+
+//TODO: Check and use that
+enum TimelineInteractionType { course, classes, segment, movement, mentoredVideo, sentVideo }

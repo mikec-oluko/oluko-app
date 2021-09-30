@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/coach_segment_content.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/models/coach_timeline_item.dart';
 import 'package:oluko_app/ui/components/coach_timeline_circle_content.dart';
 import 'package:oluko_app/ui/components/coach_timeline_video_content.dart';
 import 'package:oluko_app/ui/components/tab_content_list.dart';
@@ -11,7 +12,7 @@ import 'coach_timeline_card_content.dart';
 
 class CoachTimelinePanel extends StatefulWidget {
   const CoachTimelinePanel({this.contentTest});
-  final List<CoachSegmentContent> contentTest;
+  final List<CoachTimelineItem> contentTest;
 
   @override
   _CoachTimelinePanelConteState createState() => _CoachTimelinePanelConteState();
@@ -25,7 +26,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Singl
   @override
   void initState() {
     _tabController = TabController(length: widget.contentTest.length, vsync: this);
-    splitContentWithDifferentContainers();
+    // splitContentWithDifferentContainers();
     super.initState();
   }
 
@@ -46,7 +47,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Singl
               tabs: widget.contentTest
                   .map((content) => Tab(
                         child: Container(
-                          child: Text(content.segmentName.toUpperCase(),
+                          child: Text(content.course.name.toUpperCase(),
                               style: OlukoFonts.olukoMediumFont(
                                   customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
                         ),
@@ -65,39 +66,5 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Singl
                   ))
               .toList(),
         ));
-  }
-
-  List<CoachTimelineCardContent> splitContentWithDifferentContainers() {
-    widget.contentTest.forEach((element) {
-      if (widget.contentTest[2] == element || widget.contentTest[5] == element) {
-        contentList.add(CoachTimelineCircleContent(
-          circleTitle: element.segmentName,
-          circleImage: element.classImage,
-          // circleSubTitle: 'Counter 500',
-          date: '7:10 AM',
-          fileType: CoachFileTypeEnum.recommendedMovement,
-        ));
-      } else if (widget.contentTest[1] == element || widget.contentTest[7] == element) {
-        contentList.add(CoachTimelineVideoContent(
-          videoTitle: element.segmentName,
-          videoThumbnail: element.classImage,
-          // circleSubTitle: 'Counter 500',
-          date: '7:10 AM',
-          fileType: CoachFileTypeEnum.mentoredVideo,
-        ));
-      } else {
-        contentList.add(CoachTimelineCardContent(
-          cardTitle: element.segmentName,
-          cardImage: element.classImage,
-          cardSubTitle: 'Counter 500',
-          date: '7:10 AM',
-          fileType: CoachFileTypeEnum.recommendedClass,
-        ));
-      }
-    });
-    contentList.forEach((elem) {
-      contentWithListNodes.add(contentList);
-    });
-    print(contentWithListNodes);
   }
 }
