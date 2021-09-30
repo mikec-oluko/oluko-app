@@ -74,7 +74,7 @@ class HiFiveBloc extends Cubit<HiFiveState> {
     if (_lastState != null && _chatExists(_lastState, targetUserId)) {
       _lastState.chat.removeWhere((key, value) => key.id == targetUserId);
       _lastState.users.removeWhere((element) => element.id == targetUserId);
-      emit(HiFiveSuccess(chat: _lastState.chat, users: _lastState.users, alertMessage: OlukoLocalizations.of(context).find('hiFiveSent')));
+      emit(HiFiveSuccess(chat: _lastState.chat, users: _lastState.users, alertMessage: OlukoLocalizations.get(context, 'hiFiveSent')));
     } else {
       get(userId);
     }
@@ -85,7 +85,7 @@ class HiFiveBloc extends Cubit<HiFiveState> {
     if (_lastState != null && _chatExists(_lastState, targetUserId)) {
       _lastState.chat.removeWhere((key, value) => key.id == targetUserId);
       _lastState.users.removeWhere((element) => element.id == targetUserId);
-      emit(HiFiveSuccess(chat: _lastState.chat, users: _lastState.users, alertMessage: OlukoLocalizations.of(context).find('hiFiveRemoved')));
+      emit(HiFiveSuccess(chat: _lastState.chat, users: _lastState.users, alertMessage: OlukoLocalizations.get(context, 'hiFiveRemoved')));
     } else {
       get(userId);
     }

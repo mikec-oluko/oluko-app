@@ -56,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
         width: MediaQuery.of(context).size.width,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(
-            OlukoLocalizations.of(context).find('welcomeBack'),
+            OlukoLocalizations.get(context, 'welcomeBack'),
             textAlign: TextAlign.start,
             style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
           ),
@@ -83,13 +83,13 @@ class _LoginPageState extends State<LoginPage> {
             focusColor: Colors.white,
             filled: false,
             hintStyle: new TextStyle(color: Colors.grey[800]),
-            hintText: OlukoLocalizations.of(context).find('emailExample'),
+            hintText: OlukoLocalizations.get(context, 'emailExample'),
             fillColor: Colors.white70,
-            labelText: OlukoLocalizations.of(context).find('emailOrUsername'),
+            labelText: OlukoLocalizations.get(context, 'emailOrUsername'),
             labelStyle: new TextStyle(color: Colors.grey[800])),
         validator: (value) {
           if (value == null || value.isEmpty) {
-            return OlukoLocalizations.of(context).find('required');
+            return OlukoLocalizations.get(context, 'required');
           }
           return null;
         },
@@ -125,8 +125,8 @@ class _LoginPageState extends State<LoginPage> {
             errorStyle: const TextStyle(height: 0.5),
             hintStyle: TextStyle(color: Colors.grey[800]),
             labelStyle: TextStyle(color: Colors.grey[800]),
-            hintText: "8 ${OlukoLocalizations.of(context).find('maxChars')}",
-            labelText: OlukoLocalizations.of(context).find('password'),
+            hintText: "8 ${OlukoLocalizations.get(context, 'maxChars')}",
+            labelText: OlukoLocalizations.get(context, 'password'),
             fillColor: Colors.white70),
         obscureText: !_peekPassword,
         onSaved: (value) {
@@ -134,7 +134,7 @@ class _LoginPageState extends State<LoginPage> {
         },
         validator: (value) {
           if (value == null || value.isEmpty) {
-            return OlukoLocalizations.of(context).find('required');
+            return OlukoLocalizations.get(context, 'required');
           }
           return null;
         },
@@ -146,7 +146,7 @@ class _LoginPageState extends State<LoginPage> {
               alignment: Alignment.centerRight,
               child: InkWell(
                 child: Text(
-                  OlukoLocalizations.of(context).find('forgotPassword'),
+                  OlukoLocalizations.get(context, 'forgotPassword'),
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.normal,
@@ -186,13 +186,13 @@ class _LoginPageState extends State<LoginPage> {
                   },
                   child: Stack(children: [
                     Align(
-                      child: Text(OlukoLocalizations.of(context).find('login').toUpperCase()),
+                      child: Text(OlukoLocalizations.get(context, 'login').toUpperCase()),
                     )
                   ])))),
       Padding(
           padding: const EdgeInsets.symmetric(vertical: 15),
           child: Text(
-            '- ${OlukoLocalizations.of(context).find('or')} -',
+            '- ${OlukoLocalizations.get(context, 'or')} -',
             style: const TextStyle(color: Colors.grey),
           )),
       //Login with SSO

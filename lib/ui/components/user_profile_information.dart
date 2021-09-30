@@ -269,7 +269,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
             Container(
               width: 150,
               height: 25,
-              child: Text(OlukoLocalizations.of(context).find('privateProfile'),
+              child: Text(OlukoLocalizations.get(context, 'privateProfile'),
                   style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300)),
             )
           ],

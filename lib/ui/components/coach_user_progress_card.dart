@@ -23,7 +23,7 @@ class _CoachUserProgressCardState extends State<CoachUserProgressCard> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Text(
-          OlukoLocalizations.of(context).find('activityStats'),
+          OlukoLocalizations.get(context, 'activityStats'),
           style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
         ),
         AnimatedContainer(
@@ -42,10 +42,10 @@ class _CoachUserProgressCardState extends State<CoachUserProgressCard> {
                   children: [
                     CoachUserProgressComponent(
                         progressValue: widget.userStats != null ? widget.userStats.completedClasses : 0,
-                        nameOfField: OlukoLocalizations.of(context).find('classesCompleted')),
+                        nameOfField: OlukoLocalizations.get(context, 'classesCompleted')),
                     CoachUserProgressComponent(
                         progressValue: widget.userStats != null ? widget.userStats.completedChallenges : 0,
-                        nameOfField: OlukoLocalizations.of(context).find('challengesCompleted')),
+                        nameOfField: OlukoLocalizations.get(context, 'challengesCompleted')),
                     TextButton(
                         onPressed: () {
                           setState(() {
@@ -63,10 +63,10 @@ class _CoachUserProgressCardState extends State<CoachUserProgressCard> {
                   children: [
                     CoachUserProgressComponent(
                         progressValue: widget.userStats != null ? widget.userStats.completedCourses : 0,
-                        nameOfField: OlukoLocalizations.of(context).find('coursesCompleted')),
+                        nameOfField: OlukoLocalizations.get(context, 'coursesCompleted')),
                     CoachUserProgressComponent(
                       progressValue: 0,
-                      nameOfField: OlukoLocalizations.of(context).find('appCompleted'),
+                      nameOfField: OlukoLocalizations.get(context, 'appCompleted'),
                       needPercentage: true,
                     ),
                     Container(

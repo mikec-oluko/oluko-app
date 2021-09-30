@@ -43,11 +43,8 @@ class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
                         Padding(
                           padding: const EdgeInsets.all(10.0),
                           child: Text(
-                            OlukoLocalizations.of(context)
-                                .find('upcomingChallenges'),
-                            style: OlukoFonts.olukoBigFont(
-                                customColor: OlukoColors.white,
-                                custoFontWeight: FontWeight.w500),
+                            OlukoLocalizations.of(context).find('upcomingChallenges'),
+                            style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                           ),
                         ),
                         Row(children: [
@@ -74,10 +71,8 @@ class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text(
-                            OlukoLocalizations.of(context).find('all'),
-                            style: OlukoFonts.olukoBigFont(
-                                customColor: OlukoColors.white,
-                                custoFontWeight: FontWeight.w500),
+                            OlukoLocalizations.get(context, 'all'),
+                            style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                           ),
                           GridView.count(
                             childAspectRatio: 0.5,

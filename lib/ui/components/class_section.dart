@@ -64,7 +64,7 @@ class _State extends State<ClassSection> {
                           Padding(
                               padding: const EdgeInsets.only(left: 15.0),
                               child: Text(
-                                OlukoLocalizations.of(context).find('class').toUpperCase() +
+                                OlukoLocalizations.get(context, 'class').toUpperCase() +
                                     " " +
                                     (widget.index + 1).toString() +
                                     "/" +

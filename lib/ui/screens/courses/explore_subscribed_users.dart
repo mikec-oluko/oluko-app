@@ -47,7 +47,7 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
                         padding: const EdgeInsets.only(bottom: 16.0),
                         child: Row(
                           children: [
-                            TitleBody(OlukoLocalizations.of(context).find("favourites")),
+                            TitleBody(OlukoLocalizations.get(context, "favourites")),
                           ],
                         ),
                       ),
@@ -59,7 +59,7 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
                         padding: const EdgeInsets.only(bottom: 16.0),
                         child: Row(
                           children: [
-                            TitleBody(OlukoLocalizations.of(context).find("everyoneElse")),
+                            TitleBody(OlukoLocalizations.get(context, "everyoneElse")),
                           ],
                         ),
                       ),
@@ -116,7 +116,7 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
     } else {
       return Padding(
         padding: const EdgeInsets.only(bottom: 20, top: 10),
-        child: TitleBody(OlukoLocalizations.of(context).find('noUsers')),
+        child: TitleBody(OlukoLocalizations.get(context, 'noUsers')),
       );
     }
   }

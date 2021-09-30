@@ -51,19 +51,19 @@ class TimeConverter {
   static String toCourseDuration(int weeks, int classes, BuildContext context) {
     return weeks.toString() +
         " " +
-        OlukoLocalizations.of(context).find('weeks') +
+        OlukoLocalizations.get(context, 'weeks') +
         ", " +
         classes.toString() +
         " " +
-        OlukoLocalizations.of(context).find('classes');
+        OlukoLocalizations.get(context, 'classes');
   }
 
   static String toClassProgress(int currentClass, int totalClasses, BuildContext context) {
-    return OlukoLocalizations.of(context).find('class') +
+    return OlukoLocalizations.get(context, 'class') +
         " " +
         (currentClass + 1).toString() +
         " " +
-        OlukoLocalizations.of(context).find('of') +
+        OlukoLocalizations.get(context, 'of') +
         " " +
         totalClasses.toString();
   }

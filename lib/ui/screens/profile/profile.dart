@@ -146,7 +146,7 @@ class _ProfilePageState extends State<ProfilePage> {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(left: 10),
-                  child: Text(OlukoLocalizations.of(context).find(returnOptionString(option.option)),
+                  child: Text(OlukoLocalizations.get(context, returnOptionString(option.option)),
                       style: option.enable ? OlukoFonts.olukoMediumFont() : OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor)),
                 ),
                 IconButton(icon: Icon(Icons.arrow_forward_ios, color: OlukoColors.grayColor), onPressed: null)
