@@ -13,6 +13,8 @@ class CoachHeders {
         return OlukoLocalizations.of(context).find('timelineRecommendedClass');
       case CoachFileTypeEnum.recommendedMovement:
         return OlukoLocalizations.of(context).find('timelineRecommendedMovement');
+      case CoachFileTypeEnum.recommendedSegment:
+        return OlukoLocalizations.of(context).find('timelineRecommendedSegment');
       case CoachFileTypeEnum.faqVideo:
         return OlukoLocalizations.of(context).find('timelineFaqVideo');
     }

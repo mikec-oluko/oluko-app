@@ -14,8 +14,9 @@ List<CoachTimelineGroup> buildContentForTimelinePanel(
   //-----------------------------------------
 
   //REPETIDOS------------------------------
-  listOfCourseId.forEach((course) {
-    final repeatedItemsQuery = timelineItemsContent.where((timelineItem) => timelineItem.course.id == course).toList();
+  listOfCourseId.forEach((courseId) {
+    final repeatedItemsQuery =
+        timelineItemsContent.where((timelineItem) => timelineItem.course.id == courseId).toList();
     repeatedItemsQuery.length > 1
         ? contentSameCourse.addAll(repeatedItemsQuery)
         : contentEachCourse.addAll(repeatedItemsQuery);

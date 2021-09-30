@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/coach_get_header_for_content.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 
 class CoachTimelineCircleContent extends StatefulWidget {
   const CoachTimelineCircleContent({this.circleImage, this.circleTitle, this.date, this.fileType});
-  final String circleImage, circleTitle, date;
+  final String circleImage, circleTitle;
+  final DateTime date;
   final CoachFileTypeEnum fileType;
 
   @override
@@ -56,7 +58,8 @@ class _CoachTimelineCircleContentState extends State<CoachTimelineCircleContent>
                     ),
                     Padding(
                       padding: const EdgeInsets.all(5),
-                      child: Text(widget.date, style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor)),
+                      child: Text(DateFormat.jm().format(widget.date).toString(),
+                          style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor)),
                     ),
                   ],
                 ),

@@ -29,9 +29,11 @@ enum CoachContentSection { sentVideos, mentoredVideos, recomendedVideos, voiceMe
 
 enum CoachFileTypeEnum {
   mentoredVideo,
+  sentVideo,
   recommendedCourse,
   recommendedClass,
   recommendedMovement,
+  recommendedSegment,
   faqVideo,
 }
 

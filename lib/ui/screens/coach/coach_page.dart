@@ -81,7 +81,6 @@ class _CoachPageState extends State<CoachPage> {
               if (state is CoachProfileDataSuccess) {
                 _coachUser = state.coachProfile;
               }
-
               return Scaffold(
                 appBar: CoachAppBar(
                   coachUser: _coachUser,
@@ -103,11 +102,12 @@ class _CoachPageState extends State<CoachPage> {
                           timelinePanelContent = buildContentForTimelinePanel(listOfCourseId, contentSameCourse,
                               contentEachCourse, timelinePanelContent, _timelineItemsContent);
                         }
-                        print(timelinePanelContent);
-                        return CoachSlidingUpPanel(
-                          content: coachViewPageContent(context),
-                          timelineItemsContent: _timelineItemsContent,
-                        );
+                        return timelinePanelContent.isEmpty
+                            ? Container(color: OlukoColors.black, child: OlukoCircularProgressIndicator())
+                            : CoachSlidingUpPanel(
+                                content: coachViewPageContent(context),
+                                timelineItemsContent: timelinePanelContent,
+                              );
                       },
                     );
                   },

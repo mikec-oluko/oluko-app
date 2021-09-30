@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/coach_get_header_for_content.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 
 class CoachTimelineVideoContent extends StatefulWidget {
   const CoachTimelineVideoContent({this.videoTitle, this.videoThumbnail, this.date, this.fileType});
-  final String videoTitle, videoThumbnail, date;
+  final String videoTitle, videoThumbnail;
+  final DateTime date;
   final CoachFileTypeEnum fileType;
   @override
   _CoachTimelineVideoContentState createState() => _CoachTimelineVideoContentState();
@@ -74,7 +76,8 @@ class _CoachTimelineVideoContentState extends State<CoachTimelineVideoContent> {
                     ),
                     Padding(
                       padding: const EdgeInsets.all(5),
-                      child: Text(widget.date, style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor)),
+                      child: Text(DateFormat.jm().format(widget.date).toString(),
+                          style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor)),
                     ),
                   ],
                 ),

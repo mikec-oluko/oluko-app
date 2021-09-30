@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/coach_get_header_for_content.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
@@ -6,13 +7,13 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class CoachTimelineCardContent extends StatefulWidget {
   const CoachTimelineCardContent({this.cardTitle, this.cardSubTitle, this.cardImage, this.date, this.fileType});
-  final String cardTitle, cardSubTitle, date, cardImage;
+  final String cardTitle, cardSubTitle, cardImage;
+  final DateTime date;
   final CoachFileTypeEnum fileType;
 
   @override
   _CoachTimelineCardContentState createState() => _CoachTimelineCardContentState();
 }
-// '7:10 AM'
 
 class _CoachTimelineCardContentState extends State<CoachTimelineCardContent> {
   @override
@@ -48,8 +49,8 @@ class _CoachTimelineCardContentState extends State<CoachTimelineCardContent> {
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 5),
-                          child:
-                              Text(widget.date, style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor)),
+                          child: Text(DateFormat.jm().format(widget.date).toString(),
+                              style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor)),
                         ),
                       ],
                     )
