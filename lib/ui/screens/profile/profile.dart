@@ -172,5 +172,5 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
-  String returnOptionString(ProfileOptionsTitle option) => option.toString().split(".")[1];
+  String returnOptionString(ProfileOptionsTitle option) => option.toString().split('.')[1];
 }

@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_positional_boolean_parameters
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
@@ -32,7 +34,7 @@ class UserProfileInformation extends StatefulWidget {
 class _UserProfileInformationState extends State<UserProfileInformation> {
   String _userLocation;
   bool _isOwner = false;
-  String _archivementsDefaultValue = "0";
+  final String _archivementsDefaultValue = '0';
   PrivacyOptions _privacyOptions = PrivacyOptions();
   HiFiveReceivedSuccess _hiFiveReceivedState;
   AuthSuccess _authState;
@@ -40,9 +42,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
   @override
   void initState() {
     _userLocation = getUserLocation(widget.userToDisplayInformation);
-    if (_isOwnerProfile(currentUser: widget.currentUser, userRequested: widget.userToDisplayInformation)) {
-      _isOwner = true;
-    }
+    _isOwner = _isOwnerProfile(currentUser: widget.currentUser, userRequested: widget.userToDisplayInformation);
 
     super.initState();
   }
@@ -53,7 +53,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
 
   @override
   Widget build(BuildContext context) {
-    final List<String> _valuesDemo = ["07", "10", "50"];
+    final List<String> _valuesDemo = ['07', '10', '50'];
 
     return BlocListener<HiFiveReceivedBloc, HiFiveReceivedState>(
       listener: (BuildContext context, HiFiveReceivedState state) {
@@ -85,6 +85,12 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
   }
 
   Widget _profileUserInformation(String location, List<String> valuesForArchivements) {
+    final bool canShowDetails = _privacyOptions.canShowDetails(
+        isOwner: _isOwner,
+        currentUser: widget.currentUser,
+        userRequested: widget.userToDisplayInformation,
+        connectStatus: widget.connectStatus);
+
     return Column(
       children: [
         //PROFILE IMAGE AND INFO
@@ -111,23 +117,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                             ).image,
                             radius: 30.0,
                           ),
-                          Visibility(
-                            visible: widget.actualRoute == ActualProfileRoute.userProfile && _isOwner,
-                            child: Positioned(
-                              top: 25,
-                              right: -12,
-                              child: Container(
-                                clipBehavior: Clip.none,
-                                width: 40,
-                                height: 40,
-                                child: TextButton(
-                                    onPressed: () {
-                                      BlocProvider.of<ProfileAvatarBloc>(context).openPanel();
-                                    },
-                                    child: Image.asset('assets/profile/uploadImage.png')),
-                              ),
-                            ),
-                          ),
+                          getVisibility(widget, context, _isOwner),
                         ]),
                       )
                     : Padding(
@@ -137,23 +127,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                             backgroundColor: OlukoColors.black,
                             radius: 30.0,
                           ),
-                          Visibility(
-                            visible: widget.actualRoute == ActualProfileRoute.userProfile && _isOwner,
-                            child: Positioned(
-                              top: 25,
-                              right: -12,
-                              child: Container(
-                                clipBehavior: Clip.none,
-                                width: 40,
-                                height: 40,
-                                child: TextButton(
-                                    onPressed: () {
-                                      BlocProvider.of<ProfileAvatarBloc>(context)..openPanel();
-                                    },
-                                    child: Image.asset('assets/profile/uploadImage.png')),
-                              ),
-                            ),
-                          ),
+                          getVisibility(widget, context, _isOwner),
                         ]),
                       ),
                 Padding(
@@ -163,11 +137,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                       //PROFILE NAME AND LASTNAME
                       _isOwner
                           ? userInfoUnlocked(location)
-                          : _privacyOptions.canShowDetails(
-                                  isOwner: _isOwner,
-                                  currentUser: widget.currentUser,
-                                  userRequested: widget.userToDisplayInformation,
-                                  connectStatus: widget.connectStatus)
+                          : canShowDetails
                               ? userInfoUnlocked(location)
                               : userInfoLocked(),
                     ],
@@ -216,23 +186,44 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
             ),
           ],
         ),
-        //PROFILE ARCHIVEMENTS
-        _privacyOptions.canShowDetails(
-                isOwner: _isOwner,
-                currentUser: widget.currentUser,
-                userRequested: widget.userToDisplayInformation,
-                connectStatus: widget.connectStatus)
-            ? UserProfileProgress(
-                challengesCompleted: widget.userStats != null ? widget.userStats.completedChallenges.toString() : _archivementsDefaultValue,
-                coursesCompleted: widget.userStats != null ? widget.userStats.completedCourses.toString() : _archivementsDefaultValue,
-                classesCompleted: widget.userStats != null ? widget.userStats.completedClasses.toString() : _archivementsDefaultValue,
-              )
-            : UserProfileProgress(
-                challengesCompleted: _archivementsDefaultValue,
-                coursesCompleted: _archivementsDefaultValue,
-                classesCompleted: _archivementsDefaultValue,
-              )
+        getUserProfileProgress(widget.userStats, canShowDetails)
       ],
+    );
+  }
+
+  UserProfileProgress getUserProfileProgress(UserStatistics userStats, bool canShowDetails) {
+    if (!canShowDetails || userStats == null) {
+      return UserProfileProgress(
+        challengesCompleted: _archivementsDefaultValue,
+        coursesCompleted: _archivementsDefaultValue,
+        classesCompleted: _archivementsDefaultValue,
+      );
+    } else {
+      return UserProfileProgress(
+        challengesCompleted: widget.userStats.completedChallenges.toString(),
+        coursesCompleted: widget.userStats.completedCourses.toString(),
+        classesCompleted: widget.userStats.completedClasses.toString(),
+      );
+    }
+  }
+
+  Visibility getVisibility(UserProfileInformation userProfileWidget, BuildContext context, bool isOwner) {
+    return Visibility(
+      visible: userProfileWidget.actualRoute == ActualProfileRoute.userProfile && isOwner,
+      child: Positioned(
+        top: 25,
+        right: -12,
+        child: Container(
+          clipBehavior: Clip.none,
+          width: 40,
+          height: 40,
+          child: TextButton(
+              onPressed: () {
+                BlocProvider.of<ProfileAvatarBloc>(context).openPanel();
+              },
+              child: Image.asset('assets/profile/uploadImage.png')),
+        ),
+      ),
     );
   }
 

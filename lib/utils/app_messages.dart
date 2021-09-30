@@ -12,7 +12,7 @@ class AppMessages {
   static void showSnackbarTranslated(BuildContext context, String translationKey) {
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(OlukoLocalizations.of(context).find(translationKey)),
+      content: Text(OlukoLocalizations.get(context, translationKey)),
     ));
   }
 }
