@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:oluko_app/blocs/course_bloc.dart';
+import 'package:oluko_app/blocs/course/course_bloc.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/course_statistics.dart';

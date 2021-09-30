@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
-import 'package:oluko_app/blocs/course_bloc.dart';
+import 'package:oluko_app/blocs/course/course_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
