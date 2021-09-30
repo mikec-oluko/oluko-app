@@ -121,6 +121,7 @@ class CourseEnrollmentRepository {
         image: course.image);
     CourseEnrollment courseEnrollment = CourseEnrollment(
         createdBy: user.uid,
+        userId: user.uid,
         userReference: userReference,
         course: courseSubmodel,
         classes: []);
