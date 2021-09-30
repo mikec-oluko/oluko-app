@@ -36,9 +36,9 @@ class AssessmentAssignment extends Base {
     AssessmentAssignment assessmentAssignment = AssessmentAssignment(
       compleatedAt: json['compleated_at'] as Timestamp,
       seenAt: json['seen_at'] as Timestamp,
-      assessmentId: json['assessment_id'].toString(),
+      assessmentId: json['assessment_id']?.toString(),
       assessmentReference: json['assessment_reference'] as DocumentReference,
-      coachId: json['coach_id'].toString(),
+      coachId: json['coach_id']?.toString(),
       coachReference: json['coach_reference'] as DocumentReference,
     );
     assessmentAssignment.setBase(json);

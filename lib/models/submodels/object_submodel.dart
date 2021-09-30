@@ -11,9 +11,9 @@ class ObjectSubmodel {
   factory ObjectSubmodel.fromJson(Map<String, dynamic> json) {
     return ObjectSubmodel(
         reference: json['reference'] as DocumentReference,
-        id: json['id'].toString(),
-        name: json['name'].toString(),
-        image: json['image'].toString());
+        id: json['id']?.toString(),
+        name: json['name']?.toString(),
+        image: json['image']?.toString());
   }
 
   Map<String, dynamic> toJson() => {

@@ -9,28 +9,16 @@ class SignUpRequest {
   String username;
 
   SignUpRequest.fromJson(Map json)
-      : email = json['email'].toString(),
-        password = json['password'].toString(),
-        firstName = json['first_name'].toString(),
-        lastName = json['last_name'].toString(),
-        projectId = json['projectid'].toString(),
-        username = json['username'].toString();
+      : email = json['email']?.toString(),
+        password = json['password']?.toString(),
+        firstName = json['first_name']?.toString(),
+        lastName = json['last_name']?.toString(),
+        projectId = json['projectid']?.toString(),
+        username = json['username']?.toString();
 
-  Map<String, dynamic> toJson() => {
-        'email': email,
-        'password': password,
-        'first_name': firstName,
-        'last_name': lastName,
-        'projectId': projectId,
-        'username': username
-      };
+  Map<String, dynamic> toJson() =>
+      {'email': email, 'password': password, 'first_name': firstName, 'last_name': lastName, 'projectId': projectId, 'username': username};
 
-  Map<String, dynamic> toDTOJson() => {
-        'email': email,
-        'password': password,
-        'firstName': firstName,
-        'lastName': lastName,
-        'projectId': projectId,
-        'username': username
-      };
+  Map<String, dynamic> toDTOJson() =>
+      {'email': email, 'password': password, 'firstName': firstName, 'lastName': lastName, 'projectId': projectId, 'username': username};
 }

@@ -23,13 +23,13 @@ class DrawPoint {
       point: json['x'] == null
           ? null
           : DrawingPoints(
-              points: Offset(double.tryParse(json['x'].toString()), double.tryParse(json['y'].toString())),
+              points: Offset(double.tryParse(json['x']?.toString()), double.tryParse(json['y']?.toString())),
               paint: Paint()
                 ..strokeWidth = 3.0
                 ..isAntiAlias = true
                 ..strokeCap = StrokeCap.butt
                 ..color = Colors.red),
-      miliseconds: json['time_stamp'].toString() as int,
+      miliseconds: json['time_stamp']?.toString() as int,
     );
   }
 }

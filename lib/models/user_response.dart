@@ -54,12 +54,12 @@ class UserResponse extends Base {
       city: json['city']?.toString(),
       state: json['state']?.toString(),
       country: json['country']?.toString(),
-      firebaseId: json['firebase_id'].toString(),
+      firebaseId: json['firebase_id']?.toString(),
       hubspotCompanyId: json['hubspot_company_id'] as num,
       hubspotContactId: json['hubspot_contact_id'] as num,
       notification: json['notification'] == null ? true : json['notification'] as bool,
       privacy: json['privacy'] == null ? 0 : json['privacy'] as int,
-      currentPlan: json['current_plan'] == null ? -100 : double.tryParse((json['current_plan'] as num).toString()),
+      currentPlan: json['current_plan'] == null ? -100 : double.tryParse((json['current_plan'] as num)?.toString()),
     );
     userResponse.setBase(json);
     return userResponse;

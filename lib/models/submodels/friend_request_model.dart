@@ -9,7 +9,7 @@ class FriendRequestModel {
   }) : super();
 
   factory FriendRequestModel.fromJson(Map<String, dynamic> json) {
-    FriendRequestModel favorite = FriendRequestModel(id: json['id'].toString());
+    FriendRequestModel favorite = FriendRequestModel(id: json['id']?.toString());
     return favorite;
   }
 

@@ -10,23 +10,15 @@ class FriendModel {
   String id;
   bool isFavorite;
 
-  FriendModel(
-      {this.reference,
-      this.isMuted,
-      this.isMutedUntil,
-      this.latestSeenContent,
-      this.id,
-      this.isFavorite});
+  FriendModel({this.reference, this.isMuted, this.isMutedUntil, this.latestSeenContent, this.id, this.isFavorite});
 
   factory FriendModel.fromJson(Map<String, dynamic> json) {
     FriendModel favorite = FriendModel(
         reference: json['reference'] as DocumentReference,
         isMuted: json['is_muted'] as bool,
-        isMutedUntil:
-            json['is_muted_until'] as DateTime, //TODO: update me to Timestamp
-        latestSeenContent: json['latest_seen_content']
-            as DateTime, //TODO: update me to Timestamp
-        id: json['id'].toString(),
+        isMutedUntil: json['is_muted_until'] as DateTime, //TODO: update me to Timestamp
+        latestSeenContent: json['latest_seen_content'] as DateTime, //TODO: update me to Timestamp
+        id: json['id']?.toString(),
         isFavorite: json['is_favorite'] as bool);
     return favorite;
   }
