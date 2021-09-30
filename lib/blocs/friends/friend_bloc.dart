@@ -59,8 +59,8 @@ class FriendBloc extends Cubit<FriendState> {
       Friend friendInformation = await FriendRepository.getUserFriendsRequestByUserId(userId);
 
       if (friendInformation != null) {
-        List<UserResponse> friendRequestUsers = await Future.wait(
-            friendInformation.friendRequestReceived.map((e) => UserRepository().getById(e.id)).toList());
+        List<UserResponse> friendRequestUsers =
+            await Future.wait(friendInformation.friendRequestReceived.map((e) => UserRepository().getById(e.id)).toList());
 
         emit(GetFriendRequestsSuccess(friendData: friendInformation, friendRequestList: friendRequestUsers));
       } else {
@@ -90,10 +90,10 @@ class FriendBloc extends Cubit<FriendState> {
     }
   }
 
-  void removeRequestSent(Friend currentUserFriend, String userRequestedId) async {
+  void removeRequestSent(String userId, Friend currentUserFriend, String userRequestedId) async {
     try {
       await FriendRepository.removeRequestSent(currentUserFriend, userRequestedId);
-      // emit(GetFriendSuggestionSuccess(friendSuggestionList: null));
+      getFriendsByUserId(userId);
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
@@ -104,10 +104,10 @@ class FriendBloc extends Cubit<FriendState> {
     }
   }
 
-  void sendRequestOfConnect(Friend currentUserFriend, String userRequestedId) async {
+  void sendRequestOfConnect(String userId, Friend currentUserFriend, String userRequestedId) async {
     try {
       await FriendRepository.sendRequestOfConnectOnBothUsers(currentUserFriend, userRequestedId);
-      // emit(GetFriendSuggestionSuccess(friendSuggestionList: null));
+      getFriendsByUserId(userId);
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
@@ -120,8 +120,7 @@ class FriendBloc extends Cubit<FriendState> {
 
   void removeFriend(Friend currentUserFriend, String userToRemoveId) async {
     try {
-      await FriendRepository.removeFriendFromList(
-          currentUserFriend, userToRemoveId);
+      await FriendRepository.removeFriendFromList(currentUserFriend, userToRemoveId);
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

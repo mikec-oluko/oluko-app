@@ -61,7 +61,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
         BlocProvider.of<FriendBloc>(context).getFriendsByUserId(authState.user.id);
       }
       return BlocListener<FavoriteFriendBloc, FavoriteFriendState>(
-        listener: (context, favoriteState) {
+        listener: (favoriteFriendContext, favoriteState) {
           handleFriendFavoriteState(favoriteState);
         },
         child: Container(
@@ -87,7 +87,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                 // ),
 
                 BlocBuilder<FriendBloc, FriendState>(builder: (context, friendState) {
-                  return BlocBuilder<UserListBloc, UserListState>(builder: (context, userListState) {
+                  return BlocBuilder<UserListBloc, UserListState>(builder: (userListContext, userListState) {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -186,7 +186,8 @@ class _FriendsListPageState extends State<FriendsListPage> {
             : userListState.users.map((user) {
                 return GestureDetector(
                   onTap: () {
-                    BottomDialogUtils.showBottomDialog(content: dialogContainer(user: user), context: context);
+                    BottomDialogUtils.showBottomDialog(
+                        content: dialogContainer(context: context, user: user, friendState: friendState), context: context);
                   },
                   child: FriendCard(
                     friend: null,
@@ -219,131 +220,154 @@ class _FriendsListPageState extends State<FriendsListPage> {
     }
   }
 
-  Widget dialogContainer({UserResponse user}) {
-    return Container(
-        height: 350,
-        decoration: BoxDecoration(
-            image: DecorationImage(
-          image: AssetImage("assets/courses/dialog_background.png"),
-          fit: BoxFit.cover,
-        )),
-        child: Stack(children: [
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Column(children: [
-              SizedBox(height: 30),
-              Row(
-                children: [
-                  StoriesItem(maxRadius: 40, imageUrl: user.avatar),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+  Widget dialogContainer({BuildContext context, UserResponse user, FriendState friendState}) {
+    bool connectionRequested =
+        friendState is GetFriendsSuccess && friendState.friendData.friendRequestSent.map((f) => f.id).toList().indexOf(user.id) > -1;
+
+    return BlocBuilder<FriendBloc, FriendState>(
+        bloc: BlocProvider.of<FriendBloc>(context),
+        builder: (friendContext, friendState) {
+          connectionRequested =
+              friendState is GetFriendsSuccess && friendState.friendData.friendRequestSent.map((f) => f.id).toList().indexOf(user.id) > -1;
+          return Container(
+              height: 350,
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                image: AssetImage("assets/courses/dialog_background.png"),
+                fit: BoxFit.cover,
+              )),
+              child: Stack(children: [
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(children: [
+                    SizedBox(height: 30),
+                    Row(
                       children: [
-                        TitleBody(
-                          '${user.firstName} ${user.lastName}',
-                          bold: true,
-                        ),
-                        Text(
-                          user.username,
-                          style: TextStyle(color: Colors.grey, fontSize: 15),
-                        ),
+                        StoriesItem(maxRadius: 40, imageUrl: user.avatar),
                         Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text('${user.city}, ${user.country}', style: TextStyle(color: Colors.grey, fontSize: 15)),
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              TitleBody(
+                                '${user.firstName} ${user.lastName}',
+                                bold: true,
+                              ),
+                              Text(
+                                user.username,
+                                style: TextStyle(color: Colors.grey, fontSize: 15),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: Text('${user.city}, ${user.country}', style: TextStyle(color: Colors.grey, fontSize: 15)),
+                              )
+                            ],
+                          ),
                         )
                       ],
                     ),
-                  )
-                ],
-              ),
-              SizedBox(height: 20),
-              BlocBuilder<HiFiveReceivedBloc, HiFiveReceivedState>(
-                  bloc: BlocProvider.of<HiFiveReceivedBloc>(context)..get(context, _authStateData.user.id, user.id),
-                  builder: (hiFiveReceivedContext, hiFiveReceivedState) {
-                    return BlocBuilder<UserStatisticsBloc, UserStatisticsState>(
-                        bloc: BlocProvider.of(context)..getUserStatistics(user.id),
-                        builder: (userStatisticsContext, userStats) {
-                          return userStats is StatisticsSuccess
-                              ? Row(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(right: 16.0),
-                                      child: GestureDetector(
-                                          onTap: () {
-                                            BlocProvider.of<HiFiveSendBloc>(context).set(context, _authStateData.user.id, user.id,
-                                                hiFive: !(hiFiveReceivedState is HiFiveReceivedSuccess && hiFiveReceivedState.hiFive == true));
-                                          },
-                                          child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
-                                            bloc: BlocProvider.of(context),
-                                            listener: (hiFiveSendContext, hiFiveSendState) {
-                                              if (hiFiveSendState is HiFiveSendSuccess) {
-                                                AppMessages.showSnackbar(
-                                                    userStatisticsContext,
-                                                    hiFiveSendState.hiFive
-                                                        ? OlukoLocalizations.of(context).find('hiFiveSent')
-                                                        : OlukoLocalizations.of(context).find('hiFiveRemoved'));
-                                              }
-                                              if (hiFiveSendState is HiFiveSendSuccess) {
-                                                BlocProvider.of<HiFiveReceivedBloc>(context).get(context, _authStateData.user.id, user.id);
-                                              }
-                                            },
-                                            child: Container(
-                                                width: 80,
-                                                height: 80,
-                                                child: Image.asset(hiFiveReceivedState is HiFiveReceivedSuccess && hiFiveReceivedState.hiFive == true
-                                                    ? 'assets/profile/hiFive_selected.png'
-                                                    : 'assets/profile/hiFive.png')),
-                                          )),
-                                    ),
-                                    profileAccomplishments(
-                                        achievementTitle: 'Challenges completed',
-                                        achievementValue: userStats.userStats.completedChallenges.toString()),
-                                    profileAccomplishments(
-                                        achievementTitle: 'Courses completed', achievementValue: userStats.userStats.completedChallenges.toString()),
-                                    profileAccomplishments(
-                                        achievementTitle: 'Courses completed', achievementValue: userStats.userStats.completedCourses.toString()),
-                                  ],
-                                )
-                              : SizedBox();
-                        });
-                  }),
-              SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Container(
-                      height: 25,
-                      width: 25,
-                      child: Image.asset(
-                        'assets/icon/heart.png',
-                      ),
+                    SizedBox(height: 20),
+                    BlocBuilder<HiFiveReceivedBloc, HiFiveReceivedState>(
+                        bloc: BlocProvider.of<HiFiveReceivedBloc>(context)..get(context, _authStateData.user.id, user.id),
+                        builder: (hiFiveReceivedContext, hiFiveReceivedState) {
+                          return BlocBuilder<UserStatisticsBloc, UserStatisticsState>(
+                              bloc: BlocProvider.of(context)..getUserStatistics(user.id),
+                              builder: (userStatisticsContext, userStats) {
+                                return userStats is StatisticsSuccess
+                                    ? Row(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(right: 16.0),
+                                            child: GestureDetector(
+                                                onTap: () {
+                                                  BlocProvider.of<HiFiveSendBloc>(context).set(context, _authStateData.user.id, user.id,
+                                                      hiFive: !(hiFiveReceivedState is HiFiveReceivedSuccess && hiFiveReceivedState.hiFive == true));
+                                                },
+                                                child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
+                                                  bloc: BlocProvider.of(context),
+                                                  listener: (hiFiveSendContext, hiFiveSendState) {
+                                                    if (hiFiveSendState is HiFiveSendSuccess) {
+                                                      AppMessages.showSnackbar(
+                                                          userStatisticsContext,
+                                                          hiFiveSendState.hiFive
+                                                              ? OlukoLocalizations.of(context).find('hiFiveSent')
+                                                              : OlukoLocalizations.of(context).find('hiFiveRemoved'));
+                                                    }
+                                                    if (hiFiveSendState is HiFiveSendSuccess) {
+                                                      BlocProvider.of<HiFiveReceivedBloc>(context).get(context, _authStateData.user.id, user.id);
+                                                    }
+                                                  },
+                                                  child: Container(
+                                                      width: 80,
+                                                      height: 80,
+                                                      child: Image.asset(
+                                                          hiFiveReceivedState is HiFiveReceivedSuccess && hiFiveReceivedState.hiFive == true
+                                                              ? 'assets/profile/hiFive_selected.png'
+                                                              : 'assets/profile/hiFive.png')),
+                                                )),
+                                          ),
+                                          profileAccomplishments(
+                                              achievementTitle: 'Challenges completed',
+                                              achievementValue: userStats.userStats.completedChallenges.toString()),
+                                          profileAccomplishments(
+                                              achievementTitle: 'Courses completed',
+                                              achievementValue: userStats.userStats.completedChallenges.toString()),
+                                          profileAccomplishments(
+                                              achievementTitle: 'Courses completed',
+                                              achievementValue: userStats.userStats.completedCourses.toString()),
+                                        ],
+                                      )
+                                    : SizedBox();
+                              });
+                        }),
+                    SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Container(
+                            height: 25,
+                            width: 25,
+                            child: Image.asset(
+                              'assets/icon/heart.png',
+                            ),
+                          ),
+                        ),
+                        connectionRequested
+                            ? OlukoPrimaryButton(
+                                thinPadding: true,
+                                title: 'Cancel',
+                                onPressed: () {
+                                  if (friendState is GetFriendsSuccess)
+                                    BlocProvider.of<FriendBloc>(context).removeRequestSent(_authStateData.user.id, friendState.friendData, user.id);
+                                },
+                              )
+                            : OlukoOutlinedButton(
+                                thinPadding: true,
+                                title: OlukoLocalizations.of(context).find('connect'),
+                                onPressed: () {
+                                  if (friendState is GetFriendsSuccess)
+                                    BlocProvider.of<FriendBloc>(context)
+                                        .sendRequestOfConnect(_authStateData.user.id, friendState.friendData, user.id);
+                                }),
+                        SizedBox(width: 10),
+                        OlukoOutlinedButton(
+                          thinPadding: true,
+                          title: 'View full profile',
+                          onPressed: () {
+                            Navigator.pushNamed(context, routeLabels[RouteEnum.profileViewOwnProfile], arguments: {'userRequested': user});
+                          },
+                        )
+                      ],
                     ),
-                  ),
-                  OlukoOutlinedButton(
-                    thinPadding: true,
-                    title: OlukoLocalizations.of(context).find('connect'),
-                    onPressed: () {
-                      //navigateToSegmentWithoutRecording();
-                    },
-                  ),
-                  SizedBox(width: 10),
-                  OlukoPrimaryButton(
-                    thinPadding: true,
-                    title: 'View full profile',
-                    onPressed: () {
-                      Navigator.pushNamed(context, routeLabels[RouteEnum.profileViewOwnProfile], arguments: {'userRequested': user});
-                    },
-                  )
-                ],
-              ),
-            ]),
-          ),
-          Align(
-              alignment: Alignment.topRight, child: IconButton(icon: Icon(Icons.close, color: Colors.white), onPressed: () => Navigator.pop(context)))
-        ]));
+                  ]),
+                ),
+                Align(
+                    alignment: Alignment.topRight,
+                    child: IconButton(icon: Icon(Icons.close, color: Colors.white), onPressed: () => Navigator.pop(context)))
+              ]));
+        });
   }
 
   Widget profileAccomplishments({String achievementTitle, String achievementValue}) {
