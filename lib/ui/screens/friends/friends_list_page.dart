@@ -229,6 +229,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
         builder: (friendContext, friendState) {
           connectionRequested =
               friendState is GetFriendsSuccess && friendState.friendData.friendRequestSent.map((f) => f.id).toList().indexOf(user.id) > -1;
+          bool userIsFriend = friendState is GetFriendsSuccess && friendState.friendUsers.map((e) => e.id).toList().contains(user.id);
           return Container(
               height: 350,
               decoration: BoxDecoration(
@@ -324,13 +325,31 @@ class _FriendsListPageState extends State<FriendsListPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Container(
-                            height: 25,
-                            width: 25,
-                            child: Image.asset(
-                              'assets/icon/heart.png',
+                        Visibility(
+                          visible: friendState is GetFriendsSuccess && friendState.friendUsers.map((e) => e.id).toList().contains(user.id),
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: GestureDetector(
+                              onTap: () {
+                                if (friendState is GetFriendsSuccess) {
+                                  bool userIsFriend = friendState.friendUsers.map((e) => e.id).toList().contains(user.id);
+                                  FriendModel friendModel = friendState.friendData.friends.where((element) => element.id == user.id).first;
+                                  if (friendState is GetFriendsSuccess && userIsFriend) {
+                                    BlocProvider.of<FavoriteFriendBloc>(context).favoriteFriend(context, friendState.friendData, friendModel);
+                                  }
+                                }
+                              },
+                              child: Container(
+                                height: 25,
+                                width: 25,
+                                child: Image.asset(
+                                  friendState is GetFriendsSuccess &&
+                                          friendState.friendData.friends.where((e) => e.id == user.id).toList().isNotEmpty &&
+                                          friendState.friendData.friends.where((e) => e.id == user.id).toList()[0].isFavorite
+                                      ? 'assets/icon/heart_filled.png'
+                                      : 'assets/icon/heart.png',
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -345,7 +364,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                               )
                             : OlukoOutlinedButton(
                                 thinPadding: true,
-                                title: OlukoLocalizations.of(context).find('connect'),
+                                title: userIsFriend ? OlukoLocalizations.of(context).find('remove') : OlukoLocalizations.of(context).find('connect'),
                                 onPressed: () {
                                   if (friendState is GetFriendsSuccess)
                                     BlocProvider.of<FriendBloc>(context)
