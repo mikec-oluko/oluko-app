@@ -132,7 +132,6 @@ class _MyHomePageState extends State<MyHomePage> {
       padding: const EdgeInsets.only(top: 0.0, left: 8, right: 8),
       child: ListView(
         children: [
-          StoriesHeader(),
           ListView.builder(
               physics: NeverScrollableScrollPhysics(),
               itemCount: courseState.coursesByCategories.length,

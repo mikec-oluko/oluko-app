@@ -1,7 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/dto/story_dto.dart';
 import 'package:oluko_app/models/movement_submission.dart';
-import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/repositories/story_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 

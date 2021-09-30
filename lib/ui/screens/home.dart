@@ -12,6 +12,7 @@ import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/course_section.dart';
 import 'package:oluko_app/ui/components/course_step_section.dart';
+import 'package:oluko_app/ui/components/stories_header.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -58,12 +59,15 @@ class _HomeState extends State<Home> {
           showBackButton: false,
           actions: [_handWidget()],
         ),
-        body: WillPopScope(
-          onWillPop: () => AppNavigator.onWillPop(context),
-          child: OrientationBuilder(builder: (context, orientation) {
-            return homeContainer();
-          }),
-        ));
+        body: Column(children: [
+          StoriesHeader(_user.uid),
+          WillPopScope(
+            onWillPop: () => AppNavigator.onWillPop(context),
+            child: OrientationBuilder(builder: (context, orientation) {
+              return homeContainer();
+            }),
+          )
+        ]));
   }
 
   Widget homeContainer() {
@@ -88,14 +92,7 @@ class _HomeState extends State<Home> {
   Widget enrolled() {
     return CarouselSlider(
       items: courseSectionList(),
-      options: CarouselOptions(
-          height: 600,
-          autoPlay: false,
-          enlargeCenterPage: false,
-          disableCenter: true,
-          enableInfiniteScroll: false,
-          initialPage: 0,
-          viewportFraction: 1),
+      options: CarouselOptions(height: 600, autoPlay: false, enlargeCenterPage: false, disableCenter: true, enableInfiniteScroll: false, initialPage: 0, viewportFraction: 1),
     );
   }
 
@@ -105,8 +102,7 @@ class _HomeState extends State<Home> {
       if (_courses.length - 1 < i) {
         // do nothing
       } else {
-        widgets
-            .add(CourseSection(qtyCourses: _courses.length, courseIndex: i, course: _courses[i], courseEnrollment: _courseEnrollments[i]));
+        widgets.add(CourseSection(qtyCourses: _courses.length, courseIndex: i, course: _courses[i], courseEnrollment: _courseEnrollments[i]));
       }
     }
     return widgets;
@@ -129,10 +125,8 @@ class _HomeState extends State<Home> {
               scale: 2,
             ),
             SizedBox(height: 70),
-            Text(OlukoLocalizations.of(context).find('enroll'),
-                style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold, customColor: OlukoColors.white)),
-            Text(OlukoLocalizations.of(context).find('toACourse'),
-                style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold, customColor: OlukoColors.white)),
+            Text(OlukoLocalizations.of(context).find('enroll'), style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold, customColor: OlukoColors.white)),
+            Text(OlukoLocalizations.of(context).find('toACourse'), style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold, customColor: OlukoColors.white)),
             SizedBox(height: 10),
             CourseStepSection(totalCourseSteps: 4, currentCourseStep: 4),
             SizedBox(height: 30),
