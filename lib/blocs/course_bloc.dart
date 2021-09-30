@@ -2,7 +2,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_category.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
-import 'package:oluko_app/models/course_statistics.dart';
 import 'package:oluko_app/repositories/course_category_repository.dart';
 import 'package:oluko_app/repositories/course_repository.dart';
 import 'package:oluko_app/utils/course_utils.dart';
@@ -34,7 +33,7 @@ class GetByCourseEnrollmentsSuccess extends CourseState {
 }
 
 class CourseFailure extends CourseState {
-  final Exception exception;
+  final dynamic exception;
 
   CourseFailure({this.exception});
 }
@@ -55,6 +54,7 @@ class CourseBloc extends Cubit<CourseState> {
         stackTrace: stackTrace,
       );
       emit(CourseFailure(exception: exception));
+      rethrow;
     }
   }
 
@@ -64,10 +64,8 @@ class CourseBloc extends Cubit<CourseState> {
     }
     try {
       List<Course> courses = await CourseRepository().getAll();
-      List<CourseCategory> courseCategories =
-          await CourseCategoryRepository().getAll();
-      Map<CourseCategory, List<Course>> mappedCourses =
-          CourseUtils.mapCoursesByCategories(courses, courseCategories);
+      List<CourseCategory> courseCategories = await CourseCategoryRepository().getAll();
+      Map<CourseCategory, List<Course>> mappedCourses = CourseUtils.mapCoursesByCategories(courses, courseCategories);
       emit(CourseSuccess(values: courses, coursesByCategories: mappedCourses));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -75,6 +73,7 @@ class CourseBloc extends Cubit<CourseState> {
         stackTrace: stackTrace,
       );
       emit(CourseFailure(exception: exception));
+      rethrow;
     }
   }
 
@@ -91,13 +90,13 @@ class CourseBloc extends Cubit<CourseState> {
         stackTrace: stackTrace,
       );
       emit(CourseFailure(exception: exception));
+      rethrow;
     }
   }
 
   void getUserEnrolled(String userId) async {
     try {
-      List<Course> enrolledCourses =
-          await CourseRepository.getUserEnrolled(userId);
+      List<Course> enrolledCourses = await CourseRepository.getUserEnrolled(userId);
       emit(UserEnrolledCoursesSuccess(courses: enrolledCourses));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -105,13 +104,13 @@ class CourseBloc extends Cubit<CourseState> {
         stackTrace: stackTrace,
       );
       emit(CourseFailure(exception: exception));
+      rethrow;
     }
   }
 
   void getByCourseEnrollments(List<CourseEnrollment> courseEnrollments) async {
     try {
-      List<Course> courses =
-          await CourseRepository.getByCourseEnrollments(courseEnrollments);
+      List<Course> courses = await CourseRepository.getByCourseEnrollments(courseEnrollments);
       emit(GetByCourseEnrollmentsSuccess(courses: courses));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -119,6 +118,7 @@ class CourseBloc extends Cubit<CourseState> {
         stackTrace: stackTrace,
       );
       emit(CourseFailure(exception: exception));
+      rethrow;
     }
   }
 }

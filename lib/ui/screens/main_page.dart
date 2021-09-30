@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/views_bloc/hi_five_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';
 import 'package:oluko_app/ui/screens/coach/coach_page.dart';
@@ -16,8 +19,7 @@ class MainPage extends StatefulWidget {
   _MainPageState createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage>
-    with SingleTickerProviderStateMixin {
+class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin {
   List<Widget> tabs = [
     //MyHomePage(),
     //TODO:Change to Home() when finished
@@ -53,14 +55,19 @@ class _MainPageState extends State<MainPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: TabBarView(
-        controller: this.tabController,
-        children: tabs,
-      ),
+      body: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
+        if (authState is AuthSuccess) {
+          BlocProvider.of<HiFiveBloc>(context).get(authState.user.id);
+        }
+        return TabBarView(
+          controller: this.tabController,
+          children: tabs,
+        );
+      }),
       bottomNavigationBar: OlukoBottomNavigationBar(
         selectedIndex: this.tabController.index,
         onPressed: (index) => this.setState(() {
-          this.tabController.animateTo(index);
+          this.tabController.animateTo(index as int);
         }),
       ),
     );

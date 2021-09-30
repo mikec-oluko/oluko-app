@@ -39,9 +39,7 @@ class _OverlayVideoPreviewState extends State<OverlayVideoPreview> {
   @override
   Widget build(BuildContext context) {
     return widget.bottomWidgets != null
-        ? Stack(
-            alignment: Alignment.bottomLeft,
-            children: [videoWithButtons()] + widget.bottomWidgets)
+        ? Stack(alignment: Alignment.bottomLeft, children: [videoWithButtons()] + widget.bottomWidgets)
         : videoWithButtons();
   }
 
@@ -68,10 +66,7 @@ class _OverlayVideoPreviewState extends State<OverlayVideoPreview> {
         child: Row(
           children: [
             widget.showBackButton
-                ? IconButton(
-                    icon:
-                        Icon(Icons.chevron_left, size: 35, color: Colors.white),
-                    onPressed: () => Navigator.pop(context))
+                ? IconButton(icon: Icon(Icons.chevron_left, size: 35, color: Colors.white), onPressed: () => Navigator.pop(context))
                 : SizedBox(),
             Expanded(child: SizedBox()),
             widget.showShareButton
@@ -105,33 +100,33 @@ class _OverlayVideoPreviewState extends State<OverlayVideoPreview> {
                   widget.image,
                   fit: BoxFit.cover,
                 )),
-      Padding(
-          padding: const EdgeInsets.only(bottom: 16),
-          child: GestureDetector(
-            onTap: () => Navigator.of(context).push(
-              PageRouteBuilder(
-                opaque: false,
-                pageBuilder: (_, __, ___) =>
-                    VideoOverlay(videoUrl: widget.video),
+      if (widget.video != null && widget.video != "null")
+        Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: GestureDetector(
+              onTap: () => Navigator.of(context).push(
+                PageRouteBuilder(
+                  opaque: false,
+                  pageBuilder: (_, __, ___) => VideoOverlay(videoUrl: widget.video),
+                ),
               ),
-            ),
-            child: Align(
-                alignment: Alignment.center,
-                child: Stack(alignment: Alignment.center, children: [
-                  Image.asset(
-                    'assets/courses/play_ellipse.png',
-                    height: 46,
-                    width: 46,
-                  ),
-                  Padding(
-                      padding: const EdgeInsets.only(left: 3.5),
-                      child: Image.asset(
-                        'assets/courses/play_arrow.png',
-                        height: 16,
-                        width: 16,
-                      )),
-                ])),
-          ))
+              child: Align(
+                  alignment: Alignment.center,
+                  child: Stack(alignment: Alignment.center, children: [
+                    Image.asset(
+                      'assets/courses/play_ellipse.png',
+                      height: 46,
+                      width: 46,
+                    ),
+                    Padding(
+                        padding: const EdgeInsets.only(left: 3.5),
+                        child: Image.asset(
+                          'assets/courses/play_arrow.png',
+                          height: 16,
+                          width: 16,
+                        )),
+                  ])),
+            ))
     ]);
   }
 }

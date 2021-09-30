@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/helpers/permissions.dart';
 import 'package:oluko_app/models/enums/file_type_enum.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
@@ -9,31 +10,24 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class TransformationJourneyContentState {}
 
-class TransformationJourneyContentLoading
-    extends TransformationJourneyContentState {}
+class TransformationJourneyContentLoading extends TransformationJourneyContentState {}
 
-class TransformationJourneyContentDefault
-    extends TransformationJourneyContentState {}
+class TransformationJourneyContentDefault extends TransformationJourneyContentState {}
 
-class TransformationJourneyContentOpen
-    extends TransformationJourneyContentState {}
+class TransformationJourneyContentOpen extends TransformationJourneyContentState {}
 
-class TransformationJourneyContentSuccess
-    extends TransformationJourneyContentState {}
+class TransformationJourneyContentSuccess extends TransformationJourneyContentState {}
 
-class TransformationJourneyContentFailure
-    extends TransformationJourneyContentState {
-  Exception exception;
+class TransformationJourneyContentFailure extends TransformationJourneyContentState {
+  dynamic exception;
   TransformationJourneyContentFailure({this.exception});
 }
+class TransformationJourneyRequirePermissions extends TransformationJourneyContentState {}
 
-class TransformationJourneyContentBloc
-    extends Cubit<TransformationJourneyContentState> {
-  TransformationJourneyContentBloc()
-      : super(TransformationJourneyContentDefault());
+class TransformationJourneyContentBloc extends Cubit<TransformationJourneyContentState> {
+  TransformationJourneyContentBloc() : super(TransformationJourneyContentDefault());
 
-  void uploadTransformationJourneyContent(
-      {DeviceContentFrom uploadedFrom, int indexForContent}) async {
+  void uploadTransformationJourneyContent({DeviceContentFrom uploadedFrom, int indexForContent}) async {
     PickedFile _image;
     try {
       final imagePicker = ImagePicker();
@@ -59,8 +53,20 @@ class TransformationJourneyContentBloc
         e,
         stackTrace: stackTrace,
       );
+
+      if (!await requiredTJourneyPermissionsEnabled(uploadedFrom)) return;
+
       emit(TransformationJourneyContentFailure(exception: e));
+      rethrow;
     }
+  }
+
+  Future<bool> requiredTJourneyPermissionsEnabled(DeviceContentFrom uploadedFrom) async {
+    if (!await Permissions.requiredPermissionsEnabled(uploadedFrom)) {
+      emit(TransformationJourneyRequirePermissions());
+      return false;
+    }
+    return true;
   }
 
   void emitDefaultState() {

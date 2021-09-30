@@ -21,8 +21,8 @@ class ProfileSettingsPage extends StatefulWidget {
 class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
   UserResponse _authUser;
   bool _notificationNewValue;
-  num _userPrivacyValue;
-  num _privacyNewValue;
+  int _userPrivacyValue;
+  int _privacyNewValue;
 
   void initState() {
     BlocProvider.of<AuthBloc>(context).checkCurrentUser();
@@ -73,9 +73,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
       children: [
         createNotificationSwitch(context),
         Column(
-          children: PrivacyOptions.privacyOptionsList
-              .map((option) => _buildOptionTiles(context, option))
-              .toList(),
+          children: PrivacyOptions.privacyOptionsList.map((option) => _buildOptionTiles(context, option)).toList(),
         ),
       ],
     );
@@ -85,17 +83,15 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
     return Container(
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
-        border: Border(
-            top: BorderSide(width: 1.0, color: OlukoColors.grayColor),
-            bottom: BorderSide(width: 1.0, color: OlukoColors.grayColor)),
+        border:
+            Border(top: BorderSide(width: 1.0, color: OlukoColors.grayColor), bottom: BorderSide(width: 1.0, color: OlukoColors.grayColor)),
         color: OlukoColors.black,
       ),
       child: MergeSemantics(
         child: ListTile(
             contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-            title: Text(ProfileViewConstants.profileSettingsNotification,
-                style: OlukoFonts.olukoBigFont(
-                    customColor: OlukoColors.grayColor)),
+            title:
+                Text(ProfileViewConstants.profileSettingsNotification, style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor)),
             trailing: Switch(
               value: _notificationNewValue,
               onChanged: (bool value) => _setValueForNotifications(value),
@@ -106,13 +102,12 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
     );
   }
 
-  Container _buildOptionTiles(BuildContext context, PrivacyOptions option) {
+  Widget _buildOptionTiles(BuildContext context, PrivacyOptions option) {
     Widget widgetToReturn = Container();
     if (option.isSwitch == false) {
       widgetToReturn = Container(
           decoration: BoxDecoration(
-            border: Border(
-                bottom: BorderSide(width: 1.0, color: OlukoColors.grayColor)),
+            border: Border(bottom: BorderSide(width: 1.0, color: OlukoColors.grayColor)),
             color: OlukoColors.black,
           ),
           child: Theme(
@@ -124,23 +119,19 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
                 controlAffinity: ListTileControlAffinity.trailing,
                 selected: _userPrivacyValue == option.option.index,
                 title: Text(
-                  OlukoLocalizations.of(context)
-                      .find(returnOption(option.title.toString())),
-                  style: OlukoFonts.olukoBigFont(
-                      customColor: OlukoColors.grayColor),
+                  OlukoLocalizations.of(context).find(returnOption(option.title.toString())),
+                  style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
                 ),
                 subtitle: option.showSubtitle
                     ? Text(
-                        OlukoLocalizations.of(context)
-                            .find(returnOption(option.subtitle.toString())),
-                        style: OlukoFonts.olukoSmallFont(
-                            customColor: OlukoColors.grayColor),
+                        OlukoLocalizations.of(context).find(returnOption(option.subtitle.toString())),
+                        style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor),
                       )
                     : SizedBox(),
                 value: option.option.index,
                 groupValue: _privacyNewValue,
                 onChanged: (value) {
-                  _setValueForPrivacy(index: value);
+                  _setValueForPrivacy(index: value as int);
                 }),
           ));
     }
@@ -152,14 +143,12 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
       setState(() {
         _privacyNewValue = index;
       });
-      BlocProvider.of<ProfileBloc>(context).updateSettingsPreferences(
-          _authUser, _privacyNewValue, _notificationNewValue);
+      BlocProvider.of<ProfileBloc>(context).updateSettingsPreferences(_authUser, _privacyNewValue, _notificationNewValue);
     } else if (_notificationNewValue != _authUser.notification) {
       if (index == null) {
         index = _privacyNewValue;
       }
-      BlocProvider.of<ProfileBloc>(context).updateSettingsPreferences(
-          _authUser, _privacyNewValue, _notificationNewValue);
+      BlocProvider.of<ProfileBloc>(context).updateSettingsPreferences(_authUser, _privacyNewValue, _notificationNewValue);
     }
   }
 
@@ -167,8 +156,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
     setState(() {
       _notificationNewValue = value;
     });
-    BlocProvider.of<ProfileBloc>(context).updateSettingsPreferences(
-        _authUser, _privacyNewValue, _notificationNewValue);
+    BlocProvider.of<ProfileBloc>(context).updateSettingsPreferences(_authUser, _privacyNewValue, _notificationNewValue);
   }
 
   String returnOption(String option) => option.split(".")[1];

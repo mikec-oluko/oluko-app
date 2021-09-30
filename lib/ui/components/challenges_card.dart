@@ -16,9 +16,7 @@ class _State extends State<ChallengesCard> {
   String _defaultChallengeTitle = "in 2 weeks";
   @override
   Widget build(BuildContext context) {
-    return widget.challenge.completedAt != null
-        ? unlockedCard(context)
-        : lockedCard(context);
+    return widget.challenge.completedAt != null ? unlockedCard(context) : lockedCard(context);
   }
 
   Stack lockedCard(BuildContext context) {
@@ -37,13 +35,11 @@ class _State extends State<ChallengesCard> {
           height: 115,
           width: 80,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
             color: OlukoColors.challengeLockedFilterColor,
             image: new DecorationImage(
               fit: BoxFit.cover,
-              colorFilter: new ColorFilter.mode(
-                  Colors.black.withOpacity(0.2), BlendMode.dstATop),
+              colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.2), BlendMode.dstATop),
               image: new NetworkImage(widget.challenge.image),
             ),
           ),
@@ -74,8 +70,7 @@ class _State extends State<ChallengesCard> {
           height: 115,
           width: 80,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
             image: new DecorationImage(
               fit: BoxFit.cover,
               image: new NetworkImage(widget.challenge.image),

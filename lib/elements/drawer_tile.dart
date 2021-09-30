@@ -5,21 +5,21 @@ import 'package:oluko_app/constants/theme.dart';
 class DrawerTile extends StatelessWidget {
   final String title;
   final IconData icon;
-  final Function onTap;
+  final void Function() tap;
   final bool isSelected;
   final Color iconColor;
 
   DrawerTile(
       {this.title,
       this.icon,
-      this.onTap,
+      this.tap,
       this.isSelected = false,
       this.iconColor = OlukoColors.text});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: tap,
       child: Container(
           padding: EdgeInsets.all(16),
           decoration: BoxDecoration(

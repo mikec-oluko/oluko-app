@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
+import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
 import 'package:oluko_app/blocs/profile/upload_avatar_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
@@ -7,6 +10,7 @@ import 'package:oluko_app/helpers/privacy_options.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/user_statistics.dart';
 import 'package:oluko_app/ui/components/user_profile_progress.dart';
+import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/container_grediant.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -35,6 +39,8 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
   bool _isOwner = false;
   String _archivementsDefaultValue = "0";
   PrivacyOptions _privacyOptions = PrivacyOptions();
+  HiFiveReceivedSuccess _hiFiveReceivedState;
+  AuthSuccess _authState;
 
   @override
   void initState() {
@@ -58,21 +64,39 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
   Widget build(BuildContext context) {
     final List<String> _valuesDemo = ["07", "10", "50"];
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      child: Container(
-        decoration: ContainerGradient.getContainerGradientDecoration(),
-        width: MediaQuery.of(context).size.width,
-        child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: _profileUserInformation(_userLocation, _valuesDemo)),
-      ),
+    return BlocListener<HiFiveReceivedBloc, HiFiveReceivedState>(
+      listener: (BuildContext context, HiFiveReceivedState state) {
+        if (state is HiFiveReceivedSuccess) {
+          setState(() {
+            _hiFiveReceivedState = state;
+          });
+        }
+      },
+      child: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
+        if (_hiFiveReceivedState == null && authState is AuthSuccess) {
+          _authState = authState;
+          BlocProvider.of<HiFiveReceivedBloc>(context).get(
+              context, authState.user.id, widget.userToDisplayInformation.id);
+        }
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          child: Container(
+            decoration: ContainerGradient.getContainerGradientDecoration(),
+            width: MediaQuery.of(context).size.width,
+            child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: _profileUserInformation(_userLocation, _valuesDemo)),
+          ),
+        );
+      }),
     );
   }
 
   String getUserLocation(UserResponse user) {
     String userLocationContent;
-    if (user.city != null && (user.state != null && user.country != null)) {
+    if ((user.city != null && user.city != 'null') &&
+        ((user.state != null && user.state != 'null') &&
+            (user.country != null && user.country != 'null'))) {
       userLocationContent = "${user.city}, ${user.state} ${user.country}";
     }
     return userLocationContent;
@@ -122,9 +146,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                                 height: 40,
                                 child: TextButton(
                                     onPressed: () {
-                                      BlocProvider.of<ProfileAvatarBloc>(
-                                          context)
-                                        ..openPanel();
+                                      BlocProvider.of<ProfileAvatarBloc>(context).openPanel();
                                     },
                                     child: Image.asset(
                                         'assets/profile/uploadImage.png')),
@@ -187,21 +209,58 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                 !_isOwner &&
                         widget.actualRoute == ActualProfileRoute.userProfile
                     ? Container(
-                        height: 50,
-                        width: 50,
-                        child: TextButton(
-                            style: TextButton.styleFrom(
-                              padding: EdgeInsets.zero,
-                            ),
-                            onPressed: () {
-                              //TODO: HiFive Logic
-                            },
-                            child: Image.asset(
-                              'assets/profile/hiFive.png',
-                              fit: BoxFit.cover,
-                              height: 60,
-                              width: 60,
-                            )),
+                        child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
+                          listener: (context, hiFiveSendState) {
+                            if (hiFiveSendState is HiFiveSendSuccess) {
+                              AppMessages.showSnackbar(
+                                  context,
+                                  hiFiveSendState.hiFive
+                                      ? OlukoLocalizations.of(context)
+                                          .find('hiFiveSent')
+                                      : OlukoLocalizations.of(context)
+                                          .find('hiFiveRemoved'));
+                            }
+                            BlocProvider.of<HiFiveReceivedBloc>(context).get(
+                                context,
+                                _authState.user.id,
+                                widget.userToDisplayInformation.id);
+                          },
+                          child: BlocBuilder<HiFiveReceivedBloc,
+                                  HiFiveReceivedState>(
+                              builder: (context, HiFiveReceivedState) {
+                            return HiFiveReceivedState is HiFiveReceivedSuccess
+                                ? Container(
+                                    height: 50,
+                                    width: 50,
+                                    child: TextButton(
+                                        style: TextButton.styleFrom(
+                                          padding: EdgeInsets.zero,
+                                        ),
+                                        onPressed: () {
+                                          BlocProvider.of<HiFiveSendBloc>(
+                                                  context)
+                                              .set(
+                                                  context,
+                                                  _authState.user.id,
+                                                  widget
+                                                      .userToDisplayInformation
+                                                      .id,
+                                                  hiFive: !_hiFiveReceivedState
+                                                      .hiFive);
+                                        },
+                                        child: Image.asset(
+                                          HiFiveReceivedState.hiFive
+                                              ? 'assets/profile/hiFive_selected.png'
+                                              : 'assets/profile/hiFive.png',
+                                          fit: BoxFit.cover,
+                                          colorBlendMode: BlendMode.lighten,
+                                          height: 60,
+                                          width: 60,
+                                        )),
+                                  )
+                                : SizedBox();
+                          }),
+                        ),
                       )
                     : SizedBox(),
               ],
@@ -334,7 +393,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                 child: Wrap(
                   children: [
                     Text(
-                      this.widget.userToDisplayInformation.username,
+                      this.widget.userToDisplayInformation.username ?? '',
                       style: OlukoFonts.olukoMediumFont(
                           customColor: OlukoColors.grayColor,
                           custoFontWeight: FontWeight.w300),

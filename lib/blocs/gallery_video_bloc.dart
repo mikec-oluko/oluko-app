@@ -11,7 +11,7 @@ class Success extends GalleryVideoState {
 }
 
 class Failure extends GalleryVideoState {
-  final Exception exception;
+  final dynamic exception;
 
   Failure({this.exception});
 }

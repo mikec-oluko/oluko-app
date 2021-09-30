@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:oluko_app/ui/screens/courses/initial_timer_panel.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/timer_utils.dart';
+
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class CountdownOverlay extends StatefulWidget {
-  final num seconds;
+  final int seconds;
   final int totalRounds;
   final int currentRound;
   final bool recording;
 
-  CountdownOverlay(
-      {this.seconds = 5, this.totalRounds, this.currentRound, this.recording});
+  CountdownOverlay({this.seconds = 5, this.totalRounds, this.currentRound, this.recording});
 
   @override
   _CountdownOverlayState createState() => _CountdownOverlayState(seconds);
@@ -20,11 +20,11 @@ class CountdownOverlay extends StatefulWidget {
 
 class _CountdownOverlayState extends State<CountdownOverlay> {
   Timer countdownTimer;
-  num countdown;
+  int countdown;
   PanelController panelController = new PanelController();
   bool open = true;
 
-  _CountdownOverlayState(num seconds) {
+  _CountdownOverlayState(int seconds) {
     countdown = seconds;
     countdownTimer = Timer.periodic(Duration(seconds: 1), (Timer timer) {
       this.setState(() {
@@ -44,9 +44,7 @@ class _CountdownOverlayState extends State<CountdownOverlay> {
         backgroundColor: Colors.black.withOpacity(0.8),
         body: widget.recording
             ? SlidingUpPanel(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20)),
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
                 controller: panelController,
                 minHeight: 0,
                 maxHeight: 330,
@@ -82,8 +80,7 @@ class _CountdownOverlayState extends State<CountdownOverlay> {
         SizedBox(height: 30),
         Stack(alignment: Alignment.center, children: [
           TimerUtils.roundsTimer(widget.totalRounds, widget.currentRound),
-          TimerUtils.initialTimer(InitialTimerType.Start, widget.currentRound,
-              widget.seconds, countdown, context)
+          TimerUtils.initialTimer(InitialTimerType.Start, widget.currentRound, widget.seconds, countdown, context)
         ])
       ]),
     );

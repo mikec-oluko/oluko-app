@@ -50,11 +50,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
           width: MediaQuery.of(context).size.width,
           color: OlukoColors.black,
           child: Column(
-            children: [
-              buildUserInformationFields(),
-              subscriptionSection(),
-              logoutButton()
-            ],
+            children: [buildUserInformationFields()],
           ),
         ),
       ),
@@ -64,20 +60,13 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
   Column buildUserInformationFields() {
     return Column(
       children: [
-        userInformationFields(OlukoLocalizations.of(context).find('userName'),
-            _profileInfo.username),
-        userInformationFields(OlukoLocalizations.of(context).find('firstName'),
-            _profileInfo.firstName),
-        userInformationFields(OlukoLocalizations.of(context).find('lastName'),
-            _profileInfo.lastName),
-        userInformationFields(
-            OlukoLocalizations.of(context).find('email'), _profileInfo.email),
-        userInformationFields(OlukoLocalizations.of(context).find('city'),
-            _profileInfo.city != null ? _profileInfo.city : ""),
-        userInformationFields(OlukoLocalizations.of(context).find('state'),
-            _profileInfo.state != null ? _profileInfo.state : ""),
-        userInformationFields(OlukoLocalizations.of(context).find('country'),
-            _profileInfo.country != null ? _profileInfo.country : ""),
+        userInformationFields(OlukoLocalizations.of(context).find('userName'), _profileInfo.username),
+        userInformationFields(OlukoLocalizations.of(context).find('firstName'), _profileInfo.firstName),
+        userInformationFields(OlukoLocalizations.of(context).find('lastName'), _profileInfo.lastName),
+        userInformationFields(OlukoLocalizations.of(context).find('email'), _profileInfo.email),
+        userInformationFields(OlukoLocalizations.of(context).find('city'), _profileInfo.city != null ? _profileInfo.city : ""),
+        userInformationFields(OlukoLocalizations.of(context).find('state'), _profileInfo.state != null ? _profileInfo.state : ""),
+        userInformationFields(OlukoLocalizations.of(context).find('country'), _profileInfo.country != null ? _profileInfo.country : ""),
       ],
     );
   }
@@ -89,8 +78,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
   Widget subscriptionSection() {
     return Container(
         width: MediaQuery.of(context).size.width,
-        child:
-            Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+        child: Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
           BlocBuilder<PlanBloc, PlanState>(builder: (context, state) {
             return Column(children: [
               Padding(
@@ -114,42 +102,19 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
 
   List<SubscriptionCard> showSubscriptionCard(List<Plan> plans) {
     //TODO: Use plan from userData.
-    final Plan userPlan = plans[1];
+    final Plan userPlan = plans.firstWhere((element) => element.isCurrentLevel(_profileInfo.currentPlan), orElse: () => null);
 
     SubscriptionCard subscriptionCard = SubscriptionCard();
-    subscriptionCard.priceLabel =
-        '\$${userPlan.price}/${durationLabel[userPlan.duration].toLowerCase()}';
-    subscriptionCard.priceSubtitle = userPlan.recurrent
-        ? 'Renews every ${durationLabel[userPlan.duration].toLowerCase()}'
-        : '';
-    subscriptionCard.title = userPlan.title;
-    subscriptionCard.subtitles = userPlan.features
-        .map((PlanFeature feature) => EnumHelper.enumToString(feature))
-        .toList();
     subscriptionCard.selected = true;
-    subscriptionCard.showHint = false;
-    subscriptionCard.backgroundImage = userPlan.backgroundImage;
-    subscriptionCard.onHintPressed = userPlan.infoDialog != null ? () {} : null;
+    if (userPlan != null) {
+      subscriptionCard.priceLabel = '\$${userPlan.price}/${durationLabel[userPlan.duration].toLowerCase()}';
+      subscriptionCard.priceSubtitle = userPlan.recurrent ? 'Renews every ${durationLabel[userPlan.duration].toLowerCase()}' : '';
+      subscriptionCard.title = userPlan.title;
+      subscriptionCard.subtitles = userPlan.features.map((PlanFeature feature) => EnumHelper.enumToString(feature)).toList();
+      subscriptionCard.showHint = false;
+      subscriptionCard.backgroundImage = userPlan.backgroundImage;
+      subscriptionCard.onHintPressed = userPlan.infoDialog != null ? () {} : null;
+    }
     return [subscriptionCard];
-  }
-
-  Align logoutButton() {
-    return Align(
-      alignment: Alignment.bottomLeft,
-      child: Padding(
-        padding: const EdgeInsets.only(left: 5.0),
-        child: TextButton(
-          child: Text(OlukoLocalizations.of(context).find('logout'),
-              style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary)),
-          onPressed: () {
-            BlocProvider.of<AuthBloc>(context).logout(context);
-            AppMessages.showSnackbar(context, 'Logged out.');
-            Navigator.pushNamed(context, '/');
-
-            setState(() {});
-          },
-        ),
-      ),
-    );
   }
 }

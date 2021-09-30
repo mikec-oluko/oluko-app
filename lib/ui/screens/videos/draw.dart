@@ -122,7 +122,7 @@ class DrawState extends State<Draw> {
         },
         onPanStart: (details) {
           setState(() {
-            RenderBox renderBox = context.findRenderObject();
+            RenderBox renderBox = context.findRenderObject() as RenderBox;
             points.add(DrawingPoints(
                 points: renderBox.globalToLocal(details.globalPosition),
                 paint: Paint()
@@ -150,9 +150,9 @@ class DrawState extends State<Draw> {
 
   update(details) {
     setState(() {
-      RenderBox renderBox = context.findRenderObject();
+      RenderBox renderBox = context.findRenderObject() as RenderBox;
       DrawingPoints drwPoint = DrawingPoints(
-          points: renderBox.globalToLocal(details.globalPosition),
+          points: renderBox.globalToLocal(details.globalPosition as Offset),
           paint: Paint()
             ..strokeCap = strokeCap
             ..isAntiAlias = true
@@ -185,7 +185,7 @@ class DrawState extends State<Draw> {
           ..strokeWidth = strokeWidth);
   }
 
-  getColorList() {
+  List<Widget> getColorList() {
     List<Widget> listWidget = [];
     for (Color color in colors) {
       listWidget.add(colorCircle(color));

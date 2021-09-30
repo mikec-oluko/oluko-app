@@ -1,4 +1,4 @@
-class Video{
+class Video {
   String url;
   String thumbUrl;
   double aspectRatio;
@@ -9,11 +9,11 @@ class Video{
 
   factory Video.fromJson(Map<String, dynamic> json) {
     return Video(
-        url: json['url'],
-        thumbUrl: json['thumb_url'],
-        aspectRatio: json['aspect_ratio'],
-        name: json['name'],
-        duration: json['duration']);
+        url: json['url']?.toString(),
+        thumbUrl: json['thumb_url']?.toString(),
+        aspectRatio: json['aspect_ratio'] as double,
+        name: json['name']?.toString(),
+        duration: json['duration'] as int);
   }
 
   Map<String, dynamic> toJson() => {

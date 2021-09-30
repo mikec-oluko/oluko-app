@@ -58,9 +58,7 @@ class _State extends State<MovementVideosSection> {
               child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: MovementItemBubbles(
-                      onPressed: widget.onPressedMovement,
-                      content: segmentMovements,
-                      width: ScreenUtils.width(context) / 1))),
+                      onPressed: widget.onPressedMovement, content: segmentMovements, width: ScreenUtils.width(context) / 1))),
           Image.asset(
             'assets/courses/horizontal_vector.png',
             scale: 2,
@@ -68,11 +66,15 @@ class _State extends State<MovementVideosSection> {
         ]));
   }
 
-  getSegmentMovements() {
+  List<Movement> getSegmentMovements() {
     List<String> movementIds = [];
     List<Movement> movements = [];
-    widget.segment.movements.forEach((MovementSubmodel movement) {
-      movementIds.add(movement.id);
+    widget.segment.sections.forEach((section) {
+      section.movements.forEach((MovementSubmodel movement) {
+        if (!movement.isRestTime) {
+          movementIds.add(movement.id);
+        }
+      });
     });
     widget.movements.forEach((movement) {
       if (movementIds.contains(movement.id)) {

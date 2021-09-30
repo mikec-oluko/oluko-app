@@ -17,12 +17,12 @@ class TagCategoryRepository {
   Future<List<TagCategory>> getAll() async {
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('tagsCategories')
         .get();
     List<TagCategory> response = [];
     docRef.docs.forEach((doc) {
-      final Map<String, dynamic> element = doc.data();
+      final Map<String, dynamic> element = doc.data() as Map<String, dynamic>;
       response.add(TagCategory.fromJson(element));
     });
     return response;

@@ -2,7 +2,6 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:oluko_app/utils/chewieMaterialControls/oluko_material_controls.dart';
 import 'package:video_player/video_player.dart';
 import 'dart:io';
 
@@ -43,13 +42,12 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
         _controller = null;
       }
     }
-    var controls;
+    Widget controls;
     if (Platform.isAndroid) {
-      controls = OlukoMaterialControls();
+      // controls = OlukoMaterialControls();
+      controls = MaterialControls();
     } else if (Platform.isIOS) {
-      controls = CupertinoControls(
-          backgroundColor: Colors.grey[100].withOpacity(0.2),
-          iconColor: Colors.black);
+      controls = CupertinoControls(backgroundColor: Colors.grey[100].withOpacity(0.2), iconColor: Colors.black);
     }
     if (_controller != null) {
       _controller
@@ -62,15 +60,9 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
               placeholder: Center(child: CircularProgressIndicator()),
               deviceOrientationsAfterFullScreen: [DeviceOrientation.portraitUp],
               cupertinoProgressColors: ChewieProgressColors(
-                  handleColor: Colors.black,
-                  backgroundColor: Colors.black,
-                  bufferedColor: Colors.black,
-                  playedColor: Colors.black),
+                  handleColor: Colors.black, backgroundColor: Colors.black, bufferedColor: Colors.black, playedColor: Colors.black),
               materialProgressColors: ChewieProgressColors(
-                  handleColor: Colors.black,
-                  backgroundColor: Colors.black,
-                  bufferedColor: Colors.black,
-                  playedColor: Colors.black));
+                  handleColor: Colors.black, backgroundColor: Colors.black, bufferedColor: Colors.black, playedColor: Colors.black));
           if (widget.whenInitialized != null) {
             widget.whenInitialized(chewieController);
           }

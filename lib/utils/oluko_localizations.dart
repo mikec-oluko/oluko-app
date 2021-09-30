@@ -16,7 +16,7 @@ class OlukoLocalizations {
   Future<bool> load() async {
     String data = await rootBundle.loadString('assets/lang/${locale.languageCode}.json');
 
-    Map<String, dynamic> _result = jsonDecode(data);
+    Map<String, dynamic> _result = jsonDecode(data) as Map<String, dynamic>;
     Map<String, String> _values = new Map();
 
     _result.forEach((String key, dynamic value) {

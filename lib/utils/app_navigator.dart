@@ -1,28 +1,34 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class AppNavigator {
-  Future<void> returnToHome(context) async {
+  Future<void> returnToHome(BuildContext context) async {
     Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
   }
 
-  static Future<bool> onWillPop(context) async {
+  static Future<bool> onWillPop(BuildContext context) async {
     return (await showDialog(
           context: context,
-          builder: (context) => new AlertDialog(
+          builder: (context) => AlertDialog(
             backgroundColor: Colors.black,
-            title: TitleBody('Are you Sure?'),
-            content: new Text('Do you want to exit Oluko MVT?',
-                style: OlukoFonts.olukoBigFont()),
+            title: TitleBody(OlukoLocalizations.of(context).find('exitConfirmationTitle')),
+            content: Text(OlukoLocalizations.of(context).find('exitConfirmationBody'), style: OlukoFonts.olukoBigFont()),
             actions: <Widget>[
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
-                child: new Text('No'),
+                child: Text(
+                  OlukoLocalizations.of(context).find('no'),
+                ),
               ),
               TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: new Text('Yes'),
+                onPressed: () => {if (Platform.isAndroid) SystemNavigator.pop() else if (Platform.isIOS) exit(0)},
+                child: Text(
+                  OlukoLocalizations.of(context).find('yes'),
+                ),
               ),
             ],
           ),

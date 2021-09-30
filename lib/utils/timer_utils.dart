@@ -19,7 +19,7 @@ class TimerUtils {
             aspectRatio: 1,
             child: CircularProgressIndicator(
                 value: getProgress(totalTime, countDown),
-                // color: OlukoColors.coral,
+                color: OlukoColors.coral,
                 backgroundColor: OlukoColors.grayColorSemiTransparent)),
       ),
       Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -37,7 +37,7 @@ class TimerUtils {
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                   color: Colors.white)),
-          Text(round.toString(),
+          Text((round + 1).toString(),
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontSize: 18,
@@ -133,7 +133,7 @@ class TimerUtils {
               fontStyle: FontStyle.italic,
               color: OlukoColors.primary)),
       SizedBox(width: 10),
-      Text(round.toString(),
+      Text((round + 1).toString(),
           textAlign: TextAlign.center,
           style: TextStyle(
               fontSize: 50,
@@ -143,19 +143,12 @@ class TimerUtils {
     ]);
   }
 
-  static Widget completedTimer(
-      double progressValue, String duration, BuildContext context) {
+  static Widget completedTimer(BuildContext context) {
     return Container(
         child: SizedBox(
             height: 180,
             width: 180,
             child: Stack(alignment: Alignment.center, children: [
-              AspectRatio(
-                  aspectRatio: 1,
-                  child: CircularProgressIndicator(
-                      value: progressValue,
-                      // color: OlukoColors.coral,
-                      backgroundColor: OlukoColors.grayColorSemiTransparent)),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -166,7 +159,7 @@ class TimerUtils {
                   Text(OlukoLocalizations.of(context).find('completed'),
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                          fontSize: 22,
+                          fontSize: 24,
                           fontWeight: FontWeight.bold,
                           color: Colors.white)),
                 ],
@@ -231,7 +224,7 @@ class TimerUtils {
                   aspectRatio: 1,
                   child: CircularProgressIndicator(
                       value: progressValue,
-                      // color: OlukoColors.skyblue,
+                      color: OlukoColors.skyblue,
                       backgroundColor: OlukoColors.grayColorSemiTransparent)),
               Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Text(OlukoLocalizations.of(context).find('rest').toUpperCase(),

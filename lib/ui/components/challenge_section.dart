@@ -20,29 +20,25 @@ class _State extends State<ChallengeSection> {
     return Container(
       width: MediaQuery.of(context).size.width,
       child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Divider(
-              color: OlukoColors.grayColor,
-              height: 50,
-            ),
-            widget.addTitle
-                ? Text(
-                    buildTitle(),
-                    style: OlukoFonts.olukoBigFont(
-                        custoFontWeight: FontWeight.w500,
-                        customColor: OlukoColors.grayColor),
-                  )
-                : SizedBox(),
-            SizedBox(height: widget.addTitle ? 20 : 0),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: getChallengesCards()),
-            )
-          ],
-        ),
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Divider(
+            color: OlukoColors.grayColor,
+            height: 50,
+          ),
+          widget.addTitle
+              ? Text(
+                  buildTitle(),
+                  style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
+                )
+              : SizedBox(),
+          SizedBox(height: widget.addTitle ? 20 : 0),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(mainAxisAlignment: MainAxisAlignment.start, children: getChallengesCards()),
+          )
+        ],
+      ),
     );
   }
 
@@ -72,9 +68,7 @@ class _State extends State<ChallengeSection> {
                 width: 100,
                 fit: BoxFit.cover,
               ),
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  bottomRight: Radius.circular(10)),
+              borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
             ),
             Image.asset(
               'assets/courses/locked_challenge.png',

@@ -3,7 +3,7 @@ class LoginResponse {
 
   String accessToken;
 
-  LoginResponse.fromJson(Map json) : accessToken = json['accessToken'];
+  LoginResponse.fromJson(Map json) : accessToken = json['accessToken']?.toString();
 
   Map<String, dynamic> toJson() => {
         'accessToken': accessToken,

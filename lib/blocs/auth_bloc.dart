@@ -14,6 +14,7 @@ import 'package:oluko_app/repositories/user_repository.dart';
 import 'package:oluko_app/utils/app_loader.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 abstract class AuthState {}
 
@@ -24,7 +25,7 @@ class AuthSuccess extends AuthState {
 }
 
 class AuthFailure extends AuthState {
-  final Exception exception;
+  final dynamic exception;
   AuthFailure({this.exception});
 }
 
@@ -40,11 +41,27 @@ class AuthBloc extends Cubit<AuthState> {
   final _authRepository = AuthRepository();
   final _userRepository = UserRepository();
 
-  Future<void> login(context, LoginRequest request) async {
-    ApiResponse apiResponse = await _authRepository.login(request);
+  Future<void> login(BuildContext context, LoginRequest request) async {
+    if (request.email == null && request.userName.isEmpty && request.password.isEmpty) {
+      AppMessages.showSnackbarTranslated(context, 'invalidUsernameOrPw');
+      return;
+    }
+
+    if (request.email == null && request.userName.isEmpty) {
+      AppMessages.showSnackbarTranslated(context, 'emailUsernameRequired');
+      return;
+    }
+
+    if (request.password.isEmpty) {
+      AppMessages.showSnackbarTranslated(context, 'passwordRequired');
+      return;
+    }
+    AppLoader.startLoading(context);
+    final ApiResponse apiResponse = await _authRepository.login(request);
+    AppLoader.stopLoading();
     if (apiResponse.statusCode != 200) {
-      AppLoader.stopLoading();
-      AppMessages.showSnackbar(context, apiResponse.message[0]);
+      //TODO: response should bring key apiResponse.message
+      AppMessages.showSnackbarTranslated(context, 'invalidUsernameOrPw');
       emit(AuthFailure(exception: Exception(apiResponse.message)));
       return;
     }
@@ -54,28 +71,32 @@ class AuthBloc extends Cubit<AuthState> {
     } else {
       user = await _userRepository.get(request.email);
     }
-    AppLoader.stopLoading();
+
     final firebaseUser = FirebaseAuth.instance.currentUser;
-    if (!firebaseUser.emailVerified) {
+    if (user.currentPlan == -100) {
+      FirebaseAuth.instance.signOut();
+      AppMessages.showSnackbarTranslated(context, 'pleaseSubscribeToAPlanBeforeUsingTheApp');
+      emit(AuthGuest());
+      return;
+    } else if (!firebaseUser.emailVerified) {
       //TODO: trigger to send another email
       await firebaseUser.updateEmail(user.email);
       firebaseUser.sendEmailVerification();
       FirebaseAuth.instance.signOut();
-      AppMessages.showSnackbar(
-          context, 'Please check your Email for account confirmation.');
+      AppMessages.showSnackbarTranslated(context, 'pleaseCheckYourEmail');
       emit(AuthGuest());
     } else {
       AuthRepository().storeLoginData(user);
-      AppMessages.showSnackbar(context, 'Welcome, ${user.firstName}');
+      AppMessages.showSnackbar(context, '${OlukoLocalizations.of(context).find('welcome')}, ${user.firstName}');
       emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
       await AppNavigator().returnToHome(context);
     }
   }
 
-  Future<void> loginWithGoogle(context) async {
+  Future<void> loginWithGoogle(BuildContext context) async {
     UserCredential result = await _authRepository.signInWithGoogle();
     User firebaseUser = result.user;
-    dynamic userResponse = await UserRepository().get(firebaseUser.email);
+    UserResponse userResponse = await UserRepository().get(firebaseUser.email);
 
     //TODO (Not implemented in MVP) If Firebase user document not found, create one.
 
@@ -94,8 +115,7 @@ class AuthBloc extends Cubit<AuthState> {
     if (!firebaseUser.emailVerified) {
       //TODO: trigger to send another email
       FirebaseAuth.instance.signOut();
-      AppMessages.showSnackbar(
-          context, 'Please check your Email for account confirmation.');
+      AppMessages.showSnackbar(context, OlukoLocalizations.of(context).find('pleaseCheckYourEmail'));
       emit(AuthGuest());
       return;
     }
@@ -103,8 +123,7 @@ class AuthBloc extends Cubit<AuthState> {
     //If there is no associated user for this account
     if (userResponse == null) {
       FirebaseAuth.instance.signOut();
-      AppMessages.showSnackbar(
-          context, 'User for this account not found. Please sign up.');
+      AppMessages.showSnackbar(context, OlukoLocalizations.of(context).find('userForThisAccountNotFoundPleaseSignUp'));
       emit(AuthGuest());
       return;
     }
@@ -114,7 +133,7 @@ class AuthBloc extends Cubit<AuthState> {
     await AppNavigator().returnToHome(context);
   }
 
-  Future<void> loginWithFacebook(context) async {
+  Future<void> loginWithFacebook(BuildContext context) async {
     UserCredential result = await _authRepository.signInWithFacebook();
     User firebaseUser = result.user;
     UserResponse user = UserResponse();
@@ -146,7 +165,7 @@ class AuthBloc extends Cubit<AuthState> {
     }
   }
 
-  Future<void> logout(context) async {
+  Future<void> logout(BuildContext context) async {
     final success = await AuthRepository().removeLoginData();
     if (success == true) {
       Navigator.pushNamedAndRemoveUntil(context, '/sign-up', (route) => false);
@@ -154,12 +173,10 @@ class AuthBloc extends Cubit<AuthState> {
     }
   }
 
-  Future<void> sendPasswordResetEmail(
-      context, LoginRequest loginRequest) async {
+  Future<void> sendPasswordResetEmail(BuildContext context, LoginRequest loginRequest) async {
     //TODO: unused variable final success =
     await AuthRepository().sendPasswordResetEmail(loginRequest.email);
-    AppMessages.showSnackbar(
-        context, 'Please check your email for instructions.');
+    AppMessages.showSnackbar(context, OlukoLocalizations.of(context).find('pleaseCheckYourEmailForInstructions'));
   }
 
   String getRandString(int len) {
@@ -174,7 +191,7 @@ class AuthBloc extends Cubit<AuthState> {
       email: firebaseUser.email,
       firstName: splitDisplayName[0],
       lastName: splitDisplayName[1],
-      projectId: GlobalConfiguration().getValue("projectId"),
+      projectId: GlobalConfiguration().getValue('projectId'),
     );
     UserResponse response = await UserRepository().createSSO(signUpRequest);
     return response;

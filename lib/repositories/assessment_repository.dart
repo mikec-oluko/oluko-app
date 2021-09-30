@@ -16,12 +16,12 @@ class AssessmentRepository {
   Future<List<Assessment>> getAll() async {
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('assessments')
         .get();
     List<Assessment> response = [];
     docRef.docs.forEach((doc) {
-      final Map<String, dynamic> element = doc.data();
+      final Map<String, dynamic> element = doc.data() as Map<String, dynamic>;
       response.add(Assessment.fromJson(element));
     });
     return response;
@@ -30,12 +30,12 @@ class AssessmentRepository {
   Future<Assessment> getById(String id) async {
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('assessments')
         .where('id', isEqualTo: id)
         .get();
     if (docRef.docs.length > 0) {
-      return Assessment.fromJson(docRef.docs[0].data());
+      return Assessment.fromJson(docRef.docs[0].data() as Map<String, dynamic>);
     } else {
       return null;
     }

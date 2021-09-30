@@ -20,7 +20,7 @@ class PlanSuccess extends PlanState {
 }
 
 class Failure extends PlanState {
-  final Exception exception;
+  final dynamic exception;
 
   Failure({this.exception});
 }
@@ -42,6 +42,7 @@ class PlanBloc extends Cubit<PlanState> {
         stackTrace: stackTrace,
       );
       emit(Failure(exception: exception));
+      rethrow;
     }
   }
 }

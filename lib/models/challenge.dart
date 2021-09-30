@@ -50,20 +50,20 @@ class Challenge extends Base {
 
   factory Challenge.fromJson(Map<String, dynamic> json) {
     Challenge challengeObject = Challenge(
-        segmentId: json['segment_id'],
-        segmentReference: json['segment_reference'],
-        courseEnrollmentId: json['course_enrollment_id'],
-        courseEnrollmentReference: json['course_enrollment_reference'],
-        classId: json['class_id'],
-        classReference: json['class_reference'],
-        result: json['result'],
-        completedAt: json['completed_at'],
-        requiredClasses: json['required_classes'],
-        requiredSegments: json['required_segments'],
-        index: json['index'],
-        challengeType: json['type'],
-        image: json['image'],
-        challengeName: json['name']);
+        segmentId: json['segment_id']?.toString(),
+        segmentReference: json['segment_reference'] as DocumentReference,
+        courseEnrollmentId: json['course_enrollment_id']?.toString(),
+        courseEnrollmentReference: json['course_enrollment_reference'] as DocumentReference,
+        classId: json['class_id']?.toString(),
+        classReference: json['class_reference'] as DocumentReference,
+        result: json['result']?.toString(),
+        completedAt: json['completed_at'] as Timestamp,
+        requiredClasses: json['required_classes'] as List<String>,
+        requiredSegments: json['required_segments'] as List<String>,
+        index: json['index'] as int,
+        challengeType: json['type']?.toString(),
+        image: json['image']?.toString(),
+        challengeName: json['name']?.toString());
 
     challengeObject.setBase(json);
     return challengeObject;

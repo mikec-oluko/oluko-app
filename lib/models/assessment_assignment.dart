@@ -34,12 +34,12 @@ class AssessmentAssignment extends Base {
 
   factory AssessmentAssignment.fromJson(Map<String, dynamic> json) {
     AssessmentAssignment assessmentAssignment = AssessmentAssignment(
-      compleatedAt: json['compleated_at'],
-      seenAt: json['seen_at'],
-      assessmentId: json['assessment_id'],
-      assessmentReference: json['assessment_reference'],
-      coachId: json['coach_id'],
-      coachReference: json['coach_reference'],
+      compleatedAt: json['compleated_at'] as Timestamp,
+      seenAt: json['seen_at'] as Timestamp,
+      assessmentId: json['assessment_id']?.toString(),
+      assessmentReference: json['assessment_reference'] as DocumentReference,
+      coachId: json['coach_id']?.toString(),
+      coachReference: json['coach_reference'] as DocumentReference,
     );
     assessmentAssignment.setBase(json);
     return assessmentAssignment;

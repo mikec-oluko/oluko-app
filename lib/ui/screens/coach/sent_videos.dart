@@ -20,22 +20,16 @@ class _SentVideosPageState extends State<SentVideosPage> {
       appBar: AppBar(
         title: Text(
           OlukoLocalizations.of(context).find('sentVideos'),
-          style: OlukoFonts.olukoTitleFont(
-              customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+          style: OlukoFonts.olukoTitleFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
         ),
         actions: [
           Row(
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 5),
-                child: IconButton(
-                    icon: Icon(Icons.sort, color: OlukoColors.grayColor),
-                    onPressed: () {}),
+                child: IconButton(icon: Icon(Icons.sort, color: OlukoColors.grayColor), onPressed: () {}),
               ),
-              IconButton(
-                  icon:
-                      Icon(Icons.favorite_border, color: OlukoColors.grayColor),
-                  onPressed: () {}),
+              IconButton(icon: Icon(Icons.favorite_border, color: OlukoColors.grayColor), onPressed: () {}),
             ],
           )
         ],
@@ -54,13 +48,12 @@ class _SentVideosPageState extends State<SentVideosPage> {
       body: Container(
         width: MediaQuery.of(context).size.width,
         color: OlukoColors.black,
-        child: ListView(
-            children: segmentCard(taskSubmissions: widget.taskSubmissions)),
+        child: ListView(children: segmentCard(taskSubmissions: widget.taskSubmissions)),
       ),
     );
   }
 
-  segmentCard({List<TaskSubmission> taskSubmissions}) {
+  List<Widget> segmentCard({List<TaskSubmission> taskSubmissions}) {
     List<Widget> contentForSection = [];
 
     taskSubmissions.forEach((taskSubmitted) {
@@ -70,7 +63,7 @@ class _SentVideosPageState extends State<SentVideosPage> {
     return contentForSection;
   }
 
-  returnCardForSegment(TaskSubmission taskSubmitted) {
+  Widget returnCardForSegment(TaskSubmission taskSubmitted) {
     //TODO: repeated code 1 from Mentored Video
     Widget contentForReturn = SizedBox();
     contentForReturn = Padding(
@@ -82,9 +75,7 @@ class _SentVideosPageState extends State<SentVideosPage> {
               color: OlukoColors.listGrayColor,
               borderRadius: BorderRadius.all(Radius.circular(6.0)),
               image: DecorationImage(
-                image: taskSubmitted.video.thumbUrl != null
-                    ? NetworkImage(taskSubmitted.video.thumbUrl)
-                    : AssetImage("assets/home/mvt.png"),
+                image: getImage(taskSubmitted),
                 fit: BoxFit.fitWidth,
                 onError: (exception, stackTrace) {
                   return Text('Your error widget...');
@@ -98,13 +89,10 @@ class _SentVideosPageState extends State<SentVideosPage> {
                   alignment: Alignment.center,
                   child: TextButton(
                       onPressed: () {
-                        Navigator.pushNamed(
-                            context, routeLabels[RouteEnum.coachShowVideo],
-                            arguments: {
-                              'videoUrl': taskSubmitted.video.url,
-                              'titleForView': OlukoLocalizations.of(context)
-                                  .find('sentVideos')
-                            });
+                        Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
+                          'videoUrl': taskSubmitted.video.url,
+                          'titleForView': OlukoLocalizations.of(context).find('sentVideos')
+                        });
                       },
                       child: Image.asset(
                         'assets/assessment/play.png',
@@ -126,19 +114,14 @@ class _SentVideosPageState extends State<SentVideosPage> {
                             children: [
                               Text(
                                 OlukoLocalizations.of(context).find('date'),
-                                style: OlukoFonts.olukoMediumFont(
-                                    customColor: OlukoColors.grayColor,
-                                    custoFontWeight: FontWeight.w500),
+                                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
                               ),
                               SizedBox(
                                 height: 5,
                               ),
                               Text(
-                                DateFormat.yMMMd()
-                                    .format(taskSubmitted.createdAt.toDate()),
-                                style: OlukoFonts.olukoMediumFont(
-                                    customColor: OlukoColors.grayColor,
-                                    custoFontWeight: FontWeight.w500),
+                                DateFormat.yMMMd().format(taskSubmitted.createdAt.toDate()),
+                                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
                               )
                             ],
                           ),
@@ -152,5 +135,11 @@ class _SentVideosPageState extends State<SentVideosPage> {
       ),
     );
     return contentForReturn;
+  }
+
+  ImageProvider getImage(TaskSubmission taskSubmitted) {
+    return taskSubmitted.video.thumbUrl != null
+        ? NetworkImage(taskSubmitted.video.thumbUrl)
+        : AssetImage("assets/home/mvt.png") as ImageProvider;
   }
 }

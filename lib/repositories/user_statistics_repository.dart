@@ -9,21 +9,19 @@ class UserStatisticsRepository {
     firestoreInstance = FirebaseFirestore.instance;
   }
 
-  UserStatisticsRepository.test({FirebaseFirestore firestoreInstance}) {
-    this.firestoreInstance = firestoreInstance;
-  }
+  UserStatisticsRepository.test({this.firestoreInstance});
 
   static Future<UserStatistics> getUserStatics(String userId) async {
-    DocumentReference docRef = FirebaseFirestore.instance
+    final DocumentReference docRef = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('userStatistics')
         .doc(userId);
     DocumentSnapshot ds = await docRef.get();
-    var doc = ds.data();
+    var doc = ds.data() as Map<String, dynamic>;
     if (doc != null) {
-      return UserStatistics.fromJson(ds.data());
+      return UserStatistics.fromJson(ds.data() as Map<String, dynamic>);
     }
-    return null;
+    return UserStatistics(completedChallenges: 0, completedClasses: 0, completedCourses: 0, completedSegments: 0);
   }
 }

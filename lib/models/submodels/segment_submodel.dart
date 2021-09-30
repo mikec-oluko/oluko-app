@@ -1,30 +1,26 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
+import 'package:oluko_app/models/submodels/section_submodel.dart';
 
 class SegmentSubmodel {
   String id;
   DocumentReference reference;
   String name;
   String challengeImage;
-  List<ObjectSubmodel> movements;
+  List<SectionSubmodel> sections;
 
-  SegmentSubmodel(
-      {this.id,
-      this.reference,
-      this.challengeImage,
-      this.name,
-      this.movements});
+  SegmentSubmodel({this.id, this.reference, this.challengeImage, this.name, this.sections});
 
   factory SegmentSubmodel.fromJson(Map<String, dynamic> json) {
     return SegmentSubmodel(
-        id: json['id'],
-        reference: json['reference'],
-        name: json['name'],
-        challengeImage: json['challenge_image'],
-        movements: json['movements'] == null
+        id: json['id']?.toString(),
+        reference: json['reference'] as DocumentReference,
+        name: json['name']?.toString(),
+        challengeImage: json['challenge_image'] == null ? null : json['challenge_image']?.toString(),
+        sections: json['sections'] == null
             ? null
-            : List<ObjectSubmodel>.from(json['movements']
-                .map((movement) => ObjectSubmodel.fromJson(movement))));
+            : List<SectionSubmodel>.from(
+                (json['sections'] as Iterable).map((section) => SectionSubmodel.fromJson(section as Map<String, dynamic>))));
   }
 
   Map<String, dynamic> toJson() => {
@@ -32,9 +28,6 @@ class SegmentSubmodel {
         'reference': reference,
         'name': name,
         'challenge_image': challengeImage,
-        'movements': movements == null
-            ? null
-            : List<dynamic>.from(
-                movements.map((movement) => movement.toJson())),
+        'sections': sections == null ? null : List<dynamic>.from(sections.map((section) => section.toJson())),
       };
 }

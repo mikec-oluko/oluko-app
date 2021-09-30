@@ -4,10 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/plan_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_helper.dart';
-import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/utils/info_dialog.dart';
 import 'package:oluko_app/models/plan.dart';
-import 'package:oluko_app/models/sign_up_response.dart';
 import 'package:oluko_app/ui/components/subscription_card.dart';
 
 class AppPlans extends StatefulWidget {
@@ -39,21 +37,15 @@ class _AppPlansState extends State<AppPlans> {
                       padding: EdgeInsets.symmetric(horizontal: 15),
                       child: Container(
                           width: MediaQuery.of(context).size.width,
-                          child: Column(children: [
-                            SizedBox(height: 20),
-                            SizedBox(height: 20),
-                            titleSection(),
-                            SizedBox(height: 50),
-                            formSection()
-                          ])))
+                          child: Column(
+                              children: [SizedBox(height: 20), SizedBox(height: 20), titleSection(), SizedBox(height: 50), formSection()])))
                 ]))));
   }
 
   Widget formSection() {
     return Container(
         width: MediaQuery.of(context).size.width,
-        child:
-            Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+        child: Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
           BlocBuilder<PlanBloc, PlanState>(builder: (context, state) {
             return Column(children: formFields(state));
           }),
@@ -69,18 +61,12 @@ class _AppPlansState extends State<AppPlans> {
               Text(
                 'Choose ',
                 textAlign: TextAlign.start,
-                style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.w200,
-                    color: Colors.white),
+                style: TextStyle(fontSize: 30, fontWeight: FontWeight.w200, color: Colors.white),
               ),
               Text(
                 'Your Plan',
                 textAlign: TextAlign.start,
-                style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
+                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
               ),
             ],
           ),
@@ -102,12 +88,11 @@ class _AppPlansState extends State<AppPlans> {
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton(
-                    style:
-                        ElevatedButton.styleFrom(primary: OlukoColors.primary),
+                    style: ElevatedButton.styleFrom(primary: OlukoColors.primary),
                     onPressed: () {},
                     child: Stack(children: [
                       Align(
-                        child: Text('Get Started'),
+                        child: const Text('Get Started'),
                       )
                     ])))),
       ];
@@ -116,7 +101,7 @@ class _AppPlansState extends State<AppPlans> {
     }
   }
 
-  showWaitlist(context, InfoDialog infoDialog) {
+  showWaitlist(BuildContext context, InfoDialog infoDialog) {
     showDialog(
         context: context,
         builder: (context2) {
@@ -130,9 +115,7 @@ class _AppPlansState extends State<AppPlans> {
                   Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: Container(
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(10))),
+                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(10))),
                       child: Padding(
                         padding: const EdgeInsets.all(15.0),
                         child: Column(
@@ -162,10 +145,8 @@ class _AppPlansState extends State<AppPlans> {
                       child: Align(
                         alignment: Alignment.topRight,
                         child: Container(
-                          decoration: BoxDecoration(
-                              boxShadow: [BoxShadow(blurRadius: 5)],
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(15))),
+                          decoration:
+                              BoxDecoration(boxShadow: [BoxShadow(blurRadius: 5)], borderRadius: BorderRadius.all(Radius.circular(15))),
                           child: CircleAvatar(
                             radius: 14.0,
                             backgroundColor: Colors.white,
@@ -183,21 +164,14 @@ class _AppPlansState extends State<AppPlans> {
   List<SubscriptionCard> showSubscriptionCards(List<Plan> plans) {
     return plans.map((Plan plan) {
       SubscriptionCard subscriptionCard = SubscriptionCard();
-      subscriptionCard.priceLabel =
-          '\$${plan.price}/${durationLabel[plan.duration].toLowerCase()}';
-      subscriptionCard.priceSubtitle = plan.recurrent
-          ? 'Renews every ${durationLabel[plan.duration].toLowerCase()}'
-          : '';
+      subscriptionCard.priceLabel = '\$${plan.price}/${durationLabel[plan.duration].toLowerCase()}';
+      subscriptionCard.priceSubtitle = plan.recurrent ? 'Renews every ${durationLabel[plan.duration].toLowerCase()}' : '';
       subscriptionCard.title = plan.title;
-      subscriptionCard.subtitles = plan.features
-          .map((PlanFeature feature) => EnumHelper.enumToString(feature))
-          .toList();
+      subscriptionCard.subtitles = plan.features.map((PlanFeature feature) => EnumHelper.enumToString(feature)).toList();
       subscriptionCard.selected = false;
       subscriptionCard.showHint = plan.infoDialog != null;
       subscriptionCard.backgroundImage = plan.backgroundImage;
-      subscriptionCard.onHintPressed = plan.infoDialog != null
-          ? () => showWaitlist(context, plan.infoDialog)
-          : null;
+      subscriptionCard.onHintPressed = plan.infoDialog != null ? () => showWaitlist(context, plan.infoDialog) : null;
       return subscriptionCard;
     }).toList();
   }

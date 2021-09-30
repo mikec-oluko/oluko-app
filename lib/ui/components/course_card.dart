@@ -9,12 +9,7 @@ class CourseCard extends StatefulWidget {
   final double height;
   final List<String> userRecommendationsAvatarUrls;
 
-  CourseCard(
-      {this.imageCover,
-      this.progress,
-      this.width,
-      this.height,
-      this.userRecommendationsAvatarUrls});
+  CourseCard({this.imageCover, this.progress, this.width, this.height, this.userRecommendationsAvatarUrls});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -29,10 +24,7 @@ class _State extends State<CourseCard> {
       width: widget.width,
       child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
         widget.userRecommendationsAvatarUrls != null
-            ? Expanded(
-                flex: 2,
-                child:
-                    _userRecommendations(widget.userRecommendationsAvatarUrls))
+            ? Expanded(flex: 2, child: _userRecommendations(widget.userRecommendationsAvatarUrls))
             : SizedBox(),
         Expanded(flex: 9, child: widget.imageCover),
         widget.progress != null
@@ -44,8 +36,7 @@ class _State extends State<CourseCard> {
                     heightFactor: 1,
                     widthFactor: 0.6,
                     child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 1.0, vertical: 8.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 1.0, vertical: 8.0),
                         child: CourseProgressBar(value: widget.progress)),
                   ),
                 ),
@@ -56,9 +47,8 @@ class _State extends State<CourseCard> {
   }
 
   Widget _userRecommendations(List<String> userRecommendationImageUrls) {
-    List<String> userImageList = userRecommendationImageUrls.length < 3
-        ? userRecommendationImageUrls
-        : userRecommendationImageUrls.sublist(0, 3);
+    List<String> userImageList =
+        userRecommendationImageUrls.length < 3 ? userRecommendationImageUrls : userRecommendationImageUrls.sublist(0, 3);
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 1.0),
@@ -69,9 +59,7 @@ class _State extends State<CourseCard> {
               .map((index, userUrl) => MapEntry(
                   Positioned(
                     //Expression to overlap user avatars to a max of 3 items.
-                    right: (index +
-                            (userRecommendationImageUrls.length <= 3 ? 0 : 1)) *
-                        (userRadius / 1.5),
+                    right: (index + (userRecommendationImageUrls.length <= 3 ? 0 : 1)) * (userRadius / 1.5),
                     child: CircleAvatar(
                       minRadius: userRadius,
                       backgroundImage: NetworkImage(userUrl),
@@ -80,14 +68,14 @@ class _State extends State<CourseCard> {
                   index))
               .keys
               .toList()
-                ..add(Positioned(
-                  right: 0,
-                  child: Text(
-                    //Show ellipsis if there are more than 3 user avatars
-                    userRecommendationImageUrls.length > 3 ? '...' : '',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ))),
+            ..add(Positioned(
+              right: 0,
+              child: Text(
+                //Show ellipsis if there are more than 3 user avatars
+                userRecommendationImageUrls.length > 3 ? '...' : '',
+                style: TextStyle(color: Colors.white),
+              ),
+            ))),
     );
   }
 }

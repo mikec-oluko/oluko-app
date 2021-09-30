@@ -16,12 +16,12 @@ class RecommendationRepository {
   Future<List<Recommendation>> getAll() async {
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('recommendations')
         .get();
     List<Recommendation> response = [];
     docRef.docs.forEach((doc) {
-      final Map<String, dynamic> element = doc.data();
+      final Map<String, dynamic> element = doc.data() as Map<String, dynamic>;
       response.add(Recommendation.fromJson(element));
     });
     return response;
@@ -30,13 +30,13 @@ class RecommendationRepository {
   Future<List<Recommendation>> getByDestinationUser(userId) async {
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('recommendations')
         .where('destination_user_id', isEqualTo: userId)
         .get();
     List<Recommendation> response = [];
     docRef.docs.forEach((doc) {
-      final Map<String, dynamic> element = doc.data();
+      final Map<String, dynamic> element = doc.data() as Map<String, dynamic>;
       response.add(Recommendation.fromJson(element));
     });
     return response;

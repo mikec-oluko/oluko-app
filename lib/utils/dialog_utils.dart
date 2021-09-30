@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 
 class DialogUtils {
-  static Future<dynamic> getDialog(
-      BuildContext context, List<Widget> content,
-      {bool showExitButton = true}) {
+  static Future<dynamic> getDialog(BuildContext context, List<Widget> content, {bool showExitButton = true}) {
     return showDialog(
       context: context,
       builder: (context) => new AlertDialog(

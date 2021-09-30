@@ -9,44 +9,34 @@ class VideoInfoRepository {
     this.firestoreInstance = FirebaseFirestore.instance;
   }
 
-  static VideoInfo createVideoInfo(
-      VideoInfo videoInfo, CollectionReference reference) {
+  static VideoInfo createVideoInfo(VideoInfo videoInfo, CollectionReference reference) {
     final DocumentReference docRef = reference.doc();
     videoInfo.id = docRef.id;
     docRef.set(videoInfo.toJson());
     return videoInfo;
   }
 
-  static Future<List<VideoInfo>> getVideosInfoByUser(
-      String userId, CollectionReference reference) async {
-    final querySnapshot = await reference
-        .orderBy("created_at", descending: true)
-        .where("created_by", isEqualTo: userId)
-        .get();
+  static Future<List<VideoInfo>> getVideosInfoByUser(String userId, CollectionReference reference) async {
+    final querySnapshot = await reference.orderBy('created_at', descending: true).where('created_by', isEqualTo: userId).get();
     return mapQueryToVideoInfo(querySnapshot);
   }
 
   static List<VideoInfo> mapQueryToVideoInfo(QuerySnapshot qs) {
     return qs.docs.map((DocumentSnapshot ds) {
-      return VideoInfo.fromJson(ds.data());
+      return VideoInfo.fromJson(ds.data() as Map<String, dynamic>);
     }).toList();
   }
 
-  static addDrawingToVideoInfo(
-      List<DrawPoint> canvasPointsRecording, DocumentReference reference) {
+  static addDrawingToVideoInfo(List<DrawPoint> canvasPointsRecording, DocumentReference reference) {
     if (canvasPointsRecording.length == 0) {
       return;
     }
-    reference.update({
-      'drawing': List<dynamic>.from(
-          canvasPointsRecording.map((drawPoint) => drawPoint.toJson()))
-    });
+    reference.update({'drawing': List<dynamic>.from(canvasPointsRecording.map((drawPoint) => drawPoint.toJson()))});
   }
 
-  static addMarkerToVideoInfo(
-      double marker, DocumentReference reference) async {
+  static Future<double> addMarkerToVideoInfo(double marker, DocumentReference reference) async {
     final ds = await reference.get();
-    VideoInfo videoInfo = VideoInfo.fromJson(ds.data());
+    VideoInfo videoInfo = VideoInfo.fromJson(ds.data() as Map<String, dynamic>);
     List<double> markers = videoInfo.markers;
     if (!markers.contains(marker)) {
       markers.add(marker);
