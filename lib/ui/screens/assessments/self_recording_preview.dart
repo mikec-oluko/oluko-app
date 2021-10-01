@@ -72,7 +72,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                           if (state is CreateSuccess) {
                             _taskSubmission = state.taskSubmission;
                             BlocProvider.of<VideoBloc>(context)
-                              .createVideo(context, File(widget.filePath), 3.0 / 4.0, state.taskSubmission.id);
+                                .createVideo(context, File(widget.filePath), 3.0 / 4.0, state.taskSubmission.id);
                           }
                         },
                         child: form());
@@ -156,7 +156,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
             child: Padding(
                 padding: const EdgeInsets.only(left: 20, right: 8),
                 child: Text(
-                  OlukoLocalizations.of(context).find('retake'),
+                  OlukoLocalizations.get(context, 'retake'),
                   style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary),
                 ))));
   }
@@ -169,7 +169,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
           child: Row(children: [
             OlukoPrimaryButton(
-              title: OlukoLocalizations.of(context).find('done'),
+              title: OlukoLocalizations.get(context, 'done'),
               onPressed: () async {
                 _controller.pause();
                 if (_taskSubmission == null) {

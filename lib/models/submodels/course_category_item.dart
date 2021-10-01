@@ -8,7 +8,7 @@ class CourseCategoryItem {
 
   CourseCategoryItem.fromJson(Map json)
       : reference = json['reference'] as DocumentReference,
-        id = json['id'].toString();
+        id = json['id']?.toString();
 
   Map<String, dynamic> toJson() => {
         'reference': reference,

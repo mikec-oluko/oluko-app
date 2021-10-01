@@ -206,5 +206,8 @@
     "userForThisAccountNotFoundPleaseSignUp": "User for this account not found. Please sign up.",
     "pleaseCheckYourEmailForInstructions":"Please check your email for instructions.",
     "errorGettingCurrentPlan": "Error getting current plan",
-    "total": "Total"
+    "total": "Total",
+    "invalidUsernameOrPw":"Invalid username/email or password.",
+    "passwordRequired":"Password is required.",
+    "emailUsernameRequired":"Email/Username is required."
 }

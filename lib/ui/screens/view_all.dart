@@ -25,12 +25,8 @@ class _ViewAllState extends State<ViewAll> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: OlukoAppBar(
-            title: widget.title != null
-                ? widget.title
-                : OlukoLocalizations.of(context).find('viewAll')),
+        appBar: OlukoAppBar(title: widget.title != null ? widget.title : OlukoLocalizations.get(context, 'viewAll')),
         backgroundColor: Colors.black,
-        body: CourseUtils.searchResults(context,
-            SearchResults(searchResults: widget.courses), 0.69333, 3, 5));
+        body: CourseUtils.searchResults(context, SearchResults(searchResults: widget.courses), 0.69333, 3, 5));
   }
 }

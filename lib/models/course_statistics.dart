@@ -34,7 +34,7 @@ class CourseStatistics extends Base {
 
   factory CourseStatistics.fromJson(Map<String, dynamic> json) {
     CourseStatistics movement = CourseStatistics(
-        courseId: json['course_id'].toString(),
+        courseId: json['course_id']?.toString(),
         courseReference: json['course_reference'] as DocumentReference,
         doing: json['doing'] as int,
         takingUp: json['taking_up'] as int,

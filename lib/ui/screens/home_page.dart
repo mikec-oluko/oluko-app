@@ -63,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 builder: (context, tagState) {
                   return Scaffold(
                       backgroundColor: Colors.black,
-                      appBar: OlukoAppBar(title: OlukoLocalizations.of(context).find('home'), showBackButton: false),
+                      appBar: OlukoAppBar(title: OlukoLocalizations.get(context, 'home'), showBackButton: false),
                       body: courseState is CourseSuccess && tagState is TagSuccess
                           ? WillPopScope(
                               onWillPop: () => AppNavigator.onWillPop(context),
@@ -113,8 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget _searchResults() {
     return SearchResultsGrid<Course>(
         childAspectRatio: cardsAspectRatio,
-        crossAxisCount:
-            MediaQuery.of(context).orientation == Orientation.portrait ? searchResultsPortrait : searchResultsLandscape,
+        crossAxisCount: MediaQuery.of(context).orientation == Orientation.portrait ? searchResultsPortrait : searchResultsLandscape,
         textInput: searchResults.query,
         itemList: searchResults.searchResults);
   }
@@ -142,23 +141,21 @@ class _MyHomePageState extends State<MyHomePage> {
                 return CarouselSection(
                   height: carouselSectionHeight,
                   title: courseState.coursesByCategories.keys.elementAt(index).name,
-                  optionLabel: OlukoLocalizations.of(context).find('viewAll'),
+                  optionLabel: OlukoLocalizations.get(context, 'viewAll'),
                   children: coursesList
                       .map((course) => Padding(
                             padding: const EdgeInsets.only(right: 8.0),
                             child: GestureDetector(
                               //TODO: Change to RouteEnum.courseMarketing
                               //when finish with enrolledClass
-                              onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.enrolledClass],
-                                  arguments: {'course': course}),
+                              onTap: () =>
+                                  Navigator.pushNamed(context, routeLabels[RouteEnum.enrolledClass], arguments: {'course': course}),
                               child: _getCourseCard(
                                   Image.network(
                                     course.image,
                                     fit: BoxFit.cover,
-                                    frameBuilder:
-                                        (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
-                                            ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded,
-                                                height: 120),
+                                    frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
+                                        ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 120),
                                   ),
                                   width: ScreenUtils.width(context) / (0.2 + _cardsToShow())),
                             ),

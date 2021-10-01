@@ -36,13 +36,9 @@ class _CoachAssessmentCardState extends State<CoachAssessmentCard> {
                 children: [
                   Text(
                     widget.task.name,
-                    style: OlukoFonts.olukoBigFont(
-                        customColor: OlukoColors.white,
-                        custoFontWeight: FontWeight.w500),
+                    style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                   ),
-                  checkAssessmentSubmitted(
-                              widget.task, widget.assessmentVideos) ==
-                          false
+                  checkAssessmentSubmitted(widget.task, widget.assessmentVideos) == false
                       ? Image.asset(
                           'assets/assessment/check_ellipse.png',
                           scale: 4,
@@ -52,8 +48,7 @@ class _CoachAssessmentCardState extends State<CoachAssessmentCard> {
                           child: Container(
                             width: 35,
                             height: 35,
-                            child:
-                                Stack(alignment: Alignment.center, children: [
+                            child: Stack(alignment: Alignment.center, children: [
                               Image.asset(
                                 'assets/assessment/green_ellipse.png',
                                 scale: 2,
@@ -71,9 +66,7 @@ class _CoachAssessmentCardState extends State<CoachAssessmentCard> {
                 children: [
                   Text(
                     widget.task.description,
-                    style: OlukoFonts.olukoMediumFont(
-                        customColor: OlukoColors.grayColor,
-                        custoFontWeight: FontWeight.w500),
+                    style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
                   ),
                 ],
               ),
@@ -81,10 +74,8 @@ class _CoachAssessmentCardState extends State<CoachAssessmentCard> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    OlukoLocalizations.of(context).find('public'),
-                    style: OlukoFonts.olukoBigFont(
-                        customColor: OlukoColors.grayColor,
-                        custoFontWeight: FontWeight.w500),
+                    OlukoLocalizations.get(context, 'public'),
+                    style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
                   ),
                   Stack(alignment: Alignment.center, children: [
                     Image.asset(

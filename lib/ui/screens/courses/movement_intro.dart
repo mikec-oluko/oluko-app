@@ -231,7 +231,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                             color: Colors.white,
                           ),
                           Text(
-                            OlukoLocalizations.of(context).find('bookMark'),
+                            OlukoLocalizations.get(context, 'bookMark'),
                             style: OlukoFonts.olukoBigFont(),
                           )
                         ],
@@ -290,7 +290,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   TitleBody(
-                    OlukoLocalizations.of(context).find('referenceMovements'),
+                    OlukoLocalizations.get(context, 'referenceMovements'),
                     bold: true,
                   ),
                 ],
@@ -314,7 +314,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: TitleBody(
-                      OlukoLocalizations.of(context).find('referenceCourses'),
+                      OlukoLocalizations.get(context, 'referenceCourses'),
                       bold: true,
                     ),
                   ),
@@ -347,7 +347,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   TitleBody(
-                    OlukoLocalizations.of(context).find('referenceMovements'),
+                    OlukoLocalizations.get(context, 'referenceMovements'),
                     bold: true,
                   ),
                 ],
@@ -367,7 +367,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: TitleBody(
-                      OlukoLocalizations.of(context).find('referenceCourses'),
+                      OlukoLocalizations.get(context, 'referenceCourses'),
                       bold: true,
                     ),
                   ),

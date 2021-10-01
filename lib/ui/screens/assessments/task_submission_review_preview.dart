@@ -112,7 +112,7 @@ class _TaskSubmissionReviewPreviewState extends State<TaskSubmissionReviewPrevie
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     OlukoPrimaryButton(
-                      title: OlukoLocalizations.of(context).find('done'),
+                      title: OlukoLocalizations.get(context, 'done'),
                       onPressed: () async {
                         _videoController.pause();
                         _taskReviewBloc..createTaskReview(reference, widget.taskSubmission, assessmentAssignmentId);

@@ -125,7 +125,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                           Padding(
                                             padding: const EdgeInsets.only(top: 10.0, right: 10),
                                             child: Text(
-                                              widget.course.description,
+                                              widget.course.description ?? '',
                                               style: OlukoFonts.olukoBigFont(
                                                   custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
                                             ),
@@ -133,7 +133,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                           Padding(
                                             padding: const EdgeInsets.only(top: 25.0),
                                             child: Text(
-                                              OlukoLocalizations.of(context).find('classes'),
+                                              OlukoLocalizations.get(context, 'classes'),
                                               style: OlukoFonts.olukoSubtitleFont(custoFontWeight: FontWeight.bold),
                                             ),
                                           ),
@@ -171,7 +171,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     OlukoPrimaryButton(
-                      title: OlukoLocalizations.of(context).find('enroll'),
+                      title: OlukoLocalizations.get(context, 'enroll'),
                       onPressed: () {
                         BlocProvider.of<CourseEnrollmentBloc>(context)..create(_user, widget.course);
                       },
@@ -196,7 +196,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
         return Padding(
           padding: const EdgeInsets.all(50.0),
           child: Center(
-            child: Text(OlukoLocalizations.of(context).find('loadingWhithDots'),
+            child: Text(OlukoLocalizations.get(context, 'loadingWhithDots'),
                 style: TextStyle(
                   color: Colors.white,
                 )),

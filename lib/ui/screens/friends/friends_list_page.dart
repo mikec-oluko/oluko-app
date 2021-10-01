@@ -291,8 +291,8 @@ class _FriendsListPageState extends State<FriendsListPage> {
                                                       AppMessages.showSnackbar(
                                                           userStatisticsContext,
                                                           hiFiveSendState.hiFive
-                                                              ? OlukoLocalizations.of(context).find('hiFiveSent')
-                                                              : OlukoLocalizations.of(context).find('hiFiveRemoved'));
+                                                              ? OlukoLocalizations.get(context, 'hiFiveSent')
+                                                              : OlukoLocalizations.get(context, 'hiFiveRemoved'));
                                                     }
                                                     if (hiFiveSendState is HiFiveSendSuccess) {
                                                       BlocProvider.of<HiFiveReceivedBloc>(context).get(context, _authStateData.user.id, user.id);

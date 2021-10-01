@@ -60,12 +60,11 @@ class Course extends Base {
       return null;
     }
     Course course = Course(
-        name: json['name'] != null ? json['name'].toString() : '-',
-        statisticsReference:
-            json['statistics_reference'] != null ? json['statistics_reference'] as DocumentReference : null,
-        video: json['video'].toString(),
-        duration: json['duration'].toString(),
-        description: json['description'] != null ? json['description'].toString() : '-',
+        name: json['name']?.toString(),
+        statisticsReference: json['statistics_reference'] != null ? json['statistics_reference'] as DocumentReference : null,
+        video: json['video']?.toString(),
+        duration: json['duration']?.toString(),
+        description: json['description']?.toString(),
         equipment: json['equipment'] == null ? null : json['equipment'] as List<String>,
         intensity: json['intensity'] == null ? null : json['intensity'] as List<String>,
         categories: json['categories'] == null ? null : json['categories'] as List<String>,
@@ -76,14 +75,12 @@ class Course extends Base {
         engagementTime: json['engagement_time'],
         mandatoryGapTime: json['mandatory_gap_time'] as bool,
         classes: json['classes'] != null
-            ? List<ObjectSubmodel>.from(
-                (json['classes'] as Iterable).map((c) => ObjectSubmodel.fromJson(c as Map<String, dynamic>)))
+            ? List<ObjectSubmodel>.from((json['classes'] as Iterable).map((c) => ObjectSubmodel.fromJson(c as Map<String, dynamic>)))
             : null,
         tags: json['tags'] != null
-            ? List<ObjectSubmodel>.from(
-                (json['tags'] as Iterable).map((c) => ObjectSubmodel.fromJson(c as Map<String, dynamic>)))
+            ? List<ObjectSubmodel>.from((json['tags'] as Iterable).map((c) => ObjectSubmodel.fromJson(c as Map<String, dynamic>)))
             : null,
-        image: json['image'].toString());
+        image: json['image']?.toString());
     course.setBase(json);
     return course;
   }

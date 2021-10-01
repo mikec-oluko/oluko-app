@@ -15,19 +15,19 @@ class AppNavigator {
           context: context,
           builder: (context) => AlertDialog(
             backgroundColor: Colors.black,
-            title: TitleBody(OlukoLocalizations.of(context).find('exitConfirmationTitle')),
-            content: Text(OlukoLocalizations.of(context).find('exitConfirmationBody'), style: OlukoFonts.olukoBigFont()),
+            title: TitleBody(OlukoLocalizations.get(context, 'exitConfirmationTitle')),
+            content: Text(OlukoLocalizations.get(context, 'exitConfirmationBody'), style: OlukoFonts.olukoBigFont()),
             actions: <Widget>[
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
                 child: Text(
-                  OlukoLocalizations.of(context).find('no'),
+                  OlukoLocalizations.get(context, 'no'),
                 ),
               ),
               TextButton(
                 onPressed: () => {if (Platform.isAndroid) SystemNavigator.pop() else if (Platform.isIOS) exit(0)},
                 child: Text(
-                  OlukoLocalizations.of(context).find('yes'),
+                  OlukoLocalizations.get(context, 'yes'),
                 ),
               ),
             ],

@@ -132,7 +132,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         break;
                       case ProfileOptionsTitle.logout:
                         BlocProvider.of<AuthBloc>(context).logout(context);
-                        AppMessages.showSnackbar(context, OlukoLocalizations.of(context).find('loggedOut'));
+                        AppMessages.showSnackbarTranslated(context, 'loggedOut');
                         Navigator.pushNamed(context, '/');
                         setState(() {});
                         break;
@@ -145,15 +145,11 @@ class _ProfilePageState extends State<ProfilePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(left: 25.0),
-                  child: Text(OlukoLocalizations.of(context).find(returnOptionString(option.option)),
+                  padding: const EdgeInsets.only(left: 10),
+                  child: Text(OlukoLocalizations.get(context, returnOptionString(option.option)),
                       style: option.enable ? OlukoFonts.olukoMediumFont() : OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor)),
                 ),
-                IconButton(
-                    icon: Icon(Icons.arrow_forward_ios, color: OlukoColors.grayColor),
-                    onPressed: option.enable
-                        ? () => Navigator.pushNamed(context, ProfileRoutes.returnRouteName(option.option)).then((value) => onGoBack())
-                        : () {})
+                IconButton(icon: Icon(Icons.arrow_forward_ios, color: OlukoColors.grayColor), onPressed: null)
               ],
             ),
           ),
@@ -176,5 +172,5 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
-  String returnOptionString(ProfileOptionsTitle option) => option.toString().split(".")[1];
+  String returnOptionString(ProfileOptionsTitle option) => option.toString().split('.')[1];
 }

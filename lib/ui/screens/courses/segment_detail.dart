@@ -139,7 +139,8 @@ class _SegmentDetailState extends State<SegmentDetail> {
   Widget _viewBody() {
     return Container(
       child: ListView(children: [
-        SegmentImageSection(segment: _segments[widget.segmentIndex], currentSegmentStep: currentSegmentStep, totalSegmentStep: totalSegmentStep),
+        SegmentImageSection(
+            segment: _segments[widget.segmentIndex], currentSegmentStep: currentSegmentStep, totalSegmentStep: totalSegmentStep),
         _menuOptions()
       ]),
     );
@@ -153,7 +154,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
           padding: const EdgeInsets.only(left: 15, right: 15, bottom: 25.0),
           child: Row(children: [
             OlukoPrimaryButton(
-                title: OlukoLocalizations.of(context).find('startWorkouts'),
+                title: OlukoLocalizations.get(context, 'startWorkouts'),
                 color: OlukoColors.primary,
                 onPressed: () {
                   BottomDialogUtils.showBottomDialog(context: context, content: dialogContainer());
@@ -170,7 +171,8 @@ class _SegmentDetailState extends State<SegmentDetail> {
       Icon(Icons.warning_amber_rounded, color: Colors.white, size: 100),
       Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Text(OlukoLocalizations.of(context).find('coachRecommendsRecording'), textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont()),
+        child: Text(OlukoLocalizations.get(context, 'coachRecommendsRecording'),
+            textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont()),
       ),
       Padding(
         padding: const EdgeInsets.only(top: 16.0),
@@ -181,7 +183,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
                 Navigator.of(context).pop(true);
               },
               color: Colors.white,
-              title: OlukoLocalizations.of(context).find('recordAndStartSegment'),
+              title: OlukoLocalizations.get(context, 'recordAndStartSegment'),
             ),
           ],
         ),
@@ -191,7 +193,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
           Navigator.of(context).pop(false);
         },
         child: Text(
-          OlukoLocalizations.of(context).find('continueWithoutRecording'),
+          OlukoLocalizations.get(context, 'continueWithoutRecording'),
           style: OlukoFonts.olukoMediumFont(),
         ),
       )
@@ -220,7 +222,8 @@ class _SegmentDetailState extends State<SegmentDetail> {
             SizedBox(height: 20),
             Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 50),
-                child: Text("Coach Mike has requested you to record the segment", textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont())),
+                child: Text("Coach Mike has requested you to record the segment",
+                    textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont())),
             SizedBox(height: 35),
             Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -228,7 +231,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     OlukoOutlinedButton(
-                      title: OlukoLocalizations.of(context).find('ignore'),
+                      title: OlukoLocalizations.get(context, 'ignore'),
                       onPressed: () {
                         navigateToSegmentWithoutRecording();
                       },
@@ -244,7 +247,8 @@ class _SegmentDetailState extends State<SegmentDetail> {
                 )),
           ]),
           Align(
-              alignment: Alignment.topRight, child: IconButton(icon: Icon(Icons.close, color: Colors.white), onPressed: () => Navigator.pop(context)))
+              alignment: Alignment.topRight,
+              child: IconButton(icon: Icon(Icons.close, color: Colors.white), onPressed: () => Navigator.pop(context)))
         ]));
   }
 
@@ -258,8 +262,8 @@ class _SegmentDetailState extends State<SegmentDetail> {
   }
 
   navigateToSegmentWithoutRecording() {
-    TimerUtils.startCountdown(
-        WorkoutType.segment, context, getArguments(), _segments[widget.segmentIndex].initialTimer, _segments[widget.segmentIndex].rounds, 0);
+    TimerUtils.startCountdown(WorkoutType.segment, context, getArguments(), _segments[widget.segmentIndex].initialTimer,
+        _segments[widget.segmentIndex].rounds, 0);
   }
 
   Object getArguments() {

@@ -7,15 +7,10 @@ class LoginRequest {
   String projectId;
 
   LoginRequest.fromJson(Map json)
-      : email = json['email'].toString(),
-        password = json['password'].toString(),
-        projectId = json['projectId'].toString(),
-        userName = json['userName'].toString();
+      : email = json['email']?.toString(),
+        password = json['password']?.toString(),
+        projectId = json['projectId']?.toString(),
+        userName = json['userName']?.toString();
 
-  Map<String, dynamic> toJson() => {
-        'email': email,
-        'password': password,
-        'projectId': projectId,
-        'username': userName
-      };
+  Map<String, dynamic> toJson() => {'email': email, 'password': password, 'projectId': projectId, 'username': userName};
 }

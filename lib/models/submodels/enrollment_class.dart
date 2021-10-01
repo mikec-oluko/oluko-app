@@ -12,29 +12,21 @@ class EnrollmentClass {
   String selfieThumbnailUrl;
 
   EnrollmentClass(
-      {this.id,
-      this.reference,
-      this.name,
-      this.compleatedAt,
-      this.segments,
-      this.image,
-      this.selfieDownloadUrl,
-      this.selfieThumbnailUrl});
+      {this.id, this.reference, this.name, this.compleatedAt, this.segments, this.image, this.selfieDownloadUrl, this.selfieThumbnailUrl});
 
   factory EnrollmentClass.fromJson(Map<String, dynamic> json) {
     return EnrollmentClass(
-        id: json['id'].toString(),
+        id: json['id']?.toString(),
         reference: json['reference'] as DocumentReference,
-        name: json['name'].toString(),
-        image: json['image'].toString(),
+        name: json['name']?.toString(),
+        image: json['image']?.toString(),
         compleatedAt: json['compleated_at'] as Timestamp,
-        selfieDownloadUrl: json['selfie_download_url'].toString(),
-        selfieThumbnailUrl: json['selfie_thumbnail_url'].toString(),
+        selfieDownloadUrl: json['selfie_download_url']?.toString(),
+        selfieThumbnailUrl: json['selfie_thumbnail_url']?.toString(),
         segments: json['segments'] == null
             ? null
-            : List<EnrollmentSegment>.from((json['segments'] as Iterable).map(
-                (segment) => EnrollmentSegment.fromJson(
-                    segment as Map<String, dynamic>))));
+            : List<EnrollmentSegment>.from(
+                (json['segments'] as Iterable).map((segment) => EnrollmentSegment.fromJson(segment as Map<String, dynamic>))));
   }
 
   Map<String, dynamic> toJson() => {
@@ -45,8 +37,6 @@ class EnrollmentClass {
         'selfie_download_url': selfieDownloadUrl,
         'selfie_thumbnail_url': selfieThumbnailUrl,
         'compleated_at': compleatedAt,
-        'segments': segments == null
-            ? null
-            : List<dynamic>.from(segments.map((segment) => segment.toJson())),
+        'segments': segments == null ? null : List<dynamic>.from(segments.map((segment) => segment.toJson())),
       };
 }
