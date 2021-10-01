@@ -13,9 +13,8 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 class TransformationJourneyRepository {
   FirebaseFirestore firestoreInstance;
 
-  static DocumentReference projectReference = FirebaseFirestore.instance
-      .collection("projects")
-      .doc(GlobalConfiguration().getValue("projectId"));
+  static DocumentReference projectReference =
+      FirebaseFirestore.instance.collection("projects").doc(GlobalConfiguration().getValue('projectId'));
 
   TransformationJourneyRepository() {
     firestoreInstance = FirebaseFirestore.instance;
@@ -25,12 +24,11 @@ class TransformationJourneyRepository {
     this.firestoreInstance = firestoreInstance;
   }
 
-  Future<List<TransformationJourneyUpload>> getUploadedContentByUserId(
-      String userId) async {
+  Future<List<TransformationJourneyUpload>> getUploadedContentByUserId(String userId) async {
     try {
       QuerySnapshot docRef = await FirebaseFirestore.instance
           .collection('projects')
-          .doc(GlobalConfiguration().getValue("projectId"))
+          .doc(GlobalConfiguration().getValue('projectId'))
           .collection('users')
           .doc(userId)
           .collection('transformationJourneyUploads')
@@ -38,7 +36,7 @@ class TransformationJourneyRepository {
           .get();
       List<TransformationJourneyUpload> contentUploaded = [];
       docRef.docs.forEach((doc) {
-        final Map<String, dynamic> content = doc.data();
+        final Map<String, dynamic> content = doc.data() as Map<String, dynamic>;
         contentUploaded.add(TransformationJourneyUpload.fromJson(content));
       });
       contentUploaded.sort((a, b) => a.index.compareTo(b.index));
@@ -48,7 +46,7 @@ class TransformationJourneyRepository {
         e,
         stackTrace: stackTrace,
       );
-      throw e;
+      rethrow;
     }
   }
 
@@ -56,12 +54,9 @@ class TransformationJourneyRepository {
       FileTypeEnum type, PickedFile file, String userId, int index) async {
     try {
       CollectionReference transformationJourneyUploadsReference =
-          projectReference
-              .collection('users')
-              .doc(userId)
-              .collection('transformationJourneyUploads');
+          projectReference.collection('users').doc(userId).collection('transformationJourneyUploads');
 
-      var thumbnail;
+      String thumbnail;
 
       switch (type) {
         case FileTypeEnum.image:
@@ -75,27 +70,23 @@ class TransformationJourneyRepository {
           break;
       }
       if (type == FileTypeEnum.image) {
-        final thumbNaildownloadUrl = await _uploadFile(thumbnail,
-            '${transformationJourneyUploadsReference.path}/thumbnails');
+        final thumbNaildownloadUrl = await _uploadFile(thumbnail, '${transformationJourneyUploadsReference.path}/thumbnails');
 
-        final downloadUrl = await _uploadFile(
-            file.path, transformationJourneyUploadsReference.path);
+        final downloadUrl = await _uploadFile(file.path, transformationJourneyUploadsReference.path);
 
-        TransformationJourneyUpload transformationJourneyUpload =
-            TransformationJourneyUpload(
-                createdBy: userId,
-                name: '',
-                from: Timestamp.now(),
-                description: '',
-                index: index == null ? 0 : index,
-                type: type,
-                file: downloadUrl,
-                isPublic: true,
-                isDeleted: false,
-                thumbnail: thumbNaildownloadUrl);
+        TransformationJourneyUpload transformationJourneyUpload = TransformationJourneyUpload(
+            createdBy: userId,
+            name: '',
+            from: Timestamp.now(),
+            description: '',
+            index: index == null ? 0 : index,
+            type: type,
+            file: downloadUrl,
+            isPublic: true,
+            isDeleted: false,
+            thumbnail: thumbNaildownloadUrl);
 //TODO: update thumbnail with thumbnailer https://pub.dev/packages/thumbnailer
-        final DocumentReference docRef =
-            transformationJourneyUploadsReference.doc();
+        final DocumentReference docRef = transformationJourneyUploadsReference.doc();
         transformationJourneyUpload.id = docRef.id;
         docRef.set(transformationJourneyUpload.toJson());
         return transformationJourneyUpload;
@@ -105,25 +96,22 @@ class TransformationJourneyRepository {
         e,
         stackTrace: stackTrace,
       );
-      throw e;
+      rethrow;
     }
   }
 
-  static Future<String> _uploadFile(filePath, folderName) async {
+  static Future<String> _uploadFile(String filePath, String folderName) async {
     final file = new File(filePath);
     final basename = p.basename(filePath);
 
     final S3Provider s3Provider = S3Provider();
-    String downloadUrl =
-        await s3Provider.putFile(file.readAsBytesSync(), folderName, basename);
+    String downloadUrl = await s3Provider.putFile(file.readAsBytesSync(), folderName, basename);
 
     return downloadUrl;
   }
 
   static Future<bool> reorderElementsIndex(
-      {TransformationJourneyUpload elementMoved,
-      TransformationJourneyUpload elementReplaced,
-      String userId}) async {
+      {TransformationJourneyUpload elementMoved, TransformationJourneyUpload elementReplaced, String userId}) async {
     updateIndexOfElements(elementMoved, elementReplaced);
 
     try {
@@ -137,18 +125,13 @@ class TransformationJourneyRepository {
     }
   }
 
-  static Future updateDocument(
-      String userId, TransformationJourneyUpload elementToUpdate) async {
-    DocumentReference contentReference = projectReference
-        .collection('users')
-        .doc(userId)
-        .collection('transformationJourneyUploads')
-        .doc(elementToUpdate.id);
+  static Future updateDocument(String userId, TransformationJourneyUpload elementToUpdate) async {
+    DocumentReference contentReference =
+        projectReference.collection('users').doc(userId).collection('transformationJourneyUploads').doc(elementToUpdate.id);
     await contentReference.update(elementToUpdate.toJson());
   }
 
-  static void updateIndexOfElements(TransformationJourneyUpload elementMoved,
-      TransformationJourneyUpload elementReplaced) {
+  static void updateIndexOfElements(TransformationJourneyUpload elementMoved, TransformationJourneyUpload elementReplaced) {
     final temptElement = elementMoved.index;
     elementMoved.index = elementReplaced.index;
     elementReplaced.index = temptElement;

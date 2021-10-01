@@ -8,9 +8,12 @@ import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/ui/components/open_settings_modal.dart';
+import 'package:oluko_app/utils/dialog_utils.dart';
+import 'package:oluko_app/utils/exception_codes.dart';
 
 class SelfRecording extends StatefulWidget {
-  SelfRecording({this.taskIndex, this.isPublic, Key key}) : super(key: key);
+  const SelfRecording({this.taskIndex, this.isPublic, Key key}) : super(key: key);
 
   final int taskIndex;
   final bool isPublic;
@@ -55,12 +58,12 @@ class _State extends State<SelfRecording> {
               _task = _tasks[widget.taskIndex];
               return form();
             } else {
-              return SizedBox();
+              return const SizedBox();
             }
           },
         );
       } else {
-        return SizedBox();
+        return const SizedBox();
       }
     });
   }
@@ -77,18 +80,15 @@ class _State extends State<SelfRecording> {
                   child: ListView(
                     children: [
                       ConstrainedBox(
-                          constraints: BoxConstraints(
-                              maxHeight: MediaQuery.of(context).size.height),
+                          constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height),
                           child: (!_isReady)
                               ? Container()
                               : Stack(alignment: Alignment.topRight, children: [
-                                  AspectRatio(
-                                      aspectRatio: 3.0 / 4.0,
-                                      child: CameraPreview(cameraController)),
+                                  AspectRatio(aspectRatio: 3.0 / 4.0, child: CameraPreview(cameraController)),
                                   Padding(
-                                      padding: EdgeInsets.all(10),
+                                      padding: const EdgeInsets.all(10),
                                       child: IconButton(
-                                        icon: Icon(
+                                        icon: const Icon(
                                           Icons.close,
                                           size: 30,
                                           color: Colors.white,
@@ -113,35 +113,37 @@ class _State extends State<SelfRecording> {
                   padding: EdgeInsets.symmetric(horizontal: 10),
                   child: Text(
                     _task.stepsTitle,
-                    style: OlukoFonts.olukoSuperBigFont(
-                        customColor: OlukoColors.grayColor,
-                        custoFontWeight: FontWeight.normal),
+                    style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.normal),
                   ))
-              : SizedBox(),
+              : const SizedBox(),
         ),
-        _task.stepsDescription != null
-            ? Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                child: Text(
-                  '${_task.stepsDescription.replaceAll('\\n', '\n')}',
-                  style: OlukoFonts.olukoSuperBigFont(
-                      customColor: OlukoColors.white,
-                      custoFontWeight: FontWeight.normal),
-                ))
-            : SizedBox(),
-        SizedBox(height: 50)
+        if (_task.stepsDescription != null)
+          Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Text(
+                _task.stepsDescription.replaceAll('\\n', '\n'),
+                style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.normal),
+              ))
+        else
+          const SizedBox(),
+        const SizedBox(height: 50)
       ],
     );
   }
 
   Future<void> _setupCameras() async {
-    int cameraPos = isCameraFront ? 0 : 1;
+    final int cameraPos = isCameraFront ? 0 : 1;
     try {
       cameras = await availableCameras();
-      cameraController =
-          new CameraController(cameras[cameraPos], ResolutionPreset.medium);
+      cameraController = CameraController(cameras[cameraPos], ResolutionPreset.medium);
       await cameraController.initialize();
-    } on CameraException catch (_) {}
+    } on CameraException catch (e) {
+      if (e.code == ExceptionCodes.cameraPermissionError) {
+        Navigator.pop(context);
+        DialogUtils.getDialog(context, [OpenSettingsModal(context)], showExitButton: false);
+        return;
+      }
+    }
     if (!mounted) return;
     setState(() {
       _isReady = true;
@@ -168,7 +170,7 @@ class _State extends State<SelfRecording> {
                     'assets/assessment/camera.png',
                     scale: 4,
                   ),
-                  Icon(
+                  const Icon(
                     Icons.cached,
                     color: OlukoColors.grayColor,
                     size: 18,
@@ -177,16 +179,14 @@ class _State extends State<SelfRecording> {
             GestureDetector(
               onTap: () async {
                 if (_recording) {
-                  XFile videopath = await cameraController.stopVideoRecording();
-                  String path = videopath.path;
+                  final XFile videopath = await cameraController.stopVideoRecording();
+                  final String path = videopath.path;
                   Navigator.pop(context);
-                  Navigator.pushNamed(
-                      context, routeLabels[RouteEnum.selfRecordingPreview],
-                      arguments: {
-                        'taskIndex': widget.taskIndex,
-                        'filePath': path,
-                        'isPublic': widget.isPublic,
-                      });
+                  Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecordingPreview], arguments: {
+                    'taskIndex': widget.taskIndex,
+                    'filePath': path,
+                    'isPublic': widget.isPublic,
+                  });
                 } else {
                   await cameraController.startVideoRecording();
                 }
@@ -200,21 +200,18 @@ class _State extends State<SelfRecording> {
                 listener: (context, state) {
                   if (state is Success && state.pickedFile != null) {
                     Navigator.pop(context);
-                    Navigator.pushNamed(
-                        context, routeLabels[RouteEnum.selfRecordingPreview],
-                        arguments: {
-                          'taskIndex': widget.taskIndex,
-                          'filePath': state.pickedFile.path,
-                          'isPublic': widget.isPublic,
-                        });
+                    Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecordingPreview], arguments: {
+                      'taskIndex': widget.taskIndex,
+                      'filePath': state.pickedFile.path,
+                      'isPublic': widget.isPublic,
+                    });
                   }
                 },
                 child: GestureDetector(
                   onTap: () {
-                    BlocProvider.of<GalleryVideoBloc>(context)
-                      ..getVideoFromGallery();
+                    BlocProvider.of<GalleryVideoBloc>(context).getVideoFromGallery();
                   },
-                  child: Icon(
+                  child: const Icon(
                     Icons.file_upload,
                     size: 30,
                     color: OlukoColors.grayColor,

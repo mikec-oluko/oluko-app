@@ -8,7 +8,7 @@ abstract class CourseEnrollmentListState {}
 class Loading extends CourseEnrollmentListState {}
 
 class Failure extends CourseEnrollmentListState {
-  final Exception exception;
+  final dynamic exception;
   Failure({this.exception});
 }
 
@@ -32,6 +32,7 @@ class CourseEnrollmentListBloc extends Cubit<CourseEnrollmentListState> {
         stackTrace: stackTrace,
       );
       emit(Failure(exception: exception));
+      rethrow;
     }
   }
 
@@ -47,6 +48,7 @@ class CourseEnrollmentListBloc extends Cubit<CourseEnrollmentListState> {
         stackTrace: stackTrace,
       );
       emit(Failure(exception: exception));
+      rethrow;
     }
   }
 }

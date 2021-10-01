@@ -26,23 +26,18 @@ class _State extends State<InitialTimerPanel> {
               image: AssetImage('assets/courses/gray_background.png'),
               fit: BoxFit.cover,
             ),
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
         child: Column(children: [
           startButton(),
           SizedBox(height: 30),
-          Text(OlukoLocalizations.of(context).find('pauseWarning'),
+          Text(OlukoLocalizations.get(context, 'pauseWarning'),
               textAlign: TextAlign.center,
-              style: OlukoFonts.olukoBigFont(
-                  custoFontWeight: FontWeight.w400,
-                  customColor: OlukoColors.coral)),
+              style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400, customColor: OlukoColors.coral)),
           SizedBox(height: 5),
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Text(OlukoLocalizations.of(context).find('dontShowAgain'),
+            Text(OlukoLocalizations.get(context, 'dontShowAgain'),
                 textAlign: TextAlign.center,
-                style: OlukoFonts.olukoBigFont(
-                    custoFontWeight: FontWeight.w400,
-                    customColor: OlukoColors.white)),
+                style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400, customColor: OlukoColors.white)),
             Theme(
                 data: ThemeData(unselectedWidgetColor: OlukoColors.primary),
                 child: Checkbox(
@@ -61,7 +56,7 @@ class _State extends State<InitialTimerPanel> {
             padding: const EdgeInsets.symmetric(horizontal: 80),
             child: Row(children: [
               OlukoPrimaryButton(
-                  title: OlukoLocalizations.of(context).find('ok'),
+                  title: OlukoLocalizations.get(context, 'ok'),
                   color: OlukoColors.primary,
                   onPressed: () {
                     widget.panelController.close();

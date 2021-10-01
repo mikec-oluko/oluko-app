@@ -19,7 +19,7 @@ class SubscribedCourseUsersSuccess extends SubscribedCourseUsersState {
 }
 
 class SubscribedCourseUsersFailure extends SubscribedCourseUsersState {
-  final Exception exception;
+  final dynamic exception;
   SubscribedCourseUsersFailure({this.exception});
 }
 
@@ -29,8 +29,7 @@ class SubscribedCourseUsersBloc extends Cubit<SubscribedCourseUsersState> {
   void get(String courseId, String userId) async {
     try {
       //Fetch enrollments for this course. And retrieve all users that are already enrolled.
-      List<CourseEnrollment> courseEnrollmentList =
-          await CourseEnrollmentRepository.getByCourse(courseId);
+      List<CourseEnrollment> courseEnrollmentList = await CourseEnrollmentRepository.getByCourse(courseId, userId);
 
       List<UserResponse> uniqueUserList = [];
       List<String> uniqueUserIds = [];
@@ -38,9 +37,8 @@ class SubscribedCourseUsersBloc extends Cubit<SubscribedCourseUsersState> {
       List<UserResponse> userListToShow = [];
       if (courseEnrollmentList != null) {
         //User list for all subscribers of this course.
-        List<UserResponse> usersSubscribedToCourse = await Future.wait(
-            courseEnrollmentList
-                .map((e) => UserRepository().getById(e.userReference.id)));
+        List<UserResponse> usersSubscribedToCourse =
+            await Future.wait(courseEnrollmentList.map((e) => UserRepository().getById(e.userReference.id)));
         //Remove enrollments without user
         usersSubscribedToCourse.removeWhere((element) => element == null);
 
@@ -51,31 +49,27 @@ class SubscribedCourseUsersBloc extends Cubit<SubscribedCourseUsersState> {
           }
         });
 
-        Friend friendData =
-            await FriendRepository.getUserFriendsByUserId(userId);
+        Friend friendData = await FriendRepository.getUserFriendsByUserId(userId);
         List<FriendModel> friends = friendData.friends;
 
         userListToShow = List.from(uniqueUserList);
 
         friends.forEach((friend) {
           if (friend.isFavorite) {
-            num index = userListToShow
-                .map((user) => user.id)
-                .toList()
-                .indexOf(friend.id);
+            int index = userListToShow.map((user) => user.id).toList().indexOf(friend.id);
             favoriteUserList.add(userListToShow[index]);
           }
         });
       }
 
-      emit(SubscribedCourseUsersSuccess(
-          users: userListToShow, favoriteUsers: favoriteUserList));
+      emit(SubscribedCourseUsersSuccess(users: userListToShow, favoriteUsers: favoriteUserList));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
         stackTrace: stackTrace,
       );
       emit(SubscribedCourseUsersFailure(exception: exception));
+      rethrow;
     }
   }
 }

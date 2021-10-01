@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_helper.dart';
 import 'package:oluko_app/models/plan.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class SubscriptionCard extends StatefulWidget {
   Function(bool) onPressed;
@@ -33,18 +34,12 @@ class SubscriptionCard extends StatefulWidget {
 class _State extends State<SubscriptionCard> {
   @override
   Widget build(BuildContext context) {
-    Color cardColor =
-        widget.selected ? OlukoColors.secondary : OlukoColors.primary;
-    return GestureDetector(
-      onTap: () => this.setState(() {
-        widget.selected = !widget.selected;
-      }),
-      child: Padding(
+    Color cardColor = widget.selected ? OlukoColors.secondary : OlukoColors.primary;
+    if (widget.title == null) {
+      return Padding(
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Container(
-          decoration: BoxDecoration(
-              border: Border.all(color: cardColor, width: 2),
-              borderRadius: BorderRadius.all(Radius.circular(10))),
+          decoration: BoxDecoration(border: Border.all(color: cardColor, width: 2), borderRadius: BorderRadius.all(Radius.circular(10))),
           child: Column(
             children: [
               Column(
@@ -53,110 +48,135 @@ class _State extends State<SubscriptionCard> {
                     Opacity(
                       opacity: 0.3,
                       child: Container(
-                        decoration: BoxDecoration(
-                            color: Colors.black,
-                            image: DecorationImage(
-                                fit: BoxFit.cover,
-                                alignment: Alignment.centerRight,
-                                image: NetworkImage(widget.backgroundImage)),
-                            borderRadius: BorderRadius.all(Radius.circular(9))),
+                        decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.all(Radius.circular(9))),
                         child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 30, horizontal: 10),
+                          padding: EdgeInsets.symmetric(vertical: 30, horizontal: 10),
                           child: Container(
-                            height: 30.0 +
-                                (widget.subtitles.length * 15).toDouble(),
+                            height: 30.0,
                           ),
                         ),
                       ),
                     ),
                     Container(
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            stops: [0.15, 1],
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                            colors: [
-                              cardColor,
-                              Colors.transparent,
-                            ],
-                          ),
-                          color: cardColor,
-                          borderRadius: BorderRadius.all(Radius.circular(3))),
                       child: Padding(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 30, horizontal: 10),
+                        padding: EdgeInsets.symmetric(vertical: 30, horizontal: 10),
                         child: Container(
-                          height:
-                              41.0 + (widget.subtitles.length * 15).toDouble(),
                           child: Column(children: [
                             Row(
                               children: [
-                                Text(widget.title,
+                                Text(OlukoLocalizations.get(context, 'errorGettingCurrentPlan'),
                                     style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 30,
-                                        fontWeight: FontWeight.bold)),
-                                widget.showHint ? getWaitList() : SizedBox()
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                    )),
                               ],
                             ),
-                            Row(
-                              children: [
-                                Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children:
-                                        displayFeatures(widget.subtitles)),
-                              ],
-                            )
                           ]),
                         ),
                       ),
                     ),
                   ]),
-                  Container(
-                    child: Padding(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-                        child: Column(children: [
-                          Row(
-                            children: [
-                              Text(widget.priceLabel,
-                                  style: TextStyle(
-                                      color: cardColor,
-                                      fontSize: 30,
-                                      fontWeight: FontWeight.bold)),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Text(widget.priceSubtitle,
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w300)),
-                            ],
-                          )
-                        ])),
-                  ),
                 ],
               ),
             ],
           ),
         ),
-      ),
-    );
+      );
+    } else {
+      return GestureDetector(
+        onTap: () => this.setState(() {
+          widget.selected = !widget.selected;
+        }),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          child: Container(
+            decoration: BoxDecoration(border: Border.all(color: cardColor, width: 2), borderRadius: BorderRadius.all(Radius.circular(10))),
+            child: Column(
+              children: [
+                Column(
+                  children: [
+                    Stack(children: [
+                      Opacity(
+                        opacity: 0.3,
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: Colors.black,
+                              image: DecorationImage(
+                                  fit: BoxFit.cover, alignment: Alignment.centerRight, image: NetworkImage(widget.backgroundImage)),
+                              borderRadius: BorderRadius.all(Radius.circular(9))),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 30, horizontal: 10),
+                            child: Container(
+                              height: 30.0 + (widget.subtitles.length * 15).toDouble(),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              stops: [0.15, 1],
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                              colors: [
+                                cardColor,
+                                Colors.transparent,
+                              ],
+                            ),
+                            color: cardColor,
+                            borderRadius: BorderRadius.all(Radius.circular(3))),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 30, horizontal: 10),
+                          child: Container(
+                            height: 41.0 + (widget.subtitles.length * 15).toDouble(),
+                            child: Column(children: [
+                              Row(
+                                children: [
+                                  Text(widget.title, style: TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold)),
+                                  widget.showHint ? getWaitList() : SizedBox()
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Column(crossAxisAlignment: CrossAxisAlignment.start, children: displayFeatures(widget.subtitles)),
+                                ],
+                              )
+                            ]),
+                          ),
+                        ),
+                      ),
+                    ]),
+                    Container(
+                      child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                          child: Column(children: [
+                            Row(
+                              children: [
+                                Text(widget.priceLabel, style: TextStyle(color: cardColor, fontSize: 30, fontWeight: FontWeight.bold)),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Text(widget.priceSubtitle,
+                                    style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w300)),
+                              ],
+                            )
+                          ])),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
   }
 
   List<Widget> displayFeatures(List<String> items) {
     return items
-        .map((item) => Text(
-            featureLabel[EnumHelper.enumFromString<PlanFeature>(
-                PlanFeature.values, item)],
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 15,
-                fontWeight: FontWeight.w300)))
+        .map((item) => Text(featureLabel[EnumHelper.enumFromString<PlanFeature>(PlanFeature.values, item)],
+            style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w300)))
         .toList();
   }
 

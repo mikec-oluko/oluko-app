@@ -21,12 +21,12 @@ class CourseRepository {
   Future<List<Course>> getAll() async {
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('courses')
         .get();
     List<Course> response = [];
     docRef.docs.forEach((doc) {
-      final Map<String, dynamic> element = doc.data();
+      final Map<String, dynamic> element = doc.data() as Map<String, dynamic>;
       response.add(Course.fromJson(element));
     });
     return response;
@@ -35,15 +35,14 @@ class CourseRepository {
   static Future<Course> get(String courseId) async {
     DocumentReference docRef = FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('courses')
         .doc(courseId);
     DocumentSnapshot ds = await docRef.get();
-    return Course.fromJson(ds.data());
+    return Course.fromJson(ds.data() as Map<String, dynamic>);
   }
 
-  static Future<CourseStatistics> getStatistics(
-      DocumentReference reference) async {
+  static Future<CourseStatistics> getStatistics(DocumentReference reference) async {
     if (reference == null) {
       return null;
     }
@@ -53,24 +52,21 @@ class CourseRepository {
       return null;
     }
 
-    return CourseStatistics.fromJson(docRef.data());
+    return CourseStatistics.fromJson(docRef.data() as Map<String, dynamic>);
   }
 
   static Course create(Course course) {
-    CollectionReference reference = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
-        .collection('courses');
+    CollectionReference reference =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('courses');
     final DocumentReference docRef = reference.doc();
     course.id = docRef.id;
     docRef.set(course.toJson());
     return course;
   }
 
-  static Future<void> updateClasses(
-      ObjectSubmodel classObj, DocumentReference reference) async {
+  static Future<void> updateClasses(ObjectSubmodel classObj, DocumentReference reference) async {
     DocumentSnapshot ds = await reference.get();
-    Course course = Course.fromJson(ds.data());
+    Course course = Course.fromJson(ds.data() as Map<String, dynamic>);
     List<ObjectSubmodel> classes;
     if (course.classes == null) {
       classes = [];
@@ -78,27 +74,24 @@ class CourseRepository {
       classes = course.classes;
     }
     classes.add(classObj);
-    reference.update(
-        {'classes': List<dynamic>.from(classes.map((c) => c.toJson()))});
+    reference.update({'classes': List<dynamic>.from(classes.map((c) => c.toJson()))});
   }
 
   static Future<List<Course>> getUserEnrolled(String userId) async {
     List<Course> coursesList = [];
-    List<CourseEnrollment> coruseEnrollments =
-        await CourseEnrollmentRepository.getUserCourseEnrollments(userId);
+    List<CourseEnrollment> coruseEnrollments = await CourseEnrollmentRepository.getUserCourseEnrollments(userId);
     for (CourseEnrollment courseEnrollment in coruseEnrollments) {
       final DocumentSnapshot ds = await courseEnrollment.course.reference.get();
-      coursesList.add(Course.fromJson(ds.data()));
+      coursesList.add(Course.fromJson(ds.data() as Map<String, dynamic>));
     }
     return coursesList;
   }
 
-  static Future<List<Course>> getByCourseEnrollments(
-      List<CourseEnrollment> courseEnrollments) async {
+  static Future<List<Course>> getByCourseEnrollments(List<CourseEnrollment> courseEnrollments) async {
     List<Course> courses = [];
     for (CourseEnrollment courseEnrollment in courseEnrollments) {
       DocumentSnapshot ds = await courseEnrollment.course.reference.get();
-      courses.add(Course.fromJson(ds.data()));
+      courses.add(Course.fromJson(ds.data() as Map<String, dynamic>));
     }
     return courses;
   }

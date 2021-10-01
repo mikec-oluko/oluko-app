@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
@@ -27,10 +28,15 @@ class GetUserTaskSubmissionSuccess extends TaskSubmissionState {
   GetUserTaskSubmissionSuccess({this.taskSubmissions});
 }
 
+class TaskSubmissionDefault extends TaskSubmissionState {
+  List<TaskSubmission> taskSubmissions;
+  TaskSubmissionDefault({this.taskSubmissions});
+}
+
 class UpdateSuccess extends TaskSubmissionState {}
 
 class Failure extends TaskSubmissionState {
-  final Exception exception;
+  final dynamic exception;
 
   Failure({this.exception});
 }
@@ -38,12 +44,9 @@ class Failure extends TaskSubmissionState {
 class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
   TaskSubmissionBloc() : super(Loading());
 
-  Future<void> createTaskSubmission(AssessmentAssignment assessmentAssignment,
-      Task task, bool isPublic) async {
+  Future<void> createTaskSubmission(AssessmentAssignment assessmentAssignment, Task task, bool isPublic) async {
     try {
-      TaskSubmission newTaskSubmission =
-          await TaskSubmissionRepository.createTaskSubmission(
-              assessmentAssignment, task, isPublic);
+      TaskSubmission newTaskSubmission = await TaskSubmissionRepository.createTaskSubmission(assessmentAssignment, task, isPublic);
       emit(CreateSuccess(taskSubmission: newTaskSubmission));
     } catch (e, stackTrace) {
       await Sentry.captureException(
@@ -51,14 +54,13 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
         stackTrace: stackTrace,
       );
       emit(Failure(exception: e));
+      rethrow;
     }
   }
 
-  void updateTaskSubmissionVideo(AssessmentAssignment assessmentA,
-      String taskSubmissionId, Video video) async {
+  void updateTaskSubmissionVideo(AssessmentAssignment assessmentA, String taskSubmissionId, Video video) async {
     try {
-      await TaskSubmissionRepository.updateTaskSubmissionVideo(
-          assessmentA, taskSubmissionId, video);
+      await TaskSubmissionRepository.updateTaskSubmissionVideo(assessmentA, taskSubmissionId, video);
       emit(UpdateSuccess());
     } catch (e, stackTrace) {
       await Sentry.captureException(
@@ -67,14 +69,13 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
       );
       print(e.toString());
       emit(Failure(exception: e));
+      rethrow;
     }
   }
 
-  void updateTaskSubmissionPrivacity(AssessmentAssignment assessmentA,
-      String taskSubmissionId, bool isPublic) async {
+  void updateTaskSubmissionPrivacity(AssessmentAssignment assessmentA, String taskSubmissionId, bool isPublic) async {
     try {
-      await TaskSubmissionRepository.updateTaskSubmissionPrivacity(
-          assessmentA, taskSubmissionId, isPublic);
+      await TaskSubmissionRepository.updateTaskSubmissionPrivacity(assessmentA, taskSubmissionId, isPublic);
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,
@@ -82,18 +83,14 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
       );
       print(e.toString());
       //emit(Failure(exception: e));
+      rethrow;
     }
   }
 
-  void getTaskSubmissionOfTask(
-      AssessmentAssignment assessmentAssignment, Task task) async {
+  void getTaskSubmissionOfTask(AssessmentAssignment assessmentAssignment, Task task) async {
     try {
-      TaskSubmission taskSubmission =
-          await TaskSubmissionRepository.getTaskSubmissionOfTask(
-              assessmentAssignment, task);
-      if (taskSubmission == null ||
-          taskSubmission.video == null ||
-          taskSubmission.video.url == null) {
+      TaskSubmission taskSubmission = await TaskSubmissionRepository.getTaskSubmissionOfTask(assessmentAssignment, task);
+      if (taskSubmission == null || taskSubmission.video == null || taskSubmission.video.url == null) {
         taskSubmission = null;
       }
       emit(GetSuccess(taskSubmission: taskSubmission));
@@ -103,42 +100,73 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
         stackTrace: stackTrace,
       );
       emit(Failure(exception: e));
+      rethrow;
     }
   }
 
   void getTaskSubmissionByUserId(String userId) async {
     try {
-      List<TaskSubmission> taskSubmissions =
-          await TaskSubmissionRepository.getTaskSubmissionsByUserId(userId);
-      if (taskSubmissions.length != 0) {
-        emit(GetUserTaskSubmissionSuccess(taskSubmissions: taskSubmissions));
-      }
+      List<TaskSubmission> taskSubmissions = await TaskSubmissionRepository.getTaskSubmissionsByUserId(userId);
+      emit(GetUserTaskSubmissionSuccess(taskSubmissions: taskSubmissions));
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,
         stackTrace: stackTrace,
       );
       emit(Failure(exception: e));
+      rethrow;
     }
   }
 
-  Future<bool> checkCompleted(
-      AssessmentAssignment assessmentAssignment, Assessment assessment) async {
+  Future<bool> checkCompleted(AssessmentAssignment assessmentAssignment, Assessment assessment) async {
     try {
-      List<TaskSubmission> taskSubmissions =
-          await TaskSubmissionRepository.getTaskSubmissions(
-              assessmentAssignment);
+      List<TaskSubmission> taskSubmissions = await TaskSubmissionRepository.getTaskSubmissions(assessmentAssignment);
       if (taskSubmissions.length == assessment.tasks.length) {
         AssessmentAssignmentRepository.setAsCompleted(assessmentAssignment.id);
       }
-      return true;
+      return false;
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,
         stackTrace: stackTrace,
       );
       emit(Failure(exception: e));
-      return false;
+      rethrow;
     }
+  }
+
+  Future<Timestamp> setCompleted(String assessmentAssignmentId) async {
+    if (assessmentAssignmentId != null) {
+      try {
+        return AssessmentAssignmentRepository.setAsCompleted(assessmentAssignmentId);
+      } catch (e, stackTrace) {
+        await Sentry.captureException(
+          e,
+          stackTrace: stackTrace,
+        );
+        emit(Failure(exception: e));
+        rethrow;
+      }
+    }
+    return null;
+  }
+
+  void setIncompleted(String assessmentAssignmentId) async {
+    if (assessmentAssignmentId != null) {
+      try {
+        AssessmentAssignmentRepository.setAsIncompleted(assessmentAssignmentId);
+      } catch (e, stackTrace) {
+        await Sentry.captureException(
+          e,
+          stackTrace: stackTrace,
+        );
+        emit(Failure(exception: e));
+        rethrow;
+      }
+    }
+  }
+
+  void setTaskSubmissionDefaultState() {
+    emit(TaskSubmissionDefault(taskSubmissions: []));
   }
 }

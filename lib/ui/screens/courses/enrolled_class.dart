@@ -48,8 +48,7 @@ class _EnrolledClassState extends State<EnrolledClass> {
       if (authState is AuthSuccess) {
         BlocProvider.of<ClassBloc>(context)..getAll(widget.course);
         BlocProvider.of<MovementBloc>(context)..getAll();
-        BlocProvider.of<CourseEnrollmentBloc>(context)
-          ..get(authState.firebaseUser, widget.course);
+        BlocProvider.of<CourseEnrollmentBloc>(context)..get(authState.firebaseUser, widget.course);
         return form(authState.firebaseUser);
       } else {
         return SizedBox();
@@ -58,17 +57,14 @@ class _EnrolledClassState extends State<EnrolledClass> {
   }
 
   Widget form(User user) {
-    return BlocBuilder<CourseEnrollmentBloc, CourseEnrollmentState>(
-        builder: (context, enrollmentState) {
+    return BlocBuilder<CourseEnrollmentBloc, CourseEnrollmentState>(builder: (context, enrollmentState) {
       return BlocBuilder<ClassBloc, ClassState>(builder: (context, classState) {
-        if ((enrollmentState is GetEnrollmentSuccess) &&
-            classState is GetSuccess) {
+        if ((enrollmentState is GetEnrollmentSuccess) && classState is GetSuccess) {
           bool existsEnrollment = enrollmentState.courseEnrollment != null;
           return Form(
               key: _formKey,
               child: Scaffold(
-                  appBar: OlukoAppBar(
-                      title: OlukoLocalizations.of(context).find('class')),
+                  appBar: OlukoAppBar(title: OlukoLocalizations.get(context, 'class')),
                   body: Container(
                       color: Colors.black,
                       child: Stack(
@@ -79,8 +75,7 @@ class _EnrolledClassState extends State<EnrolledClass> {
                               child: OrientationBuilder(
                                 builder: (context, orientation) {
                                   if (existsEnrollment) {
-                                    return showVideoPlayer(
-                                        classState.classes[0].video);
+                                    return showVideoPlayer(classState.classes[0].video);
                                   } else {
                                     return showVideoPlayer(widget.course.video);
                                   }
@@ -92,96 +87,55 @@ class _EnrolledClassState extends State<EnrolledClass> {
                                     value: enrollmentState
                                         .courseEnrollment.completion)
                                 : SizedBox(),*/
-                            showButton(
-                                enrollmentState.courseEnrollment,
-                                context,
-                                user,
-                                widget.course,
-                                classState.classes),
+                            showButton(enrollmentState.courseEnrollment, context, user, widget.course, classState.classes),
                             Padding(
-                                padding: EdgeInsets.only(
-                                    right: 15, left: 15, top: 0),
+                                padding: EdgeInsets.only(right: 15, left: 15, top: 0),
                                 child: Container(
                                     width: MediaQuery.of(context).size.width,
-                                    child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            widget.course.name,
-                                            style: OlukoFonts.olukoTitleFont(
-                                                custoFontWeight:
-                                                    FontWeight.bold),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                top: 10.0, right: 10),
-                                            child: Text(
-                                              //TODO: change weeks number
-                                              TimeConverter.toCourseDuration(
-                                                  6,
-                                                  widget.course.classes != null
-                                                      ? widget
-                                                          .course.classes.length
-                                                      : 0,
-                                                  context),
-                                              style: OlukoFonts.olukoBigFont(
-                                                  custoFontWeight:
-                                                      FontWeight.normal,
-                                                  customColor:
-                                                      OlukoColors.grayColor),
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                top: 10.0, right: 10),
-                                            child: Text(
-                                              widget.course.description,
-                                              style: OlukoFonts.olukoBigFont(
-                                                  custoFontWeight:
-                                                      FontWeight.normal,
-                                                  customColor:
-                                                      OlukoColors.grayColor),
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                top: 25.0),
-                                            child: Text(
-                                              OlukoLocalizations.of(context)
-                                                  .find('classes'),
-                                              style:
-                                                  OlukoFonts.olukoSubtitleFont(
-                                                      custoFontWeight:
-                                                          FontWeight.bold),
-                                            ),
-                                          ),
-                                          BlocBuilder<MovementBloc,
-                                                  MovementState>(
-                                              builder:
-                                                  (context, movementState) {
-                                            if (movementState
-                                                is GetAllSuccess) {
-                                              return ClassExpansionPanel(
-                                                classes: classState.classes,
-                                                movements:
-                                                    movementState.movements,
-                                                onPressedMovement: (BuildContext
-                                                            context,
-                                                        Movement movement) =>
-                                                    Navigator.pushNamed(
-                                                        context,
-                                                        routeLabels[RouteEnum
-                                                            .movementIntro],
-                                                        arguments: {
-                                                      'movement': movement
-                                                    }),
-                                              );
-                                            } else {
-                                              return SizedBox();
-                                            }
-                                          }),
-                                          /*Column(
+                                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                      Text(
+                                        widget.course.name,
+                                        style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 10.0, right: 10),
+                                        child: Text(
+                                          //TODO: change weeks number
+                                          TimeConverter.toCourseDuration(
+                                              6, widget.course.classes != null ? widget.course.classes.length : 0, context),
+                                          style: OlukoFonts.olukoBigFont(
+                                              custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 10.0, right: 10),
+                                        child: Text(
+                                          widget.course.description,
+                                          style: OlukoFonts.olukoBigFont(
+                                              custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 25.0),
+                                        child: Text(
+                                          OlukoLocalizations.get(context, 'classes'),
+                                          style: OlukoFonts.olukoSubtitleFont(custoFontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                      BlocBuilder<MovementBloc, MovementState>(builder: (context, movementState) {
+                                        if (movementState is GetAllSuccess) {
+                                          return ClassExpansionPanel(
+                                            classes: classState.classes,
+                                            movements: movementState.movements,
+                                            onPressedMovement: (BuildContext context, Movement movement) => Navigator.pushNamed(
+                                                context, routeLabels[RouteEnum.movementIntro],
+                                                arguments: {'movement': movement}),
+                                          );
+                                        } else {
+                                          return SizedBox();
+                                        }
+                                      }),
+                                      /*Column(
                                             children: [
                                               ListView.builder(
                                                   physics:
@@ -226,7 +180,7 @@ class _EnrolledClassState extends State<EnrolledClass> {
                                                   }),
                                             ],
                                           )*/
-                                        ]))),
+                                    ]))),
                             SizedBox(
                               height: 150,
                             )
@@ -241,8 +195,7 @@ class _EnrolledClassState extends State<EnrolledClass> {
   }
 
   //TODO: Adapt when home view is ready
-  Widget showButton(CourseEnrollment courseEnrollment, BuildContext context,
-      User user, Course course, List<Class> classes) {
+  Widget showButton(CourseEnrollment courseEnrollment, BuildContext context, User user, Course course, List<Class> classes) {
     return courseEnrollment == null
         ? Padding(
             padding: EdgeInsets.symmetric(vertical: 20, horizontal: 15),
@@ -250,10 +203,9 @@ class _EnrolledClassState extends State<EnrolledClass> {
               mainAxisSize: MainAxisSize.max,
               children: [
                 OlukoPrimaryButton(
-                  title: OlukoLocalizations.of(context).find('start'),
+                  title: OlukoLocalizations.get(context, 'start'),
                   onPressed: () {
-                    BlocProvider.of<CourseEnrollmentBloc>(context)
-                      ..create(user, course);
+                    BlocProvider.of<CourseEnrollmentBloc>(context)..create(user, course);
                     Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
                   },
                 ),
@@ -268,7 +220,7 @@ class _EnrolledClassState extends State<EnrolledClass> {
     double classProgress;
 
     if (courseEnrollment != null) {
-      buttonText = OlukoLocalizations.of(context).find('start');
+      buttonText = OlukoLocalizations.get(context, 'start');
       index = CourseEnrollmentService.getFirstUncompletedClassIndex(
           courseEnrollment);
       if (index != -1) {
@@ -276,7 +228,7 @@ class _EnrolledClassState extends State<EnrolledClass> {
             CourseEnrollmentService.getClassProgress(courseEnrollment, index);
       }
     } else {
-      buttonText = OlukoLocalizations.of(context).find('enroll');
+      buttonText = OlukoLocalizations.get(context, 'enroll');
     }
     return index == -1
         ? SizedBox()
@@ -317,21 +269,18 @@ class _EnrolledClassState extends State<EnrolledClass> {
     widgets.add(OlukoVideoPlayer(
         videoUrl: videoUrl,
         autoPlay: false,
-        whenInitialized: (ChewieController chewieController) =>
-            this.setState(() {
+        whenInitialized: (ChewieController chewieController) => this.setState(() {
               _controller = chewieController;
             })));
 
     return ConstrainedBox(
         constraints: BoxConstraints(
-            maxHeight:
-                MediaQuery.of(context).orientation == Orientation.portrait
-                    ? ScreenUtils.height(context) / 4
-                    : ScreenUtils.height(context) / 1.5,
-            minHeight:
-                MediaQuery.of(context).orientation == Orientation.portrait
-                    ? ScreenUtils.height(context) / 4
-                    : ScreenUtils.height(context) / 1.5),
+            maxHeight: MediaQuery.of(context).orientation == Orientation.portrait
+                ? ScreenUtils.height(context) / 4
+                : ScreenUtils.height(context) / 1.5,
+            minHeight: MediaQuery.of(context).orientation == Orientation.portrait
+                ? ScreenUtils.height(context) / 4
+                : ScreenUtils.height(context) / 1.5),
         child: Container(height: 400, child: Stack(children: widgets)));
   }
 
@@ -340,8 +289,7 @@ class _EnrolledClassState extends State<EnrolledClass> {
       Icon(Icons.warning_amber_rounded, color: Colors.white, size: 100),
       Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Text(OlukoLocalizations.of(context).find('enrollWarning'),
-            textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont()),
+        child: Text(OlukoLocalizations.get(context, 'enrollWarning'), textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont()),
       )
     ];
   }

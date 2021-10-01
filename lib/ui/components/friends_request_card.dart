@@ -1,8 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
+import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
+import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/submodels/friend_request_model.dart';
 import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 
@@ -14,8 +20,7 @@ class FriendRequestCard extends StatefulWidget {
   final UserResponse friendUser;
   final Function(UserResponse) onFriendConfirmation;
   final Function(UserResponse) onFriendRequestIgnore;
-  FriendRequestCard(
-      {this.friendUser, this.onFriendConfirmation, this.onFriendRequestIgnore});
+  FriendRequestCard({this.friendUser, this.onFriendConfirmation, this.onFriendRequestIgnore});
 
   @override
   _FriendRequestCardState createState() => _FriendRequestCardState();
@@ -33,10 +38,7 @@ class _FriendRequestCardState extends State<FriendRequestCard> {
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.center,
-      decoration: BoxDecoration(
-          color: OlukoColors.black,
-          border: Border(
-              bottom: BorderSide(width: 1.0, color: OlukoColors.grayColor))),
+      decoration: BoxDecoration(color: OlukoColors.black, border: Border(bottom: BorderSide(width: 1.0, color: OlukoColors.grayColor))),
       height: 120,
       child: Padding(
           padding: const EdgeInsets.only(left: 5),
@@ -48,12 +50,20 @@ class _FriendRequestCardState extends State<FriendRequestCard> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  CircleAvatar(
-                    // backgroundImage: NetworkImage(widget.userData.photoURL),
-                    backgroundImage: NetworkImage(widget.friendUser.avatar),
-                    backgroundColor: Colors.red,
-                    radius: 30,
-                  ),
+                  GestureDetector(
+                      child: CircleAvatar(
+                        // backgroundImage: NetworkImage(widget.userData.photoURL),
+                        backgroundImage: NetworkImage(widget.friendUser.avatar),
+                        backgroundColor: OlukoColors.black,
+                        radius: 30,
+                      ),
+                      onTap: () {
+                        BlocProvider.of<TransformationJourneyBloc>(context).emitTransformationJourneyDefault(noValues: true);
+                        BlocProvider.of<TaskSubmissionBloc>(context).setTaskSubmissionDefaultState();
+                        BlocProvider.of<CourseEnrollmentBloc>(context).setCourseEnrollmentChallengesDefaultValue();
+                        Navigator.pushNamed(context, routeLabels[RouteEnum.profileViewOwnProfile],
+                            arguments: {'userRequested': widget.friendUser});
+                      }),
                   Padding(
                     padding: const EdgeInsets.only(left: 20),
                     child: Column(
@@ -79,8 +89,7 @@ class _FriendRequestCardState extends State<FriendRequestCard> {
                         Text(
                             // widget.userData.displayName,
                             widget.friendUser.username,
-                            style: OlukoFonts.olukoMediumFont(
-                                customColor: OlukoColors.grayColor)),
+                            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor)),
                       ],
                     ),
                   )
@@ -96,16 +105,13 @@ class _FriendRequestCardState extends State<FriendRequestCard> {
                       width: 120,
                       height: 30,
                       child: TextButton(
-                        onPressed: () =>
-                            widget.onFriendConfirmation(widget.friendUser),
+                        onPressed: () => widget.onFriendConfirmation(widget.friendUser),
                         child: Text(
                           "Confirm",
-                          style: OlukoFonts.olukoMediumFont(
-                              customColor: OlukoColors.black),
+                          style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.black),
                         ),
                         style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all(OlukoColors.primary),
+                          backgroundColor: MaterialStateProperty.all(OlukoColors.primary),
                         ),
                       ),
                     ),
@@ -115,13 +121,9 @@ class _FriendRequestCardState extends State<FriendRequestCard> {
                         width: 120,
                         height: 30,
                         child: OutlinedButton(
-                            style: OutlinedButton.styleFrom(
-                                side: BorderSide(color: OlukoColors.grayColor)),
-                            onPressed: () =>
-                                widget.onFriendRequestIgnore(widget.friendUser),
-                            child: Text("Ignore",
-                                style: OlukoFonts.olukoMediumFont(
-                                    customColor: OlukoColors.grayColor))),
+                            style: OutlinedButton.styleFrom(side: BorderSide(color: OlukoColors.grayColor)),
+                            onPressed: () => widget.onFriendRequestIgnore(widget.friendUser),
+                            child: Text("Ignore", style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor))),
                       ),
                     ),
                   ],

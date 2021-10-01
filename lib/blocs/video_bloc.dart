@@ -49,8 +49,7 @@ class VideoBloc extends Cubit<VideoState> {
   String _processPhase = '';
   double _progress = 0.0;
 
-  Future<void> createVideo(BuildContext context, File videoFile,
-      double aspectRatio, String id) async {
+  Future<void> createVideo(BuildContext context, File videoFile, double aspectRatio, String id) async {
     try {
       Video video = await _processVideo(context, videoFile, aspectRatio, id);
       emit(VideoSuccess(video: video));
@@ -60,16 +59,16 @@ class VideoBloc extends Cubit<VideoState> {
         stackTrace: stackTrace,
       );
       emit(VideoFailure(exceptionMessage: e.toString()));
+      rethrow;
     }
   }
 
-  Future<Video> _processVideo(BuildContext context, File videoFile,
-      double aspectRatio, String id) async {
+  Future<Video> _processVideo(BuildContext context, File videoFile, double aspectRatio, String id) async {
     String videoName = id;
 
     Video video = Video(name: videoName, aspectRatio: aspectRatio);
 
-    _processPhase = "";
+    _processPhase = '';
     _progress = 0.0;
     emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
 
@@ -79,17 +78,15 @@ class VideoBloc extends Cubit<VideoState> {
     videosDir.createSync(recursive: true);
     final videoPath = videoFile.path;
     final info = await EncodingProvider.getMediaInformation(videoPath);
-    double durationInSeconds =
-        EncodingProvider.getDuration(info.getMediaProperties());
-    int durationInMilliseconds =
-        TimeConverter.fromSecondsToMilliSeconds(durationInSeconds).toInt();
+    double durationInSeconds = EncodingProvider.getDuration(info.getMediaProperties());
+    int durationInMilliseconds = TimeConverter.fromSecondsToMilliSeconds(durationInSeconds).toInt();
 
     video.duration = durationInMilliseconds;
 
-    _processPhase = OlukoLocalizations.of(context).find('generatingThumbnail');
+    _processPhase = OlukoLocalizations.get(context, 'generatingThumbnail');
     _progress += _unitOfProgress;
     emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
-    var thumbFilePath;
+    String thumbFilePath;
     try {
       thumbFilePath = await EncodingProvider.getThumb(videoPath, 100, 150);
     } catch (e, stackTrace) {
@@ -97,37 +94,31 @@ class VideoBloc extends Cubit<VideoState> {
         e,
         stackTrace: stackTrace,
       );
+      rethrow;
     }
 
-    _processPhase = OlukoLocalizations.of(context).find('encodingVideo');
+    _processPhase = OlukoLocalizations.get(context, 'encodingVideo');
     _progress += _unitOfProgress;
     emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
 
-    final encodedFilesDir =
-        await EncodingProvider.encodeHLS(videoPath, outDirPath);
-    emit(VideoEncoded(
-        encodedFilesDir: encodedFilesDir,
-        video: video,
-        thumbFilePath: thumbFilePath));
+    final encodedFilesDir = await EncodingProvider.encodeHLS(videoPath, outDirPath);
+    emit(VideoEncoded(encodedFilesDir: encodedFilesDir, video: video, thumbFilePath: thumbFilePath));
 
-    _processPhase = OlukoLocalizations.of(context).find('uploadingThumbnail');
+    _processPhase = OlukoLocalizations.get(context, 'uploadingThumbnail');
     _progress += _unitOfProgress;
     emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
 
-    video = await afterEcondingProcessing(
-        video, thumbFilePath, encodedFilesDir, context);
+    video = await afterEcondingProcessing(video, thumbFilePath, encodedFilesDir, context);
 
     return video;
   }
 
-  Future<Video> afterEcondingProcessing(Video video, String thumbFilePath,
-      String encodedFilesDir, BuildContext context) async {
-    var thumbUrl;
+  Future<Video> afterEcondingProcessing(Video video, String thumbFilePath, String encodedFilesDir, BuildContext context) async {
+    String thumbUrl;
     if (thumbFilePath != null) {
       thumbUrl = await VideoProcess.uploadFile(thumbFilePath, video.name);
     }
-    final videoUrl =
-        await _uploadHLSFiles(context, encodedFilesDir, video.name);
+    final videoUrl = await _uploadHLSFiles(context, encodedFilesDir, video.name);
 
     video.url = videoUrl;
     video.thumbUrl = thumbUrl;
@@ -135,8 +126,7 @@ class VideoBloc extends Cubit<VideoState> {
     return video;
   }
 
-  Future<String> _uploadHLSFiles(
-      BuildContext context, String dirPath, String videoName) async {
+  Future<String> _uploadHLSFiles(BuildContext context, String dirPath, String videoName) async {
     final videosDir = Directory(dirPath);
 
     var playlistUrl = '';
@@ -146,15 +136,17 @@ class VideoBloc extends Cubit<VideoState> {
     for (FileSystemEntity file in files) {
       final fileName = p.basename(file.path);
       final fileExtension = FileProcessing.getFileExtension(fileName);
-      if (fileExtension == EnumToString.convertToString(FileExtension.m3u8))
-        VideoProcess.updatePlaylistUrls(file, videoName, s3Storage: true);
+      if (fileExtension == EnumToString.convertToString(FileExtension.m3u8)) {
+        if (file is File) {
+          VideoProcess.updatePlaylistUrls(file, videoName, s3Storage: true);
+        }
+      }
 
       double fileProgress = 0.4 / files.length.toDouble();
-      _processPhase =
-          OlukoLocalizations.of(context).find('uploadingVideoFile') +
-              i.toString() +
-              OlukoLocalizations.of(context).find('outOf') +
-              files.length.toString();
+      _processPhase = OlukoLocalizations.get(context, 'uploadingVideoFile') +
+          i.toString() +
+          OlukoLocalizations.get(context, 'outOf') +
+          files.length.toString();
       _progress += fileProgress;
       emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
 

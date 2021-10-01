@@ -16,12 +16,12 @@ class CourseCategoryRepository {
   Future<List<CourseCategory>> getAll() async {
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
-        .doc(GlobalConfiguration().getValue("projectId"))
+        .doc(GlobalConfiguration().getValue('projectId'))
         .collection('courseCategories')
         .get();
     List<CourseCategory> response = [];
     docRef.docs.forEach((doc) {
-      final Map<String, dynamic> element = doc.data();
+      final Map<String, dynamic> element = doc.data() as Map<String, dynamic>;
       response.add(CourseCategory.fromJson(element));
     });
     return response;

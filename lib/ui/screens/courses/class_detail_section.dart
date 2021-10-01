@@ -50,12 +50,12 @@ class _State extends State<ClassDetailSection> {
     ];
     for (int i = 0; i < widget.classObj.segments.length; i++) {
       List<Movement> movements = ClassService.getClassSegmentMovements(
-          widget.classObj.segments[i].movements, widget.movements);
+          widget.classObj.segments[i].sections, widget.movements);
       widgets.add(ClassSegmentSection(
           showTopDivider: i != 0,
           segment: widget.segments[i],
           movements: ClassService.getClassSegmentMovements(
-              widget.classObj.segments[i].movements, movements),
+              widget.classObj.segments[i].sections, movements),
           onPressedMovement: widget.onPressedMovement));
     }
     return widgets;

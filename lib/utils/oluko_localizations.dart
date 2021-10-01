@@ -11,12 +11,16 @@ class OlukoLocalizations {
     return Localizations.of<OlukoLocalizations>(context, OlukoLocalizations);
   }
 
+  static String get(BuildContext context, String key) {
+    return Localizations.of<OlukoLocalizations>(context, OlukoLocalizations).find(key);
+  }
+
   static Map<String, Map<String, String>> _localizedValues = new Map();
 
   Future<bool> load() async {
     String data = await rootBundle.loadString('assets/lang/${locale.languageCode}.json');
 
-    Map<String, dynamic> _result = jsonDecode(data);
+    Map<String, dynamic> _result = jsonDecode(data) as Map<String, dynamic>;
     Map<String, String> _values = new Map();
 
     _result.forEach((String key, dynamic value) {

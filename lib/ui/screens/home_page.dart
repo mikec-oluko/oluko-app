@@ -35,8 +35,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   User profile;
-  SearchResults<Course> searchResults =
-      SearchResults(query: '', suggestedItems: []);
+  SearchResults<Course> searchResults = SearchResults(query: '', suggestedItems: []);
   double carouselSectionHeight;
   TextEditingController searchBarController;
   List<Tag> selectedTags = [];
@@ -54,8 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    carouselSectionHeight =
-        ((ScreenUtils.width(context) / _cardsToShow()) / cardsAspectRatio) + 75;
+    carouselSectionHeight = ((ScreenUtils.width(context) / _cardsToShow()) / cardsAspectRatio) + 75;
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       return BlocBuilder<CourseBloc, CourseState>(
           bloc: BlocProvider.of<CourseBloc>(context)..getByCategories(),
@@ -65,15 +63,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 builder: (context, tagState) {
                   return Scaffold(
                       backgroundColor: Colors.black,
-                      appBar: OlukoAppBar(
-                          title: OlukoLocalizations.of(context).find('home'),
-                          showBackButton: false),
-                      body: courseState is CourseSuccess &&
-                              tagState is TagSuccess
+                      appBar: OlukoAppBar(title: OlukoLocalizations.get(context, 'home'), showBackButton: false),
+                      body: courseState is CourseSuccess && tagState is TagSuccess
                           ? WillPopScope(
                               onWillPop: () => AppNavigator.onWillPop(context),
-                              child: OrientationBuilder(
-                                  builder: (context, orientation) {
+                              child: OrientationBuilder(builder: (context, orientation) {
                                 return ListView(
                                   shrinkWrap: true,
                                   children: [
@@ -83,20 +77,16 @@ class _MyHomePageState extends State<MyHomePage> {
                                       child: showFilterSelector
                                           ? CourseUtils.filterSelector(
                                               tagState,
-                                              onSubmit:
-                                                  (List<Base> selectedItems) =>
-                                                      this.setState(() {
-                                                selectedTags = selectedItems;
+                                              onSubmit: (List<Base> selectedItems) => this.setState(() {
+                                                selectedTags = selectedItems as List<Tag>;
                                                 showFilterSelector = false;
-                                                searchKey.currentState
-                                                    .updateSearchResults('');
+                                                searchKey.currentState.updateSearchResults('');
                                               }),
                                               onClosed: () => this.setState(() {
                                                 showFilterSelector = false;
                                               }),
                                             )
-                                          : searchResults.query.isEmpty &&
-                                                  selectedTags.isEmpty
+                                          : searchResults.query.isEmpty && selectedTags.isEmpty
                                               ? _mainPage(context, courseState)
                                               : showSearchSuggestions
                                                   ? _searchSuggestions()
@@ -123,10 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget _searchResults() {
     return SearchResultsGrid<Course>(
         childAspectRatio: cardsAspectRatio,
-        crossAxisCount:
-            MediaQuery.of(context).orientation == Orientation.portrait
-                ? searchResultsPortrait
-                : searchResultsLandscape,
+        crossAxisCount: MediaQuery.of(context).orientation == Orientation.portrait ? searchResultsPortrait : searchResultsLandscape,
         textInput: searchResults.query,
         itemList: searchResults.searchResults);
   }
@@ -135,8 +122,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return SearchSuggestions<Course>(
         textInput: searchResults.query,
         itemList: searchResults.suggestedItems,
-        onPressed: (dynamic item) =>
-            searchKey.currentState.updateSearchResults(item.name),
+        onPressed: (dynamic item) => searchKey.currentState.updateSearchResults(item.name as String),
         keyNameList: searchResults.suggestedItems.map((e) => e.name).toList());
   }
 
@@ -151,37 +137,27 @@ class _MyHomePageState extends State<MyHomePage> {
               itemCount: courseState.coursesByCategories.length,
               shrinkWrap: true,
               itemBuilder: (context, index) {
-                final List<Course> coursesList =
-                    courseState.coursesByCategories.values.elementAt(index);
+                final List<Course> coursesList = courseState.coursesByCategories.values.elementAt(index);
                 return CarouselSection(
                   height: carouselSectionHeight,
-                  title: courseState.coursesByCategories.keys
-                      .elementAt(index)
-                      .name,
-                  optionLabel: OlukoLocalizations.of(context).find('viewAll'),
+                  title: courseState.coursesByCategories.keys.elementAt(index).name,
+                  optionLabel: OlukoLocalizations.get(context, 'viewAll'),
                   children: coursesList
                       .map((course) => Padding(
                             padding: const EdgeInsets.only(right: 8.0),
                             child: GestureDetector(
-                              //TODO: Change to RouteEnum.courseMarketing 
+                              //TODO: Change to RouteEnum.courseMarketing
                               //when finish with enrolledClass
-                              onTap: () => Navigator.pushNamed(
-                                  context, routeLabels[RouteEnum.enrolledClass],
-                                  arguments: {'course': course}),
+                              onTap: () =>
+                                  Navigator.pushNamed(context, routeLabels[RouteEnum.enrolledClass], arguments: {'course': course}),
                               child: _getCourseCard(
                                   Image.network(
                                     course.image,
                                     fit: BoxFit.cover,
-                                    frameBuilder: (BuildContext context,
-                                            Widget child,
-                                            int frame,
-                                            bool wasSynchronouslyLoaded) =>
-                                        ImageUtils.frameBuilder(context, child,
-                                            frame, wasSynchronouslyLoaded,
-                                            height: 120),
+                                    frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
+                                        ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 120),
                                   ),
-                                  width: ScreenUtils.width(context) /
-                                      (0.2 + _cardsToShow())),
+                                  width: ScreenUtils.width(context) / (0.2 + _cardsToShow())),
                             ),
                           ))
                       .toList(),
@@ -195,8 +171,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  CourseCard _getCourseCard(Image image,
-      {double progress, double width, double height}) {
+  CourseCard _getCourseCard(Image image, {double progress, double width, double height}) {
     return CourseCard(
       width: width,
       height: height,

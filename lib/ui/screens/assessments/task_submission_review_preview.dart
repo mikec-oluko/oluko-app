@@ -19,21 +19,17 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:video_player/video_player.dart';
 
 class TaskSubmissionReviewPreview extends StatefulWidget {
-  TaskSubmissionReviewPreview(
-      {this.taskSubmission, this.videoEvents, this.filePath, Key key})
-      : super(key: key);
+  TaskSubmissionReviewPreview({this.taskSubmission, this.videoEvents, this.filePath, Key key}) : super(key: key);
 
   final TaskSubmission taskSubmission;
   final String filePath;
   final List<Event> videoEvents;
 
   @override
-  _TaskSubmissionReviewPreviewState createState() =>
-      _TaskSubmissionReviewPreviewState();
+  _TaskSubmissionReviewPreviewState createState() => _TaskSubmissionReviewPreviewState();
 }
 
-class _TaskSubmissionReviewPreviewState
-    extends State<TaskSubmissionReviewPreview> {
+class _TaskSubmissionReviewPreviewState extends State<TaskSubmissionReviewPreview> {
   final _formKey = GlobalKey<FormState>();
 
   int actualPos = 0;
@@ -59,7 +55,7 @@ class _TaskSubmissionReviewPreviewState
   //TODO: remove hardcoded reference
   CollectionReference reference = FirebaseFirestore.instance
       .collection("projects")
-      .doc(GlobalConfiguration().getValue("projectId"))
+      .doc(GlobalConfiguration().getValue('projectId'))
       .collection("assessmentAssignments")
       .doc('8dWwPNggqruMQr0OSV9f')
       .collection('taskReviews');
@@ -97,9 +93,7 @@ class _TaskSubmissionReviewPreviewState
                 setState(() {
                   _taskReviewId = state.taskReviewId;
                 });
-                _videoBloc
-                  ..createVideo(context, File(widget.filePath), 3.0 / 4.0,
-                      state.taskReviewId);
+                _videoBloc..createVideo(context, File(widget.filePath), 3.0 / 4.0, state.taskReviewId);
               }
             },
             child: form()));
@@ -118,36 +112,25 @@ class _TaskSubmissionReviewPreviewState
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     OlukoPrimaryButton(
-                      title: OlukoLocalizations.of(context).find('done'),
+                      title: OlukoLocalizations.get(context, 'done'),
                       onPressed: () async {
                         _videoController.pause();
-                        _taskReviewBloc
-                          ..createTaskReview(reference, widget.taskSubmission,
-                              assessmentAssignmentId);
+                        _taskReviewBloc..createTaskReview(reference, widget.taskSubmission, assessmentAssignmentId);
                       },
                     ),
                   ],
                 ),
               ),
             ),
-            body: BlocListener<VideoBloc, VideoState>(listener:
-                (context, state) {
+            body: BlocListener<VideoBloc, VideoState>(listener: (context, state) {
               if (state is VideoSuccess) {
-                VideoInfo videoInfo = VideoInfo(
-                    video: state.video,
-                    events: widget.videoEvents,
-                    markers: [],
-                    drawing: []);
-                _taskReviewBloc
-                  ..updateTaskReviewVideoInfo(
-                      reference.doc(_taskReviewId), videoInfo);
+                VideoInfo videoInfo = VideoInfo(video: state.video, events: widget.videoEvents, markers: [], drawing: []);
+                _taskReviewBloc..updateTaskReviewVideoInfo(reference.doc(_taskReviewId), videoInfo);
                 Navigator.popUntil(context, ModalRoute.withName('/'));
               }
-            }, child:
-                BlocBuilder<VideoBloc, VideoState>(builder: (context, state) {
+            }, child: BlocBuilder<VideoBloc, VideoState>(builder: (context, state) {
               if (state is VideoProcessing) {
-                return ProgressBar(
-                    processPhase: state.processPhase, progress: state.progress);
+                return ProgressBar(processPhase: state.processPhase, progress: state.progress);
               } else {
                 return videoPlayerWidget();
               }
@@ -175,9 +158,7 @@ class _TaskSubmissionReviewPreviewState
                           child: VideoPlayer(_videoController),
                         );
                       } else {
-                        return Container(
-                            color: OlukoColors.black,
-                            child: Center(child: CircularProgressIndicator()));
+                        return Container(color: OlukoColors.black, child: Center(child: CircularProgressIndicator()));
                       }
                     },
                   ),
@@ -193,14 +174,11 @@ class _TaskSubmissionReviewPreviewState
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.done) {
                         return AspectRatio(
-                          aspectRatio:
-                              _videoRecordedController.value.aspectRatio,
+                          aspectRatio: _videoRecordedController.value.aspectRatio,
                           child: VideoPlayer(_videoRecordedController),
                         );
                       } else {
-                        return Container(
-                            color: OlukoColors.black,
-                            child: Center(child: CircularProgressIndicator()));
+                        return Container(color: OlukoColors.black, child: Center(child: CircularProgressIndicator()));
                       }
                     },
                   ),
@@ -220,33 +198,25 @@ class _TaskSubmissionReviewPreviewState
                 padding: EdgeInsets.all(2.0),
                 child: Container(
                     padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20.0),
-                        color: OlukoColors.black87),
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(20.0), color: OlukoColors.black87),
                     child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 8.0),
-                        child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Container(
-                                  height: 40,
-                                  child: Row(children: <Widget>[
-                                    IconButton(
-                                        color: OlukoColors.white,
-                                        icon: Icon(
-                                          !_videoRecordedController
-                                                  .value.isPlaying
-                                              ? Icons.pause
-                                              : Icons.play_arrow,
-                                        ),
-                                        onPressed: () => playPauseVideo()),
-                                    Expanded(
-                                        child: SizedBox(
-                                      child: sliderAdaptive(),
-                                    ))
-                                  ]))
-                            ]))))));
+                        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+                        child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                          Container(
+                              height: 40,
+                              child: Row(children: <Widget>[
+                                IconButton(
+                                    color: OlukoColors.white,
+                                    icon: Icon(
+                                      !_videoRecordedController.value.isPlaying ? Icons.pause : Icons.play_arrow,
+                                    ),
+                                    onPressed: () => playPauseVideo()),
+                                Expanded(
+                                    child: SizedBox(
+                                  child: sliderAdaptive(),
+                                ))
+                              ]))
+                        ]))))));
   }
 
   Widget sliderAdaptive() {
@@ -257,8 +227,7 @@ class _TaskSubmissionReviewPreviewState
       max: duration.toDouble(),
       min: 0,
       onChanged: (val) async {
-        await _videoRecordedController
-            .seekTo(Duration(milliseconds: val.toInt()));
+        await _videoRecordedController.seekTo(Duration(milliseconds: val.toInt()));
         setState(() {
           actualPos = val.toInt();
         });
@@ -282,10 +251,8 @@ class _TaskSubmissionReviewPreviewState
   }
 
   setDuration() {
-    if (_videoRecordedController != null &&
-        _videoRecordedController.value.duration != null) {
-      int videoDuration =
-          _videoRecordedController.value.duration.inMilliseconds;
+    if (_videoRecordedController != null && _videoRecordedController.value.duration != null) {
+      int videoDuration = _videoRecordedController.value.duration.inMilliseconds;
       setState(() {
         duration = videoDuration;
       });
@@ -296,15 +263,11 @@ class _TaskSubmissionReviewPreviewState
     _videoController = VideoPlayerController.network(
       widget.taskSubmission.video.url,
     );
-    _initializeVideoPlayerFuture = _videoController
-        .initialize()
-        .then((value) => _videoController.setVolume(0.0));
+    _initializeVideoPlayerFuture = _videoController.initialize().then((value) => _videoController.setVolume(0.0));
     _videoController.setLooping(true);
 
-    _videoRecordedController =
-        VideoPlayerController.file(File(widget.filePath));
-    _initializeVideoPlayerRecordedFuture =
-        _videoRecordedController.initialize().then((value) => setDuration());
+    _videoRecordedController = VideoPlayerController.file(File(widget.filePath));
+    _initializeVideoPlayerRecordedFuture = _videoRecordedController.initialize().then((value) => setDuration());
     _videoRecordedController.setLooping(true);
   }
 
@@ -315,10 +278,7 @@ class _TaskSubmissionReviewPreviewState
 
       await checkEventToPerform(pos);
 
-      if (_videoRecordedController.value != null &&
-          _videoRecordedController.value.duration != null &&
-          pos >= 0 &&
-          pos <= 500) {
+      if (_videoRecordedController.value != null && _videoRecordedController.value.duration != null && pos >= 0 && pos <= 500) {
         setState(() {
           index = 0;
         });
@@ -368,8 +328,7 @@ class _TaskSubmissionReviewPreviewState
   }
 
   setCorrectVideoPosition() async {
-    if (_videoController.value != null &&
-        _videoController.value.duration != null) {
+    if (_videoController.value != null && _videoController.value.duration != null) {
       List<Event> events = widget.videoEvents;
       for (var i = 0; i < events.length; i++) {
         if (events[i].recordingPosition >= actualPos) {
@@ -378,8 +337,7 @@ class _TaskSubmissionReviewPreviewState
             calculateAndSeekToNewVideoPosition(previousEvent);
             setPlayPauseState(previousEvent);
           } else {
-            await _videoController
-                .seekTo(Duration(milliseconds: events[i].videoPosition));
+            await _videoController.seekTo(Duration(milliseconds: events[i].videoPosition));
           }
           setState(() {
             index = i;

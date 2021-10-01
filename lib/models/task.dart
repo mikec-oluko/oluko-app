@@ -36,13 +36,13 @@ class Task extends Base {
 
   factory Task.fromJson(Map<String, dynamic> json) {
     Task task = Task(
-      name: json['name'],
-      video: json['video'],
-      stepsDescription: json['steps_description'],
-      stepsTitle: json['steps_title'],
-      description: json['description'],
-      shortDescription: json['short_description'],
-      thumbnailImage: json['thumbnail_image'],
+      name: json['name']?.toString(),
+      video: json['video']?.toString(),
+      stepsDescription: json['steps_description']?.toString(),
+      stepsTitle: json['steps_title']?.toString(),
+      description: json['description']?.toString(),
+      shortDescription: json['short_description']?.toString(),
+      thumbnailImage: json['thumbnail_image']?.toString(),
     );
     task.setBase(json);
     return task;
@@ -62,4 +62,3 @@ class Task extends Base {
     return taskJson;
   }
 }
-

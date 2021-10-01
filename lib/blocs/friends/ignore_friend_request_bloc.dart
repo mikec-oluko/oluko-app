@@ -16,7 +16,7 @@ class IgnoreFriendRequestSuccess extends IgnoreFriendRequestState {
 }
 
 class IgnoreFriendRequestFailure extends IgnoreFriendRequestState {
-  final Exception exception;
+  final dynamic exception;
 
   IgnoreFriendRequestFailure({this.exception});
 }
@@ -24,11 +24,9 @@ class IgnoreFriendRequestFailure extends IgnoreFriendRequestState {
 class IgnoreFriendRequestBloc extends Cubit<IgnoreFriendRequestState> {
   IgnoreFriendRequestBloc() : super(IgnoreFriendRequestLoading());
 
-  void ignoreFriend(BuildContext context, Friend friend,
-      FriendRequestModel friendRequest) async {
+  void ignoreFriend(BuildContext context, Friend friend, FriendRequestModel friendRequest) async {
     try {
-      FriendRequestModel friendRequestModel =
-          await FriendRepository.ignoreFriendRequest(friend, friendRequest);
+      FriendRequestModel friendRequestModel = await FriendRepository.ignoreFriendRequest(friend, friendRequest);
       emit(IgnoreFriendRequestSuccess(friendRequestModel: friendRequestModel));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -36,6 +34,7 @@ class IgnoreFriendRequestBloc extends Cubit<IgnoreFriendRequestState> {
         stackTrace: stackTrace,
       );
       emit(IgnoreFriendRequestFailure(exception: exception));
+      rethrow;
     }
   }
 }

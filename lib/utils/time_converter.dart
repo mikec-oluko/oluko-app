@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class TimeConverter {
@@ -42,28 +43,38 @@ class TimeConverter {
 
   static String durationToString(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, "0");
-    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
-    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60).toInt());
+    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60).toInt());
     return "$twoDigitMinutes:$twoDigitSeconds";
   }
 
   static String toCourseDuration(int weeks, int classes, BuildContext context) {
     return weeks.toString() +
         " " +
-        OlukoLocalizations.of(context).find('weeks') +
+        OlukoLocalizations.get(context, 'weeks') +
         ", " +
         classes.toString() +
         " " +
-        OlukoLocalizations.of(context).find('classes');
+        OlukoLocalizations.get(context, 'classes');
   }
 
-  static String returnDateAndTimeOnStringFormat({Timestamp dateToFormat}) {
-    String dateToReturnAsString;
-    String date =
-        dateToFormat.toDate().toString().split(" ")[0].replaceAll("-", ".");
-    String hour = dateToFormat.toDate().toString().split(" ")[1].split(".")[0];
-    hour = hour.replaceRange(hour.lastIndexOf(":"), hour.length, "");
-    dateToReturnAsString = date + " | " + hour;
-    return dateToReturnAsString;
+  static String toClassProgress(int currentClass, int totalClasses, BuildContext context) {
+    return OlukoLocalizations.get(context, 'class') +
+        " " +
+        (currentClass + 1).toString() +
+        " " +
+        OlukoLocalizations.get(context, 'of') +
+        " " +
+        totalClasses.toString();
+  }
+
+  static String returnDateAndTimeOnStringFormat({Timestamp dateToFormat, BuildContext context}) {
+    //date doc: https://pub.dev/documentation/intl/latest/intl/DateFormat-class.html
+    //7/10/1996 5:08 PM
+    final String ymdLocalized =
+        DateFormat.yMd(Localizations.localeOf(context).languageCode).add_jm().format(dateToFormat.toDate()).replaceAll('/', '.');
+    final dateSplitted = ymdLocalized.split(' ');
+    dateSplitted[0] = '${dateSplitted[0]} |';
+    return dateSplitted.join(' ');
   }
 }

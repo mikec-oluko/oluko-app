@@ -27,10 +27,8 @@ class Favorite extends Base {
 
   factory Favorite.fromJson(Map<String, dynamic> json) {
     Favorite favorite = Favorite(
-        userId: json['user_id'],
-        course: json['course'] == null
-            ? null
-            : ObjectSubmodel.fromJson(json['course']));
+        userId: json['user_id']?.toString(),
+        course: json['course'] == null ? null : ObjectSubmodel.fromJson(json['course'] as Map<String, dynamic>));
     favorite.setBase(json);
     return favorite;
   }

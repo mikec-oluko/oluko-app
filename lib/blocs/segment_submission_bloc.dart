@@ -16,8 +16,14 @@ class CreateSuccess extends SegmentSubmissionState {
   CreateSuccess({this.segmentSubmission});
 }
 
+class UpdateSegmentSubmissionSuccess extends SegmentSubmissionState {}
+
+class EncodedSegmentSubmissionSuccess extends SegmentSubmissionState {}
+
+class ErrorSegmentSubmissionSuccess extends SegmentSubmissionState {}
+
 class Failure extends SegmentSubmissionState {
-  final Exception exception;
+  final dynamic exception;
 
   Failure({this.exception});
 }
@@ -37,12 +43,12 @@ class CourseEnrollmentListSuccess extends SegmentSubmissionState {
 class SegmentSubmissionBloc extends Cubit<SegmentSubmissionState> {
   SegmentSubmissionBloc() : super(Loading());
 
-  void create(
-      User user, CourseEnrollment courseEnrollment, Segment segment) async {
+  void create(User user, CourseEnrollment courseEnrollment, Segment segment,
+      String videoPath) async {
     try {
       SegmentSubmission segmentSubmission =
           await SegmentSubmissionRepository.create(
-              user, courseEnrollment, segment);
+              user, courseEnrollment, segment, videoPath);
       emit(CreateSuccess(segmentSubmission: segmentSubmission));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -50,6 +56,49 @@ class SegmentSubmissionBloc extends Cubit<SegmentSubmissionState> {
         stackTrace: stackTrace,
       );
       emit(Failure(exception: exception));
+      rethrow;
+    }
+  }
+
+  void updateVideo(SegmentSubmission segmentSubmission) async {
+    try {
+      await SegmentSubmissionRepository.updateVideo(segmentSubmission);
+      emit(UpdateSegmentSubmissionSuccess());
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: exception));
+      rethrow;
+    }
+  }
+
+  void updateStateToEncoded(SegmentSubmission segmentSubmission) async {
+    try {
+      await SegmentSubmissionRepository.updateStateToEncoded(segmentSubmission);
+      emit(EncodedSegmentSubmissionSuccess());
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: exception));
+      rethrow;
+    }
+  }
+
+  void updateStateToError(SegmentSubmission segmentSubmission) async {
+    try {
+      await SegmentSubmissionRepository.updateStateToError(segmentSubmission);
+      emit(ErrorSegmentSubmissionSuccess());
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: exception));
+      rethrow;
     }
   }
 }

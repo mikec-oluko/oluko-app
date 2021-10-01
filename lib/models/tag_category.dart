@@ -28,11 +28,9 @@ class TagCategory extends Base {
 
   factory TagCategory.fromJson(Map<String, dynamic> json) {
     TagCategory tagCategory = TagCategory(
-      name: json['name'],
+      name: json['name']?.toString(),
       tags: json['tags'] != null
-          ? json['tags']
-              .map<TagCategoryItem>((item) => TagCategoryItem.fromJson(item))
-              .toList()
+          ? (json['tags'] as Iterable).map<TagCategoryItem>((item) => TagCategoryItem.fromJson(item as Map<String, dynamic>)).toList()
           : [],
     );
     tagCategory.setBase(json);

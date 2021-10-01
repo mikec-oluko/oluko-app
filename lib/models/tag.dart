@@ -2,15 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oluko_app/models/base.dart';
 
 class Tag extends Base {
-  Tag(
-      {this.name,
-      String id,
-      Timestamp createdAt,
-      String createdBy,
-      Timestamp updatedAt,
-      String updatedBy,
-      bool isHidden,
-      bool isDeleted})
+  Tag({this.name, String id, Timestamp createdAt, String createdBy, Timestamp updatedAt, String updatedBy, bool isHidden, bool isDeleted})
       : super(
             id: id,
             createdBy: createdBy,
@@ -24,7 +16,7 @@ class Tag extends Base {
 
   factory Tag.fromJson(Map<String, dynamic> json) {
     Tag courseCategory = Tag(
-      name: json['name'],
+      name: json['name']?.toString(),
     );
     courseCategory.setBase(json);
     return courseCategory;

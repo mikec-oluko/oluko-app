@@ -15,9 +15,9 @@ class _CoachTabChallengeCardState extends State<CoachTabChallengeCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      decoration: BoxDecoration(color: OlukoColors.challengesGreyBackground, borderRadius: BorderRadius.all(Radius.circular(5))),
       height: 100,
       width: 150,
-      color: OlukoColors.challengesGreyBackground,
       child: Wrap(
         children: [
           Row(
@@ -33,10 +33,8 @@ class _CoachTabChallengeCardState extends State<CoachTabChallengeCard> {
                           return Text('Your error widget...');
                         },
                       ),
-                      color: OlukoColors.white,
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(10),
-                          bottomRight: Radius.circular(10))),
+                      color: OlukoColors.warning,
+                      borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10))),
                   width: 60,
                   height: 90,
                 ),
@@ -52,10 +50,8 @@ class _CoachTabChallengeCardState extends State<CoachTabChallengeCard> {
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 2),
                             child: Text(
-                              OlukoLocalizations.of(context).find("challenge"),
-                              style: OlukoFonts.olukoSmallFont(
-                                  customColor: OlukoColors.grayColor,
-                                  custoFontWeight: FontWeight.w500),
+                              OlukoLocalizations.get(context, "challenge"),
+                              style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
                             ),
                           ),
                           Padding(
@@ -63,28 +59,21 @@ class _CoachTabChallengeCardState extends State<CoachTabChallengeCard> {
                             child: Text(
                               widget.challenge.challengeName,
                               overflow: TextOverflow.ellipsis,
-                              style: OlukoFonts.olukoMediumFont(
-                                  customColor: OlukoColors.white,
-                                  custoFontWeight: FontWeight.w500),
+                              style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 2),
                             child: Text(
-                              OlukoLocalizations.of(context)
-                                  .find("challengeBy"),
-                              style: OlukoFonts.olukoSmallFont(
-                                  customColor: OlukoColors.grayColor,
-                                  custoFontWeight: FontWeight.w500),
+                              OlukoLocalizations.of(context).find("challengeBy"),
+                              style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 2),
                             child: Text(
-                              OlukoLocalizations.of(context).find("coach"),
-                              style: OlukoFonts.olukoMediumFont(
-                                  customColor: OlukoColors.white,
-                                  custoFontWeight: FontWeight.w500),
+                              OlukoLocalizations.get(context, "coach"),
+                              style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                             ),
                           ),
                         ],

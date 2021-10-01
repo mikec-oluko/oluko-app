@@ -61,14 +61,11 @@ class _CourseMarketingState extends State<CourseMarketing> {
         _user = authState.firebaseUser;
         if (_userState == null) {
           _userState = authState;
-          BlocProvider.of<SubscribedCourseUsersBloc>(context)
-              .get(widget.course.id, _userState.user.id);
+          BlocProvider.of<SubscribedCourseUsersBloc>(context).get(widget.course.id, _userState.user.id);
           BlocProvider.of<ClassBloc>(context)..getAll(widget.course);
-          BlocProvider.of<StatisticsBloc>(context)
-            ..get(widget.course.statisticsReference);
+          BlocProvider.of<StatisticsBloc>(context)..get(widget.course.statisticsReference);
           BlocProvider.of<MovementBloc>(context)..getAll();
-          BlocProvider.of<CourseEnrollmentBloc>(context)
-            ..get(authState.firebaseUser, widget.course);
+          BlocProvider.of<CourseEnrollmentBloc>(context)..get(authState.firebaseUser, widget.course);
         }
 
         return form();
@@ -79,18 +76,13 @@ class _CourseMarketingState extends State<CourseMarketing> {
   }
 
   Widget form() {
-    return BlocBuilder<MovementBloc, MovementState>(
-        builder: (context, movementState) {
+    return BlocBuilder<MovementBloc, MovementState>(builder: (context, movementState) {
       if (movementState is GetAllSuccess) {
         _movements = movementState.movements;
-        return BlocBuilder<CourseEnrollmentBloc, CourseEnrollmentState>(
-            builder: (context, enrollmentState) {
-          return BlocBuilder<ClassBloc, ClassState>(
-              builder: (context, classState) {
-            if ((enrollmentState is GetEnrollmentSuccess) &&
-                classState is GetSuccess) {
-              _classes = classState
-                  .classes; //TODO: this is receiving old classes from another (previously opened) course
+        return BlocBuilder<CourseEnrollmentBloc, CourseEnrollmentState>(builder: (context, enrollmentState) {
+          return BlocBuilder<ClassBloc, ClassState>(builder: (context, classState) {
+            if ((enrollmentState is GetEnrollmentSuccess) && classState is GetSuccess) {
+              _classes = classState.classes; //TODO: this is receiving old classes from another (previously opened) course
               return Form(
                   key: _formKey,
                   child: Scaffold(
@@ -109,76 +101,44 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                     showShareButton: true,
                                   ),
                                 ),
-                                showEnrollButton(
-                                    enrollmentState.courseEnrollment, context),
+                                showEnrollButton(enrollmentState.courseEnrollment, context),
                                 Padding(
-                                    padding: EdgeInsets.only(
-                                        right: 15, left: 15, top: 0),
+                                    padding: EdgeInsets.only(right: 15, left: 15, top: 0),
                                     child: Container(
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                widget.course.name,
-                                                style:
-                                                    OlukoFonts.olukoTitleFont(
-                                                        custoFontWeight:
-                                                            FontWeight.bold),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 10.0, right: 10),
-                                                child: Text(
-                                                  //TODO: change weeks number
-                                                  TimeConverter.toCourseDuration(
-                                                      6,
-                                                      widget.course.classes !=
-                                                              null
-                                                          ? widget.course
-                                                              .classes.length
-                                                          : 0,
-                                                      context),
-                                                  style:
-                                                      OlukoFonts.olukoBigFont(
-                                                          custoFontWeight:
-                                                              FontWeight.normal,
-                                                          customColor:
-                                                              OlukoColors
-                                                                  .grayColor),
-                                                ),
-                                              ),
-                                              buildStatistics(),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 10.0, right: 10),
-                                                child: Text(
-                                                  widget.course.description,
-                                                  style:
-                                                      OlukoFonts.olukoBigFont(
-                                                          custoFontWeight:
-                                                              FontWeight.normal,
-                                                          customColor:
-                                                              OlukoColors
-                                                                  .grayColor),
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 25.0),
-                                                child: Text(
-                                                  OlukoLocalizations.of(context)
-                                                      .find('classes'),
-                                                  style: OlukoFonts
-                                                      .olukoSubtitleFont(
-                                                          custoFontWeight:
-                                                              FontWeight.bold),
-                                                ),
-                                              ),
-                                              buildClassExpansionPanels(),
-                                            ]))),
+                                        width: MediaQuery.of(context).size.width,
+                                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                          Text(
+                                            widget.course.name,
+                                            style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(top: 10.0, right: 10),
+                                            child: Text(
+                                              //TODO: change weeks number
+                                              TimeConverter.toCourseDuration(
+                                                  6, widget.course.classes != null ? widget.course.classes.length : 0, context),
+                                              style: OlukoFonts.olukoBigFont(
+                                                  custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+                                            ),
+                                          ),
+                                          buildStatistics(),
+                                          Padding(
+                                            padding: const EdgeInsets.only(top: 10.0, right: 10),
+                                            child: Text(
+                                              widget.course.description ?? '',
+                                              style: OlukoFonts.olukoBigFont(
+                                                  custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(top: 25.0),
+                                            child: Text(
+                                              OlukoLocalizations.get(context, 'classes'),
+                                              style: OlukoFonts.olukoSubtitleFont(custoFontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                          buildClassExpansionPanels(),
+                                        ]))),
                                 SizedBox(
                                   height: 150,
                                 )
@@ -196,14 +156,12 @@ class _CourseMarketingState extends State<CourseMarketing> {
     });
   }
 
-  Widget showEnrollButton(
-      CourseEnrollment courseEnrollment, BuildContext context) {
+  Widget showEnrollButton(CourseEnrollment courseEnrollment, BuildContext context) {
     return courseEnrollment == null
         ? BlocListener<CourseEnrollmentBloc, CourseEnrollmentState>(
             listener: (context, courseEnrollmentState) {
               if (courseEnrollmentState is CreateEnrollmentSuccess) {
-                BlocProvider.of<CourseEnrollmentListBloc>(context)
-                  ..getCourseEnrollmentsByUser(_user.uid);
+                BlocProvider.of<CourseEnrollmentListBloc>(context)..getCourseEnrollmentsByUser(_user.uid);
                 Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
               }
             },
@@ -213,10 +171,9 @@ class _CourseMarketingState extends State<CourseMarketing> {
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     OlukoPrimaryButton(
-                      title: OlukoLocalizations.of(context).find('enroll'),
+                      title: OlukoLocalizations.get(context, 'enroll'),
                       onPressed: () {
-                        BlocProvider.of<CourseEnrollmentBloc>(context)
-                          ..create(_user, widget.course);
+                        BlocProvider.of<CourseEnrollmentBloc>(context)..create(_user, widget.course);
                       },
                     ),
                   ],
@@ -227,23 +184,19 @@ class _CourseMarketingState extends State<CourseMarketing> {
   }
 
   Widget buildStatistics() {
-    return BlocBuilder<SubscribedCourseUsersBloc, SubscribedCourseUsersState>(
-        builder: (context, state) {
+    return BlocBuilder<SubscribedCourseUsersBloc, SubscribedCourseUsersState>(builder: (context, state) {
       if (state is SubscribedCourseUsersSuccess) {
         return Padding(
             padding: EdgeInsets.symmetric(vertical: 15),
             child: StatisticChart(
-              courseStatistics: CourseStatistics(
-                  courseId: widget.course.id,
-                  takingUp: state.users.length,
-                  doing: state.users.length),
+              courseStatistics: CourseStatistics(courseId: widget.course.id, takingUp: state.users.length, doing: state.users.length),
               course: widget.course,
             ));
       } else {
         return Padding(
           padding: const EdgeInsets.all(50.0),
           child: Center(
-            child: Text(OlukoLocalizations.of(context).find('loadingWhithDots'),
+            child: Text(OlukoLocalizations.get(context, 'loadingWhithDots'),
                 style: TextStyle(
                   color: Colors.white,
                 )),
@@ -258,8 +211,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
       classes: _classes,
       movements: _movements,
       onPressedMovement: (BuildContext context, Movement movement) =>
-          Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro],
-              arguments: {'movement': movement}),
+          Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement}),
     );
   }
 }

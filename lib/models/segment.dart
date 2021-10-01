@@ -1,35 +1,31 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oluko_app/models/base.dart';
-import 'package:oluko_app/models/enums/timer_type_enum.dart';
-import 'package:oluko_app/models/submodels/movement_submodel.dart';
+import 'package:oluko_app/models/enums/segment_type_enum.dart';
+import 'package:oluko_app/models/submodels/section_submodel.dart';
 
 class Segment extends Base {
   String name;
-  List<MovementSubmodel> movements;
   String image;
   String description;
-  String duration;
-  int totalTime;
   int initialTimer;
+  SegmentTypeEnum type;
   int rounds;
-  int roundBreakDuration;
-  bool isChallenge;
+  int totalTime;
   bool isPublished;
-  TimerTypeEnum timerType;
+  List<SectionSubmodel> sections;
+  bool isChallenge;
 
   Segment(
       {this.name,
-      this.movements,
+      this.sections,
       this.image,
       this.rounds,
       this.description,
-      this.duration,
       this.initialTimer,
-      this.roundBreakDuration,
-      this.isChallenge,
       this.isPublished,
-      this.timerType,
       this.totalTime,
+      this.isChallenge,
+      this.type,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -48,45 +44,37 @@ class Segment extends Base {
 
   factory Segment.fromJson(Map<String, dynamic> json) {
     Segment segment = Segment(
-        name: json['name'],
-        image: json['image'],
-        rounds: json['rounds'],
-        description: json['description'],
-        duration: json['duration'],
-        totalTime: json['total_time'],
-        initialTimer: json['initial_timer'],
-        roundBreakDuration: json['round_break_duration'],
-        isChallenge: json['is_challenge'],
-        isPublished: json['is_published'],
-        timerType: json['timer_type'] == null
+        name: json['name']?.toString(),
+        image: json['image']?.toString(),
+        rounds: json['rounds'] as int,
+        description: json['description']?.toString(),
+        isChallenge: json['is_challenge'] as bool,
+        totalTime: json['total_time'] as int,
+        initialTimer: json['initial_timer'] as int,
+        isPublished: json['is_published'] as bool,
+        type: json['type'] == null ? null : SegmentTypeEnum.values[json['type'] as int],
+        sections: json['sections'] == null
             ? null
-            : TimerTypeEnum.values[json['timer_type']],
-        movements: json['movements'] == null
-            ? null
-            : List<MovementSubmodel>.from(json['movements']
-                .map((movement) => MovementSubmodel.fromJson(movement))));
+            : List<SectionSubmodel>.from(
+                (json['sections'] as Iterable).map((section) => SectionSubmodel.fromJson(section as Map<String, dynamic>))));
     segment.setBase(json);
     return segment;
   }
 
   Map<String, dynamic> toJson() {
-    Map<String, dynamic> movementJson = {
+    Map<String, dynamic> segmentJson = {
       'name': name,
       'image': image,
       'rounds': rounds,
-      'duration': duration,
-      "total_time": totalTime,
+      'total_time': totalTime,
       'description': description,
       'initial_timer': initialTimer,
-      'round_break_duration': roundBreakDuration,
-      'is_challenge': isChallenge,
       'is_published': isPublished,
-      'timer_type': timerType == null ? null : timerType.index,
-      'movements': movements == null
-          ? null
-          : List<dynamic>.from(movements.map((movement) => movement.toJson()))
+      'is_challenge': isChallenge,
+      'type': type == null ? null : type.index,
+      'movements': sections == null ? null : List<dynamic>.from(sections.map((section) => section.toJson()))
     };
-    movementJson.addEntries(super.toJson().entries);
-    return movementJson;
+    segmentJson.addEntries(super.toJson().entries);
+    return segmentJson;
   }
 }

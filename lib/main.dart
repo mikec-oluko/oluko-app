@@ -20,13 +20,18 @@ Future<void> main() async {
   final MyApp myApp = MyApp(
     initialRoute: alreadyLoggedUser == null ? '/sign-up' : '/',
   );
-  await SentryFlutter.init(
-    (options) {
-      options.dsn = GlobalConfiguration().getValue("sentryDsn");
-      options.environment = GlobalConfiguration().getValue("environment");
-    },
-    appRunner: () => runApp(myApp),
-  );
+  if (GlobalConfiguration().getValue("build") == "local") {
+    runApp(myApp);
+  } else {
+    await SentryFlutter.init(
+      (options) {
+        options.dsn = GlobalConfiguration().getValue("sentryDsn");
+        options.environment = GlobalConfiguration().getValue("environment");
+        options.reportSilentFlutterErrors = true;
+      },
+      appRunner: () => runApp(myApp),
+    );
+  }
 }
 
 const OLUKO = 'Oluko';
@@ -56,8 +61,7 @@ class _MyAppState extends State<MyApp> {
         primarySwatch: Colors.grey,
       ),
       initialRoute: widget.initialRoute,
-      onGenerateRoute: (RouteSettings settings) =>
-          routes.getRouteView(settings.name, settings.arguments),
+      onGenerateRoute: (RouteSettings settings) => routes.getRouteView(settings.name, settings.arguments),
       localizationsDelegates: [
         const OlukoLocalizationsDelegate(),
         GlobalMaterialLocalizations.delegate,
