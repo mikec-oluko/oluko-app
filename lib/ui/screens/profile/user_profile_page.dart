@@ -343,7 +343,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                   onPressed: () {
                                     switch (connectStatus) {
                                       case UserConnectStatus.connected:
-                                        BlocProvider.of<FriendBloc>(context).removeFriend(friendData, userRequested.id);
+                                        BlocProvider.of<FriendBloc>(context).removeFriend(_currentAuthUser.id, friendData, userRequested.id);
                                         break;
                                       case UserConnectStatus.notConnected:
                                         BlocProvider.of<FriendBloc>(context).sendRequestOfConnect(_currentAuthUser.id, friendData, userRequested.id);

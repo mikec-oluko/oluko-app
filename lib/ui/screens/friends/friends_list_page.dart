@@ -367,8 +367,10 @@ class _FriendsListPageState extends State<FriendsListPage> {
                                 title: userIsFriend ? OlukoLocalizations.of(context).find('remove') : OlukoLocalizations.of(context).find('connect'),
                                 onPressed: () {
                                   if (friendState is GetFriendsSuccess)
-                                    BlocProvider.of<FriendBloc>(context)
-                                        .sendRequestOfConnect(_authStateData.user.id, friendState.friendData, user.id);
+                                    userIsFriend
+                                        ? BlocProvider.of<FriendBloc>(context).removeFriend(_authStateData.user.id, friendState.friendData, user.id)
+                                        : BlocProvider.of<FriendBloc>(context)
+                                            .sendRequestOfConnect(_authStateData.user.id, friendState.friendData, user.id);
                                 }),
                         SizedBox(width: 10),
                         OlukoOutlinedButton(
