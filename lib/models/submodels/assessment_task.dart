@@ -10,7 +10,6 @@ class AssessmentTask {
 
   AssessmentTask.fromJson(Map json)
       : taskReference = json['reference'] as DocumentReference,
-        index = num.tryParse(json['index']?.toString()),
         taskId = json['id']?.toString(),
         taskName = json['name']?.toString();
 
