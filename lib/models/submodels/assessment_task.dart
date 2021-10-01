@@ -10,9 +10,16 @@ class AssessmentTask {
 
   AssessmentTask.fromJson(Map json)
       : taskReference = json['reference'] as DocumentReference,
-        index = num.tryParse(json['index']?.toString()),
+        index = json['index'] == null
+            ? null
+            : num.tryParse(json['index']?.toString()),
         taskId = json['id']?.toString(),
         taskName = json['name']?.toString();
 
-  Map<String, dynamic> toJson() => {'reference': taskReference, 'index': index, 'id': taskId, 'name': taskName};
+  Map<String, dynamic> toJson() => {
+        'reference': taskReference,
+        'index': index,
+        'id': taskId,
+        'name': taskName
+      };
 }
