@@ -86,7 +86,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
                               child: Row(
                                 children: [
                                   OlukoOutlinedButton(
-                                      title: OlukoLocalizations.of(context).find('tapToUpload'),
+                                      title: OlukoLocalizations.get(context, 'tapToUpload'),
                                       onPressed: () {
                                         BlocProvider.of<TransformationJourneyContentBloc>(context).openPanel();
                                       }),

@@ -64,7 +64,7 @@ class _EnrolledClassState extends State<EnrolledClass> {
           return Form(
               key: _formKey,
               child: Scaffold(
-                  appBar: OlukoAppBar(title: OlukoLocalizations.of(context).find('class')),
+                  appBar: OlukoAppBar(title: OlukoLocalizations.get(context, 'class')),
                   body: Container(
                       color: Colors.black,
                       child: Stack(
@@ -118,7 +118,7 @@ class _EnrolledClassState extends State<EnrolledClass> {
                                       Padding(
                                         padding: const EdgeInsets.only(top: 25.0),
                                         child: Text(
-                                          OlukoLocalizations.of(context).find('classes'),
+                                          OlukoLocalizations.get(context, 'classes'),
                                           style: OlukoFonts.olukoSubtitleFont(custoFontWeight: FontWeight.bold),
                                         ),
                                       ),
@@ -203,7 +203,7 @@ class _EnrolledClassState extends State<EnrolledClass> {
               mainAxisSize: MainAxisSize.max,
               children: [
                 OlukoPrimaryButton(
-                  title: OlukoLocalizations.of(context).find('start'),
+                  title: OlukoLocalizations.get(context, 'start'),
                   onPressed: () {
                     BlocProvider.of<CourseEnrollmentBloc>(context)..create(user, course);
                     Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
@@ -220,7 +220,7 @@ class _EnrolledClassState extends State<EnrolledClass> {
     double classProgress;
 
     if (courseEnrollment != null) {
-      buttonText = OlukoLocalizations.of(context).find('start');
+      buttonText = OlukoLocalizations.get(context, 'start');
       index = CourseEnrollmentService.getFirstUncompletedClassIndex(
           courseEnrollment);
       if (index != -1) {
@@ -228,7 +228,7 @@ class _EnrolledClassState extends State<EnrolledClass> {
             CourseEnrollmentService.getClassProgress(courseEnrollment, index);
       }
     } else {
-      buttonText = OlukoLocalizations.of(context).find('enroll');
+      buttonText = OlukoLocalizations.get(context, 'enroll');
     }
     return index == -1
         ? SizedBox()
@@ -289,7 +289,7 @@ class _EnrolledClassState extends State<EnrolledClass> {
       Icon(Icons.warning_amber_rounded, color: Colors.white, size: 100),
       Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Text(OlukoLocalizations.of(context).find('enrollWarning'), textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont()),
+        child: Text(OlukoLocalizations.get(context, 'enrollWarning'), textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont()),
       )
     ];
   }

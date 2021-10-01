@@ -16,9 +16,9 @@ class VideoState {
 
   factory VideoState.fromJson(Map<String, dynamic> json) {
     return VideoState(
-      stateInfo: json['state_info'].toString(),
-      stateExtraInfo: json['state_extra_info'].toString(),
-      error: json['error'].toString(),
+      stateInfo: json['state_info']?.toString(),
+      stateExtraInfo: json['state_extra_info']?.toString(),
+      error: json['error']?.toString(),
       state: SubmissionStateEnum.values[json['state'] as int],
     );
   }

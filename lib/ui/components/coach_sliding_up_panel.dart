@@ -29,8 +29,8 @@ class _CoachSlidingUpPanelState extends State<CoachSlidingUpPanel> {
         child: Padding(
           padding: const EdgeInsets.only(left: 10),
           child: Text(
-            OlukoLocalizations.of(context).find('myTimeline'),
-            style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+            OlukoLocalizations.get(context, 'myTimeline'),
+            style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
           ),
         ),
       ),

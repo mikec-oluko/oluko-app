@@ -83,7 +83,7 @@ class VideoBloc extends Cubit<VideoState> {
 
     video.duration = durationInMilliseconds;
 
-    _processPhase = OlukoLocalizations.of(context).find('generatingThumbnail');
+    _processPhase = OlukoLocalizations.get(context, 'generatingThumbnail');
     _progress += _unitOfProgress;
     emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
     String thumbFilePath;
@@ -97,14 +97,14 @@ class VideoBloc extends Cubit<VideoState> {
       rethrow;
     }
 
-    _processPhase = OlukoLocalizations.of(context).find('encodingVideo');
+    _processPhase = OlukoLocalizations.get(context, 'encodingVideo');
     _progress += _unitOfProgress;
     emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
 
     final encodedFilesDir = await EncodingProvider.encodeHLS(videoPath, outDirPath);
     emit(VideoEncoded(encodedFilesDir: encodedFilesDir, video: video, thumbFilePath: thumbFilePath));
 
-    _processPhase = OlukoLocalizations.of(context).find('uploadingThumbnail');
+    _processPhase = OlukoLocalizations.get(context, 'uploadingThumbnail');
     _progress += _unitOfProgress;
     emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
 
@@ -113,8 +113,7 @@ class VideoBloc extends Cubit<VideoState> {
     return video;
   }
 
-  Future<Video> afterEcondingProcessing(
-      Video video, String thumbFilePath, String encodedFilesDir, BuildContext context) async {
+  Future<Video> afterEcondingProcessing(Video video, String thumbFilePath, String encodedFilesDir, BuildContext context) async {
     String thumbUrl;
     if (thumbFilePath != null) {
       thumbUrl = await VideoProcess.uploadFile(thumbFilePath, video.name);
@@ -144,9 +143,9 @@ class VideoBloc extends Cubit<VideoState> {
       }
 
       double fileProgress = 0.4 / files.length.toDouble();
-      _processPhase = OlukoLocalizations.of(context).find('uploadingVideoFile') +
+      _processPhase = OlukoLocalizations.get(context, 'uploadingVideoFile') +
           i.toString() +
-          OlukoLocalizations.of(context).find('outOf') +
+          OlukoLocalizations.get(context, 'outOf') +
           files.length.toString();
       _progress += fileProgress;
       emit(VideoProcessing(processPhase: _processPhase, progress: _progress));

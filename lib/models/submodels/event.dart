@@ -15,10 +15,9 @@ class Event {
 
   factory Event.fromJson(Map<String, dynamic> json) {
     return Event(
-      recordingPosition: int.tryParse(json['recording_position'].toString()),
-      videoPosition: int.tryParse(json['video_position'].toString()),
-      eventType: EnumToString.fromString(
-          EventType.values, json['event_type'].toString()),
+      recordingPosition: int.tryParse(json['recording_position']?.toString()),
+      videoPosition: int.tryParse(json['video_position']?.toString()),
+      eventType: EnumToString.fromString(EventType.values, json['event_type']?.toString()),
     );
   }
 

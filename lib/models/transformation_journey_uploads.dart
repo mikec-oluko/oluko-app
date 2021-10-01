@@ -20,18 +20,18 @@ class TransformationJourneyUpload extends Base {
 
   factory TransformationJourneyUpload.fromJson(Map<String, dynamic> json) {
     TransformationJourneyUpload transformationJourneyUpload = TransformationJourneyUpload(
-        name: json['name'].toString(),
+        name: json['name']?.toString(),
         from: json['from'] as Timestamp,
-        description: json['description'].toString(),
+        description: json['description']?.toString(),
         index: json['index'] as int,
-        type: getFileTypeEnumFromString(json['type'].toString()),
-        file: json['file'].toString(),
+        type: getFileTypeEnumFromString(json['type']?.toString()),
+        file: json['file']?.toString(),
         isPublic: json['isPublic'] as bool,
-        thumbnail: json['thumbnail'].toString(),
+        thumbnail: json['thumbnail']?.toString(),
         createdAt: json['createdAt'] as Timestamp,
-        createdBy: json['createdBy'].toString(),
+        createdBy: json['createdBy']?.toString(),
         updatedAt: json['updatedAt'] as Timestamp,
-        updatedBy: json['updatedBy'].toString());
+        updatedBy: json['updatedBy']?.toString());
 
     transformationJourneyUpload.setBase(json);
     return transformationJourneyUpload;
@@ -43,7 +43,7 @@ class TransformationJourneyUpload extends Base {
       'from': from,
       'description': description,
       'index': index,
-      'type': type.toString(),
+      'type': type?.toString(),
       'file': file,
       'isPublic': isPublic,
       'thumbnail': thumbnail,

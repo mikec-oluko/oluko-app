@@ -51,13 +51,13 @@ class SegmentSubmission extends Base {
 
   factory SegmentSubmission.fromJson(Map<String, dynamic> json) {
     SegmentSubmission segmentSubmission = SegmentSubmission(
-        userId: json['user_id'].toString(),
+        userId: json['user_id']?.toString(),
         userReference: json['user_reference'] as DocumentReference,
-        segmentId: json['segment_id'].toString(),
+        segmentId: json['segment_id']?.toString(),
         segmentReference: json['segment_reference'] as DocumentReference,
-        coachId: json['coach_id'].toString(),
+        coachId: json['coach_id']?.toString(),
         coachReference: json['coach_reference'] as DocumentReference,
-        courseEnrollmentId: json['course_enrollment_id'].toString(),
+        courseEnrollmentId: json['course_enrollment_id']?.toString(),
         status: SegmentSubmissionStatusEnum.values[json['status'] as int],
         courseEnrollmentReference: json['course_enrollment_reference'] as DocumentReference,
         seenAt: json['seen_at'] as Timestamp,

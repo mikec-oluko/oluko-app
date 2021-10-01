@@ -9,10 +9,10 @@ class Video {
 
   factory Video.fromJson(Map<String, dynamic> json) {
     return Video(
-        url: json['url'].toString(),
-        thumbUrl: json['thumb_url'].toString(),
+        url: json['url']?.toString(),
+        thumbUrl: json['thumb_url']?.toString(),
         aspectRatio: json['aspect_ratio'] as double,
-        name: json['name'].toString(),
+        name: json['name']?.toString(),
         duration: json['duration'] as int);
   }
 

@@ -305,6 +305,9 @@ class Routes {
           BlocProvider<CoachMentoredVideosBloc>.value(value: _coachMentoredVideosBloc),
           BlocProvider<CoachTimelineItemsBloc>.value(value: _coachTimelineItemsBloc),
           BlocProvider<HiFiveBloc>.value(value: _hiFiveBloc),
+          BlocProvider<HiFiveSendBloc>.value(
+            value: _hiFiveSendBloc,
+          )
         ];
         newRouteView = MainPage();
         break;

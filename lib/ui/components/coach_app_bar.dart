@@ -31,7 +31,7 @@ class _CoachAppBarState extends State<CoachAppBar> {
                       arguments: {'coachUser': widget.coachUser});
                 },
                 child: Text(
-                  OlukoLocalizations.of(context).find('hiCoach'),
+                  OlukoLocalizations.get(context, 'hiCoach'),
                   style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
                 ),
               ),

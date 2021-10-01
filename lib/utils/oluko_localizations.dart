@@ -11,6 +11,10 @@ class OlukoLocalizations {
     return Localizations.of<OlukoLocalizations>(context, OlukoLocalizations);
   }
 
+  static String get(BuildContext context, String key) {
+    return Localizations.of<OlukoLocalizations>(context, OlukoLocalizations).find(key);
+  }
+
   static Map<String, Map<String, String>> _localizedValues = new Map();
 
   Future<bool> load() async {

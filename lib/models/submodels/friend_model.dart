@@ -18,7 +18,7 @@ class FriendModel {
         isMuted: json['is_muted'] as bool,
         isMutedUntil: json['is_muted_until'] as DateTime, //TODO: update me to Timestamp
         latestSeenContent: json['latest_seen_content'] as DateTime, //TODO: update me to Timestamp
-        id: json['id'].toString(),
+        id: json['id']?.toString(),
         isFavorite: json['is_favorite'] as bool);
     return favorite;
   }

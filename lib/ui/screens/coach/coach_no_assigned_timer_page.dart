@@ -48,7 +48,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
     final difference = _auction.difference(_now);
     return Scaffold(
       appBar: OlukoAppBar(
-        title: OlukoLocalizations.of(context).find('coach'),
+        title: OlukoLocalizations.get(context, 'coach'),
         showBackButton: false,
       ),
       body: Container(
@@ -76,7 +76,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
                       child: Text(
-                        OlukoLocalizations.of(context).find('hey'),
+                        OlukoLocalizations.get(context, 'hey'),
                         style:
                             OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                       ),
@@ -84,7 +84,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                       child: Text(
-                        OlukoLocalizations.of(context).find('coachText'),
+                        OlukoLocalizations.get(context, 'coachText'),
                         textAlign: TextAlign.center,
                         style: OlukoFonts.olukoMediumFont(
                             customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
@@ -190,7 +190,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                   child: Column(
                     children: [
                       Text(
-                        _isTimeExpired ? '00' : difference.inSeconds.remainder(60).toString() ,
+                        _isTimeExpired ? '00' : difference.inSeconds.remainder(60).toString(),
                         style: OlukoFonts.olukoBiggestFont(
                             customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                       ),

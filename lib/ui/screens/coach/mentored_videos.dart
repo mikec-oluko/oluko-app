@@ -51,7 +51,7 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
         return Scaffold(
           appBar: AppBar(
             title: Text(
-              OlukoLocalizations.of(context).find('mentoredVideos'),
+              OlukoLocalizations.get(context, 'mentoredVideos'),
               style: OlukoFonts.olukoTitleFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
             ),
             actions: [
@@ -146,7 +146,7 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
                       onPressed: () {
                         Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
                           'videoUrl': coachAnnotation.video.url,
-                          'titleForView': OlukoLocalizations.of(context).find('mentoredVideos')
+                          'titleForView': OlukoLocalizations.get(context, 'mentoredVideos')
                         });
                       },
                       child: Image.asset(
@@ -171,7 +171,7 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                OlukoLocalizations.of(context).find('date'),
+                                OlukoLocalizations.get(context, 'date'),
                                 style: OlukoFonts.olukoMediumFont(
                                     customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                               ),

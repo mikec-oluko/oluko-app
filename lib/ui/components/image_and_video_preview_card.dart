@@ -39,7 +39,9 @@ class _State extends State<ImageAndVideoPreviewCard> {
   @override
   void initState() {
     setState(() {
-      definePreviewTitleByTypeOfContent();
+      new Future.delayed(Duration.zero, () {
+        definePreviewTitleByTypeOfContent(context);
+      });
     });
     super.initState();
   }
@@ -159,12 +161,12 @@ class _State extends State<ImageAndVideoPreviewCard> {
             ).image));
   }
 
-  void definePreviewTitleByTypeOfContent() {
+  void definePreviewTitleByTypeOfContent(BuildContext context) {
     if (widget.originalContent is TransformationJourneyUpload) {
       transformationJourneyContent = widget.originalContent as TransformationJourneyUpload;
       titleForPreviewImage = transformationJourneyContent.createdAt != null
-          ? TimeConverter.returnDateAndTimeOnStringFormat(dateToFormat: transformationJourneyContent.createdAt)
-          : "";
+          ? TimeConverter.returnDateAndTimeOnStringFormat(dateToFormat: transformationJourneyContent.createdAt, context: context)
+          : '';
     }
     if (widget.originalContent is TaskSubmission) {
       taskSubmissionContent = widget.originalContent as TaskSubmission;

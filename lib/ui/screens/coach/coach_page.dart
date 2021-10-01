@@ -275,11 +275,11 @@ class _CoachPageState extends State<CoachPage> {
       return _sentVideosContent.length != null && _sentVideosContent.isNotEmpty
           ? CoachContentPreviewContent(
               contentFor: CoachContentSection.sentVideos,
-              titleForSection: OlukoLocalizations.of(context).find('sentVideos'),
+              titleForSection: OlukoLocalizations.get(context, 'sentVideos'),
               segmentSubmissionContent: _sentVideosContent,
               isForCarousel: isForCarousel)
           : CoachContentSectionCard(
-              title: OlukoLocalizations.of(context).find('sentVideos'),
+              title: OlukoLocalizations.get(context, 'sentVideos'),
               isForCarousel: isForCarousel,
             );
     });
@@ -293,11 +293,11 @@ class _CoachPageState extends State<CoachPage> {
       return _annotationVideosContent != null && _annotationVideosContent.isNotEmpty
           ? CoachContentPreviewContent(
               contentFor: CoachContentSection.mentoredVideos,
-              titleForSection: OlukoLocalizations.of(context).find('mentoredVideos'),
+              titleForSection: OlukoLocalizations.get(context, 'mentoredVideos'),
               coachAnnotationContent: _annotationVideosContent,
               isForCarousel: isForCarousel)
           : CoachContentSectionCard(
-              title: OlukoLocalizations.of(context).find('mentoredVideos'),
+              title: OlukoLocalizations.get(context, 'mentoredVideos'),
               isForCarousel: isForCarousel,
             );
     });

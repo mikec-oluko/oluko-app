@@ -111,7 +111,7 @@ class _CoachContentPreviewContentState extends State<CoachContentPreviewContent>
               padding: const EdgeInsets.only(left: 5),
               child: Text(
                 widget.titleForSection,
-                // OlukoLocalizations.of(context).find('sentVideos'),
+                // OlukoLocalizations.get(context, 'sentVideos'),
                 style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
               ),
             ),
@@ -167,9 +167,9 @@ class _CoachContentPreviewContentState extends State<CoachContentPreviewContent>
         return Navigator.pushNamed(context, routeLabels[RouteEnum.sentVideos],
             arguments: {'sentVideosContent': widget.segmentSubmissionContent});
       case CoachContentSection.recomendedVideos:
-        return OlukoLocalizations.of(context).find('recomendedVideos');
+        return OlukoLocalizations.get(context, 'recomendedVideos');
       case CoachContentSection.voiceMessages:
-        return OlukoLocalizations.of(context).find('voiceMessages');
+        return OlukoLocalizations.get(context, 'voiceMessages');
 
       default:
     }

@@ -126,7 +126,7 @@ class _InsideClassesState extends State<InsideClass> {
       mainAxisSize: MainAxisSize.max,
       children: [
         OlukoPrimaryButton(
-          title: OlukoLocalizations.of(context).find('start'),
+          title: OlukoLocalizations.get(context, 'start'),
           onPressed: () {
             //TODO: Remove this
             /*Navigator.pushNamed(context, routeLabels[RouteEnum.completedClass],

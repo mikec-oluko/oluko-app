@@ -19,15 +19,12 @@ class MovementUtils {
         Padding(
             padding: const EdgeInsets.only(bottom: 8.0),
             child: Text(
-              OlukoLocalizations.of(context).find('description') + ":",
-              style: OlukoFonts.olukoSuperBigFont(
-                  custoFontWeight: FontWeight.bold),
+              OlukoLocalizations.get(context, 'description') + ":",
+              style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold),
             )),
         Text(
           description,
-          style: OlukoFonts.olukoBigFont(
-              custoFontWeight: FontWeight.normal,
-              customColor: OlukoColors.white),
+          style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.white),
         ),
       ],
     );
