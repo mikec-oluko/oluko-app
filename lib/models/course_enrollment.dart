@@ -6,6 +6,7 @@ import 'base.dart';
 
 class CourseEnrollment extends Base {
   DocumentReference userReference;
+  String userId;
   ObjectSubmodel course;
   double completion;
   Timestamp completedAt;
@@ -21,6 +22,7 @@ class CourseEnrollment extends Base {
       this.finishedAt,
       this.classes,
       this.challenges,
+      this.userId,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -40,6 +42,7 @@ class CourseEnrollment extends Base {
   factory CourseEnrollment.fromJson(Map<String, dynamic> json) {
     CourseEnrollment courseEnrollment = CourseEnrollment(
         userReference: json['user_reference'] as DocumentReference,
+        userId: json['user_id'] as String,
         course: json['course'] != null
             ? ObjectSubmodel.fromJson(json['course'] as Map<String, dynamic>)
             : null,
@@ -62,6 +65,7 @@ class CourseEnrollment extends Base {
   Map<String, dynamic> toJson() {
     Map<String, dynamic> courseEnrollmentJson = {
       'user_reference': userReference,
+      'user_id': userId,
       'completion': completion == null ? 0.0 : completion.toDouble(),
       'course': course.toJson(),
       'completed_at': completedAt,
