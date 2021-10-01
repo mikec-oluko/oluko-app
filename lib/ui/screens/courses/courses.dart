@@ -122,7 +122,7 @@ class _State extends State<Courses> {
         ? OlukoAppBar<Course>(
             showBackButton: false,
             searchKey: searchKey,
-            title: showFilterSelector ? OlukoLocalizations.of(context).find('filters') : OlukoLocalizations.of(context).find('courses'),
+            title: showFilterSelector ? OlukoLocalizations.get(context, 'filters') : OlukoLocalizations.get(context, 'courses'),
             actions: [_filterWidget()],
             onSearchSubmit: (SearchResults<Course> results) => this.setState(() {
               showSearchSuggestions = false;
@@ -160,7 +160,7 @@ class _State extends State<Courses> {
                       arguments: {'courses': coursesList, 'title': courseState.coursesByCategories.keys.elementAt(index).name}),
                   height: carouselSectionHeight,
                   title: courseState.coursesByCategories.keys.elementAt(index).name,
-                  optionLabel: OlukoLocalizations.of(context).find('viewAll'),
+                  optionLabel: OlukoLocalizations.get(context, 'viewAll'),
                   children: coursesList
                       .map((course) => Padding(
                             padding: const EdgeInsets.only(right: 8.0),
@@ -207,7 +207,7 @@ class _State extends State<Courses> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    OlukoLocalizations.of(context).find('clearAll'),
+                    OlukoLocalizations.get(context, 'clearAll'),
                     style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary),
                   ),
                 ],
@@ -233,7 +233,7 @@ class _State extends State<Courses> {
                       recommendationState.recommendations.length > 0 &&
                       recommendationState.recommendationsByUsers.entries.length > 0
                   ? CarouselSection(
-                      title: OlukoLocalizations.of(context).find('friendsRecommended'),
+                      title: OlukoLocalizations.get(context, 'friendsRecommended'),
                       height: carouselSectionHeight + 10,
                       children: recommendationState.recommendationsByUsers.entries.map((MapEntry<String, List<UserResponse>> courseEntry) {
                         final course = courseState.values.where((element) => element.id == courseEntry.key).toList()[0];
@@ -266,13 +266,15 @@ class _State extends State<Courses> {
       if (authState is AuthSuccess) {
         AuthSuccess authSuccess = authState;
         return BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(
-            bloc: BlocProvider.of<CourseEnrollmentListBloc>(context)..getCourseEnrollmentsByUser(authSuccess.user.id != null && authSuccess.user.id != 'null' ? authSuccess.user.id : authSuccess.user.firebaseId),
+            bloc: BlocProvider.of<CourseEnrollmentListBloc>(context)
+              ..getCourseEnrollmentsByUser(
+                  authSuccess.user.id != null && authSuccess.user.id != 'null' ? authSuccess.user.id : authSuccess.user.firebaseId),
             builder: (context, courseEnrollmentState) {
               return courseEnrollmentState is CourseEnrollmentsByUserSuccess &&
                       courseState is CourseSuccess &&
                       courseEnrollmentState.courseEnrollments.length > 0
                   ? CarouselSection(
-                      title: OlukoLocalizations.of(context).find('activeCourses'),
+                      title: OlukoLocalizations.get(context, 'activeCourses'),
                       height: carouselSectionHeight + 10,
                       children: courseEnrollmentState.courseEnrollments.map((CourseEnrollment courseEnrollment) {
                         final course = courseState.values.where((element) => element.id == courseEnrollment.course.id).toList()[0];
@@ -308,7 +310,7 @@ class _State extends State<Courses> {
                 builder: (context, favoriteState) {
                   return favoriteState is FavoriteSuccess && courseState is CourseSuccess && favoriteState.favorites.length > 0
                       ? CarouselSection(
-                          title: OlukoLocalizations.of(context).find('myList'),
+                          title: OlukoLocalizations.get(context, 'myList'),
                           height: carouselSectionHeight,
                           children: favoriteState.favorites.map((Favorite favorite) {
                             Course favoriteCourse = courseState.values.where((course) => course.id == favorite.course.id).toList()[0];

@@ -76,34 +76,40 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
               color: OlukoColors.black,
               child: SafeArea(
                 child: Stack(children: [
-                  if (isCurrenUser) Align(
-                          alignment: Alignment.topCenter,
-                          child: Container(
-                              width: MediaQuery.of(context).size.width,
-                              child: Padding(
-                                padding: const EdgeInsets.all(15.0),
-                                child: Row(
-                                  children: [
-                                    OlukoOutlinedButton(
-                                        title: OlukoLocalizations.of(context).find('tapToUpload'),
-                                        onPressed: () {
-                                          BlocProvider.of<TransformationJourneyContentBloc>(context).openPanel();
-                                        }),
-                                  ],
-                                ),
-                              ))) else const SizedBox(
-                          height: 0,
+                  if (isCurrenUser)
+                    Align(
+                        alignment: Alignment.topCenter,
+                        child: Container(
+                            width: MediaQuery.of(context).size.width,
+                            child: Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Row(
+                                children: [
+                                  OlukoOutlinedButton(
+                                      title: OlukoLocalizations.get(context, 'tapToUpload'),
+                                      onPressed: () {
+                                        BlocProvider.of<TransformationJourneyContentBloc>(context).openPanel();
+                                      }),
+                                ],
+                              ),
+                            )))
+                  else
+                    const SizedBox(
+                      height: 0,
+                    ),
+                  if (_contentGallery.length != 0)
+                    Align(
+                      alignment: Alignment.topCenter,
+                      child: Padding(
+                        padding: isCurrenUser ? const EdgeInsets.fromLTRB(10, 100, 10, 10) : const EdgeInsets.fromLTRB(10, 20, 10, 20),
+                        child: Text(
+                          getTitleForContent(uploadListContent: _transformationJourneyContent),
+                          style: OlukoFonts.olukoBigFont(),
                         ),
-                  if (_contentGallery.length != 0) Align(
-                          alignment: Alignment.topCenter,
-                          child: Padding(
-                            padding: isCurrenUser ? const EdgeInsets.fromLTRB(10, 100, 10, 10) : const EdgeInsets.fromLTRB(10, 20, 10, 20),
-                            child: Text(
-                              getTitleForContent(uploadListContent: _transformationJourneyContent),
-                              style: OlukoFonts.olukoBigFont(),
-                            ),
-                          ),
-                        ) else SizedBox(),
+                      ),
+                    )
+                  else
+                    SizedBox(),
                   _contentGallery.length != 0 ? dragAndDropGridView(context) : SizedBox(),
                   slidingUpPanelComponent(context),
                 ]),
@@ -202,7 +208,8 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
                   },
                   onReorder: (int oldIndex, int newIndex) {
                     if (isCurrenUser) {
-                      BlocProvider.of<TransformationJourneyBloc>(context).changeContentOrder(_transformationJourneyContent[oldIndex], _transformationJourneyContent[newIndex], _profileInfo.id);
+                      BlocProvider.of<TransformationJourneyBloc>(context).changeContentOrder(
+                          _transformationJourneyContent[oldIndex], _transformationJourneyContent[newIndex], _profileInfo.id);
 
                       final elementMoved = _transformationJourneyContent[oldIndex];
                       _transformationJourneyContent[oldIndex] = _transformationJourneyContent[newIndex];
@@ -269,8 +276,8 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
       builder: (context, state) {
         if (state is TransformationJourneySuccess) {
           _transformationJourneyContent = state.contentFromUser;
-          _contentGallery =
-              TransformListOfItemsToWidget.getWidgetListFromContent(tansformationJourneyData: _transformationJourneyContent, requestedFromRoute: ActualProfileRoute.transformationJourney);
+          _contentGallery = TransformListOfItemsToWidget.getWidgetListFromContent(
+              tansformationJourneyData: _transformationJourneyContent, requestedFromRoute: ActualProfileRoute.transformationJourney);
         }
         if (state is TransformationJourneyFailure || state is TransformationJourneyDefault) {
           BlocProvider.of<TransformationJourneyBloc>(context).getContentByUserId(userToUse.id);

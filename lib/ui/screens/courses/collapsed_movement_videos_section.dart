@@ -32,7 +32,7 @@ class _State extends State<CollapsedMovementVideosSection> {
           Row(children: [
             Padding(
                 padding: EdgeInsets.only(left: 20),
-                child: Text(OlukoLocalizations.of(context).find('movementVideos'),
+                child: Text(OlukoLocalizations.get(context, 'movementVideos'),
                     style: TextStyle(fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold))),
             SizedBox(width: 10),
             Icon(Icons.directions_run, color: Colors.white, size: 30),

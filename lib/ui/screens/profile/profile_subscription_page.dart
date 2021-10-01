@@ -14,8 +14,7 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ProfileSubscriptionPage extends StatefulWidget {
   @override
-  _ProfileSubscriptionPageState createState() =>
-      _ProfileSubscriptionPageState();
+  _ProfileSubscriptionPageState createState() => _ProfileSubscriptionPageState();
 }
 
 class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
@@ -46,8 +45,7 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
                           padding: const EdgeInsets.all(10.0),
                           child: Align(
                             alignment: Alignment.centerLeft,
-                            child: TitleBody(ProfileViewConstants
-                                .profileSubscriptionMessage),
+                            child: TitleBody(ProfileViewConstants.profileSubscriptionMessage),
                           ),
                         ),
                         _subscriptionCardWithButton(state, context),
@@ -85,19 +83,14 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
               child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(10.0),
-                              bottomRight: Radius.circular(10.0))),
+                          borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10.0), bottomRight: Radius.circular(10.0))),
                       primary: OlukoColors.primary,
                       side: BorderSide(color: OlukoColors.primary)),
-                  onPressed: () => AppModal.dialogContent(
-                      context: context,
-                      content: [SubscriptionModalOption()],
-                      closeButton: true),
+                  onPressed: () => AppModal.dialogContent(context: context, content: [SubscriptionModalOption()], closeButton: true),
                   child: Padding(
                       padding: const EdgeInsets.all(15.0),
                       child: Text(
-                        OlukoLocalizations.of(context).find('upgrade'),
+                        OlukoLocalizations.get(context, 'upgrade'),
                         style: TextStyle(fontSize: 18),
                       ))),
             ),
@@ -110,15 +103,10 @@ class _ProfileSubscriptionPageState extends State<ProfileSubscriptionPage> {
   SubscriptionCard _showSubscriptionCard(Plan plan) {
     SubscriptionCard subscriptionCard = SubscriptionCard();
 
-    subscriptionCard.priceLabel =
-        '\$${plan.price}/${durationLabel[plan.duration].toLowerCase()}';
-    subscriptionCard.priceSubtitle = plan.recurrent
-        ? 'Renews every ${durationLabel[plan.duration].toLowerCase()}'
-        : '';
+    subscriptionCard.priceLabel = '\$${plan.price}/${durationLabel[plan.duration].toLowerCase()}';
+    subscriptionCard.priceSubtitle = plan.recurrent ? 'Renews every ${durationLabel[plan.duration].toLowerCase()}' : '';
     subscriptionCard.title = plan.title;
-    subscriptionCard.subtitles = plan.features
-        .map((PlanFeature feature) => EnumHelper.enumToString(feature))
-        .toList();
+    subscriptionCard.subtitles = plan.features.map((PlanFeature feature) => EnumHelper.enumToString(feature)).toList();
     subscriptionCard.selected = false;
     subscriptionCard.showHint = false;
     subscriptionCard.backgroundImage = plan.backgroundImage;

@@ -272,7 +272,8 @@ class _FriendsListPageState extends State<FriendsListPage> {
                                       child: GestureDetector(
                                           onTap: () {
                                             BlocProvider.of<HiFiveSendBloc>(context).set(context, _authStateData.user.id, user.id,
-                                                hiFive: !(hiFiveReceivedState is HiFiveReceivedSuccess && hiFiveReceivedState.hiFive == true));
+                                                hiFive:
+                                                    !(hiFiveReceivedState is HiFiveReceivedSuccess && hiFiveReceivedState.hiFive == true));
                                           },
                                           child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
                                             bloc: BlocProvider.of(context),
@@ -281,8 +282,8 @@ class _FriendsListPageState extends State<FriendsListPage> {
                                                 AppMessages.showSnackbar(
                                                     userStatisticsContext,
                                                     hiFiveSendState.hiFive
-                                                        ? OlukoLocalizations.of(context).find('hiFiveSent')
-                                                        : OlukoLocalizations.of(context).find('hiFiveRemoved'));
+                                                        ? OlukoLocalizations.get(context, 'hiFiveSent')
+                                                        : OlukoLocalizations.get(context, 'hiFiveRemoved'));
                                               }
                                               if (hiFiveSendState is HiFiveSendSuccess) {
                                                 BlocProvider.of<HiFiveReceivedBloc>(context).get(context, _authStateData.user.id, user.id);
@@ -291,18 +292,21 @@ class _FriendsListPageState extends State<FriendsListPage> {
                                             child: Container(
                                                 width: 80,
                                                 height: 80,
-                                                child: Image.asset(hiFiveReceivedState is HiFiveReceivedSuccess && hiFiveReceivedState.hiFive == true
-                                                    ? 'assets/profile/hiFive_selected.png'
-                                                    : 'assets/profile/hiFive.png')),
+                                                child: Image.asset(
+                                                    hiFiveReceivedState is HiFiveReceivedSuccess && hiFiveReceivedState.hiFive == true
+                                                        ? 'assets/profile/hiFive_selected.png'
+                                                        : 'assets/profile/hiFive.png')),
                                           )),
                                     ),
                                     profileAccomplishments(
                                         achievementTitle: 'Challenges completed',
                                         achievementValue: userStats.userStats.completedChallenges.toString()),
                                     profileAccomplishments(
-                                        achievementTitle: 'Courses completed', achievementValue: userStats.userStats.completedChallenges.toString()),
+                                        achievementTitle: 'Courses completed',
+                                        achievementValue: userStats.userStats.completedChallenges.toString()),
                                     profileAccomplishments(
-                                        achievementTitle: 'Courses completed', achievementValue: userStats.userStats.completedCourses.toString()),
+                                        achievementTitle: 'Courses completed',
+                                        achievementValue: userStats.userStats.completedCourses.toString()),
                                   ],
                                 )
                               : SizedBox();
@@ -324,7 +328,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                   ),
                   OlukoOutlinedButton(
                     thinPadding: true,
-                    title: OlukoLocalizations.of(context).find('connect'),
+                    title: OlukoLocalizations.get(context, 'connect'),
                     onPressed: () {
                       //navigateToSegmentWithoutRecording();
                     },
@@ -342,7 +346,8 @@ class _FriendsListPageState extends State<FriendsListPage> {
             ]),
           ),
           Align(
-              alignment: Alignment.topRight, child: IconButton(icon: Icon(Icons.close, color: Colors.white), onPressed: () => Navigator.pop(context)))
+              alignment: Alignment.topRight,
+              child: IconButton(icon: Icon(Icons.close, color: Colors.white), onPressed: () => Navigator.pop(context)))
         ]));
   }
 

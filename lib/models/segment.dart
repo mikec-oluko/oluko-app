@@ -44,22 +44,19 @@ class Segment extends Base {
 
   factory Segment.fromJson(Map<String, dynamic> json) {
     Segment segment = Segment(
-        name: json['name'].toString(),
-        image: json['image'].toString(),
+        name: json['name']?.toString(),
+        image: json['image']?.toString(),
         rounds: json['rounds'] as int,
-        description: json['description'].toString(),
+        description: json['description']?.toString(),
         isChallenge: json['is_challenge'] as bool,
         totalTime: json['total_time'] as int,
         initialTimer: json['initial_timer'] as int,
         isPublished: json['is_published'] as bool,
-        type: json['type'] == null
-            ? null
-            : SegmentTypeEnum.values[json['type'] as int],
+        type: json['type'] == null ? null : SegmentTypeEnum.values[json['type'] as int],
         sections: json['sections'] == null
             ? null
-            : List<SectionSubmodel>.from((json['sections'] as Iterable).map(
-                (section) => SectionSubmodel.fromJson(
-                    section as Map<String, dynamic>))));
+            : List<SectionSubmodel>.from(
+                (json['sections'] as Iterable).map((section) => SectionSubmodel.fromJson(section as Map<String, dynamic>))));
     segment.setBase(json);
     return segment;
   }
@@ -75,9 +72,7 @@ class Segment extends Base {
       'is_published': isPublished,
       'is_challenge': isChallenge,
       'type': type == null ? null : type.index,
-      'movements': sections == null
-          ? null
-          : List<dynamic>.from(sections.map((section) => section.toJson()))
+      'movements': sections == null ? null : List<dynamic>.from(sections.map((section) => section.toJson()))
     };
     segmentJson.addEntries(super.toJson().entries);
     return segmentJson;

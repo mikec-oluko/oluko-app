@@ -53,15 +53,15 @@ class Plan extends Base {
 
   factory Plan.fromJson(Map<String, dynamic> json) {
     Plan plan = Plan(
-        duration: EnumHelper.enumFromString<PlanDuration>(PlanDuration.values, json['duration'].toString()),
+        duration: EnumHelper.enumFromString<PlanDuration>(PlanDuration.values, json['duration']?.toString()),
         features: List.from(json['features'] as Iterable)
-            .map((e) => EnumHelper.enumFromString<PlanFeature>(PlanFeature.values, e.toString()))
+            .map((e) => EnumHelper.enumFromString<PlanFeature>(PlanFeature.values, e?.toString()))
             .toList(),
         infoDialog: json['info_dialog'] != null ? InfoDialog.fromJson(json['info_dialog'] as Map<String, dynamic>) : null,
         price: json['price'] as num,
         recurrent: json['recurrent'] as bool,
-        title: json['title'].toString(),
-        backgroundImage: json['background_image'].toString(),
+        title: json['title']?.toString(),
+        backgroundImage: json['background_image']?.toString(),
         metadata: json['metadata'] as Map<String, String>);
     plan.setBase(json);
     return plan;

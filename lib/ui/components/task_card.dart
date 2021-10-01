@@ -82,8 +82,8 @@ class _State extends State<TaskCard> {
                           child: Row(children: [
                             Text(
                               widget.isPublic
-                                  ? OlukoLocalizations.of(context).find('public').toUpperCase()
-                                  : OlukoLocalizations.of(context).find('private').toUpperCase(),
+                                  ? OlukoLocalizations.get(context, 'public').toUpperCase()
+                                  : OlukoLocalizations.get(context, 'private').toUpperCase(),
                               style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColorFadeTop, custoFontWeight: FontWeight.bold),
                             ),
                             Expanded(child: SizedBox()),

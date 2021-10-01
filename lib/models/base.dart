@@ -21,16 +21,16 @@ class Base {
   bool isHidden = false;
 
   Base.fromJson(Map json)
-      : id = json['id'].toString(),
+      : id = json['id']?.toString(),
         createdAt = json['created_at'] as Timestamp,
-        createdBy = json['created_by'].toString(),
+        createdBy = json['created_by']?.toString(),
         updatedAt = json['updated_at'] as Timestamp,
-        updatedBy = json['updated_by'].toString(),
+        updatedBy = json['updated_by']?.toString(),
         isDeleted = json['is_deleted'] as bool,
         isHidden = json['is_hidden'] as bool;
 
   setBase(Map<String, dynamic> json) {
-    id = json['id'].toString();
+    id = json['id']?.toString();
     createdAt = json['created_at'] is FieldValue
         ? null
         : json['created_at'] is Timestamp
@@ -40,7 +40,7 @@ class Base {
                 : json['created_at'] is int
                     ? Timestamp.fromMillisecondsSinceEpoch(json['created_at'] as int)
                     : null;
-    createdBy = json['created_by'].toString();
+    createdBy = json['created_by']?.toString();
     updatedAt = json['updated_at'] is FieldValue
         ? null
         : json['updated_at'] is Timestamp
@@ -50,7 +50,7 @@ class Base {
                 : json['updated_at'] is int
                     ? Timestamp.fromMillisecondsSinceEpoch(json['updated_at'] as int)
                     : null;
-    updatedBy = json['updated_by'].toString();
+    updatedBy = json['updated_by']?.toString();
     isDeleted = json['is_deleted'] as bool;
     isHidden = json['is_hidden'] as bool;
   }

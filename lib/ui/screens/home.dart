@@ -57,7 +57,7 @@ class _HomeState extends State<Home> {
     return Scaffold(
         backgroundColor: Colors.black,
         appBar: OlukoAppBar(
-          title: OlukoLocalizations.of(context).find('home'),
+          title: OlukoLocalizations.get(context, 'home'),
           showLogo: true,
           showBackButton: false,
           actions: [_handWidget()],
@@ -133,9 +133,9 @@ class _HomeState extends State<Home> {
               scale: 2,
             ),
             SizedBox(height: 70),
-            Text(OlukoLocalizations.of(context).find('enroll'),
+            Text(OlukoLocalizations.get(context, 'enroll'),
                 style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold, customColor: OlukoColors.white)),
-            Text(OlukoLocalizations.of(context).find('toACourse'),
+            Text(OlukoLocalizations.get(context, 'toACourse'),
                 style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold, customColor: OlukoColors.white)),
             SizedBox(height: 10),
             CourseStepSection(totalCourseSteps: 4, currentCourseStep: 4),

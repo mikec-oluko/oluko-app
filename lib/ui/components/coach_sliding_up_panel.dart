@@ -26,10 +26,8 @@ class _CoachSlidingUpPanelState extends State<CoachSlidingUpPanel> {
         child: Padding(
           padding: const EdgeInsets.only(left: 10),
           child: Text(
-            OlukoLocalizations.of(context).find('myTimeline'),
-            style: OlukoFonts.olukoBigFont(
-                customColor: OlukoColors.grayColor,
-                custoFontWeight: FontWeight.w500),
+            OlukoLocalizations.get(context, 'myTimeline'),
+            style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
           ),
         ),
       ),
@@ -46,13 +44,11 @@ class _CoachSlidingUpPanelState extends State<CoachSlidingUpPanel> {
         decoration: BoxDecoration(
           color: OlukoColors.grayColor,
           borderRadius: radius,
-          gradient: LinearGradient(colors: [
-            OlukoColors.grayColorFadeTop,
-            OlukoColors.grayColorFadeBottom
-          ], stops: [
-            0.0,
-            1
-          ], begin: Alignment.topCenter, end: Alignment.bottomCenter),
+          gradient: LinearGradient(
+              colors: [OlukoColors.grayColorFadeTop, OlukoColors.grayColorFadeBottom],
+              stops: [0.0, 1],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter),
         ),
         width: MediaQuery.of(context).size.width,
         height: 300,

@@ -10,10 +10,10 @@ class Recommendation {
   num typeId;
 
   Recommendation.fromJson(Map json)
-      : id = json['id'].toString(),
-        originUserId = json['origin_user_id'].toString(),
-        destinationUserId = json['destination_user_id'].toString(),
-        entityId = json['entity_id'].toString(),
+      : id = json['id']?.toString(),
+        originUserId = json['origin_user_id']?.toString(),
+        destinationUserId = json['destination_user_id']?.toString(),
+        entityId = json['entity_id']?.toString(),
         typeId = json['type_id'] as num;
 
   Map<String, dynamic> toJson() => {

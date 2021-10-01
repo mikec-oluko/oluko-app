@@ -24,9 +24,7 @@ class _State extends State<FeedbackCard> {
   Widget build(BuildContext context) {
     return Container(
       height: 145,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-          color: OlukoColors.listGrayColor),
+      decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: OlukoColors.listGrayColor),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -37,7 +35,7 @@ class _State extends State<FeedbackCard> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                OlukoLocalizations.of(context).find('howWasYourWorkoutSession'),
+                OlukoLocalizations.get(context, 'howWasYourWorkoutSession'),
                 style: OlukoFonts.olukoBigFont(),
                 textAlign: TextAlign.center,
               ),

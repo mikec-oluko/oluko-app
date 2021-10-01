@@ -148,6 +148,7 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
         rethrow;
       }
     }
+    return null;
   }
 
   void setIncompleted(String assessmentAssignmentId) async {

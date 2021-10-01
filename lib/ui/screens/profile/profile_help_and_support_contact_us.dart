@@ -24,8 +24,7 @@ class _ProfileContacUsPageState extends State<ProfileContacUsPage> {
       if (state is AuthSuccess) {
         profileInfo = state.user;
         return Scaffold(
-          appBar: OlukoAppBar(
-              title: ProfileViewConstants.profileHelpAndSupportButtonText),
+          appBar: OlukoAppBar(title: ProfileViewConstants.profileHelpAndSupportButtonText),
           body: buildFormContactUs(context),
         );
       } else {
@@ -50,38 +49,30 @@ class _ProfileContacUsPageState extends State<ProfileContacUsPage> {
               children: [
                 buildInput(
                     context: context,
-                    titleForLabel: OlukoLocalizations.of(context).find('name'),
-                    contentForInput:
-                        profileInfo.firstName + " " + profileInfo.lastName),
+                    titleForLabel: OlukoLocalizations.get(context, 'name'),
+                    contentForInput: profileInfo.firstName + " " + profileInfo.lastName),
                 SizedBox(
                   height: 20,
                 ),
-                buildInput(
-                    context: context,
-                    titleForLabel: OlukoLocalizations.of(context).find('email'),
-                    contentForInput: profileInfo.email),
+                buildInput(context: context, titleForLabel: OlukoLocalizations.get(context, 'email'), contentForInput: profileInfo.email),
                 SizedBox(
                   height: 20,
                 ),
                 buildInput(
                   context: context,
-                  titleForLabel: OlukoLocalizations.of(context).find('phone'),
+                  titleForLabel: OlukoLocalizations.get(context, 'phone'),
                 ),
                 SizedBox(
                   height: 20,
                 ),
-                buildInput(
-                    context: context,
-                    titleForLabel:
-                        OlukoLocalizations.of(context).find('message'),
-                    isTextMaxLine: true),
+                buildInput(context: context, titleForLabel: OlukoLocalizations.get(context, 'message'), isTextMaxLine: true),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(10, 40, 10, 10),
                   child: Container(
                     width: MediaQuery.of(context).size.width,
                     child: Expanded(
                       child: OlukoPrimaryButton(
-                        title: OlukoLocalizations.of(context).find('submit'),
+                        title: OlukoLocalizations.get(context, 'submit'),
                         onPressed: () {
                           print("SUBMITTED");
                         },
@@ -97,15 +88,10 @@ class _ProfileContacUsPageState extends State<ProfileContacUsPage> {
     );
   }
 
-  Container buildInput(
-      {BuildContext context,
-      String titleForLabel,
-      String contentForInput,
-      bool isTextMaxLine = false}) {
+  Container buildInput({BuildContext context, String titleForLabel, String contentForInput, bool isTextMaxLine = false}) {
     return Container(
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(5.0)),
-          border: Border.all(width: 1.0, color: OlukoColors.primary)),
+      decoration:
+          BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(5.0)), border: Border.all(width: 1.0, color: OlukoColors.primary)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -113,8 +99,7 @@ class _ProfileContacUsPageState extends State<ProfileContacUsPage> {
             padding: const EdgeInsets.fromLTRB(10, 10, 0, 0),
             child: Text(
               titleForLabel,
-              style:
-                  OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary),
+              style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary),
             ),
           ),
           Padding(
@@ -127,12 +112,12 @@ class _ProfileContacUsPageState extends State<ProfileContacUsPage> {
                   focusColor: OlukoColors.primary,
                   filled: false,
                   hintStyle: new TextStyle(color: Colors.grey[800]),
-                  // hintText: OlukoLocalizations.of(context).find(''),
+                  // hintText: OlukoLocalizations.get(context, ''),
                   fillColor: OlukoColors.primary,
                   labelStyle: new TextStyle(color: Colors.grey[800])),
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return OlukoLocalizations.of(context).find('required');
+                  return OlukoLocalizations.get(context, 'required');
                 }
                 return null;
               },

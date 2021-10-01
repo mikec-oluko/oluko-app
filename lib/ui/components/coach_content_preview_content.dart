@@ -13,19 +13,13 @@ class CoachContentPreviewContent extends StatefulWidget {
   final List<TaskSubmission> videoContent;
   final bool isForCarousel;
 
-  const CoachContentPreviewContent(
-      {this.contentFor,
-      this.titleForSection,
-      this.videoContent,
-      this.isForCarousel = false});
+  const CoachContentPreviewContent({this.contentFor, this.titleForSection, this.videoContent, this.isForCarousel = false});
 
   @override
-  _CoachContentPreviewContentState createState() =>
-      _CoachContentPreviewContentState();
+  _CoachContentPreviewContentState createState() => _CoachContentPreviewContentState();
 }
 
-class _CoachContentPreviewContentState
-    extends State<CoachContentPreviewContent> {
+class _CoachContentPreviewContentState extends State<CoachContentPreviewContent> {
   Widget imageAndVideoContainer;
 
   @override
@@ -56,19 +50,15 @@ class _CoachContentPreviewContentState
               padding: const EdgeInsets.only(left: 5),
               child: Text(
                 widget.titleForSection,
-                // OlukoLocalizations.of(context).find('sentVideos'),
-                style: OlukoFonts.olukoMediumFont(
-                    customColor: OlukoColors.grayColor,
-                    custoFontWeight: FontWeight.w500),
+                // OlukoLocalizations.get(context, 'sentVideos'),
+                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(0),
               child: GestureDetector(
                 onTap: () {
-                  widget.videoContent.length != null
-                      ? getRouteForContent(widget.contentFor)
-                      : () {};
+                  widget.videoContent.length != null ? getRouteForContent(widget.contentFor) : () {};
                 },
                 child: widget.isForCarousel
                     ? Wrap(
@@ -80,9 +70,7 @@ class _CoachContentPreviewContentState
                             child: widget.videoContent.length != 0
                                 ? imageAndVideoContainer
                                 : CoachContentSectionCard(
-                                    title: widget.titleForSection,
-                                    isForCarousel: widget.isForCarousel,
-                                    needTitle: false),
+                                    title: widget.titleForSection, isForCarousel: widget.isForCarousel, needTitle: false),
                           ),
                         ],
                       )
@@ -92,10 +80,7 @@ class _CoachContentPreviewContentState
                         color: Colors.black,
                         child: widget.videoContent.length != 0
                             ? imageAndVideoContainer
-                            : CoachContentSectionCard(
-                                title: widget.titleForSection,
-                                isForCarousel: widget.isForCarousel,
-                                needTitle: false),
+                            : CoachContentSectionCard(title: widget.titleForSection, isForCarousel: widget.isForCarousel, needTitle: false),
                       ),
               ),
             )
@@ -108,16 +93,13 @@ class _CoachContentPreviewContentState
   getRouteForContent(CoachContentSection contentFor) {
     switch (contentFor) {
       case CoachContentSection.mentoredVideos:
-        return Navigator.pushNamed(
-            context, routeLabels[RouteEnum.mentoredVideos],
-            arguments: {'taskSubmissions': widget.videoContent});
+        return Navigator.pushNamed(context, routeLabels[RouteEnum.mentoredVideos], arguments: {'taskSubmissions': widget.videoContent});
       case CoachContentSection.sentVideos:
-        return Navigator.pushNamed(context, routeLabels[RouteEnum.sentVideos],
-            arguments: {'taskSubmissions': widget.videoContent});
+        return Navigator.pushNamed(context, routeLabels[RouteEnum.sentVideos], arguments: {'taskSubmissions': widget.videoContent});
       case CoachContentSection.recomendedVideos:
-        return OlukoLocalizations.of(context).find('recomendedVideos');
+        return OlukoLocalizations.get(context, 'recomendedVideos');
       case CoachContentSection.voiceMessages:
-        return OlukoLocalizations.of(context).find('voiceMessages');
+        return OlukoLocalizations.get(context, 'voiceMessages');
 
       default:
     }

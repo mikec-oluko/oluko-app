@@ -19,7 +19,7 @@ class _SentVideosPageState extends State<SentVideosPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          OlukoLocalizations.of(context).find('sentVideos'),
+          OlukoLocalizations.get(context, 'sentVideos'),
           style: OlukoFonts.olukoTitleFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
         ),
         actions: [
@@ -91,7 +91,7 @@ class _SentVideosPageState extends State<SentVideosPage> {
                       onPressed: () {
                         Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
                           'videoUrl': taskSubmitted.video.url,
-                          'titleForView': OlukoLocalizations.of(context).find('sentVideos')
+                          'titleForView': OlukoLocalizations.get(context, 'sentVideos')
                         });
                       },
                       child: Image.asset(
@@ -113,7 +113,7 @@ class _SentVideosPageState extends State<SentVideosPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                OlukoLocalizations.of(context).find('date'),
+                                OlukoLocalizations.get(context, 'date'),
                                 style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
                               ),
                               SizedBox(

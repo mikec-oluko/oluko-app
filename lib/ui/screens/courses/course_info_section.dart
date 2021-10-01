@@ -18,18 +18,12 @@ class _State extends State<CourseInfoSection> {
   @override
   Widget build(BuildContext context) {
     return Row(children: [
-      Padding(
-          padding: const EdgeInsets.only(left: 15),
-          child: CoursePoster(image: widget.image)),
+      Padding(padding: const EdgeInsets.only(left: 15), child: CoursePoster(image: widget.image)),
       Padding(
           padding: const EdgeInsets.only(left: 40),
           child: Column(children: [
             SizedBox(height: 80),
-            Row(children: [
-              peopleSection(),
-              verticalDivider(),
-              audioSection(context)
-            ])
+            Row(children: [peopleSection(), verticalDivider(), audioSection(context)])
           ])),
     ]);
   }
@@ -39,21 +33,18 @@ class _State extends State<CourseInfoSection> {
       Text(
         widget.peopleQty.toString() + "+",
         textAlign: TextAlign.center,
-        style: TextStyle(
-            fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+        style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
       ),
       SizedBox(height: 5),
       Text(
-        OlukoLocalizations.of(context).find('inThis'),
+        OlukoLocalizations.get(context, 'inThis'),
         textAlign: TextAlign.center,
-        style: TextStyle(
-            fontSize: 13, fontWeight: FontWeight.w300, color: Colors.white),
+        style: TextStyle(fontSize: 13, fontWeight: FontWeight.w300, color: Colors.white),
       ),
       Text(
-        OlukoLocalizations.of(context).find('course').toLowerCase(),
+        OlukoLocalizations.get(context, 'course').toLowerCase(),
         textAlign: TextAlign.center,
-        style: TextStyle(
-            fontSize: 13, fontWeight: FontWeight.w300, color: Colors.white),
+        style: TextStyle(fontSize: 13, fontWeight: FontWeight.w300, color: Colors.white),
       ),
     ]);
   }
@@ -78,10 +69,7 @@ class _State extends State<CourseInfoSection> {
             Text(
               widget.audioMessageQty.toString(),
               textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w300,
-                  color: Colors.white),
+              style: TextStyle(fontSize: 10, fontWeight: FontWeight.w300, color: Colors.white),
             )
           ])),
     ]);
