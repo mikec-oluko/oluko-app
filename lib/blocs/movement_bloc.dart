@@ -6,7 +6,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class MovementState {}
 
-class Loading extends MovementState {}
+class LoadingMovementState extends MovementState {}
 
 class GetMovementsSuccess extends MovementState {
   List<Movement> movements;
@@ -25,7 +25,7 @@ class Failure extends MovementState {
 }
 
 class MovementBloc extends Cubit<MovementState> {
-  MovementBloc() : super(Loading());
+  MovementBloc() : super(LoadingMovementState());
 
   void getBySegment(Segment segment) async {
     try {
@@ -43,6 +43,7 @@ class MovementBloc extends Cubit<MovementState> {
 
   void getAll() async {
     try {
+      emit(LoadingMovementState());
       List<Movement> movements = await MovementRepository.getAll();
       emit(GetAllSuccess(movements: movements));
     } catch (exception, stackTrace) {
