@@ -133,7 +133,7 @@ class _CoachPageState extends State<CoachPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            OlukoLocalizations.of(context).find('toDo'),
+            OlukoLocalizations.get(context, 'toDo'),
             style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
           ),
           toDoSection(context),
@@ -216,11 +216,10 @@ class _CoachPageState extends State<CoachPage> {
       return _assessmentVideosContent.length != null && _assessmentVideosContent.length != 0
           ? CoachContentPreviewContent(
               contentFor: CoachContentSection.sentVideos,
-              titleForSection: OlukoLocalizations.of(context).find('sentVideos'),
+              titleForSection: OlukoLocalizations.get(context, 'sentVideos'),
               videoContent: _assessmentVideosContent,
               isForCarousel: isForCarousel)
-          : CoachContentSectionCard(
-              title: OlukoLocalizations.of(context).find('sentVideos'), isForCarousel: isForCarousel, needTitle: false);
+          : CoachContentSectionCard(title: OlukoLocalizations.get(context, 'sentVideos'), isForCarousel: isForCarousel, needTitle: false);
     });
   }
 
@@ -233,11 +232,11 @@ class _CoachPageState extends State<CoachPage> {
       return _assessmentVideosContent.length != null && _assessmentVideosContent.length != 0
           ? CoachContentPreviewContent(
               contentFor: CoachContentSection.mentoredVideos,
-              titleForSection: OlukoLocalizations.of(context).find('mentoredVideos'),
+              titleForSection: OlukoLocalizations.get(context, 'mentoredVideos'),
               videoContent: _assessmentVideosContent,
               isForCarousel: isForCarousel)
           : CoachContentSectionCard(
-              title: OlukoLocalizations.of(context).find('mentoredVideos'), isForCarousel: isForCarousel, needTitle: false);
+              title: OlukoLocalizations.get(context, 'mentoredVideos'), isForCarousel: isForCarousel, needTitle: false);
     });
   }
 

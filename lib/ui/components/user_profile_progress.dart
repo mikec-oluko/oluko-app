@@ -7,9 +7,7 @@ class UserProfileProgress extends StatefulWidget {
   final String coursesCompleted;
   final String classesCompleted;
 
-  const UserProfileProgress(
-      {this.challengesCompleted, this.coursesCompleted, this.classesCompleted})
-      : super();
+  const UserProfileProgress({this.challengesCompleted, this.coursesCompleted, this.classesCompleted}) : super();
 
   @override
   _UserProfileProgressState createState() => _UserProfileProgressState();
@@ -29,23 +27,19 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
             children: [
               //CHALLENGES COMPLETED
               profileAccomplishments(
-                  achievementTitle: OlukoLocalizations.of(context)
-                      .find('challengesCompleted'),
-                  achievementValue: widget.challengesCompleted),
+                  achievementTitleKey: 'challengesCompleted', achievementValue: widget.challengesCompleted, color: OlukoColors.primary),
               //SEPARATOR
-              VerticalDivider(color: OlukoColors.grayColor),
+              profileVerticalDivider(),
+              const Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
               //COURSES COMPLETED
               profileAccomplishments(
-                  achievementTitle:
-                      OlukoLocalizations.of(context).find('coursesCompleted'),
-                  achievementValue: widget.coursesCompleted),
+                  achievementTitleKey: 'coursesCompleted', achievementValue: widget.coursesCompleted, color: OlukoColors.primary),
               //SEPARATOR
-              VerticalDivider(color: OlukoColors.grayColor),
+              profileVerticalDivider(),
+              const Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
               //CLASSES COMPLETED
               profileAccomplishments(
-                  achievementTitle:
-                      OlukoLocalizations.of(context).find('classesCompleted'),
-                  achievementValue: widget.classesCompleted),
+                  achievementTitleKey: 'classesCompleted', achievementValue: widget.classesCompleted, color: OlukoColors.white),
             ],
           ),
         )
@@ -53,9 +47,18 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
     );
   }
 
-  Widget profileAccomplishments(
-      {String achievementTitle, String achievementValue}) {
-    final double _textContainerWidth = 80;
+  VerticalDivider profileVerticalDivider() {
+    return const VerticalDivider(
+      color: OlukoColors.white,
+      thickness: 1,
+      indent: 20,
+      endIndent: 6,
+      width: 1,
+    );
+  }
+
+  Widget profileAccomplishments({String achievementTitleKey, String achievementValue, Color color}) {
+    const double _textContainerWidth = 80;
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,9 +68,7 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
           children: [
             Text(
               achievementValue,
-              style: OlukoFonts.olukoBigFont(
-                  customColor: OlukoColors.primary,
-                  custoFontWeight: FontWeight.w500),
+              style: OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.w500),
             ),
           ],
         ),
@@ -80,10 +81,8 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
             Container(
               width: _textContainerWidth,
               child: Text(
-                achievementTitle,
-                style: OlukoFonts.olukoMediumFont(
-                    customColor: OlukoColors.grayColor,
-                    custoFontWeight: FontWeight.w300),
+                OlukoLocalizations.get(context, achievementTitleKey),
+                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300),
               ),
             ),
           ],

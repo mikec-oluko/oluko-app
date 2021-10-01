@@ -36,14 +36,14 @@ class _State extends State<ClassMovementSection> {
       ),
       Row(children: [
         Text(
-          OlukoLocalizations.of(context).find('movesInThisClass'),
+          OlukoLocalizations.get(context, 'movesInThisClass'),
           style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
         ),
         Expanded(child: SizedBox()),
         GestureDetector(
             onTap: () => widget.panelController.open(),
             child: Text(
-              OlukoLocalizations.of(context).find('viewDetails'),
+              OlukoLocalizations.get(context, 'viewDetails'),
               style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.primary),
             ))
       ]),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
-import 'package:oluko_app/blocs/course_bloc.dart';
+import 'package:oluko_app/blocs/course/course_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
@@ -353,7 +353,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                     }
                                     BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_currentAuthUser.id);
                                   },
-                                  title: OlukoLocalizations.of(context).find(_connectButtonTitle)),
+                                  title: OlukoLocalizations.get(context, _connectButtonTitle)),
                             ),
                           ],
                         ),
@@ -367,7 +367,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
                       return _assessmentVideosContent.length != 0
                           ? _buildCarouselSection(
-                              titleForSection: OlukoLocalizations.of(context).find('assessmentVideos'),
+                              titleForSection: OlukoLocalizations.get(context, 'assessmentVideos'),
                               routeForSection: RouteEnum.profileAssessmentVideos,
                               contentForSection: TransformListOfItemsToWidget.getWidgetListFromContent(
                                   assessmentVideoData: _assessmentVideosContent, requestedFromRoute: ActualProfileRoute.userProfile))
@@ -380,7 +380,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         }
                         return _transformationJourneyContent.length != 0
                             ? _buildCarouselSection(
-                                titleForSection: OlukoLocalizations.of(context).find('transformationJourney'),
+                                titleForSection: OlukoLocalizations.get(context, 'transformationJourney'),
                                 routeForSection: RouteEnum.profileTransformationJourney,
                                 contentForSection: TransformListOfItemsToWidget.getWidgetListFromContent(
                                     tansformationJourneyData: _transformationJourneyContent,
@@ -412,7 +412,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         }
                         return _activeChallenges.length != 0
                             ? _buildCarouselSection(
-                                titleForSection: OlukoLocalizations.of(context).find('upcomingChallenges'),
+                                titleForSection: OlukoLocalizations.get(context, 'upcomingChallenges'),
                                 routeForSection: RouteEnum.profileChallenges,
                                 contentForSection: TransformListOfItemsToWidget.getWidgetListFromContent(
                                     upcomingChallenges: _activeChallenges, requestedFromRoute: ActualProfileRoute.userProfile))

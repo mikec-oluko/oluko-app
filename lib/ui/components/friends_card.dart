@@ -102,8 +102,8 @@ class _FriendCardState extends State<FriendCard> {
                   ? IconButton(
                       icon: Icon(
                         widget.friend != null && widget.friend.isFavorite != null && widget.friend.isFavorite
-                            ? Icons.star
-                            : Icons.star_outline,
+                            ? Icons.favorite
+                            : Icons.favorite_border,
                         color: OlukoColors.primary,
                       ),
                       onPressed: () {

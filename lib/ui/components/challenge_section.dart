@@ -47,9 +47,9 @@ class _State extends State<ChallengeSection> {
     title += widget.challenges.length.toString();
     title += " ";
     if (widget.challenges.length > 1) {
-      title += OlukoLocalizations.of(context).find('challenges');
+      title += OlukoLocalizations.get(context, 'challenges');
     } else {
-      title += OlukoLocalizations.of(context).find('challenge');
+      title += OlukoLocalizations.get(context, 'challenge');
     }
     return title;
   }

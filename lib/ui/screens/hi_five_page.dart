@@ -96,7 +96,7 @@ class _HiFivePageState extends State<HiFivePage> {
             Padding(
               padding: const EdgeInsets.all(30.0),
               child: Text(
-                OlukoLocalizations.of(context).find('remove').toUpperCase(),
+                OlukoLocalizations.get(context, 'remove').toUpperCase(),
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
@@ -145,7 +145,7 @@ class _HiFivePageState extends State<HiFivePage> {
               child: Column(
                 children: [
                   Text(
-                    '$hiFives ${OlukoLocalizations.of(context).find('hiFives')}',
+                    '$hiFives ${OlukoLocalizations.get(context, 'hiFives')}',
                     style: TextStyle(color: Colors.grey),
                   )
                 ],

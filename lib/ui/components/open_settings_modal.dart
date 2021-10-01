@@ -18,15 +18,17 @@ class _OpenSettingsModalState extends State<OpenSettingsModal> {
   @override
   Widget build(BuildContext context) {
     return Column(children: [
-      Padding(padding: const EdgeInsets.only(bottom: 15.0), child: TitleBody(OlukoLocalizations.of(context).find('requiredPermitsTitle'), bold: true)),
-      Text(OlukoLocalizations.of(context).find('requiredPermitsBody'), textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont()),
+      Padding(
+          padding: const EdgeInsets.only(bottom: 15.0),
+          child: TitleBody(OlukoLocalizations.get(context, 'requiredPermitsTitle'), bold: true)),
+      Text(OlukoLocalizations.get(context, 'requiredPermitsBody'), textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont()),
       Padding(
           padding: const EdgeInsets.only(top: 25.0),
           child: Row(
             children: [
               OlukoPrimaryButton(
                 thinPadding: true,
-                title: OlukoLocalizations.of(context).find('ignore'),
+                title: OlukoLocalizations.get(context, 'ignore'),
                 onPressed: () {
                   Navigator.pop(context);
                 },
@@ -34,7 +36,7 @@ class _OpenSettingsModalState extends State<OpenSettingsModal> {
               const SizedBox(width: 10),
               OlukoOutlinedButton(
                 thinPadding: true,
-                title: OlukoLocalizations.of(context).find('settings'),
+                title: OlukoLocalizations.get(context, 'settings'),
                 onPressed: () {
                   Navigator.pop(context);
                   openAppSettings();

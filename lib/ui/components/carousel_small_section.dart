@@ -13,13 +13,7 @@ class CarouselSmallSection extends StatefulWidget {
   final RouteEnum routeToGo;
   final UserResponse userToGetData;
 
-  CarouselSmallSection(
-      {this.title,
-      this.children,
-      this.onOptionTap,
-      this.optionLabel,
-      this.routeToGo,
-      this.userToGetData});
+  CarouselSmallSection({this.title, this.children, this.onOptionTap, this.optionLabel, this.routeToGo, this.userToGetData});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -46,7 +40,7 @@ class _State extends State<CarouselSmallSection> {
                   goToRoute(widget.routeToGo);
                 },
                 child: Text(
-                  OlukoLocalizations.of(context).find('viewAll'),
+                  OlukoLocalizations.get(context, 'viewAll'),
                   style: TextStyle(color: OlukoColors.primary),
                 ),
               ),
@@ -80,13 +74,10 @@ class _State extends State<CarouselSmallSection> {
   goToRoute(RouteEnum routeToGo) {
     switch (routeToGo) {
       case RouteEnum.profileTransformationJourney:
-        Navigator.pushNamed(
-            context, routeLabels[RouteEnum.profileTransformationJourney],
-            arguments: {'profileInfo': widget.userToGetData});
+        Navigator.pushNamed(context, routeLabels[RouteEnum.profileTransformationJourney], arguments: {'profileInfo': widget.userToGetData});
         break;
       case RouteEnum.profileAssessmentVideos:
-        Navigator.pushNamed(
-            context, routeLabels[RouteEnum.profileAssessmentVideos]);
+        Navigator.pushNamed(context, routeLabels[RouteEnum.profileAssessmentVideos]);
         break;
       case RouteEnum.profileChallenges:
         Navigator.pushNamed(context, routeLabels[RouteEnum.profileChallenges]);

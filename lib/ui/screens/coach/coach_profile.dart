@@ -328,7 +328,7 @@ class _CoachProfileState extends State<CoachProfile> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                OlukoLocalizations.of(context).find('coach'),
+                                OlukoLocalizations.get(context, 'coach'),
                                 style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
                               ),
                               SizedBox(

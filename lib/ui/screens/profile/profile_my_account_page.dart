@@ -60,13 +60,13 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
   Column buildUserInformationFields() {
     return Column(
       children: [
-        userInformationFields(OlukoLocalizations.of(context).find('userName'), _profileInfo.username),
-        userInformationFields(OlukoLocalizations.of(context).find('firstName'), _profileInfo.firstName),
-        userInformationFields(OlukoLocalizations.of(context).find('lastName'), _profileInfo.lastName),
-        userInformationFields(OlukoLocalizations.of(context).find('email'), _profileInfo.email),
-        userInformationFields(OlukoLocalizations.of(context).find('city'), _profileInfo.city != null ? _profileInfo.city : ""),
-        userInformationFields(OlukoLocalizations.of(context).find('state'), _profileInfo.state != null ? _profileInfo.state : ""),
-        userInformationFields(OlukoLocalizations.of(context).find('country'), _profileInfo.country != null ? _profileInfo.country : ""),
+        userInformationFields(OlukoLocalizations.get(context, 'userName'), _profileInfo.username),
+        userInformationFields(OlukoLocalizations.get(context, 'firstName'), _profileInfo.firstName),
+        userInformationFields(OlukoLocalizations.get(context, 'lastName'), _profileInfo.lastName),
+        userInformationFields(OlukoLocalizations.get(context, 'email'), _profileInfo.email),
+        userInformationFields(OlukoLocalizations.get(context, 'city'), _profileInfo.city != null ? _profileInfo.city : ""),
+        userInformationFields(OlukoLocalizations.get(context, 'state'), _profileInfo.state != null ? _profileInfo.state : ""),
+        userInformationFields(OlukoLocalizations.get(context, 'country'), _profileInfo.country != null ? _profileInfo.country : ""),
       ],
     );
   }

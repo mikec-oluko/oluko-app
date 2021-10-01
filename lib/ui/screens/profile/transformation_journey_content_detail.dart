@@ -9,12 +9,10 @@ class TransformationJourneyContentDetail extends StatefulWidget {
   TransformationJourneyContentDetail({this.contentToShow});
 
   @override
-  _TransformationJourneyContentDetailState createState() =>
-      _TransformationJourneyContentDetailState();
+  _TransformationJourneyContentDetailState createState() => _TransformationJourneyContentDetailState();
 }
 
-class _TransformationJourneyContentDetailState
-    extends State<TransformationJourneyContentDetail> {
+class _TransformationJourneyContentDetailState extends State<TransformationJourneyContentDetail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,11 +39,8 @@ class _TransformationJourneyContentDetailState
                 alignment: Alignment.topLeft,
                 child: Padding(
                   padding: const EdgeInsets.all(10.0),
-                  child: Text(
-                      TimeConverter.returnDateAndTimeOnStringFormat(
-                          dateToFormat: widget.contentToShow.createdAt),
-                      style: OlukoFonts.olukoBigFont(
-                          customColor: OlukoColors.white)),
+                  child: Text(TimeConverter.returnDateAndTimeOnStringFormat(dateToFormat: widget.contentToShow.createdAt, context: context),
+                      style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white)),
                 )),
             Align(
                 alignment: Alignment.center,
@@ -58,11 +53,8 @@ class _TransformationJourneyContentDetailState
                           alignment: Alignment.center,
                           image: Image.network(
                             widget.contentToShow.file,
-                            frameBuilder: (BuildContext context, Widget child,
-                                    int frame, bool wasSynchronouslyLoaded) =>
-                                ImageUtils.frameBuilder(context, child, frame,
-                                    wasSynchronouslyLoaded,
-                                    height: 120),
+                            frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
+                                ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 120),
                           ).image)),
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height / 2,

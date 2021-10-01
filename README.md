@@ -28,7 +28,10 @@ samples, guidance on mobile development, and a full API reference.
 
 main.dart file you need to add the extra language
 assets/lang u need to create the resource file.
-use: OlukoLocalizations.of(context).find('writeText')
+use: OlukoLocalizations.get(context, translationKey)
+
+## Date Formatting
+https://pub.dev/documentation/intl/latest/intl/DateFormat-class.html
 
 ## Create new appbundle build (Android)
 

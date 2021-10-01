@@ -72,7 +72,7 @@ class _CompletedClassState extends State<CompletedClass> {
                   padding: const EdgeInsets.symmetric(horizontal: 80),
                   child: Row(mainAxisSize: MainAxisSize.max, children: [
                     OlukoPrimaryButton(
-                        title: OlukoLocalizations.of(context).find('done'),
+                        title: OlukoLocalizations.get(context, 'done'),
                         onPressed: () {
                           Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.insideClass]));
                         })
@@ -180,7 +180,7 @@ class _CompletedClassState extends State<CompletedClass> {
                   child: RotationTransition(
                       turns: AlwaysStoppedAnimation(-0.01),
                       child: Text(
-                        OlukoLocalizations.of(context).find('addYourSelfie'),
+                        OlukoLocalizations.get(context, 'addYourSelfie'),
                         style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: OlukoColors.black),
                         textAlign: TextAlign.start,
                       ))),

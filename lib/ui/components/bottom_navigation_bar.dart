@@ -38,9 +38,8 @@ class _State extends State<OlukoBottomNavigationBar> {
   }
 
   BottomNavigationBarItem getBottomNavigationBarWidget(OlukoBottomNavigationBarItem olukoBottomNavigationBarItem) {
-    double blockSize = MediaQuery.of(context).orientation == Orientation.portrait
-        ? ScreenUtils.width(context) / 5
-        : ScreenUtils.width(context) / 5;
+    double blockSize =
+        MediaQuery.of(context).orientation == Orientation.portrait ? ScreenUtils.width(context) / 5 : ScreenUtils.width(context) / 5;
     return BottomNavigationBarItem(
         icon: Container(
           decoration: BoxDecoration(
@@ -75,31 +74,23 @@ class _State extends State<OlukoBottomNavigationBar> {
   List<OlukoBottomNavigationBarItem> getBottomNavigationBarItems() {
     List<OlukoBottomNavigationBarItem> items = [
       OlukoBottomNavigationBarItem(
-          title: OlukoLocalizations.of(context).find('home'),
-          assetImageUrl: 'assets/bottom_navigation_bar/home.png',
-          route: '/'),
+          title: OlukoLocalizations.get(context, 'home'), assetImageUrl: 'assets/bottom_navigation_bar/home.png', route: '/'),
       OlukoBottomNavigationBarItem(
-          title: OlukoLocalizations.of(context).find('coach'),
-          assetImageUrl: 'assets/bottom_navigation_bar/coach.png',
-          route: '/coach'),
+          title: OlukoLocalizations.get(context, 'coach'), assetImageUrl: 'assets/bottom_navigation_bar/coach.png', route: '/coach'),
       //TODO: Item for testing (remove it later)
       /*OlukoBottomNavigationBarItem(
           title: "TEST",
           assetImageUrl: 'assets/bottom_navigation_bar/coach.png',
           route: '/segment-progress'),*/
       OlukoBottomNavigationBarItem(
-        title: OlukoLocalizations.of(context).find('friends'),
+        title: OlukoLocalizations.get(context, 'friends'),
         assetImageUrl: 'assets/bottom_navigation_bar/friends.png',
         route: '/friends',
       ),
       OlukoBottomNavigationBarItem(
-          title: OlukoLocalizations.of(context).find('courses'),
-          assetImageUrl: 'assets/bottom_navigation_bar/course.png',
-          route: '/courses'),
+          title: OlukoLocalizations.get(context, 'courses'), assetImageUrl: 'assets/bottom_navigation_bar/course.png', route: '/courses'),
       OlukoBottomNavigationBarItem(
-          title: OlukoLocalizations.of(context).find('profile'),
-          assetImageUrl: 'assets/bottom_navigation_bar/profile.png',
-          route: '/profile'),
+          title: OlukoLocalizations.get(context, 'profile'), assetImageUrl: 'assets/bottom_navigation_bar/profile.png', route: '/profile'),
     ];
     return items;
   }

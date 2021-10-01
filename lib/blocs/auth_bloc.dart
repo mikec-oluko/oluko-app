@@ -87,7 +87,7 @@ class AuthBloc extends Cubit<AuthState> {
       emit(AuthGuest());
     } else {
       AuthRepository().storeLoginData(user);
-      AppMessages.showSnackbar(context, '${OlukoLocalizations.of(context).find('welcome')}, ${user.firstName}');
+      AppMessages.showSnackbar(context, '${OlukoLocalizations.get(context, 'welcome')}, ${user.firstName}');
       emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
       await AppNavigator().returnToHome(context);
     }
@@ -115,7 +115,7 @@ class AuthBloc extends Cubit<AuthState> {
     if (!firebaseUser.emailVerified) {
       //TODO: trigger to send another email
       FirebaseAuth.instance.signOut();
-      AppMessages.showSnackbar(context, OlukoLocalizations.of(context).find('pleaseCheckYourEmail'));
+      AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'pleaseCheckYourEmail'));
       emit(AuthGuest());
       return;
     }
@@ -123,7 +123,7 @@ class AuthBloc extends Cubit<AuthState> {
     //If there is no associated user for this account
     if (userResponse == null) {
       FirebaseAuth.instance.signOut();
-      AppMessages.showSnackbar(context, OlukoLocalizations.of(context).find('userForThisAccountNotFoundPleaseSignUp'));
+      AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'userForThisAccountNotFoundPleaseSignUp'));
       emit(AuthGuest());
       return;
     }
@@ -176,7 +176,7 @@ class AuthBloc extends Cubit<AuthState> {
   Future<void> sendPasswordResetEmail(BuildContext context, LoginRequest loginRequest) async {
     //TODO: unused variable final success =
     await AuthRepository().sendPasswordResetEmail(loginRequest.email);
-    AppMessages.showSnackbar(context, OlukoLocalizations.of(context).find('pleaseCheckYourEmailForInstructions'));
+    AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'pleaseCheckYourEmailForInstructions'));
   }
 
   String getRandString(int len) {

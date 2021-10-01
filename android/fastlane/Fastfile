@@ -25,7 +25,7 @@ platform :android do
   lane :beta do
     gradle(task: "clean bundle", build_type: "Release")
     # crashlytics
-    upload_to_play_store(track:"beta",aab: "../build/app/outputs/bundle/release/app-release.aab")
+    upload_to_play_store(track:"internal",aab: "../build/app/outputs/bundle/release/app-release.aab")
   
     # sh "your_script.sh"
     # You can also use other beta testing services here
