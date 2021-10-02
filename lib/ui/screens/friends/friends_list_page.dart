@@ -137,12 +137,18 @@ class _FriendsListPageState extends State<FriendsListPage> {
               ]
             : friendState.friendData.friends.map((friend) {
                 UserResponse friendUser = friendState.friendUsers.where((fuser) => fuser.id == friend.id).first;
-                return FriendCard(
-                  friend: friend,
-                  friendUser: friendUser,
-                  onFavoriteToggle: (FriendModel friendModel) {
-                    BlocProvider.of<FavoriteFriendBloc>(context).favoriteFriend(context, friendState.friendData, friendModel);
+                return GestureDetector(
+                  onTap: () {
+                    BottomDialogUtils.showBottomDialog(
+                        content: dialogContainer(context: context, user: friendUser, friendState: friendState), context: context);
                   },
+                  child: FriendCard(
+                    friend: friend,
+                    friendUser: friendUser,
+                    onFavoriteToggle: (FriendModel friendModel) {
+                      BlocProvider.of<FavoriteFriendBloc>(context).favoriteFriend(context, friendState.friendData, friendModel);
+                    },
+                  ),
                 );
               }).toList();
       } else {
