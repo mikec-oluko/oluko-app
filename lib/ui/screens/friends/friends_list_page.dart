@@ -21,6 +21,7 @@ import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/user_utils.dart';
 
 class FriendsListPage extends StatefulWidget {
   // final List<User> friends;
@@ -95,13 +96,29 @@ class _FriendsListPageState extends State<FriendsListPage> {
                           padding: const EdgeInsets.only(top: 10),
                           child: Text('My Friends', style: OlukoFonts.olukoBigFont()),
                         ),
-                        Column(children: generateFriendList(friendState).toList()),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 16.0),
+                          child: GridView.count(
+                            childAspectRatio: 0.7,
+                            crossAxisCount: 4,
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            children: generateFriendList(friendState),
+                          ),
+                        ),
                         Padding(
                           padding: const EdgeInsets.only(top: 10),
                           child: Text('Other users', style: OlukoFonts.olukoBigFont()),
                         ),
-                        Column(
-                          children: generateUsersList(friendState, userListState),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 16.0),
+                          child: GridView.count(
+                            childAspectRatio: 0.7,
+                            crossAxisCount: 4,
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            children: generateUsersList(friendState, userListState),
+                          ),
                         )
                       ],
                     );
@@ -142,12 +159,26 @@ class _FriendsListPageState extends State<FriendsListPage> {
                     BottomDialogUtils.showBottomDialog(
                         content: dialogContainer(context: context, user: friendUser, friendState: friendState), context: context);
                   },
-                  child: FriendCard(
-                    friend: friend,
-                    friendUser: friendUser,
-                    onFavoriteToggle: (FriendModel friendModel) {
-                      BlocProvider.of<FavoriteFriendBloc>(context).favoriteFriend(context, friendState.friendData, friendModel);
-                    },
+                  child: Column(
+                    children: [
+                      StoriesItem(
+                        maxRadius: 30,
+                        imageUrl: friendUser.avatar ?? UserUtils().defaultAvatarImageUrl,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0, bottom: 0.0),
+                        child: Text(
+                          '${friendUser.firstName} ${friendUser.lastName}',
+                          style: const TextStyle(color: Colors.white, fontSize: 13),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Text(
+                        friendUser.username ?? '',
+                        style: const TextStyle(color: Colors.grey, fontSize: 10),
+                        textAlign: TextAlign.center,
+                      )
+                    ],
                   ),
                 );
               }).toList();
@@ -195,12 +226,26 @@ class _FriendsListPageState extends State<FriendsListPage> {
                     BottomDialogUtils.showBottomDialog(
                         content: dialogContainer(context: context, user: user, friendState: friendState), context: context);
                   },
-                  child: FriendCard(
-                    friend: null,
-                    friendUser: user,
-                    onFavoriteToggle: (FriendModel friendModel) {
-                      BlocProvider.of<FavoriteFriendBloc>(context).favoriteFriend(context, friendState.friendData, friendModel);
-                    },
+                  child: Column(
+                    children: [
+                      StoriesItem(
+                        maxRadius: 30,
+                        imageUrl: user.avatar ?? UserUtils().defaultAvatarImageUrl,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0, bottom: 0.0),
+                        child: Text(
+                          '${user.firstName} ${user.lastName}',
+                          style: const TextStyle(color: Colors.white, fontSize: 13),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Text(
+                        user.username ?? '',
+                        style: const TextStyle(color: Colors.grey, fontSize: 10),
+                        textAlign: TextAlign.center,
+                      )
+                    ],
                   ),
                 );
               }).toList();
@@ -429,5 +474,43 @@ class _FriendsListPageState extends State<FriendsListPage> {
         ),
       ],
     );
+  }
+
+  Widget usersGrid(List<UserResponse> users) {
+    if (users.isNotEmpty) {
+      return GridView.count(
+          childAspectRatio: 0.7,
+          crossAxisCount: 4,
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          children: users
+              .map((user) => Column(
+                    children: [
+                      StoriesItem(
+                        maxRadius: 30,
+                        imageUrl: user.avatar ?? UserUtils().defaultAvatarImageUrl,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0, bottom: 0.0),
+                        child: Text(
+                          '${user.firstName} ${user.lastName}',
+                          style: const TextStyle(color: Colors.white, fontSize: 13),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Text(
+                        user.username,
+                        style: const TextStyle(color: Colors.grey, fontSize: 10),
+                        textAlign: TextAlign.center,
+                      )
+                    ],
+                  ))
+              .toList());
+    } else {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 20, top: 10),
+        child: TitleBody(OlukoLocalizations.get(context, 'noUsers')),
+      );
+    }
   }
 }
