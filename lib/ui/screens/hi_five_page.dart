@@ -144,10 +144,12 @@ class _HiFivePageState extends State<HiFivePage> {
               flex: 5,
               child: Column(
                 children: [
-                  Text(
-                    '$hiFives ${OlukoLocalizations.get(context, 'hiFives')}',
-                    style: TextStyle(color: Colors.grey),
-                  )
+                  hiFives > 1
+                      ? Text(
+                          '$hiFives ${OlukoLocalizations.get(context, 'hiFives')}',
+                          style: TextStyle(color: Colors.grey),
+                        )
+                      : SizedBox()
                 ],
               ),
             ),
