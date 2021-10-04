@@ -136,6 +136,14 @@ class FriendRepository {
       friend.friendRequestSent.removeWhere((element) => element.id == friend.id);
       friend.friends.add(friendtargetModel);
 
+      //Set my friend user document
+      await FirebaseFirestore.instance
+          .collection('projects')
+          .doc(GlobalConfiguration().getValue('projectId'))
+          .collection('friends')
+          .doc(targetUserFriend.id)
+          .set(targetUserFriend.toJson());
+
       return friendModel;
     } catch (e, stackTrace) {
       await Sentry.captureException(
