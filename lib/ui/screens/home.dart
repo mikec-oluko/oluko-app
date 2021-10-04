@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
-import 'package:oluko_app/blocs/course_bloc.dart';
+import 'package:oluko_app/blocs/course/course_bloc.dart';
+import 'package:oluko_app/blocs/course/course_home_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/views_bloc/hi_five_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -40,7 +41,7 @@ class _HomeState extends State<Home> {
         return BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(builder: (context, courseEnrollmentListState) {
           if (courseEnrollmentListState is CourseEnrollmentsByUserSuccess) {
             _courseEnrollments = courseEnrollmentListState.courseEnrollments;
-            BlocProvider.of<CourseBloc>(context)..getByCourseEnrollments(_courseEnrollments);
+            BlocProvider.of<CourseHomeBloc>(context)..getByCourseEnrollments(_courseEnrollments);
             return form();
           } else {
             return nil;
@@ -71,7 +72,7 @@ class _HomeState extends State<Home> {
 
   Widget homeContainer() {
     if (_courseEnrollments.length > 0) {
-      return BlocBuilder<CourseBloc, CourseState>(builder: (context, courseState) {
+      return BlocBuilder<CourseHomeBloc, CourseHomeState>(builder: (context, courseState) {
         if (courseState is GetByCourseEnrollmentsSuccess) {
           _courses = courseState.courses;
           if (_courses != null && _courses.length > 0) {

@@ -13,5 +13,5 @@ class AssessmentTask {
         taskId = json['id']?.toString(),
         taskName = json['name']?.toString();
 
-  Map<String, dynamic> toJson() => {'reference': taskReference, 'index': index, 'id': taskId, 'name': taskName};
+  Map<String, dynamic> toJson() => {'reference': taskReference, 'id': taskId, 'name': taskName};
 }
