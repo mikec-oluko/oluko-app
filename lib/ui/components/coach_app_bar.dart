@@ -13,7 +13,7 @@ class CoachAppBar extends StatefulWidget implements PreferredSizeWidget {
   _CoachAppBarState createState() => _CoachAppBarState();
 
   @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
 
 class _CoachAppBarState extends State<CoachAppBar> {
@@ -36,37 +36,37 @@ class _CoachAppBarState extends State<CoachAppBar> {
                 ),
               ),
             ),
-            widget.coachUser != null && widget.coachUser.avatarThumbnail != null
-                ? Padding(
-                    padding: const EdgeInsets.only(right: 5),
-                    child: CircleAvatar(
-                      backgroundColor: OlukoColors.black,
-                      backgroundImage: Image.network(
-                        widget.coachUser.avatarThumbnail,
-                        fit: BoxFit.contain,
-                        frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
-                            ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded,
-                                height: 24, width: 24),
-                        height: 24,
-                        width: 24,
-                      ).image,
-                      radius: 24.0,
-                    ),
-                  )
-                : Padding(
-                    padding: const EdgeInsets.only(right: 5),
-                    child: CircleAvatar(
-                      backgroundColor: OlukoColors.primary,
-                      radius: 24.0,
-                    ),
-                  ),
+            if (widget.coachUser != null && widget.coachUser.avatarThumbnail != null)
+              Padding(
+                padding: const EdgeInsets.only(right: 5),
+                child: CircleAvatar(
+                  backgroundColor: OlukoColors.black,
+                  backgroundImage: Image.network(
+                    widget.coachUser.avatarThumbnail,
+                    fit: BoxFit.contain,
+                    frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
+                        ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 24, width: 24),
+                    height: 24,
+                    width: 24,
+                  ).image,
+                  radius: 24.0,
+                ),
+              )
+            else
+              const Padding(
+                padding: EdgeInsets.only(right: 5),
+                child: CircleAvatar(
+                  backgroundColor: OlukoColors.black,
+                  radius: 24.0,
+                ),
+              ),
           ],
         )
       ],
       elevation: 0.0,
       backgroundColor: OlukoColors.black,
       leading: IconButton(
-        icon: Icon(
+        icon: const Icon(
           Icons.arrow_back_ios,
           color: Colors.white,
         ),
