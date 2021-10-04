@@ -133,8 +133,8 @@ class FriendRepository {
           .get();
 
       Friend targetUserFriend = Friend.fromJson(targetUserFriendDocument.data());
-      friend.friendRequestSent.removeWhere((element) => element.id == friend.id);
-      friend.friends.add(friendtargetModel);
+      targetUserFriend.friendRequestSent.removeWhere((element) => element.id == friend.id);
+      targetUserFriend.friends.add(friendtargetModel);
 
       //Set my friend user document
       await FirebaseFirestore.instance
