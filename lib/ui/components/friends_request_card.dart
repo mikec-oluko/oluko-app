@@ -11,6 +11,7 @@ import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
+import 'package:oluko_app/utils/user_utils.dart';
 
 class FriendRequestCard extends StatefulWidget {
   // final UserResponse userToDisplay;
@@ -53,7 +54,7 @@ class _FriendRequestCardState extends State<FriendRequestCard> {
                   GestureDetector(
                       child: CircleAvatar(
                         // backgroundImage: NetworkImage(widget.userData.photoURL),
-                        backgroundImage: NetworkImage(widget.friendUser.avatar),
+                        backgroundImage: NetworkImage(widget.friendUser.avatar ?? UserUtils().defaultAvatarImageUrl),
                         backgroundColor: OlukoColors.black,
                         radius: 30,
                       ),
@@ -61,8 +62,7 @@ class _FriendRequestCardState extends State<FriendRequestCard> {
                         BlocProvider.of<TransformationJourneyBloc>(context).emitTransformationJourneyDefault(noValues: true);
                         BlocProvider.of<TaskSubmissionBloc>(context).setTaskSubmissionDefaultState();
                         BlocProvider.of<CourseEnrollmentBloc>(context).setCourseEnrollmentChallengesDefaultValue();
-                        Navigator.pushNamed(context, routeLabels[RouteEnum.profileViewOwnProfile],
-                            arguments: {'userRequested': widget.friendUser});
+                        Navigator.pushNamed(context, routeLabels[RouteEnum.profileViewOwnProfile], arguments: {'userRequested': widget.friendUser});
                       }),
                   Padding(
                     padding: const EdgeInsets.only(left: 20),
