@@ -366,7 +366,7 @@ class _PlayerDoubleState extends State<PlayerDouble> {
       num miliseconds,
       List<DrawPoint> canvasPoints) {
     for (var i = 0; i < canvasPoints.length; i++) {
-      if (canvasPoints[i].miliseconds > miliseconds) {
+      if (canvasPoints[i].miliseconds > (miliseconds as int)) {
         return canvasPoints.getRange(0, i).toList();
       }
     }
