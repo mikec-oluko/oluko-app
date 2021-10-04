@@ -17,7 +17,15 @@ enum ActualProfileRoute { rootProfile, userProfile, userAssessmentVideos, transf
 //Enum of options for upload content
 enum DeviceContentFrom { camera, gallery }
 
-enum ProfileOptionsTitle { myAccount, assessmentVideos, transformationJourney, subscription, settings, helpAndSupport, logout }
+enum ProfileOptionsTitle {
+  myAccount,
+  assessmentVideos,
+  transformationJourney,
+  subscription,
+  settings,
+  helpAndSupport,
+  logout
+}
 
 enum ErrorTypeOption { noConnection, noContent }
 
@@ -26,3 +34,18 @@ enum OlukoPanelAction { open, close, hide, show, loading, error, success }
 enum UserConnectStatus { connected, notConnected, requestPending }
 
 enum CoachContentSection { sentVideos, mentoredVideos, recomendedVideos, voiceMessages }
+
+enum CoachFileTypeEnum {
+  mentoredVideo,
+  sentVideo,
+  recommendedCourse,
+  recommendedClass,
+  recommendedMovement,
+  recommendedSegment,
+  faqVideo,
+}
+
+enum CoachAssignmentStatusEnum { requested, approved, rejected }
+
+//TODO: Check and use that
+enum TimelineInteractionType { course, classes, segment, movement, mentoredVideo, sentVideo }
