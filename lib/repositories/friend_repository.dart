@@ -105,7 +105,7 @@ class FriendRepository {
           .collection('projects')
           .doc(GlobalConfiguration().getValue('projectId'))
           .collection('users')
-          .doc(friendRequest.id)
+          .doc(friend.id)
           .get();
 
       //Friend model to add as a friend

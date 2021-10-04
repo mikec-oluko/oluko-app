@@ -98,11 +98,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 16.0),
-                          child: GridView.count(
-                            childAspectRatio: 0.7,
-                            crossAxisCount: 4,
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
+                          child: Column(
                             children: generateFriendList(friendState),
                           ),
                         ),
@@ -152,36 +148,43 @@ class _FriendsListPageState extends State<FriendsListPage> {
                   child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [TitleBody('No Friends.')]),
                 )
               ]
-            : friendState.friendData.friends.map((friend) {
-                UserResponse friendUser = friendState.friendUsers.where((fuser) => fuser.id == friend.id).first;
-                return GestureDetector(
-                  onTap: () {
-                    BottomDialogUtils.showBottomDialog(
-                        content: dialogContainer(context: context, user: friendUser, friendState: friendState), context: context);
-                  },
-                  child: Column(
-                    children: [
-                      StoriesItem(
-                        maxRadius: 30,
-                        imageUrl: friendUser.avatar ?? UserUtils().defaultAvatarImageUrl,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0, bottom: 0.0),
-                        child: Text(
-                          '${friendUser.firstName} ${friendUser.lastName}',
-                          style: const TextStyle(color: Colors.white, fontSize: 13),
-                          textAlign: TextAlign.center,
+            : [
+                GridView.count(
+                    childAspectRatio: 0.7,
+                    crossAxisCount: 4,
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    children: friendState.friendData.friends.map((friend) {
+                      UserResponse friendUser = friendState.friendUsers.where((fuser) => fuser.id == friend.id).first;
+                      return GestureDetector(
+                        onTap: () {
+                          BottomDialogUtils.showBottomDialog(
+                              content: dialogContainer(context: context, user: friendUser, friendState: friendState), context: context);
+                        },
+                        child: Column(
+                          children: [
+                            StoriesItem(
+                              maxRadius: 30,
+                              imageUrl: friendUser.avatar ?? UserUtils().defaultAvatarImageUrl,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8.0, bottom: 0.0),
+                              child: Text(
+                                '${friendUser.firstName} ${friendUser.lastName}',
+                                style: const TextStyle(color: Colors.white, fontSize: 13),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Text(
+                              friendUser.username ?? '',
+                              style: const TextStyle(color: Colors.grey, fontSize: 10),
+                              textAlign: TextAlign.center,
+                            )
+                          ],
                         ),
-                      ),
-                      Text(
-                        friendUser.username ?? '',
-                        style: const TextStyle(color: Colors.grey, fontSize: 10),
-                        textAlign: TextAlign.center,
-                      )
-                    ],
-                  ),
-                );
-              }).toList();
+                      );
+                    }).toList())
+              ];
       } else {
         return [];
       }
