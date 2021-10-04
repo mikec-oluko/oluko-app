@@ -10,6 +10,7 @@ import 'package:oluko_app/blocs/coach/coach_sent_videos_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
+import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/coach_content_for_timeline_panel.dart';
@@ -122,7 +123,9 @@ class _CoachPageState extends State<CoachPage> {
                                   allContent.addAll(sentVideosTimelineContent);
                                   allContent.addAll(mentoredVideoTimelineContent);
                                   CoachTimelineGroup allTabContent = CoachTimelineGroup(
-                                      courseId: '0', courseName: 'All', timelineElements: allContent);
+                                      courseId: defaultIdForAllContentTimeline,
+                                      courseName: OlukoLocalizations.get(context, 'all'),
+                                      timelineElements: allContent);
                                   allContent.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
                                   timelinePanelContent.insert(0, allTabContent);
                                 }
@@ -210,6 +213,8 @@ class _CoachPageState extends State<CoachPage> {
     BlocProvider.of<CoachSentVideosBloc>(context).getSentVideosByUserId(_currentAuthUser.id);
 
     BlocProvider.of<AssessmentBloc>(context).getById('emnsmBgZ13UBRqTS26Qd');
+
+    BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionByUserId(_currentAuthUser.id);
   }
 
   Widget coachViewPageContent(BuildContext context) {
@@ -297,15 +302,22 @@ class _CoachPageState extends State<CoachPage> {
       challenges: _activeChallenges, segments: actualSegmentsToDisplay);
 
   Widget assessmentSection(BuildContext context) {
-    return BlocBuilder<TaskBloc, TaskState>(
+    return BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
       builder: (context, state) {
-        if (state is TaskSuccess) {
-          _tasks = state.values;
+        if (state is GetUserTaskSubmissionSuccess) {
+          _assessmentVideosContent = state.taskSubmissions;
         }
-        return CoachHorizontalCarousel(
-          contentToDisplay:
-              TransformListOfItemsToWidget.getAssessmentCards(tasks: _tasks, tasksSubmitted: _assessmentVideosContent),
-          isAssessmentContent: true,
+        return BlocBuilder<TaskBloc, TaskState>(
+          builder: (context, state) {
+            if (state is TaskSuccess) {
+              _tasks = state.values;
+            }
+            return CoachHorizontalCarousel(
+              contentToDisplay: TransformListOfItemsToWidget.getAssessmentCards(
+                  tasks: _tasks, tasksSubmitted: _assessmentVideosContent),
+              isAssessmentContent: true,
+            );
+          },
         );
       },
     );

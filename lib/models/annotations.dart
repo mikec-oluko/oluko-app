@@ -50,7 +50,7 @@ class Annotation extends Base {
         coachId: json['coach_id'].toString(),
         coachReference: json['coach_reference'] as DocumentReference,
         status: AnnotationStatusEnum.values[json['status'] as int],
-        favorite: json['favorite'] as bool,
+        favorite: json['favorite'] == null ? false : json['favorite'] as bool,
         video: json['video'] == null ? null : Video.fromJson(json['video'] as Map<String, dynamic>),
         videoState:
             json['video_state'] == null ? null : VideoState.fromJson(json['video_state'] as Map<String, dynamic>));
@@ -66,7 +66,7 @@ class Annotation extends Base {
       'coach_id': coachId,
       'coach_reference': coachReference,
       'status': status.index,
-      'favorite': favorite,
+      'favorite': favorite ?? false,
       'video': video == null ? null : video.toJson(),
       'video_state': videoState == null ? null : videoState.toJson()
     };
