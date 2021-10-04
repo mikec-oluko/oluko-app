@@ -89,7 +89,8 @@ class CourseEnrollmentRepository {
     final DocumentReference docRef = reference.doc();
     final DocumentReference userReference = projectReference.collection('users').doc(user.uid);
     final ObjectSubmodel courseSubmodel = ObjectSubmodel(id: course.id, reference: courseReference, name: course.name, image: course.image);
-    CourseEnrollment courseEnrollment = CourseEnrollment(createdBy: user.uid, userReference: userReference, course: courseSubmodel, classes: []);
+    CourseEnrollment courseEnrollment =
+        CourseEnrollment(createdBy: user.uid, userId: user.uid, userReference: userReference, course: courseSubmodel, classes: []);
     courseEnrollment.id = docRef.id;
     courseEnrollment = await setEnrollmentClasses(course, courseEnrollment);
     docRef.set(courseEnrollment.toJson());
