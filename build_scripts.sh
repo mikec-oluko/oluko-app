@@ -23,6 +23,12 @@ if [ "$1" = "qa" ]
     cp lib/config/src/qa/project_settings.dart lib/config/src/qa/s3_settings.dart lib/config && \
     flutter pub get && cd ios && pod install && cd ..
 fi
-if [[ "$1" != "qa" ]] && [[ "$1" != "dev" ]] && [[ "$1" != "prod" ]]
-    then echo "Arguments allowed qa / dev / prod"
+if [ "$1" = "appbundle" ]
+    then flutter build appbundle
+fi
+if [ "$1" = "increment_build" ]
+    then perl -i -pe 's/^(version:\s+\d+\.\d+\.)(\d+)(\+)(\d+)$/$1.($2).$3.($4+1)/e' pubspec.yaml
+fi
+if [[ "$1" != "qa" ]] && [[ "$1" != "dev" ]] && [[ "$1" != "prod" ]] && [[ "$1" != "appbundle" ]] && [[ "$1" != "increment_build" ]]
+    then echo "Arguments allowed qa / dev / prod / appbundle / increment_build"
 fi
