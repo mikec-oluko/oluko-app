@@ -16,6 +16,8 @@ samples, guidance on mobile development, and a full API reference.
     1. https://git-scm.com/  
 3. Install Flutter
     1. https://flutter.dev/docs/get-started/install (This guide installs everything needed to run app)
+    2. After running flutter doctor you'll need to install to android studio this: https://pineapplelabcom.sharepoint.com/sites/41891282-MichaelChaney/Shared%20Documents/MichaelChaney/installAndroid.png
+
 4. Install VS Code
     1. https://code.visualstudio.com/download
     2. add Flutter plugin 
@@ -26,7 +28,10 @@ samples, guidance on mobile development, and a full API reference.
 
 main.dart file you need to add the extra language
 assets/lang u need to create the resource file.
-use: OlukoLocalizations.of(context).find('writeText')
+use: OlukoLocalizations.get(context, translationKey)
+
+## Date Formatting
+https://pub.dev/documentation/intl/latest/intl/DateFormat-class.html
 
 ## Create new appbundle build (Android)
 

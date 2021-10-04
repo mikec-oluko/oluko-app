@@ -44,45 +44,26 @@ class _FriendCardState extends State<FriendCard> {
         child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           Row(
             children: [
-              GestureDetector(
-                onTap: () {
-                  BlocProvider.of<TransformationJourneyBloc>(context).emitTransformationJourneyDefault(noValues: true);
-                  BlocProvider.of<TaskSubmissionBloc>(context).setTaskSubmissionDefaultState();
-                  BlocProvider.of<CourseEnrollmentBloc>(context).setCourseEnrollmentChallengesDefaultValue();
-                  Navigator.pushNamed(context, routeLabels[RouteEnum.profileViewOwnProfile],
-                      arguments: {'userRequested': widget.friendUser});
-                },
-                child: CircleAvatar(
-                    // backgroundImage: NetworkImage(widget.userData.photoURL),
-                    backgroundImage: _loadImageError ? null : (NetworkImage(widget.friendUser.avatar)),
-                    onBackgroundImageError: _loadImageError
-                        ? null
-                        : (dynamic exception, StackTrace stackTrace) {
-                            print("Error loading image! " + exception.toString());
-                            setState(() {
-                              _loadImageError = true;
-                            });
-                          },
-                    backgroundColor: OlukoColors.userColor(widget.friendUser.firstName, widget.friendUser.lastName),
-                    radius: 30,
-                    child: _loadImageError
-                        ? Text(
-                            widget.friendUser.firstName.characters.first.toString().toUpperCase(),
-                            style: OlukoFonts.olukoBigFont(
-                              customColor: OlukoColors.white,
-                              custoFontWeight: FontWeight.w500,
-                            ),
-                            textAlign: TextAlign.center,
-                          )
-                        : null
-                    // this._loadImageError
-                    //     ? Image.asset(
-                    //         UserUtils().defaultAvatarImageAsset,
-                    //         scale: 2,
-                    //       )
-                    //     : null,
-                    ),
-              ),
+              CircleAvatar(
+                  backgroundImage: getUserImg(widget.friendUser.avatarThumbnail),
+                  onBackgroundImageError: _loadImageError
+                      ? null
+                      : (dynamic exception, StackTrace stackTrace) {
+                          print("Error loading image! " + exception.toString());
+                          setBackgroundImageAsError();
+                        },
+                  backgroundColor: OlukoColors.userColor(widget.friendUser.firstName, widget.friendUser.lastName),
+                  radius: 30,
+                  child: _loadImageError
+                      ? Text(
+                          widget.friendUser.firstName.characters.first.toString().toUpperCase(),
+                          style: OlukoFonts.olukoBigFont(
+                            customColor: OlukoColors.white,
+                            custoFontWeight: FontWeight.w500,
+                          ),
+                          textAlign: TextAlign.center,
+                        )
+                      : const Text(' ')),
               Padding(
                 padding: const EdgeInsets.only(left: 10),
                 child: Column(
@@ -95,26 +76,20 @@ class _FriendCardState extends State<FriendCard> {
                         Row(
                           children: [
                             Text(
-                              // widget.userToDisplay.firstName,
-                              widget.friendUser.firstName != null ? widget.friendUser.firstName : ' ',
+                              widget.friendUser.firstName ?? ' ',
                               style: OlukoFonts.olukoMediumFont(),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(left: 5),
                               // child: Text(widget.userToDisplay.lastName,
                               //     style: OlukoFonts.olukoMediumFont()),
-                              child: Text(widget.friendUser.lastName != null ? widget.friendUser.lastName : ' ',
-                                  style: OlukoFonts.olukoMediumFont()),
+                              child: Text(widget.friendUser.lastName ?? ' ', style: OlukoFonts.olukoMediumFont()),
                             ),
                           ],
                         ),
                       ],
                     ),
-                    Text(widget.friendUser.username != null ? widget.friendUser.username : ' ',
-                        style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor)),
-                    // Text(widget.userData.displayName,
-                    //     style: OlukoFonts.olukoMediumFont(
-                    //         customColor: OlukoColors.grayColor)),
+                    Text(widget.friendUser.username ?? '', style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor)),
                   ],
                 ),
               )
@@ -127,8 +102,8 @@ class _FriendCardState extends State<FriendCard> {
                   ? IconButton(
                       icon: Icon(
                         widget.friend != null && widget.friend.isFavorite != null && widget.friend.isFavorite
-                            ? Icons.star
-                            : Icons.star_outline,
+                            ? Icons.favorite
+                            : Icons.favorite_border,
                         color: OlukoColors.primary,
                       ),
                       onPressed: () {
@@ -148,5 +123,22 @@ class _FriendCardState extends State<FriendCard> {
         ]),
       ),
     );
+  }
+
+  void setBackgroundImageAsError() {
+    setState(() {
+      _loadImageError = true;
+    });
+  }
+
+  ImageProvider<Object> getUserImg(String avatarUrl) {
+    if (_loadImageError) {
+      return null;
+    } else if (avatarUrl == null) {
+      setBackgroundImageAsError();
+      return null;
+    } else {
+      return NetworkImage(avatarUrl);
+    }
   }
 }

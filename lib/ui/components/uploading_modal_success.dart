@@ -24,8 +24,8 @@ class UploadingModalSuccess extends StatefulWidget {
 class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
   @override
   Widget build(BuildContext context) {
-    final _successText = OlukoLocalizations.of(context).find('uploadedSuccessfully');
-    final _doneButtonText = OlukoLocalizations.of(context).find('done');
+    final _successText = OlukoLocalizations.get(context, 'uploadedSuccessfully');
+    final _doneButtonText = OlukoLocalizations.get(context, 'done');
     return Container(
       color: OlukoColors.black,
       width: MediaQuery.of(context).size.width,
@@ -63,8 +63,11 @@ class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
                               onPressed: () {
                                 if (widget.goToPage == UploadFrom.transformationJourney) {
                                   BlocProvider.of<TransformationJourneyContentBloc>(context)..emitDefaultState();
-                                  BlocProvider.of<TransformationJourneyBloc>(context)..emitTransformationJourneyDefault();
-                                  Navigator.popAndPushNamed(context, routeLabels[RouteEnum.profileTransformationJourney]);
+                                  BlocProvider.of<TransformationJourneyBloc>(context)
+                                    ..emitTransformationJourneyDefault();
+                                  Navigator.popAndPushNamed(
+                                      context, routeLabels[RouteEnum.profileTransformationJourney],
+                                      arguments: {'profileInfo': widget.userRequested});
                                 } else {
                                   BlocProvider.of<ProfileAvatarBloc>(context)..emitDefaultState();
                                   BlocProvider.of<ProfileCoverImageBloc>(context)..emitDefaultState();

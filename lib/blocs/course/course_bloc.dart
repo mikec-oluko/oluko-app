@@ -27,11 +27,6 @@ class UserEnrolledCoursesSuccess extends CourseState {
   UserEnrolledCoursesSuccess({this.courses});
 }
 
-class GetByCourseEnrollmentsSuccess extends CourseState {
-  final List<Course> courses;
-  GetByCourseEnrollmentsSuccess({this.courses});
-}
-
 class CourseFailure extends CourseState {
   final dynamic exception;
 
@@ -98,20 +93,6 @@ class CourseBloc extends Cubit<CourseState> {
     try {
       List<Course> enrolledCourses = await CourseRepository.getUserEnrolled(userId);
       emit(UserEnrolledCoursesSuccess(courses: enrolledCourses));
-    } catch (exception, stackTrace) {
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
-      );
-      emit(CourseFailure(exception: exception));
-      rethrow;
-    }
-  }
-
-  void getByCourseEnrollments(List<CourseEnrollment> courseEnrollments) async {
-    try {
-      List<Course> courses = await CourseRepository.getByCourseEnrollments(courseEnrollments);
-      emit(GetByCourseEnrollmentsSuccess(courses: courses));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

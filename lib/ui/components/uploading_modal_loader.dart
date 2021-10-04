@@ -52,7 +52,7 @@ class LoaderAndUploadingText extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.all(20.0).copyWith(top: 50),
                     child: Text(
-                      OlukoLocalizations.of(context).find('uploadingWithDots'),
+                      OlukoLocalizations.get(context, 'uploadingWithDots'),
                       style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.w400),
                     ),
                   )

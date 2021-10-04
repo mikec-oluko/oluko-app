@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/course/course_home_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
 import 'package:oluko_app/blocs/friends/chat_bloc.dart';
@@ -15,26 +16,20 @@ import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
 import 'package:oluko_app/blocs/class_bloc.dart';
-import 'package:oluko_app/blocs/course_bloc.dart';
+import 'package:oluko_app/blocs/course/course_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
-import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
-import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
 import 'package:oluko_app/blocs/favorite_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/ignore_friend_request_bloc.dart';
-import 'package:oluko_app/blocs/gallery_video_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/plan_bloc.dart';
 import 'package:oluko_app/blocs/profile/profile_bloc.dart';
 import 'package:oluko_app/blocs/recommendation_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
-import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/statistics_bloc.dart';
-import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
-import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/blocs/user_list_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
@@ -70,7 +65,6 @@ import 'package:oluko_app/ui/screens/courses/movement_intro.dart';
 import 'package:oluko_app/ui/screens/courses/segment_camera_preview.dart.dart';
 import 'package:oluko_app/ui/screens/courses/segment_detail.dart';
 import 'package:oluko_app/ui/screens/friends/friends_page.dart';
-import 'package:oluko_app/ui/screens/authentication/login.dart';
 import 'package:oluko_app/ui/screens/hi_five_page.dart';
 import 'package:oluko_app/ui/screens/main_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile.dart';
@@ -86,29 +80,31 @@ import 'package:oluko_app/ui/screens/profile/transformation_journey_content_deta
 import 'package:oluko_app/ui/screens/profile/transformation_journey_post.dart';
 import 'package:oluko_app/ui/screens/profile/user_profile_page.dart';
 import 'package:oluko_app/ui/screens/courses/segment_detail.dart';
+import 'blocs/coach/coach_assignment_bloc.dart';
+import 'blocs/coach/coach_interaction_timeline_bloc.dart';
+import 'blocs/coach/coach_mentored_videos_bloc.dart';
+import 'blocs/coach/coach_profile_bloc.dart';
+import 'blocs/coach/coach_sent_videos_bloc.dart';
+import 'blocs/movement_info_bloc.dart';
 import 'blocs/friends/hi_five_send_bloc.dart';
 import 'blocs/movement_info_bloc.dart';
 import 'blocs/views_bloc/hi_five_bloc.dart';
+import 'models/annotations.dart';
+import 'models/segment_submission.dart';
 import 'models/task.dart';
+import 'ui/screens/coach/coach_main_page.dart';
 import 'ui/screens/courses/segment_clocks.dart';
-import 'package:oluko_app/ui/screens/authentication/sign_up.dart';
-import 'package:oluko_app/ui/screens/authentication/sign_up_with_email.dart';
-import 'package:oluko_app/ui/screens/assessments/task_details.dart';
 import 'package:oluko_app/ui/screens/videos/videos_home.dart';
 import 'package:oluko_app/ui/screens/view_all.dart';
-
 import 'blocs/friends/confirm_friend_bloc.dart';
 import 'blocs/friends/favorite_friend_bloc.dart';
-import 'blocs/movement_info_bloc.dart';
 import 'blocs/oluko_panel_bloc.dart';
 import 'blocs/profile/upload_avatar_bloc.dart';
 import 'blocs/profile/upload_cover_image_bloc.dart';
 import 'blocs/profile/upload_transformation_journey_content_bloc.dart';
 import 'blocs/user_statistics_bloc.dart';
 import 'models/course.dart';
-import 'models/task.dart';
 import 'models/transformation_journey_uploads.dart';
-import 'ui/screens/courses/segment_clocks.dart';
 
 enum RouteEnum {
   root,
@@ -214,6 +210,7 @@ class Routes {
   final AuthBloc _authBloc = AuthBloc();
   final ProfileBloc _profileBloc = ProfileBloc();
   final CourseBloc _courseBloc = CourseBloc();
+  final CourseHomeBloc _courseHomeBloc = CourseHomeBloc();
   final TagBloc _tagBloc = TagBloc();
   final FriendBloc _friendBloc = FriendBloc();
   final ConfirmFriendBloc _confirmFriendBloc = ConfirmFriendBloc();
@@ -245,6 +242,11 @@ class Routes {
   final UserStatisticsBloc _userStatisticsBloc = UserStatisticsBloc();
   final CourseEnrollmentUpdateBloc _courseEnrollmentUpdateBloc = CourseEnrollmentUpdateBloc();
   final UserListBloc _userListBloc = UserListBloc();
+  final CoachAssignmentBloc _coachAssignmentBloc = CoachAssignmentBloc();
+  final CoachProfileBloc _coachProfileBloc = CoachProfileBloc();
+  final CoachSentVideosBloc _coachSentVideosBloc = CoachSentVideosBloc();
+  final CoachMentoredVideosBloc _coachMentoredVideosBloc = CoachMentoredVideosBloc();
+  final CoachTimelineItemsBloc _coachTimelineItemsBloc = CoachTimelineItemsBloc();
   final ChatBloc _chatBloc = ChatBloc();
   final MessageBloc _messageBloc = MessageBloc();
   final HiFiveReceivedBloc _hiFiveReceivedBloc = HiFiveReceivedBloc();
@@ -266,6 +268,7 @@ class Routes {
           BlocProvider<HiFiveReceivedBloc>.value(
             value: _hiFiveReceivedBloc,
           ),
+          BlocProvider<CourseHomeBloc>.value(value: _courseHomeBloc),
           BlocProvider<CourseBloc>.value(value: _courseBloc),
           BlocProvider<ClassBloc>.value(value: _classBloc),
           BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
@@ -284,7 +287,15 @@ class Routes {
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
           BlocProvider<UserListBloc>.value(value: _userListBloc),
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
+          BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
+          BlocProvider<CoachProfileBloc>.value(value: _coachProfileBloc),
+          BlocProvider<CoachSentVideosBloc>.value(value: _coachSentVideosBloc),
+          BlocProvider<CoachMentoredVideosBloc>.value(value: _coachMentoredVideosBloc),
+          BlocProvider<CoachTimelineItemsBloc>.value(value: _coachTimelineItemsBloc),
           BlocProvider<HiFiveBloc>.value(value: _hiFiveBloc),
+          BlocProvider<HiFiveSendBloc>.value(
+            value: _hiFiveSendBloc,
+          )
         ];
         newRouteView = MainPage();
         break;
@@ -295,7 +306,8 @@ class Routes {
         providers = [BlocProvider<CourseEnrollmentUpdateBloc>.value(value: _courseEnrollmentUpdateBloc)];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = CompletedClass(
-            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment, classIndex: argumentsToAdd['classIndex'] as int);
+            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
+            classIndex: argumentsToAdd['classIndex'] as int);
         break;
       case RouteEnum.signUpWithEmail:
         newRouteView = SignUpWithMailPage();
@@ -417,7 +429,8 @@ class Routes {
         newRouteView = TransformationJourneyPostPage();
         break;
       case RouteEnum.transformationJournetContentDetails:
-        final Map<String, TransformationJourneyUpload> argumentsToAdd = arguments as Map<String, TransformationJourneyUpload>;
+        final Map<String, TransformationJourneyUpload> argumentsToAdd =
+            arguments as Map<String, TransformationJourneyUpload>;
         newRouteView = TransformationJourneyContentDetail(contentToShow: argumentsToAdd['TransformationJourneyUpload']);
         break;
       case RouteEnum.logIn:
@@ -503,7 +516,8 @@ class Routes {
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = InsideClass(
-            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment, classIndex: argumentsToAdd['classIndex'] as int);
+            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
+            classIndex: argumentsToAdd['classIndex'] as int);
         break;
       case RouteEnum.assessmentVideos:
         providers = [
@@ -612,8 +626,13 @@ class Routes {
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
           BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
+          BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
+          BlocProvider<CoachProfileBloc>.value(value: _coachProfileBloc),
+          BlocProvider<CoachSentVideosBloc>.value(value: _coachSentVideosBloc),
+          BlocProvider<CoachMentoredVideosBloc>.value(value: _coachMentoredVideosBloc),
+          BlocProvider<CoachTimelineItemsBloc>.value(value: _coachTimelineItemsBloc),
         ];
-        newRouteView = CoachAssignedCountDown();
+        newRouteView = CoachMainPage();
         break;
       case RouteEnum.coach2:
         providers = [
@@ -625,16 +644,27 @@ class Routes {
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
           BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
+          BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
+          BlocProvider<CoachProfileBloc>.value(value: _coachProfileBloc),
+          BlocProvider<CoachSentVideosBloc>.value(value: _coachSentVideosBloc),
+          BlocProvider<CoachMentoredVideosBloc>.value(value: _coachMentoredVideosBloc),
+          BlocProvider<CoachTimelineItemsBloc>.value(value: _coachTimelineItemsBloc),
         ];
         newRouteView = CoachPage();
         break;
       case RouteEnum.sentVideos:
-        final Map<String, List<TaskSubmission>> argumentsToAdd = arguments as Map<String, List<TaskSubmission>>;
-        newRouteView = SentVideosPage(taskSubmissions: argumentsToAdd['taskSubmissions']);
+        providers = [
+          BlocProvider<CoachSentVideosBloc>.value(value: _coachSentVideosBloc),
+        ];
+        final Map<String, List<SegmentSubmission>> argumentsToAdd = arguments as Map<String, List<SegmentSubmission>>;
+        newRouteView = SentVideosPage(segmentSubmissions: argumentsToAdd['sentVideosContent']);
         break;
       case RouteEnum.mentoredVideos:
-        final Map<String, List<TaskSubmission>> argumentsToAdd = arguments as Map<String, List<TaskSubmission>>;
-        newRouteView = MentoredVideosPage(taskSubmissions: argumentsToAdd['taskSubmissions']);
+        providers = [
+          BlocProvider<CoachMentoredVideosBloc>.value(value: _coachMentoredVideosBloc),
+        ];
+        final Map<String, List<Annotation>> argumentsToAdd = arguments as Map<String, List<Annotation>>;
+        newRouteView = MentoredVideosPage(coachAnnotation: argumentsToAdd['coachAnnotation']);
         break;
       case RouteEnum.coachShowVideo:
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;

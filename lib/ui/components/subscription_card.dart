@@ -64,7 +64,7 @@ class _State extends State<SubscriptionCard> {
                           child: Column(children: [
                             Row(
                               children: [
-                                Text(OlukoLocalizations.of(context).find('errorGettingCurrentPlan'),
+                                Text(OlukoLocalizations.get(context, 'errorGettingCurrentPlan'),
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 18,

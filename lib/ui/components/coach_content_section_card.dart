@@ -43,7 +43,7 @@ class _CoachContentSectionCardState extends State<CoachContentSectionCard> {
                       height: 100,
                       child: Center(
                         child: Text(
-                          OlukoLocalizations.of(context).find('noContent'),
+                          OlukoLocalizations.get(context, 'noContent'),
                           style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
                         ),
                       ),
@@ -59,7 +59,7 @@ class _CoachContentSectionCardState extends State<CoachContentSectionCard> {
                           height: 150,
                           child: Center(
                             child: Text(
-                              OlukoLocalizations.of(context).find('noContent'),
+                              OlukoLocalizations.get(context, 'noContent'),
                               style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
                             ),
                           ),

@@ -4,6 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:oluko_app/models/segment.dart';
+import 'package:oluko_app/models/submodels/enrollment_section.dart';
+import 'package:oluko_app/models/submodels/section_submodel.dart';
 import 'package:path/path.dart' as p;
 import 'package:oluko_app/helpers/s3_provider.dart';
 import 'package:oluko_app/models/challenge.dart';
@@ -76,6 +79,7 @@ class CourseEnrollmentRepository {
       courseEnrollment.completion = courseProgress;
     }
     reference.update({'classes': List<dynamic>.from(classes.map((c) => c.toJson())), 'completion': courseEnrollment.completion});
+    return reference.get() as Future<CourseEnrollment>;
   }
 
   static Future<CourseEnrollment> create(User user, Course course) async {
@@ -84,10 +88,19 @@ class CourseEnrollmentRepository {
     final CollectionReference reference = projectReference.collection('courseEnrollments');
     final DocumentReference courseReference = projectReference.collection('courses').doc(course.id);
     final DocumentReference docRef = reference.doc();
-    final DocumentReference userReference = projectReference.collection('users').doc(user.uid);
-    final ObjectSubmodel courseSubmodel = ObjectSubmodel(id: course.id, reference: courseReference, name: course.name, image: course.image);
-    CourseEnrollment courseEnrollment =
-        CourseEnrollment(createdBy: user.uid, userReference: userReference, course: courseSubmodel, classes: []);
+    final DocumentReference userReference =
+        projectReference.collection('users').doc(user.uid);
+    final ObjectSubmodel courseSubmodel = ObjectSubmodel(
+        id: course.id,
+        reference: courseReference,
+        name: course.name,
+        image: course.image);
+    CourseEnrollment courseEnrollment = CourseEnrollment(
+        createdBy: user.uid,
+        userId: user.uid,
+        userReference: userReference,
+        course: courseSubmodel,
+        classes: []);
     courseEnrollment.id = docRef.id;
     courseEnrollment = await setEnrollmentClasses(course, courseEnrollment);
     docRef.set(courseEnrollment.toJson());
@@ -108,9 +121,26 @@ class CourseEnrollmentRepository {
     final DocumentSnapshot qs = await enrollmentClass.reference.get();
     final Class classObj = Class.fromJson(qs.data() as Map<String, dynamic>);
     classObj.segments.forEach((SegmentSubmodel segment) {
-      enrollmentClass.segments.add(EnrollmentSegment(id: segment.id, name: segment.name, reference: segment.reference));
+      enrollmentClass.segments.add(
+          EnrollmentSegment(id: segment.id, name: segment.name, reference: segment.reference, sections: getEnrollmentSections(segment)));
     });
     return enrollmentClass;
+  }
+
+  static List<EnrollmentSection> getEnrollmentSections(SegmentSubmodel segment) {
+    final List<EnrollmentSection> sections = [];
+    for (final section in segment.sections) {
+      sections.add(EnrollmentSection(movements: getEnrollmentMovements(section)));
+    }
+    return sections;
+  }
+
+  static List<EnrollmentMovement> getEnrollmentMovements(SectionSubmodel section) {
+    final List<EnrollmentMovement> movements = [];
+    for (final movement in section.movements) {
+      movements.add(EnrollmentMovement(id: movement.id, reference: movement.reference, name: movement.name));
+    }
+    return movements;
   }
 
   static Future<List<CourseEnrollment>> getUserCourseEnrollments(String userId) async {
@@ -181,24 +211,27 @@ class CourseEnrollmentRepository {
     }
   }
 
-  static Future<CourseEnrollment> saveMovementCounter(
-      CourseEnrollment courseEnrollment, int segmentIndex, int classIndex, MovementSubmodel movement, Counter counter) async {
+  static Future<void> saveMovementCounter(CourseEnrollment courseEnrollment, int segmentIndex, int classIndex, int sectionIndex,
+      MovementSubmodel movement, int totalRounds, int currentRound, int counter) async {
     final DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
         .collection('courseEnrollments')
         .doc(courseEnrollment.id);
 
-    final EnrollmentMovement enrollmentMovement =
-        EnrollmentMovement(id: movement.id, reference: movement.reference, name: movement.name, counter: counter);
     final List<EnrollmentClass> classes = courseEnrollment.classes;
-    final List<EnrollmentMovement> movements = classes[classIndex].segments[segmentIndex].movements;
 
-    if (movements == null || counter.round == 1) {
-      classes[classIndex].segments[segmentIndex].movements = [];
+    final List<EnrollmentMovement> movements = classes[classIndex].segments[segmentIndex].sections[sectionIndex].movements;
+
+    for (var mov in movements) {
+      if (mov.id == movement.id) {
+        if (mov.counters == null) {
+          mov.counters = List<int>.filled(totalRounds, 0);
+        }
+        mov.counters[currentRound] = counter;
+        break;
+      }
     }
-
-    classes[classIndex].segments[segmentIndex].movements.add(enrollmentMovement);
 
     reference.update({'classes': List<dynamic>.from(classes.map((c) => c.toJson()))});
   }

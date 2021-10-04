@@ -28,14 +28,11 @@ class HiFiveReceivedBloc extends Cubit<HiFiveReceivedState> {
 
   void get(BuildContext context, String userId, String targetUserId) async {
     try {
-      List<Message> messages =
-          await ChatRepository().getMessages(userId, targetUserId);
+      List<Message> messages = await ChatRepository().getMessages(userId, targetUserId);
 
       bool hiFive = false;
       if (messages.isNotEmpty) {
-        messages[0].message == Message().hifiveMessageCode
-            ? hiFive = true
-            : hiFive = false;
+        messages.last.message == Message().hifiveMessageCode && messages.last.createdBy == userId ? hiFive = true : hiFive = false;
       }
       emit(HiFiveReceivedSuccess(hiFive: hiFive));
     } catch (exception, stackTrace) {
