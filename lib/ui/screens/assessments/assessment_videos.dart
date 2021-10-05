@@ -82,8 +82,8 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
         key: _formKey,
         child: Scaffold(
             appBar: OlukoAppBar(
-              title: OlukoLocalizations.of(context).find('assessment'),
-              actions: [skipButton()],
+              title: OlukoLocalizations.get(context, 'assessment'),
+              //TODO: show only for onboarding actions: [skipButton()],
             ),
             body: Container(
                 color: Colors.black,
@@ -120,9 +120,10 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                                       }
                                     }
                                     if (completedTask == enabledTask && _assessmentAssignment.compleatedAt == null) {
-                                      BlocProvider.of<TaskSubmissionBloc>(context)
-                                          .setCompleted(_assessmentAssignment.id)
-                                          .then((value) => {_assessmentAssignment.compleatedAt = value, BlocProvider.of<AssessmentAssignmentBloc>(context).getOrCreate(_user.id, _assessment)});
+                                      BlocProvider.of<TaskSubmissionBloc>(context).setCompleted(_assessmentAssignment.id).then((value) => {
+                                            _assessmentAssignment.compleatedAt = value,
+                                            BlocProvider.of<AssessmentAssignmentBloc>(context).getOrCreate(_user.id, _assessment)
+                                          });
                                     } else if (completedTask != enabledTask && _assessmentAssignment.compleatedAt != null) {
                                       BlocProvider.of<TaskSubmissionBloc>(context).setIncompleted(_assessmentAssignment.id);
                                       _assessmentAssignment.compleatedAt = null;
@@ -138,7 +139,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                                 if (assessmentAssignmentState.assessmentAssignment.compleatedAt != null)
                                   Row(children: [
                                     OlukoPrimaryButton(
-                                      title: OlukoLocalizations.of(context).find('done'),
+                                      title: OlukoLocalizations.get(context, 'done'),
                                       onPressed: () {
                                         DialogUtils.getDialog(context, _confirmDialogContent(), showExitButton: false);
                                       },
@@ -175,8 +176,12 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
 
     return ConstrainedBox(
         constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).orientation == Orientation.portrait ? ScreenUtils.height(context) / 4 : ScreenUtils.height(context) / 1.5,
-            minHeight: MediaQuery.of(context).orientation == Orientation.portrait ? ScreenUtils.height(context) / 4 : ScreenUtils.height(context) / 1.5),
+            maxHeight: MediaQuery.of(context).orientation == Orientation.portrait
+                ? ScreenUtils.height(context) / 4
+                : ScreenUtils.height(context) / 1.5,
+            minHeight: MediaQuery.of(context).orientation == Orientation.portrait
+                ? ScreenUtils.height(context) / 4
+                : ScreenUtils.height(context) / 1.5),
         child: Container(height: 400, child: Stack(children: widgets)));
   }
 
@@ -204,7 +209,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                             _controller.pause();
                           }
                           if (OlukoPermissions.isAssessmentTaskDisabled(_user, index)) {
-                            AppMessages.showSnackbar(context, OlukoLocalizations.of(context).find('yourCurrentPlanDoesntIncludeAssessment'));
+                            AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'yourCurrentPlanDoesntIncludeAssessment'));
                           } else {
                             return Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {'taskIndex': index});
                           }
@@ -236,7 +241,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
             child: Padding(
                 padding: const EdgeInsets.only(right: 8),
                 child: Text(
-                  OlukoLocalizations.of(context).find('skip'),
+                  OlukoLocalizations.get(context, 'skip'),
                   style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
                 ))));
   }
@@ -259,15 +264,15 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
             Padding(
                 padding: const EdgeInsets.only(top: 20.0, bottom: 15.0),
                 child: Text(
-                  OlukoLocalizations.of(context).find('done!'),
+                  OlukoLocalizations.get(context, 'done!'),
                   style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold),
                 )),
             Text(
-              OlukoLocalizations.of(context).find('assessmentMessagePart1'),
+              OlukoLocalizations.get(context, 'assessmentMessagePart1'),
               style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
             ),
             Text(
-              OlukoLocalizations.of(context).find('assessmentMessagePart2'),
+              OlukoLocalizations.get(context, 'assessmentMessagePart2'),
               style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
             ),
             Padding(
@@ -275,7 +280,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                 child: Row(
                   children: [
                     OlukoPrimaryButton(
-                      title: OlukoLocalizations.of(context).find('goBack'),
+                      title: OlukoLocalizations.get(context, 'goBack'),
                       thinPadding: true,
                       onPressed: () {
                         Navigator.pop(context);
@@ -283,7 +288,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                     ),
                     const SizedBox(width: 20),
                     OlukoOutlinedButton(
-                      title: OlukoLocalizations.of(context).find('ok'),
+                      title: OlukoLocalizations.get(context, 'ok'),
                       onPressed: () {
                         if (_controller != null) {
                           _controller.pause();

@@ -8,8 +8,7 @@ class SegmentStepSection extends StatefulWidget {
   final int currentSegmentStep;
   final Function() onPressed;
 
-  SegmentStepSection(
-      {this.totalSegmentStep, this.currentSegmentStep, this.onPressed});
+  SegmentStepSection({this.totalSegmentStep, this.currentSegmentStep, this.onPressed});
 
   @override
   _State createState() => _State();
@@ -29,16 +28,15 @@ class _State extends State<SegmentStepSection> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  '${OlukoLocalizations.of(context).find('segment')} $currentSegmentStep/$totalSegmentStep',
+                  '${OlukoLocalizations.get(context, 'segment')} $currentSegmentStep/$totalSegmentStep',
                   style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400),
                 )
               ],
             ),
-             Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: getStepCircles(),
-              ),
-            
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: getStepCircles(),
+            ),
           ],
         ),
       ),
@@ -49,8 +47,7 @@ class _State extends State<SegmentStepSection> {
     List<Widget> circles = [];
     for (var i = 1; i <= widget.totalSegmentStep; i++) {
       circles.add(Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 10),
-              child:createCircleIcon(i == widget.currentSegmentStep)));
+          padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 10), child: createCircleIcon(i == widget.currentSegmentStep)));
     }
     return circles;
   }

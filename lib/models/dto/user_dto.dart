@@ -3,8 +3,8 @@ import 'package:oluko_app/models/user_response.dart';
 
 class UserDto {
   UserDto.fromUserResponse(UserResponse userReponse) {
-    createdAt = userReponse.createdAt?.seconds;
-    updatedAt = userReponse.updatedAt?.seconds;
+    createdAt = userReponse.createdAt?.millisecondsSinceEpoch;
+    updatedAt = userReponse.updatedAt?.millisecondsSinceEpoch;
     firstName = userReponse.firstName;
     lastName = userReponse.lastName;
     email = userReponse.email;
@@ -73,27 +73,27 @@ class UserDto {
 
   factory UserDto.fromJson(Map<String, dynamic> json) {
     UserDto userDto = UserDto(
-      firstName: json['first_name'].toString(),
-      lastName: json['last_name'].toString(),
-      email: json['email'].toString(),
-      username: json['username'].toString(),
-      avatar: json['avatar'].toString(),
-      avatarThumbnail: json['avatar_thumbnail'].toString(),
-      coverImage: json['cover_image'].toString(),
-      city: json['city'].toString(),
-      state: json['state'].toString(),
-      country: json['country'].toString(),
-      firebaseId: json['firebase_id'].toString(),
+      firstName: json['first_name']?.toString(),
+      lastName: json['last_name']?.toString(),
+      email: json['email']?.toString(),
+      username: json['username']?.toString(),
+      avatar: json['avatar']?.toString(),
+      avatarThumbnail: json['avatar_thumbnail']?.toString(),
+      coverImage: json['cover_image']?.toString(),
+      city: json['city']?.toString(),
+      state: json['state']?.toString(),
+      country: json['country']?.toString(),
+      firebaseId: json['firebase_id']?.toString(),
       hubspotCompanyId: json['hubspot_company_id'] as num,
       hubspotContactId: json['hubspot_contact_id'] as num,
       notification: json['notification'] == null ? true : json['notification'] as bool,
       privacy: json['privacy'] == null ? 0 : json['privacy'] as int,
-      currentPlan: json['current_plan'] == null ? 0 : double.tryParse((json['current_plan'] as num).toString()),
-      id: json['id'].toString(),
+      currentPlan: json['current_plan'] == null ? 0 : double.tryParse((json['current_plan'] as num)?.toString()),
+      id: json['id']?.toString(),
       createdAt: json['created_at'] as Timestamp,
-      createdBy: json['created_by'].toString(),
+      createdBy: json['created_by']?.toString(),
       updatedAt: json['updated_at'] as Timestamp,
-      updatedBy: json['updated_by'].toString(),
+      updatedBy: json['updated_by']?.toString(),
       isDeleted: json['is_deleted'] as bool,
       isHidden: json['is_hidden'] as bool,
     );
@@ -119,6 +119,7 @@ class UserDto {
       'privacy': privacy ?? 0,
       'current_plan': currentPlan,
       'updated_by': updatedBy,
+      'created_at': createdAt,
       'created_by': createdBy,
       'id': id,
       'is_deleted': isDeleted,

@@ -107,9 +107,7 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
   void getTaskSubmissionByUserId(String userId) async {
     try {
       List<TaskSubmission> taskSubmissions = await TaskSubmissionRepository.getTaskSubmissionsByUserId(userId);
-      if (taskSubmissions.length != 0) {
-        emit(GetUserTaskSubmissionSuccess(taskSubmissions: taskSubmissions));
-      }
+      emit(GetUserTaskSubmissionSuccess(taskSubmissions: taskSubmissions));
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,
@@ -150,6 +148,7 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
         rethrow;
       }
     }
+    return null;
   }
 
   void setIncompleted(String assessmentAssignmentId) async {

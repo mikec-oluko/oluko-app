@@ -9,8 +9,9 @@ class ProfileOptions {
     ProfileOptions(option: ProfileOptionsTitle.myAccount),
     ProfileOptions(option: ProfileOptionsTitle.assessmentVideos),
     ProfileOptions(option: ProfileOptionsTitle.transformationJourney),
-    ProfileOptions(option: ProfileOptionsTitle.subscription, enable: false),
+    // ProfileOptions(option: ProfileOptionsTitle.subscription, enable: false),
     ProfileOptions(option: ProfileOptionsTitle.settings),
     ProfileOptions(option: ProfileOptionsTitle.helpAndSupport),
+    ProfileOptions(option: ProfileOptionsTitle.logout)
   ];
 }

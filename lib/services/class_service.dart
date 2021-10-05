@@ -5,13 +5,15 @@ import 'package:oluko_app/models/submodels/section_submodel.dart';
 import 'package:oluko_app/models/submodels/segment_submodel.dart';
 
 class ClassService {
-  static List<Movement> getClassSegmentMovements(
-      List<SectionSubmodel> sections, List<Movement> allMovements) {
+  static List<Movement> getClassSegmentMovements(List<SectionSubmodel> sections, List<Movement> allMovements) {
     List<String> movementIds = [];
     List<Movement> movements = [];
+    if (sections == null) {
+      return movements;
+    }
     for (SectionSubmodel section in sections) {
       for (MovementSubmodel movement in section.movements) {
-        if (movement.name != 'Rest') {
+        if (!movement.isRestTime) {
           movementIds.add(movement.id);
         }
       }
@@ -21,17 +23,17 @@ class ClassService {
         movements.add(movement);
       }
     });
+
     return movements;
   }
 
-  static List<Movement> getClassMovements(
-      Class classObj, List<Movement> allMovements) {
+  static List<Movement> getClassMovements(Class classObj, List<Movement> allMovements) {
     List<Movement> movements = [];
     List<String> movementIds = [];
     for (SegmentSubmodel segment in classObj.segments) {
       for (SectionSubmodel section in segment.sections) {
         for (MovementSubmodel movement in section.movements) {
-          if (movement.name != 'Rest') {
+          if (!movement.isRestTime) {
             movementIds.add(movement.id);
           }
         }

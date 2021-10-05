@@ -38,9 +38,7 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
               Icons.camera_alt_outlined,
               color: Colors.white,
             ),
-            title: Text(OlukoLocalizations.of(context).find('camera'),
-                style:
-                    OlukoFonts.olukoSmallFont(customColor: OlukoColors.white)),
+            title: Text(OlukoLocalizations.get(context, 'camera'), style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.white)),
           ),
           ListTile(
             onTap: () {
@@ -50,9 +48,7 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
               Icons.image,
               color: Colors.white,
             ),
-            title: Text(OlukoLocalizations.of(context).find('fromGallery'),
-                style:
-                    OlukoFonts.olukoSmallFont(customColor: OlukoColors.white)),
+            title: Text(OlukoLocalizations.get(context, 'fromGallery'), style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.white)),
           ),
         ],
       ),
@@ -62,8 +58,7 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
   void uploadContentFromCamera(BuildContext context) {
     switch (widget.contentFrom) {
       case UploadFrom.profileImage:
-        BlocProvider.of<ProfileAvatarBloc>(context)
-          ..uploadProfileAvatarImage(uploadedFrom: DeviceContentFrom.camera);
+        BlocProvider.of<ProfileAvatarBloc>(context)..uploadProfileAvatarImage(uploadedFrom: DeviceContentFrom.camera);
         break;
       case UploadFrom.profileCoverImage:
         BlocProvider.of<ProfileCoverImageBloc>(context)
@@ -73,9 +68,7 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
         break;
       case UploadFrom.transformationJourney:
         BlocProvider.of<TransformationJourneyContentBloc>(context)
-          ..uploadTransformationJourneyContent(
-              uploadedFrom: DeviceContentFrom.camera,
-              indexForContent: widget.indexValue);
+          ..uploadTransformationJourneyContent(uploadedFrom: DeviceContentFrom.camera, indexForContent: widget.indexValue);
         break;
       default:
     }
@@ -84,8 +77,7 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
   void uploadContentFromGallery(BuildContext context) {
     switch (widget.contentFrom) {
       case UploadFrom.profileImage:
-        BlocProvider.of<ProfileAvatarBloc>(context)
-          ..uploadProfileAvatarImage(uploadedFrom: DeviceContentFrom.gallery);
+        BlocProvider.of<ProfileAvatarBloc>(context)..uploadProfileAvatarImage(uploadedFrom: DeviceContentFrom.gallery);
         break;
       case UploadFrom.profileCoverImage:
         BlocProvider.of<ProfileCoverImageBloc>(context)
@@ -95,9 +87,7 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
         break;
       case UploadFrom.transformationJourney:
         BlocProvider.of<TransformationJourneyContentBloc>(context)
-          ..uploadTransformationJourneyContent(
-              uploadedFrom: DeviceContentFrom.gallery,
-              indexForContent: widget.indexValue);
+          ..uploadTransformationJourneyContent(uploadedFrom: DeviceContentFrom.gallery, indexForContent: widget.indexValue);
         break;
       default:
         return;

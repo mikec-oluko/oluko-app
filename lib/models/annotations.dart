@@ -2,28 +2,31 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oluko_app/models/base.dart';
 import 'package:oluko_app/models/submodels/video.dart';
 import 'package:oluko_app/models/submodels/video_state.dart';
+import 'enums/annotation_status.dart';
 
-class MovementSubmission extends Base {
-  String userId;
-  DocumentReference userReference;
-  String movementId;
-  DocumentReference movementReference;
-  Timestamp seenAt;
-  Video video;
-  VideoState videoState;
+class Annotation extends Base {
   String segmentSubmissionId;
   DocumentReference segmentSubmissionReference;
+  String userId;
+  DocumentReference userReference;
+  String coachId;
+  DocumentReference coachReference;
+  Video video;
+  VideoState videoState;
+  AnnotationStatusEnum status;
+  bool favorite;
 
-  MovementSubmission(
-      {this.userId,
+  Annotation(
+      {this.segmentSubmissionId,
+      this.segmentSubmissionReference,
+      this.userId,
       this.userReference,
-      this.movementId,
-      this.movementReference,
-      this.seenAt,
+      this.coachId,
+      this.coachReference,
       this.video,
       this.videoState,
-      this.segmentSubmissionId,
-      this.segmentSubmissionReference,
+      this.status,
+      this.favorite,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -40,34 +43,34 @@ class MovementSubmission extends Base {
             isDeleted: isDeleted,
             isHidden: isHidden);
 
-  factory MovementSubmission.fromJson(Map<String, dynamic> json) {
-    MovementSubmission movementSubmission = MovementSubmission(
+  factory Annotation.fromJson(Map<String, dynamic> json) {
+    Annotation annotation = Annotation(
         userId: json['user_id'].toString(),
         userReference: json['user_reference'] as DocumentReference,
-        segmentSubmissionId: json['segment_submission_id'].toString(),
-        segmentSubmissionReference: json['segment_submission_reference'] as DocumentReference,
-        movementId: json['movement_id'].toString(),
-        movementReference: json['movement_reference'] as DocumentReference,
+        coachId: json['coach_id'].toString(),
+        coachReference: json['coach_reference'] as DocumentReference,
+        status: AnnotationStatusEnum.values[json['status'] as int],
+        favorite: json['favorite'] == null ? false : json['favorite'] as bool,
         video: json['video'] == null ? null : Video.fromJson(json['video'] as Map<String, dynamic>),
         videoState:
             json['video_state'] == null ? null : VideoState.fromJson(json['video_state'] as Map<String, dynamic>));
-    movementSubmission.setBase(json);
-    return movementSubmission;
+
+    annotation.setBase(json);
+    return annotation;
   }
 
   Map<String, dynamic> toJson() {
-    Map<String, dynamic> movementSubmissionJson = {
+    Map<String, dynamic> annotation = {
       'user_id': userId,
       'user_reference': userReference,
-      'segment_submission_id': segmentSubmissionId,
-      'segment_submission_reference': segmentSubmissionReference,
-      'movement_id': movementId,
-      'movement_reference': movementReference,
-      'seen_at': seenAt,
+      'coach_id': coachId,
+      'coach_reference': coachReference,
+      'status': status.index,
+      'favorite': favorite ?? false,
       'video': video == null ? null : video.toJson(),
       'video_state': videoState == null ? null : videoState.toJson()
     };
-    movementSubmissionJson.addEntries(super.toJson().entries);
-    return movementSubmissionJson;
+    annotation.addEntries(super.toJson().entries);
+    return annotation;
   }
 }

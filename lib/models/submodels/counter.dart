@@ -6,8 +6,8 @@ class Counter {
 
   factory Counter.fromJson(Map<String, dynamic> json) {
     return Counter(
-      round: int.tryParse(json['round'].toString()),
-      counter: int.tryParse(json['counter'].toString()),
+      round: int.tryParse(json['round']?.toString()),
+      counter: int.tryParse(json['counter']?.toString()),
     );
   }
 

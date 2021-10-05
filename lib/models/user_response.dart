@@ -44,22 +44,22 @@ class UserResponse extends Base {
 
   factory UserResponse.fromJson(Map<String, dynamic> json) {
     UserResponse userResponse = UserResponse(
-      firstName: json['first_name'].toString(),
-      lastName: json['last_name'].toString(),
-      email: json['email'].toString(),
-      username: json['username'].toString(),
-      avatar: json['avatar'].toString(),
-      avatarThumbnail: json['avatar_thumbnail'].toString(),
-      coverImage: json['cover_image'].toString(),
-      city: json['city'].toString(),
-      state: json['state'].toString(),
-      country: json['country'].toString(),
-      firebaseId: json['firebase_id'].toString(),
+      firstName: json['first_name']?.toString(),
+      lastName: json['last_name']?.toString(),
+      email: json['email']?.toString(),
+      username: json['username']?.toString(),
+      avatar: json['avatar']?.toString(),
+      avatarThumbnail: json['avatar_thumbnail']?.toString(),
+      coverImage: json['cover_image']?.toString(),
+      city: json['city']?.toString(),
+      state: json['state']?.toString(),
+      country: json['country']?.toString(),
+      firebaseId: json['firebase_id']?.toString(),
       hubspotCompanyId: json['hubspot_company_id'] as num,
       hubspotContactId: json['hubspot_contact_id'] as num,
       notification: json['notification'] == null ? true : json['notification'] as bool,
       privacy: json['privacy'] == null ? 0 : json['privacy'] as int,
-      currentPlan: json['current_plan'] == null ? -100 : double.tryParse((json['current_plan'] as num).toString()),
+      currentPlan: json['current_plan'] == null ? -100 : double.tryParse((json['current_plan'] as num)?.toString()),
     );
     userResponse.setBase(json);
     return userResponse;

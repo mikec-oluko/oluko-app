@@ -25,6 +25,7 @@ class FavoriteFriendBloc extends Cubit<FavoriteFriendState> {
 
   void favoriteFriend(BuildContext context, Friend friend, FriendModel friendModel) async {
     try {
+      friendModel.isFavorite = friendModel.isFavorite == null ? true : !friendModel.isFavorite;
       FriendModel updatedFriendModel = await FriendRepository.markFriendAsFavorite(friend, friendModel);
       emit(FavoriteFriendSuccess(friendModel: updatedFriendModel));
     } catch (exception, stackTrace) {

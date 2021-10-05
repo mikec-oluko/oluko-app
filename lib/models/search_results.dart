@@ -8,7 +8,7 @@ class SearchResults<T> {
   SearchResults.fromJson(Map json)
       : suggestedItems = json['suggested_items'] as List<T>,
         searchResults = json['search_results'] as List<T>,
-        query = json['query'].toString();
+        query = json['query']?.toString();
 
   Map<String, dynamic> toJson() => {
         'suggested_items': suggestedItems,

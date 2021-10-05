@@ -24,7 +24,7 @@ class Chat extends Base {
 
   factory Chat.fromJson(Map<String, dynamic> json) {
     Chat chatJson = Chat(
-      lastConnected: json['last_connected'].toString(),
+      lastConnected: json['last_connected']?.toString(),
     );
     chatJson.setBase(json);
     return chatJson;

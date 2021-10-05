@@ -1,10 +1,14 @@
+import 'package:badges/badges.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
-import 'package:oluko_app/blocs/course_bloc.dart';
+import 'package:oluko_app/blocs/course/course_bloc.dart';
+import 'package:oluko_app/blocs/course/course_home_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
+import 'package:oluko_app/blocs/views_bloc/hi_five_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
@@ -38,14 +42,14 @@ class _HomeState extends State<Home> {
         return BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(builder: (context, courseEnrollmentListState) {
           if (courseEnrollmentListState is CourseEnrollmentsByUserSuccess) {
             _courseEnrollments = courseEnrollmentListState.courseEnrollments;
-            BlocProvider.of<CourseBloc>(context)..getByCourseEnrollments(_courseEnrollments);
+            BlocProvider.of<CourseHomeBloc>(context)..getByCourseEnrollments(_courseEnrollments);
             return form();
           } else {
-            return SizedBox();
+            return nil;
           }
         });
       } else {
-        return SizedBox();
+        return nil;
       }
     });
   }
@@ -54,7 +58,7 @@ class _HomeState extends State<Home> {
     return Scaffold(
         backgroundColor: Colors.black,
         appBar: OlukoAppBar(
-          title: OlukoLocalizations.of(context).find('home'),
+          title: OlukoLocalizations.get(context, 'home'),
           showLogo: true,
           showBackButton: false,
           actions: [_handWidget()],
@@ -72,7 +76,7 @@ class _HomeState extends State<Home> {
 
   Widget homeContainer() {
     if (_courseEnrollments.length > 0) {
-      return BlocBuilder<CourseBloc, CourseState>(builder: (context, courseState) {
+      return BlocBuilder<CourseHomeBloc, CourseHomeState>(builder: (context, courseState) {
         if (courseState is GetByCourseEnrollmentsSuccess) {
           _courses = courseState.courses;
           if (_courses != null && _courses.length > 0) {
@@ -125,8 +129,10 @@ class _HomeState extends State<Home> {
               scale: 2,
             ),
             SizedBox(height: 70),
-            Text(OlukoLocalizations.of(context).find('enroll'), style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold, customColor: OlukoColors.white)),
-            Text(OlukoLocalizations.of(context).find('toACourse'), style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold, customColor: OlukoColors.white)),
+            Text(OlukoLocalizations.get(context, 'enroll'),
+                style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold, customColor: OlukoColors.white)),
+            Text(OlukoLocalizations.get(context, 'toACourse'),
+                style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold, customColor: OlukoColors.white)),
             SizedBox(height: 10),
             CourseStepSection(totalCourseSteps: 4, currentCourseStep: 4),
             SizedBox(height: 30),
@@ -147,17 +153,24 @@ class _HomeState extends State<Home> {
   }
 
   Widget _handWidget() {
-    return GestureDetector(
-      onTap: () {
-        //TODO: add action here.
-      },
-      child: Padding(
-        padding: const EdgeInsets.only(right: 20.0, top: 5),
-        child: Image.asset(
-          'assets/home/hand.png',
-          scale: 4,
-        ),
-      ),
-    );
+    return BlocBuilder<HiFiveBloc, HiFiveState>(builder: (context, hiFiveState) {
+      return hiFiveState is HiFiveSuccess && hiFiveState.users.isNotEmpty
+          ? GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, routeLabels[RouteEnum.hiFivePage]);
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(right: 20.0, top: 5),
+                child: Badge(
+                    position: BadgePosition(top: 0, start: 10),
+                    badgeContent: Text(hiFiveState.users.length.toString()),
+                    child: Image.asset(
+                      'assets/home/hand.png',
+                      scale: 4,
+                    )),
+              ),
+            )
+          : SizedBox();
+    });
   }
 }

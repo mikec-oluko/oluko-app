@@ -119,12 +119,12 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
                 controlAffinity: ListTileControlAffinity.trailing,
                 selected: _userPrivacyValue == option.option.index,
                 title: Text(
-                  OlukoLocalizations.of(context).find(returnOption(option.title.toString())),
+                  OlukoLocalizations.get(context, returnOption(option.title.toString())),
                   style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
                 ),
                 subtitle: option.showSubtitle
                     ? Text(
-                        OlukoLocalizations.of(context).find(returnOption(option.subtitle.toString())),
+                        OlukoLocalizations.get(context, returnOption(option.subtitle.toString())),
                         style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor),
                       )
                     : SizedBox(),

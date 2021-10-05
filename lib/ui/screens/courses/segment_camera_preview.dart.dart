@@ -143,7 +143,7 @@ class _State extends State<SegmentCameraPreview> {
               getArguments(),
               widget.segments[widget.segmentIndex].initialTimer,
               widget.segments[widget.segmentIndex].rounds,
-              1);
+              0);
         },
         child: Stack(alignment: Alignment.center, children: [
           Image.asset(

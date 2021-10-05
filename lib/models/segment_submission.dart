@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oluko_app/models/base.dart';
-import 'package:oluko_app/models/submodels/object_submodel.dart';
+import 'package:oluko_app/models/enums/segment_submission_status_enum.dart';
+import 'package:oluko_app/models/submodels/video.dart';
+import 'package:oluko_app/models/submodels/video_state.dart';
 
 class SegmentSubmission extends Base {
   String segmentId;
@@ -12,7 +14,10 @@ class SegmentSubmission extends Base {
   String coachId;
   DocumentReference coachReference;
   Timestamp seenAt;
-  List<ObjectSubmodel> movementSubmissions;
+  Video video;
+  VideoState videoState;
+  SegmentSubmissionStatusEnum status;
+  bool favorite;
 
   SegmentSubmission(
       {this.segmentId,
@@ -23,8 +28,11 @@ class SegmentSubmission extends Base {
       this.coachReference,
       this.courseEnrollmentId,
       this.courseEnrollmentReference,
-      this.movementSubmissions,
+      this.video,
+      this.videoState,
       this.seenAt,
+      this.status,
+      this.favorite,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -43,19 +51,21 @@ class SegmentSubmission extends Base {
 
   factory SegmentSubmission.fromJson(Map<String, dynamic> json) {
     SegmentSubmission segmentSubmission = SegmentSubmission(
-        userId: json['user_id'].toString(),
+        userId: json['user_id']?.toString(),
         userReference: json['user_reference'] as DocumentReference,
-        segmentId: json['segment_id'].toString(),
+        segmentId: json['segment_id']?.toString(),
         segmentReference: json['segment_reference'] as DocumentReference,
-        coachId: json['coach_id'].toString(),
+        coachId: json['coach_id']?.toString(),
         coachReference: json['coach_reference'] as DocumentReference,
-        courseEnrollmentId: json['course_enrollment_id'].toString(),
+        courseEnrollmentId: json['course_enrollment_id']?.toString(),
+        status: SegmentSubmissionStatusEnum.values[json['status'] as int],
         courseEnrollmentReference: json['course_enrollment_reference'] as DocumentReference,
         seenAt: json['seen_at'] as Timestamp,
-        movementSubmissions: json['movement_submissions'] == null
-            ? null
-            : List<ObjectSubmodel>.from((json['movement_submissions'] as Iterable)
-                .map((movement) => ObjectSubmodel.fromJson(movement as Map<String, dynamic>))));
+        favorite: json['favorite'] == null ? false : json['favorite'] as bool,
+        video: json['video'] == null ? null : Video.fromJson(json['video'] as Map<String, dynamic>),
+        videoState:
+            json['video_state'] == null ? null : VideoState.fromJson(json['video_state'] as Map<String, dynamic>));
+
     segmentSubmission.setBase(json);
     return segmentSubmission;
   }
@@ -71,9 +81,10 @@ class SegmentSubmission extends Base {
       'course_enrollment_id': courseEnrollmentId,
       'course_enrollment_reference': courseEnrollmentReference,
       'seen_at': seenAt,
-      'movement_submissions': movementSubmissions == null
-          ? null
-          : List<dynamic>.from(movementSubmissions.map((movement) => movement.toJson()))
+      'status': status.index,
+      'favorite': favorite ?? false,
+      'video': video == null ? null : video.toJson(),
+      'video_state': videoState == null ? null : videoState.toJson()
     };
     segmentSubmissionJson.addEntries(super.toJson().entries);
     return segmentSubmissionJson;

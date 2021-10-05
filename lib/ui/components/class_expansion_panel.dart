@@ -69,7 +69,7 @@ class _State extends State<ClassExpansionPanel> {
         : Center(
             child: Padding(
               padding: EdgeInsets.only(top: 10),
-              child: TitleBody(OlukoLocalizations.of(context).find("noClasses")),
+              child: TitleBody(OlukoLocalizations.get(context, "noClasses")),
             ),
           );
   }
