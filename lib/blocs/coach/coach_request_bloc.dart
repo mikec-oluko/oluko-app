@@ -45,9 +45,7 @@ class CoachRequestBloc extends Cubit<CoachRequestState> {
 
   void getBySegment(
       String userId, String segmentId, String courseEnrollmentId) async {
-    if (!(state is CoachRequestSuccess)) {
-      emit(CoachRequestLoading());
-    }
+    emit(CoachRequestLoading());
     try {
       CoachRequest coachRequest = await CoachRequestRepository()
           .getBySegment(userId, segmentId, courseEnrollmentId);

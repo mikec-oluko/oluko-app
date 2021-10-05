@@ -23,9 +23,7 @@ class CoachUserBloc extends Cubit<CoachUserState> {
   CoachUserBloc() : super(CoachUserLoading());
 
   void get(String userId) async {
-    if (!(state is CoachUserSuccess)) {
-      emit(CoachUserLoading());
-    }
+    emit(CoachUserLoading());
     try {
       UserResponse coach = await UserRepository().getById(userId);
       emit(CoachUserSuccess(coach: coach));
