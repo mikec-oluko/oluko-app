@@ -322,7 +322,8 @@ class _FriendsListPageState extends State<FriendsListPage> {
                                         ),
                                         Padding(
                                           padding: const EdgeInsets.only(top: 8.0),
-                                          child: Text('${user.city}, ${user.country}', style: TextStyle(color: Colors.grey, fontSize: 15)),
+                                          child:
+                                              Text('${user.city ?? ''}, ${user.country ?? ''}', style: TextStyle(color: Colors.grey, fontSize: 15)),
                                         )
                                       ],
                                     )
