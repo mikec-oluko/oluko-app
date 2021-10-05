@@ -32,11 +32,13 @@ class _HomeState extends State<Home> {
   User _user;
   List<CourseEnrollment> _courseEnrollments;
   List<Course> _courses;
+  AuthSuccess _authState;
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
+        _authState ??= authState;
         _user = authState.firebaseUser;
         BlocProvider.of<CourseEnrollmentListBloc>(context).getCourseEnrollmentsByUser(_user.uid);
         return BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(builder: (context, courseEnrollmentListState) {
@@ -137,7 +139,7 @@ class _HomeState extends State<Home> {
             CourseStepSection(totalCourseSteps: 4, currentCourseStep: 4),
             SizedBox(height: 30),
             GestureDetector(
-                onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courses]),
+                onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courses], arguments: {'homeEnrollTocourse': 'true'}),
                 child: Stack(alignment: Alignment.center, children: [
                   Image.asset(
                     'assets/home/ellipse.png',
@@ -157,7 +159,8 @@ class _HomeState extends State<Home> {
       return hiFiveState is HiFiveSuccess && hiFiveState.users.isNotEmpty
           ? GestureDetector(
               onTap: () {
-                Navigator.pushNamed(context, routeLabels[RouteEnum.hiFivePage]);
+                Navigator.pushNamed(context, routeLabels[RouteEnum.hiFivePage])
+                    .then((value) => BlocProvider.of<HiFiveBloc>(context).get(_authState.user.id));
               },
               child: Padding(
                 padding: const EdgeInsets.only(right: 20.0, top: 5),

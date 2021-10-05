@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
 import 'package:oluko_app/blocs/course/course_home_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
@@ -263,6 +265,8 @@ class Routes {
   final HiFiveReceivedBloc _hiFiveReceivedBloc = HiFiveReceivedBloc();
   final HiFiveSendBloc _hiFiveSendBloc = HiFiveSendBloc();
   final HiFiveBloc _hiFiveBloc = HiFiveBloc();
+  final CoachRequestBloc _coachRequestBloc = CoachRequestBloc();
+  final CoachUserBloc _coachUserBloc = CoachUserBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -318,8 +322,7 @@ class Routes {
         providers = [BlocProvider<CourseEnrollmentUpdateBloc>.value(value: _courseEnrollmentUpdateBloc)];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = CompletedClass(
-            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
-            classIndex: argumentsToAdd['classIndex'] as int);
+            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment, classIndex: argumentsToAdd['classIndex'] as int);
         break;
       case RouteEnum.story:
         providers = [BlocProvider<StoryBloc>.value(value: _storyBloc), BlocProvider<StoryListBloc>.value(value: _storyListBloc)];
@@ -446,8 +449,7 @@ class Routes {
         newRouteView = TransformationJourneyPostPage();
         break;
       case RouteEnum.transformationJournetContentDetails:
-        final Map<String, TransformationJourneyUpload> argumentsToAdd =
-            arguments as Map<String, TransformationJourneyUpload>;
+        final Map<String, TransformationJourneyUpload> argumentsToAdd = arguments as Map<String, TransformationJourneyUpload>;
         newRouteView = TransformationJourneyContentDetail(contentToShow: argumentsToAdd['TransformationJourneyUpload']);
         break;
       case RouteEnum.logIn:
@@ -460,6 +462,8 @@ class Routes {
         providers = [
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
           BlocProvider<MovementBloc>.value(value: _movementBloc),
+          BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
+          BlocProvider<CoachUserBloc>.value(value: _coachUserBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SegmentDetail(
@@ -534,8 +538,7 @@ class Routes {
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = InsideClass(
-            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
-            classIndex: argumentsToAdd['classIndex'] as int);
+            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment, classIndex: argumentsToAdd['classIndex'] as int);
         break;
       case RouteEnum.assessmentVideos:
         providers = [
@@ -545,7 +548,13 @@ class Routes {
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
           BlocProvider<TaskBloc>.value(value: _taskBloc),
         ];
-        newRouteView = AssessmentVideos();
+        final Map<String, dynamic> argumentsToAdd =
+            arguments as Map<String, dynamic>;
+        newRouteView = AssessmentVideos(
+            isFirstTime:
+                argumentsToAdd == null || argumentsToAdd['isFirstTime'] == null
+                    ? false
+                    : argumentsToAdd['isFirstTime'] as bool);
         break;
       case RouteEnum.taskDetails:
         providers = [
@@ -605,7 +614,9 @@ class Routes {
           BlocProvider<RecommendationBloc>.value(value: _recommendationBloc),
           BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
         ];
-        newRouteView = Courses();
+
+        final Map<String, dynamic> args = arguments as Map<String, dynamic>;
+        newRouteView = Courses(homeEnrollTocourse: args['homeEnrollTocourse'] == 'true');
         break;
       case RouteEnum.viewAll:
         Map<String, dynamic> args = arguments as Map<String, dynamic>;

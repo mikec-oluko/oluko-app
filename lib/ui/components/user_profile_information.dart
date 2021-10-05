@@ -24,8 +24,7 @@ class UserProfileInformation extends StatefulWidget {
   final UserConnectStatus connectStatus;
   final UserStatistics userStats;
 
-  const UserProfileInformation({this.userToDisplayInformation, this.actualRoute, this.currentUser, this.connectStatus, this.userStats})
-      : super();
+  const UserProfileInformation({this.userToDisplayInformation, this.actualRoute, this.currentUser, this.connectStatus, this.userStats}) : super();
 
   @override
   _UserProfileInformationState createState() => _UserProfileInformationState();
@@ -86,10 +85,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
 
   Widget _profileUserInformation(String location, List<String> valuesForArchivements) {
     final bool canShowDetails = _privacyOptions.canShowDetails(
-        isOwner: _isOwner,
-        currentUser: widget.currentUser,
-        userRequested: widget.userToDisplayInformation,
-        connectStatus: widget.connectStatus);
+        isOwner: _isOwner, currentUser: widget.currentUser, userRequested: widget.userToDisplayInformation, connectStatus: widget.connectStatus);
 
     return Column(
       children: [
@@ -150,10 +146,9 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                         child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
                           listener: (context, hiFiveSendState) {
                             if (hiFiveSendState is HiFiveSendSuccess) {
-                              AppMessages.showSnackbarTranslated(context, hiFiveSendState.hiFive ? 'hiFiveSent' : 'hiFiveRemoved');
+                              AppMessages.showSnackbarTranslated(context, 'hiFiveSent');
                             }
-                            BlocProvider.of<HiFiveReceivedBloc>(context)
-                                .get(context, _authState.user.id, widget.userToDisplayInformation.id);
+                            BlocProvider.of<HiFiveReceivedBloc>(context).get(context, _authState.user.id, widget.userToDisplayInformation.id);
                           },
                           child: BlocBuilder<HiFiveReceivedBloc, HiFiveReceivedState>(builder: (context, HiFiveReceivedState) {
                             return HiFiveReceivedState is HiFiveReceivedSuccess
@@ -166,11 +161,13 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                                         ),
                                         onPressed: () {
                                           BlocProvider.of<HiFiveSendBloc>(context).set(
-                                              context, _authState.user.id, widget.userToDisplayInformation.id,
-                                              hiFive: !_hiFiveReceivedState.hiFive);
+                                            context,
+                                            _authState.user.id,
+                                            widget.userToDisplayInformation.id,
+                                          );
                                         },
                                         child: Image.asset(
-                                          HiFiveReceivedState.hiFive ? 'assets/profile/hiFive_selected.png' : 'assets/profile/hiFive.png',
+                                          'assets/profile/hiFive.png',
                                           fit: BoxFit.cover,
                                           colorBlendMode: BlendMode.lighten,
                                           height: 60,

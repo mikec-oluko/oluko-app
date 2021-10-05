@@ -30,7 +30,8 @@ import 'package:oluko_app/utils/screen_utils.dart';
 import '../../../routes.dart';
 
 class Courses extends StatefulWidget {
-  Courses({Key key}) : super(key: key);
+  bool homeEnrollTocourse;
+  Courses({this.homeEnrollTocourse, Key key}) : super(key: key);
 
   @override
   _State createState() => _State();
@@ -48,11 +49,10 @@ class _State extends State<Courses> {
   bool showFilterSelector = false;
   //Constants to display cards
   final double cardsAspectRatio = 0.69333;
-  final int cardsToShowOnPortrait = 4;
-  final int cardsToShowOnLandscape = 5;
+  final int cardsToShowOnPortrait = 3;
+  final int cardsToShowOnLandscape = 4;
   final int searchResultsPortrait = 3;
   final int searchResultsLandscape = 5;
-
   //TODO Make Dynamic
   List<String> userRecommendationsAvatarUrls = [
     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEMWzdlSputkYso9dJb4VY5VEWQunXGBJMgGys7BLC4MzPQp6yfLURe-9nEdGrcK6Jasc&usqp=CAU',
@@ -75,36 +75,8 @@ class _State extends State<Courses> {
               builder: (context, tagState) {
                 return Scaffold(
                     backgroundColor: Colors.black,
-                    appBar: _appBar(courseState),
-                    body: courseState is CourseSuccess && tagState is TagSuccess
-                        ? WillPopScope(
-                            onWillPop: () => AppNavigator.onWillPop(context),
-                            child: OrientationBuilder(builder: (context, orientation) {
-                              return Container(
-                                height: ScreenUtils.height(context),
-                                width: ScreenUtils.width(context),
-                                child: showFilterSelector
-                                    ? CourseUtils.filterSelector(
-                                        tagState,
-                                        onSubmit: (List<Base> selectedItems) => this.setState(() {
-                                          selectedTags = selectedItems as List<Tag>;
-                                          showFilterSelector = false;
-                                          searchKey.currentState.updateSearchResults('');
-                                        }),
-                                        onClosed: () => this.setState(() {
-                                          showFilterSelector = false;
-                                        }),
-                                      )
-                                    : searchResults.query.isEmpty && selectedTags.isEmpty
-                                        ? _mainPage(context, courseState)
-                                        : showSearchSuggestions
-                                            ? CourseUtils.searchSuggestions(searchResults, searchKey)
-                                            : CourseUtils.searchResults(
-                                                context, searchResults, cardsAspectRatio, searchResultsPortrait, searchResultsLandscape),
-                              );
-                            }),
-                          )
-                        : OlukoCircularProgressIndicator());
+                    appBar: _appBar(courseState, widget.homeEnrollTocourse ?? false),
+                    body: _courseWidget(context, tagState, courseState));
               });
         });
   }
@@ -117,13 +89,51 @@ class _State extends State<Courses> {
     }
   }
 
-  PreferredSizeWidget _appBar(CourseState state) {
+  Widget _courseWidget(BuildContext context, TagState tagState, CourseState courseState) {
+    if (courseState is CourseSuccess) {
+      if (tagState is TagSuccess) {
+        return WillPopScope(
+          onWillPop: () => AppNavigator.onWillPop(context),
+          child: OrientationBuilder(builder: (context, orientation) {
+            return Container(
+              height: ScreenUtils.height(context),
+              width: ScreenUtils.width(context),
+              child: showFilterSelector
+                  ? CourseUtils.filterSelector(
+                      tagState,
+                      onSubmit: (List<Base> selectedItems) => this.setState(() {
+                        selectedTags = selectedItems as List<Tag>;
+                        showFilterSelector = false;
+                        searchKey.currentState.updateSearchResults('');
+                      }),
+                      onClosed: () => this.setState(() {
+                        showFilterSelector = false;
+                      }),
+                    )
+                  : searchResults.query.isEmpty && selectedTags.isEmpty
+                      ? _mainPage(context, courseState)
+                      : showSearchSuggestions
+                          ? CourseUtils.searchSuggestions(searchResults, searchKey)
+                          : CourseUtils.searchResults(
+                              context, searchResults, cardsAspectRatio, searchResultsPortrait, searchResultsLandscape),
+            );
+          }),
+        );
+      }
+    }
+
+    // this return will handle this states: TagLoading TagFailure CourseLoading CourseFailure
+    return OlukoCircularProgressIndicator();
+  }
+
+  PreferredSizeWidget _appBar(CourseState state, bool goBack) {
     return state is CourseSuccess
         ? OlukoAppBar<Course>(
-            showBackButton: true,
+            showBackButton: goBack,
             searchKey: searchKey,
             title: showFilterSelector ? OlukoLocalizations.get(context, 'filters') : OlukoLocalizations.get(context, 'courses'),
             actions: [_filterWidget()],
+            onPressed: () => Navigator.pushNamed(context, routeLabels[RouteEnum.root]),
             onSearchSubmit: (SearchResults<Course> results) => this.setState(() {
               showSearchSuggestions = false;
               searchResults = results;
