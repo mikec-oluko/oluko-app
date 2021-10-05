@@ -134,7 +134,11 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                   child: Column(
                     children: [
                       Text(
-                        _isTimeExpired ? '00' : difference.inHours.toString(),
+                        _isTimeExpired
+                            ? '00'
+                            : difference.inHours.toString().length == 1
+                                ? '0${difference.inHours.remainder(60)}'
+                                : difference.inHours.remainder(60).toString(),
                         style: OlukoFonts.olukoBiggestFont(
                             customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                       ),
@@ -162,7 +166,11 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                   child: Column(
                     children: [
                       Text(
-                        _isTimeExpired ? '00' : difference.inMinutes.remainder(60).toString(),
+                        _isTimeExpired
+                            ? '00'
+                            : difference.inMinutes.remainder(60).toString().length == 1
+                                ? '0' + difference.inMinutes.remainder(60).toString()
+                                : difference.inMinutes.remainder(60).toString(),
                         style: OlukoFonts.olukoBiggestFont(
                             customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                       ),
@@ -190,7 +198,11 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                   child: Column(
                     children: [
                       Text(
-                        _isTimeExpired ? '00' : difference.inSeconds.remainder(60).toString(),
+                        _isTimeExpired
+                            ? '00'
+                            : difference.inSeconds.remainder(60).toString().length == 1
+                                ? '0${difference.inSeconds.remainder(60)}'
+                                : difference.inSeconds.remainder(60).toString(),
                         style: OlukoFonts.olukoBiggestFont(
                             customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                       ),
