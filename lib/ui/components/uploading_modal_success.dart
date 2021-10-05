@@ -63,8 +63,11 @@ class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
                               onPressed: () {
                                 if (widget.goToPage == UploadFrom.transformationJourney) {
                                   BlocProvider.of<TransformationJourneyContentBloc>(context)..emitDefaultState();
-                                  BlocProvider.of<TransformationJourneyBloc>(context)..emitTransformationJourneyDefault();
-                                  Navigator.popAndPushNamed(context, routeLabels[RouteEnum.profileTransformationJourney]);
+                                  BlocProvider.of<TransformationJourneyBloc>(context)
+                                    ..emitTransformationJourneyDefault();
+                                  Navigator.popAndPushNamed(
+                                      context, routeLabels[RouteEnum.profileTransformationJourney],
+                                      arguments: {'profileInfo': widget.userRequested});
                                 } else {
                                   BlocProvider.of<ProfileAvatarBloc>(context)..emitDefaultState();
                                   BlocProvider.of<ProfileCoverImageBloc>(context)..emitDefaultState();

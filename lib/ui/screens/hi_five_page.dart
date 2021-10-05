@@ -18,6 +18,7 @@ class HiFivePage extends StatefulWidget {
 
 class _HiFivePageState extends State<HiFivePage> {
   HiFiveSuccess _hiFiveState;
+  AuthSuccess _authState;
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +28,7 @@ class _HiFivePageState extends State<HiFivePage> {
       body: BlocBuilder<AuthBloc, AuthState>(
         builder: (context, authState) {
           if (authState is AuthSuccess) {
+            _authState = authState;
             if (_hiFiveState == null) {
               BlocProvider.of<HiFiveBloc>(context).get(authState.user.id);
             }
@@ -144,10 +146,12 @@ class _HiFivePageState extends State<HiFivePage> {
               flex: 5,
               child: Column(
                 children: [
-                  Text(
-                    '$hiFives ${OlukoLocalizations.get(context, 'hiFives')}',
-                    style: TextStyle(color: Colors.grey),
-                  )
+                  hiFives > 1
+                      ? Text(
+                          '$hiFives ${OlukoLocalizations.get(context, 'hiFives')}',
+                          style: TextStyle(color: Colors.grey),
+                        )
+                      : SizedBox()
                 ],
               ),
             ),
@@ -172,7 +176,36 @@ class _HiFivePageState extends State<HiFivePage> {
       title: 'Hi Five',
       showLogo: false,
       showBackButton: true,
-      actions: [],
+      actions: [
+        GestureDetector(
+          onTap: () {
+            BlocProvider.of<HiFiveBloc>(context).sendHiFiveToAll(context, _authState.user.id, _hiFiveState.users.map((e) => e.id).toList());
+          },
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                children: [
+                  Image.asset(
+                    'assets/profile/hiFive.png',
+                    fit: BoxFit.cover,
+                    colorBlendMode: BlendMode.lighten,
+                    height: 40,
+                    width: 40,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 16.0),
+                    child: Text(
+                      'Hi Five all',
+                      style: TextStyle(color: OlukoColors.primary),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        )
+      ],
     );
   }
 }
