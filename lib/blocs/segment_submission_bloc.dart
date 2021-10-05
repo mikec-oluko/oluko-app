@@ -28,12 +28,6 @@ class Failure extends SegmentSubmissionState {
   Failure({this.exception});
 }
 
-class GetCourseEnrollmentChallenge extends SegmentSubmissionState {
-  final List<Challenge> challenges;
-
-  GetCourseEnrollmentChallenge({this.challenges});
-}
-
 class CourseEnrollmentListSuccess extends SegmentSubmissionState {
   final List<CourseEnrollment> courseEnrollmentList;
 
@@ -43,12 +37,10 @@ class CourseEnrollmentListSuccess extends SegmentSubmissionState {
 class SegmentSubmissionBloc extends Cubit<SegmentSubmissionState> {
   SegmentSubmissionBloc() : super(Loading());
 
-  void create(User user, CourseEnrollment courseEnrollment, Segment segment,
-      String videoPath) async {
+  void create(User user, CourseEnrollment courseEnrollment, Segment segment, String videoPath) async {
     try {
       SegmentSubmission segmentSubmission =
-          await SegmentSubmissionRepository.create(
-              user, courseEnrollment, segment, videoPath);
+          await SegmentSubmissionRepository.create(user, courseEnrollment, segment, videoPath);
       emit(CreateSuccess(segmentSubmission: segmentSubmission));
     } catch (exception, stackTrace) {
       await Sentry.captureException(

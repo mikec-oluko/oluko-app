@@ -47,32 +47,27 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess && _authStateData == null) {
         _authStateData = authState;
-        BlocProvider.of<FriendBloc>(context)
-            .getUserFriendsRequestByUserId(authState.user.id);
+        BlocProvider.of<FriendBloc>(context).getUserFriendsRequestByUserId(authState.user.id);
       }
       return SingleChildScrollView(
         child: Container(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
             color: OlukoColors.black,
-            child:
-                BlocListener<IgnoreFriendRequestBloc, IgnoreFriendRequestState>(
+            child: BlocListener<IgnoreFriendRequestBloc, IgnoreFriendRequestState>(
               listener: (context, ignoreFriendState) {
                 if (ignoreFriendState is IgnoreFriendRequestSuccess) {
-                  BlocProvider.of<FriendBloc>(context)
-                      .getUserFriendsRequestByUserId(_authStateData.user.id);
+                  BlocProvider.of<FriendBloc>(context).getUserFriendsRequestByUserId(_authStateData.user.id);
                   AppMessages.showSnackbar(context, 'Request ignored.');
                 } else if (ignoreFriendState is IgnoreFriendRequestFailure) {
                   AppMessages.showSnackbar(context, 'Error ignoring request.');
                 }
               },
               child: BlocListener<ConfirmFriendBloc, ConfirmFriendState>(
-                listenWhen: (previousState, currentState) =>
-                    currentState is ConfirmFriendSuccess,
+                listenWhen: (previousState, currentState) => currentState is ConfirmFriendSuccess,
                 listener: (context, confirmFriendState) {
                   if (confirmFriendState is ConfirmFriendSuccess) {
-                    BlocProvider.of<FriendBloc>(context)
-                        .getUserFriendsRequestByUserId(_authStateData.user.id);
+                    BlocProvider.of<FriendBloc>(context).getUserFriendsRequestByUserId(_authStateData.user.id);
                     AppMessages.showSnackbar(context, 'Friend added.');
                   } else if (confirmFriendState is ConfirmFriendFailure) {
                     AppMessages.showSnackbar(context, 'Error adding friend.');
@@ -90,11 +85,9 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
                         //               userData: friend,
                         //             ))
                         //         .toList()),
-                        BlocBuilder<FriendBloc, FriendState>(
-                            builder: (context, friendsRequestState) {
+                        BlocBuilder<FriendBloc, FriendState>(builder: (context, friendsRequestState) {
                           return Column(
-                            children:
-                                generateFriendRequestsList(friendsRequestState),
+                            children: generateFriendRequestsList(friendsRequestState),
                           );
                         })
                       ],
@@ -138,45 +131,31 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
           ? [
               Padding(
                 padding: const EdgeInsets.all(32.0),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [TitleBody('No Requests.')]),
+                child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [TitleBody('No Requests.')]),
               )
             ]
           : friendsRequestState.friendRequestList
                   .map<Widget>((UserResponse friend) => FriendRequestCard(
                         friendUser: friend,
                         onFriendRequestIgnore: (UserResponse friend) {
-                          FriendRequestModel friendRequestModel =
-                              friendsRequestState
-                                  .friendData.friendRequestReceived
-                                  .where((friendRequest) =>
-                                      friendRequest.id == friend.id)
-                                  .toList()
-                                  .first;
+                          FriendRequestModel friendRequestModel = friendsRequestState.friendData.friendRequestReceived
+                              .where((friendRequest) => friendRequest.id == friend.id)
+                              .toList()
+                              .first;
                           BlocProvider.of<IgnoreFriendRequestBloc>(context)
-                              .ignoreFriend(
-                                  context,
-                                  friendsRequestState.friendData,
-                                  friendRequestModel);
+                              .ignoreFriend(context, friendsRequestState.friendData, friendRequestModel);
                         },
                         onFriendConfirmation: (UserResponse friend) {
-                          FriendRequestModel friendRequestModel =
-                              friendsRequestState
-                                  .friendData.friendRequestReceived
-                                  .where((friendRequest) =>
-                                      friendRequest.id == friend.id)
-                                  .toList()
-                                  .first;
+                          FriendRequestModel friendRequestModel = friendsRequestState.friendData.friendRequestReceived
+                              .where((friendRequest) => friendRequest.id == friend.id)
+                              .toList()
+                              .first;
                           BlocProvider.of<ConfirmFriendBloc>(context)
-                              .confirmFriend(
-                                  context,
-                                  friendsRequestState.friendData,
-                                  friendRequestModel);
+                              .confirmFriend(context, friendsRequestState.friendData, friendRequestModel);
                         },
                       ))
                   .toList() +
-              (friendsRequestState.friendRequestList.length > maxRequestsToShow
+              (friendsRequestState.friendRequestList.length > (maxRequestsToShow as int)
                   ? [buildAllRequestButton(context)]
                   : []);
     } else if (friendsRequestState is FriendFailure) {
