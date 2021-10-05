@@ -74,37 +74,7 @@ class _State extends State<Courses> {
               bloc: BlocProvider.of<TagBloc>(context)..getByCategories(),
               builder: (context, tagState) {
                 return Scaffold(
-                    backgroundColor: Colors.black,
-                    appBar: _appBar(courseState),
-                    body: courseState is CourseSuccess && tagState is TagSuccess
-                        ? WillPopScope(
-                            onWillPop: () => AppNavigator.onWillPop(context),
-                            child: OrientationBuilder(builder: (context, orientation) {
-                              return Container(
-                                height: ScreenUtils.height(context),
-                                width: ScreenUtils.width(context),
-                                child: showFilterSelector
-                                    ? CourseUtils.filterSelector(
-                                        tagState,
-                                        onSubmit: (List<Base> selectedItems) => this.setState(() {
-                                          selectedTags = selectedItems as List<Tag>;
-                                          showFilterSelector = false;
-                                          searchKey.currentState.updateSearchResults('');
-                                        }),
-                                        onClosed: () => this.setState(() {
-                                          showFilterSelector = false;
-                                        }),
-                                      )
-                                    : searchResults.query.isEmpty && selectedTags.isEmpty
-                                        ? _mainPage(context, courseState)
-                                        : showSearchSuggestions
-                                            ? CourseUtils.searchSuggestions(searchResults, searchKey)
-                                            : CourseUtils.searchResults(
-                                                context, searchResults, cardsAspectRatio, searchResultsPortrait, searchResultsLandscape),
-                              );
-                            }),
-                          )
-                        : OlukoCircularProgressIndicator());
+                    backgroundColor: Colors.black, appBar: _appBar(courseState), body: _courseWidget(context, tagState, courseState));
               });
         });
   }
@@ -117,6 +87,43 @@ class _State extends State<Courses> {
     }
   }
 
+  Widget _courseWidget(BuildContext context, TagState tagState, CourseState courseState) {
+    if (courseState is CourseSuccess) {
+      if (tagState is TagSuccess) {
+        return WillPopScope(
+          onWillPop: () => AppNavigator.onWillPop(context),
+          child: OrientationBuilder(builder: (context, orientation) {
+            return Container(
+              height: ScreenUtils.height(context),
+              width: ScreenUtils.width(context),
+              child: showFilterSelector
+                  ? CourseUtils.filterSelector(
+                      tagState,
+                      onSubmit: (List<Base> selectedItems) => this.setState(() {
+                        selectedTags = selectedItems as List<Tag>;
+                        showFilterSelector = false;
+                        searchKey.currentState.updateSearchResults('');
+                      }),
+                      onClosed: () => this.setState(() {
+                        showFilterSelector = false;
+                      }),
+                    )
+                  : searchResults.query.isEmpty && selectedTags.isEmpty
+                      ? _mainPage(context, courseState)
+                      : showSearchSuggestions
+                          ? CourseUtils.searchSuggestions(searchResults, searchKey)
+                          : CourseUtils.searchResults(
+                              context, searchResults, cardsAspectRatio, searchResultsPortrait, searchResultsLandscape),
+            );
+          }),
+        );
+      }
+    }
+
+    // this return will handle this states: TagLoading TagFailure CourseLoading CourseFailure
+    return OlukoCircularProgressIndicator();
+  }
+
   PreferredSizeWidget _appBar(CourseState state) {
     return state is CourseSuccess
         ? OlukoAppBar<Course>(
@@ -124,6 +131,7 @@ class _State extends State<Courses> {
             searchKey: searchKey,
             title: showFilterSelector ? OlukoLocalizations.get(context, 'filters') : OlukoLocalizations.get(context, 'courses'),
             actions: [_filterWidget()],
+            onPressed: () => Navigator.pushNamed(context, routeLabels[RouteEnum.root]),
             onSearchSubmit: (SearchResults<Course> results) => this.setState(() {
               showSearchSuggestions = false;
               searchResults = results;
