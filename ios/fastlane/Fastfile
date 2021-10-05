@@ -47,6 +47,6 @@ platform :ios do
     # firebase_app_distribution(
     #         app: "1:14784345427:ios:e3aa4c755c3d4138131da6",
     #     )
-    upload_to_testflight(changelog: "U+1F680", distribute_external:true, groups:"Beta Testers")
+    upload_to_testflight(changelog: "🚀", distribute_external:true, groups:"Beta Testers")
   end
 end

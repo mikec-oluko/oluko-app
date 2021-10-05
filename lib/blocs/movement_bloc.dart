@@ -44,7 +44,7 @@ class MovementBloc extends Cubit<MovementState> {
   void getAll() async {
     try {
       emit(LoadingMovementState());
-      List<Movement> movements = await MovementRepository.getAll();
+      final List<Movement> movements = await MovementRepository.getAll();
       emit(GetAllSuccess(movements: movements));
     } catch (exception, stackTrace) {
       await Sentry.captureException(

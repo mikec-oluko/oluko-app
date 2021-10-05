@@ -62,7 +62,8 @@ class _FriendRequestCardState extends State<FriendRequestCard> {
                         BlocProvider.of<TransformationJourneyBloc>(context).emitTransformationJourneyDefault(noValues: true);
                         BlocProvider.of<TaskSubmissionBloc>(context).setTaskSubmissionDefaultState();
                         BlocProvider.of<CourseEnrollmentBloc>(context).setCourseEnrollmentChallengesDefaultValue();
-                        Navigator.pushNamed(context, routeLabels[RouteEnum.profileViewOwnProfile], arguments: {'userRequested': widget.friendUser});
+                        Navigator.pushNamed(context, routeLabels[RouteEnum.profileViewOwnProfile],
+                            arguments: {'userRequested': widget.friendUser});
                       }),
                   Padding(
                     padding: const EdgeInsets.only(left: 20),
@@ -86,10 +87,7 @@ class _FriendRequestCardState extends State<FriendRequestCard> {
                             ),
                           ],
                         ),
-                        Text(
-                            // widget.userData.displayName,
-                            widget.friendUser.username,
-                            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor)),
+                        Text(widget.friendUser.username ?? '', style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor)),
                       ],
                     ),
                   )
