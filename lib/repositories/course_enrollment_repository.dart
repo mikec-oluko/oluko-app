@@ -95,6 +95,7 @@ class CourseEnrollmentRepository {
       classes[classIndex].compleatedAt = Timestamp.now();
       courseEnrollment.completion = courseProgress;
     }
+
     reference.update({
       'classes': List<dynamic>.from(classes.map((c) => c.toJson())),
       'completion': courseEnrollment.completion
@@ -138,6 +139,7 @@ class CourseEnrollmentRepository {
           image: classObj.image,
           reference: classObj.reference,
           segments: []);
+
       enrollmentClass = await setEnrollmentSegments(enrollmentClass);
       courseEnrollment.classes.add(enrollmentClass);
     }
@@ -245,7 +247,7 @@ class CourseEnrollmentRepository {
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
         .collection('challenges')
-        // .where('course_enrollment_id', isEqualTo: courseEnrollment.id)
+        .where('course_enrollment_id', isEqualTo: courseEnrollment.id)
         .get();
     for (var challengeDoc in query.docs) {
       final Map<String, dynamic> challenge =

@@ -169,8 +169,10 @@
     "challengeBy": "Desafío por:",
     "appCompleted": "App Completada",
     "sentVideos": "Videos enviados",
+    "sentVideo": "Video enviado",
     "date": "Fecha",
     "mentoredVideos": "Videos de Mentores",
+    "mentoredVideo": "Video de Mentor",
     "hiCoach": "HOLA COACH",
     "toDo": "Por hacer",
     "myTimeline": "Mi Cronología",
@@ -193,6 +195,7 @@
     "voiceMessages": "Mensajes de voz",
     "addYourSelfie": "Agrega Tu Selfie...",
     "timelineMentoredVideo": "Video de Mentor: ",
+    "timelineSentVideo": "Videos Enviados: ",
     "timelineRecommendedCourse": "Curso Recomendado: ",
     "timelineRecommendedClass": "Clase Recomendada: ",
     "timelineRecommendedMovement": "Movimiento Recomendado: ",
@@ -217,5 +220,6 @@
     "total": "Total",
     "invalidUsernameOrPw": "Usuario/email o password inválido.",
     "passwordRequired": "Password es requerido.",
-    "emailUsernameRequired": "Email/Username es requerido."
+    "emailUsernameRequired": "Email/Username es requerido.",
+    "today": "Hoy"
 }

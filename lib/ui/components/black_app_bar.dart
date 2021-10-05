@@ -24,7 +24,7 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
 
   OlukoAppBar(
       {this.title,
-      this.onPressed,
+      this.onPressed = null,
       this.actions,
       this.showLogo = false,
       this.onSearchResults,
@@ -44,7 +44,11 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
       child: AppBar(
           backgroundColor: Colors.black,
           leading: showBackButton
-              ? IconButton(icon: Icon(Icons.chevron_left, size: 35, color: Colors.white), onPressed: () => Navigator.pop(context))
+              ? IconButton(
+                  icon: Icon(Icons.chevron_left, size: 35, color: Colors.white),
+                  onPressed: () => {
+                        if (this.onPressed == null) {Navigator.pop(context)} else {this.onPressed()}
+                      })
               : null,
           title: showLogo
               ? Align(

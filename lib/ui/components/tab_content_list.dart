@@ -56,7 +56,8 @@ List<Widget> createTimelineContent(List<Widget> contentToDisplay) {
       contentForTimelineTile.add(Container(
         color: OlukoColors.black,
         child: TimelineTile(
-            indicatorStyle: const IndicatorStyle(width: 15, height: 15),
+            lineXY: 0.0,
+            indicatorStyle: const IndicatorStyle(width: 15, height: 15, indicatorXY: 0),
             beforeLineStyle: const LineStyle(thickness: 2),
             afterLineStyle: const LineStyle(thickness: 2),
             endChild: content),

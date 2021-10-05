@@ -26,9 +26,7 @@ class TagBloc extends Cubit<TagState> {
   TagBloc() : super(TagLoading());
 
   void get() async {
-    if (!(state is TagSuccess)) {
-      emit(TagLoading());
-    }
+    emit(TagLoading());
     try {
       List<Tag> tags = await TagRepository().getAll();
       emit(TagSuccess(values: tags));
@@ -43,9 +41,7 @@ class TagBloc extends Cubit<TagState> {
   }
 
   void getByCategories() async {
-    if (!(state is TagSuccess)) {
-      emit(TagLoading());
-    }
+    emit(TagLoading());
     try {
       List<Tag> tags = await TagRepository().getAll();
       List<TagCategory> tagCategories = await TagCategoryRepository().getAll();
