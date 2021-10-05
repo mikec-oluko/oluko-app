@@ -80,6 +80,14 @@ class HiFiveBloc extends Cubit<HiFiveState> {
     }
   }
 
+  void sendHiFiveToAll(BuildContext context, String userId, List<String> targetUserIds) async {
+    List<Message> results = await Future.wait(targetUserIds.map((String targetUserId) {
+      return ChatRepository().sendHiFive(userId, targetUserId);
+    }));
+
+    get(userId);
+  }
+
   void ignoreHiFive(BuildContext context, String userId, String targetUserId) async {
     bool hiFiveMessage = await ChatRepository().removeHiFive(userId, targetUserId);
     if (_lastState != null && _chatExists(_lastState, targetUserId)) {

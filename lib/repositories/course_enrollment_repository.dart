@@ -91,16 +91,14 @@ class CourseEnrollmentRepository {
   }
 
   static Future<CourseEnrollment> create(User user, Course course) async {
-    final DocumentReference projectReference =
-        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId'));
+    final DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId'));
     final CollectionReference reference = projectReference.collection('courseEnrollments');
     final DocumentReference courseReference = projectReference.collection('courses').doc(course.id);
     final DocumentReference docRef = reference.doc();
     final DocumentReference userReference = projectReference.collection('users').doc(user.uid);
-    final ObjectSubmodel courseSubmodel =
-        ObjectSubmodel(id: course.id, reference: courseReference, name: course.name, image: course.image);
+    final ObjectSubmodel courseSubmodel = ObjectSubmodel(id: course.id, reference: courseReference, name: course.name, image: course.image);
     CourseEnrollment courseEnrollment =
-        CourseEnrollment(createdBy: user.uid, userReference: userReference, course: courseSubmodel, classes: []);
+        CourseEnrollment(createdBy: user.uid, userId: user.uid, userReference: userReference, course: courseSubmodel, classes: []);
     courseEnrollment.id = docRef.id;
     courseEnrollment = await setEnrollmentClasses(course, courseEnrollment);
     docRef.set(courseEnrollment.toJson());
@@ -121,8 +119,8 @@ class CourseEnrollmentRepository {
     final DocumentSnapshot qs = await enrollmentClass.reference.get();
     final Class classObj = Class.fromJson(qs.data() as Map<String, dynamic>);
     classObj.segments.forEach((SegmentSubmodel segment) {
-      enrollmentClass.segments.add(EnrollmentSegment(
-          id: segment.id, name: segment.name, reference: segment.reference, sections: getEnrollmentSections(segment)));
+      enrollmentClass.segments
+          .add(EnrollmentSegment(id: segment.id, name: segment.name, reference: segment.reference, sections: getEnrollmentSections(segment)));
     });
     return enrollmentClass;
   }

@@ -101,8 +101,16 @@ class FriendRepository {
           .doc(friendRequest.id)
           .get();
 
+      var friendTargetUserDocument = await FirebaseFirestore.instance
+          .collection('projects')
+          .doc(GlobalConfiguration().getValue('projectId'))
+          .collection('users')
+          .doc(friend.id)
+          .get();
+
       //Friend model to add as a friend
       FriendModel friendModel = FriendModel(id: friendRequest.id, isFavorite: false, reference: friendUserDocument.reference);
+      FriendModel friendtargetModel = FriendModel(id: friend.id, isFavorite: false, reference: friendTargetUserDocument.reference);
 
       //Remove friend request
       friend.friendRequestReceived.removeWhere((element) => element.id == friendModel.id);
@@ -116,6 +124,26 @@ class FriendRepository {
           .collection('friends')
           .doc(friend.id)
           .set(friend.toJson());
+
+      var targetUserFriendDocument = await FirebaseFirestore.instance
+          .collection('projects')
+          .doc(GlobalConfiguration().getValue('projectId'))
+          .collection('friends')
+          .doc(friendRequest.id)
+          .get();
+
+      Friend targetUserFriend = Friend.fromJson(targetUserFriendDocument.data());
+      targetUserFriend.friendRequestSent.removeWhere((element) => element.id == friend.id);
+      targetUserFriend.friends.add(friendtargetModel);
+
+      //Set my friend user document
+      await FirebaseFirestore.instance
+          .collection('projects')
+          .doc(GlobalConfiguration().getValue('projectId'))
+          .collection('friends')
+          .doc(targetUserFriend.id)
+          .set(targetUserFriend.toJson());
+
       return friendModel;
     } catch (e, stackTrace) {
       await Sentry.captureException(
@@ -330,6 +358,27 @@ class FriendRepository {
           .collection('friends')
           .doc(friend.id)
           .set(friend.toJson());
+
+      //Remove friend from the target user
+
+      DocumentSnapshot<Map<String, dynamic>> targetFriendData = await FirebaseFirestore.instance
+          .collection('projects')
+          .doc(GlobalConfiguration().getValue('projectId'))
+          .collection('friends')
+          .doc(friendToRemoveId)
+          .get();
+
+      Friend targetFriend = Friend.fromJson(targetFriendData.data());
+
+      targetFriend.friends.removeWhere((friendFromList) => friendFromList.id == friend.id);
+
+      await FirebaseFirestore.instance
+          .collection('projects')
+          .doc(GlobalConfiguration().getValue('projectId'))
+          .collection('friends')
+          .doc(friendToRemoveId)
+          .set(targetFriend.toJson());
+
       return friend;
     } catch (e, stackTrace) {
       await Sentry.captureException(
