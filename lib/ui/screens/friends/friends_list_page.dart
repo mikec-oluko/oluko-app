@@ -362,7 +362,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                                             child: GestureDetector(
                                                 onTap: () {
                                                   BlocProvider.of<HiFiveSendBloc>(context).set(context, _authStateData.user.id, user.id);
-                                                  showHiFiveSentDialog();
+                                                  AppMessages().showHiFiveSentDialog(context);
                                                 },
                                                 child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
                                                   bloc: BlocProvider.of(context),
@@ -543,28 +543,5 @@ class _FriendsListPageState extends State<FriendsListPage> {
         child: TitleBody(OlukoLocalizations.get(context, 'noUsers')),
       );
     }
-  }
-
-  void showHiFiveSentDialog() {
-    showDialog(
-        context: context,
-        builder: (context) {
-          Future.delayed(const Duration(seconds: 2), () {
-            Navigator.of(context).pop(true);
-          });
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset('assets/profile/hiFive_primary.png'),
-              const Padding(
-                padding: EdgeInsets.all(10.0),
-                child: Text(
-                  'Hi5 Sent!',
-                  style: TextStyle(fontSize: 23, color: OlukoColors.primary, fontWeight: FontWeight.bold),
-                ),
-              )
-            ],
-          );
-        });
   }
 }
