@@ -29,6 +29,9 @@ import 'package:oluko_app/blocs/profile/profile_bloc.dart';
 import 'package:oluko_app/blocs/recommendation_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/blocs/statistics_bloc.dart';
+import 'package:oluko_app/blocs/story_bloc.dart';
+import 'package:oluko_app/blocs/story_list_bloc.dart';
+import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
@@ -37,6 +40,7 @@ import 'package:oluko_app/blocs/user_list_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/dto/user_stories.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/task_submission.dart';
@@ -81,6 +85,7 @@ import 'package:oluko_app/ui/screens/profile/profile_transformation_journey_page
 import 'package:oluko_app/ui/screens/profile/transformation_journey_content_detail.dart';
 import 'package:oluko_app/ui/screens/profile/transformation_journey_post.dart';
 import 'package:oluko_app/ui/screens/profile/user_profile_page.dart';
+import 'package:oluko_app/ui/screens/story/story_page.dart';
 import 'package:oluko_app/ui/screens/courses/segment_detail.dart';
 import 'blocs/coach/coach_assignment_bloc.dart';
 import 'blocs/coach/coach_interaction_timeline_bloc.dart';
@@ -106,6 +111,8 @@ import 'blocs/profile/upload_cover_image_bloc.dart';
 import 'blocs/profile/upload_transformation_journey_content_bloc.dart';
 import 'blocs/user_statistics_bloc.dart';
 import 'models/course.dart';
+import 'models/dto/story_dto.dart';
+import 'models/task.dart';
 import 'models/transformation_journey_uploads.dart';
 
 enum RouteEnum {
@@ -152,6 +159,7 @@ enum RouteEnum {
   coachShowVideo,
   coachProfile,
   completedClass,
+  story,
   hiFivePage
 }
 
@@ -199,6 +207,7 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.coachShowVideo: '/coach-show-video',
   RouteEnum.coachProfile: '/coach-profile',
   RouteEnum.completedClass: '/completed-class',
+  RouteEnum.story: '/story',
   RouteEnum.hiFivePage: '/hi-five-page'
 };
 
@@ -244,6 +253,8 @@ class Routes {
   final UserStatisticsBloc _userStatisticsBloc = UserStatisticsBloc();
   final CourseEnrollmentUpdateBloc _courseEnrollmentUpdateBloc = CourseEnrollmentUpdateBloc();
   final UserListBloc _userListBloc = UserListBloc();
+  final StoryBloc _storyBloc = StoryBloc();
+  final StoryListBloc _storyListBloc = StoryListBloc();
   final CoachAssignmentBloc _coachAssignmentBloc = CoachAssignmentBloc();
   final CoachProfileBloc _coachProfileBloc = CoachProfileBloc();
   final CoachSentVideosBloc _coachSentVideosBloc = CoachSentVideosBloc();
@@ -291,6 +302,7 @@ class Routes {
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
           BlocProvider<UserListBloc>.value(value: _userListBloc),
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
+          BlocProvider<StoryListBloc>.value(value: _storyListBloc),
           BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
           BlocProvider<CoachProfileBloc>.value(value: _coachProfileBloc),
           BlocProvider<CoachSentVideosBloc>.value(value: _coachSentVideosBloc),
@@ -311,6 +323,11 @@ class Routes {
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = CompletedClass(
             courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment, classIndex: argumentsToAdd['classIndex'] as int);
+        break;
+      case RouteEnum.story:
+        providers = [BlocProvider<StoryBloc>.value(value: _storyBloc), BlocProvider<StoryListBloc>.value(value: _storyListBloc)];
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        newRouteView = StoryPage(userStories: argumentsToAdd['userStories'] as UserStories, userId: argumentsToAdd['userId'] as String);
         break;
       case RouteEnum.signUpWithEmail:
         newRouteView = SignUpWithMailPage();
@@ -468,7 +485,8 @@ class Routes {
           BlocProvider<SegmentSubmissionBloc>.value(value: _segmentSubmissionBloc),
           BlocProvider<VideoBloc>.value(value: _videoBloc),
           BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
-          BlocProvider<CourseEnrollmentUpdateBloc>.value(value: _courseEnrollmentUpdateBloc)
+          BlocProvider<CourseEnrollmentUpdateBloc>.value(value: _courseEnrollmentUpdateBloc),
+          BlocProvider<StoryBloc>.value(value: _storyBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SegmentClocks(

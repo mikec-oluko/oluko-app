@@ -222,5 +222,7 @@
     "passwordRequired": "Password is required.",
     "emailUsernameRequired": "Email/Username is required.",
     "today": "Today",
+    "storyCreated": "Story successfully created",
+    "storyBeingCreated": "The story is being created",
     "coachRequest": "has requested you to record the segment"
 }
