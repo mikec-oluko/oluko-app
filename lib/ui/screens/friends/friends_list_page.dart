@@ -171,12 +171,14 @@ class _FriendsListPageState extends State<FriendsListPage> {
                               padding: const EdgeInsets.only(top: 8.0, bottom: 0.0),
                               child: Text(
                                 '${friendUser.firstName} ${friendUser.lastName}',
+                                overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(color: Colors.white, fontSize: 13),
                                 textAlign: TextAlign.center,
                               ),
                             ),
                             Text(
                               friendUser.username ?? '',
+                              overflow: TextOverflow.ellipsis,
                               style: const TextStyle(color: Colors.grey, fontSize: 10),
                               textAlign: TextAlign.center,
                             )
@@ -239,12 +241,14 @@ class _FriendsListPageState extends State<FriendsListPage> {
                         padding: const EdgeInsets.only(top: 8.0, bottom: 0.0),
                         child: Text(
                           '${user.firstName} ${user.lastName}',
+                          overflow: TextOverflow.ellipsis,
                           style: const TextStyle(color: Colors.white, fontSize: 13),
                           textAlign: TextAlign.center,
                         ),
                       ),
                       Text(
                         user.username ?? '',
+                        overflow: TextOverflow.ellipsis,
                         style: const TextStyle(color: Colors.grey, fontSize: 10),
                         textAlign: TextAlign.center,
                       )
