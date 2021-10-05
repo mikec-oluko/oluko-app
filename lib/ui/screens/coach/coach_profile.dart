@@ -105,48 +105,51 @@ class _CoachProfileState extends State<CoachProfile> {
                           height: 50,
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: IntrinsicHeight(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Image.asset(
-                                        'assets/assessment/play.png',
-                                        scale: 5,
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                                        child: Image.asset(
-                                          'assets/courses/coach_audio.png',
-                                          width: 150,
-                                          fit: BoxFit.fill,
-                                          scale: 5,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  VerticalDivider(color: OlukoColors.grayColor),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 5),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            child: Visibility(
+                              visible: false,
+                              child: IntrinsicHeight(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
                                       children: [
                                         Image.asset(
-                                          'assets/courses/coach_delete.png',
+                                          'assets/assessment/play.png',
                                           scale: 5,
                                         ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Image.asset(
-                                          'assets/courses/coach_tick.png',
-                                          scale: 5,
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                                          child: Image.asset(
+                                            'assets/courses/coach_audio.png',
+                                            width: 150,
+                                            fit: BoxFit.fill,
+                                            scale: 5,
+                                          ),
                                         ),
                                       ],
                                     ),
-                                  ),
-                                ],
+                                    VerticalDivider(color: OlukoColors.grayColor),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Image.asset(
+                                            'assets/courses/coach_delete.png',
+                                            scale: 5,
+                                          ),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Image.asset(
+                                            'assets/courses/coach_tick.png',
+                                            scale: 5,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),

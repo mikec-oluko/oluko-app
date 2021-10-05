@@ -6,7 +6,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class SegmentState {}
 
-class Loading extends SegmentState {}
+class LoadingSegment extends SegmentState {}
 
 class GetSegmentsSuccess extends SegmentState {
   List<Segment> segments;
@@ -20,9 +20,10 @@ class Failure extends SegmentState {
 }
 
 class SegmentBloc extends Cubit<SegmentState> {
-  SegmentBloc() : super(Loading());
+  SegmentBloc() : super(LoadingSegment());
 
   void getAll(Class classObj) async {
+    emit(LoadingSegment());
     try {
       List<Segment> segments = await SegmentRepository.getAll(classObj);
       emit(GetSegmentsSuccess(segments: segments));
