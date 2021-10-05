@@ -69,6 +69,7 @@ dependencies:
   flutter_image_compress: ^1.1.0
   nil: ^1.1.1
   permission_handler: ^8.1.6
+  firebase_database: ^8.0.0
   timeline_tile: ^2.0.0 
   badges: ^2.0.1
 
