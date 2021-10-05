@@ -182,7 +182,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> getProfile() async {
     final profileData = AuthRepository.getLoggedUser();
-    profile = profileData != null ? profileData : null;
+    profile = profileData ?? null;
   }
 
   onGoBack() {
