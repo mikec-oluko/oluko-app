@@ -221,5 +221,7 @@
     "invalidUsernameOrPw": "Invalid username/email or password.",
     "passwordRequired": "Password is required.",
     "emailUsernameRequired": "Email/Username is required.",
-    "today": "Today"
+    "today": "Today",
+    "storyCreated": "Story successfully created",
+    "storyBeingCreated": "The story is being created"
 }

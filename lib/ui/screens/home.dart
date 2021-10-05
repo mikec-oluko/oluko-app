@@ -38,7 +38,7 @@ class _HomeState extends State<Home> {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
         _user = authState.firebaseUser;
-        BlocProvider.of<CourseEnrollmentListBloc>(context)..getCourseEnrollmentsByUser(_user.uid);
+        BlocProvider.of<CourseEnrollmentListBloc>(context).getCourseEnrollmentsByUser(_user.uid);
         return BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(builder: (context, courseEnrollmentListState) {
           if (courseEnrollmentListState is CourseEnrollmentsByUserSuccess) {
             _courseEnrollments = courseEnrollmentListState.courseEnrollments;
@@ -63,8 +63,8 @@ class _HomeState extends State<Home> {
           showBackButton: false,
           actions: [_handWidget()],
         ),
-        body: Column(children: [
-          StoriesHeader(_user.uid),
+        body: ListView(children: [
+          Center(child: StoriesHeader(_user.uid)),
           WillPopScope(
             onWillPop: () => AppNavigator.onWillPop(context),
             child: OrientationBuilder(builder: (context, orientation) {

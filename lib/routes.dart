@@ -322,9 +322,9 @@ class Routes {
             classIndex: argumentsToAdd['classIndex'] as int);
         break;
       case RouteEnum.story:
-        providers = [];
+        providers = [BlocProvider<StoryBloc>.value(value: _storyBloc), BlocProvider<StoryListBloc>.value(value: _storyListBloc)];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
-        newRouteView = StoryPage(userStories: argumentsToAdd['userStories'] as UserStories);
+        newRouteView = StoryPage(userStories: argumentsToAdd['userStories'] as UserStories, userId: argumentsToAdd['userId'] as String);
         break;
       case RouteEnum.signUpWithEmail:
         newRouteView = SignUpWithMailPage();

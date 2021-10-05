@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/blocs/movement_submission_bloc.dart';
+import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/story_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/movement.dart';
+import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ShareCard extends StatefulWidget {
-  ShareCard();
+  final Function() createStory;
+
+  ShareCard({this.createStory});
 
   @override
   _State createState() => _State();
@@ -16,6 +19,7 @@ class ShareCard extends StatefulWidget {
 
 class _State extends State<ShareCard> {
   List<Movement> segmentMovements;
+  bool _storyEnabled = true;
 
   @override
   void initState() {
@@ -63,52 +67,27 @@ class _State extends State<ShareCard> {
                               style: OlukoFonts.olukoBigFont(),
                               textAlign: TextAlign.start,
                             ),
-                            SizedBox(height: 5),
+                            const SizedBox(height: 5),
                             Row(
                               children: [
-                                BlocListener<MovementSubmissionBloc, MovementSubmissionState>(
-                                  listener: (context, state) {
-                                    if (state is UpdateMovementSubmissionSuccess) {
-                                      BlocProvider.of<StoryBloc>(context).createStory(state.movementSubmission);
-                                      GestureDetector(
-                                        onTap: () {
-                                          BlocProvider.of<StoryBloc>(context).createStory(state.movementSubmission);
-                                        },
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(right: 10),
-                                          child: Column(
-                                            children: [
-                                              Image.asset(
-                                                'assets/courses/story.png',
-                                                scale: 8.4,
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.all(8.0),
-                                                child: Text('Story', style: OlukoFonts.olukoMediumFont()),
-                                              )
-                                            ],
-                                          ),
+                                GestureDetector(
+                                  onTap: _storyEnabled ? _onTap : null,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(right: 10),
+                                    child: Column(
+                                      children: [
+                                        Image.asset(
+                                          'assets/courses/story.png',
+                                          scale: 8.4,
+                                          color: _storyEnabled ? null : Colors.grey,
                                         ),
-                                      );
-                                    } else {
-                                      Padding(
-                                        padding: const EdgeInsets.only(right: 10),
-                                        child: Column(
-                                          children: [
-                                            Image.asset(
-                                              'assets/courses/story.png',
-                                              scale: 8.4,
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.all(8.0),
-                                              child: Text('Story', style: OlukoFonts.olukoMediumFont()),
-                                            )
-                                          ],
-                                        ),
-                                      );
-                                    }
-                                  },
-                                  child: const SizedBox(),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text('Story', style: _storyEnabled ? OlukoFonts.olukoMediumFont() : OlukoFonts.olukoMediumFont(customColor: Colors.grey)),
+                                        )
+                                      ],
+                                    ),
+                                  ),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
@@ -141,5 +120,10 @@ class _State extends State<ShareCard> {
         ),
       ),
     );
+  }
+
+  void _onTap() {
+    widget.createStory();
+    setState(() => _storyEnabled = false);
   }
 }

@@ -1,12 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/story_bloc.dart';
+import 'package:oluko_app/blocs/story_list_bloc.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/dto/story_dto.dart';
 import 'package:oluko_app/models/dto/user_stories.dart';
 import 'package:video_player/video_player.dart';
 
 class StoryPage extends StatefulWidget {
   UserStories userStories;
-  StoryPage({@required this.userStories});
+  String userId;
+  StoryPage({@required this.userStories, @required this.userId});
   @override
   _StoryPageState createState() => _StoryPageState();
 }
@@ -15,33 +20,43 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
   PageController _pageController;
   AnimationController _animController;
   VideoPlayerController _videoController;
+  Future<void> _initializeVideoPlayerFuture;
+  bool _updateState = false;
   int _currentIndex = 0;
 
   void initState() {
     super.initState();
     _pageController = PageController();
     _animController = AnimationController(vsync: this);
-
-    final Story firstStory = widget.userStories.stories.first;
+    findFirstStory();
+    final Story firstStory = widget.userStories.stories[_currentIndex];
     _loadStory(story: firstStory, animateToPage: false);
 
     _animController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         _animController.stop();
         _animController.reset();
+        setStoryAsSeen();
         setState(() {
           if (_currentIndex + 1 < widget.userStories.stories.length) {
             _currentIndex += 1;
             _loadStory(story: widget.userStories.stories[_currentIndex]);
           } else {
-            // Out of bounds - loop story
-            // You can also Navigator.of(context).pop() here
-            _currentIndex = 0;
-            _loadStory(story: widget.userStories.stories[_currentIndex]);
+            Navigator.of(context).pop();
+            if (_updateState) BlocProvider.of<StoryListBloc>(context).get(widget.userId);
           }
         });
       }
     });
+  }
+
+  void findFirstStory() {
+    final firstStoryIndex = widget.userStories.stories.indexWhere((element) => !element.seen);
+    if (firstStoryIndex != -1) {
+      _currentIndex = firstStoryIndex;
+    } else {
+      _currentIndex = 0;
+    }
   }
 
   @override
@@ -54,6 +69,7 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
 
   @override
   Widget build(BuildContext context) {
+    var loading = false;
     final Story story = widget.userStories.stories[_currentIndex];
     return Scaffold(
       backgroundColor: Colors.black,
@@ -69,10 +85,54 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
                 final Story story = widget.userStories.stories[i];
                 switch (story.content_type) {
                   case 'image':
-                    return Image.network(story.url, fit: BoxFit.cover);
+                    var img = Image.network(
+                      story.url,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent loadingProgress) {
+                        if (loadingProgress == null) {
+                          if (loading) {
+                            _animController.stop();
+                            _animController.reset();
+                            _animController.duration = Duration(seconds: story.duration);
+                            _animController.forward();
+                            loading = false;
+                          }
+                          return child;
+                        } else {
+                          loading = true;
+                          _animController.stop();
+                          _animController.reset();
+                        }
+                        return Center(
+                          child: CircularProgressIndicator(
+                            value: loadingProgress.expectedTotalBytes != null ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes : null,
+                          ),
+                        );
+                      },
+                    );
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 170),
+                      child: Column(children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(15.0),
+                          child: Container(width: 248, height: 350, child: img),
+                        ),
+                        const SizedBox(height: 30),
+                        Text(
+                          widget.userStories.stories[_currentIndex].description,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ]),
+                    );
                   case 'video':
-                  /*if (_videoController != null &&
-                              _videoController.value.initialized) {
+                    if (_videoController != null && _videoController.value.isInitialized) {
+                      return FutureBuilder(
+                          future: _initializeVideoPlayerFuture,
+                          builder: (context, snapshot) {
                             return FittedBox(
                               fit: BoxFit.cover,
                               child: SizedBox(
@@ -81,7 +141,10 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
                                 child: VideoPlayer(_videoController),
                               ),
                             );
-                          }*/
+                          });
+                    } else {
+                      return const Center(child: CircularProgressIndicator());
+                    }
                 }
                 return const SizedBox.shrink();
               },
@@ -112,11 +175,17 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
                       horizontal: 1.5,
                       vertical: 10.0,
                     ),
-                    child: UserInfo(avatar_thumbnail: widget.userStories.avatar_thumbnail, name: widget.userStories.name,),
+                    child: UserInfo(
+                      avatar_thumbnail: widget.userStories.avatar_thumbnail,
+                      name: widget.userStories.name,
+                      updateState: _updateState,
+                      userId: widget.userId,
+                      hour: '1hr',
+                    ),
                   ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -135,49 +204,55 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
       });
     } else if (dx > 2 * screenWidth / 3) {
       setState(() {
+        setStoryAsSeen();
         if (_currentIndex + 1 < widget.userStories.stories.length) {
           _currentIndex += 1;
           _loadStory(story: widget.userStories.stories[_currentIndex]);
         } else {
-          // Out of bounds - loop story
-          // You can also Navigator.of(context).pop() here
-          _currentIndex = 0;
-          _loadStory(story: widget.userStories.stories[_currentIndex]);
+          Navigator.of(context).pop();
+          if (_updateState) BlocProvider.of<StoryListBloc>(context).get(widget.userId);
         }
       });
     } else {
       if (story.content_type == 'video') {
-        /*if (_videoController.value.isPlaying) {
+        if (_videoController.value.isPlaying) {
           _videoController.pause();
           _animController.stop();
         } else {
           _videoController.play();
           _animController.forward();
-        }*/
+        }
       }
+    }
+  }
+
+  void setStoryAsSeen() {
+    if (!widget.userStories.stories[_currentIndex].seen) {
+      BlocProvider.of<StoryBloc>(context).setStoryAsSeen(widget.userId, widget.userStories.id, widget.userStories.stories[_currentIndex].id);
+      _updateState = true;
     }
   }
 
   void _loadStory({Story story, bool animateToPage = true}) {
     _animController.stop();
     _animController.reset();
+    _videoController?.dispose();
     switch (story.content_type) {
       case 'image':
         _animController.duration = Duration(seconds: story.duration);
         _animController.forward();
         break;
       case 'video':
-        /*_videoController = null;
-        _videoController?.dispose();
-        _videoController = VideoPlayerController.network(story.url)
-          ..initialize().then((_) {
-            setState(() {});
-            if (_videoController.value.initialized) {
-              _animController.duration = _videoController.value.duration;
-              _videoController.play();
-              _animController.forward();
-            }
-          });*/
+        _videoController = null;
+        _videoController = VideoPlayerController.network(story.url);
+        _initializeVideoPlayerFuture = _videoController.initialize().then((_) {
+          setState(() {});
+          if (_videoController.value.isInitialized) {
+            _animController.duration = _videoController.value.duration;
+            _videoController.play();
+            _animController.forward();
+          }
+        });
         break;
     }
     if (animateToPage) {
@@ -228,7 +303,7 @@ class AnimatedBar extends StatelessWidget {
               children: <Widget>[
                 _buildContainer(
                   double.infinity,
-                  position < currentIndex ? Colors.white : Colors.white.withOpacity(0.5),
+                  position < currentIndex ? OlukoColors.primary : Colors.white.withOpacity(0.5),
                 ),
                 if (position == currentIndex)
                   AnimatedBuilder(
@@ -236,7 +311,7 @@ class AnimatedBar extends StatelessWidget {
                     builder: (context, child) {
                       return _buildContainer(
                         constraints.maxWidth * animController.value,
-                        Colors.white,
+                        OlukoColors.primary,
                       );
                     },
                   )
@@ -254,10 +329,17 @@ class AnimatedBar extends StatelessWidget {
 class UserInfo extends StatelessWidget {
   final String avatar_thumbnail;
   final String name;
+  final String userId;
+  final bool updateState;
+  final String hour;
 
   const UserInfo({
     Key key,
-    @required this.avatar_thumbnail, @required this.name,
+    @required this.avatar_thumbnail,
+    @required this.name,
+    @required this.userId,
+    @required this.updateState,
+    @required this.hour,
   }) : super(key: key);
 
   @override
@@ -265,21 +347,34 @@ class UserInfo extends StatelessWidget {
     return Row(
       children: <Widget>[
         CircleAvatar(
-          radius: 20.0,
+          radius: 22.0,
           backgroundColor: Colors.grey[300],
           backgroundImage: Image.network(
             avatar_thumbnail,
           ).image,
         ),
-        const SizedBox(width: 10.0),
+        const SizedBox(width: 16.0),
         Expanded(
-          child: Text(
-            name,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 18.0,
-              fontWeight: FontWeight.w600,
-            ),
+          child: Row(
+            children: [
+              Text(
+                name,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 17.0,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(width: 10.0),
+              Text(
+                hour,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 17.0,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ],
           ),
         ),
         IconButton(
@@ -288,7 +383,10 @@ class UserInfo extends StatelessWidget {
             size: 30.0,
             color: Colors.white,
           ),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () {
+            Navigator.of(context).pop();
+            if (updateState) BlocProvider.of<StoryListBloc>(context).get(userId);
+          },
         ),
       ],
     );

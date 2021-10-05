@@ -5,13 +5,19 @@ import 'package:oluko_app/models/dto/story_dto.dart';
 class StoriesItem extends StatefulWidget {
   final String imageUrl;
   final double maxRadius;
-  final double progressValue;
+  double progressValue;
   final String name;
   final String avatar;
   final String avatar_thumbnail;
   final List<Story> stories;
 
-  const StoriesItem({this.maxRadius = 35, this.imageUrl, this.progressValue = 0, this.name, this.avatar, this.avatar_thumbnail, this.stories});
+  StoriesItem({this.maxRadius, this.imageUrl, this.name, this.avatar, this.avatar_thumbnail, this.stories, this.progressValue}) {
+    if (stories != null) {
+      progressValue = stories.where((element) => !element.seen).isNotEmpty ? 1 : 0;
+    } else {
+      progressValue = 0;
+    }
+  }
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -21,7 +27,7 @@ class _State extends State<StoriesItem> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(8, 16, 8, 29),
+      padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -34,7 +40,7 @@ class _State extends State<StoriesItem> {
                 right: 0,
                 child: CircularProgressIndicator(
                   value: widget.progressValue,
-                  strokeWidth: 5,
+                  strokeWidth: 7,
                   valueColor: const AlwaysStoppedAnimation<Color>(OlukoColors.primary),
                 ),
               ),
@@ -52,10 +58,10 @@ class _State extends State<StoriesItem> {
           ),
           if (widget.name != null)
             Padding(
-              padding: const EdgeInsets.all(5.0),
+              padding: const EdgeInsets.only(top: 10, bottom: 5),
               child: Text(
                 widget.name ?? '',
-                style: const TextStyle(color: Colors.white60),
+                style: const TextStyle(color: Colors.white60, fontWeight: FontWeight.w400, fontSize: 12, fontFamily: 'Open Sans'),
               ),
             )
           else

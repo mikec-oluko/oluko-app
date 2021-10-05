@@ -16,8 +16,22 @@ class UserStories extends Base {
       return null;
     }
     UserStories userStories = UserStories(name: json['name'].toString(), avatar: json['avatar'].toString(), avatar_thumbnail: json['avatar_thumbnail'].toString());
-    stories:
-    json['stories'] != null ? (json['stories'] as Iterable).map<Story>((item) => Story.fromJson(item as Map<String, dynamic>)).toList() : [];
+    List<Story> stories = [];
+    if (json['stories'] != null) {
+      Map<String, dynamic> storiesJson = Map<String, dynamic>.from(json['stories'] as Map);
+      storiesJson.forEach((key, story) {
+        stories.add(Story.fromJson(Map<String, dynamic>.from(story as Map)));
+      });
+      stories.sort((a, b) {
+        if (a.seen && !b.seen) return -1;
+        if (!a.seen && b.seen) return 1;
+        if (a.createdAt != null && b.createdAt != null) return a.createdAt?.compareTo(b.createdAt);
+        return 0;
+      });
+    } else {
+      stories = [];
+    }
+    userStories.stories = stories;
     userStories.setBase(json);
     return userStories;
   }
