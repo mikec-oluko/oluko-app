@@ -8,6 +8,7 @@ import 'package:oluko_app/ui/components/coach_timeline_circle_content.dart';
 import 'package:oluko_app/ui/components/coach_timeline_video_content.dart';
 import 'package:oluko_app/ui/components/tab_content_list.dart';
 import 'package:oluko_app/utils/container_grediant.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'coach_timeline_card_content.dart';
 
 class CoachTimelinePanel extends StatefulWidget {
@@ -47,7 +48,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Singl
               tabs: widget.timelineContentItems
                   .map((content) => Tab(
                         child: Container(
-                          child: Text(content.courseName,
+                          child: Text(content.courseName.toUpperCase(),
                               style: OlukoFonts.olukoMediumFont(
                                   customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
                         ),
@@ -69,26 +70,32 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Singl
   }
 
   List<List<Widget>> passContentToWidgets() {
-    Widget widgetToUse;
-    List<Widget> list = [];
-    List<List<Widget>> finalList = [];
+    Widget widgetTypeToUse;
+    List<Widget> listOfWidgets = [];
+    List<List<Widget>> finalListOfWidgetContent = [];
     widget.timelineContentItems.forEach((content) {
       content.timelineElements.forEach((element) {
-        widgetToUse = getWidgedToUse(element);
-        list.add(widgetToUse);
+        widgetTypeToUse = getWidgedToUse(element);
+        listOfWidgets.add(widgetTypeToUse);
       });
-      finalList.insert(widget.timelineContentItems.indexOf(content), list);
-      list = [];
+      finalListOfWidgetContent.insert(widget.timelineContentItems.indexOf(content), listOfWidgets);
+      listOfWidgets = [];
     });
-    return finalList;
+    return finalListOfWidgetContent;
   }
 
   Widget getWidgedToUse(CoachTimelineItem content) {
+    DateTime now = DateTime.now();
+
     final dateForContent = Padding(
       padding: const EdgeInsets.only(left: 5),
-      child: Text(DateFormat.yMMMd().format(content.createdAt.toDate()),
+      child: Text(
+          now.difference(content.createdAt.toDate()) <= Duration(days: 1)
+              ? OlukoLocalizations.get(context, 'today')
+              : DateFormat.yMMMd().format(content.createdAt.toDate()),
           style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
     );
+
     switch (TimelineContentOption.getTimelineOption(content.contentType as int)) {
       case TimelineInteractionType.course:
         return Container(
@@ -165,11 +172,19 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Singl
           ),
         );
       case TimelineInteractionType.sentVideo:
-        return CoachTimelineVideoContent(
-            videoThumbnail: content.contentThumbnail,
-            videoTitle: content.contentName,
-            date: content.createdAt.toDate(),
-            fileType: CoachFileTypeEnum.sentVideo);
+        return Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              dateForContent,
+              CoachTimelineVideoContent(
+                  videoThumbnail: content.contentThumbnail,
+                  videoTitle: content.contentName,
+                  date: content.createdAt.toDate(),
+                  fileType: CoachFileTypeEnum.sentVideo),
+            ],
+          ),
+        );
       //   break;
       default:
     }
