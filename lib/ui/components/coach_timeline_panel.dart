@@ -90,7 +90,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Singl
     final dateForContent = Padding(
       padding: const EdgeInsets.only(left: 5),
       child: Text(
-          now.difference(content.createdAt.toDate()) <= Duration(days: 1)
+          !now.isAfter(content.createdAt.toDate())
               ? OlukoLocalizations.get(context, 'today')
               : DateFormat.yMMMd().format(content.createdAt.toDate()),
           style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
