@@ -30,7 +30,8 @@ import 'package:oluko_app/utils/screen_utils.dart';
 import '../../../routes.dart';
 
 class Courses extends StatefulWidget {
-  Courses({Key key}) : super(key: key);
+  bool homeEnrollTocourse;
+  Courses({this.homeEnrollTocourse, Key key}) : super(key: key);
 
   @override
   _State createState() => _State();
@@ -52,7 +53,6 @@ class _State extends State<Courses> {
   final int cardsToShowOnLandscape = 5;
   final int searchResultsPortrait = 3;
   final int searchResultsLandscape = 5;
-
   //TODO Make Dynamic
   List<String> userRecommendationsAvatarUrls = [
     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEMWzdlSputkYso9dJb4VY5VEWQunXGBJMgGys7BLC4MzPQp6yfLURe-9nEdGrcK6Jasc&usqp=CAU',
@@ -74,7 +74,9 @@ class _State extends State<Courses> {
               bloc: BlocProvider.of<TagBloc>(context)..getByCategories(),
               builder: (context, tagState) {
                 return Scaffold(
-                    backgroundColor: Colors.black, appBar: _appBar(courseState), body: _courseWidget(context, tagState, courseState));
+                    backgroundColor: Colors.black,
+                    appBar: _appBar(courseState, widget.homeEnrollTocourse ?? false),
+                    body: _courseWidget(context, tagState, courseState));
               });
         });
   }
@@ -124,10 +126,10 @@ class _State extends State<Courses> {
     return OlukoCircularProgressIndicator();
   }
 
-  PreferredSizeWidget _appBar(CourseState state) {
+  PreferredSizeWidget _appBar(CourseState state, bool goBack) {
     return state is CourseSuccess
         ? OlukoAppBar<Course>(
-            showBackButton: true,
+            showBackButton: goBack,
             searchKey: searchKey,
             title: showFilterSelector ? OlukoLocalizations.get(context, 'filters') : OlukoLocalizations.get(context, 'courses'),
             actions: [_filterWidget()],

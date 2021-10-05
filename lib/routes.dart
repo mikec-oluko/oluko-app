@@ -329,9 +329,7 @@ class Routes {
         final Map<String, dynamic> argumentsToAdd =
             arguments as Map<String, dynamic>;
         newRouteView = CompletedClass(
-            courseEnrollment:
-                argumentsToAdd['courseEnrollment'] as CourseEnrollment,
-            classIndex: argumentsToAdd['classIndex'] as int);
+            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment, classIndex: argumentsToAdd['classIndex'] as int);
         break;
       case RouteEnum.signUpWithEmail:
         newRouteView = SignUpWithMailPage();
@@ -474,10 +472,8 @@ class Routes {
         newRouteView = TransformationJourneyPostPage();
         break;
       case RouteEnum.transformationJournetContentDetails:
-        final Map<String, TransformationJourneyUpload> argumentsToAdd =
-            arguments as Map<String, TransformationJourneyUpload>;
-        newRouteView = TransformationJourneyContentDetail(
-            contentToShow: argumentsToAdd['TransformationJourneyUpload']);
+        final Map<String, TransformationJourneyUpload> argumentsToAdd = arguments as Map<String, TransformationJourneyUpload>;
+        newRouteView = TransformationJourneyContentDetail(contentToShow: argumentsToAdd['TransformationJourneyUpload']);
         break;
       case RouteEnum.logIn:
         newRouteView = LoginPage();
@@ -585,6 +581,7 @@ class Routes {
             courseEnrollment:
                 argumentsToAdd['courseEnrollment'] as CourseEnrollment,
             classIndex: argumentsToAdd['classIndex'] as int);
+            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment, classIndex: argumentsToAdd['classIndex'] as int);
         break;
       case RouteEnum.assessmentVideos:
         providers = [
@@ -667,7 +664,9 @@ class Routes {
           BlocProvider<CourseEnrollmentListBloc>.value(
               value: _courseEnrollmentListBloc),
         ];
-        newRouteView = Courses();
+
+        final Map<String, dynamic> args = arguments as Map<String, dynamic>;
+        newRouteView = Courses(homeEnrollTocourse: args['homeEnrollTocourse'] == 'true');
         break;
       case RouteEnum.viewAll:
         Map<String, dynamic> args = arguments as Map<String, dynamic>;
