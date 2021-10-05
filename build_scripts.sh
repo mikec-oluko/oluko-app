@@ -51,7 +51,7 @@ if [ "$1" = "deploy" ]
             cp lib/config/src/production/project_settings.dart lib/config/src/production/s3_settings.dart lib/config && \
             flutter pub get && cd ios && pod install && cd ..
         fi
-        if [ "$3" = "qa" ]
+        if [ "$2" = "qa" ]
             then echo "Setting up qa environment" && flutter clean && \
             cp ios/Flutter/src/qa/GoogleService-Info.plist ios/Flutter && \
             cp android/app/src/qa/google-services.json android/app && \
