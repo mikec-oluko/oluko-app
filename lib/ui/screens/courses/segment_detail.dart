@@ -11,6 +11,7 @@ import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/segment_image_section.dart';
@@ -63,12 +64,12 @@ class _SegmentDetailState extends State<SegmentDetail> {
               _movements = movementState.movements;
               return form();
             } else {
-              return SizedBox();
+              return OlukoCircularProgressIndicator();
             }
           });
         });
       } else {
-        return SizedBox();
+        return OlukoCircularProgressIndicator();
       }
     });
   }
