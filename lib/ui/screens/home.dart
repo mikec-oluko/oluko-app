@@ -141,7 +141,7 @@ class _HomeState extends State<Home> {
             CourseStepSection(totalCourseSteps: 4, currentCourseStep: 4),
             SizedBox(height: 30),
             GestureDetector(
-                onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courses]),
+                onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courses], arguments: {'homeEnrollTocourse': 'true'}),
                 child: Stack(alignment: Alignment.center, children: [
                   Image.asset(
                     'assets/home/ellipse.png',
