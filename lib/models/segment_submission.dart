@@ -17,6 +17,7 @@ class SegmentSubmission extends Base {
   Video video;
   VideoState videoState;
   SegmentSubmissionStatusEnum status;
+  bool favorite;
 
   SegmentSubmission(
       {this.segmentId,
@@ -31,6 +32,7 @@ class SegmentSubmission extends Base {
       this.videoState,
       this.seenAt,
       this.status,
+      this.favorite,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -59,8 +61,10 @@ class SegmentSubmission extends Base {
         status: SegmentSubmissionStatusEnum.values[json['status'] as int],
         courseEnrollmentReference: json['course_enrollment_reference'] as DocumentReference,
         seenAt: json['seen_at'] as Timestamp,
+        favorite: json['favorite'] == null ? false : json['favorite'] as bool,
         video: json['video'] == null ? null : Video.fromJson(json['video'] as Map<String, dynamic>),
-        videoState: json['video_state'] == null ? null : VideoState.fromJson(json['video_state'] as Map<String, dynamic>));
+        videoState:
+            json['video_state'] == null ? null : VideoState.fromJson(json['video_state'] as Map<String, dynamic>));
 
     segmentSubmission.setBase(json);
     return segmentSubmission;
@@ -78,6 +82,7 @@ class SegmentSubmission extends Base {
       'course_enrollment_reference': courseEnrollmentReference,
       'seen_at': seenAt,
       'status': status.index,
+      'favorite': favorite ?? false,
       'video': video == null ? null : video.toJson(),
       'video_state': videoState == null ? null : videoState.toJson()
     };
