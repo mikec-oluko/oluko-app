@@ -23,10 +23,7 @@ class UserProfileInformation extends StatefulWidget {
   final UserResponse currentUser;
   final UserConnectStatus connectStatus;
   final UserStatistics userStats;
-
-  const UserProfileInformation(
-      {this.userToDisplayInformation, this.actualRoute, this.currentUser, this.connectStatus, this.userStats})
-      : super();
+  const UserProfileInformation({this.userToDisplayInformation, this.actualRoute, this.currentUser, this.connectStatus, this.userStats}) : super();
 
   @override
   _UserProfileInformationState createState() => _UserProfileInformationState();
@@ -89,10 +86,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
 
   Widget _profileUserInformation(String location, List<String> valuesForArchivements) {
     final bool canShowDetails = _privacyOptions.canShowDetails(
-        isOwner: _isOwner,
-        currentUser: widget.currentUser,
-        userRequested: widget.userToDisplayInformation,
-        connectStatus: widget.connectStatus);
+        isOwner: _isOwner, currentUser: widget.currentUser, userRequested: widget.userToDisplayInformation, connectStatus: widget.connectStatus);
 
     final profileDefaultProfilePicContent =
         '${widget.userToDisplayInformation.firstName.characters.first.toUpperCase()} ${widget.userToDisplayInformation.lastName.characters.first.toUpperCase()}';
@@ -163,8 +157,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                               AppMessages.showSnackbarTranslated(
                                   context, hiFiveSendState.hiFive ? 'hiFiveSent' : 'hiFiveRemoved');
                             }
-                            BlocProvider.of<HiFiveReceivedBloc>(context)
-                                .get(context, _authState.user.id, widget.userToDisplayInformation.id);
+                            BlocProvider.of<HiFiveReceivedBloc>(context).get(context, _authState.user.id, widget.userToDisplayInformation.id);
                           },
                           child: BlocBuilder<HiFiveReceivedBloc, HiFiveReceivedState>(
                               builder: (context, HiFiveReceivedState) {
@@ -178,8 +171,10 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                                         ),
                                         onPressed: () {
                                           BlocProvider.of<HiFiveSendBloc>(context).set(
-                                              context, _authState.user.id, widget.userToDisplayInformation.id,
-                                              hiFive: !_hiFiveReceivedState.hiFive);
+                                            context,
+                                            _authState.user.id,
+                                            widget.userToDisplayInformation.id,
+                                          );
                                         },
                                         child: Image.asset(
                                           HiFiveReceivedState.hiFive

@@ -221,5 +221,6 @@
     "invalidUsernameOrPw": "Usuario/email o password inválido.",
     "passwordRequired": "Password es requerido.",
     "emailUsernameRequired": "Email/Username es requerido.",
-    "today": "Hoy"
+    "today": "Hoy",
+    "coachRequest": "te solicitó grabar este segmento"
 }

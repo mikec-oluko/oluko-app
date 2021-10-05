@@ -20,7 +20,8 @@ class _CoachAssessmentCardState extends State<CoachAssessmentCard> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos]);
+        Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos],
+            arguments: {'isFirstTime': false});
       },
       child: Container(
         width: 250,
@@ -36,9 +37,13 @@ class _CoachAssessmentCardState extends State<CoachAssessmentCard> {
                 children: [
                   Text(
                     widget.task.name,
-                    style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                    style: OlukoFonts.olukoBigFont(
+                        customColor: OlukoColors.white,
+                        custoFontWeight: FontWeight.w500),
                   ),
-                  checkAssessmentSubmitted(widget.task, widget.assessmentVideos) == false
+                  checkAssessmentSubmitted(
+                              widget.task, widget.assessmentVideos) ==
+                          false
                       ? Image.asset(
                           'assets/assessment/check_ellipse.png',
                           scale: 4,
@@ -64,7 +69,8 @@ class _CoachAssessmentCardState extends State<CoachAssessmentCard> {
                   Text(
                     widget.task.description,
                     style: OlukoFonts.olukoMediumFont(
-                        customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+                        customColor: OlukoColors.grayColor,
+                        custoFontWeight: FontWeight.w500),
                   ),
                 ],
               ),
@@ -73,8 +79,9 @@ class _CoachAssessmentCardState extends State<CoachAssessmentCard> {
                 children: [
                   Text(
                     OlukoLocalizations.get(context, 'public'),
-                    style:
-                        OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+                    style: OlukoFonts.olukoBigFont(
+                        customColor: OlukoColors.grayColor,
+                        custoFontWeight: FontWeight.w500),
                   ),
                   Stack(alignment: Alignment.center, children: [
                     Image.asset(
@@ -100,7 +107,9 @@ class _CoachAssessmentCardState extends State<CoachAssessmentCard> {
     if (tasksSubmitted.length == null || tasksSubmitted.length == 0) {
       result = false;
     } else {
-      if (tasksSubmitted.where((element) => element.task.id == task.id).isNotEmpty) {
+      if (tasksSubmitted
+          .where((element) => element.task.id == task.id)
+          .isNotEmpty) {
         result = true;
       } else {
         result = false;

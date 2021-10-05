@@ -26,4 +26,24 @@ class CoachRequestRepository {
     });
     return response;
   }
+
+  Future<CoachRequest> getBySegment(
+      String userId, String segmentId, String courseEnrollmentId) async {
+    QuerySnapshot docRef = await FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('coachAssignments')
+        .doc(userId)
+        .collection('coachRequests')
+        .where('segment_id', isEqualTo: segmentId)
+        .where('course_enrollment_id', isEqualTo: courseEnrollmentId)
+        .get();
+
+    if (docRef.docs.length > 0) {
+      return CoachRequest.fromJson(
+          docRef.docs[0].data() as Map<String, dynamic>);
+    } else {
+      return null;
+    }
+  }
 }
