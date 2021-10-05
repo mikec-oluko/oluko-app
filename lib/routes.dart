@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
 import 'package:oluko_app/blocs/course/course_home_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
@@ -263,6 +265,8 @@ class Routes {
   final HiFiveReceivedBloc _hiFiveReceivedBloc = HiFiveReceivedBloc();
   final HiFiveSendBloc _hiFiveSendBloc = HiFiveSendBloc();
   final HiFiveBloc _hiFiveBloc = HiFiveBloc();
+  final CoachRequestBloc _coachRequestBloc = CoachRequestBloc();
+  final CoachUserBloc _coachUserBloc = CoachUserBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -489,6 +493,8 @@ class Routes {
         providers = [
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
           BlocProvider<MovementBloc>.value(value: _movementBloc),
+          BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
+          BlocProvider<CoachUserBloc>.value(value: _coachUserBloc),
         ];
         final Map<String, dynamic> argumentsToAdd =
             arguments as Map<String, dynamic>;
@@ -599,7 +605,10 @@ class Routes {
         final Map<String, dynamic> argumentsToAdd =
             arguments as Map<String, dynamic>;
         newRouteView = AssessmentVideos(
-            isFirstTime: argumentsToAdd['isFirstTime'] as bool);
+            isFirstTime:
+                argumentsToAdd == null || argumentsToAdd['isFirstTime'] == null
+                    ? false
+                    : argumentsToAdd['isFirstTime'] as bool);
         break;
       case RouteEnum.taskDetails:
         providers = [

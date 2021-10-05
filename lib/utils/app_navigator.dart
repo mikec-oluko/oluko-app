@@ -12,8 +12,6 @@ class AppNavigator {
   }
 
   Future<void> goToAssessmentVideos(BuildContext context) async {
-    /*Navigator.pushNamedAndRemoveUntil(
-        context, '/assessment-videos', (route) => false, {'isFirsTime': true});*/
     Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos],
         arguments: {'isFirstTime': true});
   }
