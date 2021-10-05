@@ -120,7 +120,7 @@ class _State extends State<Courses> {
   PreferredSizeWidget _appBar(CourseState state) {
     return state is CourseSuccess
         ? OlukoAppBar<Course>(
-            showBackButton: false,
+            showBackButton: true,
             searchKey: searchKey,
             title: showFilterSelector ? OlukoLocalizations.get(context, 'filters') : OlukoLocalizations.get(context, 'courses'),
             actions: [_filterWidget()],
