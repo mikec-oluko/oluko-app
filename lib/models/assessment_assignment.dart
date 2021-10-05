@@ -8,6 +8,7 @@ class AssessmentAssignment extends Base {
   DocumentReference assessmentReference;
   String coachId;
   DocumentReference coachReference;
+  bool seenByUser;
 
   AssessmentAssignment(
       {this.compleatedAt,
@@ -16,6 +17,7 @@ class AssessmentAssignment extends Base {
       this.assessmentReference,
       this.coachId,
       this.coachReference,
+      this.seenByUser,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -40,6 +42,7 @@ class AssessmentAssignment extends Base {
       assessmentReference: json['assessment_reference'] as DocumentReference,
       coachId: json['coach_id']?.toString(),
       coachReference: json['coach_reference'] as DocumentReference,
+      seenByUser: json['seen_by_user'] as bool,
     );
     assessmentAssignment.setBase(json);
     return assessmentAssignment;
@@ -53,6 +56,7 @@ class AssessmentAssignment extends Base {
       'assessment_reference': assessmentReference,
       'coach_id': coachId,
       'coach_reference': coachReference,
+      'seen_by_user': seenByUser
     };
     assessmentAssignmentJson.addEntries(super.toJson().entries);
     return assessmentAssignmentJson;
