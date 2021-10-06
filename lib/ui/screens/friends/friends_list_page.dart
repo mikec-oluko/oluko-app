@@ -227,7 +227,9 @@ class _FriendsListPageState extends State<FriendsListPage> {
                   child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [TitleBody('No Friends.')]),
                 )
               ]
-            : userListState.users.where((e) => !friendState.friendUsers.map((fu) => fu.id).toList().contains(e.id)).map((user) {
+            : userListState.users
+                .where((e) => e.id != _authStateData.user.id && !friendState.friendUsers.map((fu) => fu.id).toList().contains(e.id))
+                .map((user) {
                 return GestureDetector(
                   onTap: () {
                     BottomDialogUtils.showBottomDialog(
