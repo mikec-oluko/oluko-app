@@ -5,27 +5,27 @@
     
     
       
-      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000243">
+      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000262">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="1: cd .. &amp;&amp; cd .. &amp;&amp; bash ./build_scripts.sh increment_build" time="0.022529">
+      <testcase classname="fastlane.lanes" name="1: cd .. &amp;&amp; cd .. &amp;&amp; bash ./build_scripts.sh increment_build" time="0.022557">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="2: clean" time="23.700322">
+      <testcase classname="fastlane.lanes" name="2: clean" time="20.674674">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="3: cd .. &amp;&amp; cd .. &amp;&amp; bash ./build_scripts.sh appbundle" time="202.196199">
+      <testcase classname="fastlane.lanes" name="3: cd .. &amp;&amp; cd .. &amp;&amp; bash ./build_scripts.sh appbundle" time="204.298996">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="4: upload_to_play_store" time="166.344614">
+      <testcase classname="fastlane.lanes" name="4: upload_to_play_store" time="116.780419">
         
       </testcase>
     

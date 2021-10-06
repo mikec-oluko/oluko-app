@@ -97,7 +97,7 @@ class AuthBloc extends Cubit<AuthState> {
 
   void navigateToNextScreen(BuildContext context, String userId) async {
     AssessmentAssignment assessmentA = await AssessmentAssignmentRepository.getByUserId(userId);
-    if (assessmentA.seenByUser == null || !assessmentA.seenByUser) {
+    if (assessmentA != null && (assessmentA.seenByUser == null || !assessmentA.seenByUser)) {
       await AppNavigator().goToAssessmentVideos(context);
     } else {
       await AppNavigator().returnToHome(context);

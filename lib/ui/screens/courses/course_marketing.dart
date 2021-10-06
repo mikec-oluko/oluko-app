@@ -65,8 +65,8 @@ class _CourseMarketingState extends State<CourseMarketing> {
         _user = authState.firebaseUser;
         if (_userState == null) {
           _userState = authState;
-          BlocProvider.of<SubscribedCourseUsersBloc>(context)
-              .get(widget.course.id, _userState.user.id);
+          /*BlocProvider.of<SubscribedCourseUsersBloc>(context)
+              .get(widget.course.id, _userState.user.id);*/
           BlocProvider.of<ClassBloc>(context)..getAll(widget.course);
           BlocProvider.of<StatisticsBloc>(context)
             ..get(widget.course.statisticsReference);
@@ -230,7 +230,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                 ],
               )));
     } else {
-      return nil;
+      return SizedBox();
     }
   }
 

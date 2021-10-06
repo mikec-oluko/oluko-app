@@ -11,8 +11,8 @@ class CoachRequest extends Base {
   DocumentReference coachReference;
   String segmentSubmissionId;
   DocumentReference segmentSubmissionReference;
-  String courseEnrolledId;
-  DocumentReference courseEnrolledReference;
+  String courseEnrollmentId;
+  DocumentReference courseEnrollmentReference;
 
   CoachRequest(
       {this.status,
@@ -22,8 +22,8 @@ class CoachRequest extends Base {
       this.coachReference,
       this.segmentSubmissionId,
       this.segmentSubmissionReference,
-      this.courseEnrolledId,
-      this.courseEnrolledReference,
+      this.courseEnrollmentId,
+      this.courseEnrollmentReference,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -50,8 +50,8 @@ class CoachRequest extends Base {
         segmentSubmissionId: json['segment_submission_id']?.toString(),
         segmentSubmissionReference:
             json['segment_submission_reference'] != null ? json['segment_submission_reference'] as DocumentReference : null,
-        courseEnrolledId: json['course_enrolled_id']?.toString(),
-        courseEnrolledReference: json['course_enrolled_reference'] != null ? json['course_enrolled_reference'] as DocumentReference : null);
+        courseEnrollmentId: json['course_enrollment_id']?.toString(),
+        courseEnrollmentReference: json['course_enrollment_reference'] != null ? json['course_enrolled_reference'] as DocumentReference : null);
     coachRequest.setBase(json);
     return coachRequest;
   }
@@ -66,8 +66,8 @@ class CoachRequest extends Base {
       'coach_reference': coachReference,
       'segment_submission_id': segmentSubmissionId,
       'segment_submission_reference': segmentSubmissionReference,
-      'course_enrolled_id': courseEnrolledId,
-      'course_enrolled_reference': courseEnrolledReference,
+      'course_enrollment_id': courseEnrollmentId,
+      'course_enrollment_reference': courseEnrollmentReference,
     };
     coachRequestJson.addEntries(super.toJson().entries);
     return coachRequestJson;
