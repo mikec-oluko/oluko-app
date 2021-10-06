@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/enums/segment_submission_status_enum.dart';
 import 'package:oluko_app/models/enums/submission_state_enum.dart';
@@ -20,7 +21,7 @@ class SegmentSubmissionRepository {
   }
 
   static Future<SegmentSubmission> create(User user, CourseEnrollment courseEnrollment, Segment segment, String videoPath,
-      [String coachId = 'Sjq3rAj1q2gGriWRTS7P2CrawZR2']) async {
+      CoachRequest coachRequest) async {
     DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue("projectId"));
 
     DocumentReference courseEnrollmentReference = projectReference.collection('courseEnrollments').doc(courseEnrollment.id);
@@ -42,8 +43,8 @@ class SegmentSubmissionRepository {
         courseEnrollmentReference: courseEnrollmentReference,
         status: SegmentSubmissionStatusEnum.created,
         createdBy: user.uid,
-        coachId: coachId,
-        coachReference: null, //TODO: missing reference
+        coachId: coachRequest.coachId,
+        coachReference: coachRequest.coachReference,
         videoState: VideoState(state: SubmissionStateEnum.recorded, stateInfo: videoPath));
 
     segmentSubmission.id = docRef.id;
