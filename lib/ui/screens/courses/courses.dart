@@ -131,7 +131,7 @@ class _State extends State<Courses> {
         ? OlukoAppBar<Course>(
             showBackButton: goBack,
             searchKey: searchKey,
-            title: showFilterSelector ? OlukoLocalizations.get(context, 'filters') : OlukoLocalizations.get(context, 'courses'),
+            title: OlukoLocalizations.get(context, showFilterSelector ? 'filters' : 'courses'),
             actions: [_filterWidget()],
             onPressed: () => Navigator.pushNamed(context, routeLabels[RouteEnum.root]),
             onSearchSubmit: (SearchResults<Course> results) => this.setState(() {
@@ -223,7 +223,7 @@ class _State extends State<Courses> {
                 ],
               )
             : Icon(
-                showFilterSelector || selectedTags.length > 0 ? Icons.filter_alt : Icons.filter_alt_outlined,
+                showFilterSelector || selectedTags.isNotEmpty ? Icons.filter_alt : Icons.filter_alt_outlined,
                 color: OlukoColors.appBarIcon,
                 size: 25,
               ),
@@ -240,7 +240,7 @@ class _State extends State<Courses> {
             builder: (context, recommendationState) {
               return recommendationState is RecommendationSuccess &&
                       courseState is CourseSuccess &&
-                      recommendationState.recommendations.length > 0 &&
+                      recommendationState.recommendations.isNotEmpty &&
                       recommendationState.recommendationsByUsers.entries.length > 0
                   ? CarouselSection(
                       title: OlukoLocalizations.get(context, 'friendsRecommended'),
@@ -249,7 +249,7 @@ class _State extends State<Courses> {
                         final course = courseState.values.where((element) => element.id == courseEntry.key).toList()[0];
 
                         final List<String> userRecommendationAvatars =
-                            courseEntry.value.map((user) => user.avatar != null ? user.avatar : defaultAvatar).toList();
+                            courseEntry.value.map((user) => user.avatar ?? defaultAvatar).toList();
 
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -277,12 +277,11 @@ class _State extends State<Courses> {
         AuthSuccess authSuccess = authState;
         return BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(
             bloc: BlocProvider.of<CourseEnrollmentListBloc>(context)
-              ..getCourseEnrollmentsByUser(
-                  authSuccess.user.id != null && authSuccess.user.id != 'null' ? authSuccess.user.id : authSuccess.user.firebaseId),
+              ..getCourseEnrollmentsByUser(authSuccess.user.id ?? authSuccess.user.firebaseId),
             builder: (context, courseEnrollmentState) {
               return courseEnrollmentState is CourseEnrollmentsByUserSuccess &&
                       courseState is CourseSuccess &&
-                      courseEnrollmentState.courseEnrollments.length > 0
+                      courseEnrollmentState.courseEnrollments.isNotEmpty
                   ? CarouselSection(
                       title: OlukoLocalizations.get(context, 'activeCourses'),
                       height: carouselSectionHeight + 10,

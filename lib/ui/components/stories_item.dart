@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nil/nil.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/dto/story_dto.dart';
 
@@ -7,12 +8,14 @@ class StoriesItem extends StatefulWidget {
   final double maxRadius;
   double progressValue;
   final String name;
+  final bool showName;
+  final String lastname;
   final String avatar;
   final String avatar_thumbnail;
   final List<Story> stories;
   bool _hasUnseenStories = false;
 
-  StoriesItem({this.maxRadius, this.imageUrl, this.name, this.avatar, this.avatar_thumbnail, this.stories, this.progressValue = 0}) {
+  StoriesItem({this.maxRadius, this.imageUrl, this.name, this.lastname, this.avatar, this.avatar_thumbnail, this.stories, this.progressValue = 0, this.showName = true}) {
     if (stories != null) {
       if (stories.where((element) => !element.seen).isNotEmpty) {
         _hasUnseenStories = true;
@@ -54,12 +57,22 @@ class _State extends State<StoriesItem> {
               else
                 CircleAvatar(
                   maxRadius: widget.maxRadius,
-                  child: const Icon(Icons.error),
+                  backgroundColor: OlukoColors.userColor(widget.name, widget.lastname),
+                  child: widget.name != null
+                      ? Text(
+                          widget.name?.characters.first.toString().toUpperCase(),
+                          style: OlukoFonts.olukoBigFont(
+                            customColor: OlukoColors.white,
+                            custoFontWeight: FontWeight.w500,
+                          ),
+                          textAlign: TextAlign.center,
+                        )
+                      : nil,
                 ),
               if (widget._hasUnseenStories) Image.asset('assets/courses/photo_ellipse.png', scale: 7, color: OlukoColors.secondary)
             ],
           ),
-          if (widget.name != null)
+          if (widget.name != null && widget.showName)
             Padding(
               padding: const EdgeInsets.only(top: 10, bottom: 5),
               child: Text(
