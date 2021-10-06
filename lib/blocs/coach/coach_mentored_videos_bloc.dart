@@ -21,9 +21,9 @@ class CoachMentoredVideoFailure extends CoachMentoredVideosState {
 class CoachMentoredVideosBloc extends Cubit<CoachMentoredVideosState> {
   CoachMentoredVideosBloc() : super(Loading());
 
-  void getMentoredVideosByUserId(String userId) async {
+  void getMentoredVideosByUserId(String userId, String coachId) async {
     try {
-      final List<Annotation> coachAnnotations = await CoachRepository().getCoachAnnotationsByUserId(userId);
+      final List<Annotation> coachAnnotations = await CoachRepository().getCoachAnnotationsByUserId(userId, coachId);
       emit(CoachMentoredVideosSuccess(mentoredVideos: coachAnnotations));
     } catch (exception, stackTrace) {
       await Sentry.captureException(

@@ -124,11 +124,13 @@ class CoachRepository {
     }
   }
 
-  Future<List<Annotation>> getCoachAnnotationsByUserId(String userId) async {
+  Future<List<Annotation>> getCoachAnnotationsByUserId(String userId, String coachId) async {
     try {
       QuerySnapshot docRef = await FirebaseFirestore.instance
           .collection('projects')
           .doc(GlobalConfiguration().getValue('projectId'))
+          .collection('coachStatistics')
+          .doc(coachId)
           .collection('annotations')
           .where('user_id', isEqualTo: userId)
           .get();
