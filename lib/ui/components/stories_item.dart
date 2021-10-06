@@ -8,13 +8,22 @@ class StoriesItem extends StatefulWidget {
   final double maxRadius;
   double progressValue;
   final String name;
+  final bool showName;
   final String lastname;
   final String avatar;
   final String avatar_thumbnail;
   final List<Story> stories;
 
   StoriesItem(
-      {this.maxRadius, this.imageUrl, this.name, this.lastname, this.avatar, this.avatar_thumbnail, this.stories, this.progressValue}) {
+      {this.maxRadius,
+      this.imageUrl,
+      this.name,
+      this.lastname,
+      this.avatar,
+      this.avatar_thumbnail,
+      this.stories,
+      this.progressValue,
+      this.showName = true}) {
     if (stories != null) {
       progressValue = stories.where((element) => !element.seen).isNotEmpty ? 1 : 0;
     } else {
@@ -69,7 +78,7 @@ class _State extends State<StoriesItem> {
                 ),
             ],
           ),
-          if (widget.name != null)
+          if (widget.name != null && widget.showName)
             Padding(
               padding: const EdgeInsets.only(top: 10, bottom: 5),
               child: Text(
