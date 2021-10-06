@@ -132,38 +132,55 @@ class VideoBloc extends Cubit<VideoState> {
     return video;
   }
 
-  Future<String> _uploadFiles(BuildContext context, String dirPath, String videoName) async {
-    // final videosDir = Directory(dirPath);
+  Future<Video> uploadVideoWithoutProcessing(Video video, String thumbFilePath, String filePath, BuildContext context) async {
+    String thumbUrl;
+    if (thumbFilePath != null) {
+      thumbUrl = await VideoProcess.uploadFile(thumbFilePath, video.name);
+    }
 
-    // var playlistUrl = '';
-
-    // final files = videosDir.listSync();
-    // int i = 1;
-    // for (FileSystemEntity file in files) {
-    // final fileName = p.basename(file.path);
-    // final fileExtension = FileProcessing.getFileExtension(fileName);
-    // if (fileExtension == EnumToString.convertToString(FileExtension.m3u8)) {
-    //   if (file is File) {
-    //     VideoProcess.updatePlaylistUrls(file, videoName, s3Storage: true);
-    //   }
-    // }
-
-    // double fileProgress = 0.4 / files.length.toDouble();
-    // _processPhase = OlukoLocalizations.get(context, 'uploadingVideoFile') +
-    //     i.toString() +
-    //     OlukoLocalizations.get(context, 'outOf') +
-    //     files.length.toString();
-    // _progress += fileProgress;
     emit(VideoProcessing(processPhase: OlukoLocalizations.get(context, 'uploadingVideoFile'), progress: 0));
-    final downloadUrl = await VideoProcess.uploadFile(dirPath, videoName);
+    final videoUrl = await VideoProcess.uploadFile(filePath, video.name);
     emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
-    //   if (fileName == 'master.m3u8') {
-    //     playlistUrl = downloadUrl;
-    //   }
-    //   i++;
-    // }
 
-    return downloadUrl;
+    video.url = videoUrl;
+    video.thumbUrl = thumbUrl;
+
+    return video;
+  }
+
+  Future<String> _uploadFiles(BuildContext context, String dirPath, String videoName) async {
+    final videosDir = Directory(dirPath);
+
+    var playlistUrl = '';
+
+    final files = videosDir.listSync();
+    int i = 1;
+    for (FileSystemEntity file in files) {
+      final fileName = p.basename(file.path);
+      final fileExtension = FileProcessing.getFileExtension(fileName);
+      if (fileExtension == EnumToString.convertToString(FileExtension.m3u8)) {
+        if (file is File) {
+          VideoProcess.updatePlaylistUrls(file, videoName, s3Storage: true);
+        }
+      }
+
+      double fileProgress = 0.4 / files.length.toDouble();
+      _processPhase = OlukoLocalizations.get(context, 'uploadingVideoFile') +
+          i.toString() +
+          OlukoLocalizations.get(context, 'outOf') +
+          files.length.toString();
+      _progress += fileProgress;
+      emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
+
+      final downloadUrl = await VideoProcess.uploadFile(file.path, videoName);
+
+      if (fileName == 'master.m3u8') {
+        playlistUrl = downloadUrl;
+      }
+      i++;
+    }
+
+    return playlistUrl;
   }
 
   Future<Video> _processVideoWithoutEncoding(BuildContext context, File videoFile, double aspectRatio, String id) async {
@@ -204,7 +221,7 @@ class VideoBloc extends Cubit<VideoState> {
     _progress += _unitOfProgress;
     emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
 
-    video = await uploadVideo(video, thumbFilePath, videoPath, context);
+    video = await uploadVideoWithoutProcessing(video, thumbFilePath, videoPath, context);
 
     return video;
   }
