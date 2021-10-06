@@ -46,7 +46,9 @@ class Annotation extends Base {
   factory Annotation.fromJson(Map<String, dynamic> json) {
     Annotation annotation = Annotation(
         userId: json['user_id'].toString(),
+        segmentSubmissionId: json['segment_submission_id'].toString(),
         userReference: json['user_reference'] as DocumentReference,
+        segmentSubmissionReference: json['segment_submission_reference'] as DocumentReference,
         coachId: json['coach_id'].toString(),
         coachReference: json['coach_reference'] as DocumentReference,
         status: AnnotationStatusEnum.values[json['status'] as int],
@@ -62,10 +64,12 @@ class Annotation extends Base {
   Map<String, dynamic> toJson() {
     Map<String, dynamic> annotation = {
       'user_id': userId,
+      'segment_submission_id': segmentSubmissionId,
       'user_reference': userReference,
       'coach_id': coachId,
       'coach_reference': coachReference,
-      'status': status.index,
+      'segment_submission_reference': segmentSubmissionReference,
+      // 'status': status,
       'favorite': favorite ?? false,
       'video': video == null ? null : video.toJson(),
       'video_state': videoState == null ? null : videoState.toJson()
