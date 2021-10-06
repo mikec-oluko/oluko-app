@@ -92,19 +92,11 @@ class FriendRepository {
   }
 
   static DocumentReference<Map<String, dynamic>> getFriendUserDocReferenceById(String userId) {
-    return FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('friends')
-        .doc(userId);
+    return FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('friends').doc(userId);
   }
 
   static DocumentReference<Map<String, dynamic>> getUserDocReferenceById(String userId) {
-    return FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('users')
-        .doc(userId);
+    return FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users').doc(userId);
   }
 
   static Future<void> addFriendToFriendList(Friend friend, FriendModel friendModel, String friendId) async {
@@ -309,7 +301,9 @@ class FriendRepository {
 
       Friend friend = await getUserFriendsByUserId(userRequestedId);
 
-      friend.friendRequestReceived.add(userToConnect);
+      if (friend.friendRequestReceived.where((element) => element.id == userToConnect.id).isEmpty) {
+        friend.friendRequestReceived.add(userToConnect);
+      }
 
       await FirebaseFirestore.instance
           .collection('projects')
