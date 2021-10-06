@@ -125,7 +125,8 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                     padding: const EdgeInsets.all(5.0),
                     child: Stack(children: [
                       CircleAvatar(
-                        backgroundColor: OlukoColors.black,
+                        backgroundColor: OlukoColors.userColor(
+                            widget.userToDisplayInformation.firstName, widget.userToDisplayInformation.lastName),
                         radius: 30.0,
                         child: Text(profileDefaultProfilePicContent,
                             style: OlukoFonts.olukoBigFont(
