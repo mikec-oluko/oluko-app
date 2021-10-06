@@ -24,7 +24,7 @@ platform :android do
   desc "Submit a new Beta Build to Crashlytics Beta"
   lane :beta do
     sh "cd .. && cd .. && bash ./build_scripts.sh increment_build"
-    gradle(task: "clean")
+    # gradle(task: "clean")
     sh "cd .. && cd .. && bash ./build_scripts.sh appbundle"
     # crashlytics
     upload_to_play_store(track:"internal",
