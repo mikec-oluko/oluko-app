@@ -50,15 +50,13 @@ class VideoBloc extends Cubit<VideoState> {
   String _processPhase = '';
   double _progress = 0.0;
 
-  Future<void> createVideo(BuildContext context, File videoFile,
-      double aspectRatio, String id) async {
+  Future<void> createVideo(BuildContext context, File videoFile, double aspectRatio, String id) async {
     try {
       Video video;
       if (GlobalConfiguration().getValue('encodeOnDevice') == 'true') {
         video = await _processVideo(context, videoFile, aspectRatio, id);
       } else {
-        video = await _processVideoWithoutEncoding(
-            context, videoFile, aspectRatio, id);
+        video = await _processVideoWithoutEncoding(context, videoFile, aspectRatio, id);
       }
       emit(VideoSuccess(video: video));
     } catch (e, stackTrace) {
@@ -71,8 +69,7 @@ class VideoBloc extends Cubit<VideoState> {
     }
   }
 
-  Future<Video> _processVideo(BuildContext context, File videoFile,
-      double aspectRatio, String id) async {
+  Future<Video> _processVideo(BuildContext context, File videoFile, double aspectRatio, String id) async {
     String videoName = id;
 
     Video video = Video(name: videoName, aspectRatio: aspectRatio);
@@ -87,10 +84,8 @@ class VideoBloc extends Cubit<VideoState> {
     videosDir.createSync(recursive: true);
     final videoPath = videoFile.path;
     final info = await EncodingProvider.getMediaInformation(videoPath);
-    double durationInSeconds =
-        EncodingProvider.getDuration(info.getMediaProperties());
-    int durationInMilliseconds =
-        TimeConverter.fromSecondsToMilliSeconds(durationInSeconds).toInt();
+    double durationInSeconds = EncodingProvider.getDuration(info.getMediaProperties());
+    int durationInMilliseconds = TimeConverter.fromSecondsToMilliSeconds(durationInSeconds).toInt();
 
     video.duration = durationInMilliseconds;
 
@@ -112,24 +107,19 @@ class VideoBloc extends Cubit<VideoState> {
     _progress += _unitOfProgress;
     emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
 
-    final encodedFilesDir =
-        await EncodingProvider.encodeHLS(videoPath, outDirPath);
-    emit(VideoEncoded(
-        encodedFilesDir: encodedFilesDir,
-        video: video,
-        thumbFilePath: thumbFilePath));
+    // final encodedFilesDir = await EncodingProvider.encodeHLS(videoPath, outDirPath);
+    // emit(VideoEncoded(encodedFilesDir: encodedFilesDir, video: video, thumbFilePath: thumbFilePath));
 
     _processPhase = OlukoLocalizations.get(context, 'uploadingThumbnail');
     _progress += _unitOfProgress;
     emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
 
-    video = await uploadVideo(video, thumbFilePath, encodedFilesDir, context);
+    video = await uploadVideo(video, thumbFilePath, videoPath, context);
 
     return video;
   }
 
-  Future<Video> uploadVideo(Video video, String thumbFilePath,
-      String encodedFilesDir, BuildContext context) async {
+  Future<Video> uploadVideo(Video video, String thumbFilePath, String encodedFilesDir, BuildContext context) async {
     String thumbUrl;
     if (thumbFilePath != null) {
       thumbUrl = await VideoProcess.uploadFile(thumbFilePath, video.name);
@@ -142,44 +132,41 @@ class VideoBloc extends Cubit<VideoState> {
     return video;
   }
 
-  Future<String> _uploadFiles(
-      BuildContext context, String dirPath, String videoName) async {
-    final videosDir = Directory(dirPath);
+  Future<String> _uploadFiles(BuildContext context, String dirPath, String videoName) async {
+    // final videosDir = Directory(dirPath);
 
-    var playlistUrl = '';
+    // var playlistUrl = '';
 
-    final files = videosDir.listSync();
-    int i = 1;
-    for (FileSystemEntity file in files) {
-      final fileName = p.basename(file.path);
-      final fileExtension = FileProcessing.getFileExtension(fileName);
-      if (fileExtension == EnumToString.convertToString(FileExtension.m3u8)) {
-        if (file is File) {
-          VideoProcess.updatePlaylistUrls(file, videoName, s3Storage: true);
-        }
-      }
+    // final files = videosDir.listSync();
+    // int i = 1;
+    // for (FileSystemEntity file in files) {
+    // final fileName = p.basename(file.path);
+    // final fileExtension = FileProcessing.getFileExtension(fileName);
+    // if (fileExtension == EnumToString.convertToString(FileExtension.m3u8)) {
+    //   if (file is File) {
+    //     VideoProcess.updatePlaylistUrls(file, videoName, s3Storage: true);
+    //   }
+    // }
 
-      double fileProgress = 0.4 / files.length.toDouble();
-      _processPhase = OlukoLocalizations.get(context, 'uploadingVideoFile') +
-          i.toString() +
-          OlukoLocalizations.get(context, 'outOf') +
-          files.length.toString();
-      _progress += fileProgress;
-      emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
+    // double fileProgress = 0.4 / files.length.toDouble();
+    // _processPhase = OlukoLocalizations.get(context, 'uploadingVideoFile') +
+    //     i.toString() +
+    //     OlukoLocalizations.get(context, 'outOf') +
+    //     files.length.toString();
+    // _progress += fileProgress;
+    emit(VideoProcessing(processPhase: OlukoLocalizations.get(context, 'uploadingVideoFile'), progress: 0));
+    final downloadUrl = await VideoProcess.uploadFile(dirPath, videoName);
+    emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
+    //   if (fileName == 'master.m3u8') {
+    //     playlistUrl = downloadUrl;
+    //   }
+    //   i++;
+    // }
 
-      final downloadUrl = await VideoProcess.uploadFile(file.path, videoName);
-
-      if (fileName == 'master.m3u8') {
-        playlistUrl = downloadUrl;
-      }
-      i++;
-    }
-
-    return playlistUrl;
+    return downloadUrl;
   }
 
-  Future<Video> _processVideoWithoutEncoding(BuildContext context,
-      File videoFile, double aspectRatio, String id) async {
+  Future<Video> _processVideoWithoutEncoding(BuildContext context, File videoFile, double aspectRatio, String id) async {
     String videoName = id;
 
     Video video = Video(name: videoName, aspectRatio: aspectRatio);
@@ -194,10 +181,8 @@ class VideoBloc extends Cubit<VideoState> {
     videosDir.createSync(recursive: true);
     final videoPath = videoFile.path;
     final info = await EncodingProvider.getMediaInformation(videoPath);
-    double durationInSeconds =
-        EncodingProvider.getDuration(info.getMediaProperties());
-    int durationInMilliseconds =
-        TimeConverter.fromSecondsToMilliSeconds(durationInSeconds).toInt();
+    double durationInSeconds = EncodingProvider.getDuration(info.getMediaProperties());
+    int durationInMilliseconds = TimeConverter.fromSecondsToMilliSeconds(durationInSeconds).toInt();
 
     video.duration = durationInMilliseconds;
 
@@ -219,7 +204,7 @@ class VideoBloc extends Cubit<VideoState> {
     _progress += _unitOfProgress;
     emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
 
-    video = await uploadVideo(video, thumbFilePath, outDirPath, context);
+    video = await uploadVideo(video, thumbFilePath, videoPath, context);
 
     return video;
   }
