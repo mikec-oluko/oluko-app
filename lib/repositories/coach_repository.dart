@@ -151,35 +151,19 @@ class CoachRepository {
 
   Future<List<CoachTimelineItem>> getTimelineContent(String userId) async {
     try {
-      // QuerySnapshot docRef = await FirebaseFirestore.instance
-      //     .collection('projects')
-      //     .doc(GlobalConfiguration().getValue('projectId'))
-      //     .collection('users')
-      //     .doc(userId)
-      //     .collection('interactionTimelineItems')
-      //     // .where('is_deleted', isNotEqualTo: true)
-      //     .get();
-
-      List<CoachTimelineItem> coachTimelineContent = [];
-
-      // if (docRef.docs.isEmpty) {
       QuerySnapshot docRef = await FirebaseFirestore.instance
           .collection('projects')
           .doc(GlobalConfiguration().getValue('projectId'))
+          .collection('users')
+          .doc(userId)
           .collection('interactionTimelineItems')
-          // .where('user_id', isEqualTo: userId)
           .get();
-      // List<CoachTimelineItem> coachTimelineContent = [];
+
+      List<CoachTimelineItem> coachTimelineContent = [];
       docRef.docs.forEach((doc) {
         final Map<String, dynamic> content = doc.data() as Map<String, dynamic>;
         coachTimelineContent.add(CoachTimelineItem.fromJson(content));
       });
-      // } else {
-      //   docRef.docs.forEach((doc) {
-      //     final Map<String, dynamic> content = doc.data() as Map<String, dynamic>;
-      //     coachTimelineContent.add(CoachTimelineItem.fromJson(content));
-      // });
-      // }
       return coachTimelineContent;
     } catch (e, stackTrace) {
       await Sentry.captureException(
