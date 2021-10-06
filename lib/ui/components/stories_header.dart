@@ -1,64 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/story_list_bloc.dart';
+import 'package:oluko_app/models/dto/user_stories.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
 
 class StoriesHeader extends StatefulWidget {
-  final List<String> stories;
+  final String userId;
 
-  StoriesHeader(
-      {this.stories = const [
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrpM3UTTyyqIwGsPYB1gCDhfl3XVv0Cex2Lw&usqp=CAU',
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlCzsqcGBluOOUtgQahXtISLTM3Wb2tkpsoeMqwurI2LEP6pCS0ZgCFLQGiv8BtfJ9p2A&usqp=CAU',
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEMWzdlSputkYso9dJb4VY5VEWQunXGBJMgGys7BLC4MzPQp6yfLURe-9nEdGrcK6Jasc&usqp=CAU',
-        'https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20%2820%29.jpg',
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRHNX4Bb1o5JWY91Db6I4jf_wmw24ajOdaOPgRCqFlnEnxcAlQ42pyWJxM9klp3E8JoT0k&usqp=CAU',
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTF-rBV5pmJhYA8QbjpPcx6s9SywnXGbvsaxWyFi47oDf9JuL4GruKBY5zl2tM4tdgYdQ0&usqp=CAU',
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRF1L_s4YJh7RHSIag8CxT0LTuJQo-XQnTJkVApDXar4b0A57U_TnAMrK_l4Fd_Nzp65Bg&usqp=CAU'
-      ]});
+  const StoriesHeader(this.userId);
 
   @override
   State<StatefulWidget> createState() => _State();
 }
 
 class _State extends State<StoriesHeader> {
-  //TODO delete after building story model
-  List<String> sampleNames = [
-    'Evelyn',
-    'Rita',
-    'John',
-    'Karen',
-    'Sophia',
-    'Romina',
-    'Mark'
-  ];
-  List<double> sampleProgress = [
-    0,
-    0.5,
-    0,
-    0.35,
-    0,
-    0.7,
-    0,
-  ];
+  List<UserStories> stories;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 110,
-      child: ListView.builder(
-          shrinkWrap: true,
-          scrollDirection: Axis.horizontal,
-          itemCount: widget.stories.length,
-          itemBuilder: (context, index) {
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: StoriesItem(
-                maxRadius: 30,
-                name: sampleNames[index],
-                imageUrl: widget.stories[index],
-                progressValue: sampleProgress[index],
-              ),
-            );
-          }),
-    );
+    BlocProvider.of<StoryListBloc>(context).get(widget.userId);
+    return BlocBuilder<StoryListBloc, StoryListState>(builder: (context, storyState) {
+      if (storyState is StoryListSuccess && storyState.usersStories.isNotEmpty) {
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
+          child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                  children: storyState.usersStories.map((userStory) {
+                return GestureDetector(onTap:() => {Navigator.pushNamed(context,
+                              routeLabels[RouteEnum.story],
+                              arguments: {'userStories': userStory, 'userId': widget.userId})}, child: Container(child: StoriesItem(stories: userStory.stories, imageUrl: userStory.avatar_thumbnail, maxRadius: 35, name: userStory.name), margin: EdgeInsets.only(top: 5),));
+              }).toList())),
+        ); 
+      } else {
+        return const SizedBox();
+      }
+    });
   }
 }

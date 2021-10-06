@@ -31,10 +31,12 @@ class ClassService {
     List<Movement> movements = [];
     List<String> movementIds = [];
     for (SegmentSubmodel segment in classObj.segments) {
-      for (SectionSubmodel section in segment.sections) {
-        for (MovementSubmodel movement in section.movements) {
-          if (!movement.isRestTime) {
-            movementIds.add(movement.id);
+      if (segment.sections != null) {
+        for (SectionSubmodel section in segment?.sections) {
+          for (MovementSubmodel movement in section.movements) {
+            if (!movement.isRestTime) {
+              movementIds.add(movement.id);
+            }
           }
         }
       }

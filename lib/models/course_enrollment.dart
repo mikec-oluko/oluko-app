@@ -46,8 +46,9 @@ class CourseEnrollment extends Base {
         course: json['course'] != null
             ? ObjectSubmodel.fromJson(json['course'] as Map<String, dynamic>)
             : null,
-        completion:
-            json['completion'] == null ? 0.0 : (json['completion'] as double),
+        completion: json['completion'] == null || json['completion'] == 0
+            ? 0.0
+            : (json['completion'] as double),
         completedAt: json['completed_at'] as Timestamp,
         finishedAt: json['finished_at'] as Timestamp,
         classes: json['classes'] != null

@@ -4,13 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/segment_image_section.dart';
@@ -25,7 +30,9 @@ import 'package:oluko_app/utils/timer_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class SegmentDetail extends StatefulWidget {
-  SegmentDetail({this.courseEnrollment, this.segmentIndex, this.classIndex, Key key}) : super(key: key);
+  SegmentDetail(
+      {this.courseEnrollment, this.segmentIndex, this.classIndex, Key key})
+      : super(key: key);
 
   final CourseEnrollment courseEnrollment;
   final int segmentIndex;
@@ -43,11 +50,14 @@ class _SegmentDetailState extends State<SegmentDetail> {
   List<Segment> _segments;
   List<Movement> _movements;
   PanelController panelController = new PanelController();
+  CoachRequest _coachRequest;
+  UserResponse _coach;
 
   @override
   void initState() {
     currentSegmentStep = widget.segmentIndex + 1;
-    totalSegmentStep = widget.courseEnrollment.classes[widget.classIndex].segments.length;
+    totalSegmentStep =
+        widget.courseEnrollment.classes[widget.classIndex].segments.length;
     super.initState();
   }
 
@@ -56,24 +66,47 @@ class _SegmentDetailState extends State<SegmentDetail> {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
         _user = authState.firebaseUser;
-        return BlocBuilder<SegmentBloc, SegmentState>(builder: (context, segmentState) {
-          return BlocBuilder<MovementBloc, MovementState>(builder: (context, movementState) {
-            if (segmentState is GetSegmentsSuccess && movementState is GetAllSuccess) {
+        return BlocBuilder<SegmentBloc, SegmentState>(
+            builder: (context, segmentState) {
+          return BlocBuilder<MovementBloc, MovementState>(
+              builder: (context, movementState) {
+            if (segmentState is GetSegmentsSuccess &&
+                movementState is GetAllSuccess) {
               _segments = segmentState.segments;
               _movements = movementState.movements;
-              return form();
+              return BlocListener<CoachUserBloc, CoachUserState>(
+                  listener: (context, coachUserState) {
+                    if (coachUserState is CoachUserSuccess) {
+                      _coach = coachUserState.coach;
+                    }
+                  },
+                  child: BlocListener<CoachRequestBloc, CoachRequestState>(
+                      listener: (context, coachRequestState) {
+                        if (coachRequestState is GetCoachRequestSuccess) {
+                          _coachRequest = coachRequestState.coachRequest;
+                          BlocProvider.of<CoachUserBloc>(context)
+                            ..get(_coachRequest.coachId);
+                        }
+                      },
+                      child: form()));
             } else {
-              return SizedBox();
+              return OlukoCircularProgressIndicator();
             }
           });
         });
       } else {
-        return SizedBox();
+        return OlukoCircularProgressIndicator();
       }
     });
   }
 
   Widget form() {
+    BlocProvider.of<CoachRequestBloc>(context)
+      ..getBySegment(
+          _user.uid,
+          widget.courseEnrollment.classes[widget.classIndex]
+              .segments[widget.segmentIndex].id,
+          widget.courseEnrollment.id);
     return Scaffold(
       backgroundColor: Colors.black,
       body: Container(
@@ -81,7 +114,8 @@ class _SegmentDetailState extends State<SegmentDetail> {
         height: ScreenUtils.height(context),
         child: SlidingUpPanel(
             controller: panelController,
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20), topRight: Radius.circular(20)),
             minHeight: 90,
             maxHeight: 185,
             collapsed: CollapsedMovementVideosSection(action: getAction()),
@@ -90,7 +124,9 @@ class _SegmentDetailState extends State<SegmentDetail> {
                 segment: _segments[widget.segmentIndex],
                 movements: _movements,
                 onPressedMovement: (BuildContext context, Movement movement) =>
-                    Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement})),
+                    Navigator.pushNamed(
+                        context, routeLabels[RouteEnum.movementIntro],
+                        arguments: {'movement': movement})),
             body: _viewBody()),
       ),
     );
@@ -140,7 +176,9 @@ class _SegmentDetailState extends State<SegmentDetail> {
     return Container(
       child: ListView(children: [
         SegmentImageSection(
-            segment: _segments[widget.segmentIndex], currentSegmentStep: currentSegmentStep, totalSegmentStep: totalSegmentStep),
+            segment: _segments[widget.segmentIndex],
+            currentSegmentStep: currentSegmentStep,
+            totalSegmentStep: totalSegmentStep),
         _menuOptions()
       ]),
     );
@@ -157,7 +195,14 @@ class _SegmentDetailState extends State<SegmentDetail> {
                 title: OlukoLocalizations.get(context, 'startWorkouts'),
                 color: OlukoColors.primary,
                 onPressed: () {
-                  BottomDialogUtils.showBottomDialog(context: context, content: dialogContainer());
+                  if (_coachRequest != null && _coach != null) {
+                    BottomDialogUtils.showBottomDialog(
+                        context: context,
+                        content:
+                            dialogContainer(_coach.firstName, _coach.avatar));
+                  } else {
+                    navigateToSegmentWithoutRecording();
+                  }
                 })
           ]),
         ),
@@ -200,7 +245,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
     ];
   }
 
-  Widget dialogContainer() {
+  Widget dialogContainer(String name, String image) {
     return Container(
         decoration: BoxDecoration(
             image: DecorationImage(
@@ -211,19 +256,25 @@ class _SegmentDetailState extends State<SegmentDetail> {
           Column(children: [
             SizedBox(height: 30),
             Stack(alignment: Alignment.center, children: [
-              StoriesItem(
-                  maxRadius: 65,
-                  imageUrl:
-                      "https://firebasestorage.googleapis.com/v0/b/oluko-development.appspot.com/o/coach_mike.png?alt=media&token=ead25dbe-f6e5-4857-a2ed-9d77f146ee72"),
+              StoriesItem(maxRadius: 65, imageUrl: image),
               Image.asset('assets/courses/photo_ellipse.png', scale: 4)
             ]),
             SizedBox(height: 15),
-            Text("Coach Mike", textAlign: TextAlign.center, style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold)),
+            Text(OlukoLocalizations.get(context, 'coach') + " " + name,
+                textAlign: TextAlign.center,
+                style: OlukoFonts.olukoSuperBigFont(
+                    custoFontWeight: FontWeight.bold)),
             SizedBox(height: 20),
             Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 50),
-                child: Text("Coach Mike has requested you to record the segment",
-                    textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont())),
+                child: Text(
+                    OlukoLocalizations.get(context, 'coach') +
+                        " " +
+                        name +
+                        " " +
+                        OlukoLocalizations.get(context, 'coachRequest'),
+                    textAlign: TextAlign.center,
+                    style: OlukoFonts.olukoBigFont())),
             SizedBox(height: 35),
             Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -248,22 +299,30 @@ class _SegmentDetailState extends State<SegmentDetail> {
           ]),
           Align(
               alignment: Alignment.topRight,
-              child: IconButton(icon: Icon(Icons.close, color: Colors.white), onPressed: () => Navigator.pop(context)))
+              child: IconButton(
+                  icon: Icon(Icons.close, color: Colors.white),
+                  onPressed: () => Navigator.pop(context)))
         ]));
   }
 
   navigateToSegmentWithRecording() {
-    Navigator.pushNamed(context, routeLabels[RouteEnum.segmentCameraPreview], arguments: {
-      'segmentIndex': widget.segmentIndex,
-      'classIndex': widget.classIndex,
-      'courseEnrollment': widget.courseEnrollment,
-      'segments': _segments,
-    });
+    Navigator.pushNamed(context, routeLabels[RouteEnum.segmentCameraPreview],
+        arguments: {
+          'segmentIndex': widget.segmentIndex,
+          'classIndex': widget.classIndex,
+          'courseEnrollment': widget.courseEnrollment,
+          'segments': _segments,
+        });
   }
 
   navigateToSegmentWithoutRecording() {
-    TimerUtils.startCountdown(WorkoutType.segment, context, getArguments(), _segments[widget.segmentIndex].initialTimer,
-        _segments[widget.segmentIndex].rounds, 0);
+    TimerUtils.startCountdown(
+        WorkoutType.segment,
+        context,
+        getArguments(),
+        _segments[widget.segmentIndex].initialTimer,
+        _segments[widget.segmentIndex].rounds,
+        0);
   }
 
   Object getArguments() {

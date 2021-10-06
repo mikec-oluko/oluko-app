@@ -87,8 +87,14 @@ class OlukoColors {
   }
 
   static Color userColor(String firstName, String lastName) {
-    int index = firstName.codeUnitAt(0) + lastName.codeUnitAt(0);
     var list = [grayColorSemiTransparent, skyblue, coral, searchSuggestionsAlreadyWrittenText, inputError, purple, orange];
+    if (firstName == null) {
+      var rndm = Random();
+      var position = rndm.nextInt(list.length);
+      return list[position];
+    }
+    int index = firstName.codeUnitAt(0) + lastName.codeUnitAt(0);
+
     return list[index % list.length];
   }
 }
