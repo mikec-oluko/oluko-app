@@ -280,7 +280,8 @@ class _FriendsListPageState extends State<FriendsListPage> {
   Widget dialogContainer({BuildContext context, UserResponse user, FriendState friendState}) {
     bool connectionRequested =
         friendState is GetFriendsSuccess && friendState.friendData.friendRequestSent.map((f) => f.id).toList().indexOf(user.id) > -1;
-
+    BlocProvider.of<HiFiveReceivedBloc>(context).get(context, _authStateData.user.id, user.id);
+    BlocProvider.of<UserStatisticsBloc>(context).getUserStatistics(user.id);
     return BlocBuilder<FriendBloc, FriendState>(
         bloc: BlocProvider.of<FriendBloc>(context),
         builder: (friendContext, friendState) {
@@ -349,10 +350,10 @@ class _FriendsListPageState extends State<FriendsListPage> {
                     ),
                     SizedBox(height: 20),
                     BlocBuilder<HiFiveReceivedBloc, HiFiveReceivedState>(
-                        bloc: BlocProvider.of<HiFiveReceivedBloc>(context)..get(context, _authStateData.user.id, user.id),
+                        bloc: BlocProvider.of<HiFiveReceivedBloc>(context),
                         builder: (hiFiveReceivedContext, hiFiveReceivedState) {
                           return BlocBuilder<UserStatisticsBloc, UserStatisticsState>(
-                              bloc: BlocProvider.of(context)..getUserStatistics(user.id),
+                              bloc: BlocProvider.of(context),
                               builder: (userStatisticsContext, userStats) {
                                 return userStats is StatisticsSuccess && user.privacy == 0
                                     ? Row(
