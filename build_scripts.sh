@@ -60,6 +60,6 @@ if [ "$1" = "deploy" ]
         fi
         echo "Starting deploy..." && \
         cd android && bundle exec fastlane beta && \
-        cd .. && cd ios && bundle exec fastlane beta
+        cd .. && cd ios && pod install && bundle exec fastlane beta
     fi
 fi
