@@ -185,7 +185,11 @@ class AuthBloc extends Cubit<AuthState> {
   }
 
   Future<void> sendPasswordResetEmail(BuildContext context, LoginRequest loginRequest) async {
-    //TODO: unused variable final success =
+    if (loginRequest.email == null || loginRequest.email == '') {
+      AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'enterEmail'));
+      return;
+    }
+
     await AuthRepository().sendPasswordResetEmail(loginRequest.email);
     AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'pleaseCheckYourEmailForInstructions'));
   }

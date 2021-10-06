@@ -83,7 +83,15 @@ class _State extends State<ShareCard> {
                                         ),
                                         Padding(
                                           padding: const EdgeInsets.all(8.0),
-                                          child: Text('Story', style: _storyEnabled ? OlukoFonts.olukoMediumFont() : OlukoFonts.olukoMediumFont(customColor: Colors.grey)),
+                                          child: Row(
+                                            children: [
+                                              Text('Story', style: _storyEnabled ? OlukoFonts.olukoMediumFont() : OlukoFonts.olukoMediumFont(customColor: Colors.grey)),
+                                              if (!_storyEnabled)
+                                                Stack(
+                                                  children: [Image.asset('assets/assessment/check.png', scale: 5), Positioned(left: 4, child: Image.asset('assets/assessment/check.png', scale: 5))],
+                                                ),
+                                            ],
+                                          ),
                                         )
                                       ],
                                     ),
