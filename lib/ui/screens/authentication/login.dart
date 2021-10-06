@@ -37,13 +37,8 @@ class _LoginPageState extends State<LoginPage> {
                       padding: EdgeInsets.symmetric(horizontal: 15),
                       child: Container(
                           width: MediaQuery.of(context).size.width,
-                          child: Column(children: [
-                            SizedBox(height: 20),
-                            SizedBox(height: 20),
-                            titleSection(),
-                            SizedBox(height: 50),
-                            formSection()
-                          ])))
+                          child: Column(
+                              children: [SizedBox(height: 20), SizedBox(height: 20), titleSection(), SizedBox(height: 50), formSection()])))
                 ]))));
   }
 
@@ -51,8 +46,7 @@ class _LoginPageState extends State<LoginPage> {
     return Container(
         width: MediaQuery.of(context).size.width,
         height: 400,
-        child:
-            Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+        child: Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
           Column(children: formFields()),
         ]));
   }
@@ -64,8 +58,7 @@ class _LoginPageState extends State<LoginPage> {
           Text(
             OlukoLocalizations.get(context, 'welcomeBack'),
             textAlign: TextAlign.start,
-            style: TextStyle(
-                fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
+            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
           ),
           SizedBox(
             height: 10,
@@ -181,7 +174,7 @@ class _LoginPageState extends State<LoginPage> {
                   style: ElevatedButton.styleFrom(primary: OlukoColors.primary),
                   onPressed: () {
                     _formKey.currentState.save();
-
+                    FocusScope.of(context).unfocus();
                     BlocProvider.of<AuthBloc>(context)
                       ..login(
                           context,
@@ -189,13 +182,11 @@ class _LoginPageState extends State<LoginPage> {
                               email: _requestData.email,
                               password: _requestData.password,
                               userName: _requestData.userName,
-                              projectId:
-                                  GlobalConfiguration().getValue('projectId')));
+                              projectId: GlobalConfiguration().getValue('projectId')));
                   },
                   child: Stack(children: [
                     Align(
-                      child: Text(OlukoLocalizations.get(context, 'login')
-                          .toUpperCase()),
+                      child: Text(OlukoLocalizations.get(context, 'login').toUpperCase()),
                     )
                   ])))),
       Padding(
@@ -213,17 +204,13 @@ class _LoginPageState extends State<LoginPage> {
                 width: MediaQuery.of(context).size.width / 2.2,
                 child: OutlinedButton(
                     onPressed: () {
-                      BlocProvider.of<AuthBloc>(context)
-                        ..loginWithGoogle(context);
+                      BlocProvider.of<AuthBloc>(context)..loginWithGoogle(context);
                     },
-                    style: OutlinedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        side: BorderSide(color: Colors.grey)),
+                    style: OutlinedButton.styleFrom(backgroundColor: Colors.transparent, side: BorderSide(color: Colors.grey)),
                     child: Stack(children: [
                       Align(
                         alignment: Alignment.center,
-                        child: Image.asset('assets/login/google-logo.png',
-                            width: 30),
+                        child: Image.asset('assets/login/google-logo.png', width: 30),
                       ),
                     ])))),
         Padding(
@@ -233,12 +220,9 @@ class _LoginPageState extends State<LoginPage> {
                 width: MediaQuery.of(context).size.width / 2.2,
                 child: OutlinedButton(
                     onPressed: () {
-                      BlocProvider.of<AuthBloc>(context)
-                        ..loginWithFacebook(context);
+                      BlocProvider.of<AuthBloc>(context)..loginWithFacebook(context);
                     },
-                    style: OutlinedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        side: BorderSide(color: Colors.grey)),
+                    style: OutlinedButton.styleFrom(backgroundColor: Colors.transparent, side: BorderSide(color: Colors.grey)),
                     child: Stack(children: [
                       Align(
                           alignment: Alignment.center,
