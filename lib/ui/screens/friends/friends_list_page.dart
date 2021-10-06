@@ -164,11 +164,11 @@ class _FriendsListPageState extends State<FriendsListPage> {
                         child: Column(
                           children: [
                             StoriesItem(
-                              maxRadius: 30,
-                              imageUrl: friendUser.avatar,
-                              name: friendUser.firstName,
-                              lastname: friendUser.lastName,
-                            ),
+                                maxRadius: 30,
+                                imageUrl: friendUser.avatar,
+                                name: friendUser.firstName,
+                                lastname: friendUser.lastName,
+                                showName: false),
                             Padding(
                               padding: const EdgeInsets.only(top: 8.0, bottom: 0.0),
                               child: Text(
@@ -235,12 +235,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                   },
                   child: Column(
                     children: [
-                      StoriesItem(
-                        maxRadius: 30,
-                        imageUrl: user.avatar,
-                        name: user.firstName,
-                        lastname: user.lastName,
-                      ),
+                      StoriesItem(maxRadius: 30, imageUrl: user.avatar, name: user.firstName, lastname: user.lastName, showName: false),
                       Padding(
                         padding: const EdgeInsets.only(top: 8.0, bottom: 0.0),
                         child: Text(
@@ -306,12 +301,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                     SizedBox(height: 30),
                     Row(
                       children: [
-                        StoriesItem(
-                          maxRadius: 40,
-                          imageUrl: user.avatar,
-                          name: user.firstName,
-                          lastname: user.lastName,
-                        ),
+                        StoriesItem(maxRadius: 40, imageUrl: user.avatar, name: user.firstName, lastname: user.lastName, showName: false),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16.0),
                           child: Column(
