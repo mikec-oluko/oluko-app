@@ -35,6 +35,7 @@ class FriendRequestCard extends StatefulWidget {
  */
 
 class _FriendRequestCardState extends State<FriendRequestCard> {
+  bool _loadImageError = false;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -53,11 +54,25 @@ class _FriendRequestCardState extends State<FriendRequestCard> {
                 children: [
                   GestureDetector(
                       child: CircleAvatar(
-                        // backgroundImage: NetworkImage(widget.userData.photoURL),
-                        backgroundImage: NetworkImage(widget.friendUser.avatar ?? UserUtils().defaultAvatarImageUrl),
-                        backgroundColor: OlukoColors.black,
-                        radius: 30,
-                      ),
+                          backgroundImage: getUserImg(widget.friendUser.avatar),
+                          onBackgroundImageError: _loadImageError
+                              ? null
+                              : (dynamic exception, StackTrace stackTrace) {
+                                  print("Error loading image! " + exception.toString());
+                                  setBackgroundImageAsError();
+                                },
+                          backgroundColor: OlukoColors.userColor(widget.friendUser.firstName, widget.friendUser.lastName),
+                          radius: 30,
+                          child: _loadImageError
+                              ? Text(
+                                  widget.friendUser.firstName.characters.first.toString().toUpperCase(),
+                                  style: OlukoFonts.olukoBigFont(
+                                    customColor: OlukoColors.white,
+                                    custoFontWeight: FontWeight.w500,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                )
+                              : const Text(' ')),
                       onTap: () {
                         BlocProvider.of<TransformationJourneyBloc>(context).emitTransformationJourneyDefault(noValues: true);
                         BlocProvider.of<TaskSubmissionBloc>(context).setTaskSubmissionDefaultState();
@@ -130,5 +145,22 @@ class _FriendRequestCardState extends State<FriendRequestCard> {
             ],
           )),
     );
+  }
+
+  void setBackgroundImageAsError() {
+    setState(() {
+      _loadImageError = true;
+    });
+  }
+
+  ImageProvider<Object> getUserImg(String avatarUrl) {
+    if (_loadImageError) {
+      return null;
+    } else if (avatarUrl == null) {
+      setBackgroundImageAsError();
+      return null;
+    } else {
+      return NetworkImage(avatarUrl);
+    }
   }
 }

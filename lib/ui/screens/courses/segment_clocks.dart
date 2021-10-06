@@ -12,6 +12,7 @@ import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
+import 'package:oluko_app/blocs/story_bloc.dart' as storyBloc;
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/coach_request.dart';
@@ -106,6 +107,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
   List<String> scores = [];
   int totalScore = 0;
   bool counter = false;
+  bool _wantsToCreateStory = false;
+  bool _isVideoUploaded = false;
 
   CoachRequest _coachRequest;
 
@@ -159,6 +162,15 @@ class _SegmentClocksState extends State<SegmentClocks> {
                                       3.0 / 4.0,
                                       _segmentSubmission.id);
                               }
+                            } else if (state
+                                is UpdateSegmentSubmissionSuccess) {
+                              if (_wantsToCreateStory) {
+                                callBlocToCreateStory(
+                                    context, state.segmentSubmission);
+                              } else {
+                                _isVideoUploaded = true;
+                                _segmentSubmission = state?.segmentSubmission;
+                              }
                             }
                           },
                           child: form())));
@@ -172,6 +184,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
       }
     });
   }
+
+  Future<void> callBlocToCreateStory(
+          BuildContext context, SegmentSubmission segmentSubmission) =>
+      BlocProvider.of<storyBloc.StoryBloc>(context)
+          .createStory(segmentSubmission);
 
   bool isSegmentWithRecording() {
     return workoutType == WorkoutType.segmentWithRecording;
@@ -802,7 +819,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
           widget.courseEnrollment, widget.segmentIndex, widget.classIndex);
     setState(() {
       if (_segmentSubmission != null &&
-          widget.workoutType == WorkoutType.segmentWithRecording) {
+          widget.workoutType == WorkoutType.segmentWithRecording &&
+          !_isVideoUploaded) {
         topBarIcon = uploadingIcon();
       }
     });
@@ -940,10 +958,17 @@ class _SegmentClocksState extends State<SegmentClocks> {
               padding: const EdgeInsets.symmetric(vertical: 20.0),
               child: widget.workoutType == WorkoutType.segment || shareDone
                   ? FeedbackCard()
-                  : ShareCard()),
+                  : ShareCard(createStory: _createStory)),
         ],
       ),
     );
+  }
+
+  _createStory() {
+    _wantsToCreateStory = true;
+    if (_isVideoUploaded) {
+      callBlocToCreateStory(context, _segmentSubmission);
+    }
   }
 
   List<Widget> getScoresByRound() {

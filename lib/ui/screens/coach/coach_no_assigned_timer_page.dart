@@ -62,16 +62,11 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
               Container(
                 child: Column(
                   children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pushNamed(context, routeLabels[RouteEnum.coach2]);
-                      },
-                      child: Image.asset(
-                        'assets/courses/coach.png',
-                        color: OlukoColors.primary,
-                        height: 100,
-                        width: 100,
-                      ),
+                    Image.asset(
+                      'assets/courses/coach.png',
+                      color: OlukoColors.primary,
+                      height: 100,
+                      width: 100,
                     ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),

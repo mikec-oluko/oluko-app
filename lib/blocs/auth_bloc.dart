@@ -97,7 +97,7 @@ class AuthBloc extends Cubit<AuthState> {
 
   void navigateToNextScreen(BuildContext context, String userId) async {
     AssessmentAssignment assessmentA = await AssessmentAssignmentRepository.getByUserId(userId);
-    if (!assessmentA.seenByUser) {
+    if (assessmentA != null && (assessmentA.seenByUser == null || !assessmentA.seenByUser)) {
       await AppNavigator().goToAssessmentVideos(context);
     } else {
       await AppNavigator().returnToHome(context);
@@ -185,7 +185,11 @@ class AuthBloc extends Cubit<AuthState> {
   }
 
   Future<void> sendPasswordResetEmail(BuildContext context, LoginRequest loginRequest) async {
-    //TODO: unused variable final success =
+    if (loginRequest.email == null || loginRequest.email == '') {
+      AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'enterEmail'));
+      return;
+    }
+
     await AuthRepository().sendPasswordResetEmail(loginRequest.email);
     AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'pleaseCheckYourEmailForInstructions'));
   }

@@ -17,7 +17,10 @@ class CreateSuccess extends SegmentSubmissionState {
   CreateSuccess({this.segmentSubmission});
 }
 
-class UpdateSegmentSubmissionSuccess extends SegmentSubmissionState {}
+class UpdateSegmentSubmissionSuccess extends SegmentSubmissionState {
+  SegmentSubmission segmentSubmission;
+  UpdateSegmentSubmissionSuccess({this.segmentSubmission});
+}
 
 class EncodedSegmentSubmissionSuccess extends SegmentSubmissionState {}
 
@@ -56,7 +59,7 @@ class SegmentSubmissionBloc extends Cubit<SegmentSubmissionState> {
   void updateVideo(SegmentSubmission segmentSubmission) async {
     try {
       await SegmentSubmissionRepository.updateVideo(segmentSubmission);
-      emit(UpdateSegmentSubmissionSuccess());
+      emit(UpdateSegmentSubmissionSuccess(segmentSubmission: segmentSubmission));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

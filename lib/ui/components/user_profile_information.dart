@@ -23,9 +23,7 @@ class UserProfileInformation extends StatefulWidget {
   final UserResponse currentUser;
   final UserConnectStatus connectStatus;
   final UserStatistics userStats;
-
-  const UserProfileInformation({this.userToDisplayInformation, this.actualRoute, this.currentUser, this.connectStatus, this.userStats})
-      : super();
+  const UserProfileInformation({this.userToDisplayInformation, this.actualRoute, this.currentUser, this.connectStatus, this.userStats}) : super();
 
   @override
   _UserProfileInformationState createState() => _UserProfileInformationState();
@@ -66,14 +64,16 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
       child: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
         if (_hiFiveReceivedState == null && authState is AuthSuccess) {
           _authState = authState;
-          BlocProvider.of<HiFiveReceivedBloc>(context).get(context, authState.user.id, widget.userToDisplayInformation.id);
+          BlocProvider.of<HiFiveReceivedBloc>(context)
+              .get(context, authState.user.id, widget.userToDisplayInformation.id);
         }
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
           child: Container(
             decoration: ContainerGradient.getContainerGradientDecoration(),
             width: MediaQuery.of(context).size.width,
-            child: Padding(padding: const EdgeInsets.all(10.0), child: _profileUserInformation(_userLocation, _valuesDemo)),
+            child: Padding(
+                padding: const EdgeInsets.all(10.0), child: _profileUserInformation(_userLocation, _valuesDemo)),
           ),
         );
       }),
@@ -86,11 +86,10 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
 
   Widget _profileUserInformation(String location, List<String> valuesForArchivements) {
     final bool canShowDetails = _privacyOptions.canShowDetails(
-        isOwner: _isOwner,
-        currentUser: widget.currentUser,
-        userRequested: widget.userToDisplayInformation,
-        connectStatus: widget.connectStatus);
+        isOwner: _isOwner, currentUser: widget.currentUser, userRequested: widget.userToDisplayInformation, connectStatus: widget.connectStatus);
 
+    final profileDefaultProfilePicContent =
+        '${widget.userToDisplayInformation.firstName.characters.first.toUpperCase()} ${widget.userToDisplayInformation.lastName.characters.first.toUpperCase()}';
     return Column(
       children: [
         //PROFILE IMAGE AND INFO
@@ -101,35 +100,41 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                widget.userToDisplayInformation.avatarThumbnail != null
-                    ? Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Stack(clipBehavior: Clip.none, children: [
-                          CircleAvatar(
-                            backgroundColor: OlukoColors.black,
-                            backgroundImage: Image.network(
-                              widget.userToDisplayInformation.avatarThumbnail,
-                              fit: BoxFit.contain,
-                              frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
-                                  ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 30, width: 30),
-                              height: 30,
-                              width: 30,
-                            ).image,
-                            radius: 30.0,
-                          ),
-                          getVisibility(widget, context, _isOwner),
-                        ]),
-                      )
-                    : Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Stack(children: [
-                          CircleAvatar(
-                            backgroundColor: OlukoColors.black,
-                            radius: 30.0,
-                          ),
-                          getVisibility(widget, context, _isOwner),
-                        ]),
+                if (widget.userToDisplayInformation.avatarThumbnail != null)
+                  Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Stack(clipBehavior: Clip.none, children: [
+                      CircleAvatar(
+                        backgroundColor: OlukoColors.black,
+                        backgroundImage: Image.network(
+                          widget.userToDisplayInformation.avatarThumbnail,
+                          fit: BoxFit.contain,
+                          frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
+                              ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded,
+                                  height: 30, width: 30),
+                          height: 30,
+                          width: 30,
+                        ).image,
+                        radius: 30.0,
                       ),
+                      getVisibility(widget, context, _isOwner),
+                    ]),
+                  )
+                else
+                  Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Stack(children: [
+                      CircleAvatar(
+                        backgroundColor: OlukoColors.userColor(
+                            widget.userToDisplayInformation.firstName, widget.userToDisplayInformation.lastName),
+                        radius: 30.0,
+                        child: Text(profileDefaultProfilePicContent,
+                            style: OlukoFonts.olukoBigFont(
+                                customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500)),
+                      ),
+                      getVisibility(widget, context, _isOwner),
+                    ]),
+                  ),
                 Padding(
                   padding: const EdgeInsets.only(left: 10.0),
                   child: Row(
@@ -150,12 +155,13 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                         child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
                           listener: (context, hiFiveSendState) {
                             if (hiFiveSendState is HiFiveSendSuccess) {
-                              AppMessages.showSnackbarTranslated(context, hiFiveSendState.hiFive ? 'hiFiveSent' : 'hiFiveRemoved');
+                              AppMessages.showSnackbarTranslated(
+                                  context, hiFiveSendState.hiFive ? 'hiFiveSent' : 'hiFiveRemoved');
                             }
-                            BlocProvider.of<HiFiveReceivedBloc>(context)
-                                .get(context, _authState.user.id, widget.userToDisplayInformation.id);
+                            BlocProvider.of<HiFiveReceivedBloc>(context).get(context, _authState.user.id, widget.userToDisplayInformation.id);
                           },
-                          child: BlocBuilder<HiFiveReceivedBloc, HiFiveReceivedState>(builder: (context, HiFiveReceivedState) {
+                          child: BlocBuilder<HiFiveReceivedBloc, HiFiveReceivedState>(
+                              builder: (context, HiFiveReceivedState) {
                             return HiFiveReceivedState is HiFiveReceivedSuccess
                                 ? Container(
                                     height: 50,
@@ -166,11 +172,15 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                                         ),
                                         onPressed: () {
                                           BlocProvider.of<HiFiveSendBloc>(context).set(
-                                              context, _authState.user.id, widget.userToDisplayInformation.id,
-                                              hiFive: !_hiFiveReceivedState.hiFive);
+                                            context,
+                                            _authState.user.id,
+                                            widget.userToDisplayInformation.id,
+                                          );
                                         },
                                         child: Image.asset(
-                                          HiFiveReceivedState.hiFive ? 'assets/profile/hiFive_selected.png' : 'assets/profile/hiFive.png',
+                                          HiFiveReceivedState.hiFive
+                                              ? 'assets/profile/hiFive_selected.png'
+                                              : 'assets/profile/hiFive.png',
                                           fit: BoxFit.cover,
                                           colorBlendMode: BlendMode.lighten,
                                           height: 60,
@@ -270,7 +280,8 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
               width: 150,
               height: 25,
               child: Text(OlukoLocalizations.get(context, 'privateProfile'),
-                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300)),
+                  style:
+                      OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300)),
             )
           ],
         )
@@ -315,7 +326,8 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
               children: [
                 Text(
                   this.widget.userToDisplayInformation.username ?? '',
-                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300),
+                  style:
+                      OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 3),
@@ -323,7 +335,8 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                 _userLocation != null
                     ? Text(
                         location,
-                        style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300),
+                        style: OlukoFonts.olukoMediumFont(
+                            customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300),
                       )
                     : SizedBox(),
               ],

@@ -19,8 +19,7 @@ class CourseUtils {
   static List<Course> filterByCategories(List<Course> courses, CourseCategory courseCategory) {
     List<Course> tasksToShow = [];
     courses.forEach((Course course) {
-      List<String> courseIds =
-          courseCategory.courses.map((CourseCategoryItem courseCategoryItem) => courseCategoryItem.id).toList();
+      List<String> courseIds = courseCategory.courses.map((CourseCategoryItem courseCategoryItem) => courseCategoryItem.id).toList();
 
       if (courseIds.indexOf(course.id) != -1) {
         tasksToShow.add(course);
@@ -32,8 +31,7 @@ class CourseUtils {
   /*
   Returns Map with a list of Courses for each Category
   */
-  static Map<CourseCategory, List<Course>> mapCoursesByCategories(
-      List<Course> courses, List<CourseCategory> courseCategories) {
+  static Map<CourseCategory, List<Course>> mapCoursesByCategories(List<Course> courses, List<CourseCategory> courseCategories) {
     Map<CourseCategory, List<Course>> mappedCourses = {};
     courseCategories.forEach((courseCategory) {
       final List<Course> courseList = filterByCategories(courses, courseCategory);
@@ -44,18 +42,15 @@ class CourseUtils {
 
   static List<Course> sortByCategoriesIndex(List<Course> courses, CourseCategory courseCategory) {
     courses.sort((Course courseCategoryA, Course courseCategoryB) {
-      int courseCategoryAIndex =
-          courseCategory.courses.indexWhere((CourseCategoryItem element) => element.id == courseCategoryA.id);
-      int courseCategoryBIndex =
-          courseCategory.courses.indexWhere((CourseCategoryItem element) => element.id == courseCategoryB.id);
+      int courseCategoryAIndex = courseCategory.courses.indexWhere((CourseCategoryItem element) => element.id == courseCategoryA.id);
+      int courseCategoryBIndex = courseCategory.courses.indexWhere((CourseCategoryItem element) => element.id == courseCategoryB.id);
       return courseCategoryAIndex.compareTo(courseCategoryBIndex);
     });
     return courses;
   }
 
   static List<Course> searchMethod(String query, List<Course> collection, {List<Tag> selectedTags = const []}) {
-    List<Course> resultsWithoutFilters =
-        collection.where((course) => course.name.toLowerCase().contains(query.toLowerCase())).toList();
+    List<Course> resultsWithoutFilters = collection.where((course) => course.name.toLowerCase().contains(query.toLowerCase())).toList();
     List<Course> filteredResults = resultsWithoutFilters.where((Course course) {
       final List<String> courseTagIds = course.tags != null ? course.tags.map((e) => e.id).toList() : [];
       final List<String> selectedTagIds = selectedTags.map((e) => e.id).toList();
@@ -83,17 +78,16 @@ class CourseUtils {
     return SearchSuggestions<Course>(
         textInput: search.query,
         itemList: search.suggestedItems,
-        onPressed: (dynamic item) => searchBarKey.currentState.updateSearchResults(item.name.toString()),
+        onPressed: (dynamic item) => {searchBarKey.currentState.updateSearchResults(item.name.toString())},
         keyNameList: search.suggestedItems.map((e) => e.name).toList());
   }
 
-  static SearchResultsGrid<Course> searchResults(BuildContext context, SearchResults<Course> search,
-      double cardsAspectRatio, int searchResultsToShowPortrait, int searchResultsToShowLandscape) {
+  static SearchResultsGrid<Course> searchResults(BuildContext context, SearchResults<Course> search, double cardsAspectRatio,
+      int searchResultsToShowPortrait, int searchResultsToShowLandscape) {
     return SearchResultsGrid<Course>(
         childAspectRatio: cardsAspectRatio,
-        crossAxisCount: MediaQuery.of(context).orientation == Orientation.portrait
-            ? searchResultsToShowPortrait
-            : searchResultsToShowLandscape,
+        crossAxisCount:
+            MediaQuery.of(context).orientation == Orientation.portrait ? searchResultsToShowPortrait : searchResultsToShowLandscape,
         textInput: search.query,
         itemList: search.searchResults);
   }
@@ -111,8 +105,7 @@ class CourseUtils {
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(20.0),
-                    child: Text('Would you like to cancel?',
-                        textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont()),
+                    child: Text('Would you like to cancel?', textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont()),
                   ),
                   Text(
                     'Cancelling would remove all the selected filters, please confirm the action.',
@@ -144,15 +137,13 @@ class CourseUtils {
         false;
   }
 
-  static Widget filterSelector(TagSuccess state,
-      {Function(List<Base>) onSubmit, Function() onClosed, List<Tag> selectedTags = const []}) {
+  static Widget filterSelector(TagSuccess state, {Function(List<Base>) onSubmit, Function() onClosed, List<Tag> selectedTags = const []}) {
     return Padding(
         padding: EdgeInsets.only(top: 15.0, left: 8, right: 8),
         child: FilterSelector<Tag>(
             itemList: Map.fromIterable(state.tagsByCategories.entries,
                 key: (entry) => entry.key.name.toString(),
-                value: (entry) => Map.fromIterable(entry.value as Iterable,
-                    key: (tag) => tag as Tag, value: (tag) => tag.name.toString())),
+                value: (entry) => Map.fromIterable(entry.value as Iterable, key: (tag) => tag as Tag, value: (tag) => tag.name.toString())),
             selectedTags: selectedTags,
             onSubmit: onSubmit,
             onClosed: onClosed));

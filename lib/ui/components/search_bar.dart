@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course.dart';
@@ -11,6 +13,7 @@ class SearchBar<T> extends StatefulWidget {
   final List<T> Function(String, List<T>) searchMethod;
   final List<T> items;
   final GlobalKey<SearchState> searchKey;
+
   const SearchBar(
       {Key key,
       this.onSearchResults,
@@ -27,6 +30,7 @@ class SearchBar<T> extends StatefulWidget {
 }
 
 class SearchState<T> extends State<SearchBar> {
+  Timer _debounce;
   final TextEditingController _searchQueryController = TextEditingController();
   String searchQuery = 'Search query';
 
@@ -86,6 +90,7 @@ class SearchState<T> extends State<SearchBar> {
   }
 
   void _cancelSearch() {
+    _debounce.cancel();
     setState(() {
       _searchQueryController.text = '';
       updateSearchQuery(_searchQueryController.text);
@@ -102,7 +107,7 @@ class SearchState<T> extends State<SearchBar> {
         hintStyle: TextStyle(color: Colors.white30),
       ),
       style: TextStyle(color: Colors.white, fontSize: 16.0),
-      onChanged: (query) => updateSearchQuery(query),
+      onChanged: (query) => _onSearchChanged(query),
       onSubmitted: (query) => updateSearchResults(query),
     );
   }
@@ -110,10 +115,9 @@ class SearchState<T> extends State<SearchBar> {
   void updateSearchQuery(String newQuery) {
     setState(() {
       searchQuery = newQuery;
-      var suggestedItems = widget.suggestionMethod(searchQuery, widget.items);
-      List<T> searchResults = widget.searchMethod(searchQuery, widget.items) as List<T>;
-      widget.onSearchResults(
-          SearchResults<T>(query: newQuery, suggestedItems: suggestedItems as List<T>, searchResults: searchResults));
+      final suggestedItems = widget.suggestionMethod(searchQuery, widget.items);
+      final List<T> searchResults = widget.searchMethod(searchQuery, widget.items) as List<T>;
+      widget.onSearchResults(SearchResults<T>(query: newQuery, suggestedItems: suggestedItems as List<T>, searchResults: searchResults));
     });
   }
 
@@ -123,9 +127,23 @@ class SearchState<T> extends State<SearchBar> {
       List<T> suggestedItems = widget.suggestionMethod(searchQuery, widget.items) as List<T>;
       List<T> searchResults = widget.searchMethod(searchQuery, widget.items) as List<T>;
       widget.onSearchSubmit(
-        SearchResults<T>(
-            query: newQuery, suggestedItems: suggestedItems as List<T>, searchResults: searchResults as List<T>),
+        SearchResults<T>(query: newQuery, suggestedItems: suggestedItems as List<T>, searchResults: searchResults as List<T>),
       );
     });
+  }
+
+  _onSearchChanged(String query) async {
+    if (_debounce?.isActive ?? false) {
+      _debounce.cancel();
+    }
+    _debounce = Timer(const Duration(milliseconds: 1500), () {
+      updateSearchQuery(query);
+    });
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
   }
 }

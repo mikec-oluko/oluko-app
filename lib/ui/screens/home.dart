@@ -16,6 +16,7 @@ import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/course_section.dart';
 import 'package:oluko_app/ui/components/course_step_section.dart';
+import 'package:oluko_app/ui/components/stories_header.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -31,13 +32,15 @@ class _HomeState extends State<Home> {
   User _user;
   List<CourseEnrollment> _courseEnrollments;
   List<Course> _courses;
+  AuthSuccess _authState;
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
+        _authState ??= authState;
         _user = authState.firebaseUser;
-        BlocProvider.of<CourseEnrollmentListBloc>(context)..getCourseEnrollmentsByUser(_user.uid);
+        BlocProvider.of<CourseEnrollmentListBloc>(context).getCourseEnrollmentsByUser(_user.uid);
         return BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(builder: (context, courseEnrollmentListState) {
           if (courseEnrollmentListState is CourseEnrollmentsByUserSuccess) {
             _courseEnrollments = courseEnrollmentListState.courseEnrollments;
@@ -62,12 +65,15 @@ class _HomeState extends State<Home> {
           showBackButton: false,
           actions: [_handWidget()],
         ),
-        body: WillPopScope(
-          onWillPop: () => AppNavigator.onWillPop(context),
-          child: OrientationBuilder(builder: (context, orientation) {
-            return homeContainer();
-          }),
-        ));
+        body: ListView(children: [
+          Center(child: StoriesHeader(_user.uid)),
+          WillPopScope(
+            onWillPop: () => AppNavigator.onWillPop(context),
+            child: OrientationBuilder(builder: (context, orientation) {
+              return homeContainer();
+            }),
+          )
+        ]));
   }
 
   Widget homeContainer() {
@@ -92,14 +98,7 @@ class _HomeState extends State<Home> {
   Widget enrolled() {
     return CarouselSlider(
       items: courseSectionList(),
-      options: CarouselOptions(
-          height: 600,
-          autoPlay: false,
-          enlargeCenterPage: false,
-          disableCenter: true,
-          enableInfiniteScroll: false,
-          initialPage: 0,
-          viewportFraction: 1),
+      options: CarouselOptions(height: 600, autoPlay: false, enlargeCenterPage: false, disableCenter: true, enableInfiniteScroll: false, initialPage: 0, viewportFraction: 1),
     );
   }
 
@@ -109,8 +108,7 @@ class _HomeState extends State<Home> {
       if (_courses.length - 1 < i) {
         // do nothing
       } else {
-        widgets
-            .add(CourseSection(qtyCourses: _courses.length, courseIndex: i, course: _courses[i], courseEnrollment: _courseEnrollments[i]));
+        widgets.add(CourseSection(qtyCourses: _courses.length, courseIndex: i, course: _courses[i], courseEnrollment: _courseEnrollments[i]));
       }
     }
     return widgets;
@@ -161,7 +159,8 @@ class _HomeState extends State<Home> {
       return hiFiveState is HiFiveSuccess && hiFiveState.users.isNotEmpty
           ? GestureDetector(
               onTap: () {
-                Navigator.pushNamed(context, routeLabels[RouteEnum.hiFivePage]);
+                Navigator.pushNamed(context, routeLabels[RouteEnum.hiFivePage])
+                    .then((value) => BlocProvider.of<HiFiveBloc>(context).get(_authState.user.id));
               },
               child: Padding(
                 padding: const EdgeInsets.only(right: 20.0, top: 5),
