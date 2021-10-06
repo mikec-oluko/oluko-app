@@ -10,12 +10,13 @@ class StoriesItem extends StatefulWidget {
   final String avatar;
   final String avatar_thumbnail;
   final List<Story> stories;
+  bool _hasUnseenStories = false;
 
-  StoriesItem({this.maxRadius, this.imageUrl, this.name, this.avatar, this.avatar_thumbnail, this.stories, this.progressValue}) {
+  StoriesItem({this.maxRadius, this.imageUrl, this.name, this.avatar, this.avatar_thumbnail, this.stories, this.progressValue = 0}) {
     if (stories != null) {
-      progressValue = stories.where((element) => !element.seen).isNotEmpty ? 1 : 0;
-    } else {
-      progressValue = 0;
+      if (stories.where((element) => !element.seen).isNotEmpty) {
+        _hasUnseenStories = true;
+      }
     }
   }
 
@@ -32,6 +33,7 @@ class _State extends State<StoriesItem> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Stack(
+            alignment: Alignment.center,
             children: [
               Positioned(
                 bottom: 0,
@@ -40,7 +42,7 @@ class _State extends State<StoriesItem> {
                 right: 0,
                 child: CircularProgressIndicator(
                   value: widget.progressValue,
-                  strokeWidth: 7,
+                  strokeWidth: 6,
                   valueColor: const AlwaysStoppedAnimation<Color>(OlukoColors.primary),
                 ),
               ),
@@ -54,6 +56,7 @@ class _State extends State<StoriesItem> {
                   maxRadius: widget.maxRadius,
                   child: const Icon(Icons.error),
                 ),
+              if (widget._hasUnseenStories) Image.asset('assets/courses/photo_ellipse.png', scale: 7, color: OlukoColors.secondary)
             ],
           ),
           if (widget.name != null)
