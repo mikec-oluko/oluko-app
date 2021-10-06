@@ -70,7 +70,7 @@ String defaultIdForAllContentTimeline = '0';
 class _CoachPageState extends State<CoachPage> {
   @override
   void initState() {
-    BlocProvider.of<CoachProfileBloc>(context).getCoachProfile(widget.coachId);
+    BlocProvider.of<CoachProfileBloc>(context).getCoachProfile(widget.coachAssignment.coachId);
     super.initState();
   }
 
@@ -159,7 +159,6 @@ class _CoachPageState extends State<CoachPage> {
     );
   }
 
-  //TODO: ADD TRANSLATIONS
   void getMentoredVideoContent(List<CoachTimelineItem> mentoredVideos) {
     _annotationVideosContent.forEach((element) {
       CoachTimelineItem newItem = CoachTimelineItem(
@@ -179,7 +178,6 @@ class _CoachPageState extends State<CoachPage> {
     });
   }
 
-  //TODO: ADD TRANSLATIONS
   void getSentVideoContent(List<CoachTimelineItem> sentVideos) {
     _sentVideosContent.forEach((element) {
       CoachTimelineItem newItem = CoachTimelineItem(
@@ -200,6 +198,8 @@ class _CoachPageState extends State<CoachPage> {
   }
 
   void requestCurrentUserData(BuildContext context) {
+    // BlocProvider.of<CoachProfileBloc>(context).getCoachProfile(widget.coachId);
+
     BlocProvider.of<CoachTimelineItemsBloc>(context).getTimelineItemsForUser(_currentAuthUser.id);
 
     BlocProvider.of<UserStatisticsBloc>(context).getUserStatistics(_currentAuthUser.id);
@@ -208,7 +208,8 @@ class _CoachPageState extends State<CoachPage> {
 
     BlocProvider.of<CourseEnrollmentBloc>(context).getChallengesForUser(_currentAuthUser.id);
 
-    BlocProvider.of<CoachMentoredVideosBloc>(context).getMentoredVideosByUserId(_currentAuthUser.id);
+    BlocProvider.of<CoachMentoredVideosBloc>(context)
+        .getMentoredVideosByUserId(_currentAuthUser.id, widget.coachAssignment.coachId);
 
     BlocProvider.of<CoachSentVideosBloc>(context).getSentVideosByUserId(_currentAuthUser.id);
 
