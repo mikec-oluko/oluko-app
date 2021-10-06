@@ -165,7 +165,9 @@ class _FriendsListPageState extends State<FriendsListPage> {
                           children: [
                             StoriesItem(
                               maxRadius: 30,
-                              imageUrl: friendUser.avatar ?? UserUtils().defaultAvatarImageUrl,
+                              imageUrl: friendUser.avatar,
+                              name: friendUser.firstName,
+                              lastname: friendUser.lastName,
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top: 8.0, bottom: 0.0),
@@ -235,7 +237,9 @@ class _FriendsListPageState extends State<FriendsListPage> {
                     children: [
                       StoriesItem(
                         maxRadius: 30,
-                        imageUrl: user.avatar ?? UserUtils().defaultAvatarImageUrl,
+                        imageUrl: user.avatar,
+                        name: user.firstName,
+                        lastname: user.lastName,
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 8.0, bottom: 0.0),
@@ -302,7 +306,12 @@ class _FriendsListPageState extends State<FriendsListPage> {
                     SizedBox(height: 30),
                     Row(
                       children: [
-                        StoriesItem(maxRadius: 40, imageUrl: user.avatar),
+                        StoriesItem(
+                          maxRadius: 40,
+                          imageUrl: user.avatar,
+                          name: user.firstName,
+                          lastname: user.lastName,
+                        ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16.0),
                           child: Column(
@@ -322,8 +331,8 @@ class _FriendsListPageState extends State<FriendsListPage> {
                                         ),
                                         Padding(
                                           padding: const EdgeInsets.only(top: 8.0),
-                                          child:
-                                              Text('${user.city ?? ''}, ${user.country ?? ''}', style: TextStyle(color: Colors.grey, fontSize: 15)),
+                                          child: Text('${user.city ?? ''}, ${user.country ?? ''}',
+                                              style: TextStyle(color: Colors.grey, fontSize: 15)),
                                         )
                                       ],
                                     )
@@ -376,7 +385,8 @@ class _FriendsListPageState extends State<FriendsListPage> {
                                                               : OlukoLocalizations.get(context, 'hiFiveRemoved'));
                                                     }
                                                     if (hiFiveSendState is HiFiveSendSuccess) {
-                                                      BlocProvider.of<HiFiveReceivedBloc>(context).get(context, _authStateData.user.id, user.id);
+                                                      BlocProvider.of<HiFiveReceivedBloc>(context)
+                                                          .get(context, _authStateData.user.id, user.id);
                                                     }
                                                   },
                                                   child: Container(width: 80, height: 80, child: Image.asset('assets/profile/hiFive.png')),
@@ -414,7 +424,8 @@ class _FriendsListPageState extends State<FriendsListPage> {
                                   bool userIsFriend = friendState.friendUsers.map((e) => e.id).toList().contains(user.id);
                                   FriendModel friendModel = friendState.friendData.friends.where((element) => element.id == user.id).first;
                                   if (friendState is GetFriendsSuccess && userIsFriend) {
-                                    BlocProvider.of<FavoriteFriendBloc>(context).favoriteFriend(context, friendState.friendData, friendModel);
+                                    BlocProvider.of<FavoriteFriendBloc>(context)
+                                        .favoriteFriend(context, friendState.friendData, friendModel);
                                   }
                                 }
                               },
@@ -438,16 +449,20 @@ class _FriendsListPageState extends State<FriendsListPage> {
                                 title: 'Cancel',
                                 onPressed: () {
                                   if (friendState is GetFriendsSuccess)
-                                    BlocProvider.of<FriendBloc>(context).removeRequestSent(_authStateData.user.id, friendState.friendData, user.id);
+                                    BlocProvider.of<FriendBloc>(context)
+                                        .removeRequestSent(_authStateData.user.id, friendState.friendData, user.id);
                                 },
                               )
                             : OlukoOutlinedButton(
                                 thinPadding: true,
-                                title: userIsFriend ? OlukoLocalizations.of(context).find('remove') : OlukoLocalizations.of(context).find('connect'),
+                                title: userIsFriend
+                                    ? OlukoLocalizations.of(context).find('remove')
+                                    : OlukoLocalizations.of(context).find('connect'),
                                 onPressed: () {
                                   if (friendState is GetFriendsSuccess)
                                     userIsFriend
-                                        ? BlocProvider.of<FriendBloc>(context).removeFriend(_authStateData.user.id, friendState.friendData, user.id)
+                                        ? BlocProvider.of<FriendBloc>(context)
+                                            .removeFriend(_authStateData.user.id, friendState.friendData, user.id)
                                         : BlocProvider.of<FriendBloc>(context)
                                             .sendRequestOfConnect(_authStateData.user.id, friendState.friendData, user.id);
                                 }),
@@ -458,7 +473,8 @@ class _FriendsListPageState extends State<FriendsListPage> {
                                   thinPadding: true,
                                   title: 'View full profile',
                                   onPressed: () {
-                                    Navigator.pushNamed(context, routeLabels[RouteEnum.profileViewOwnProfile], arguments: {'userRequested': user});
+                                    Navigator.pushNamed(context, routeLabels[RouteEnum.profileViewOwnProfile],
+                                        arguments: {'userRequested': user});
                                   },
                                 ),
                               )
@@ -520,7 +536,9 @@ class _FriendsListPageState extends State<FriendsListPage> {
                     children: [
                       StoriesItem(
                         maxRadius: 30,
-                        imageUrl: user.avatar ?? UserUtils().defaultAvatarImageUrl,
+                        imageUrl: user.avatar,
+                        name: user.firstName,
+                        lastname: user.lastName,
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 8.0, bottom: 0.0),

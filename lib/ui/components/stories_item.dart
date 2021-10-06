@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nil/nil.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/dto/story_dto.dart';
 
@@ -7,11 +8,13 @@ class StoriesItem extends StatefulWidget {
   final double maxRadius;
   double progressValue;
   final String name;
+  final String lastname;
   final String avatar;
   final String avatar_thumbnail;
   final List<Story> stories;
 
-  StoriesItem({this.maxRadius, this.imageUrl, this.name, this.avatar, this.avatar_thumbnail, this.stories, this.progressValue}) {
+  StoriesItem(
+      {this.maxRadius, this.imageUrl, this.name, this.lastname, this.avatar, this.avatar_thumbnail, this.stories, this.progressValue}) {
     if (stories != null) {
       progressValue = stories.where((element) => !element.seen).isNotEmpty ? 1 : 0;
     } else {
@@ -52,7 +55,17 @@ class _State extends State<StoriesItem> {
               else
                 CircleAvatar(
                   maxRadius: widget.maxRadius,
-                  child: const Icon(Icons.error),
+                  backgroundColor: OlukoColors.userColor(widget.name, widget.lastname),
+                  child: widget.name != null
+                      ? Text(
+                          widget.name?.characters.first.toString().toUpperCase(),
+                          style: OlukoFonts.olukoBigFont(
+                            customColor: OlukoColors.white,
+                            custoFontWeight: FontWeight.w500,
+                          ),
+                          textAlign: TextAlign.center,
+                        )
+                      : nil,
                 ),
             ],
           ),
