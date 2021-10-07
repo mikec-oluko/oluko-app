@@ -1,0 +1,1 @@
+enum StatusEnum { requested, resolved }
