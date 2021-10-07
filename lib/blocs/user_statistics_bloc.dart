@@ -23,9 +23,7 @@ class UserStatisticsBloc extends Cubit<UserStatisticsState> {
   UserStatisticsBloc() : super(Loading());
 
   void getUserStatistics(String userId) async {
-    if (!(state is StatisticsSuccess)) {
-      emit(Loading());
-    }
+    emit(Loading());
     try {
       UserStatistics userStats = await UserStatisticsRepository.getUserStatics(userId);
       emit(StatisticsSuccess(userStats: userStats));

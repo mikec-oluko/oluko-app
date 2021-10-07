@@ -20,7 +20,8 @@ class _CoachAssessmentCardState extends State<CoachAssessmentCard> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos]);
+        Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos],
+            arguments: {'isFirstTime': false});
       },
       child: Container(
         width: 250,
@@ -36,29 +37,30 @@ class _CoachAssessmentCardState extends State<CoachAssessmentCard> {
                 children: [
                   Text(
                     widget.task.name,
-                    style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                    style: OlukoFonts.olukoBigFont(
+                        customColor: OlukoColors.white,
+                        custoFontWeight: FontWeight.w500),
                   ),
-                  checkAssessmentSubmitted(widget.task, widget.assessmentVideos) == false
+                  checkAssessmentSubmitted(
+                              widget.task, widget.assessmentVideos) ==
+                          false
                       ? Image.asset(
                           'assets/assessment/check_ellipse.png',
                           scale: 4,
                         )
-                      : Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: Container(
-                            width: 35,
-                            height: 35,
-                            child: Stack(alignment: Alignment.center, children: [
-                              Image.asset(
-                                'assets/assessment/green_ellipse.png',
-                                scale: 2,
-                              ),
-                              Image.asset(
-                                'assets/assessment/gray_check.png',
-                                scale: 5,
-                              )
-                            ]),
-                          ),
+                      : Container(
+                          width: 50,
+                          height: 50,
+                          child: Stack(alignment: Alignment.center, children: [
+                            Image.asset(
+                              'assets/assessment/check_ellipse.png',
+                              scale: 4,
+                            ),
+                            Image.asset(
+                              'assets/assessment/check.png',
+                              scale: 4,
+                            )
+                          ]),
                         ),
                 ],
               ),
@@ -66,7 +68,9 @@ class _CoachAssessmentCardState extends State<CoachAssessmentCard> {
                 children: [
                   Text(
                     widget.task.description,
-                    style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+                    style: OlukoFonts.olukoMediumFont(
+                        customColor: OlukoColors.grayColor,
+                        custoFontWeight: FontWeight.w500),
                   ),
                 ],
               ),
@@ -75,7 +79,9 @@ class _CoachAssessmentCardState extends State<CoachAssessmentCard> {
                 children: [
                   Text(
                     OlukoLocalizations.get(context, 'public'),
-                    style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+                    style: OlukoFonts.olukoBigFont(
+                        customColor: OlukoColors.grayColor,
+                        custoFontWeight: FontWeight.w500),
                   ),
                   Stack(alignment: Alignment.center, children: [
                     Image.asset(
@@ -100,15 +106,16 @@ class _CoachAssessmentCardState extends State<CoachAssessmentCard> {
     bool result = false;
     if (tasksSubmitted.length == null || tasksSubmitted.length == 0) {
       result = false;
-    }
-
-    tasksSubmitted.forEach((taskSub) {
-      if (taskSub.task.id == task.id) {
+    } else {
+      if (tasksSubmitted
+          .where((element) => element.task.id == task.id)
+          .isNotEmpty) {
         result = true;
       } else {
         result = false;
       }
-    });
+    }
+
     return result;
   }
 }

@@ -80,6 +80,19 @@ class HiFiveBloc extends Cubit<HiFiveState> {
     }
   }
 
+  void sendHiFiveToAll(BuildContext context, String userId, List<String> targetUserIds) async {
+    List<Message> results = await Future.wait(targetUserIds.map((String targetUserId) {
+      return ChatRepository().sendHiFive(userId, targetUserId);
+    }));
+
+    _lastState.users.removeWhere((element) => targetUserIds.contains(element.id));
+    _lastState.chat.removeWhere((key, value) => targetUserIds.contains(key.id));
+    emit(HiFiveSuccess(
+        chat: _lastState.chat,
+        users: _lastState.users,
+        alertMessage: '${targetUserIds.length} Hi-Five${targetUserIds.length > 1 ? 's' : ''} sended'));
+  }
+
   void ignoreHiFive(BuildContext context, String userId, String targetUserId) async {
     bool hiFiveMessage = await ChatRepository().removeHiFive(userId, targetUserId);
     if (_lastState != null && _chatExists(_lastState, targetUserId)) {

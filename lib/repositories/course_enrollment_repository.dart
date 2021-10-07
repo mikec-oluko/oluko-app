@@ -63,7 +63,7 @@ class CourseEnrollmentRepository {
     return null;
   }
 
-  static Future<CourseEnrollment> markSegmentAsCompleted(CourseEnrollment courseEnrollment, int segmentIndex, int classIndex) async {
+  static Future<void> markSegmentAsCompleted(CourseEnrollment courseEnrollment, int segmentIndex, int classIndex) async {
     final DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
@@ -78,8 +78,8 @@ class CourseEnrollmentRepository {
       classes[classIndex].compleatedAt = Timestamp.now();
       courseEnrollment.completion = courseProgress;
     }
+
     reference.update({'classes': List<dynamic>.from(classes.map((c) => c.toJson())), 'completion': courseEnrollment.completion});
-    return reference.get() as Future<CourseEnrollment>;
   }
 
   static Future<CourseEnrollment> create(User user, Course course) async {
@@ -88,19 +88,10 @@ class CourseEnrollmentRepository {
     final CollectionReference reference = projectReference.collection('courseEnrollments');
     final DocumentReference courseReference = projectReference.collection('courses').doc(course.id);
     final DocumentReference docRef = reference.doc();
-    final DocumentReference userReference =
-        projectReference.collection('users').doc(user.uid);
-    final ObjectSubmodel courseSubmodel = ObjectSubmodel(
-        id: course.id,
-        reference: courseReference,
-        name: course.name,
-        image: course.image);
-    CourseEnrollment courseEnrollment = CourseEnrollment(
-        createdBy: user.uid,
-        userId: user.uid,
-        userReference: userReference,
-        course: courseSubmodel,
-        classes: []);
+    final DocumentReference userReference = projectReference.collection('users').doc(user.uid);
+    final ObjectSubmodel courseSubmodel = ObjectSubmodel(id: course.id, reference: courseReference, name: course.name, image: course.image);
+    CourseEnrollment courseEnrollment =
+        CourseEnrollment(createdBy: user.uid, userId: user.uid, userReference: userReference, course: courseSubmodel, classes: []);
     courseEnrollment.id = docRef.id;
     courseEnrollment = await setEnrollmentClasses(course, courseEnrollment);
     docRef.set(courseEnrollment.toJson());
@@ -111,6 +102,7 @@ class CourseEnrollmentRepository {
     for (ObjectSubmodel classObj in course.classes) {
       EnrollmentClass enrollmentClass =
           EnrollmentClass(id: classObj.id, name: classObj.name, image: classObj.image, reference: classObj.reference, segments: []);
+
       enrollmentClass = await setEnrollmentSegments(enrollmentClass);
       courseEnrollment.classes.add(enrollmentClass);
     }
@@ -129,8 +121,10 @@ class CourseEnrollmentRepository {
 
   static List<EnrollmentSection> getEnrollmentSections(SegmentSubmodel segment) {
     final List<EnrollmentSection> sections = [];
-    for (final section in segment.sections) {
-      sections.add(EnrollmentSection(movements: getEnrollmentMovements(section)));
+    if (segment.sections != null) {
+      for (final section in segment.sections) {
+        sections.add(EnrollmentSection(movements: getEnrollmentMovements(section)));
+      }
     }
     return sections;
   }
@@ -160,7 +154,10 @@ class CourseEnrollmentRepository {
 
       docRef.docs.forEach((doc) {
         final Map<String, dynamic> course = doc.data() as Map<String, dynamic>;
-        courseEnrollmentList.add(CourseEnrollment.fromJson(course));
+        CourseEnrollment courseEnrollment = CourseEnrollment.fromJson(course);
+        if (courseEnrollment.completion < 1) {
+          courseEnrollmentList.add(courseEnrollment);
+        }
       });
     } catch (e, stackTrace) {
       await Sentry.captureException(
@@ -203,7 +200,7 @@ class CourseEnrollmentRepository {
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
         .collection('challenges')
-        // .where('course_enrollment_id', isEqualTo: courseEnrollment.id)
+        .where('course_enrollment_id', isEqualTo: courseEnrollment.id)
         .get();
     for (var challengeDoc in query.docs) {
       final Map<String, dynamic> challenge = challengeDoc.data() as Map<String, dynamic>;

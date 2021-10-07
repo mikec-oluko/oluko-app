@@ -24,25 +24,11 @@ class SaveSelfieSuccess extends CourseEnrollmentUpdateState {
 class CourseEnrollmentUpdateBloc extends Cubit<CourseEnrollmentUpdateState> {
   CourseEnrollmentUpdateBloc() : super(Loading());
 
-  void saveMovementCounter(
-      CourseEnrollment courseEnrollment,
-      int segmentIndex,
-      int sectionIndex,
-      int classIndex,
-      MovementSubmodel movement,
-      int totalRounds,
-      int currentRound,
-      int counter) async {
+  void saveMovementCounter(CourseEnrollment courseEnrollment, int segmentIndex, int sectionIndex, int classIndex, MovementSubmodel movement,
+      int totalRounds, int currentRound, int counter) async {
     try {
       await CourseEnrollmentRepository.saveMovementCounter(
-          courseEnrollment,
-          segmentIndex,
-          classIndex,
-          sectionIndex,
-          movement,
-          totalRounds,
-          currentRound,
-          counter);
+          courseEnrollment, segmentIndex, classIndex, sectionIndex, movement, totalRounds, currentRound, counter);
       emit(UpdateCounterSuccess());
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -54,13 +40,10 @@ class CourseEnrollmentUpdateBloc extends Cubit<CourseEnrollmentUpdateState> {
     }
   }
 
-  void saveSelfie(CourseEnrollment courseEnrollment, int classIndex,
-      PickedFile file) async {
+  void saveSelfie(CourseEnrollment courseEnrollment, int classIndex, PickedFile file) async {
     emit(Loading());
     try {
-      CourseEnrollment courseUpdated =
-          await CourseEnrollmentRepository.updateSelfie(
-              courseEnrollment, classIndex, file);
+      CourseEnrollment courseUpdated = await CourseEnrollmentRepository.updateSelfie(courseEnrollment, classIndex, file);
       emit(SaveSelfieSuccess(courseEnrollment: courseUpdated));
     } catch (exception, stackTrace) {
       await Sentry.captureException(

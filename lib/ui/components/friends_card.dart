@@ -98,7 +98,8 @@ class _FriendCardState extends State<FriendCard> {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              widget.friend != null
+              //Hidden star
+              false //widget.friend != null
                   ? IconButton(
                       icon: Icon(
                         widget.friend != null && widget.friend.isFavorite != null && widget.friend.isFavorite

@@ -1,1 +1,1 @@
-enum SubmissionStateEnum { recorded, encoded, uploaded }
+enum SubmissionStateEnum { recorded, encoded, uploaded, uploadedWithoutEncoding }

@@ -59,8 +59,18 @@ class _SentVideosPageState extends State<SentVideosPage> {
                     padding: const EdgeInsets.symmetric(horizontal: 5),
                     child: IconButton(
                         icon: isContentFilteredByDate
-                            ? const Icon(Icons.sort, color: OlukoColors.white)
-                            : const Icon(Icons.sort, color: OlukoColors.grayColor),
+                            ? Image.asset(
+                                'assets/courses/vector.png',
+                                color: Colors.white,
+                                height: 20,
+                                width: 20,
+                              )
+                            : Image.asset(
+                                'assets/courses/vector.png',
+                                color: Colors.grey,
+                                height: 20,
+                                width: 20,
+                              ),
                         onPressed: () {
                           setState(() {
                             isContentFilteredByDate ? isContentFilteredByDate = false : isContentFilteredByDate = true;

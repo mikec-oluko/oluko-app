@@ -105,48 +105,51 @@ class _CoachProfileState extends State<CoachProfile> {
                           height: 50,
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: IntrinsicHeight(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Image.asset(
-                                        'assets/assessment/play.png',
-                                        scale: 5,
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                                        child: Image.asset(
-                                          'assets/courses/coach_audio.png',
-                                          width: 150,
-                                          fit: BoxFit.fill,
-                                          scale: 5,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  VerticalDivider(color: OlukoColors.grayColor),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 5),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            child: Visibility(
+                              visible: false,
+                              child: IntrinsicHeight(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
                                       children: [
                                         Image.asset(
-                                          'assets/courses/coach_delete.png',
+                                          'assets/assessment/play.png',
                                           scale: 5,
                                         ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Image.asset(
-                                          'assets/courses/coach_tick.png',
-                                          scale: 5,
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                                          child: Image.asset(
+                                            'assets/courses/coach_audio.png',
+                                            width: 150,
+                                            fit: BoxFit.fill,
+                                            scale: 5,
+                                          ),
                                         ),
                                       ],
                                     ),
-                                  ),
-                                ],
+                                    VerticalDivider(color: OlukoColors.grayColor),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Image.asset(
+                                            'assets/courses/coach_delete.png',
+                                            scale: 5,
+                                          ),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Image.asset(
+                                            'assets/courses/coach_tick.png',
+                                            scale: 5,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
@@ -160,7 +163,8 @@ class _CoachProfileState extends State<CoachProfile> {
                         children: [
                           Text(
                             "Ask your coach",
-                            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                            style: OlukoFonts.olukoMediumFont(
+                                customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                           ),
                           Container(
                             clipBehavior: Clip.none,
@@ -267,7 +271,7 @@ class _CoachProfileState extends State<CoachProfile> {
       top: MediaQuery.of(context).size.height / 5,
       right: 10,
       child: Visibility(
-        visible: true,
+        visible: false,
         child: Container(
           clipBehavior: Clip.none,
           width: 40,
@@ -308,8 +312,10 @@ class _CoachProfileState extends State<CoachProfile> {
                                   backgroundImage: Image.network(
                                     widget.coachUser.avatarThumbnail,
                                     fit: BoxFit.contain,
-                                    frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
-                                        ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 30, width: 30),
+                                    frameBuilder:
+                                        (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
+                                            ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded,
+                                                height: 30, width: 30),
                                     height: 30,
                                     width: 30,
                                   ).image,
@@ -329,7 +335,8 @@ class _CoachProfileState extends State<CoachProfile> {
                             children: [
                               Text(
                                 OlukoLocalizations.get(context, 'coach'),
-                                style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
+                                style: OlukoFonts.olukoBigFont(
+                                    customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
                               ),
                               SizedBox(
                                 width: 5.0,
@@ -338,7 +345,8 @@ class _CoachProfileState extends State<CoachProfile> {
                                   ? Text(
                                       // widget.coachUser.lastName,
                                       widget.coachUser.firstName,
-                                      style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
+                                      style: OlukoFonts.olukoBigFont(
+                                          customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
                                     )
                                   : Container(),
                             ],
@@ -349,7 +357,8 @@ class _CoachProfileState extends State<CoachProfile> {
                                 padding: const EdgeInsets.only(left: 10.0),
                                 child: Text(
                                   _userLocation,
-                                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300),
+                                  style: OlukoFonts.olukoMediumFont(
+                                      customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300),
                                 ),
                               )
                             : Container()

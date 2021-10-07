@@ -99,9 +99,7 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
   }
 
   void getVideosInfo(User user, CollectionReference parent) async {
-    if (!(state is VideoInfoSuccess)) {
-      emit(Loading());
-    }
+    emit(Loading());
     try {
       _videoInfoList = await VideoInfoRepository.getVideosInfoByUser(user.uid, parent);
       emit(VideoInfoSuccess(videosInfo: _videoInfoList));
@@ -117,9 +115,7 @@ class VideoInfoBloc extends Cubit<VideoInfoState> {
   }
 
   void createVideoInfo(CollectionReference reference, User user, bool addToList, {Video video, List<Event> events}) {
-    if (!(state is VideoInfoSuccess)) {
-      emit(Loading());
-    }
+    emit(Loading());
     try {
       VideoInfo newVideoInfo = VideoInfo(
         //createdBy: user.uid,

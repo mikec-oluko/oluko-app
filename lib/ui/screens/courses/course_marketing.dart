@@ -65,7 +65,8 @@ class _CourseMarketingState extends State<CourseMarketing> {
         _user = authState.firebaseUser;
         if (_userState == null) {
           _userState = authState;
-          BlocProvider.of<SubscribedCourseUsersBloc>(context).get(widget.course.id, _userState.user.id);
+          /*BlocProvider.of<SubscribedCourseUsersBloc>(context)
+              .get(widget.course.id, _userState.user.id);*/
           BlocProvider.of<ClassBloc>(context)..getAll(widget.course);
           BlocProvider.of<StatisticsBloc>(context)..get(widget.course.statisticsReference);
           BlocProvider.of<MovementBloc>(context)..getAll();
@@ -164,30 +165,30 @@ class _CourseMarketingState extends State<CourseMarketing> {
   }
 
   Widget showEnrollButton(CourseEnrollment courseEnrollment, BuildContext context) {
-    if (courseEnrollment != null) {
-      return nil;
+    if (courseEnrollment == null || courseEnrollment.completion >= 1) {
+      return BlocListener<CourseEnrollmentBloc, CourseEnrollmentState>(
+          listener: (context, courseEnrollmentState) {
+            if (courseEnrollmentState is CreateEnrollmentSuccess) {
+              BlocProvider.of<CourseEnrollmentListBloc>(context)..getCourseEnrollmentsByUser(_user.uid);
+              Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
+            }
+          },
+          child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  OlukoPrimaryButton(
+                    title: OlukoLocalizations.get(context, 'enroll'),
+                    onPressed: () {
+                      BlocProvider.of<CourseEnrollmentBloc>(context)..create(_user, widget.course);
+                    },
+                  ),
+                ],
+              )));
+    } else {
+      return SizedBox();
     }
-
-    return BlocListener<CourseEnrollmentBloc, CourseEnrollmentState>(
-        listener: (context, courseEnrollmentState) {
-          if (courseEnrollmentState is CreateEnrollmentSuccess) {
-            BlocProvider.of<CourseEnrollmentListBloc>(context)..getCourseEnrollmentsByUser(_user.uid);
-            Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
-          }
-        },
-        child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 20, horizontal: 15),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                OlukoPrimaryButton(
-                  title: OlukoLocalizations.get(context, 'enroll'),
-                  onPressed: () {
-                    BlocProvider.of<CourseEnrollmentBloc>(context)..create(_user, widget.course);
-                  },
-                ),
-              ],
-            )));
   }
 
   Widget buildStatistics() {
@@ -199,7 +200,8 @@ class _CourseMarketingState extends State<CourseMarketing> {
               courseStatistics: CourseStatistics(courseId: widget.course.id, takingUp: state.users.length, doing: state.users.length),
               course: widget.course,
             ));
-      } else {
+      }
+      if (state is SubscribedCourseUsersLoading) {
         return Padding(
           padding: const EdgeInsets.all(50.0),
           child: Center(
@@ -209,6 +211,15 @@ class _CourseMarketingState extends State<CourseMarketing> {
                 )),
           ),
         );
+      } else {
+        return Padding(
+            padding: const EdgeInsets.all(50.0),
+            child: Center(
+              child: Text('error',
+                  style: TextStyle(
+                    color: Colors.white,
+                  )),
+            ));
       }
     });
   }
