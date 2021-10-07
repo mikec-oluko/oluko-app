@@ -92,15 +92,15 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
                         })
                       ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20),
-                      child: FriendSuggestionSection(
-                        name: "Richard",
-                        lastName: "McGregor",
-                        userName: "Notorius",
-                        imageUser: userImages[6],
-                      ),
-                    )
+                    // Padding(
+                    //   padding: const EdgeInsets.only(top: 20),
+                    //   child: FriendSuggestionSection(
+                    //     name: "Richard",
+                    //     lastName: "McGregor",
+                    //     userName: "Notorius",
+                    //     imageUser: userImages[6],
+                    //   ),
+                    // )
                   ],
                 ),
               ),
@@ -155,9 +155,7 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
                         },
                       ))
                   .toList() +
-              (friendsRequestState.friendRequestList.length > (maxRequestsToShow as int)
-                  ? [buildAllRequestButton(context)]
-                  : []);
+              (friendsRequestState.friendRequestList.length > (maxRequestsToShow as int) ? [buildAllRequestButton(context)] : []);
     } else if (friendsRequestState is FriendFailure) {
       return [TitleBody('There was an error retrieving your Friends')];
     } else if (friendsRequestState is FriendLoading) {

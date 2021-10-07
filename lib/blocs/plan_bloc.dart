@@ -29,11 +29,9 @@ class PlanBloc extends Cubit<PlanState> {
   PlanBloc() : super(Loading());
 
   void getPlans() async {
-    if (!(state is PlanSuccess)) {
-      emit(Loading());
-    }
+    emit(Loading());
     try {
-      List<Plan> plans = await PlanRepository().getAll();
+      final List<Plan> plans = await PlanRepository().getAll();
       plans.sort((a, b) => a.title.compareTo(b.title));
       emit(PlansSuccess(plans: plans));
     } catch (exception, stackTrace) {

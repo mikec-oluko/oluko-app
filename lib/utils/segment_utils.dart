@@ -59,12 +59,15 @@ class SegmentUtils {
 
   static List<Widget> getWorkouts(Segment segment, Color color) {
     List<Widget> workouts = [];
-    for (var sectionIndex = 0; sectionIndex < segment.sections.length; sectionIndex++) {
-      for (var movementIndex = 0; movementIndex < segment.sections[sectionIndex].movements.length; movementIndex++) {
-        MovementSubmodel movement = segment.sections[sectionIndex].movements[movementIndex];
-        workouts.add(getTextWidget(getLabel(movement), color));
+    if (segment.sections != null) {
+      for (var sectionIndex = 0; sectionIndex < segment.sections.length; sectionIndex++) {
+        for (var movementIndex = 0; movementIndex < segment.sections[sectionIndex].movements.length; movementIndex++) {
+          MovementSubmodel movement = segment.sections[sectionIndex].movements[movementIndex];
+          workouts.add(getTextWidget(getLabel(movement), color));
+        }
       }
     }
+
     return workouts;
   }
 

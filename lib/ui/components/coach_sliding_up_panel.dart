@@ -4,6 +4,7 @@ import 'package:oluko_app/helpers/coach_timeline_content.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'coach_timeline_panel.dart';
+import 'dart:math' as math;
 
 class CoachSlidingUpPanel extends StatefulWidget {
   const CoachSlidingUpPanel({this.content, this.timelineItemsContent});
@@ -17,22 +18,76 @@ class CoachSlidingUpPanel extends StatefulWidget {
 class _CoachSlidingUpPanelState extends State<CoachSlidingUpPanel> {
   final PanelController _panelController = PanelController();
 
+  bool isPanelOpen = true;
   BorderRadiusGeometry radius = const BorderRadius.only(
-    topLeft: Radius.circular(24.0),
-    topRight: Radius.circular(24.0),
+    topLeft: Radius.circular(30.0),
+    topRight: Radius.circular(30.0),
   );
   @override
   Widget build(BuildContext context) {
     return SlidingUpPanel(
-      header: Padding(
-        padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
-        child: Padding(
-          padding: const EdgeInsets.only(left: 10),
-          child: Text(
-            OlukoLocalizations.get(context, 'myTimeline'),
-            style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+      header: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 10),
+            child: Text(
+              OlukoLocalizations.get(context, 'myTimeline'),
+              style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+            ),
           ),
-        ),
+          const SizedBox(width: 250),
+          IconButton(
+              onPressed: () {
+                if (_panelController.isPanelOpen) {
+                  _panelController.close();
+                  setState(() {
+                    isPanelOpen = true;
+                  });
+                } else {
+                  _panelController.open();
+                  setState(() {
+                    isPanelOpen = false;
+                  });
+                }
+              },
+              icon: isPanelOpen
+                  ? Stack(
+                      children: [
+                        Image.asset(
+                          'assets/courses/white_arrow_up.png',
+                          scale: 3,
+                        ),
+                        Positioned(
+                          top: 4,
+                          child: Image.asset(
+                            'assets/courses/grey_arrow_up.png',
+                            scale: 3,
+                          ),
+                        ),
+                      ],
+                    )
+                  : Stack(
+                      children: [
+                        Transform.rotate(
+                            angle: 180 * math.pi / 180,
+                            child: Image.asset(
+                              'assets/courses/white_arrow_up.png',
+                              scale: 3,
+                            )),
+                        Positioned(
+                          top: -4,
+                          child: Transform.rotate(
+                            angle: 180 * math.pi / 180,
+                            child: Image.asset(
+                              'assets/courses/grey_arrow_up.png',
+                              scale: 3,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ))
+        ],
       ),
       borderRadius: radius,
       backdropEnabled: true,

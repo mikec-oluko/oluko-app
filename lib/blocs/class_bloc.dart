@@ -28,6 +28,7 @@ class ClassBloc extends Cubit<ClassState> {
   ClassBloc() : super(Loading());
 
   void getAll(Course course) async {
+    emit(Loading());
     try {
       List<Class> classes = await ClassRepository.getAll(course);
       emit(GetSuccess(classes: classes));
@@ -42,6 +43,7 @@ class ClassBloc extends Cubit<ClassState> {
   }
 
   void get(String id) async {
+    emit(Loading());
     try {
       Class classObj = await ClassRepository.get(id);
       emit(GetByIdSuccess(classObj: classObj));

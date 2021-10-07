@@ -1,10 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AssessmentTask {
-  AssessmentTask({this.taskReference, this.index, this.taskId});
+  AssessmentTask({this.taskReference, this.taskId});
 
   DocumentReference taskReference;
-  num index;
   String taskId;
   String taskName;
 

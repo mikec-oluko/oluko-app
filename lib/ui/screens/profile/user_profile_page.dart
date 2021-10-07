@@ -215,8 +215,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     _panelController.close();
                   }
                   if (state is ProfileCoverRequirePermissions) {
-                    _panelController.close().then((value) =>
-                        DialogUtils.getDialog(profileViewContext, [OpenSettingsModal(profileViewContext)], showExitButton: false));
+                    _panelController
+                        .close()
+                        .then((value) => DialogUtils.getDialog(profileViewContext, [OpenSettingsModal(profileViewContext)], showExitButton: false));
                   }
                   return _contentForPanel;
                 })
@@ -243,8 +244,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     _panelController.close();
                   }
                   if (state is ProfileAvatarRequirePermissions) {
-                    _panelController.close().then((value) =>
-                        DialogUtils.getDialog(profileViewContext, [OpenSettingsModal(profileViewContext)], showExitButton: false));
+                    _panelController
+                        .close()
+                        .then((value) => DialogUtils.getDialog(profileViewContext, [OpenSettingsModal(profileViewContext)], showExitButton: false));
                   }
                   return _contentForPanel;
                 }),
@@ -341,13 +343,13 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                   onPressed: () {
                                     switch (connectStatus) {
                                       case UserConnectStatus.connected:
-                                        BlocProvider.of<FriendBloc>(context).removeFriend(friendData, userRequested.id);
+                                        BlocProvider.of<FriendBloc>(context).removeFriend(_currentAuthUser.id, friendData, userRequested.id);
                                         break;
                                       case UserConnectStatus.notConnected:
-                                        BlocProvider.of<FriendBloc>(context).sendRequestOfConnect(friendData, userRequested.id);
+                                        BlocProvider.of<FriendBloc>(context).sendRequestOfConnect(_currentAuthUser.id, friendData, userRequested.id);
                                         break;
                                       case UserConnectStatus.requestPending:
-                                        BlocProvider.of<FriendBloc>(context).removeRequestSent(friendData, userRequested.id);
+                                        BlocProvider.of<FriendBloc>(context).removeRequestSent(_currentAuthUser.id, friendData, userRequested.id);
                                         break;
                                       default:
                                     }
@@ -383,8 +385,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                 titleForSection: OlukoLocalizations.get(context, 'transformationJourney'),
                                 routeForSection: RouteEnum.profileTransformationJourney,
                                 contentForSection: TransformListOfItemsToWidget.getWidgetListFromContent(
-                                    tansformationJourneyData: _transformationJourneyContent,
-                                    requestedFromRoute: ActualProfileRoute.userProfile))
+                                    tansformationJourneyData: _transformationJourneyContent, requestedFromRoute: ActualProfileRoute.userProfile))
                             : const SizedBox();
                       },
                     ),
@@ -430,8 +431,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
   }
 
   void _requestContentForUser({BuildContext context, UserResponse userRequested}) {
-    if (PrivacyOptions().canShowDetails(
-        isOwner: _isCurrentUser, currentUser: _currentAuthUser, userRequested: _userProfileToDisplay, connectStatus: connectStatus)) {
+    if (PrivacyOptions()
+        .canShowDetails(isOwner: _isCurrentUser, currentUser: _currentAuthUser, userRequested: _userProfileToDisplay, connectStatus: connectStatus)) {
       BlocProvider.of<CourseEnrollmentListBloc>(context).getCourseEnrollmentsByUserId(userRequested.id);
       BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionByUserId(userRequested.id);
       BlocProvider.of<CourseBloc>(context).getUserEnrolled(userRequested.id);

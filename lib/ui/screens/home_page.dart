@@ -10,7 +10,6 @@ import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/search_results.dart';
 import 'package:oluko_app/models/tag.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
-import 'package:oluko_app/ui/components/bottom_navigation_bar.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/course_card.dart';
@@ -18,7 +17,6 @@ import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/search_bar.dart';
 import 'package:oluko_app/ui/components/search_results_grid.dart';
 import 'package:oluko_app/ui/components/search_suggestions.dart';
-import 'package:oluko_app/ui/components/stories_header.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/course_utils.dart';
 import 'package:oluko_app/utils/image_utils.dart';
@@ -131,7 +129,6 @@ class _MyHomePageState extends State<MyHomePage> {
       padding: const EdgeInsets.only(top: 0.0, left: 8, right: 8),
       child: ListView(
         children: [
-          StoriesHeader(),
           ListView.builder(
               physics: NeverScrollableScrollPhysics(),
               itemCount: courseState.coursesByCategories.length,
@@ -182,7 +179,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> getProfile() async {
     final profileData = AuthRepository.getLoggedUser();
-    profile = profileData != null ? profileData : null;
+    profile = profileData ?? null;
   }
 
   onGoBack() {

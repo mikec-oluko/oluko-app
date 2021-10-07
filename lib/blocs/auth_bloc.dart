@@ -5,10 +5,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/models/dto/api_response.dart';
 import 'package:oluko_app/models/dto/login_request.dart';
 import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/repositories/assessment_assignment_repository.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/repositories/user_repository.dart';
 import 'package:oluko_app/utils/app_loader.dart';
@@ -89,6 +91,15 @@ class AuthBloc extends Cubit<AuthState> {
       AuthRepository().storeLoginData(user);
       AppMessages.showSnackbar(context, '${OlukoLocalizations.get(context, 'welcome')}, ${user.firstName}');
       emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
+      navigateToNextScreen(context, firebaseUser.uid);
+    }
+  }
+
+  void navigateToNextScreen(BuildContext context, String userId) async {
+    AssessmentAssignment assessmentA = await AssessmentAssignmentRepository.getByUserId(userId);
+    if (assessmentA != null && (assessmentA.seenByUser == null || !assessmentA.seenByUser)) {
+      await AppNavigator().goToAssessmentVideos(context);
+    } else {
       await AppNavigator().returnToHome(context);
     }
   }
@@ -130,7 +141,7 @@ class AuthBloc extends Cubit<AuthState> {
 
     AuthRepository().storeLoginData(userResponse);
     emit(AuthSuccess(user: userResponse, firebaseUser: firebaseUser));
-    await AppNavigator().returnToHome(context);
+    navigateToNextScreen(context, firebaseUser.uid);
   }
 
   Future<void> loginWithFacebook(BuildContext context) async {
@@ -145,7 +156,7 @@ class AuthBloc extends Cubit<AuthState> {
       user.lastName = splitDisplayName[1];
     }
     AuthRepository().storeLoginData(user);
-    await AppNavigator().returnToHome(context);
+    navigateToNextScreen(context, firebaseUser.uid);
     emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
   }
 
@@ -174,7 +185,11 @@ class AuthBloc extends Cubit<AuthState> {
   }
 
   Future<void> sendPasswordResetEmail(BuildContext context, LoginRequest loginRequest) async {
-    //TODO: unused variable final success =
+    if (loginRequest.email == null || loginRequest.email == '') {
+      AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'enterEmail'));
+      return;
+    }
+
     await AuthRepository().sendPasswordResetEmail(loginRequest.email);
     AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'pleaseCheckYourEmailForInstructions'));
   }
