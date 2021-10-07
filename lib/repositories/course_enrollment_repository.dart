@@ -114,7 +114,7 @@ class CourseEnrollmentRepository {
     final Class classObj = Class.fromJson(qs.data() as Map<String, dynamic>);
     classObj.segments.forEach((SegmentSubmodel segment) {
       enrollmentClass.segments.add(
-          EnrollmentSegment(id: segment.id, name: segment.name, reference: segment.reference, sections: getEnrollmentSections(segment)));
+          EnrollmentSegment(id: segment.id, is_challenge: segment.is_challenge, challengeImage: segment.challengeImage, name: segment.name, reference: segment.reference, sections: getEnrollmentSections(segment)));
     });
     return enrollmentClass;
   }
