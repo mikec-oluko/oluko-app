@@ -28,7 +28,7 @@ class UserRepository {
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
         .collection('users')
-        .where('email', isEqualTo: email)
+        .where('email', isEqualTo: email.toLowerCase())
         .get();
     if (docRef.docs == null || docRef.docs.length == 0) {
       return null;
