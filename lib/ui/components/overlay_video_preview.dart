@@ -2,6 +2,7 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/video_overlay.dart';
 
 class OverlayVideoPreview extends StatefulWidget {
@@ -39,7 +40,9 @@ class _OverlayVideoPreviewState extends State<OverlayVideoPreview> {
   @override
   Widget build(BuildContext context) {
     return widget.bottomWidgets != null
-        ? Stack(alignment: Alignment.bottomLeft, children: [videoWithButtons()] + widget.bottomWidgets)
+        ? Stack(
+            alignment: Alignment.bottomLeft,
+            children: [videoWithButtons()] + widget.bottomWidgets)
         : videoWithButtons();
   }
 
@@ -66,7 +69,11 @@ class _OverlayVideoPreviewState extends State<OverlayVideoPreview> {
         child: Row(
           children: [
             widget.showBackButton
-                ? IconButton(icon: Icon(Icons.chevron_left, size: 35, color: Colors.white), onPressed: () => Navigator.pop(context))
+                ? IconButton(
+                    icon:
+                        Icon(Icons.chevron_left, size: 35, color: Colors.white),
+                    onPressed: () => Navigator.pushNamed(
+                        context, routeLabels[RouteEnum.root]))
                 : SizedBox(),
             Expanded(child: SizedBox()),
             widget.showShareButton
@@ -107,7 +114,8 @@ class _OverlayVideoPreviewState extends State<OverlayVideoPreview> {
               onTap: () => Navigator.of(context).push(
                 PageRouteBuilder(
                   opaque: false,
-                  pageBuilder: (_, __, ___) => VideoOverlay(videoUrl: widget.video),
+                  pageBuilder: (_, __, ___) =>
+                      VideoOverlay(videoUrl: widget.video),
                 ),
               ),
               child: Align(

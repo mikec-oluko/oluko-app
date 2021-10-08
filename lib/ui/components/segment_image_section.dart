@@ -8,13 +8,19 @@ import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
 
 class SegmentImageSection extends StatefulWidget {
+  final Function() onPressed;
   final Segment segment;
   final bool showBackButton;
   final int currentSegmentStep;
   final int totalSegmentStep;
 
   SegmentImageSection(
-      {this.segment, this.showBackButton = true, this.currentSegmentStep, this.totalSegmentStep, Key key})
+      {this.onPressed = null,
+      this.segment,
+      this.showBackButton = true,
+      this.currentSegmentStep,
+      this.totalSegmentStep,
+      Key key})
       : super(key: key);
 
   @override
@@ -45,20 +51,24 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
             children: [
               Text(
                 widget.segment.name,
-                style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
+                style:
+                    OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
               ),
               SizedBox(height: 10),
               Text(
                 widget.segment.description,
-                style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400),
+                style:
+                    OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400),
               ),
               SegmentStepSection(
-                  currentSegmentStep: widget.currentSegmentStep, totalSegmentStep: widget.totalSegmentStep),
+                  currentSegmentStep: widget.currentSegmentStep,
+                  totalSegmentStep: widget.totalSegmentStep),
               Padding(
                   padding: EdgeInsets.symmetric(vertical: 20),
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: SegmentUtils.getSegmentSummary(widget.segment, context, OlukoColors.white))),
+                      children: SegmentUtils.getSegmentSummary(
+                          widget.segment, context, OlukoColors.white))),
             ],
           ))
     ]);
@@ -71,8 +81,14 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
           children: [
             widget.showBackButton
                 ? IconButton(
-                    icon: Icon(Icons.chevron_left, size: 35, color: Colors.white),
-                    onPressed: () => Navigator.pop(context))
+                    icon:
+                        Icon(Icons.chevron_left, size: 35, color: Colors.white),
+                    onPressed: () => {
+                          if (widget.onPressed == null)
+                            {Navigator.pop(context)}
+                          else
+                            {widget.onPressed()}
+                        })
                 : SizedBox(),
             Expanded(child: SizedBox()),
             Padding(
@@ -84,7 +100,8 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                   ),
                   Padding(
                       padding: EdgeInsets.only(top: 1),
-                      child: Icon(Icons.circle_outlined, size: 16, color: OlukoColors.primary))
+                      child: Icon(Icons.circle_outlined,
+                          size: 16, color: OlukoColors.primary))
                 ]))
           ],
         ));

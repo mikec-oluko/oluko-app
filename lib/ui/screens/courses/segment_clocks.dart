@@ -164,6 +164,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
                               }
                             } else if (state
                                 is UpdateSegmentSubmissionSuccess) {
+                              BlocProvider.of<CoachRequestBloc>(context)
+                                ..resolve(_coachRequest, _user.uid);
                               if (_wantsToCreateStory) {
                                 callBlocToCreateStory(
                                     context, state.segmentSubmission);
