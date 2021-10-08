@@ -28,7 +28,7 @@ class UserRepository {
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
         .collection('users')
-        .where('email', isEqualTo: email)
+        .where('email', isEqualTo: email.toLowerCase())
         .get();
     if (docRef.docs == null || docRef.docs.length == 0) {
       return null;
@@ -89,7 +89,7 @@ class UserRepository {
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
         .collection('users')
-        .where('username', isEqualTo: username)
+        .where('username_lowercase', isEqualTo: username.toLowerCase())
         .get();
     if (docsRef.size > 0) {
       var response = docsRef.docs[0].data() as Map<String, dynamic>;
