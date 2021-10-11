@@ -15,8 +15,7 @@ class _CoachTabSegmentCardState extends State<CoachTabSegmentCard> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          color: OlukoColors.challengesGreyBackground,
-          borderRadius: BorderRadius.all(Radius.circular(5))),
+          color: OlukoColors.challengesGreyBackground, borderRadius: BorderRadius.all(Radius.circular(5))),
       height: 100,
       width: 150,
       child: Wrap(
@@ -25,21 +24,36 @@ class _CoachTabSegmentCardState extends State<CoachTabSegmentCard> {
             children: [
               Padding(
                   padding: const EdgeInsets.all(5),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: OlukoColors.challengesGreyBackground,
-                      borderRadius: BorderRadius.all(Radius.circular(5)),
-                      image: DecorationImage(
-                        image: NetworkImage(widget.segment.classImage),
-                        fit: BoxFit.cover,
-                        onError: (exception, stackTrace) {
-                          return Text('Your error widget...');
-                        },
-                      ),
-                    ),
-                    width: 60,
-                    height: 90,
-                  )),
+                  child: widget.segment.classImage != null
+                      ? Container(
+                          decoration: BoxDecoration(
+                            color: OlukoColors.challengesGreyBackground,
+                            borderRadius: BorderRadius.all(Radius.circular(5)),
+                            image: DecorationImage(
+                              image: NetworkImage(widget.segment.classImage),
+                              fit: BoxFit.cover,
+                              onError: (exception, stackTrace) {
+                                return Text('Your error widget...');
+                              },
+                            ),
+                          ),
+                          width: 60,
+                          height: 90,
+                        )
+                      : Container(
+                          child: Center(
+                              child: Text(
+                            "Segment",
+                            style: OlukoFonts.olukoSmallFont(
+                                customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                          )),
+                          decoration: BoxDecoration(
+                            color: OlukoColors.randomColor(),
+                            borderRadius: BorderRadius.all(Radius.circular(5)),
+                          ),
+                          width: 60,
+                          height: 90,
+                        )),
               Expanded(
                 child: Row(
                   children: [
@@ -53,8 +67,7 @@ class _CoachTabSegmentCardState extends State<CoachTabSegmentCard> {
                             child: Text(
                               widget.segment.className,
                               style: OlukoFonts.olukoSmallFont(
-                                  customColor: OlukoColors.grayColor,
-                                  custoFontWeight: FontWeight.w500),
+                                  customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
                             ),
                           ),
                           Padding(
@@ -63,8 +76,7 @@ class _CoachTabSegmentCardState extends State<CoachTabSegmentCard> {
                               widget.segment.segmentName,
                               overflow: TextOverflow.ellipsis,
                               style: OlukoFonts.olukoMediumFont(
-                                  customColor: OlukoColors.white,
-                                  custoFontWeight: FontWeight.w500),
+                                  customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                             ),
                           ),
                         ],
