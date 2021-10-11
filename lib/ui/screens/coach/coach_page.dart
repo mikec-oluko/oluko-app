@@ -6,6 +6,7 @@ import 'package:oluko_app/blocs/coach/coach_assignment_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_interaction_timeline_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_mentored_videos_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_profile_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_sent_videos_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
@@ -23,6 +24,7 @@ import 'package:oluko_app/models/annotations.dart';
 import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/coach_assignment.dart';
+import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/coach_timeline_item.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
@@ -55,11 +57,12 @@ UserResponse _coachUser;
 List<Challenge> _activeChallenges = [];
 List<CourseEnrollment> _courseEnrollmentList = [];
 List<InfoForSegments> _toDoSegments = [];
-List<CoachSegmentContent> actualSegmentsToDisplay = [];
+List<CoachSegmentContent> requiredSegments = [];
 List<TaskSubmission> _assessmentVideosContent = [];
 List<SegmentSubmission> _sentVideosContent = [];
 List<Annotation> _annotationVideosContent = [];
 List<CoachTimelineItem> _timelineItemsContent = [];
+List<CoachRequest> _coachRequestList;
 UserStatistics _userStats;
 Assessment _assessment;
 List<Task> _tasks = [];
@@ -208,6 +211,8 @@ class _CoachPageState extends State<CoachPage> {
 
     BlocProvider.of<CourseEnrollmentBloc>(context).getChallengesForUser(_currentAuthUser.id);
 
+    BlocProvider.of<CoachRequestBloc>(context).get(_currentAuthUser.id);
+
     BlocProvider.of<CoachMentoredVideosBloc>(context)
         .getMentoredVideosByUserId(_currentAuthUser.id, widget.coachAssignment.coachId);
 
@@ -269,6 +274,8 @@ class _CoachPageState extends State<CoachPage> {
   }
 
   Widget toDoSection(BuildContext context) {
+    List<CoachSegmentContent> actualSegmentsToDisplay = [];
+
     return BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(
       builder: (context, state) {
         if (state is CourseEnrollmentsByUserSuccess) {
@@ -283,15 +290,35 @@ class _CoachPageState extends State<CoachPage> {
                 _activeChallenges = state.challenges;
               }
             }
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  OlukoLocalizations.get(context, 'toDo'),
-                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
-                ),
-                CoachHorizontalCarousel(contentToDisplay: toDoContent()),
-              ],
+            return BlocBuilder<CoachRequestBloc, CoachRequestState>(
+              builder: (context, state) {
+                if (state is CoachRequestSuccess) {
+                  _coachRequestList = state.values;
+                  _coachRequestList.forEach((coachRequestItem) {
+                    actualSegmentsToDisplay.forEach((segmentItem) {
+                      if (segmentItem.segmentId == coachRequestItem.segmentId) {
+                        if (!requiredSegments
+                            .where((requiredSegmentItem) => requiredSegmentItem.segmentId == coachRequestItem.segmentId)
+                            .isNotEmpty) {
+                          requiredSegments.add(segmentItem);
+                        }
+                      }
+                    });
+                  });
+                }
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      OlukoLocalizations.get(context, 'toDo'),
+                      style:
+                          OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                    ),
+                    CoachHorizontalCarousel(contentToDisplay: toDoContent()),
+                  ],
+                );
+              },
             );
           },
         );
@@ -300,7 +327,7 @@ class _CoachPageState extends State<CoachPage> {
   }
 
   List<Widget> toDoContent() => TransformListOfItemsToWidget.coachChallengesAndSegments(
-      challenges: _activeChallenges, segments: actualSegmentsToDisplay);
+      challenges: _activeChallenges, segments: requiredSegments);
 
   Widget assessmentSection(BuildContext context) {
     return BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(

@@ -17,7 +17,7 @@ class CoachRequestRepository {
     final docRef = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('coachAssignment')
+        .collection('coachAssignments')
         .doc(userId)
         .collection('coachRequests');
     final QuerySnapshot ds = await docRef.get();
@@ -29,8 +29,7 @@ class CoachRequestRepository {
     return response;
   }
 
-  Future<CoachRequest> getBySegment(
-      String userId, String segmentId, String courseEnrollmentId) async {
+  Future<CoachRequest> getBySegment(String userId, String segmentId, String courseEnrollmentId) async {
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
@@ -42,8 +41,7 @@ class CoachRequestRepository {
         .get();
 
     if (docRef.docs.length > 0) {
-      return CoachRequest.fromJson(
-          docRef.docs[0].data() as Map<String, dynamic>);
+      return CoachRequest.fromJson(docRef.docs[0].data() as Map<String, dynamic>);
     } else {
       return null;
     }

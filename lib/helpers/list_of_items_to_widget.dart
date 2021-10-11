@@ -121,7 +121,7 @@ class TransformListOfItemsToWidget {
     Widget contentForReturn = SizedBox();
     contentForReturn = Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5),
-      child: CoachTabSegmentCard(segment: segment),
+      child: GestureDetector(onTap: () {}, child: CoachTabSegmentCard(segment: segment)),
     );
     return contentForReturn;
   }
@@ -165,6 +165,7 @@ class TransformListOfItemsToWidget {
     segments.forEach((segment) {
       segment.segments.forEach((actualSegment) {
         coachSegmentContent.add(CoachSegmentContent(
+            segmentId: actualSegment.id,
             classImage: segment.classImage,
             className: segment.className,
             segmentName: actualSegment.name,
