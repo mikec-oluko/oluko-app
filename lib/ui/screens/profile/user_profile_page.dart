@@ -161,11 +161,14 @@ class _UserProfilePageState extends State<UserProfilePage> {
           ),
           BlocListener<FriendBloc, FriendState>(
             listenWhen: (FriendState previous, FriendState current) => current != previous,
-            listener: (context, state) {
+            listener: (context, FriendState state) {
               if (state is GetFriendsSuccess) {
                 friendData = state.friendData;
                 friendUsers = state.friendUsers;
                 checkConnectionStatus(userRequested, friendData);
+                if (state.friendUsers.where((element) => element.id == widget.userRequested.id).isNotEmpty) {
+                  friendModel = state.friendData.friends.where((element) => element.id == widget.userRequested.id).first;
+                }
               }
             },
           ),
@@ -326,18 +329,17 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         padding: const EdgeInsets.fromLTRB(10, 30, 10, 0),
                         child: Row(
                           children: [
-                            TextButton(
-                              onPressed: () {
-                                setState(() {
-                                  friendModel.isFavorite = !_isFollow;
-                                });
-                                BlocProvider.of<FavoriteFriendBloc>(context).favoriteFriend(context, friendData, friendModel);
-                                setState(() {
-                                  _isFollow = !_isFollow;
-                                });
-                              },
-                              child: Icon(_isFollow ? Icons.favorite : Icons.favorite_border, color: OlukoColors.primary),
-                            ),
+                            friendModel != null
+                                ? TextButton(
+                                    onPressed: () {
+                                      BlocProvider.of<FavoriteFriendBloc>(context).favoriteFriend(context, friendData, friendModel);
+                                      setState(() {
+                                        _isFollow = !_isFollow;
+                                      });
+                                    },
+                                    child: Icon(_isFollow ? Icons.favorite : Icons.favorite_border, color: OlukoColors.primary),
+                                  )
+                                : SizedBox(),
                             Container(
                               child: OlukoOutlinedButton(
                                   onPressed: () {
