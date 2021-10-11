@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oluko_app/models/base.dart';
-import 'package:oluko_app/models/submodels/object_submodel.dart';
+import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/submodels/segment_submodel.dart';
 
 class Class extends Base {
@@ -9,6 +9,7 @@ class Class extends Base {
   String name;
   String description;
   List<SegmentSubmodel> segments;
+  List<Audio> audios;
 
   Class(
       {this.video,
@@ -16,6 +17,7 @@ class Class extends Base {
       this.segments,
       this.description,
       this.image,
+      this.audios,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -40,8 +42,13 @@ class Class extends Base {
         description: json['description']?.toString(),
         segments: json['segments'] == null
             ? null
-            : List<SegmentSubmodel>.from(
-                (json['segments'] as Iterable).map((segment) => SegmentSubmodel.fromJson(segment as Map<String, dynamic>))));
+            : List<SegmentSubmodel>.from((json['segments'] as Iterable).map(
+                (segment) =>
+                    SegmentSubmodel.fromJson(segment as Map<String, dynamic>))),
+        audios: json['audios'] == null
+            ? null
+            : List<Audio>.from((json['audios'] as Iterable).map(
+                (audio) => Audio.fromJson(audio as Map<String, dynamic>))));
     classObject.setBase(json);
     return classObject;
   }
@@ -52,7 +59,12 @@ class Class extends Base {
       'name': name,
       'description': description,
       'image': image,
-      'segments': segments == null ? null : List<dynamic>.from(segments.map((segment) => segment.toJson())),
+      'segments': segments == null
+          ? null
+          : List<dynamic>.from(segments.map((segment) => segment.toJson())),
+      'audios': audios == null
+          ? null
+          : List<dynamic>.from(audios.map((audio) => audio.toJson()))
     };
     classJson.addEntries(super.toJson().entries);
     return classJson;
