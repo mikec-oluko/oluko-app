@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/routes.dart';
-import 'package:oluko_app/ui/SegmentedProgressBar/SegmentedIndeterminateProgressbar.dart';
+import 'package:oluko_app/ui/SegmentedProgressBar/segmented_indeterminate_progressbar.dart';
 import 'package:oluko_app/ui/components/countdown_overlay.dart';
 import 'package:oluko_app/ui/screens/courses/segment_clocks.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
