@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/coach_segment_content.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class CoachTabSegmentCard extends StatefulWidget {
   final CoachSegmentContent segment;
@@ -41,18 +42,18 @@ class _CoachTabSegmentCardState extends State<CoachTabSegmentCard> {
                           height: 90,
                         )
                       : Container(
-                          child: Center(
-                              child: Text(
-                            "Segment",
-                            style: OlukoFonts.olukoSmallFont(
-                                customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
-                          )),
-                          decoration: BoxDecoration(
-                            color: OlukoColors.randomColor(),
+                          decoration: const BoxDecoration(
+                            color: OlukoColors.grayColor,
                             borderRadius: BorderRadius.all(Radius.circular(5)),
                           ),
                           width: 60,
                           height: 90,
+                          child: Center(
+                              child: Text(
+                            OlukoLocalizations.get(context, 'segment'),
+                            style: OlukoFonts.olukoSmallFont(
+                                customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                          )),
                         )),
               Expanded(
                 child: Row(
