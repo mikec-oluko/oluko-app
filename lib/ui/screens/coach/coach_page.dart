@@ -27,6 +27,7 @@ import 'package:oluko_app/models/coach_assignment.dart';
 import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/coach_timeline_item.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/enums/status_enum.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/submodels/course_timeline_submodel.dart';
 import 'package:oluko_app/models/task.dart';
@@ -274,14 +275,14 @@ class _CoachPageState extends State<CoachPage> {
   }
 
   Widget toDoSection(BuildContext context) {
-    List<CoachSegmentContent> actualSegmentsToDisplay = [];
+    List<CoachSegmentContent> allSegments = [];
 
     return BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(
       builder: (context, state) {
         if (state is CourseEnrollmentsByUserSuccess) {
           _courseEnrollmentList = state.courseEnrollments;
           _toDoSegments = TransformListOfItemsToWidget.segments(_courseEnrollmentList);
-          actualSegmentsToDisplay = TransformListOfItemsToWidget.createSegmentContentInforamtion(_toDoSegments);
+          allSegments = TransformListOfItemsToWidget.createSegmentContentInforamtion(_toDoSegments);
         }
         return BlocBuilder<CourseEnrollmentBloc, CourseEnrollmentState>(
           builder: (context, state) {
@@ -294,17 +295,7 @@ class _CoachPageState extends State<CoachPage> {
               builder: (context, state) {
                 if (state is CoachRequestSuccess) {
                   _coachRequestList = state.values;
-                  _coachRequestList.forEach((coachRequestItem) {
-                    actualSegmentsToDisplay.forEach((segmentItem) {
-                      if (segmentItem.segmentId == coachRequestItem.segmentId) {
-                        if (!requiredSegments
-                            .where((requiredSegmentItem) => requiredSegmentItem.segmentId == coachRequestItem.segmentId)
-                            .isNotEmpty) {
-                          requiredSegments.add(segmentItem);
-                        }
-                      }
-                    });
-                  });
+                  getRequiredSegments(allSegments);
                 }
 
                 return Column(
@@ -324,6 +315,22 @@ class _CoachPageState extends State<CoachPage> {
         );
       },
     );
+  }
+
+  void getRequiredSegments(List<CoachSegmentContent> allSegments) {
+    _coachRequestList.forEach((coachRequestItem) {
+      allSegments.forEach((segmentItem) {
+        if (segmentItem.segmentId == coachRequestItem.segmentId) {
+          if (requiredSegments
+              .where((requiredSegmentItem) =>
+                  requiredSegmentItem.segmentId == coachRequestItem.segmentId &&
+                  coachRequestItem.status == StatusEnum.requested)
+              .isEmpty) {
+            requiredSegments.add(segmentItem);
+          }
+        }
+      });
+    });
   }
 
   List<Widget> toDoContent() => TransformListOfItemsToWidget.coachChallengesAndSegments(
