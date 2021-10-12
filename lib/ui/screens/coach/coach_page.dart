@@ -109,7 +109,8 @@ class _CoachPageState extends State<CoachPage> {
                         return BlocBuilder<CoachSentVideosBloc, CoachSentVideosState>(
                           builder: (context, state) {
                             if (state is CoachSentVideosSuccess) {
-                              _sentVideosContent = state.sentVideos;
+                              _sentVideosContent =
+                                  state.sentVideos.where((sentVideo) => sentVideo.video != null).toList();
                               getSentVideoContent(sentVideosTimelineContent);
                             }
                             return BlocBuilder<CoachTimelineItemsBloc, CoachTimelineItemsState>(
@@ -381,40 +382,29 @@ class _CoachPageState extends State<CoachPage> {
     ];
   }
 
-  BlocBuilder<CoachSentVideosBloc, CoachSentVideosState> sentVideos({bool isForCarousel}) {
-    return BlocBuilder<CoachSentVideosBloc, CoachSentVideosState>(builder: (context, state) {
-      if (state is CoachSentVideosSuccess) {
-        _sentVideosContent = state.sentVideos;
-      }
-
-      return _sentVideosContent.length != null && _sentVideosContent.isNotEmpty
-          ? CoachContentPreviewContent(
-              contentFor: CoachContentSection.sentVideos,
-              titleForSection: OlukoLocalizations.get(context, 'sentVideos'),
-              segmentSubmissionContent: _sentVideosContent,
-              isForCarousel: isForCarousel)
-          : CoachContentSectionCard(
-              title: OlukoLocalizations.get(context, 'sentVideos'),
-              isForCarousel: isForCarousel,
-            );
-    });
+  Widget sentVideos({bool isForCarousel}) {
+    return _sentVideosContent.length != null && _sentVideosContent.isNotEmpty
+        ? CoachContentPreviewContent(
+            contentFor: CoachContentSection.sentVideos,
+            titleForSection: OlukoLocalizations.get(context, 'sentVideos'),
+            segmentSubmissionContent: _sentVideosContent,
+            isForCarousel: isForCarousel)
+        : CoachContentSectionCard(
+            title: OlukoLocalizations.get(context, 'sentVideos'),
+            isForCarousel: isForCarousel,
+          );
   }
 
-  BlocBuilder<CoachMentoredVideosBloc, CoachMentoredVideosState> mentoredVideos({bool isForCarousel}) {
-    return BlocBuilder<CoachMentoredVideosBloc, CoachMentoredVideosState>(builder: (context, state) {
-      if (state is CoachMentoredVideosSuccess) {
-        _annotationVideosContent = state.mentoredVideos;
-      }
-      return _annotationVideosContent != null && _annotationVideosContent.isNotEmpty
-          ? CoachContentPreviewContent(
-              contentFor: CoachContentSection.mentoredVideos,
-              titleForSection: OlukoLocalizations.get(context, 'mentoredVideos'),
-              coachAnnotationContent: _annotationVideosContent,
-              isForCarousel: isForCarousel)
-          : CoachContentSectionCard(
-              title: OlukoLocalizations.get(context, 'mentoredVideos'),
-              isForCarousel: isForCarousel,
-            );
-    });
+  Widget mentoredVideos({bool isForCarousel}) {
+    return _annotationVideosContent != null && _annotationVideosContent.isNotEmpty
+        ? CoachContentPreviewContent(
+            contentFor: CoachContentSection.mentoredVideos,
+            titleForSection: OlukoLocalizations.get(context, 'mentoredVideos'),
+            coachAnnotationContent: _annotationVideosContent,
+            isForCarousel: isForCarousel)
+        : CoachContentSectionCard(
+            title: OlukoLocalizations.get(context, 'mentoredVideos'),
+            isForCarousel: isForCarousel,
+          );
   }
 }

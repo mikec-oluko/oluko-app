@@ -44,7 +44,7 @@ class _SentVideosPageState extends State<SentVideosPage> {
     return BlocBuilder<CoachSentVideosBloc, CoachSentVideosState>(
       builder: (context, state) {
         if (state is CoachSentVideosSuccess) {
-          content = state.sentVideos;
+          content = state.sentVideos.where((sentVideo) => sentVideo.video != null).toList();
         }
         return Scaffold(
           appBar: AppBar(
