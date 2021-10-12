@@ -514,65 +514,32 @@ class _UserProfilePageState extends State<UserProfilePage> {
   }
 
   checkConnectionStatus(UserResponse userRequested, Friend friendData) {
-    if (friendData.friends.length != 0) {
-      friendData.friends.forEach((friendFromList) {
-        if (friendFromList.id == userRequested.id) {
-          if (friendFromList.isFavorite) {
-            setState(() {
-              _isFollow = true;
-              connectStatus = UserConnectStatus.connected;
-              _connectButtonTitle = returnTitleForConnectButton(connectStatus);
-            });
-          } else {
-            setState(() {
-              connectStatus = UserConnectStatus.connected;
-              _connectButtonTitle = returnTitleForConnectButton(connectStatus);
-            });
-          }
-        } else {
-          if (friendData.friendRequestSent.length != 0) {
-            friendData.friendRequestSent.forEach((friendRequestSent) {
-              if (friendRequestSent.id == userRequested.id) {
-                setState(() {
-                  connectStatus = UserConnectStatus.requestPending;
-                  _connectButtonTitle = returnTitleForConnectButton(connectStatus);
-                });
-              } else {
-                setState(() {
-                  connectStatus = UserConnectStatus.notConnected;
-                  _connectButtonTitle = returnTitleForConnectButton(connectStatus);
-                });
-              }
-            });
-          } else {
-            setState(() {
-              connectStatus = UserConnectStatus.notConnected;
-              _connectButtonTitle = returnTitleForConnectButton(connectStatus);
-            });
-          }
-        }
-      });
+    FriendModel userFriendModel;
+    final bool userRequestedIsFriend =
+        friendData?.friends?.isNotEmpty && friendData.friends.where((element) => element.id == userRequested.id).isNotEmpty;
+    final bool connectionRequested =
+        !userRequestedIsFriend && friendData.friendRequestSent.where((element) => element.id == userRequested.id).isNotEmpty;
+    final bool connectionRequestReceived =
+        !userRequestedIsFriend && friendData.friendRequestReceived.where((element) => element.id == userRequested.id).isNotEmpty;
+
+    if (userRequestedIsFriend) {
+      userFriendModel = friendData.friends.where((element) => element.id == userRequested.id).first;
+      _isFollow = userFriendModel.isFavorite;
+    }
+    if (userRequestedIsFriend) {
+      connectStatus = UserConnectStatus.connected;
+    } else if (connectionRequested) {
+      connectStatus = UserConnectStatus.requestPending;
+    } else if (connectionRequestReceived) {
+      connectStatus = UserConnectStatus.requestReceived;
     } else {
-      if (friendData.friendRequestSent.length != 0) {
-        friendData.friendRequestSent.forEach((friendRequestSent) {
-          if (friendRequestSent.id == userRequested.id) {
-            setState(() {
-              connectStatus = UserConnectStatus.requestPending;
-              _connectButtonTitle = returnTitleForConnectButton(connectStatus);
-            });
-          } else {
-            setState(() {
-              connectStatus = UserConnectStatus.notConnected;
-              _connectButtonTitle = returnTitleForConnectButton(connectStatus);
-            });
-          }
-        });
-      } else {
-        setState(() {
-          connectStatus = UserConnectStatus.notConnected;
-          _connectButtonTitle = returnTitleForConnectButton(connectStatus);
-        });
-      }
+      connectStatus = UserConnectStatus.notConnected;
+    }
+
+    if (_connectButtonTitle != returnTitleForConnectButton(connectStatus)) {
+      setState(() {
+        _connectButtonTitle = returnTitleForConnectButton(connectStatus);
+      });
     }
   }
 
@@ -584,6 +551,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
         return 'connect';
       case UserConnectStatus.requestPending:
         return 'cancelConnectionRequested';
+      case UserConnectStatus.requestReceived:
+        return 'confirm';
       default:
         return 'fail';
     }
