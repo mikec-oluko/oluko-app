@@ -7,8 +7,9 @@ class CourseInfoSection extends StatefulWidget {
   final int peopleQty;
   final int audioMessageQty;
   final String image;
+  final Function() onAudioPressed;
 
-  CourseInfoSection({this.peopleQty, this.audioMessageQty, this.image});
+  CourseInfoSection({this.peopleQty, this.audioMessageQty, this.image, this.onAudioPressed});
 
   @override
   _State createState() => _State();
@@ -59,7 +60,7 @@ class _State extends State<CourseInfoSection> {
             width: 50,
           )),
       GestureDetector(
-          onTap: () {},
+          onTap: () => widget.onAudioPressed,
           child: Stack(alignment: Alignment.center, children: [
             Image.asset(
               'assets/courses/audio_notification.png',
