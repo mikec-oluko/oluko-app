@@ -21,7 +21,7 @@ def flutter_root
     return matches[1].strip if matches
   end
   raise "FLUTTER_ROOT not found in #{generated_xcode_build_settings_path}. Try deleting Generated.xcconfig, then run flutter pub get"
-end 
+end
 
 require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
 
@@ -52,7 +52,7 @@ def flutter_install_plugin_pods(application_path = nil, relative_symlink_dir, pl
       symlink = File.join(symlink_plugins_dir, plugin_name)
       File.symlink(plugin_path, symlink)
       if plugin_name == 'flutter_ffmpeg'
-        pod 'flutter_ffmpeg/min-gpl-lts', :path => File.join(relative_symlink_dir, 'plugins', plugin_name, platform)
+        pod 'flutter_ffmpeg/min-gpl', :path => File.join(relative_symlink_dir, 'plugins', plugin_name, platform)
       else
         pod plugin_name, :path => File.join(relative_symlink_dir, 'plugins', plugin_name, platform)
       end
@@ -70,10 +70,5 @@ end
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
-    target.build_configurations.each do |config|
-      if Gem::Version.new('9.0') > Gem::Version.new(config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'])
-        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '9.0'
-      end
-    end
   end
 end
