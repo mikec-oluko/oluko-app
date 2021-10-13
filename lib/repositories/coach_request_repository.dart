@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
 import 'package:oluko_app/models/coach_request.dart';
+import 'package:oluko_app/models/enums/status_enum.dart';
 
 class CoachRequestRepository {
   FirebaseFirestore firestoreInstance;
@@ -45,5 +47,16 @@ class CoachRequestRepository {
     } else {
       return null;
     }
+  }
+
+  Future<void> resolve(CoachRequest coachRequest, String userId) async {
+    DocumentReference reference = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue("projectId"))
+        .collection('coachAssignments')
+        .doc(userId)
+        .collection('coachRequests')
+        .doc(coachRequest.id);
+    reference.update({'status': StatusEnum.resolved.index});
   }
 }
