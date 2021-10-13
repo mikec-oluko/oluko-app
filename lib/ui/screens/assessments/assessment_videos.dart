@@ -114,7 +114,8 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                             padding: const EdgeInsets.only(bottom: 8),
                             child: Text(
                               _assessment.description,
-                              style: OlukoFonts.olukoSuperBigFont(
+                              textAlign: TextAlign.justify,
+                              style: OlukoFonts.olukoBigFont(
                                   customColor: OlukoColors.white),
                             )),
                         BlocBuilder<AssessmentAssignmentBloc,
