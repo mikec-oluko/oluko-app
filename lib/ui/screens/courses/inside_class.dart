@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/class_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
@@ -224,12 +225,17 @@ class _InsideClassesState extends State<InsideClass> {
                     padding: const EdgeInsets.only(top: 10.0),
                     child: CourseProgressBar(value: CourseEnrollmentService.getClassProgress(widget.courseEnrollment, widget.classIndex))),
                 Padding(
-                  padding: const EdgeInsets.only(top: 20.0),
-                  child: Text(
-                    _class.description,
-                    style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
-                  ),
-                ),
+                    padding: const EdgeInsets.only(top: 20.0),
+                    child: (() {
+                      if (_class.description != null) {
+                        return Text(
+                          _class.description,
+                          style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+                        );
+                      } else {
+                        nil;
+                      }
+                    }())),
                 buildChallengeSection(),
                 classMovementSection(),
               ]))),
