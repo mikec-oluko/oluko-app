@@ -26,6 +26,7 @@ class _SentVideosPageState extends State<SentVideosPage> {
       content = widget.segmentSubmissions;
       filteredContent = widget.segmentSubmissions;
     });
+    contentSortedByDate();
 
     super.initState();
   }
@@ -35,6 +36,8 @@ class _SentVideosPageState extends State<SentVideosPage> {
     setState(() {
       content = [];
       filteredContent = [];
+      isFavoriteSelected = false;
+      isContentFilteredByDate = false;
     });
     super.dispose();
   }
@@ -73,10 +76,9 @@ class _SentVideosPageState extends State<SentVideosPage> {
                               ),
                         onPressed: () {
                           setState(() {
-                            isContentFilteredByDate ? isContentFilteredByDate = false : isContentFilteredByDate = true;
-                            isContentFilteredByDate
-                                ? filteredContent.sort((a, b) => a.createdAt.toDate().compareTo(b.createdAt.toDate()))
-                                : filteredContent.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
+                            isContentFilteredByDate = !isContentFilteredByDate;
+
+                            contentSortedByDate();
                           });
                         }),
                   ),
@@ -85,7 +87,7 @@ class _SentVideosPageState extends State<SentVideosPage> {
                           color: OlukoColors.grayColor),
                       onPressed: () {
                         setState(() {
-                          isFavoriteSelected ? isFavoriteSelected = false : isFavoriteSelected = true;
+                          isFavoriteSelected = !isFavoriteSelected;
                           isFavoriteSelected
                               ? filteredContent = content.where((element) => element.favorite == true).toList()
                               : filteredContent = widget.segmentSubmissions;
@@ -98,7 +100,7 @@ class _SentVideosPageState extends State<SentVideosPage> {
             elevation: 0.0,
             backgroundColor: OlukoColors.black,
             leading: IconButton(
-              icon: Icon(
+              icon: const Icon(
                 Icons.arrow_back_ios,
                 color: Colors.white,
               ),
@@ -117,6 +119,12 @@ class _SentVideosPageState extends State<SentVideosPage> {
     );
   }
 
+  void contentSortedByDate() {
+    isContentFilteredByDate
+        ? filteredContent.sort((a, b) => a.createdAt.toDate().compareTo(b.createdAt.toDate()))
+        : filteredContent.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
+  }
+
   List<Widget> segmentCard({List<SegmentSubmission> segmentSubmissions}) {
     List<Widget> contentForSection = [];
 
@@ -128,10 +136,9 @@ class _SentVideosPageState extends State<SentVideosPage> {
   }
 
   Widget returnCardForSegment(SegmentSubmission segmentSubmitted) {
-    //TODO: repeated code 1 from Mentored Video
     Widget contentForReturn = const SizedBox();
     contentForReturn = Padding(
-      padding: EdgeInsets.symmetric(horizontal: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 5),
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: 10),
         child: Container(
@@ -172,7 +179,6 @@ class _SentVideosPageState extends State<SentVideosPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
@@ -212,6 +218,6 @@ class _SentVideosPageState extends State<SentVideosPage> {
   ImageProvider getImage(SegmentSubmission segmentSubmitted) {
     return segmentSubmitted.video.thumbUrl != null
         ? NetworkImage(segmentSubmitted.video.thumbUrl)
-        : AssetImage('assets/home/mvt.png') as ImageProvider;
+        : const AssetImage('assets/home/mvt.png') as ImageProvider;
   }
 }

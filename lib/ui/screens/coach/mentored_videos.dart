@@ -28,7 +28,7 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
       content = widget.coachAnnotation;
       filteredContent = widget.coachAnnotation;
     });
-
+    contentSortedByDate();
     super.initState();
   }
 
@@ -37,6 +37,8 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
     setState(() {
       content = [];
       filteredContent = [];
+      isFavoriteSelected = false;
+      isContentFilteredByDate = false;
     });
     super.dispose();
   }
@@ -75,10 +77,8 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
                               ),
                         onPressed: () {
                           setState(() {
-                            isContentFilteredByDate ? isContentFilteredByDate = false : isContentFilteredByDate = true;
-                            isContentFilteredByDate
-                                ? filteredContent.sort((a, b) => a.createdAt.toDate().compareTo(b.createdAt.toDate()))
-                                : filteredContent.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
+                            isContentFilteredByDate = !isContentFilteredByDate;
+                            contentSortedByDate();
                           });
                         }),
                   ),
@@ -87,7 +87,7 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
                           color: OlukoColors.grayColor),
                       onPressed: () {
                         setState(() {
-                          isFavoriteSelected ? isFavoriteSelected = false : isFavoriteSelected = true;
+                          isFavoriteSelected = !isFavoriteSelected;
                           isFavoriteSelected
                               ? filteredContent = content.where((element) => element.favorite == true).toList()
                               : filteredContent = widget.coachAnnotation;
@@ -218,5 +218,11 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
     return coachAnnotation.video.thumbUrl != null
         ? NetworkImage(coachAnnotation.video.thumbUrl)
         : AssetImage("assets/home/mvt.png") as ImageProvider;
+  }
+
+  void contentSortedByDate() {
+    isContentFilteredByDate
+        ? filteredContent.sort((a, b) => a.createdAt.toDate().compareTo(b.createdAt.toDate()))
+        : filteredContent.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
   }
 }
