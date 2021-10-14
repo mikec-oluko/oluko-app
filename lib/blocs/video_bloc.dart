@@ -206,7 +206,7 @@ class VideoBloc extends Cubit<VideoState> {
     _processPhase = OlukoLocalizations.get(context, 'generatingThumbnail');
     _progress += _unitOfProgress;
     emit(VideoProcessing(processPhase: _processPhase, progress: _progress));
-    String thumbFilePath;
+    String thumbFilePath = null;
     try {
       thumbFilePath = await EncodingProvider.getThumb(videoPath, 100, 150);
     } catch (e, stackTrace) {
@@ -214,7 +214,7 @@ class VideoBloc extends Cubit<VideoState> {
         e,
         stackTrace: stackTrace,
       );
-      rethrow;
+      // rethrow;
     }
 
     _processPhase = OlukoLocalizations.get(context, 'uploadingThumbnail');
