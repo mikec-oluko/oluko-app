@@ -36,6 +36,7 @@ class _State extends State<AudioSection> {
 
   void initPlayer() {
     audioPlayer = new AudioPlayer();
+    audioPlayer.setUrl(widget.audio.url);
     audioPlayer.onDurationChanged.listen((Duration d) {
       print('Max duration: $d');
       setState(() => _duration = d);
@@ -111,8 +112,7 @@ class _State extends State<AudioSection> {
     return GestureDetector(
         onTap: () {
           if (isPlaying == false) {
-            audioPlayer.play(
-                "https://firebasestorage.googleapis.com/v0/b/oluko-development.appspot.com/o/test_audio.mp3?alt=media&token=64a4bc5d-19d5-4830-934a-0029c27da6d5");
+            audioPlayer.resume();
             setState(() {
               isPlaying = true;
             });

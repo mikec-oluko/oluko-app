@@ -244,10 +244,10 @@ class _InsideClassesState extends State<InsideClass> {
               bottomWidgets: [
                 CourseInfoSection(
                     onAudioPressed: () {
-                      /*BottomDialogUtils.showBottomDialog(
+                      BottomDialogUtils.showBottomDialog(
                           context: context,
                           content:
-                              AudioDialogContent(coach: coach, audio: audio));*/
+                              AudioDialogContent(coach: coach, audio: audio));
                     },
                     peopleQty: 50,
                     audioMessageQty: widget.courseEnrollment
