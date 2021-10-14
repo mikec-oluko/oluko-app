@@ -4,7 +4,7 @@ SetupDevEnv () {
     echo "Setting up development environment" && flutter clean && \
     cp ios/Flutter/src/development/GoogleService-Info.plist ios/Flutter && \
     cp android/app/src/development/google-services.json android/app && \
-    cp -a android/fastlane/src/development/metadata android/fastlane && \
+    cp -a android/fastlane/src/dev/metadata android/fastlane && \
     cp lib/config/src/development/project_settings.dart lib/config/src/development/s3_settings.dart lib/config && \
     flutter pub get && cd ios && pod install && cd ..
 }

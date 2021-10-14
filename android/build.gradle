@@ -12,8 +12,10 @@ buildscript {
     }
 }
 
+
 allprojects {
     repositories {
+        mavenCentral()
         google()
         jcenter()
     }
@@ -28,7 +30,7 @@ subprojects {
 }
 
 ext {
-  flutterFFmpegPackage  = "min-gpl-lts"
+  flutterFFmpegPackage  = "min-gpl"
 }
 
 task clean(type: Delete) {
