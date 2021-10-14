@@ -3,8 +3,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/segment.dart';
+import 'package:oluko_app/ui/components/audio_section.dart';
+import 'package:oluko_app/ui/components/people_section.dart';
 import 'package:oluko_app/ui/components/segment_step_section.dart';
-import 'package:oluko_app/utils/movement_utils.dart';
+import 'package:oluko_app/ui/components/vertical_divider.dart' as verticalDivider;
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
 
 class SegmentImageSection extends StatefulWidget {
@@ -12,10 +15,11 @@ class SegmentImageSection extends StatefulWidget {
   final bool showBackButton;
   final int currentSegmentStep;
   final int totalSegmentStep;
+  final Function() audioAction;
+  final Function() peopleAction;
+  final Function() clockAction;
 
-  SegmentImageSection(
-      {this.segment, this.showBackButton = true, this.currentSegmentStep, this.totalSegmentStep, Key key})
-      : super(key: key);
+  SegmentImageSection({this.segment, this.showBackButton = true, this.currentSegmentStep, this.totalSegmentStep, Key key, this.audioAction, this.clockAction, this.peopleAction}) : super(key: key);
 
   @override
   _SegmentImageSectionState createState() => _SegmentImageSectionState();
@@ -38,13 +42,14 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
     return Stack(children: [
       imageSection(),
       topButtons(),
+      if (widget.segment.isChallenge) challengeButtons(),
       Padding(
           padding: EdgeInsets.only(top: 270, right: 15, left: 15),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                widget.segment.name,
+                widget.segment.isChallenge ? (OlukoLocalizations.get(context, 'challengeTitle') + widget.segment.name) : widget.segment.name,
                 style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
               ),
               SizedBox(height: 10),
@@ -52,13 +57,10 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                 widget.segment.description,
                 style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400),
               ),
-              SegmentStepSection(
-                  currentSegmentStep: widget.currentSegmentStep, totalSegmentStep: widget.totalSegmentStep),
+              SegmentStepSection(currentSegmentStep: widget.currentSegmentStep, totalSegmentStep: widget.totalSegmentStep),
               Padding(
                   padding: EdgeInsets.symmetric(vertical: 20),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: SegmentUtils.getSegmentSummary(widget.segment, context, OlukoColors.white))),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: SegmentUtils.getSegmentSummary(widget.segment, context, OlukoColors.white))),
             ],
           ))
     ]);
@@ -69,11 +71,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
         padding: EdgeInsets.only(top: 15),
         child: Row(
           children: [
-            widget.showBackButton
-                ? IconButton(
-                    icon: Icon(Icons.chevron_left, size: 35, color: Colors.white),
-                    onPressed: () => Navigator.pop(context))
-                : SizedBox(),
+            widget.showBackButton ? IconButton(icon: Icon(Icons.chevron_left, size: 35, color: Colors.white), onPressed: () => Navigator.pop(context)) : SizedBox(),
             Expanded(child: SizedBox()),
             Padding(
                 padding: EdgeInsets.only(right: 15),
@@ -82,9 +80,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                     'assets/courses/outlined_camera.png',
                     scale: 3,
                   ),
-                  Padding(
-                      padding: EdgeInsets.only(top: 1),
-                      child: Icon(Icons.circle_outlined, size: 16, color: OlukoColors.primary))
+                  Padding(padding: EdgeInsets.only(top: 1), child: Icon(Icons.circle_outlined, size: 16, color: OlukoColors.primary))
                 ]))
           ],
         ));
@@ -103,5 +99,47 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
         scale: 4,
       ),
     ]);
+  }
+
+  Widget challengeButtons() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 20, top: 190),
+      child: Column(children: [
+        Row(children: [
+          GestureDetector(child: AudioSection(audioMessageQty: 10), onTap: widget.audioAction),
+          verticalDivider.VerticalDivider(
+            width: 30,
+            height: 60,
+          ),
+          GestureDetector(child: PeopleSection(peopleQty: 30), onTap: widget.peopleAction),
+          verticalDivider.VerticalDivider(
+            width: 30,
+            height: 60,
+          ),
+          GestureDetector(child: clockSection(), onTap: widget.clockAction),
+        ])
+      ]),
+    );
+  }
+
+  Widget clockSection() {
+    return Container(
+      width: 60,
+      child: Column(children: [
+        Padding(
+            padding: const EdgeInsets.only(top: 7),
+            child: Image.asset(
+              'assets/courses/clock.png',
+              height: 24,
+              width: 27,
+            )),
+        const SizedBox(height: 5),
+        Text(
+          OlukoLocalizations.get(context, 'personalRecord'),
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w300, color: Colors.white),
+        )
+      ]),
+    );
   }
 }

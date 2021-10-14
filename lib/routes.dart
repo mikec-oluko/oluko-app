@@ -10,10 +10,12 @@ import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
 import 'package:oluko_app/blocs/course/course_home_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
+import 'package:oluko_app/blocs/done_challenge_users_bloc.dart';
 import 'package:oluko_app/blocs/friends/chat_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/message_bloc.dart';
 import 'package:oluko_app/blocs/gallery_video_bloc.dart';
+import 'package:oluko_app/blocs/segment_detail_content_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
@@ -278,6 +280,8 @@ class Routes {
   final HiFiveBloc _hiFiveBloc = HiFiveBloc();
   final CoachRequestBloc _coachRequestBloc = CoachRequestBloc();
   final CoachUserBloc _coachUserBloc = CoachUserBloc();
+  final SegmentDetailContentBloc _segmentDetailContentBloc = SegmentDetailContentBloc();
+  final DoneChallengeUsersBloc _doneChallengeUsersBloc = DoneChallengeUsersBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -518,6 +522,8 @@ class Routes {
           BlocProvider<MovementBloc>.value(value: _movementBloc),
           BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
           BlocProvider<CoachUserBloc>.value(value: _coachUserBloc),
+          BlocProvider<SegmentDetailContentBloc>.value(value: _segmentDetailContentBloc),
+          BlocProvider<DoneChallengeUsersBloc>.value(value: _doneChallengeUsersBloc),
         ];
         final Map<String, dynamic> argumentsToAdd =
             arguments as Map<String, dynamic>;

@@ -25,5 +25,5 @@ class EnrollmentSegment {
   }
 
   Map<String, dynamic> toJson() =>
-      {'id': id, 'reference': reference, 'name': name, 'compleated_at': compleatedAt, 'is_challenge': is_challenge, 'challengeImage': challengeImage, 'sections': sections == null ? null : List<dynamic>.from(sections.map((section) => section.toJson()))};
+      {'id': id, 'reference': reference, 'name': name, 'compleated_at': compleatedAt, 'is_challenge': is_challenge, 'challenge_image': challengeImage, 'sections': sections == null ? null : List<dynamic>.from(sections.map((section) => section.toJson()))};
 }

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:oluko_app/ui/components/audio_section.dart';
 import 'package:oluko_app/ui/components/course_poster.dart';
+import 'package:oluko_app/ui/components/people_section.dart';
+import 'package:oluko_app/ui/components/vertical_divider.dart' as verticalDivider;
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class CourseInfoSection extends StatefulWidget {
@@ -23,63 +26,8 @@ class _State extends State<CourseInfoSection> {
           padding: const EdgeInsets.only(left: 40),
           child: Column(children: [
             SizedBox(height: 80),
-            Row(children: [peopleSection(), verticalDivider(), audioSection(context)])
+            Row(children: [PeopleSection(peopleQty: widget.peopleQty), verticalDivider.VerticalDivider(width: 48, height: 48,), AudioSection(audioMessageQty: widget.audioMessageQty)])
           ])),
     ]);
-  }
-
-  Widget peopleSection() {
-    return Column(children: [
-      Text(
-        widget.peopleQty.toString() + "+",
-        textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
-      ),
-      SizedBox(height: 5),
-      Text(
-        OlukoLocalizations.get(context, 'inThis'),
-        textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 13, fontWeight: FontWeight.w300, color: Colors.white),
-      ),
-      Text(
-        OlukoLocalizations.get(context, 'course').toLowerCase(),
-        textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 13, fontWeight: FontWeight.w300, color: Colors.white),
-      ),
-    ]);
-  }
-
-  Widget audioSection(BuildContext context) {
-    return Stack(alignment: Alignment.topRight, children: [
-      Padding(
-          padding: const EdgeInsets.only(top: 7),
-          child: Image.asset(
-            'assets/courses/audio.png',
-            height: 50,
-            width: 50,
-          )),
-      GestureDetector(
-          onTap: () {},
-          child: Stack(alignment: Alignment.center, children: [
-            Image.asset(
-              'assets/courses/audio_notification.png',
-              height: 22,
-              width: 22,
-            ),
-            Text(
-              widget.audioMessageQty.toString(),
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 10, fontWeight: FontWeight.w300, color: Colors.white),
-            )
-          ])),
-    ]);
-  }
-
-  Widget verticalDivider() {
-    return Image.asset(
-      'assets/courses/vertical_divider.png',
-      height: 48,
-      width: 48,
-    );
   }
 }
