@@ -9,7 +9,8 @@ class CourseInfoSection extends StatefulWidget {
   final String image;
   final Function() onAudioPressed;
 
-  CourseInfoSection({this.peopleQty, this.audioMessageQty, this.image, this.onAudioPressed});
+  CourseInfoSection(
+      {this.peopleQty, this.audioMessageQty, this.image, this.onAudioPressed});
 
   @override
   _State createState() => _State();
@@ -19,12 +20,18 @@ class _State extends State<CourseInfoSection> {
   @override
   Widget build(BuildContext context) {
     return Row(children: [
-      Padding(padding: const EdgeInsets.only(left: 15), child: CoursePoster(image: widget.image)),
+      Padding(
+          padding: const EdgeInsets.only(left: 15),
+          child: CoursePoster(image: widget.image)),
       Padding(
           padding: const EdgeInsets.only(left: 40),
           child: Column(children: [
             SizedBox(height: 80),
-            Row(children: [peopleSection(), verticalDivider(), audioSection(context)])
+            Row(children: [
+              peopleSection(),
+              verticalDivider(),
+              audioSection(context)
+            ])
           ])),
     ]);
   }
@@ -34,34 +41,37 @@ class _State extends State<CourseInfoSection> {
       Text(
         widget.peopleQty.toString() + "+",
         textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+        style: TextStyle(
+            fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
       ),
       SizedBox(height: 5),
       Text(
         OlukoLocalizations.get(context, 'inThis'),
         textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 13, fontWeight: FontWeight.w300, color: Colors.white),
+        style: TextStyle(
+            fontSize: 13, fontWeight: FontWeight.w300, color: Colors.white),
       ),
       Text(
         OlukoLocalizations.get(context, 'course').toLowerCase(),
         textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 13, fontWeight: FontWeight.w300, color: Colors.white),
+        style: TextStyle(
+            fontSize: 13, fontWeight: FontWeight.w300, color: Colors.white),
       ),
     ]);
   }
 
   Widget audioSection(BuildContext context) {
-    return Stack(alignment: Alignment.topRight, children: [
-      Padding(
-          padding: const EdgeInsets.only(top: 7),
-          child: Image.asset(
-            'assets/courses/audio.png',
-            height: 50,
-            width: 50,
-          )),
-      GestureDetector(
-          onTap: () => widget.onAudioPressed,
-          child: Stack(alignment: Alignment.center, children: [
+    return GestureDetector(
+        onTap: widget.onAudioPressed,
+        child: Stack(alignment: Alignment.topRight, children: [
+          Padding(
+              padding: const EdgeInsets.only(top: 7),
+              child: Image.asset(
+                'assets/courses/audio.png',
+                height: 50,
+                width: 50,
+              )),
+          Stack(alignment: Alignment.center, children: [
             Image.asset(
               'assets/courses/audio_notification.png',
               height: 22,
@@ -70,10 +80,13 @@ class _State extends State<CourseInfoSection> {
             Text(
               widget.audioMessageQty.toString(),
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 10, fontWeight: FontWeight.w300, color: Colors.white),
+              style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w300,
+                  color: Colors.white),
             )
-          ])),
-    ]);
+          ]),
+        ]));
   }
 
   Widget verticalDivider() {

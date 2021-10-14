@@ -1,10 +1,8 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/class_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
@@ -14,6 +12,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/movement.dart';
+import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/submodels/segment_submodel.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
@@ -25,8 +24,10 @@ import 'package:oluko_app/ui/components/course_progress_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/overlay_video_preview.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
+import 'package:oluko_app/ui/screens/courses/audio_dialog_content.dart';
 import 'package:oluko_app/ui/screens/courses/class_detail_section.dart';
 import 'package:oluko_app/ui/screens/courses/course_info_section.dart';
+import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
@@ -112,7 +113,10 @@ class _InsideClassesState extends State<InsideClass> {
                     panel: /*audioSection(coachState.coaches)*/ classDetailSection(),
                     body: Container(
                       color: Colors.black,
-                      child: classInfoSection(),
+                      child: classInfoSection(
+                          widget.courseEnrollment.classes[widget.classIndex]
+                              .audios[0],
+                          coachState.coaches[0]),
                     ));
               } else {
                 return SizedBox();
@@ -230,7 +234,7 @@ class _InsideClassesState extends State<InsideClass> {
     );
   }
 
-  Widget classInfoSection() {
+  Widget classInfoSection(Audio audio, UserResponse coach) {
     return ListView(children: [
       Padding(
           padding: const EdgeInsets.only(bottom: 3),
@@ -239,6 +243,12 @@ class _InsideClassesState extends State<InsideClass> {
               showBackButton: true,
               bottomWidgets: [
                 CourseInfoSection(
+                    onAudioPressed: () {
+                      /*BottomDialogUtils.showBottomDialog(
+                          context: context,
+                          content:
+                              AudioDialogContent(coach: coach, audio: audio));*/
+                    },
                     peopleQty: 50,
                     audioMessageQty: widget.courseEnrollment
                         .classes[widget.classIndex].audios.length,
