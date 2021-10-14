@@ -4,6 +4,7 @@ import 'package:camera/camera.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
@@ -30,6 +31,7 @@ import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/progress_bar.dart';
+import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/screens/courses/collapsed_movement_videos_section.dart';
 import 'package:oluko_app/ui/screens/courses/feedback_card.dart';
 import 'package:oluko_app/ui/screens/courses/movement_videos_section.dart';
@@ -129,62 +131,65 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
-      if (authState is AuthSuccess) {
-        _user = authState.firebaseUser;
-        return BlocBuilder<MovementBloc, MovementState>(
-            builder: (context, movementState) {
-          return BlocBuilder<CoachRequestBloc, CoachRequestState>(
-              builder: (context, coachRequestState) {
-            if (movementState is GetAllSuccess &&
-                coachRequestState is GetCoachRequestSuccess) {
-              _movements = movementState.movements;
-              _coachRequest = coachRequestState.coachRequest;
-              return GestureDetector(
-                  onTap: () {
-                    FocusScope.of(context).unfocus();
-                  },
-                  child: BlocListener<VideoBloc, VideoState>(
-                      listener: (context, state) {
-                        updateSegment(state);
-                      },
-                      child: BlocListener<SegmentSubmissionBloc,
-                              SegmentSubmissionState>(
-                          listener: (context, state) {
-                            if (state is CreateSuccess) {
-                              if (_segmentSubmission == null) {
-                                _segmentSubmission = state.segmentSubmission;
-                                BlocProvider.of<VideoBloc>(context)
-                                  ..createVideo(
-                                      context,
-                                      File(_segmentSubmission
-                                          .videoState.stateInfo),
-                                      3.0 / 4.0,
-                                      _segmentSubmission.id);
+    return WillPopScope(
+      onWillPop: () => onWillPop(context),
+      child: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
+        if (authState is AuthSuccess) {
+          _user = authState.firebaseUser;
+          return BlocBuilder<MovementBloc, MovementState>(
+              builder: (context, movementState) {
+            return BlocBuilder<CoachRequestBloc, CoachRequestState>(
+                builder: (context, coachRequestState) {
+              if (movementState is GetAllSuccess &&
+                  coachRequestState is GetCoachRequestSuccess) {
+                _movements = movementState.movements;
+                _coachRequest = coachRequestState.coachRequest;
+                return GestureDetector(
+                    onTap: () {
+                      FocusScope.of(context).unfocus();
+                    },
+                    child: BlocListener<VideoBloc, VideoState>(
+                        listener: (context, state) {
+                          updateSegment(state);
+                        },
+                        child: BlocListener<SegmentSubmissionBloc,
+                                SegmentSubmissionState>(
+                            listener: (context, state) {
+                              if (state is CreateSuccess) {
+                                if (_segmentSubmission == null) {
+                                  _segmentSubmission = state.segmentSubmission;
+                                  BlocProvider.of<VideoBloc>(context)
+                                    ..createVideo(
+                                        context,
+                                        File(_segmentSubmission
+                                            .videoState.stateInfo),
+                                        3.0 / 4.0,
+                                        _segmentSubmission.id);
+                                }
+                              } else if (state
+                                  is UpdateSegmentSubmissionSuccess) {
+                                BlocProvider.of<CoachRequestBloc>(context)
+                                  ..resolve(_coachRequest, _user.uid);
+                                if (_wantsToCreateStory) {
+                                  callBlocToCreateStory(
+                                      context, state.segmentSubmission);
+                                } else {
+                                  _isVideoUploaded = true;
+                                  _segmentSubmission = state?.segmentSubmission;
+                                }
                               }
-                            } else if (state
-                                is UpdateSegmentSubmissionSuccess) {
-                              BlocProvider.of<CoachRequestBloc>(context)
-                                ..resolve(_coachRequest, _user.uid);
-                              if (_wantsToCreateStory) {
-                                callBlocToCreateStory(
-                                    context, state.segmentSubmission);
-                              } else {
-                                _isVideoUploaded = true;
-                                _segmentSubmission = state?.segmentSubmission;
-                              }
-                            }
-                          },
-                          child: form())));
-            } else {
-              return SizedBox();
-            }
+                            },
+                            child: form())));
+              } else {
+                return SizedBox();
+              }
+            });
           });
-        });
-      } else {
-        return SizedBox();
-      }
-    });
+        } else {
+          return SizedBox();
+        }
+      }),
+    );
   }
 
   Future<void> callBlocToCreateStory(
@@ -1083,6 +1088,36 @@ class _SegmentClocksState extends State<SegmentClocks> {
       processPhase = state.processPhase;
       progress = state.progress;
     });
+  }
+
+  static Future<bool> onWillPop(BuildContext context) async {
+    return (await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            backgroundColor: Colors.black,
+            title: TitleBody(
+                OlukoLocalizations.get(context, 'exitConfirmationTitle')),
+            content:
+                Text('Do you want to go back? Your recordings will be lost.',
+                    // OlukoLocalizations.get(context, 'exitConfirmationBody'),
+                    style: OlukoFonts.olukoBigFont()),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Text(
+                  OlukoLocalizations.get(context, 'no'),
+                ),
+              ),
+              TextButton(
+                onPressed: () => SystemNavigator.pop(),
+                child: Text(
+                  OlukoLocalizations.get(context, 'yes'),
+                ),
+              ),
+            ],
+          ),
+        )) ??
+        false;
   }
 
   Widget dialogContainer() {
