@@ -72,8 +72,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                       padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
                       child: Text(
                         OlukoLocalizations.get(context, 'hey'),
-                        style:
-                            OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                        style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                       ),
                     ),
                     Padding(
@@ -81,8 +80,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                       child: Text(
                         OlukoLocalizations.get(context, 'coachText'),
                         textAlign: TextAlign.center,
-                        style: OlukoFonts.olukoMediumFont(
-                            customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+                        style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
                       ),
                     ),
                   ],
@@ -134,15 +132,13 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                             : difference.inHours.toString().length == 1
                                 ? '0${difference.inHours.remainder(60)}'
                                 : difference.inHours.remainder(60).toString(),
-                        style: OlukoFonts.olukoBiggestFont(
-                            customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                        style: OlukoFonts.olukoBiggestFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                       ),
                       _spacerWidget,
                       Text(
                         OlukoLocalizations.of(context).find('hours'),
                         textAlign: TextAlign.center,
-                        style: OlukoFonts.olukoMediumFont(
-                            customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
+                        style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
                       ),
                     ],
                   ),
@@ -152,8 +148,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                   child: Text(
                     OlukoLocalizations.of(context).find('twoDots'),
                     textAlign: TextAlign.center,
-                    style:
-                        OlukoFonts.olukoBiggestFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                    style: OlukoFonts.olukoBiggestFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                   ),
                 ),
                 Padding(
@@ -166,15 +161,13 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                             : difference.inMinutes.remainder(60).toString().length == 1
                                 ? '0' + difference.inMinutes.remainder(60).toString()
                                 : difference.inMinutes.remainder(60).toString(),
-                        style: OlukoFonts.olukoBiggestFont(
-                            customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                        style: OlukoFonts.olukoBiggestFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                       ),
                       _spacerWidget,
                       Text(
                         OlukoLocalizations.of(context).find('minute'),
                         textAlign: TextAlign.center,
-                        style: OlukoFonts.olukoMediumFont(
-                            customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
+                        style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
                       ),
                     ],
                   ),
@@ -184,8 +177,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                   child: Text(
                     OlukoLocalizations.of(context).find('twoDots'),
                     textAlign: TextAlign.center,
-                    style:
-                        OlukoFonts.olukoBiggestFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                    style: OlukoFonts.olukoBiggestFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                   ),
                 ),
                 Padding(
@@ -198,15 +190,13 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                             : difference.inSeconds.remainder(60).toString().length == 1
                                 ? '0${difference.inSeconds.remainder(60)}'
                                 : difference.inSeconds.remainder(60).toString(),
-                        style: OlukoFonts.olukoBiggestFont(
-                            customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                        style: OlukoFonts.olukoBiggestFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                       ),
                       _spacerWidget,
                       Text(
                         OlukoLocalizations.of(context).find('second'),
                         textAlign: TextAlign.center,
-                        style: OlukoFonts.olukoMediumFont(
-                            customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
+                        style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
                       ),
                     ],
                   ),
@@ -229,7 +219,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
   }
 
   void startWatchCountdown() {
-    _userCreatedDate = widget.currentUser.createdAt;
+    _userCreatedDate = widget.currentUser.createdAt ?? Timestamp.now();
     _now = DateTime.now();
     _difference = _now.difference(_userCreatedDate.toDate());
 
