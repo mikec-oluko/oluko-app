@@ -9,7 +9,6 @@ class Class extends Base {
   String name;
   String description;
   List<SegmentSubmodel> segments;
-  List<Audio> audios;
 
   Class(
       {this.video,
@@ -17,7 +16,6 @@ class Class extends Base {
       this.segments,
       this.description,
       this.image,
-      this.audios,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -44,11 +42,7 @@ class Class extends Base {
             ? null
             : List<SegmentSubmodel>.from((json['segments'] as Iterable).map(
                 (segment) =>
-                    SegmentSubmodel.fromJson(segment as Map<String, dynamic>))),
-        audios: json['audios'] == null
-            ? null
-            : List<Audio>.from((json['audios'] as Iterable).map(
-                (audio) => Audio.fromJson(audio as Map<String, dynamic>))));
+                    SegmentSubmodel.fromJson(segment as Map<String, dynamic>))),);
     classObject.setBase(json);
     return classObject;
   }
@@ -61,10 +55,7 @@ class Class extends Base {
       'image': image,
       'segments': segments == null
           ? null
-          : List<dynamic>.from(segments.map((segment) => segment.toJson())),
-      'audios': audios == null
-          ? null
-          : List<dynamic>.from(audios.map((audio) => audio.toJson()))
+          : List<dynamic>.from(segments.map((segment) => segment.toJson()))
     };
     classJson.addEntries(super.toJson().entries);
     return classJson;

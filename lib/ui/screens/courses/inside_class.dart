@@ -76,7 +76,9 @@ class _InsideClassesState extends State<InsideClass> {
           if (classState is GetByIdSuccess) {
             _class = classState.classObj;
             BlocProvider.of<SegmentBloc>(context)..getAll(_class);
-            BlocProvider.of<CoachUserBloc>(context)..getByAudios(_class.audios);
+            BlocProvider.of<CoachUserBloc>(context)
+              ..getByAudios(
+                  widget.courseEnrollment.classes[widget.classIndex].audios);
             return form();
           } else {
             return SizedBox();
@@ -224,7 +226,7 @@ class _InsideClassesState extends State<InsideClass> {
   Widget audioSection(List<UserResponse> coaches) {
     return AudioPanel(
       coaches: coaches,
-      audios: _class.audios,
+      audios: widget.courseEnrollment.classes[widget.classIndex].audios,
     );
   }
 
@@ -238,7 +240,8 @@ class _InsideClassesState extends State<InsideClass> {
               bottomWidgets: [
                 CourseInfoSection(
                     peopleQty: 50,
-                    audioMessageQty: _class.audios.length,
+                    audioMessageQty: widget.courseEnrollment
+                        .classes[widget.classIndex].audios.length,
                     image: widget.courseEnrollment.course.image)
               ])),
       Padding(
