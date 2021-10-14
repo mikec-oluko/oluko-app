@@ -1,10 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oluko_app/models/base.dart';
-
-import 'enums/request_status_enum.dart';
+import 'enums/status_enum.dart';
 
 class CoachRequest extends Base {
-  RequestStatusEnum status;
+  StatusEnum status;
   String segmentId;
   DocumentReference segmentReference;
   String coachId;
@@ -42,7 +41,7 @@ class CoachRequest extends Base {
 
   factory CoachRequest.fromJson(Map<String, dynamic> json) {
     final CoachRequest coachRequest = CoachRequest(
-        status: RequestStatusEnum.values[json['status'] as int],
+        status: StatusEnum.values[json['status'] as int],
         segmentId: json['segment_id']?.toString(),
         segmentReference: json['segment_reference'] != null ? json['segment_reference'] as DocumentReference : null,
         coachId: json['coach_id']?.toString(),

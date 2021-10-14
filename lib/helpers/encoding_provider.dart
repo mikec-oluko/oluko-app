@@ -61,7 +61,7 @@ class EncodingProvider {
     if (videoPath.toString().contains('.mp4')) {
       imagePath = (videoPath.toString().substring(0, (videoPath.toString().length) - 4));
     }
-    final String outPath = '$imagePath.jpg';
+    final String outPath = '$imagePath.jpeg';
     var arguments = '-y -i $videoPath -vframes 1 -an -s ${width}x${height} -ss 1 $outPath';
     int rc = await _encoder.execute(arguments);
     assert(rc == 0);

@@ -1,6 +1,7 @@
 import 'package:chewie/chewie.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:nil/nil.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/ui/components/audio_section.dart';
@@ -11,6 +12,7 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
 
 class SegmentImageSection extends StatefulWidget {
+  final Function() onPressed;
   final Segment segment;
   final bool showBackButton;
   final int currentSegmentStep;
@@ -19,7 +21,9 @@ class SegmentImageSection extends StatefulWidget {
   final Function() peopleAction;
   final Function() clockAction;
 
-  SegmentImageSection({this.segment, this.showBackButton = true, this.currentSegmentStep, this.totalSegmentStep, Key key, this.audioAction, this.clockAction, this.peopleAction}) : super(key: key);
+  SegmentImageSection(
+      {this.onPressed = null, this.segment, this.showBackButton = true, this.currentSegmentStep, this.totalSegmentStep, this.audioAction, this.clockAction, this.peopleAction, Key key})
+      : super(key: key);
 
   @override
   _SegmentImageSectionState createState() => _SegmentImageSectionState();
@@ -71,7 +75,13 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
         padding: EdgeInsets.only(top: 15),
         child: Row(
           children: [
-            widget.showBackButton ? IconButton(icon: Icon(Icons.chevron_left, size: 35, color: Colors.white), onPressed: () => Navigator.pop(context)) : SizedBox(),
+            widget.showBackButton
+                ? IconButton(
+                    icon: Icon(Icons.chevron_left, size: 35, color: Colors.white),
+                    onPressed: () => {
+                          if (widget.onPressed == null) {Navigator.pop(context)} else {widget.onPressed()}
+                        })
+                : SizedBox(),
             Expanded(child: SizedBox()),
             Padding(
                 padding: EdgeInsets.only(right: 15),
@@ -90,10 +100,16 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
     return Stack(alignment: Alignment.center, children: [
       AspectRatio(
           aspectRatio: 3 / 4,
-          child: Image.network(
-            widget.segment.image,
-            fit: BoxFit.cover,
-          )),
+          child: () {
+            if (widget.segment.image != null) {
+              return Image.network(
+                widget.segment.image,
+                fit: BoxFit.cover,
+              );
+            } else {
+              return nil;
+            }
+          }()),
       Image.asset(
         'assets/courses/degraded.png',
         scale: 4,

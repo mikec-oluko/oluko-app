@@ -83,7 +83,10 @@ class _SegmentDetailState extends State<SegmentDetail> {
                       listener: (context, coachRequestState) {
                         if (coachRequestState is GetCoachRequestSuccess) {
                           _coachRequest = coachRequestState.coachRequest;
-                          BlocProvider.of<CoachUserBloc>(context).get(_coachRequest.coachId);
+                          if (_coachRequest != null) {
+                            BlocProvider.of<CoachUserBloc>(context)
+                              ..get(_coachRequest.coachId);
+                          }
                         }
                       },
                       child: form()));
@@ -227,6 +230,11 @@ class _SegmentDetailState extends State<SegmentDetail> {
     return Container(
       child: ListView(children: [
         SegmentImageSection(
+          onPressed: () => Navigator.pushNamed(
+                    context, routeLabels[RouteEnum.insideClass], arguments: {
+                  'courseEnrollment': widget.courseEnrollment,
+                  'classIndex': widget.classIndex
+                }),
           segment: _segments[widget.segmentIndex],
           currentSegmentStep: currentSegmentStep,
           totalSegmentStep: totalSegmentStep,
