@@ -1109,7 +1109,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
                 ),
               ),
               TextButton(
-                onPressed: () => SystemNavigator.pop(),
+                onPressed: (){
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                },
                 child: Text(
                   OlukoLocalizations.get(context, 'yes'),
                 ),
