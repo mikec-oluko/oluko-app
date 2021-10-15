@@ -151,7 +151,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                 //TODO: Check show/hide button conditions
                 //HIFIVE BUTTON
                 !_isOwner && widget.actualRoute == ActualProfileRoute.userProfile
-                    ? Container(
+                    ? Expanded(
                         child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
                           listener: (context, hiFiveSendState) {
                             if (hiFiveSendState is HiFiveSendSuccess) {
@@ -258,6 +258,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
               Text(
                 this.widget.userToDisplayInformation.lastName,
                 style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
@@ -308,6 +309,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
               Text(
                 this.widget.userToDisplayInformation.lastName,
                 style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
@@ -326,6 +328,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
               children: [
                 Text(
                   this.widget.userToDisplayInformation.username ?? '',
+                  overflow: TextOverflow.ellipsis,
                   style:
                       OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300),
                 ),
