@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/class_bloc.dart';
-import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_audio_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -77,7 +77,7 @@ class _InsideClassesState extends State<InsideClass> {
           if (classState is GetByIdSuccess) {
             _class = classState.classObj;
             BlocProvider.of<SegmentBloc>(context)..getAll(_class);
-            BlocProvider.of<CoachUserBloc>(context)
+            BlocProvider.of<CoachAudioBloc>(context)
               ..getByAudios(
                   widget.courseEnrollment.classes[widget.classIndex].audios);
             return form();
@@ -98,7 +98,7 @@ class _InsideClassesState extends State<InsideClass> {
             builder: (context, movementState) {
           if (movementState is GetAllSuccess) {
             _movements = movementState.movements;
-            return BlocBuilder<CoachUserBloc, CoachUserState>(
+            return BlocBuilder<CoachAudioBloc, CoachAudioState>(
                 builder: (context, coachState) {
               if (coachState is CoachesByAudiosSuccess) {
                 return SlidingUpPanel(
@@ -113,10 +113,7 @@ class _InsideClassesState extends State<InsideClass> {
                     panel: /*audioSection(coachState.coaches)*/ classDetailSection(),
                     body: Container(
                       color: Colors.black,
-                      child: classInfoSection(
-                          widget.courseEnrollment.classes[widget.classIndex]
-                              .audios[0],
-                          coachState.coaches[0]),
+                      child: classInfoSection(coachState.coaches),
                     ));
               } else {
                 return SizedBox();
@@ -234,7 +231,7 @@ class _InsideClassesState extends State<InsideClass> {
     );
   }
 
-  Widget classInfoSection(Audio audio, UserResponse coach) {
+  Widget classInfoSection(List<UserResponse> coaches) {
     return ListView(children: [
       Padding(
           padding: const EdgeInsets.only(bottom: 3),
@@ -244,10 +241,14 @@ class _InsideClassesState extends State<InsideClass> {
               bottomWidgets: [
                 CourseInfoSection(
                     onAudioPressed: () {
-                      BottomDialogUtils.showBottomDialog(
-                          context: context,
-                          content:
-                              AudioDialogContent(coach: coach, audio: audio));
+                      if (!coaches.isEmpty) {
+                        BottomDialogUtils.showBottomDialog(
+                            context: context,
+                            content: AudioDialogContent(
+                                coach: coaches[0],
+                                audio: widget.courseEnrollment
+                                    .classes[widget.classIndex].audios[0]));
+                      }
                     },
                     peopleQty: 50,
                     audioMessageQty: widget.courseEnrollment

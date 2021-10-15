@@ -4,18 +4,18 @@ import 'package:oluko_app/models/enums/audio_sate_enum.dart';
 class Audio {
   String url;
   AudioStateEnum state;
-  String coachId;
-  DocumentReference coachReference;
+  String userId;
+  DocumentReference userReference;
 
-  Audio({this.url, this.state, this.coachId, this.coachReference});
+  Audio({this.url, this.state, this.userId, this.userReference});
 
   factory Audio.fromJson(Map<String, dynamic> json) {
     return Audio(
       url: json['url']?.toString(),
       state: AudioStateEnum.values[json['state'] as int],
-      coachId: json['coach_id']?.toString(),
-      coachReference: json['coach_reference'] != null
-          ? json['coach_reference'] as DocumentReference
+      userId: json['user_id']?.toString(),
+      userReference: json['user_reference'] != null
+          ? json['user_reference'] as DocumentReference
           : null,
     );
   }
@@ -23,7 +23,7 @@ class Audio {
   Map<String, dynamic> toJson() => {
         'url': url,
         'state': state,
-        'coach_id': coachId,
-        'coach_reference': coachReference,
+        'user_id': userId,
+        'user_reference': userReference,
       };
 }

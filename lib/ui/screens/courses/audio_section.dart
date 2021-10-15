@@ -38,11 +38,9 @@ class _State extends State<AudioSection> {
     audioPlayer = new AudioPlayer();
     audioPlayer.setUrl(widget.audio.url);
     audioPlayer.onDurationChanged.listen((Duration d) {
-      print('Max duration: $d');
       setState(() => _duration = d);
     });
     audioPlayer.onAudioPositionChanged.listen((Duration p) {
-      print('Current position: $p');
       setState(() => _position = p);
     });
   }

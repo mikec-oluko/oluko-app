@@ -39,13 +39,18 @@ class _State extends State<AudioDialogContent> {
     audioPlayer.setUrl(widget.audio.url);
     //audioPlayer.setReleaseMode(ReleaseMode.STOP);
     audioPlayer.onDurationChanged.listen((Duration d) {
-      print('Max duration: $d');
       setState(() => _duration = d);
     });
     audioPlayer.onAudioPositionChanged.listen((Duration p) {
-      print('Current position: $p');
       setState(() => _position = p);
     });
+
+   /* audioPlayer.onPlayerCompletion.listen((event) {
+      setState(() {
+        isPlaying = false;
+        _position = Duration.zero;
+      });
+    });*/
   }
 
   Widget audioSlider() {

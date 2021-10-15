@@ -58,11 +58,13 @@ class UserRepository {
 
   Future<List<UserResponse>> getByAudios(List<Audio> audios) async {
     List<UserResponse> coaches = [];
-    for (Audio audio in audios) {
-      DocumentSnapshot ds = await audio.coachReference.get();
-      UserResponse retrievedCoach =
-          UserResponse.fromJson(ds.data() as Map<String, dynamic>);
-      coaches.add(retrievedCoach);
+    if (audios != null) {
+      for (Audio audio in audios) {
+        DocumentSnapshot ds = await audio.userReference.get();
+        UserResponse retrievedCoach =
+            UserResponse.fromJson(ds.data() as Map<String, dynamic>);
+        coaches.add(retrievedCoach);
+      }
     }
     return coaches;
   }

@@ -4,6 +4,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/screens/courses/audio_section.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class AudioPanel extends StatefulWidget {
   final List<UserResponse> coaches;
@@ -37,7 +38,7 @@ class _State extends State<AudioPanel> {
           Padding(
             padding: const EdgeInsets.only(top: 15, bottom: 5),
             child: Text(
-              "Voice messages",
+              OlukoLocalizations.get(context, 'voiceMessages'),
               style: OlukoFonts.olukoSuperBigFont(
                   custoFontWeight: FontWeight.w500,
                   customColor: OlukoColors.white),
