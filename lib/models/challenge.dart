@@ -16,6 +16,7 @@ class Challenge extends Base {
   String result;
   String image;
   String challengeName;
+  
 
   Challenge(
       {this.segmentId,

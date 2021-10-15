@@ -1,0 +1,1 @@
+enum AudioStateEnum { recorded, uploaded }
