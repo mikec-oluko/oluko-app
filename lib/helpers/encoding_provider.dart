@@ -54,11 +54,10 @@ class EncodingProvider {
     //     '-vcodec libx264 -vprofile high -preset slow -b:v 500k -maxrate 500k -bufsize 1000k -vf ' +
     //     'scale=-1:360 -threads 0 -acodec libvo_aacenc -b:a 128k $outDirPath/converted.mp4';
 
-    final arguments = "-i $videoPath "
-        "-vcodec libx264 "
-        "-crf 27 "
-        "-preset ultrafast "
-        "-an "
+    final arguments = '-i $videoPath '
+        '-vcodec libx264 '
+        '-crf 27 '
+        '-preset ultrafast '
         "-y $outDirPath/${'converted.mp4'}";
 
     final int rc = await _encoder.execute(arguments);
