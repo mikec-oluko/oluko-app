@@ -98,6 +98,7 @@ class CoachRepository {
     }
   }
 
+//TODO:
   Future<List<Annotation>> setAnnotationAsFavorite(
       Annotation coachAnnotation, List<Annotation> actualMentoredVideosContent) async {
     try {
@@ -105,6 +106,8 @@ class CoachRepository {
       await FirebaseFirestore.instance
           .collection('projects')
           .doc(GlobalConfiguration().getValue('projectId'))
+          .collection('coachStatistics')
+          .doc(coachAnnotation.coachId)
           .collection('annotations')
           .doc(coachAnnotation.id)
           .set(coachAnnotation.toJson());

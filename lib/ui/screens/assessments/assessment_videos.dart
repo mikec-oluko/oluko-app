@@ -54,27 +54,22 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
     return BlocListener<AssessmentAssignmentBloc, AssessmentAssignmentState>(
       listener: (context, assessmentAssignmentState) {
         if (assessmentAssignmentState is AssessmentAssignmentSuccess) {
-          BlocProvider.of<TaskSubmissionListBloc>(context)
-              .get(assessmentAssignmentState.assessmentAssignment);
+          BlocProvider.of<TaskSubmissionListBloc>(context).get(assessmentAssignmentState.assessmentAssignment);
         }
       },
       child: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
         if (authState is AuthSuccess) {
           _user = authState.user;
           //TODO: Change this when we have multiple assessments
-          BlocProvider.of<AssessmentBloc>(context)
-              .getById('emnsmBgZ13UBRqTS26Qd');
-          return BlocBuilder<AssessmentBloc, AssessmentState>(
-              builder: (context, assessmentState) {
+          BlocProvider.of<AssessmentBloc>(context).getById('emnsmBgZ13UBRqTS26Qd');
+          return BlocBuilder<AssessmentBloc, AssessmentState>(builder: (context, assessmentState) {
             if (assessmentState is AssessmentSuccess) {
               _assessment = assessmentState.assessment;
               BlocProvider.of<TaskBloc>(context).get(_assessment);
               if (widget.isFirstTime) {
-                BlocProvider.of<AssessmentAssignmentBloc>(context)
-                    .setAsSeen(_user.id);
+                BlocProvider.of<AssessmentAssignmentBloc>(context).setAsSeen(_user.id);
               }
-              BlocProvider.of<AssessmentAssignmentBloc>(context)
-                  .getOrCreate(_user.id, _assessment);
+              BlocProvider.of<AssessmentAssignmentBloc>(context).getOrCreate(_user.id, _assessment);
               return form();
             } else {
               return const SizedBox();
@@ -115,84 +110,45 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                             child: Text(
                               _assessment.description,
                               textAlign: TextAlign.justify,
-                              style: OlukoFonts.olukoBigFont(
-                                  customColor: OlukoColors.white),
+                              style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white),
                             )),
-                        BlocBuilder<AssessmentAssignmentBloc,
-                                AssessmentAssignmentState>(
-                            builder: (context, assessmentAssignmentState) {
-                          if (assessmentAssignmentState
-                              is AssessmentAssignmentSuccess) {
-                            _assessmentAssignment =
-                                assessmentAssignmentState.assessmentAssignment;
+                        BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(builder: (context, assessmentAssignmentState) {
+                          if (assessmentAssignmentState is AssessmentAssignmentSuccess) {
+                            _assessmentAssignment = assessmentAssignmentState.assessmentAssignment;
                             return Column(
                               children: [
-                                BlocBuilder<TaskSubmissionListBloc,
-                                        TaskSubmissionListState>(
-                                    builder:
-                                        (context, taskSubmissionListState) {
-                                  if (taskSubmissionListState
-                                      is GetTaskSubmissionSuccess) {
-                                    final completedTask =
-                                        taskSubmissionListState
-                                            .taskSubmissions.length;
+                                BlocBuilder<TaskSubmissionListBloc, TaskSubmissionListState>(builder: (context, taskSubmissionListState) {
+                                  if (taskSubmissionListState is GetTaskSubmissionSuccess) {
+                                    final completedTask = taskSubmissionListState.taskSubmissions.length;
                                     var enabledTask = 0;
-                                    for (var i = 0;
-                                        i < _assessment.tasks.length;
-                                        i++) {
-                                      if (!OlukoPermissions
-                                          .isAssessmentTaskDisabled(_user, i)) {
+                                    for (var i = 0; i < _assessment.tasks.length; i++) {
+                                      if (!OlukoPermissions.isAssessmentTaskDisabled(_user, i)) {
                                         enabledTask++;
                                       }
                                     }
-                                    if (completedTask == enabledTask &&
-                                        _assessmentAssignment.compleatedAt ==
-                                            null) {
-                                      BlocProvider.of<TaskSubmissionBloc>(
-                                              context)
-                                          .setCompleted(
-                                              _assessmentAssignment.id)
-                                          .then((value) => {
-                                                _assessmentAssignment
-                                                    .compleatedAt = value,
-                                                BlocProvider.of<
-                                                            AssessmentAssignmentBloc>(
-                                                        context)
-                                                    .getOrCreate(
-                                                        _user.id, _assessment)
-                                              });
-                                    } else if (completedTask != enabledTask &&
-                                        _assessmentAssignment.compleatedAt !=
-                                            null) {
-                                      BlocProvider.of<TaskSubmissionBloc>(
-                                              context)
-                                          .setIncompleted(
-                                              _assessmentAssignment.id);
-                                      _assessmentAssignment.compleatedAt = null;
+                                    if (completedTask == enabledTask && _assessmentAssignment.completedAt == null) {
+                                      BlocProvider.of<TaskSubmissionBloc>(context).setCompleted(_assessmentAssignment.id).then((value) => {
+                                            _assessmentAssignment.completedAt = value,
+                                            BlocProvider.of<AssessmentAssignmentBloc>(context).getOrCreate(_user.id, _assessment)
+                                          });
+                                    } else if (completedTask != enabledTask && _assessmentAssignment.completedAt != null) {
+                                      BlocProvider.of<TaskSubmissionBloc>(context).setIncompleted(_assessmentAssignment.id);
+                                      _assessmentAssignment.completedAt = null;
                                     }
-                                    return taskCardsSection(
-                                        taskSubmissionListState
-                                            .taskSubmissions);
+                                    return taskCardsSection(taskSubmissionListState.taskSubmissions);
                                   } else {
-                                    return const Padding(
-                                        padding: EdgeInsets.only(top: 30),
-                                        child: CircularProgressIndicator());
+                                    return const Padding(padding: EdgeInsets.only(top: 30), child: CircularProgressIndicator());
                                   }
                                 }),
                                 const SizedBox(
                                   height: 10,
                                 ),
-                                if (assessmentAssignmentState
-                                        .assessmentAssignment.compleatedAt !=
-                                    null)
+                                if (assessmentAssignmentState.assessmentAssignment.completedAt != null)
                                   Row(children: [
                                     OlukoPrimaryButton(
-                                      title: OlukoLocalizations.get(
-                                          context, 'done'),
+                                      title: OlukoLocalizations.get(context, 'done'),
                                       onPressed: () {
-                                        DialogUtils.getDialog(
-                                            context, _confirmDialogContent(),
-                                            showExitButton: false);
+                                        DialogUtils.getDialog(context, _confirmDialogContent(), showExitButton: false);
                                       },
                                     )
                                   ])
@@ -227,14 +183,12 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
 
     return ConstrainedBox(
         constraints: BoxConstraints(
-            maxHeight:
-                MediaQuery.of(context).orientation == Orientation.portrait
-                    ? ScreenUtils.height(context) / 4
-                    : ScreenUtils.height(context) / 1.5,
-            minHeight:
-                MediaQuery.of(context).orientation == Orientation.portrait
-                    ? ScreenUtils.height(context) / 4
-                    : ScreenUtils.height(context) / 1.5),
+            maxHeight: MediaQuery.of(context).orientation == Orientation.portrait
+                ? ScreenUtils.height(context) / 4
+                : ScreenUtils.height(context) / 1.5,
+            minHeight: MediaQuery.of(context).orientation == Orientation.portrait
+                ? ScreenUtils.height(context) / 4
+                : ScreenUtils.height(context) / 1.5),
         child: Container(height: 400, child: Stack(children: widgets)));
   }
 
@@ -249,39 +203,28 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                 shrinkWrap: true,
                 itemBuilder: (context, int index) {
                   final Task task = taskState.values[index];
-                  TaskSubmission taskSubmission =
-                      TaskSubmissionService.getTaskSubmissionOfTask(
-                          task, taskSubmissions);
+                  TaskSubmission taskSubmission = TaskSubmissionService.getTaskSubmissionOfTask(task, taskSubmissions);
                   return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10.0),
                       child: TaskCard(
                         task: task,
                         isCompleted: taskSubmission != null,
                         isPublic: isPublic(taskSubmission),
-                        isDisabled: OlukoPermissions.isAssessmentTaskDisabled(
-                            _user, index),
+                        isDisabled: OlukoPermissions.isAssessmentTaskDisabled(_user, index),
                         onPressed: () {
                           if (_controller != null) {
                             _controller.pause();
                           }
-                          if (OlukoPermissions.isAssessmentTaskDisabled(
-                              _user, index)) {
-                            AppMessages.showSnackbar(
-                                context,
-                                OlukoLocalizations.get(context,
-                                    'yourCurrentPlanDoesntIncludeAssessment'));
+                          if (OlukoPermissions.isAssessmentTaskDisabled(_user, index)) {
+                            AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'yourCurrentPlanDoesntIncludeAssessment'));
                           } else {
-                            return Navigator.pushNamed(
-                                context, routeLabels[RouteEnum.taskDetails],
-                                arguments: {'taskIndex': index});
+                            return Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {'taskIndex': index});
                           }
                         },
                       ));
                 });
           } else {
-            return Padding(
-                padding: const EdgeInsets.all(50.0),
-                child: OlukoCircularProgressIndicator());
+            return Padding(padding: const EdgeInsets.all(50.0), child: OlukoCircularProgressIndicator());
           }
         }),
       ],
@@ -307,8 +250,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                   padding: const EdgeInsets.only(right: 8),
                   child: Text(
                     OlukoLocalizations.get(context, 'skip'),
-                    style: OlukoFonts.olukoBigFont(
-                        customColor: OlukoColors.grayColor),
+                    style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
                   ))));
     } else {
       return SizedBox();
@@ -334,19 +276,15 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                 padding: const EdgeInsets.only(top: 20.0, bottom: 15.0),
                 child: Text(
                   OlukoLocalizations.get(context, 'done!'),
-                  style: OlukoFonts.olukoSuperBigFont(
-                      customColor: OlukoColors.white,
-                      custoFontWeight: FontWeight.bold),
+                  style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold),
                 )),
             Text(
               OlukoLocalizations.get(context, 'assessmentMessagePart1'),
-              style:
-                  OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
+              style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
             ),
             Text(
               OlukoLocalizations.get(context, 'assessmentMessagePart2'),
-              style:
-                  OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
+              style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
             ),
             Padding(
                 padding: const EdgeInsets.only(top: 25.0),
@@ -366,8 +304,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                         if (_controller != null) {
                           _controller.pause();
                         }
-                        return Navigator.pushNamed(
-                            context, routeLabels[RouteEnum.root]);
+                        return Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
                       },
                     ),
                   ],
