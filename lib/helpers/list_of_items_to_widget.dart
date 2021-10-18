@@ -27,19 +27,22 @@ class TransformListOfItemsToWidget {
 
     if (tansformationJourneyData != null && (assessmentVideoData == null && upcomingChallenges == null)) {
       tansformationJourneyData.forEach((contentUploaded) {
-        contentForSection.add(getImageAndVideoCard(transformationJourneyContent: contentUploaded, routeForContent: requestedFromRoute));
+        contentForSection.add(
+            getImageAndVideoCard(transformationJourneyContent: contentUploaded, routeForContent: requestedFromRoute));
       });
     }
 
     if (assessmentVideoData != null && (tansformationJourneyData == null && upcomingChallenges == null)) {
       assessmentVideoData.forEach((assessmentVideo) {
-        contentForSection.add(getImageAndVideoCard(taskSubmissionContent: assessmentVideo, routeForContent: requestedFromRoute));
+        contentForSection
+            .add(getImageAndVideoCard(taskSubmissionContent: assessmentVideo, routeForContent: requestedFromRoute));
       });
     }
 
     if (upcomingChallenges != null && (tansformationJourneyData == null && assessmentVideoData == null)) {
       upcomingChallenges.forEach((challenge) {
-        contentForSection.add(getImageAndVideoCard(upcomingChallengesContent: challenge, routeForContent: requestedFromRoute));
+        contentForSection
+            .add(getImageAndVideoCard(upcomingChallengesContent: challenge, routeForContent: requestedFromRoute));
       });
     }
     return contentForSection.toList();
@@ -97,7 +100,7 @@ class TransformListOfItemsToWidget {
 
     if (segments.length != 0) {
       segments.forEach((segment) {
-        if (segment.completedAt == null) {
+        if (segment.compleatedAt == null) {
           contentForSection.add(returnCardForSegment(segment));
         }
       });
@@ -132,7 +135,8 @@ class TransformListOfItemsToWidget {
   }
 
   static Widget returnCardForAssessment(Task task, List<TaskSubmission> tasksSubmitted) {
-    return Padding(padding: const EdgeInsets.all(5.0), child: CoachAssessmentCard(task: task, assessmentVideos: tasksSubmitted));
+    return Padding(
+        padding: const EdgeInsets.all(5.0), child: CoachAssessmentCard(task: task, assessmentVideos: tasksSubmitted));
   }
 
   static List<InfoForSegments> segments(List<CourseEnrollment> courseEnrollments) {
@@ -144,7 +148,8 @@ class TransformListOfItemsToWidget {
       courseEnrollment.classes.forEach((classToCheck) {
         className = classToCheck.name;
         classImage = classToCheck.image;
-        InfoForSegments infoForSegmentElement = InfoForSegments(classImage: classImage, className: className, segments: []);
+        InfoForSegments infoForSegmentElement =
+            InfoForSegments(classImage: classImage, className: className, segments: []);
         classToCheck.segments.forEach((segment) {
           infoForSegmentElement.segments.add(segment);
         });
@@ -164,7 +169,7 @@ class TransformListOfItemsToWidget {
             classImage: segment.classImage,
             className: segment.className,
             segmentName: actualSegment.name,
-            completedAt: actualSegment.completedAt,
+            compleatedAt: actualSegment.compleatedAt,
             segmentReference: actualSegment.reference));
       });
     });

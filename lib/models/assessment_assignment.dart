@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'base.dart';
 
 class AssessmentAssignment extends Base {
-  Timestamp completedAt;
+  Timestamp compleatedAt;
   Timestamp seenAt;
   String assessmentId;
   DocumentReference assessmentReference;
@@ -11,7 +11,7 @@ class AssessmentAssignment extends Base {
   bool seenByUser;
 
   AssessmentAssignment(
-      {this.completedAt,
+      {this.compleatedAt,
       this.seenAt,
       this.assessmentId,
       this.assessmentReference,
@@ -36,7 +36,7 @@ class AssessmentAssignment extends Base {
 
   factory AssessmentAssignment.fromJson(Map<String, dynamic> json) {
     AssessmentAssignment assessmentAssignment = AssessmentAssignment(
-      completedAt: json['compleated_at'] as Timestamp,
+      compleatedAt: json['compleated_at'] as Timestamp,
       seenAt: json['seen_at'] as Timestamp,
       assessmentId: json['assessment_id']?.toString(),
       assessmentReference: json['assessment_reference'] as DocumentReference,
@@ -50,7 +50,7 @@ class AssessmentAssignment extends Base {
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> assessmentAssignmentJson = {
-      'completed_at': completedAt,
+      'compleated_at': compleatedAt,
       'seen_at': seenAt,
       'assessment_id': assessmentId,
       'assessment_reference': assessmentReference,
