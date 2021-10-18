@@ -1,14 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/challenge.dart';
-import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/friend.dart';
 import 'package:oluko_app/models/submodels/friend_model.dart';
 import 'package:oluko_app/models/submodels/user_submodel.dart';
-import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/challenge_repository.dart';
-import 'package:oluko_app/repositories/course_enrollment_repository.dart';
 import 'package:oluko_app/repositories/friend_repository.dart';
-import 'package:oluko_app/repositories/user_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class DoneChallengeUsersState {}
@@ -36,9 +32,8 @@ class DoneChallengeUsersBloc extends Cubit<DoneChallengeUsersState> {
       List<UserSubmodel> uniqueUserList = [];
       List<UserSubmodel> favoriteUserList = [];
       if (challengesList != null) {
-
         challengesList.forEach((challenge) {
-          if (!uniqueUserList.any((element) => element.id == challenge.user.id)) {
+          if (challenge.user != null && !uniqueUserList.any((element) => element.id == challenge.user.id)) {
             uniqueUserList.add(challenge.user);
           }
         });

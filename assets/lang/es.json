@@ -227,5 +227,6 @@
     "storyBeingCreated": "La historia esta siendo creada",
     "coachRequest": "te solicitó grabar este segmento",
     "enterEmail":"Por favor ingrese email.",
-    "personalRecord": "Record Personal"
+    "personalRecord": "Record Personal",
+    "noPersonalRecords": "Sin Records Personales"
 }

@@ -23,7 +23,12 @@ class _ModalPeopleInChallengeState extends State<ModalPeopleInChallenge> {
   Widget build(BuildContext context) {
     BlocProvider.of<DoneChallengeUsersBloc>(context).get(widget.segmentId, widget.userId);
     return Container(
-      color: OlukoColors.black,
+      decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/courses/gray_background.png'),
+            fit: BoxFit.cover,
+          ),
+          borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
       width: MediaQuery.of(context).size.width,
       height: 100,
       child: ListView(
@@ -39,7 +44,10 @@ class _ModalPeopleInChallengeState extends State<ModalPeopleInChallenge> {
                     padding: const EdgeInsets.only(bottom: 16.0),
                     child: Row(
                       children: [
-                        TitleBody(OlukoLocalizations.get(context, 'favourites')),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 20),
+                          child: TitleBody(OlukoLocalizations.get(context, 'favourites')),
+                        ),
                       ],
                     ),
                   ),
@@ -64,9 +72,7 @@ class _ModalPeopleInChallengeState extends State<ModalPeopleInChallenge> {
 
   Widget usersGrid(List<UserSubmodel> users) {
     if (users.isNotEmpty) {
-      return GridView.count(
-          childAspectRatio: 0.7,
-          crossAxisCount: 4,
+      return ListView(
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           children: users
@@ -75,7 +81,8 @@ class _ModalPeopleInChallengeState extends State<ModalPeopleInChallenge> {
                       StoriesItem(
                         maxRadius: 30,
                         imageUrl: user.avatarThumbnail ?? UserUtils().defaultAvatarImageUrl,
-                        name: user.firstName + user.lastName,
+                        name: user.firstName,
+                        lastname: user.lastName,
                       ),
                     ],
                   ))

@@ -15,6 +15,7 @@ import 'package:oluko_app/blocs/friends/chat_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/message_bloc.dart';
 import 'package:oluko_app/blocs/gallery_video_bloc.dart';
+import 'package:oluko_app/blocs/personal_record_bloc.dart';
 import 'package:oluko_app/blocs/segment_detail_content_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
@@ -282,6 +283,8 @@ class Routes {
   final CoachUserBloc _coachUserBloc = CoachUserBloc();
   final SegmentDetailContentBloc _segmentDetailContentBloc = SegmentDetailContentBloc();
   final DoneChallengeUsersBloc _doneChallengeUsersBloc = DoneChallengeUsersBloc();
+  final PersonalRecordBloc _personalRecordBloc = PersonalRecordBloc();
+
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -524,6 +527,7 @@ class Routes {
           BlocProvider<CoachUserBloc>.value(value: _coachUserBloc),
           BlocProvider<SegmentDetailContentBloc>.value(value: _segmentDetailContentBloc),
           BlocProvider<DoneChallengeUsersBloc>.value(value: _doneChallengeUsersBloc),
+          BlocProvider<PersonalRecordBloc>.value(value: _personalRecordBloc),
         ];
         final Map<String, dynamic> argumentsToAdd =
             arguments as Map<String, dynamic>;

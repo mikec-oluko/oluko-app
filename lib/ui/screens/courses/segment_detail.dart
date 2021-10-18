@@ -18,6 +18,7 @@ import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/modal_people_in_challenge.dart';
+import 'package:oluko_app/ui/components/modal_personal_record.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
@@ -85,7 +86,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
                           _coachRequest = coachRequestState.coachRequest;
                           if (_coachRequest != null) {
                             BlocProvider.of<CoachUserBloc>(context)
-                              ..get(_coachRequest.coachId);
+                              .get(_coachRequest.coachId);
                           }
                         }
                       },
@@ -149,7 +150,6 @@ class _SegmentDetailState extends State<SegmentDetail> {
         },
         backdropEnabled: true,
         isDraggable: false,
-        margin: const EdgeInsets.all(0),
         header: const SizedBox(),
         padding: EdgeInsets.zero,
         color: OlukoColors.black,
@@ -175,7 +175,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
           }
           if (state is SegmentDetailContentClockOpen) {
             _challengePanelController.open();
-            _contentForPanel = Container(child: Text('clock'));
+            _contentForPanel = ModalPersonalRecord(segmentId: widget.courseEnrollment.classes[widget.classIndex].segments[widget.segmentIndex].id, userId: _user.uid);
           }
           if (state is SegmentDetailContentLoading) {
             _contentForPanel = UploadingModalLoader(UploadFrom.segmentDetail);
