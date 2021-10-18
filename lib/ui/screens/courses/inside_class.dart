@@ -68,14 +68,14 @@ class _InsideClassesState extends State<InsideClass> {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
-        BlocProvider.of<ClassBloc>(context)..get(widget.courseEnrollment.classes[widget.classIndex].id);
+        BlocProvider.of<ClassBloc>(context).get(widget.courseEnrollment.classes[widget.classIndex].id);
         BlocProvider.of<MovementBloc>(context)..getAll();
         return BlocBuilder<ClassBloc, ClassState>(builder: (context, classState) {
           if (classState is GetByIdSuccess) {
             _class = classState.classObj;
             BlocProvider.of<SegmentBloc>(context)..getAll(_class);
             BlocProvider.of<CoachAudioBloc>(context)
-              ..getByAudios(widget.courseEnrollment.classes[widget.classIndex].audios);
+                .getByAudios(widget.courseEnrollment.classes[widget.classIndex].audios);
             return form();
           } else {
             return SizedBox();
@@ -228,7 +228,9 @@ class _InsideClassesState extends State<InsideClass> {
                   }
                 },
                 peopleQty: 50,
-                audioMessageQty: widget.courseEnrollment.classes[widget.classIndex].audios.length,
+                audioMessageQty: widget.courseEnrollment.classes[widget.classIndex].audios != null
+                    ? widget.courseEnrollment.classes[widget.classIndex].audios.length
+                    : 0,
                 image: widget.courseEnrollment.course.image)
           ])),
       Padding(
