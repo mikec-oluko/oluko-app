@@ -1,7 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/user_response.dart';
-import 'package:oluko_app/repositories/coach_request_repository.dart';
 import 'package:oluko_app/repositories/user_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 

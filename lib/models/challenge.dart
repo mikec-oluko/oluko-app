@@ -18,6 +18,7 @@ class Challenge extends Base {
   String image;
   String challengeName;
   UserSubmodel user;
+  
 
   Challenge(
       {this.segmentId,

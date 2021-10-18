@@ -228,5 +228,6 @@
     "coachRequest": "te solicitó grabar este segmento",
     "enterEmail":"Por favor ingrese email.",
     "personalRecord": "Record Personal",
-    "noPersonalRecords": "Sin Records Personales"
+    "noPersonalRecords": "Sin Records Personales",
+    "hasMessage": "Tiene un mensaje para ti"
 }
