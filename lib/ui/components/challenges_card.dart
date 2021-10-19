@@ -38,7 +38,7 @@ class _State extends State<ChallengesCard> {
       children: [
         Container(
           height: 160,
-          width: 110,
+          width: 115,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
@@ -65,8 +65,8 @@ class _State extends State<ChallengesCard> {
       alignment: Alignment.center,
       children: [
         Container(
-          height: 115,
-          width: 80,
+          height: 160,
+          width: 115,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
