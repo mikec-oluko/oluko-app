@@ -10,8 +10,8 @@ class Challenge extends Base {
   String classId;
   DocumentReference classReference;
   Timestamp completedAt;
-  List<String> requiredClasses;
-  List<String> requiredSegments;
+  List<dynamic> requiredClasses;
+  List<dynamic> requiredSegments;
   int index;
   String challengeType;
   String result;
