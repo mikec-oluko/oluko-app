@@ -8,6 +8,7 @@ import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/coach_assignment.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
+import 'package:oluko_app/ui/screens/assessments/assessment_videos.dart';
 import 'coach_no_assigned_timer_page.dart';
 import 'coach_page.dart';
 
@@ -44,10 +45,15 @@ class _CoachMainPageState extends State<CoachMainPage> {
                   );
                 }
               } else {
-                return CoachAssignedCountDown(
-                  currentUser: _currentUser,
-                  coachAssignment: _coachAssignment,
-                );
+                return _currentUser.assessmentsCompletedAt != null
+                    ? CoachAssignedCountDown(
+                        currentUser: _currentUser,
+                        coachAssignment: _coachAssignment,
+                      )
+                    : const AssessmentVideos(
+                        isFirstTime: false,
+                        isForCoachPage: true,
+                      );
               }
             } else {
               return Container(color: OlukoColors.black, child: OlukoCircularProgressIndicator());
