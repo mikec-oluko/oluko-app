@@ -567,18 +567,22 @@ class Routes {
                 : argumentsToAdd['isFirstTime'] as bool);
         break;
       case RouteEnum.taskDetails:
+        //TODO: Pass flag for last assessments
         providers = [
           BlocProvider<AssessmentAssignmentBloc>.value(value: _assessmentAssignmentBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
           BlocProvider<TaskBloc>.value(value: _taskBloc),
           BlocProvider<GalleryVideoBloc>.value(value: _galleryVideoBloc),
         ];
-        final Map<String, int> argumentsToAdd = arguments as Map<String, int>;
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = TaskDetails(
-          taskIndex: argumentsToAdd['taskIndex'],
+          taskIndex: argumentsToAdd['taskIndex'] as int,
+          isLastTask: argumentsToAdd['isLastTask'] as bool,
         );
         break;
       case RouteEnum.selfRecording:
+        //TODO: Pass flag for last assessments
+
         providers = [
           BlocProvider<TaskBloc>.value(value: _taskBloc),
           BlocProvider<GalleryVideoBloc>.value(value: _galleryVideoBloc),
@@ -587,9 +591,12 @@ class Routes {
         newRouteView = SelfRecording(
           taskIndex: argumentsToAdd['taskIndex'] as int,
           isPublic: argumentsToAdd['isPublic'] as bool,
+          isLastTask: argumentsToAdd['isLastTask'] as bool,
         );
         break;
       case RouteEnum.selfRecordingPreview:
+        //TODO: Pass flag for last assessments
+
         providers = [
           BlocProvider<AssessmentAssignmentBloc>.value(value: _assessmentAssignmentBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
@@ -603,6 +610,7 @@ class Routes {
           filePath: argumentsToAdd['filePath'].toString(),
           taskIndex: argumentsToAdd['taskIndex'] as int,
           isPublic: argumentsToAdd['isPublic'] as bool,
+          isLastTask: argumentsToAdd['isLastTask'] as bool,
         );
         break;
       case RouteEnum.taskSubmissionVideo:

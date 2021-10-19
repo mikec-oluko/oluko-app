@@ -5,6 +5,8 @@ import 'package:oluko_app/models/submodels/object_submodel.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/submodels/video.dart';
+import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/repositories/user_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 class TaskSubmissionRepository {
@@ -17,14 +19,17 @@ class TaskSubmissionRepository {
     this.firestoreInstance = FirebaseFirestore.instance;
   }
 
-  static Future<TaskSubmission> createTaskSubmission(AssessmentAssignment assessmentAssignment, Task task, bool isPublic) async {
-    DocumentReference assessmentAReference = projectReference.collection('assessmentAssignments').doc(assessmentAssignment.id);
+  static Future<TaskSubmission> createTaskSubmission(
+      AssessmentAssignment assessmentAssignment, Task task, bool isPublic, bool isLastTask) async {
+    DocumentReference assessmentAReference =
+        projectReference.collection('assessmentAssignments').doc(assessmentAssignment.id);
 
     DocumentReference taskReference = projectReference.collection("tasks").doc(task.id);
 
     ObjectSubmodel taskSubmodel = ObjectSubmodel(id: task.id, reference: taskReference, name: task.name);
 
-    TaskSubmission taskSubmission = TaskSubmission(task: taskSubmodel, isPublic: isPublic, createdBy: assessmentAssignment.createdBy);
+    TaskSubmission taskSubmission =
+        TaskSubmission(task: taskSubmodel, isPublic: isPublic, createdBy: assessmentAssignment.createdBy);
 
     CollectionReference reference = assessmentAReference.collection('taskSubmissions');
 
@@ -33,6 +38,10 @@ class TaskSubmissionRepository {
     taskSubmission.id = docRef.id;
 
     docRef.set(taskSubmission.toJson());
+    if (isLastTask) {
+      UserResponse userToUpdate = await UserRepository().getById(assessmentAssignment.createdBy);
+      await UserRepository().updateUserLastAssessmentUploaded(userToUpdate, Timestamp.now());
+    }
     return taskSubmission;
   }
 
@@ -109,10 +118,13 @@ class TaskSubmissionRepository {
     return docRef;
   }
 
-  static Future getTaskSubmissionsByAssessmentId(String userId, String assessmentId, List<TaskSubmission> response) async {
+  static Future getTaskSubmissionsByAssessmentId(
+      String userId, String assessmentId, List<TaskSubmission> response) async {
     try {
-      CollectionReference reference = projectReference.collection("assessmentAssignments").doc(assessmentId).collection('taskSubmissions');
-      final querySnapshot = await reference.where('created_by', isEqualTo: userId).where('video', isNotEqualTo: null).get();
+      CollectionReference reference =
+          projectReference.collection("assessmentAssignments").doc(assessmentId).collection('taskSubmissions');
+      final querySnapshot =
+          await reference.where('created_by', isEqualTo: userId).where('video', isNotEqualTo: null).get();
 
       if (querySnapshot.docs.length > 0) {
         querySnapshot.docs.forEach((taskUploaded) {
