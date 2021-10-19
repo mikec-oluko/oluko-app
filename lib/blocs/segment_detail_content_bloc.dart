@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/models/submodels/user_submodel.dart';
 
 abstract class SegmentDetailContentState {}
 
@@ -8,7 +9,11 @@ class SegmentDetailContentDefault extends SegmentDetailContentState {}
 
 class SegmentDetailContentAudioOpen extends SegmentDetailContentState {}
 
-class SegmentDetailContentPeopleOpen extends SegmentDetailContentState {}
+class SegmentDetailContentPeopleOpen extends SegmentDetailContentState {
+  List<UserSubmodel> users;
+  List<UserSubmodel> favorites;
+  SegmentDetailContentPeopleOpen({this.users, this.favorites});
+}
 
 class SegmentDetailContentClockOpen extends SegmentDetailContentState {}
 
@@ -22,7 +27,6 @@ class SegmentDetailContentFailure extends SegmentDetailContentState {
 class SegmentDetailContentBloc extends Cubit<SegmentDetailContentState> {
   SegmentDetailContentBloc() : super(SegmentDetailContentDefault());
 
-
   void emitDefaultState() {
     emit(SegmentDetailContentDefault());
   }
@@ -31,8 +35,8 @@ class SegmentDetailContentBloc extends Cubit<SegmentDetailContentState> {
     emit(SegmentDetailContentAudioOpen());
   }
 
-  void openPeoplePanel() {
-    emit(SegmentDetailContentPeopleOpen());
+  void openPeoplePanel(List<UserSubmodel> users, List<UserSubmodel> favorites) {
+    emit(SegmentDetailContentPeopleOpen(users: users, favorites: favorites));
   }
 
   void openClockPanel() {

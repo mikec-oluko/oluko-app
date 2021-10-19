@@ -15,6 +15,7 @@ import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
+import 'package:oluko_app/models/submodels/user_submodel.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/modal_people_in_challenge.dart';
@@ -113,7 +114,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
           children: [
             SlidingUpPanel(
                 controller: panelController,
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
                 minHeight: 90,
                 maxHeight: 185,
                 collapsed: CollapsedMovementVideosSection(action: getAction()),
@@ -154,7 +155,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
         padding: EdgeInsets.zero,
         color: OlukoColors.black,
         minHeight: 0.0,
-        maxHeight: 300, //TODO
+        maxHeight: 450, //TODO
         collapsed: const SizedBox(),
         controller: _challengePanelController,
         panel: BlocBuilder<SegmentDetailContentBloc, SegmentDetailContentState>(builder: (context, state) {
@@ -171,7 +172,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
           }
           if (state is SegmentDetailContentPeopleOpen) {
             _challengePanelController.open();
-            _contentForPanel = ModalPeopleInChallenge(segmentId: widget.courseEnrollment.classes[widget.classIndex].segments[widget.segmentIndex].id, userId: _user.uid);
+            _contentForPanel = ModalPeopleInChallenge(segmentId: widget.courseEnrollment.classes[widget.classIndex].segments[widget.segmentIndex].id, userId: _user.uid, favorites: state.favorites, users: state.users);
           }
           if (state is SegmentDetailContentClockOpen) {
             _challengePanelController.open();
@@ -238,6 +239,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
           segment: _segments[widget.segmentIndex],
           currentSegmentStep: currentSegmentStep,
           totalSegmentStep: totalSegmentStep,
+          userId: _user.uid,
           audioAction: _audioAction,
           peopleAction: _peopleAction,
           clockAction: _clockAction,
@@ -375,8 +377,8 @@ class _SegmentDetailState extends State<SegmentDetail> {
     BlocProvider.of<SegmentDetailContentBloc>(context).openAudioPanel();
   }
 
-  _peopleAction() {
-    BlocProvider.of<SegmentDetailContentBloc>(context).openPeoplePanel();
+  _peopleAction(List<UserSubmodel> users, List<UserSubmodel> favorites) {
+    BlocProvider.of<SegmentDetailContentBloc>(context).openPeoplePanel(users, favorites);
   }
 
   _clockAction() {

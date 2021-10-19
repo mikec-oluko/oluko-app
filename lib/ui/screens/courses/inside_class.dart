@@ -252,7 +252,7 @@ class _InsideClassesState extends State<InsideClass> {
                     },
                     peopleQty: 50,
                     audioMessageQty: widget.courseEnrollment
-                        .classes[widget.classIndex].audios.length,
+                        .classes[widget.classIndex]?.audios?.length,
                     image: widget.courseEnrollment.course.image)
               ])),
       Padding(

@@ -28,7 +28,7 @@ class _State extends State<CourseInfoSection> {
       Padding(
           padding: const EdgeInsets.only(left: 40),
           child: Column(children: [
-            SizedBox(height: 80),
+            const SizedBox(height: 80),
             Row(children: [PeopleSection(peopleQty: widget.peopleQty), const verticalDivider.VerticalDivider(width: 48, height: 48,), AudioSection(audioMessageQty: widget.audioMessageQty, onAudioPressed: widget.onAudioPressed)])
           ])),
     ]);

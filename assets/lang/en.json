@@ -124,6 +124,7 @@
     "assessment": "Assessment",
     "private": "Private",
     "done": "Done",
+    "doneThis": "done this",
     "skip": "Skip",
     "makeThisPublic": "Make this public",
     "retake": "Retake",

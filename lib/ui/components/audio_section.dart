@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class AudioSection extends StatelessWidget {
   final int audioMessageQty;
+  final Function() onAudioPressed;
 
-  const AudioSection({ this.audioMessageQty }) : super();
+  const AudioSection({this.audioMessageQty, this.onAudioPressed}) : super();
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,7 @@ class AudioSection extends StatelessWidget {
             width: 50,
           )),
       GestureDetector(
-          onTap: () {},
+          onTap: onAudioPressed,
           child: Stack(alignment: Alignment.center, children: [
             Image.asset(
               'assets/courses/audio_notification.png',
