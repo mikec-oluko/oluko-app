@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course/course_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
@@ -215,9 +216,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     _panelController.close();
                   }
                   if (state is ProfileCoverRequirePermissions) {
-                    _panelController
-                        .close()
-                        .then((value) => DialogUtils.getDialog(profileViewContext, [OpenSettingsModal(profileViewContext)], showExitButton: false));
+                    _panelController.close().then((value) =>
+                        DialogUtils.getDialog(profileViewContext, [OpenSettingsModal(profileViewContext)], showExitButton: false));
                   }
                   return _contentForPanel;
                 })
@@ -244,9 +244,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     _panelController.close();
                   }
                   if (state is ProfileAvatarRequirePermissions) {
-                    _panelController
-                        .close()
-                        .then((value) => DialogUtils.getDialog(profileViewContext, [OpenSettingsModal(profileViewContext)], showExitButton: false));
+                    _panelController.close().then((value) =>
+                        DialogUtils.getDialog(profileViewContext, [OpenSettingsModal(profileViewContext)], showExitButton: false));
                   }
                   return _contentForPanel;
                 }),
@@ -343,13 +342,16 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                   onPressed: () {
                                     switch (connectStatus) {
                                       case UserConnectStatus.connected:
-                                        BlocProvider.of<FriendBloc>(context).removeFriend(_currentAuthUser.id, friendData, userRequested.id);
+                                        BlocProvider.of<FriendBloc>(context)
+                                            .removeFriend(_currentAuthUser.id, friendData, userRequested.id);
                                         break;
                                       case UserConnectStatus.notConnected:
-                                        BlocProvider.of<FriendBloc>(context).sendRequestOfConnect(_currentAuthUser.id, friendData, userRequested.id);
+                                        BlocProvider.of<FriendBloc>(context)
+                                            .sendRequestOfConnect(_currentAuthUser.id, friendData, userRequested.id);
                                         break;
                                       case UserConnectStatus.requestPending:
-                                        BlocProvider.of<FriendBloc>(context).removeRequestSent(_currentAuthUser.id, friendData, userRequested.id);
+                                        BlocProvider.of<FriendBloc>(context)
+                                            .removeRequestSent(_currentAuthUser.id, friendData, userRequested.id);
                                         break;
                                       default:
                                     }
@@ -385,7 +387,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                 titleForSection: OlukoLocalizations.get(context, 'transformationJourney'),
                                 routeForSection: RouteEnum.profileTransformationJourney,
                                 contentForSection: TransformListOfItemsToWidget.getWidgetListFromContent(
-                                    tansformationJourneyData: _transformationJourneyContent, requestedFromRoute: ActualProfileRoute.userProfile))
+                                    tansformationJourneyData: _transformationJourneyContent,
+                                    requestedFromRoute: ActualProfileRoute.userProfile))
                             : const SizedBox();
                       },
                     ),
@@ -431,8 +434,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
   }
 
   void _requestContentForUser({BuildContext context, UserResponse userRequested}) {
-    if (PrivacyOptions()
-        .canShowDetails(isOwner: _isCurrentUser, currentUser: _currentAuthUser, userRequested: _userProfileToDisplay, connectStatus: connectStatus)) {
+    if (PrivacyOptions().canShowDetails(
+        isOwner: _isCurrentUser, currentUser: _currentAuthUser, userRequested: _userProfileToDisplay, connectStatus: connectStatus)) {
       BlocProvider.of<CourseEnrollmentListBloc>(context).getCourseEnrollmentsByUserId(userRequested.id);
       BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionByUserId(userRequested.id);
       BlocProvider.of<CourseBloc>(context).getUserEnrolled(userRequested.id);
@@ -480,7 +483,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
   List<Widget> returnCoursesWidget({List<Course> listOfCourses}) {
     List<Widget> contentForCourseSection = [];
     listOfCourses.forEach((course) {
-      contentForCourseSection.add(_getCourseCard(courseInfo: course));
+      if (course != null) {
+        contentForCourseSection.add(_getCourseCard(courseInfo: course));
+      }
     });
     return contentForCourseSection.toList();
   }
