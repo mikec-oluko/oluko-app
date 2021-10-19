@@ -18,13 +18,7 @@ class SegmentCameraPreview extends StatefulWidget {
   final int segmentIndex;
   final List<Segment> segments;
 
-  SegmentCameraPreview(
-      {Key key,
-      this.classIndex,
-      this.segmentIndex,
-      this.courseEnrollment,
-      this.segments})
-      : super(key: key);
+  SegmentCameraPreview({Key key, this.classIndex, this.segmentIndex, this.courseEnrollment, this.segments}) : super(key: key);
 
   @override
   _State createState() => _State();
@@ -68,66 +62,48 @@ class _State extends State<SegmentCameraPreview> {
                   child: Column(
                     children: [
                       ConstrainedBox(
-                          constraints: BoxConstraints(
-                              maxHeight: MediaQuery.of(context).size.height),
+                          constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height),
                           child: (!_isReady)
                               ? Container()
                               : Stack(alignment: Alignment.topRight, children: [
-                                  AspectRatio(
-                                      aspectRatio: 3.0 / 4.0,
-                                      child: CameraPreview(cameraController)),
+                                  AspectRatio(aspectRatio: 3.0 / 4.0, child: CameraPreview(cameraController)),
                                   Padding(
-                                      padding:
-                                          const EdgeInsets.only(right: 10, top: 15),
-                                      child: Stack(
-                                          alignment: Alignment.center,
-                                          children: [
-                                            Image.asset(
-                                              'assets/courses/grey_circle.png',
-                                              scale: 4,
-                                            ),
-                                            IconButton(
-                                              icon: const Icon(
-                                                Icons.close,
-                                                size: 28,
-                                                color: Colors.grey,
-                                              ),
-                                              onPressed: () =>
-                                                  Navigator.pop(context),
-                                            )
-                                          ])),
+                                      padding: const EdgeInsets.only(right: 10, top: 15),
+                                      child: Stack(alignment: Alignment.center, children: [
+                                        Image.asset(
+                                          'assets/courses/grey_circle.png',
+                                          scale: 4,
+                                        ),
+                                        IconButton(
+                                          icon: const Icon(
+                                            Icons.close,
+                                            size: 28,
+                                            color: Colors.grey,
+                                          ),
+                                          onPressed: () => Navigator.pop(context),
+                                        )
+                                      ])),
                                 ])),
                       Expanded(
                           child: Container(
                               width: ScreenUtils.width(context),
                               decoration: const BoxDecoration(
                                   image: DecorationImage(
-                                image: AssetImage(
-                                    'assets/courses/dialog_background.png'),
+                                image: AssetImage('assets/courses/dialog_background.png'),
                                 fit: BoxFit.cover,
                               )),
                               child: Column(children: [
                                 Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20.0, vertical: 4),
-                                    child: Text(
-                                        OlukoLocalizations.of(context)
-                                            .find('cameraInfo'),
+                                    padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 4),
+                                    child: Text(OlukoLocalizations.of(context).find('cameraInfo'),
                                         textAlign: TextAlign.center,
-                                        style: OlukoFonts.olukoBigFont(
-                                            custoFontWeight: FontWeight.w300,
-                                            customColor: OlukoColors.white))),
+                                        style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w300, customColor: OlukoColors.white))),
                                 startButton(),
                                 Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20.0, vertical: 2),
-                                    child: Text(
-                                        OlukoLocalizations.of(context)
-                                            .find('cameraWarning'),
+                                    padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 2),
+                                    child: Text(OlukoLocalizations.of(context).find('cameraWarning'),
                                         textAlign: TextAlign.center,
-                                        style: OlukoFonts.olukoBigFont(
-                                            custoFontWeight: FontWeight.w300,
-                                            customColor: OlukoColors.primary)))
+                                        style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w300, customColor: OlukoColors.primary)))
                               ]))),
                     ],
                   ),
@@ -137,13 +113,8 @@ class _State extends State<SegmentCameraPreview> {
   Widget startButton() {
     return GestureDetector(
         onTap: () {
-          TimerUtils.startCountdown(
-              WorkoutType.segmentWithRecording,
-              context,
-              getArguments(),
-              widget.segments[widget.segmentIndex].initialTimer,
-              widget.segments[widget.segmentIndex].rounds,
-              0);
+          TimerUtils.startCountdown(WorkoutType.segmentWithRecording, context, getArguments(),
+              widget.segments[widget.segmentIndex].initialTimer, widget.segments[widget.segmentIndex].rounds, 0);
         },
         child: Stack(alignment: Alignment.center, children: [
           Image.asset(
@@ -177,18 +148,14 @@ class _State extends State<SegmentCameraPreview> {
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Text(
                 'title',
-                style: OlukoFonts.olukoSuperBigFont(
-                    customColor: OlukoColors.grayColor,
-                    custoFontWeight: FontWeight.normal),
+                style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.normal),
               )),
         ),
         Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Text(
               'description',
-              style: OlukoFonts.olukoSuperBigFont(
-                  customColor: OlukoColors.white,
-                  custoFontWeight: FontWeight.normal),
+              style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.normal),
             )),
         const SizedBox(height: 50)
       ],
@@ -199,8 +166,7 @@ class _State extends State<SegmentCameraPreview> {
     final int cameraPos = isCameraFront ? 0 : 1;
     try {
       cameras = await availableCameras();
-      cameraController =
-          CameraController(cameras[cameraPos], ResolutionPreset.medium);
+      cameraController = CameraController(cameras[cameraPos], ResolutionPreset.medium);
       await cameraController.initialize();
     } on CameraException catch (e) {
       if (e.code == ExceptionCodes.cameraPermissionError) {

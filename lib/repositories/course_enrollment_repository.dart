@@ -70,12 +70,12 @@ class CourseEnrollmentRepository {
         .collection('courseEnrollments')
         .doc(courseEnrollment.id);
     final List<EnrollmentClass> classes = courseEnrollment.classes;
-    classes[classIndex].segments[segmentIndex].compleatedAt = Timestamp.now();
+    classes[classIndex].segments[segmentIndex].completedAt = Timestamp.now();
 
     final bool isClassCompleted = CourseEnrollmentService.getFirstUncompletedSegmentIndex(classes[classIndex]) == -1;
     if (isClassCompleted) {
       final double courseProgress = 1 / courseEnrollment.classes.length * (classIndex + 1);
-      classes[classIndex].compleatedAt = Timestamp.now();
+      classes[classIndex].completedAt = Timestamp.now();
       courseEnrollment.completion = courseProgress;
     }
 

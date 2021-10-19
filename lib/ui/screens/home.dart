@@ -81,13 +81,13 @@ class _HomeState extends State<Home> {
       return BlocBuilder<CourseHomeBloc, CourseHomeState>(builder: (context, courseState) {
         if (courseState is GetByCourseEnrollmentsSuccess) {
           _courses = courseState.courses;
-          if (_courses != null && _courses.length > 0) {
+          if (_courses != null && _courses.length > 0 && _courses.any((element) => element != null)) {
             return enrolled();
           } else {
-            return SizedBox();
+            return notEnrolled();
           }
         } else {
-          return SizedBox();
+          return notEnrolled();
         }
       });
     } else {
@@ -98,7 +98,14 @@ class _HomeState extends State<Home> {
   Widget enrolled() {
     return CarouselSlider(
       items: courseSectionList(),
-      options: CarouselOptions(height: 600, autoPlay: false, enlargeCenterPage: false, disableCenter: true, enableInfiniteScroll: false, initialPage: 0, viewportFraction: 1),
+      options: CarouselOptions(
+          height: 600,
+          autoPlay: false,
+          enlargeCenterPage: false,
+          disableCenter: true,
+          enableInfiniteScroll: false,
+          initialPage: 0,
+          viewportFraction: 1),
     );
   }
 
@@ -108,7 +115,10 @@ class _HomeState extends State<Home> {
       if (_courses.length - 1 < i) {
         // do nothing
       } else {
-        widgets.add(CourseSection(qtyCourses: _courses.length, courseIndex: i, course: _courses[i], courseEnrollment: _courseEnrollments[i]));
+        if (_courses[i] != null) {
+          widgets.add(
+              CourseSection(qtyCourses: _courses.length, courseIndex: i, course: _courses[i], courseEnrollment: _courseEnrollments[i]));
+        }
       }
     }
     return widgets;
@@ -136,7 +146,7 @@ class _HomeState extends State<Home> {
             Text(OlukoLocalizations.get(context, 'toACourse'),
                 style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold, customColor: OlukoColors.white)),
             SizedBox(height: 10),
-            CourseStepSection(totalCourseSteps: 4, currentCourseStep: 4),
+            CourseStepSection(totalCourseSteps: 0, currentCourseStep: 0),
             SizedBox(height: 30),
             GestureDetector(
                 onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courses], arguments: {'homeEnrollTocourse': 'true'}),
