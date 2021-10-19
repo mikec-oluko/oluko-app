@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_assignment_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/coach_assignment.dart';
 import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/movement.dart';
@@ -30,9 +32,7 @@ import 'package:oluko_app/utils/timer_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class SegmentDetail extends StatefulWidget {
-  SegmentDetail(
-      {this.courseEnrollment, this.segmentIndex, this.classIndex, Key key})
-      : super(key: key);
+  SegmentDetail({this.courseEnrollment, this.segmentIndex, this.classIndex, Key key}) : super(key: key);
 
   final CourseEnrollment courseEnrollment;
   final int segmentIndex;
@@ -46,18 +46,18 @@ class _SegmentDetailState extends State<SegmentDetail> {
   final toolbarHeight = kToolbarHeight * 2;
   int currentSegmentStep;
   int totalSegmentStep;
-  User _user;
+  UserResponse _user;
   List<Segment> _segments;
   List<Movement> _movements;
   PanelController panelController = new PanelController();
   CoachRequest _coachRequest;
   UserResponse _coach;
+  CoachAssignment _coachAssignment;
 
   @override
   void initState() {
     currentSegmentStep = widget.segmentIndex + 1;
-    totalSegmentStep =
-        widget.courseEnrollment.classes[widget.classIndex].segments.length;
+    totalSegmentStep = widget.courseEnrollment.classes[widget.classIndex].segments.length;
     super.initState();
   }
 
@@ -65,32 +65,34 @@ class _SegmentDetailState extends State<SegmentDetail> {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
-        _user = authState.firebaseUser;
-        return BlocBuilder<SegmentBloc, SegmentState>(
-            builder: (context, segmentState) {
-          return BlocBuilder<MovementBloc, MovementState>(
-              builder: (context, movementState) {
-            if (segmentState is GetSegmentsSuccess &&
-                movementState is GetAllSuccess) {
+        _user = authState.user;
+        BlocProvider.of<CoachAssignmentBloc>(context).getCoachAssignmentStatus(_user.id);
+        return BlocBuilder<SegmentBloc, SegmentState>(builder: (context, segmentState) {
+          return BlocBuilder<MovementBloc, MovementState>(builder: (context, movementState) {
+            if (segmentState is GetSegmentsSuccess && movementState is GetAllSuccess) {
               _segments = segmentState.segments;
               _movements = movementState.movements;
-              return BlocListener<CoachUserBloc, CoachUserState>(
-                  listener: (context, coachUserState) {
-                    if (coachUserState is CoachUserSuccess) {
-                      _coach = coachUserState.coach;
-                    }
-                  },
-                  child: BlocListener<CoachRequestBloc, CoachRequestState>(
-                      listener: (context, coachRequestState) {
-                        if (coachRequestState is GetCoachRequestSuccess) {
-                          _coachRequest = coachRequestState.coachRequest;
-                          if (_coachRequest != null) {
-                            BlocProvider.of<CoachUserBloc>(context)
-                              ..get(_coachRequest.coachId);
-                          }
+              return BlocBuilder<CoachAssignmentBloc, CoachAssignmentState>(
+                builder: (context, state) {
+                  if (state is CoachAssignmentResponse) {
+                    _coachAssignment = state.coachAssignmentResponse;
+                    BlocProvider.of<CoachUserBloc>(context).get(_coachAssignment.coachId);
+                  }
+                  return BlocListener<CoachUserBloc, CoachUserState>(
+                      listener: (context, coachUserState) {
+                        if (coachUserState is CoachUserSuccess) {
+                          _coach = coachUserState.coach;
                         }
                       },
-                      child: form()));
+                      child: BlocListener<CoachRequestBloc, CoachRequestState>(
+                          listener: (context, coachRequestState) {
+                            if (coachRequestState is GetCoachRequestSuccess) {
+                              _coachRequest = coachRequestState.coachRequest;
+                            }
+                          },
+                          child: form()));
+                },
+              );
             } else {
               return OlukoCircularProgressIndicator();
             }
@@ -103,12 +105,11 @@ class _SegmentDetailState extends State<SegmentDetail> {
   }
 
   Widget form() {
-    BlocProvider.of<CoachRequestBloc>(context)
-      ..getBySegment(
-          _user.uid,
-          widget.courseEnrollment.classes[widget.classIndex]
-              .segments[widget.segmentIndex].id,
-          widget.courseEnrollment.id);
+    BlocProvider.of<CoachRequestBloc>(context).getSegmentCoachRequest(
+        userId: _user.id,
+        segmentId: widget.courseEnrollment.classes[widget.classIndex].segments[widget.segmentIndex].id,
+        coachId: _coachAssignment.coachId,
+        courseEnrollmentId: widget.courseEnrollment.id);
     return Scaffold(
       backgroundColor: Colors.black,
       body: Container(
@@ -116,8 +117,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
         height: ScreenUtils.height(context),
         child: SlidingUpPanel(
             controller: panelController,
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
             minHeight: 90,
             maxHeight: 185,
             collapsed: CollapsedMovementVideosSection(action: getAction()),
@@ -125,10 +125,9 @@ class _SegmentDetailState extends State<SegmentDetail> {
                 action: downButton(),
                 segment: _segments[widget.segmentIndex],
                 movements: _movements,
-                onPressedMovement: (BuildContext context, Movement movement) =>
-                    Navigator.pushNamed(
-                        context, routeLabels[RouteEnum.movementIntro],
-                        arguments: {'movement': movement})),
+                onPressedMovement: (BuildContext context, Movement movement) => Navigator.pushNamed(
+                    context, routeLabels[RouteEnum.movementIntro],
+                    arguments: {'movement': movement})),
             body: _viewBody()),
       ),
     );
@@ -178,11 +177,8 @@ class _SegmentDetailState extends State<SegmentDetail> {
     return Container(
       child: ListView(children: [
         SegmentImageSection(
-            onPressed: () => Navigator.pushNamed(
-                    context, routeLabels[RouteEnum.insideClass], arguments: {
-                  'courseEnrollment': widget.courseEnrollment,
-                  'classIndex': widget.classIndex
-                }),
+            onPressed: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass],
+                arguments: {'courseEnrollment': widget.courseEnrollment, 'classIndex': widget.classIndex}),
             segment: _segments[widget.segmentIndex],
             currentSegmentStep: currentSegmentStep,
             totalSegmentStep: totalSegmentStep),
@@ -204,9 +200,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
                 onPressed: () {
                   if (_coachRequest != null && _coach != null) {
                     BottomDialogUtils.showBottomDialog(
-                        context: context,
-                        content:
-                            dialogContainer(_coach.firstName, _coach.avatar));
+                        context: context, content: dialogContainer(_coach.firstName, _coach.avatar));
                   } else {
                     navigateToSegmentWithoutRecording();
                   }
@@ -268,9 +262,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
             ]),
             SizedBox(height: 15),
             Text(OlukoLocalizations.get(context, 'coach') + " " + name,
-                textAlign: TextAlign.center,
-                style: OlukoFonts.olukoSuperBigFont(
-                    custoFontWeight: FontWeight.bold)),
+                textAlign: TextAlign.center, style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold)),
             SizedBox(height: 20),
             Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 50),
@@ -306,30 +298,22 @@ class _SegmentDetailState extends State<SegmentDetail> {
           ]),
           Align(
               alignment: Alignment.topRight,
-              child: IconButton(
-                  icon: Icon(Icons.close, color: Colors.white),
-                  onPressed: () => Navigator.pop(context)))
+              child: IconButton(icon: Icon(Icons.close, color: Colors.white), onPressed: () => Navigator.pop(context)))
         ]));
   }
 
   navigateToSegmentWithRecording() {
-    Navigator.pushNamed(context, routeLabels[RouteEnum.segmentCameraPreview],
-        arguments: {
-          'segmentIndex': widget.segmentIndex,
-          'classIndex': widget.classIndex,
-          'courseEnrollment': widget.courseEnrollment,
-          'segments': _segments,
-        });
+    Navigator.pushNamed(context, routeLabels[RouteEnum.segmentCameraPreview], arguments: {
+      'segmentIndex': widget.segmentIndex,
+      'classIndex': widget.classIndex,
+      'courseEnrollment': widget.courseEnrollment,
+      'segments': _segments,
+    });
   }
 
   navigateToSegmentWithoutRecording() {
-    TimerUtils.startCountdown(
-        WorkoutType.segment,
-        context,
-        getArguments(),
-        _segments[widget.segmentIndex].initialTimer,
-        _segments[widget.segmentIndex].rounds,
-        0);
+    TimerUtils.startCountdown(WorkoutType.segment, context, getArguments(), _segments[widget.segmentIndex].initialTimer,
+        _segments[widget.segmentIndex].rounds, 0);
   }
 
   Object getArguments() {
