@@ -20,6 +20,7 @@ if [ "$1" = "qa" ]
     then echo "Setting up qa environment" && flutter clean && \
     cp ios/Flutter/src/qa/GoogleService-Info.plist ios/Flutter && \
     cp android/app/src/qa/google-services.json android/app && \
+    cp android/fastlane/src/qa/metadata android/fastlane/metadata && \
     cp lib/config/src/qa/project_settings.dart lib/config/src/qa/s3_settings.dart lib/config && \
     flutter pub get && cd ios && pod install && cd ..
 fi
