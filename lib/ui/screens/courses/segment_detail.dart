@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_assignment_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
@@ -11,6 +12,7 @@ import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/blocs/segment_detail_content_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/models/coach_assignment.dart';
 import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/movement.dart';
@@ -50,13 +52,14 @@ class _SegmentDetailState extends State<SegmentDetail> {
   final toolbarHeight = kToolbarHeight * 2;
   int currentSegmentStep;
   int totalSegmentStep;
-  User _user;
+  UserResponse _user;
   List<Segment> _segments;
   List<Movement> _movements;
   PanelController panelController = PanelController();
   CoachRequest _coachRequest;
   UserResponse _coach;
   final PanelController _challengePanelController = PanelController();
+  CoachAssignment _coachAssignment;
 
   @override
   void initState() {
@@ -69,29 +72,34 @@ class _SegmentDetailState extends State<SegmentDetail> {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
-        _user = authState.firebaseUser;
+        _user = authState.user;
+        BlocProvider.of<CoachAssignmentBloc>(context).getCoachAssignmentStatus(_user.id);
         return BlocBuilder<SegmentBloc, SegmentState>(builder: (context, segmentState) {
           return BlocBuilder<MovementBloc, MovementState>(builder: (context, movementState) {
             if (segmentState is GetSegmentsSuccess && movementState is GetAllSuccess) {
               _segments = segmentState.segments;
               _movements = movementState.movements;
-              return BlocListener<CoachUserBloc, CoachUserState>(
-                  listener: (context, coachUserState) {
-                    if (coachUserState is CoachUserSuccess) {
-                      _coach = coachUserState.coach;
-                    }
-                  },
-                  child: BlocListener<CoachRequestBloc, CoachRequestState>(
-                      listener: (context, coachRequestState) {
-                        if (coachRequestState is GetCoachRequestSuccess) {
-                          _coachRequest = coachRequestState.coachRequest;
-                          if (_coachRequest != null) {
-                            BlocProvider.of<CoachUserBloc>(context)
-                              .get(_coachRequest.coachId);
-                          }
+              return BlocBuilder<CoachAssignmentBloc, CoachAssignmentState>(
+                builder: (context, state) {
+                  if (state is CoachAssignmentResponse) {
+                    _coachAssignment = state.coachAssignmentResponse;
+                    BlocProvider.of<CoachUserBloc>(context).get(_coachAssignment.coachId);
+                  }
+                  return BlocListener<CoachUserBloc, CoachUserState>(
+                      listener: (context, coachUserState) {
+                        if (coachUserState is CoachUserSuccess) {
+                          _coach = coachUserState.coach;
                         }
                       },
-                      child: form()));
+                      child: BlocListener<CoachRequestBloc, CoachRequestState>(
+                          listener: (context, coachRequestState) {
+                            if (coachRequestState is GetCoachRequestSuccess) {
+                              _coachRequest = coachRequestState.coachRequest;
+                            }
+                          },
+                          child: form()));
+                },
+              );
             } else {
               return OlukoCircularProgressIndicator();
             }
@@ -104,7 +112,11 @@ class _SegmentDetailState extends State<SegmentDetail> {
   }
 
   Widget form() {
-    BlocProvider.of<CoachRequestBloc>(context).getBySegment(_user.uid, widget.courseEnrollment.classes[widget.classIndex].segments[widget.segmentIndex].id, widget.courseEnrollment.id);
+    BlocProvider.of<CoachRequestBloc>(context).getSegmentCoachRequest(
+        userId: _user.id,
+        segmentId: widget.courseEnrollment.classes[widget.classIndex].segments[widget.segmentIndex].id,
+        coachId: _coachAssignment.coachId,
+        courseEnrollmentId: widget.courseEnrollment.id);
     return Scaffold(
       backgroundColor: Colors.black,
       body: Container(
@@ -172,11 +184,11 @@ class _SegmentDetailState extends State<SegmentDetail> {
           }
           if (state is SegmentDetailContentPeopleOpen) {
             _challengePanelController.open();
-            _contentForPanel = ModalPeopleInChallenge(segmentId: widget.courseEnrollment.classes[widget.classIndex].segments[widget.segmentIndex].id, userId: _user.uid, favorites: state.favorites, users: state.users);
+            _contentForPanel = ModalPeopleInChallenge(segmentId: widget.courseEnrollment.classes[widget.classIndex].segments[widget.segmentIndex].id, userId: _user.id, favorites: state.favorites, users: state.users);
           }
           if (state is SegmentDetailContentClockOpen) {
             _challengePanelController.open();
-            _contentForPanel = ModalPersonalRecord(segmentId: widget.courseEnrollment.classes[widget.classIndex].segments[widget.segmentIndex].id, userId: _user.uid);
+            _contentForPanel = ModalPersonalRecord(segmentId: widget.courseEnrollment.classes[widget.classIndex].segments[widget.segmentIndex].id, userId: _user.id);
           }
           if (state is SegmentDetailContentLoading) {
             _contentForPanel = UploadingModalLoader(UploadFrom.segmentDetail);
@@ -239,7 +251,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
           segment: _segments[widget.segmentIndex],
           currentSegmentStep: currentSegmentStep,
           totalSegmentStep: totalSegmentStep,
-          userId: _user.uid,
+          userId: _user.id,
           audioAction: _audioAction,
           peopleAction: _peopleAction,
           clockAction: _clockAction,

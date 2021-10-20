@@ -41,7 +41,7 @@ class CoachTimelineItem extends Base {
       coachId: json['coach_id'].toString(),
       coachReference: json['coach_reference'] as DocumentReference,
       contentDescription: json['content_description'].toString(),
-      contentName: json['content_name'].toString(),
+      contentName: json['content_name'] != null ? json['content_name'].toString() : null,
       contentThumbnail: json['content_thumbnail'].toString(),
       contentType: json['content_type'] as num,
       course: json['course'] == null ? null : CourseTimelineSubmodel.fromJson(json['course'] as Map<String, dynamic>),
