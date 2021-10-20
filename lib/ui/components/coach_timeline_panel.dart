@@ -34,6 +34,9 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Singl
 
   @override
   Widget build(BuildContext context) {
+    if (_tabController.length != widget.timelineContentItems.length) {
+      _tabController = TabController(length: widget.timelineContentItems.length, vsync: this);
+    }
     return Scaffold(
         appBar: AppBar(
           backgroundColor: OlukoColors.black,

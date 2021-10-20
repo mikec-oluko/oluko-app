@@ -116,18 +116,30 @@ class _CoachPageState extends State<CoachPage> {
                                   state.sentVideos.where((sentVideo) => sentVideo.video != null).toList();
                               getSentVideoContent(sentVideosTimelineContent);
                             }
-                            return BlocBuilder<CoachRecommendationsBloc, CoachRecommendationsState>(
-                              builder: (context, state) {
-                                if (state is CoachRecommendationsSuccess) {
-                                  _coachRecommendationContent = state.coachRecommendationList;
-                                }
-                                return BlocBuilder<CoachTimelineItemsBloc, CoachTimelineItemsState>(
-                                  builder: (context, state) {
-                                    List<CoachTimelineGroup> timelinePanelContent = [];
-                                    List<CoachTimelineItem> allContent = [];
 
-                                    if (state is CoachTimelineItemsSuccess) {
-                                      _timelineItemsContent = state.timelineItems;
+                            return BlocBuilder<CoachTimelineItemsBloc, CoachTimelineItemsState>(
+                              builder: (context, timelineState) {
+                                List<CoachTimelineGroup> timelinePanelContent = [];
+                                List<CoachTimelineItem> allContent = [];
+
+                                // if (state is CoachTimelineItemsSuccess) {
+
+                                // }
+
+                                return BlocBuilder<CoachRecommendationsBloc, CoachRecommendationsState>(
+                                  builder: (context, state) {
+                                    if (state is CoachRecommendationsSuccess) {
+                                      _coachRecommendationContent = state.coachRecommendationList;
+                                      BlocProvider.of<CoachRecommendationsBloc>(context)
+                                          .getCoachRecommendationsAsTimelineItems(
+                                              coachRecommendationContent: _coachRecommendationContent);
+                                      //TODO: USE THE LIST AND CALL METHOD TO GET INFO FOR CONTENT (COURSE, MOVEMENT)
+                                      //TRANSFORM TO CoachTimelineItem
+                                      //ADD CONTENT TO timelinePanelContent
+                                    }
+                                    if (state is CoachRecommendationsAsTimelineItem &&
+                                        timelineState is CoachTimelineItemsSuccess) {
+                                      _timelineItemsContent = timelineState.timelineItems;
                                       timelinePanelContent = buildContentForTimelinePanel(_timelineItemsContent);
 
                                       timelinePanelContent.forEach((element) {
@@ -135,6 +147,7 @@ class _CoachPageState extends State<CoachPage> {
                                       });
                                       allContent.addAll(sentVideosTimelineContent);
                                       allContent.addAll(mentoredVideoTimelineContent);
+                                      allContent.addAll(state.coachRecommendationTimelineContent);
                                       CoachTimelineGroup allTabContent = CoachTimelineGroup(
                                           courseId: defaultIdForAllContentTimeline,
                                           courseName: OlukoLocalizations.get(context, 'all'),
@@ -142,7 +155,6 @@ class _CoachPageState extends State<CoachPage> {
                                       allContent.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
                                       timelinePanelContent.insert(0, allTabContent);
                                     }
-
                                     return timelinePanelContent.isEmpty
                                         ? Container(color: OlukoColors.black, child: OlukoCircularProgressIndicator())
                                         : CoachSlidingUpPanel(
@@ -193,6 +205,7 @@ class _CoachPageState extends State<CoachPage> {
     });
   }
 
+  //TODO: MAKE RECOMMENDATION CONTENT AS THIS
   void getSentVideoContent(List<CoachTimelineItem> sentVideos) {
     _sentVideosContent.forEach((element) {
       CoachTimelineItem newItem = CoachTimelineItem(

@@ -31,14 +31,19 @@ class _CoachTimelineCircleContentState extends State<CoachTimelineCircleContent>
                     Row(
                       children: [
                         SizedBox(
-                          width: 70,
-                          height: 70,
-                          child: CircleAvatar(
-                            backgroundImage: NetworkImage(widget.circleImage),
-                            backgroundColor: OlukoColors.black,
-                            radius: 30,
-                          ),
-                        ),
+                            width: 70,
+                            height: 70,
+                            child: widget.circleImage != null
+                                ? CircleAvatar(
+                                    backgroundImage: NetworkImage(widget.circleImage),
+                                    backgroundColor: OlukoColors.black,
+                                    radius: 30,
+                                  )
+                                : CircleAvatar(
+                                    child: Text('Movement'),
+                                    backgroundColor: OlukoColors.primary,
+                                    radius: 30,
+                                  )),
                         Padding(
                           padding: const EdgeInsets.all(10.0),
                           child: Column(

@@ -1,10 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:oluko_app/helpers/coach_timeline_content.dart';
+import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/annotations.dart';
 import 'package:oluko_app/models/coach_assignment.dart';
 import 'package:oluko_app/models/coach_timeline_item.dart';
+import 'package:oluko_app/models/course.dart';
+import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/recommendation.dart';
 import 'package:oluko_app/models/segment_submission.dart';
+import 'package:oluko_app/models/submodels/course_timeline_submodel.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 class CoachRepository {
@@ -201,4 +206,75 @@ class CoachRepository {
       rethrow;
     }
   }
+
+  Future<List<CoachTimelineItem>> getRecommendationsInfo(List<Recommendation> coachRecommendationContent) async {
+    List<CoachTimelineItem> recommendationsAsTimelineItems = [];
+    // for (Recommendation recommendation in coachRecommendationContent) {
+    coachRecommendationContent.forEach((recommendation) async {
+      DocumentSnapshot ds = await recommendation.entityReference.get();
+      switch (TimelineContentOption.getTimelineOption(recommendation.entityType as int)) {
+        case TimelineInteractionType.course:
+          Course courseRecommended = Course.fromJson(ds.data() as Map<String, dynamic>);
+          CoachTimelineItem recommendedCourseItem = createAnCoachTimelineItem(
+              recommendation: recommendation,
+              contentDescription: courseRecommended.description,
+              contentName: courseRecommended.name,
+              contentThumbnail: courseRecommended.image,
+              contentType: recommendation.entityType);
+          recommendationsAsTimelineItems.add(recommendedCourseItem);
+          break;
+        case TimelineInteractionType.classes:
+          break;
+        case TimelineInteractionType.segment:
+          break;
+        case TimelineInteractionType.movement:
+          Movement movementRecommended = Movement.fromJson(ds.data() as Map<String, dynamic>);
+          CoachTimelineItem recommendedMovementItem = createAnCoachTimelineItem(
+              recommendation: recommendation,
+              contentDescription: movementRecommended.description,
+              contentName: movementRecommended.name,
+              contentThumbnail: movementRecommended.image,
+              contentType: recommendation.entityType);
+          recommendationsAsTimelineItems.add(recommendedMovementItem);
+
+          break;
+        case TimelineInteractionType.mentoredVideo:
+          break;
+        case TimelineInteractionType.sentVideo:
+          break;
+        //   break;
+        default:
+      }
+    });
+
+    // }
+    return recommendationsAsTimelineItems;
+  }
+
+  CoachTimelineItem createAnCoachTimelineItem(
+      {Recommendation recommendation,
+      String contentDescription,
+      String contentName,
+      String contentThumbnail,
+      num contentType}) {
+    CoachTimelineItem newItem = CoachTimelineItem(
+        coachId: recommendation.originUserId,
+        coachReference: recommendation.originUserReference,
+        contentDescription: contentDescription,
+        contentName: contentName,
+        contentThumbnail: contentThumbnail,
+        contentType: contentType,
+        course: CourseTimelineSubmodel(id: '0', name: 'all', reference: null),
+        id: '0',
+        createdAt: recommendation.createdAt);
+    return newItem;
+  }
+  // for (SegmentSubmodel segment in classObj.segments) {
+  //   DocumentSnapshot ds = await segment.reference.get();
+  //   Segment retrievedSegment =
+  //       Segment.fromJson(ds.data() as Map<String, dynamic>);
+  //   segments.add(retrievedSegment);
+  // }
+  // return segments;
+  // }
 }
