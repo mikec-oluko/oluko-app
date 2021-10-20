@@ -364,7 +364,8 @@ class _FriendsListPageState extends State<FriendsListPage> {
                             showName: false),
                         Expanded(
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 16.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -385,7 +386,8 @@ class _FriendsListPageState extends State<FriendsListPage> {
                                           Text(
                                             user.username,
                                             style: TextStyle(
-                                                color: Colors.grey, fontSize: 15),
+                                                color: Colors.grey,
+                                                fontSize: 15),
                                           ),
                                           Padding(
                                             padding:
@@ -399,7 +401,8 @@ class _FriendsListPageState extends State<FriendsListPage> {
                                         ],
                                       )
                                     : Padding(
-                                        padding: const EdgeInsets.only(top: 8.0),
+                                        padding:
+                                            const EdgeInsets.only(top: 8.0),
                                         child: Row(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,

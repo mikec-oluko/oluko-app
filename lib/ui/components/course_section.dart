@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nil/nil.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
@@ -32,8 +33,8 @@ class _CourseSectionState extends State<CourseSection> {
     return Container(
         decoration: BoxDecoration(
             image: DecorationImage(
-          image: NetworkImage(widget.course.image),
-          fit: BoxFit.cover,
+          image: widget.course.image != null ? NetworkImage(widget.course.image) : AssetImage("assets/home/mvt.png") as ImageProvider,
+          fit: widget.course.image != null ? BoxFit.cover : BoxFit.contain,
         )),
         height: ScreenUtils.height(context),
         width: ScreenUtils.width(context),
@@ -49,27 +50,15 @@ class _CourseSectionState extends State<CourseSection> {
                 },
               )),
           SizedBox(height: 120),
-          Text(widget.course.name,
-              style: OlukoFonts.olukoSuperBigFont(
-                  custoFontWeight: FontWeight.bold,
-                  customColor: OlukoColors.white)),
+          Text(widget.course.name, style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold, customColor: OlukoColors.white)),
           SizedBox(height: 15),
           Text(
             //TODO: change weeks number
-            TimeConverter.toCourseDuration(
-                3,
-                widget.course.classes != null
-                    ? widget.course.classes.length
-                    : 0,
-                context),
-            style: OlukoFonts.olukoMediumFont(
-                custoFontWeight: FontWeight.normal,
-                customColor: OlukoColors.grayColor),
+            TimeConverter.toCourseDuration(3, widget.course.classes != null ? widget.course.classes.length : 0, context),
+            style: OlukoFonts.olukoMediumFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
           ),
           SizedBox(height: 2),
-          CourseStepSection(
-              totalCourseSteps: widget.qtyCourses,
-              currentCourseStep: widget.courseIndex + 1),
+          CourseStepSection(totalCourseSteps: widget.qtyCourses, currentCourseStep: widget.courseIndex + 1),
           SizedBox(height: 25),
           ClassCarouselGallery(courseEnrollment: widget.courseEnrollment),
         ]));
