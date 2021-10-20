@@ -1,6 +1,7 @@
 buildscript {
     ext.kotlin_version = '1.5.10'
     repositories {
+        mavenCentral()
         google()
         jcenter()
     }
@@ -12,8 +13,10 @@ buildscript {
     }
 }
 
+
 allprojects {
     repositories {
+        mavenCentral()
         google()
         jcenter()
     }
@@ -28,7 +31,7 @@ subprojects {
 }
 
 ext {
-  flutterFFmpegPackage  = "min-gpl-lts"
+  flutterFFmpegPackage  = "min-gpl"
 }
 
 task clean(type: Delete) {

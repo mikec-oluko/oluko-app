@@ -278,7 +278,8 @@ class _TaskDetailsState extends State<TaskDetails> {
                     } else {
                       if (_controller != null) {
                         _controller.pause();
-                      } else if (widget.taskIndex < _tasks.length - 1) {
+                      } 
+                      if (widget.taskIndex < _tasks.length - 1) {
                         Navigator.pop(context);
                         return Navigator.pushNamed(
                             context, routeLabels[RouteEnum.taskDetails],

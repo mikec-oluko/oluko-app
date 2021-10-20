@@ -225,5 +225,6 @@
     "storyCreated": "Story successfully created",
     "storyBeingCreated": "The story is being created",
     "coachRequest": "has requested you to record the segment",
-    "enterEmail":"Please enter an email."
+    "enterEmail":"Please enter an email.",
+    "hasMessage": "Has a message for you"
 }

@@ -47,6 +47,25 @@ class EncodingProvider {
     return outDirPath;
   }
 
+  static Future<String> encode264(String videoPath, String outDirPath) async {
+    assert(File(videoPath).existsSync());
+
+    // final arguments = '-i $videoPath ' +
+    //     '-vcodec libx264 -vprofile high -preset slow -b:v 500k -maxrate 500k -bufsize 1000k -vf ' +
+    //     'scale=-1:360 -threads 0 -acodec libvo_aacenc -b:a 128k $outDirPath/converted.mp4';
+
+    final arguments = '-i $videoPath '
+        '-vcodec libx264 '
+        '-crf 27 '
+        '-preset ultrafast '
+        "-y $outDirPath/${'converted.mp4'}";
+
+    final int rc = await _encoder.execute(arguments);
+    assert(rc == 0);
+
+    return '$outDirPath/converted.mp4';
+  }
+
   static double getAspectRatio(Map<dynamic, dynamic> info) {
     //TODO Support Gallery
     final int width = int.tryParse(info['streams'][0]['width'].toString());
@@ -61,7 +80,7 @@ class EncodingProvider {
     if (videoPath.toString().contains('.mp4')) {
       imagePath = (videoPath.toString().substring(0, (videoPath.toString().length) - 4));
     }
-    final String outPath = '$imagePath.jpg';
+    final String outPath = '$imagePath.jpeg';
     var arguments = '-y -i $videoPath -vframes 1 -an -s ${width}x${height} -ss 1 $outPath';
     int rc = await _encoder.execute(arguments);
     assert(rc == 0);

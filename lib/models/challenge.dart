@@ -9,8 +9,8 @@ class Challenge extends Base {
   String classId;
   DocumentReference classReference;
   Timestamp completedAt;
-  List<String> requiredClasses;
-  List<String> requiredSegments;
+  List<dynamic> requiredClasses;
+  List<dynamic> requiredSegments;
   int index;
   String challengeType;
   String result;
@@ -58,8 +58,8 @@ class Challenge extends Base {
         classReference: json['class_reference'] as DocumentReference,
         result: json['result']?.toString(),
         completedAt: json['completed_at'] as Timestamp,
-        requiredClasses: json['required_classes'] as List<String>,
-        requiredSegments: json['required_segments'] as List<String>,
+        requiredClasses: json['required_classes'] as List<dynamic>,
+        requiredSegments: json['required_segments'] as List<dynamic>,
         index: json['index'] as int,
         challengeType: json['type']?.toString(),
         image: json['image']?.toString(),
