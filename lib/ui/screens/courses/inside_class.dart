@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/class_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_audio_bloc.dart';
@@ -74,8 +75,7 @@ class _InsideClassesState extends State<InsideClass> {
           if (classState is GetByIdSuccess) {
             _class = classState.classObj;
             BlocProvider.of<SegmentBloc>(context)..getAll(_class);
-            BlocProvider.of<CoachAudioBloc>(context)
-                .getByAudios(widget.courseEnrollment.classes[widget.classIndex].audios);
+            BlocProvider.of<CoachAudioBloc>(context).getByAudios(widget.courseEnrollment.classes[widget.classIndex].audios);
             return form();
           } else {
             return SizedBox();
@@ -147,8 +147,7 @@ class _InsideClassesState extends State<InsideClass> {
         OlukoPrimaryButton(
           title: OlukoLocalizations.get(context, 'start'),
           onPressed: () {
-            int segmentIndex = CourseEnrollmentService.getFirstUncompletedSegmentIndex(
-                widget.courseEnrollment.classes[widget.classIndex]);
+            int segmentIndex = CourseEnrollmentService.getFirstUncompletedSegmentIndex(widget.courseEnrollment.classes[widget.classIndex]);
             if (segmentIndex == -1) {
               segmentIndex = 0;
             }
@@ -223,8 +222,8 @@ class _InsideClassesState extends State<InsideClass> {
                   if (!coaches.isEmpty) {
                     BottomDialogUtils.showBottomDialog(
                         context: context,
-                        content: AudioDialogContent(
-                            coach: coaches[0], audio: widget.courseEnrollment.classes[widget.classIndex].audios[0]));
+                        content:
+                            AudioDialogContent(coach: coaches[0], audio: widget.courseEnrollment.classes[widget.classIndex].audios[0]));
                   }
                 },
                 peopleQty: 50,
@@ -249,22 +248,26 @@ class _InsideClassesState extends State<InsideClass> {
                   padding: const EdgeInsets.only(top: 10.0, right: 10),
                   child: Text(
                     TimeConverter.toClassProgress(widget.classIndex, widget.courseEnrollment.classes.length, context),
-                    style:
-                        OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.primary),
+                    style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.primary),
                   ),
                 ),
                 Padding(
                     padding: const EdgeInsets.only(top: 10.0),
-                    child: CourseProgressBar(
-                        value: CourseEnrollmentService.getClassProgress(widget.courseEnrollment, widget.classIndex))),
-                Padding(
-                  padding: const EdgeInsets.only(top: 20.0),
-                  child: Text(
-                    _class.description,
-                    style:
-                        OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
-                  ),
-                ),
+                    child: CourseProgressBar(value: CourseEnrollmentService.getClassProgress(widget.courseEnrollment, widget.classIndex))),
+                (() {
+                  // your code here
+                  if (_class.description != null) {
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 20.0),
+                      child: Text(
+                        _class.description,
+                        style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+                      ),
+                    );
+                  } else {
+                    return SizedBox();
+                  }
+                }()),
                 buildChallengeSection(),
                 classMovementSection(),
               ]))),
