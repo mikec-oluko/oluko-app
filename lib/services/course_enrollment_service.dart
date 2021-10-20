@@ -25,16 +25,16 @@ class CourseEnrollmentService {
     if (courseEnrollment == null) {
       return 0;
     }
-    int segmentsCompleated = 0;
+    int segmentsCompleted = 0;
     EnrollmentClass enrollmentClass = courseEnrollment.classes[classIndex];
     List<EnrollmentSegment> segments = enrollmentClass.segments;
     for (var i = 0; i < segments.length; i++) {
       if (segments[i].completedAt != null) {
-        segmentsCompleated++;
+        segmentsCompleted++;
       } else {
         break;
       }
     }
-    return segmentsCompleated / segments.length;
+    return segmentsCompleted / segments.length;
   }
 }

@@ -119,7 +119,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
         courseEnrollmentId: widget.courseEnrollment.id);
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Container(
+      body: SizedBox(
         width: ScreenUtils.width(context),
         height: ScreenUtils.height(context),
         child: Stack(
@@ -145,22 +145,8 @@ class _SegmentDetailState extends State<SegmentDetail> {
 
   BlocListener<SegmentDetailContentBloc, SegmentDetailContentState> slidingUpPanelComponent(BuildContext context) {
     return BlocListener<SegmentDetailContentBloc, SegmentDetailContentState>(
-      listener: (context, state) {
-        /*if (state is TransformationJourneyContentDefault || state is TransformationJourneyContentOpen) {
-          _statePanelMaxHeight = 100;
-        } else {
-          _statePanelMaxHeight = 300;
-        }*/
-      },
+      listener: (context, state) {},
       child: SlidingUpPanel(
-        onPanelOpened: () {
-          setState(() {
-            //_panelMaxHeight = _statePanelMaxHeight;
-          });
-        },
-        onPanelClosed: () {
-          //BlocProvider.of<SegmentDetailContentBloc>(context).emitDefaultState();
-        },
         backdropEnabled: true,
         isDraggable: false,
         header: const SizedBox(),
@@ -184,7 +170,8 @@ class _SegmentDetailState extends State<SegmentDetail> {
           }
           if (state is SegmentDetailContentPeopleOpen) {
             _challengePanelController.open();
-            _contentForPanel = ModalPeopleInChallenge(segmentId: widget.courseEnrollment.classes[widget.classIndex].segments[widget.segmentIndex].id, userId: _user.id, favorites: state.favorites, users: state.users);
+            _contentForPanel = ModalPeopleInChallenge(
+                segmentId: widget.courseEnrollment.classes[widget.classIndex].segments[widget.segmentIndex].id, userId: _user.id, favorites: state.favorites, users: state.users);
           }
           if (state is SegmentDetailContentClockOpen) {
             _challengePanelController.open();
@@ -243,11 +230,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
     return Container(
       child: ListView(children: [
         SegmentImageSection(
-          onPressed: () => Navigator.pushNamed(
-                    context, routeLabels[RouteEnum.insideClass], arguments: {
-                  'courseEnrollment': widget.courseEnrollment,
-                  'classIndex': widget.classIndex
-                }),
+          onPressed: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {'courseEnrollment': widget.courseEnrollment, 'classIndex': widget.classIndex}),
           segment: _segments[widget.segmentIndex],
           currentSegmentStep: currentSegmentStep,
           totalSegmentStep: totalSegmentStep,
@@ -330,12 +313,12 @@ class _SegmentDetailState extends State<SegmentDetail> {
             const SizedBox(height: 30),
             Stack(alignment: Alignment.center, children: [StoriesItem(maxRadius: 65, imageUrl: image), Image.asset('assets/courses/photo_ellipse.png', scale: 4)]),
             const SizedBox(height: 15),
-            Text(OlukoLocalizations.get(context, 'coach') + ' ' + name, textAlign: TextAlign.center, style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold)),
+            Text('${OlukoLocalizations.get(context, 'coach')} $name', textAlign: TextAlign.center, style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold)),
             const SizedBox(height: 20),
             Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 50),
                 child:
-                    Text(OlukoLocalizations.get(context, 'coach') + ' ' + name + ' ' + OlukoLocalizations.get(context, 'coachRequest'), textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont())),
+                    Text('${OlukoLocalizations.get(context, 'coach')} $name ${OlukoLocalizations.get(context, 'coachRequest')}', textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont())),
             const SizedBox(height: 35),
             Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),

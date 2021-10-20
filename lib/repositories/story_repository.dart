@@ -4,14 +4,24 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/models/dto/story_dto.dart';
 import 'package:oluko_app/models/dto/user_stories.dart';
 import 'package:oluko_app/models/segment_submission.dart';
+import 'package:oluko_app/models/submodels/enrollment_segment.dart';
 
 class StoryRepository {
   StoryRepository();
 
-  static Future<Story> createStory(SegmentSubmission segmentSubmission) async {
+  static Future<Story> createStoryWithVideo(SegmentSubmission segmentSubmission) async {
     final DocumentReference docRef =
         FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users').doc(segmentSubmission.userId).collection('stories').doc();
     final Story story = Story(content_type: 'video', url: segmentSubmission.video.url, description: 'description', createdBy: segmentSubmission.userId);
+    story.createdAt = Timestamp.now();
+    story.id = docRef.id;
+    docRef.set(story.toJson());
+    return story;
+  }
+
+  static Future<Story> createStoryForChallenge(EnrollmentSegment enrollmentSegment, String userId) async {
+    final DocumentReference docRef = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users').doc(userId).collection('stories').doc();
+    final Story story = Story(content_type: 'image', url: enrollmentSegment.challengeImage, description: enrollmentSegment.name, createdBy: userId);
     story.createdAt = Timestamp.now();
     story.id = docRef.id;
     docRef.set(story.toJson());
