@@ -6,13 +6,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/class_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_audio_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/movement.dart';
+import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/submodels/segment_submodel.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/services/class_service.dart';
 import 'package:oluko_app/services/course_enrollment_service.dart';
@@ -22,12 +25,17 @@ import 'package:oluko_app/ui/components/course_progress_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/overlay_video_preview.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
+import 'package:oluko_app/ui/screens/courses/audio_dialog_content.dart';
 import 'package:oluko_app/ui/screens/courses/class_detail_section.dart';
 import 'package:oluko_app/ui/screens/courses/course_info_section.dart';
+import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'audio_panel.dart';
+
+enum PanelEnum { audios, classDetail }
 
 class InsideClass extends StatefulWidget {
   InsideClass({this.courseEnrollment, this.classIndex, Key key}) : super(key: key);
@@ -49,6 +57,9 @@ class _InsideClassesState extends State<InsideClass> {
   PanelController panelController = new PanelController();
   List<Movement> _classMovements;
 
+  Widget panelContent;
+  PanelEnum panelState;
+
   @override
   void initState() {
     super.initState();
@@ -58,12 +69,13 @@ class _InsideClassesState extends State<InsideClass> {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
-        BlocProvider.of<ClassBloc>(context)..get(widget.courseEnrollment.classes[widget.classIndex].id);
+        BlocProvider.of<ClassBloc>(context).get(widget.courseEnrollment.classes[widget.classIndex].id);
         BlocProvider.of<MovementBloc>(context)..getAll();
         return BlocBuilder<ClassBloc, ClassState>(builder: (context, classState) {
           if (classState is GetByIdSuccess) {
             _class = classState.classObj;
             BlocProvider.of<SegmentBloc>(context)..getAll(_class);
+            BlocProvider.of<CoachAudioBloc>(context).getByAudios(widget.courseEnrollment.classes[widget.classIndex].audios);
             return form();
           } else {
             return SizedBox();
@@ -81,18 +93,24 @@ class _InsideClassesState extends State<InsideClass> {
         child: Scaffold(body: BlocBuilder<MovementBloc, MovementState>(builder: (context, movementState) {
           if (movementState is GetAllSuccess) {
             _movements = movementState.movements;
-            return SlidingUpPanel(
-                controller: panelController,
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-                minHeight: 5,
-                collapsed: Container(
-                  color: Colors.black,
-                ),
-                panel: classDetailSection(),
-                body: Container(
-                  color: Colors.black,
-                  child: classInfoSection(),
-                ));
+            return BlocBuilder<CoachAudioBloc, CoachAudioState>(builder: (context, coachState) {
+              if (coachState is CoachesByAudiosSuccess) {
+                return SlidingUpPanel(
+                    controller: panelController,
+                    borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                    minHeight: 5,
+                    collapsed: Container(
+                      color: Colors.black,
+                    ),
+                    panel: /*audioSection(coachState.coaches)*/ classDetailSection(),
+                    body: Container(
+                      color: Colors.black,
+                      child: classInfoSection(coachState.coaches),
+                    ));
+              } else {
+                return SizedBox();
+              }
+            });
           } else {
             return SizedBox();
           }
@@ -129,13 +147,6 @@ class _InsideClassesState extends State<InsideClass> {
         OlukoPrimaryButton(
           title: OlukoLocalizations.get(context, 'start'),
           onPressed: () {
-            //TODO: Remove this
-            /*Navigator.pushNamed(context, routeLabels[RouteEnum.completedClass],
-                arguments: {
-                  'classIndex': widget.classIndex,
-                  'courseEnrollment': widget.courseEnrollment,
-                });*/
-
             int segmentIndex = CourseEnrollmentService.getFirstUncompletedSegmentIndex(widget.courseEnrollment.classes[widget.classIndex]);
             if (segmentIndex == -1) {
               segmentIndex = 0;
@@ -194,14 +205,33 @@ class _InsideClassesState extends State<InsideClass> {
     });
   }
 
-  Widget classInfoSection() {
+  Widget audioSection(List<UserResponse> coaches) {
+    return AudioPanel(
+      coaches: coaches,
+      audios: widget.courseEnrollment.classes[widget.classIndex].audios,
+    );
+  }
+
+  Widget classInfoSection(List<UserResponse> coaches) {
     return ListView(children: [
       Padding(
           padding: const EdgeInsets.only(bottom: 3),
-          child: OverlayVideoPreview(
-              video: _class.video,
-              showBackButton: true,
-              bottomWidgets: [CourseInfoSection(peopleQty: 50, audioMessageQty: 1, image: widget.courseEnrollment.course.image)])),
+          child: OverlayVideoPreview(video: _class.video, showBackButton: true, bottomWidgets: [
+            CourseInfoSection(
+                onAudioPressed: () {
+                  if (!coaches.isEmpty) {
+                    BottomDialogUtils.showBottomDialog(
+                        context: context,
+                        content:
+                            AudioDialogContent(coach: coaches[0], audio: widget.courseEnrollment.classes[widget.classIndex].audios[0]));
+                  }
+                },
+                peopleQty: 50,
+                audioMessageQty: widget.courseEnrollment?.classes[widget.classIndex]?.audios != null
+                    ? widget.courseEnrollment.classes[widget.classIndex].audios.length
+                    : 0,
+                image: widget.courseEnrollment.course.image)
+          ])),
       Padding(
           padding: EdgeInsets.only(right: 15, left: 15, top: 25),
           child: Container(
@@ -224,18 +254,20 @@ class _InsideClassesState extends State<InsideClass> {
                 Padding(
                     padding: const EdgeInsets.only(top: 10.0),
                     child: CourseProgressBar(value: CourseEnrollmentService.getClassProgress(widget.courseEnrollment, widget.classIndex))),
-                Padding(
-                    padding: const EdgeInsets.only(top: 20.0),
-                    child: (() {
-                      if (_class.description != null) {
-                        return Text(
-                          _class.description,
-                          style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
-                        );
-                      } else {
-                        nil;
-                      }
-                    }())),
+                (() {
+                  // your code here
+                  if (_class.description != null) {
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 20.0),
+                      child: Text(
+                        _class.description,
+                        style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+                      ),
+                    );
+                  } else {
+                    return SizedBox();
+                  }
+                }()),
                 buildChallengeSection(),
                 classMovementSection(),
               ]))),

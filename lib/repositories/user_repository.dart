@@ -5,6 +5,7 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/helpers/s3_provider.dart';
 import 'package:oluko_app/models/sign_up_request.dart';
+import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:path/path.dart' as p;
@@ -39,6 +40,9 @@ class UserRepository {
   }
 
   Future<UserResponse> getById(String id) async {
+    if (id == null) {
+      return null;
+    }
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
@@ -51,6 +55,18 @@ class UserRepository {
     var response = docRef.docs[0].data() as Map<String, dynamic>;
     var loginResponseBody = UserResponse.fromJson(response as Map<String, dynamic>);
     return loginResponseBody;
+  }
+
+  Future<List<UserResponse>> getByAudios(List<Audio> audios) async {
+    List<UserResponse> coaches = [];
+    if (audios != null) {
+      for (Audio audio in audios) {
+        DocumentSnapshot ds = await audio.userReference.get();
+        UserResponse retrievedCoach = UserResponse.fromJson(ds.data() as Map<String, dynamic>);
+        coaches.add(retrievedCoach);
+      }
+    }
+    return coaches;
   }
 
   Future<List<UserResponse>> getAll() async {

@@ -21,13 +21,13 @@ class CountdownOverlay extends StatefulWidget {
 class _CountdownOverlayState extends State<CountdownOverlay> {
   Timer countdownTimer;
   int countdown;
-  PanelController panelController = new PanelController();
+  PanelController panelController = PanelController();
   bool open = true;
 
   _CountdownOverlayState(int seconds) {
     countdown = seconds;
     countdownTimer = Timer.periodic(Duration(seconds: 1), (Timer timer) {
-      this.setState(() {
+      setState(() {
         if (countdown > 1) {
           countdown--;
         } else {

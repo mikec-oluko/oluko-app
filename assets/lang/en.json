@@ -124,6 +124,7 @@
     "assessment": "Assessment",
     "private": "Private",
     "done": "Done",
+    "doneThis": "done this",
     "skip": "Skip",
     "makeThisPublic": "Make this public",
     "retake": "Retake",
@@ -147,6 +148,7 @@
     "inThis": "in this",
     "challenge": "Challenge",
     "challenges": "Challenges",
+    "challengeTitle": "CHALLENGE! ",
     "movesInThisClass": "Moves in this class",
     "viewDetails": "View Details",
     "noContent": "No content to display",
@@ -225,5 +227,8 @@
     "storyCreated": "Story successfully created",
     "storyBeingCreated": "The story is being created",
     "coachRequest": "has requested you to record the segment",
-    "enterEmail":"Please enter an email."
+    "enterEmail":"Please enter an email.",
+    "personalRecord": "Personal Record",
+    "noPersonalRecords": "No Personal Records",
+    "hasMessage": "Has a message for you"
 }
