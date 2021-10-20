@@ -3,6 +3,7 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/models/annotations.dart';
 import 'package:oluko_app/models/coach_assignment.dart';
 import 'package:oluko_app/models/coach_timeline_item.dart';
+import 'package:oluko_app/models/recommendation.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -168,6 +169,30 @@ class CoachRepository {
         coachTimelineContent.add(CoachTimelineItem.fromJson(content));
       });
       return coachTimelineContent;
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
+      rethrow;
+    }
+  }
+
+  Future<List<Recommendation>> getCoachRecommendationsForUser(String userId, String coachId) async {
+    try {
+      QuerySnapshot docRef = await FirebaseFirestore.instance
+          .collection('projects')
+          .doc(GlobalConfiguration().getValue('projectId'))
+          .collection('recommendations')
+          .where('destination_user_id', isEqualTo: userId)
+          .where('origin_user_id', isEqualTo: coachId)
+          .get();
+      List<Recommendation> coachRecommendations = [];
+      docRef.docs.forEach((doc) {
+        final Map<String, dynamic> content = doc.data() as Map<String, dynamic>;
+        coachRecommendations.add(Recommendation.fromJson(content));
+      });
+      return coachRecommendations;
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,

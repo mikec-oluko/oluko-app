@@ -91,6 +91,7 @@ import 'package:oluko_app/ui/screens/courses/segment_detail.dart';
 import 'blocs/coach/coach_assignment_bloc.dart';
 import 'blocs/coach/coach_interaction_timeline_bloc.dart';
 import 'blocs/coach/coach_mentored_videos_bloc.dart';
+import 'blocs/coach/coach_recommendations_bloc.dart';
 import 'blocs/coach/coach_sent_videos_bloc.dart';
 import 'blocs/movement_info_bloc.dart';
 import 'blocs/friends/hi_five_send_bloc.dart';
@@ -267,6 +268,7 @@ class Routes {
   final CoachRequestBloc _coachRequestBloc = CoachRequestBloc();
   final CoachUserBloc _coachUserBloc = CoachUserBloc();
   final CoachAudioBloc _coachAudioBloc = CoachAudioBloc();
+  final CoachRecommendationsBloc _coachRecommendationsBloc = CoachRecommendationsBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -313,6 +315,7 @@ class Routes {
             value: _hiFiveSendBloc,
           ),
           BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
+          BlocProvider<CoachRecommendationsBloc>.value(value: _coachRecommendationsBloc),
         ];
         newRouteView = MainPage();
         break;
@@ -671,6 +674,7 @@ class Routes {
           BlocProvider<CoachMentoredVideosBloc>.value(value: _coachMentoredVideosBloc),
           BlocProvider<CoachTimelineItemsBloc>.value(value: _coachTimelineItemsBloc),
           BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
+          BlocProvider<CoachRecommendationsBloc>.value(value: _coachRecommendationsBloc),
         ];
         newRouteView = CoachMainPage();
         break;
@@ -690,6 +694,7 @@ class Routes {
           BlocProvider<CoachMentoredVideosBloc>.value(value: _coachMentoredVideosBloc),
           BlocProvider<CoachTimelineItemsBloc>.value(value: _coachTimelineItemsBloc),
           BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
+          BlocProvider<CoachRecommendationsBloc>.value(value: _coachRecommendationsBloc),
         ];
         newRouteView = CoachPage();
         break;
