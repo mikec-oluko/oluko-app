@@ -27,9 +27,8 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
   Widget scrollableBubbles() {
     return ShaderMask(
       shaderCallback: (rect) {
-        return LinearGradient(
+        return const LinearGradient(
           begin: Alignment.center,
-          end: Alignment.centerRight,
           colors: [Colors.black, Colors.transparent],
         ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
       },
@@ -40,10 +39,7 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
   }
 
   List<Widget> buildMovementItems() {
-    List<Widget> movements = widget.content
-        .map((movement) => _imageItem(context, movement.image, movement.name,
-            onPressed: (context) => widget.onPressed(context, movement)))
-        .toList();
+    List<Widget> movements = widget.content.map((movement) => _imageItem(context, movement.image, movement.name, onPressed: (context) => widget.onPressed(context, movement))).toList();
     return movements;
   }
 
@@ -68,20 +64,20 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
       onTap: () => onPressed(context),
       child: Container(
           width: 85,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              StoriesItem(maxRadius: 28, imageUrl: imageUrl),
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Text(
-                  name,
-                  textAlign: TextAlign.center,
-                  style: OlukoFonts.olukoSmallFont(
-                      customColor: OlukoColors.grayColor),
-                ),
-              )
-            ],
+          child: Flexible(
+            child: Column(
+              children: [
+                StoriesItem(maxRadius: 28, imageUrl: imageUrl),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Text(
+                    name,
+                    textAlign: TextAlign.center,
+                    style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor),
+                  ),
+                )
+              ],
+            ),
           )),
     );
   }
