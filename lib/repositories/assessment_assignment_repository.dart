@@ -49,7 +49,7 @@ class AssessmentAssignmentRepository {
         .collection('assessmentAssignments')
         .doc(id);
     reference.update({
-      'compleated_at': completedAt,
+      'completed_at': completedAt,
     });
     return completedAt;
   }
@@ -82,7 +82,7 @@ class AssessmentAssignmentRepository {
         .collection('assessmentAssignments')
         .doc(id);
     reference.update({
-      'compleated_at': null,
+      'completed_at': null,
     });
     return true;
   }

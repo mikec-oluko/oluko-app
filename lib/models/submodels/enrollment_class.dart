@@ -30,7 +30,7 @@ class EnrollmentClass {
         reference: json['reference'] as DocumentReference,
         name: json['name']?.toString(),
         image: json['image']?.toString(),
-        completedAt: json['compleated_at'] as Timestamp,
+        completedAt: json['completed_at'] as Timestamp,
         selfieDownloadUrl: json['selfie_download_url']?.toString(),
         selfieThumbnailUrl: json['selfie_thumbnail_url']?.toString(),
         audios: json['audios'] == null
@@ -49,7 +49,7 @@ class EnrollmentClass {
         'image': image,
         'selfie_download_url': selfieDownloadUrl,
         'selfie_thumbnail_url': selfieThumbnailUrl,
-        'compleated_at': completedAt,
+        'completed_at': completedAt,
         'audios': audios == null ? null : List<dynamic>.from(audios.map((audio) => audio.toJson())),
         'segments': segments == null ? null : List<dynamic>.from(segments.map((segment) => segment.toJson())),
       };
