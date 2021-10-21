@@ -6,9 +6,9 @@ import 'package:oluko_app/blocs/challenge_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_assignment_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_interaction_timeline_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_mentored_videos_bloc.dart';
-import 'package:oluko_app/blocs/coach/coach_profile_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_sent_videos_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
@@ -74,7 +74,7 @@ String defaultIdForAllContentTimeline = '0';
 class _CoachPageState extends State<CoachPage> {
   @override
   void initState() {
-    BlocProvider.of<CoachProfileBloc>(context).getCoachProfile(widget.coachAssignment.coachId);
+    BlocProvider.of<CoachUserBloc>(context).get(widget.coachAssignment.coachId);
     super.initState();
   }
 
@@ -85,10 +85,10 @@ class _CoachPageState extends State<CoachPage> {
         if (state is AuthSuccess) {
           _currentAuthUser = state.user;
           requestCurrentUserData(context);
-          return BlocBuilder<CoachProfileBloc, CoachProfileState>(
+          return BlocBuilder<CoachUserBloc, CoachUserState>(
             builder: (context, state) {
-              if (state is CoachProfileDataSuccess) {
-                _coachUser = state.coachProfile;
+              if (state is CoachUserSuccess) {
+                _coachUser = state.coach;
               }
               return Scaffold(
                 appBar: CoachAppBar(

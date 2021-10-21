@@ -49,7 +49,7 @@ class _State extends State<ChallengesCard> {
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
             color: OlukoColors.challengeLockedFilterColor,
-            image: new DecorationImage(
+            image: DecorationImage(
               fit: BoxFit.cover,
               colorFilter: new ColorFilter.mode(
                   Colors.black.withOpacity(0.4), BlendMode.dstATop),

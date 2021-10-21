@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/enrollment_section.dart';
 import 'package:oluko_app/models/submodels/section_submodel.dart';
+import 'package:oluko_app/repositories/story_repository.dart';
 import 'package:path/path.dart' as p;
 import 'package:oluko_app/helpers/s3_provider.dart';
 import 'package:oluko_app/models/challenge.dart';
@@ -318,7 +319,6 @@ class CourseEnrollmentRepository {
         .doc(GlobalConfiguration().getValue('projectId'))
         .collection('courseEnrollments')
         .doc(courseEnrollment.id);
-
     final thumbnail = await ImageUtils().getThumbnailForImage(file, 250);
     final thumbnailUrl = await _uploadFile(
         thumbnail, '${reference.path}/class' + classIndex.toString());

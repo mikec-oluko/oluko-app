@@ -23,7 +23,7 @@ class StoryBloc extends Cubit<StoryState> {
 
   Future<void> createStory(SegmentSubmission segmentSubmission) async {
     try {
-      final Story newStory = await StoryRepository.createStory(segmentSubmission);
+      final Story newStory = await StoryRepository.createStoryWithVideo(segmentSubmission);
       emit(CreateSuccess(story: newStory));
     } catch (e, stackTrace) {
       await Sentry.captureException(

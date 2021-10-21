@@ -15,6 +15,7 @@ class Segment extends Base {
   bool isPublished;
   List<SectionSubmodel> sections;
   bool isChallenge;
+  String challengeImage;
 
   Segment(
       {this.name,
@@ -27,6 +28,7 @@ class Segment extends Base {
       this.totalTime,
       this.isChallenge,
       this.video,
+      this.challengeImage,
       this.type,
       String id,
       Timestamp createdAt,
@@ -51,7 +53,14 @@ class Segment extends Base {
         image: json['image']?.toString(),
         rounds: json['rounds'] as int,
         description: json['description']?.toString(),
-        isChallenge: json['is_challenge'] as bool,
+        isChallenge: json['is_challenge'] == null
+            ? false
+            : json['is_challenge'] is bool
+                ? json['is_challenge'] as bool
+                : false,
+        challengeImage: json['challenge_image'] == null
+            ? null
+            : json['challenge_image']?.toString(),
         totalTime: json['total_time'] as int,
         initialTimer: json['initial_timer'] as int,
         isPublished: json['is_published'] as bool,
@@ -78,6 +87,7 @@ class Segment extends Base {
       'initial_timer': initialTimer,
       'is_published': isPublished,
       'is_challenge': isChallenge,
+      'challenge_image': challengeImage,
       'type': type == null ? null : type.index,
       'movements': sections == null
           ? null

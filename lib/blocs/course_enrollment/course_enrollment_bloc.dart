@@ -93,7 +93,7 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
     }
   }
 
-  void markSegmentAsCompleated(CourseEnrollment courseEnrollment,
+  void markSegmentAsCompleted(CourseEnrollment courseEnrollment,
       int segmentIndex, int classIndex) async {
     try {
       await CourseEnrollmentRepository.markSegmentAsCompleted(

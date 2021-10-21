@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/challenge_bloc.dart';
 import 'package:oluko_app/blocs/course/course_bloc.dart';
@@ -588,7 +589,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
   List<Widget> returnCoursesWidget({List<Course> listOfCourses}) {
     List<Widget> contentForCourseSection = [];
     listOfCourses.forEach((course) {
-      contentForCourseSection.add(_getCourseCard(courseInfo: course));
+      if (course != null) {
+        contentForCourseSection.add(_getCourseCard(courseInfo: course));
+      }
     });
     return contentForCourseSection.toList();
   }
