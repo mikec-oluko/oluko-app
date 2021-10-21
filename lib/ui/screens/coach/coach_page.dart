@@ -104,27 +104,29 @@ class _CoachPageState extends State<CoachPage> {
                     }
                     return BlocBuilder<CoachMentoredVideosBloc, CoachMentoredVideosState>(
                       builder: (context, state) {
+                        List<CoachTimelineItem> allContent = [];
                         if (state is CoachMentoredVideosSuccess) {
                           _annotationVideosContent = state.mentoredVideos;
-
-                          getMentoredVideoContent(mentoredVideoTimelineContent);
+                          CoachTimelineFunctions.getTimelineVideoContent(
+                              annotationContent: _annotationVideosContent,
+                              mentoredVideos: mentoredVideoTimelineContent,
+                              allContent: allContent,
+                              context: context);
                         }
                         return BlocBuilder<CoachSentVideosBloc, CoachSentVideosState>(
                           builder: (context, state) {
                             if (state is CoachSentVideosSuccess) {
                               _sentVideosContent =
                                   state.sentVideos.where((sentVideo) => sentVideo.video != null).toList();
-                              getSentVideoContent(sentVideosTimelineContent);
+                              CoachTimelineFunctions.getTimelineVideoContent(
+                                  segmentSubmittedContent: _sentVideosContent,
+                                  sentVideos: sentVideosTimelineContent,
+                                  allContent: allContent,
+                                  context: context);
                             }
-
                             return BlocBuilder<CoachTimelineItemsBloc, CoachTimelineItemsState>(
                               builder: (context, timelineState) {
                                 List<CoachTimelineGroup> timelinePanelContent = [];
-                                List<CoachTimelineItem> allContent = [];
-
-                                // if (state is CoachTimelineItemsSuccess) {
-
-                                // }
 
                                 return BlocBuilder<CoachRecommendationsBloc, CoachRecommendationsState>(
                                   builder: (context, state) {
@@ -133,20 +135,16 @@ class _CoachPageState extends State<CoachPage> {
                                       BlocProvider.of<CoachRecommendationsBloc>(context)
                                           .getCoachRecommendationsAsTimelineItems(
                                               coachRecommendationContent: _coachRecommendationContent);
-                                      //TODO: USE THE LIST AND CALL METHOD TO GET INFO FOR CONTENT (COURSE, MOVEMENT)
-                                      //TRANSFORM TO CoachTimelineItem
-                                      //ADD CONTENT TO timelinePanelContent
                                     }
                                     if (state is CoachRecommendationsAsTimelineItem &&
                                         timelineState is CoachTimelineItemsSuccess) {
                                       _timelineItemsContent = timelineState.timelineItems;
-                                      timelinePanelContent = buildContentForTimelinePanel(_timelineItemsContent);
+                                      timelinePanelContent =
+                                          CoachTimelineFunctions.buildContentForTimelinePanel(_timelineItemsContent);
 
                                       timelinePanelContent.forEach((element) {
                                         allContent.addAll(element.timelineElements);
                                       });
-                                      allContent.addAll(sentVideosTimelineContent);
-                                      allContent.addAll(mentoredVideoTimelineContent);
                                       allContent.addAll(state.coachRecommendationTimelineContent);
                                       CoachTimelineGroup allTabContent = CoachTimelineGroup(
                                           courseId: defaultIdForAllContentTimeline,
@@ -184,45 +182,6 @@ class _CoachPageState extends State<CoachPage> {
         }
       },
     );
-  }
-
-  void getMentoredVideoContent(List<CoachTimelineItem> mentoredVideos) {
-    _annotationVideosContent.forEach((element) {
-      CoachTimelineItem newItem = CoachTimelineItem(
-          coachId: element.coachId,
-          coachReference: element.coachReference,
-          contentDescription: OlukoLocalizations.get(context, 'mentoredVideo'),
-          contentName: OlukoLocalizations.get(context, 'mentoredVideo'),
-          contentThumbnail: element.video.thumbUrl,
-          contentType: 4,
-          course: CourseTimelineSubmodel(
-              id: defaultIdForAllContentTimeline, name: OlukoLocalizations.get(context, 'all'), reference: null),
-          id: defaultIdForAllContentTimeline,
-          createdAt: element.createdAt);
-      if (mentoredVideos.where((element) => element.contentThumbnail == newItem.contentThumbnail).isEmpty) {
-        mentoredVideos.add(newItem);
-      }
-    });
-  }
-
-  //TODO: MAKE RECOMMENDATION CONTENT AS THIS
-  void getSentVideoContent(List<CoachTimelineItem> sentVideos) {
-    _sentVideosContent.forEach((element) {
-      CoachTimelineItem newItem = CoachTimelineItem(
-          coachId: element.coachId,
-          coachReference: element.coachReference,
-          contentDescription: OlukoLocalizations.get(context, 'sentVideo'),
-          contentName: OlukoLocalizations.get(context, 'sentVideo'),
-          contentThumbnail: element.video.thumbUrl,
-          contentType: 5,
-          course: CourseTimelineSubmodel(
-              id: defaultIdForAllContentTimeline, name: OlukoLocalizations.get(context, 'all'), reference: null),
-          id: defaultIdForAllContentTimeline,
-          createdAt: element.createdAt);
-      if (sentVideos.where((element) => element.contentThumbnail == newItem.contentThumbnail).isEmpty) {
-        sentVideos.add(newItem);
-      }
-    });
   }
 
   void requestCurrentUserData(BuildContext context) {

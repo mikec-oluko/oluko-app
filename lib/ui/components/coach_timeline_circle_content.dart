@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/coach_get_header_for_content.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class CoachTimelineCircleContent extends StatefulWidget {
   const CoachTimelineCircleContent({this.circleImage, this.circleTitle, this.date, this.fileType});
@@ -40,9 +41,12 @@ class _CoachTimelineCircleContentState extends State<CoachTimelineCircleContent>
                                     radius: 30,
                                   )
                                 : CircleAvatar(
-                                    child: Text('Movement'),
-                                    backgroundColor: OlukoColors.primary,
+                                    backgroundColor: OlukoColors.grayColor,
                                     radius: 30,
+                                    child: Text(OlukoLocalizations.get(context, 'movement'),
+                                        textAlign: TextAlign.center,
+                                        style: OlukoFonts.olukoSmallFont(
+                                            customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
                                   )),
                         Padding(
                           padding: const EdgeInsets.all(10.0),

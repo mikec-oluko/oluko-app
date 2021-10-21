@@ -209,18 +209,19 @@ class CoachRepository {
 
   Future<List<CoachTimelineItem>> getRecommendationsInfo(List<Recommendation> coachRecommendationContent) async {
     List<CoachTimelineItem> recommendationsAsTimelineItems = [];
-    // for (Recommendation recommendation in coachRecommendationContent) {
-    coachRecommendationContent.forEach((recommendation) async {
+    for (Recommendation recommendation in coachRecommendationContent) {
       DocumentSnapshot ds = await recommendation.entityReference.get();
       switch (TimelineContentOption.getTimelineOption(recommendation.entityType as int)) {
         case TimelineInteractionType.course:
           Course courseRecommended = Course.fromJson(ds.data() as Map<String, dynamic>);
           CoachTimelineItem recommendedCourseItem = createAnCoachTimelineItem(
               recommendation: recommendation,
-              contentDescription: courseRecommended.description,
+              contentDescription: courseRecommended.classes.length.toString(),
               contentName: courseRecommended.name,
               contentThumbnail: courseRecommended.image,
+              courseForNavigation: courseRecommended,
               contentType: recommendation.entityType);
+
           recommendationsAsTimelineItems.add(recommendedCourseItem);
           break;
         case TimelineInteractionType.classes:
@@ -234,6 +235,7 @@ class CoachRepository {
               contentDescription: movementRecommended.description,
               contentName: movementRecommended.name,
               contentThumbnail: movementRecommended.image,
+              movementForNavigation: movementRecommended,
               contentType: recommendation.entityType);
           recommendationsAsTimelineItems.add(recommendedMovementItem);
 
@@ -242,12 +244,9 @@ class CoachRepository {
           break;
         case TimelineInteractionType.sentVideo:
           break;
-        //   break;
         default:
       }
-    });
-
-    // }
+    }
     return recommendationsAsTimelineItems;
   }
 
@@ -256,6 +255,8 @@ class CoachRepository {
       String contentDescription,
       String contentName,
       String contentThumbnail,
+      Course courseForNavigation,
+      Movement movementForNavigation,
       num contentType}) {
     CoachTimelineItem newItem = CoachTimelineItem(
         coachId: recommendation.originUserId,
@@ -265,16 +266,10 @@ class CoachRepository {
         contentThumbnail: contentThumbnail,
         contentType: contentType,
         course: CourseTimelineSubmodel(id: '0', name: 'all', reference: null),
+        courseForNavigation: courseForNavigation ?? courseForNavigation,
+        movementForNavigation: movementForNavigation ?? movementForNavigation,
         id: '0',
         createdAt: recommendation.createdAt);
     return newItem;
   }
-  // for (SegmentSubmodel segment in classObj.segments) {
-  //   DocumentSnapshot ds = await segment.reference.get();
-  //   Segment retrievedSegment =
-  //       Segment.fromJson(ds.data() as Map<String, dynamic>);
-  //   segments.add(retrievedSegment);
-  // }
-  // return segments;
-  // }
 }
