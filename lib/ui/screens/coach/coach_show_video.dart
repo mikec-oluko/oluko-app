@@ -52,7 +52,7 @@ class _CoachShowVideoState extends State<CoachShowVideo> {
   Widget showVideoPlayer(String videoUrl) {
     List<Widget> widgets = [];
     if (_controller == null) {
-      //widgets.add(Center(child: CircularProgressIndicator()));
+      widgets.add(Center(child: CircularProgressIndicator()));
     }
     widgets.add(OlukoVideoPlayer(
         videoUrl: videoUrl,
