@@ -35,22 +35,20 @@ class _State extends State<ChallengesCard> {
           height: 115,
           width: 80,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+            borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
             color: OlukoColors.challengeLockedFilterColor,
-            image: new DecorationImage(
+            image: DecorationImage(
               fit: BoxFit.cover,
-              colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.2), BlendMode.dstATop),
-              image: new NetworkImage(widget.challenge.image),
+              colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.2), BlendMode.dstATop),
+              image: NetworkImage(widget.challenge.image),
             ),
           ),
         ),
-        widget.challenge.completedAt == null
-            ? Image.asset(
+        if (widget.challenge.completedAt == null) Image.asset(
                 iconToUse,
                 width: 60,
                 height: 60,
-              )
-            : SizedBox()
+              ) else const SizedBox()
       ],
     );
   }
