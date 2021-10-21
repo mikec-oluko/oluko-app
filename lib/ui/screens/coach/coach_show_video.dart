@@ -22,8 +22,7 @@ class _CoachShowVideoState extends State<CoachShowVideo> {
       appBar: AppBar(
         title: Text(
           widget.titleForContent,
-          style: OlukoFonts.olukoTitleFont(
-              customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+          style: OlukoFonts.olukoTitleFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
         ),
         elevation: 0.0,
         backgroundColor: OlukoColors.black,
@@ -43,9 +42,7 @@ class _CoachShowVideoState extends State<CoachShowVideo> {
         color: OlukoColors.black,
         child: Stack(
           children: [
-            Align(
-                alignment: Alignment.center,
-                child: showVideoPlayer(widget.videoUrl)),
+            Align(alignment: Alignment.center, child: showVideoPlayer(widget.videoUrl)),
           ],
         ),
       ),
@@ -55,26 +52,23 @@ class _CoachShowVideoState extends State<CoachShowVideo> {
   Widget showVideoPlayer(String videoUrl) {
     List<Widget> widgets = [];
     if (_controller == null) {
-      widgets.add(Center(child: CircularProgressIndicator()));
+      //widgets.add(Center(child: CircularProgressIndicator()));
     }
     widgets.add(OlukoVideoPlayer(
         videoUrl: videoUrl,
         autoPlay: false,
-        whenInitialized: (ChewieController chewieController) =>
-            this.setState(() {
+        whenInitialized: (ChewieController chewieController) => this.setState(() {
               _controller = chewieController;
             })));
 
     return ConstrainedBox(
         constraints: BoxConstraints(
-            maxHeight:
-                MediaQuery.of(context).orientation == Orientation.portrait
-                    ? ScreenUtils.height(context) / 4
-                    : ScreenUtils.height(context) / 1.5,
-            minHeight:
-                MediaQuery.of(context).orientation == Orientation.portrait
-                    ? ScreenUtils.height(context) / 4
-                    : ScreenUtils.height(context) / 1.5),
+            maxHeight: MediaQuery.of(context).orientation == Orientation.portrait
+                ? ScreenUtils.height(context) / 4
+                : ScreenUtils.height(context) / 1.5,
+            minHeight: MediaQuery.of(context).orientation == Orientation.portrait
+                ? ScreenUtils.height(context) / 4
+                : ScreenUtils.height(context) / 1.5),
         child: Container(height: 400, child: Stack(children: widgets)));
   }
 }
