@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/challenge.dart';
+import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/ui/components/recorder_view.dart';
 
 class ChallengesCard extends StatefulWidget {
   final Challenge challenge;
@@ -22,13 +24,17 @@ class _State extends State<ChallengesCard> {
           : lockedCard(context),
       Padding(
           padding: EdgeInsets.only(top: 13),
-          child: Stack(alignment: Alignment.center, children: [
-            Image.asset(
-              'assets/courses/green_circle.png',
-              scale: 6,
-            ),
-            Icon(Icons.mic, size: 23, color: OlukoColors.black)
-          ]))
+          child: GestureDetector(
+              onTap: () => Navigator.pushNamed(
+                  context, routeLabels[RouteEnum.userChallengeDetail],
+                  arguments: {'challenge': widget.challenge}),
+              child: Stack(alignment: Alignment.center, children: [
+                Image.asset(
+                  'assets/courses/green_circle.png',
+                  scale: 6,
+                ),
+                Icon(Icons.mic, size: 23, color: OlukoColors.black)
+              ])))
     ]);
   }
 

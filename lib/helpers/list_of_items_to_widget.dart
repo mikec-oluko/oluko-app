@@ -25,21 +25,30 @@ class TransformListOfItemsToWidget {
       ActualProfileRoute requestedFromRoute}) {
     List<Widget> contentForSection = [];
 
-    if (tansformationJourneyData != null && (assessmentVideoData == null && upcomingChallenges == null)) {
+    if (tansformationJourneyData != null &&
+        (assessmentVideoData == null && upcomingChallenges == null)) {
       tansformationJourneyData.forEach((contentUploaded) {
-        contentForSection.add(getImageAndVideoCard(transformationJourneyContent: contentUploaded, routeForContent: requestedFromRoute));
+        contentForSection.add(getImageAndVideoCard(
+            transformationJourneyContent: contentUploaded,
+            routeForContent: requestedFromRoute));
       });
     }
 
-    if (assessmentVideoData != null && (tansformationJourneyData == null && upcomingChallenges == null)) {
+    if (assessmentVideoData != null &&
+        (tansformationJourneyData == null && upcomingChallenges == null)) {
       assessmentVideoData.forEach((assessmentVideo) {
-        contentForSection.add(getImageAndVideoCard(taskSubmissionContent: assessmentVideo, routeForContent: requestedFromRoute));
+        contentForSection.add(getImageAndVideoCard(
+            taskSubmissionContent: assessmentVideo,
+            routeForContent: requestedFromRoute));
       });
     }
 
-    if (upcomingChallenges != null && (tansformationJourneyData == null && assessmentVideoData == null)) {
+    if (upcomingChallenges != null &&
+        (tansformationJourneyData == null && assessmentVideoData == null)) {
       upcomingChallenges.forEach((challenge) {
-        contentForSection.add(getImageAndVideoCard(upcomingChallengesContent: challenge, routeForContent: requestedFromRoute));
+        contentForSection.add(getImageAndVideoCard(
+            upcomingChallengesContent: challenge,
+            routeForContent: requestedFromRoute));
       });
     }
     return contentForSection.toList();
@@ -58,7 +67,10 @@ class TransformListOfItemsToWidget {
         padding: const EdgeInsets.all(5.0),
         child: ImageAndVideoContainer(
           backgroundImage: transformationJourneyContent.thumbnail,
-          isContentVideo: transformationJourneyContent.type == FileTypeEnum.video ? true : false,
+          isContentVideo:
+              transformationJourneyContent.type == FileTypeEnum.video
+                  ? true
+                  : false,
           videoUrl: transformationJourneyContent.file,
           displayOnViewNamed: routeForContent,
           originalContent: transformationJourneyContent,
@@ -69,9 +81,13 @@ class TransformListOfItemsToWidget {
       contentForReturn = Padding(
         padding: const EdgeInsets.all(5.0),
         child: ImageAndVideoContainer(
-          backgroundImage: taskSubmissionContent.video.thumbUrl != null ? taskSubmissionContent.video.thumbUrl : '',
+          backgroundImage: taskSubmissionContent.video.thumbUrl != null
+              ? taskSubmissionContent.video.thumbUrl
+              : '',
           isContentVideo: taskSubmissionContent.video != null,
-          videoUrl: taskSubmissionContent.video.url != null ? taskSubmissionContent.video.url : '',
+          videoUrl: taskSubmissionContent.video.url != null
+              ? taskSubmissionContent.video.url
+              : '',
           originalContent: taskSubmissionContent,
           displayOnViewNamed: routeForContent,
         ),
@@ -80,13 +96,17 @@ class TransformListOfItemsToWidget {
     if (upcomingChallengesContent != null) {
       contentForReturn = Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5),
-        child: ChallengesCard(challenge: upcomingChallengesContent, routeToGo: "/"),
+        child: ChallengesCard(
+          challenge: upcomingChallengesContent,
+          routeToGo: "/",
+        ),
       );
     }
     return contentForReturn;
   }
 
-  static List<Widget> coachChallengesAndSegments({List<Challenge> challenges, List<CoachSegmentContent> segments}) {
+  static List<Widget> coachChallengesAndSegments(
+      {List<Challenge> challenges, List<CoachSegmentContent> segments}) {
     List<Widget> contentForSection = [];
 
     if (challenges.length != 0) {
@@ -118,12 +138,14 @@ class TransformListOfItemsToWidget {
     Widget contentForReturn = SizedBox();
     contentForReturn = Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5),
-      child: GestureDetector(onTap: () {}, child: CoachTabSegmentCard(segment: segment)),
+      child: GestureDetector(
+          onTap: () {}, child: CoachTabSegmentCard(segment: segment)),
     );
     return contentForReturn;
   }
 
-  static List<Widget> getAssessmentCards({List<Task> tasks, List<TaskSubmission> tasksSubmitted}) {
+  static List<Widget> getAssessmentCards(
+      {List<Task> tasks, List<TaskSubmission> tasksSubmitted}) {
     List<Widget> contentForSection = [];
     tasks.forEach((task) {
       contentForSection.add(returnCardForAssessment(task, tasksSubmitted));
@@ -131,11 +153,16 @@ class TransformListOfItemsToWidget {
     return contentForSection;
   }
 
-  static Widget returnCardForAssessment(Task task, List<TaskSubmission> tasksSubmitted) {
-    return Padding(padding: const EdgeInsets.all(5.0), child: CoachAssessmentCard(task: task, assessmentVideos: tasksSubmitted));
+  static Widget returnCardForAssessment(
+      Task task, List<TaskSubmission> tasksSubmitted) {
+    return Padding(
+        padding: const EdgeInsets.all(5.0),
+        child:
+            CoachAssessmentCard(task: task, assessmentVideos: tasksSubmitted));
   }
 
-  static List<InfoForSegments> segments(List<CourseEnrollment> courseEnrollments) {
+  static List<InfoForSegments> segments(
+      List<CourseEnrollment> courseEnrollments) {
     List<InfoForSegments> listOfSegments = [];
     String className;
     String classImage;
@@ -144,7 +171,8 @@ class TransformListOfItemsToWidget {
       courseEnrollment.classes.forEach((classToCheck) {
         className = classToCheck.name;
         classImage = classToCheck.image;
-        InfoForSegments infoForSegmentElement = InfoForSegments(classImage: classImage, className: className, segments: []);
+        InfoForSegments infoForSegmentElement = InfoForSegments(
+            classImage: classImage, className: className, segments: []);
         classToCheck.segments.forEach((segment) {
           infoForSegmentElement.segments.add(segment);
         });
@@ -154,7 +182,8 @@ class TransformListOfItemsToWidget {
     return listOfSegments;
   }
 
-  static List<CoachSegmentContent> createSegmentContentInforamtion(List<InfoForSegments> segments) {
+  static List<CoachSegmentContent> createSegmentContentInforamtion(
+      List<InfoForSegments> segments) {
     List<CoachSegmentContent> coachSegmentContent = [];
 
     segments.forEach((segment) {

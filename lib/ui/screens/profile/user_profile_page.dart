@@ -1,6 +1,9 @@
+
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/challenge_bloc.dart';
 import 'package:oluko_app/blocs/course/course_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
@@ -473,16 +476,16 @@ class _UserProfilePageState extends State<UserProfilePage> {
                             : const SizedBox();
                       },
                     ),
-                    BlocBuilder<CourseEnrollmentBloc, CourseEnrollmentState>(
+                    BlocBuilder<ChallengeBloc, ChallengeState>(
                       builder: (context, state) {
-                        if (state is GetCourseEnrollmentChallenge) {
+                        if (state is GetChallengeSuccess) {
                           if (_activeChallenges.length == 0) {
                             _activeChallenges = state.challenges;
                           }
                         }
-                        if (state is CourseEnrollmentListSuccess) {
+                        /*if (state is CourseEnrollmentListSuccess) {
                           _courseEnrollmentList = state.courseEnrollmentList;
-                        }
+                        }*/
                         return _activeChallenges.length != 0
                             ? buildChallengeSection(
                                 context: context,
@@ -518,8 +521,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
       BlocProvider.of<CourseBloc>(context).getUserEnrolled(userRequested.id);
       BlocProvider.of<TransformationJourneyBloc>(context)
           .getContentByUserId(userRequested.id);
-      BlocProvider.of<CourseEnrollmentBloc>(context)
-          .getChallengesForUser(userRequested.id);
+      BlocProvider.of<ChallengeBloc>(context)
+          .get(userRequested.id);
       BlocProvider.of<UserStatisticsBloc>(context)
           .getUserStatistics(userRequested.id);
     }

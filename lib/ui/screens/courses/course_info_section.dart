@@ -30,7 +30,9 @@ class _State extends State<CourseInfoSection> {
             Row(children: [
               peopleSection(),
               verticalDivider(),
-              audioSection(context)
+              widget.audioMessageQty != null
+                  ? audioSection(context)
+                  : SizedBox(),
             ])
           ])),
     ]);
@@ -84,7 +86,7 @@ class _State extends State<CourseInfoSection> {
                   fontSize: 10,
                   fontWeight: FontWeight.w300,
                   color: Colors.white),
-            )
+            ),
           ]),
         ]));
   }

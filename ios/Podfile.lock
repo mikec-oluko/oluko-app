@@ -465,6 +465,8 @@ PODS:
     - FirebaseCore (~> 8.0)
     - GTMSessionFetcher/Core (~> 1.5)
   - Flutter (1.0.0)
+  - flutter_audio_recorder2 (0.0.1):
+    - Flutter
   - flutter_facebook_auth (3.5.1):
     - FBSDKCoreKit (~> 11.2.0)
     - FBSDKLoginKit (~> 11.2.0)
@@ -477,10 +479,6 @@ PODS:
     - Mantle
     - SDWebImage
     - SDWebImageWebPCoder
-  - flutter_sound (8.3.9):
-    - Flutter
-    - mobile-ffmpeg-audio (= 4.4.LTS)
-    - tau_core (= 8.3.9)
   - google_sign_in (0.0.1):
     - Flutter
     - GoogleSignIn (~> 5.0)
@@ -569,7 +567,6 @@ PODS:
   - Mantle (2.1.6):
     - Mantle/extobjc (= 2.1.6)
   - Mantle/extobjc (2.1.6)
-  - mobile-ffmpeg-audio (4.4.LTS)
   - mobile-ffmpeg-min-gpl (4.4)
   - nanopb (2.30908.0):
     - nanopb/decode (= 2.30908.0)
@@ -598,7 +595,6 @@ PODS:
     - Sentry (~> 7.1.3)
   - shared_preferences (0.0.1):
     - Flutter
-  - tau_core (8.3.9)
   - video_player (0.0.1):
     - Flutter
   - wakelock (0.0.1):
@@ -616,10 +612,10 @@ DEPENDENCIES:
   - firebase_database (from `.symlinks/plugins/firebase_database/ios`)
   - firebase_storage (from `.symlinks/plugins/firebase_storage/ios`)
   - Flutter (from `Flutter`)
+  - flutter_audio_recorder2 (from `.symlinks/plugins/flutter_audio_recorder2/ios`)
   - flutter_facebook_auth (from `.symlinks/plugins/flutter_facebook_auth/ios`)
   - flutter_ffmpeg/min-gpl (from `.symlinks/plugins/flutter_ffmpeg/ios`)
   - flutter_image_compress (from `.symlinks/plugins/flutter_image_compress/ios`)
-  - flutter_sound (from `.symlinks/plugins/flutter_sound/ios`)
   - google_sign_in (from `.symlinks/plugins/google_sign_in/ios`)
   - image_picker (from `.symlinks/plugins/image_picker/ios`)
   - in_app_purchase_ios (from `.symlinks/plugins/in_app_purchase_ios/ios`)
@@ -661,14 +657,12 @@ SPEC REPOS:
     - leveldb-library
     - libwebp
     - Mantle
-    - mobile-ffmpeg-audio
     - mobile-ffmpeg-min-gpl
     - nanopb
     - PromisesObjC
     - SDWebImage
     - SDWebImageWebPCoder
     - Sentry
-    - tau_core
 
 EXTERNAL SOURCES:
   audioplayers:
@@ -687,14 +681,14 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_storage/ios"
   Flutter:
     :path: Flutter
+  flutter_audio_recorder2:
+    :path: ".symlinks/plugins/flutter_audio_recorder2/ios"
   flutter_facebook_auth:
     :path: ".symlinks/plugins/flutter_facebook_auth/ios"
   flutter_ffmpeg:
     :path: ".symlinks/plugins/flutter_ffmpeg/ios"
   flutter_image_compress:
     :path: ".symlinks/plugins/flutter_image_compress/ios"
-  flutter_sound:
-    :path: ".symlinks/plugins/flutter_sound/ios"
   google_sign_in:
     :path: ".symlinks/plugins/google_sign_in/ios"
   image_picker:
@@ -743,10 +737,10 @@ SPEC CHECKSUMS:
   FirebaseInstallations: 2563cb18a723ef9c6ef18318a49519b75dce613c
   FirebaseStorage: 2e6e58fe31fb0061fdce3f156d0ebc964e9de6ba
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
+  flutter_audio_recorder2: 0eda9d0c791d9d093e6f5f07df414d34edec4eda
   flutter_facebook_auth: 870a465b1afff3ace7a592bd44665d921991726c
   flutter_ffmpeg: 3ec3912c74649851e6c3b1885511eef78142ac4f
   flutter_image_compress: fd2b476345226e1a10ea352fa306af95704642c1
-  flutter_sound: 91c069f33d811a4c98b9aa7cec9cd1dbfd1786d9
   google_sign_in: c5cecea71f3be43282263550556e311c4cc03582
   GoogleAppMeasurement: 2be61ce546ad074dbe4dd545f222ac6033bb1d9e
   GoogleDataTransport: 85fd18ff3019bb85d3f2c551d04c481dedf71fc9
@@ -761,7 +755,6 @@ SPEC CHECKSUMS:
   leveldb-library: 50c7b45cbd7bf543c81a468fe557a16ae3db8729
   libwebp: 98a37e597e40bfdb4c911fc98f2c53d0b12d05fc
   Mantle: 4c0ed6ce47c96eccc4dc3bb071deb3def0e2c3be
-  mobile-ffmpeg-audio: 1e0a053f8a6de57114e50ff48b3a85ff1c60f902
   mobile-ffmpeg-min-gpl: 123f47d1bd9ec498688627a5be2621bcd6e88a01
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   package_info_plus: 6c92f08e1f853dc01228d6f553146438dafcd14e
@@ -772,12 +765,11 @@ SPEC CHECKSUMS:
   SDWebImageWebPCoder: f93010f3f6c031e2f8fb3081ca4ee6966c539815
   Sentry: 1d3eb1a25f8c5333c88dd5603904a6d461cd9fcf
   sentry_flutter: f20d4f199442900fbdab2b8496f1d2091d8b94d9
-  shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
-  tau_core: f7bbd1c6a632f52c2fa7c14feea385ab966b1e45
+  shared_preferences: 5033afbb22d372e15aff8ff766df9021b845f273
   video_player: 9cc823b1d9da7e8427ee591e8438bfbcde500e6e
   wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
   webview_flutter: d2b4d6c66968ad042ad94cbb791f5b72b4678a96
 
 PODFILE CHECKSUM: 78587762aea2f330de8ce0d344d01ad0370d82a5
 
-COCOAPODS: 1.10.2
+COCOAPODS: 1.11.2

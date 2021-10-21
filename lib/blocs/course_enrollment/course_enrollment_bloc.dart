@@ -23,6 +23,11 @@ class GetEnrollmentSuccess extends CourseEnrollmentState {
   GetEnrollmentSuccess({this.courseEnrollment});
 }
 
+class GetEnrollmentByIdSuccess extends CourseEnrollmentState {
+  CourseEnrollment courseEnrollment;
+  GetEnrollmentByIdSuccess({this.courseEnrollment});
+}
+
 class CreateEnrollmentSuccess extends CourseEnrollmentState {
   CourseEnrollment courseEnrollment;
   CreateEnrollmentSuccess({this.courseEnrollment});
@@ -32,12 +37,6 @@ class Failure extends CourseEnrollmentState {
   final dynamic exception;
 
   Failure({this.exception});
-}
-
-class GetCourseEnrollmentChallenge extends CourseEnrollmentState {
-  final List<Challenge> challenges;
-
-  GetCourseEnrollmentChallenge({this.challenges});
 }
 
 class CourseEnrollmentListSuccess extends CourseEnrollmentState {
@@ -79,6 +78,21 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
     }
   }
 
+  void getById(String id) async {
+    try {
+      CourseEnrollment courseEnrollment =
+          await CourseEnrollmentRepository.getById(id);
+      emit(GetEnrollmentByIdSuccess(courseEnrollment: courseEnrollment));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: exception));
+      rethrow;
+    }
+  }
+
   void markSegmentAsCompleated(CourseEnrollment courseEnrollment,
       int segmentIndex, int classIndex) async {
     try {
@@ -95,23 +109,7 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
     }
   }
 
-  void getChallengesForUser(String userId) async {
-    try {
-      List<Challenge> courseEnrollmentsChallenges =
-          await CourseEnrollmentRepository().getUserChallengesByUserId(userId);
-      emit(GetCourseEnrollmentChallenge(
-          challenges: courseEnrollmentsChallenges));
-    } catch (exception, stackTrace) {
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
-      );
-      emit(Failure(exception: exception));
-      rethrow;
-    }
-  }
-
-  void setCourseEnrollmentChallengesDefaultValue() {
+  /*void setCourseEnrollmentChallengesDefaultValue() {
     emit(GetCourseEnrollmentChallenge(challenges: []));
-  }
+  }*/
 }
