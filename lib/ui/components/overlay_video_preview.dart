@@ -72,8 +72,7 @@ class _OverlayVideoPreviewState extends State<OverlayVideoPreview> {
                 ? IconButton(
                     icon:
                         Icon(Icons.chevron_left, size: 35, color: Colors.white),
-                    onPressed: () => Navigator.pushNamed(
-                        context, routeLabels[RouteEnum.root]))
+                    onPressed: () => Navigator.pop(context))
                 : SizedBox(),
             Expanded(child: SizedBox()),
             widget.showShareButton
