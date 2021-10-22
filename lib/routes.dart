@@ -530,8 +530,9 @@ class Routes {
           BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc)
         ];
-        final Map<String, Course> argumentsToAdd = arguments as Map<String, Course>;
-        newRouteView = CourseMarketing(course: argumentsToAdd['course']);
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        newRouteView =
+            CourseMarketing(course: argumentsToAdd['course'] as Course, fromCoach: argumentsToAdd['fromCoach'] as bool);
         break;
       case RouteEnum.enrolledClass:
         providers = [

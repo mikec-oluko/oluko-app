@@ -101,7 +101,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Singl
       case TimelineInteractionType.course:
         return GestureDetector(
           onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
-              arguments: {'course': content.courseForNavigation}),
+              arguments: {'course': content.courseForNavigation, 'fromCoach': true}),
           child: Container(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -167,39 +167,31 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Singl
           ),
         );
       case TimelineInteractionType.mentoredVideo:
-        return GestureDetector(
-          onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.mentoredVideos],
-              arguments: {'coachAnnotation': content.mentoredVideosForNavigation}),
-          child: Container(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                dateForContent,
-                CoachTimelineVideoContent(
-                    videoThumbnail: content.contentThumbnail,
-                    videoTitle: content.contentName ?? OlukoLocalizations.get(context, 'mentoredVideo'),
-                    date: content.createdAt.toDate(),
-                    fileType: CoachFileTypeEnum.mentoredVideo),
-              ],
-            ),
+        return Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              dateForContent,
+              CoachTimelineVideoContent(
+                  videoThumbnail: content.contentThumbnail,
+                  videoTitle: content.contentName ?? OlukoLocalizations.get(context, 'mentoredVideo'),
+                  date: content.createdAt.toDate(),
+                  fileType: CoachFileTypeEnum.mentoredVideo),
+            ],
           ),
         );
       case TimelineInteractionType.sentVideo:
-        return GestureDetector(
-          onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.sentVideos],
-              arguments: {'sentVideosContent': content.sentVideosForNavigation}),
-          child: Container(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                dateForContent,
-                CoachTimelineVideoContent(
-                    videoThumbnail: content.contentThumbnail,
-                    videoTitle: content.contentName ?? OlukoLocalizations.get(context, 'sentVideo'),
-                    date: content.createdAt.toDate(),
-                    fileType: CoachFileTypeEnum.sentVideo),
-              ],
-            ),
+        return Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              dateForContent,
+              CoachTimelineVideoContent(
+                  videoThumbnail: content.contentThumbnail,
+                  videoTitle: content.contentName ?? OlukoLocalizations.get(context, 'sentVideo'),
+                  date: content.createdAt.toDate(),
+                  fileType: CoachFileTypeEnum.sentVideo),
+            ],
           ),
         );
       //   break;

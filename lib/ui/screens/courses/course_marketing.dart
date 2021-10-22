@@ -32,8 +32,9 @@ import 'package:oluko_app/utils/time_converter.dart';
 
 class CourseMarketing extends StatefulWidget {
   final Course course;
+  final bool fromCoach;
 
-  CourseMarketing({Key key, this.course}) : super(key: key);
+  CourseMarketing({Key key, this.course, this.fromCoach = false}) : super(key: key);
 
   get progress => null;
 
@@ -90,7 +91,8 @@ class _CourseMarketingState extends State<CourseMarketing> {
         return BlocBuilder<CourseEnrollmentBloc, CourseEnrollmentState>(builder: (context, enrollmentState) {
           return BlocBuilder<ClassBloc, ClassState>(builder: (context, classState) {
             if ((enrollmentState is GetEnrollmentSuccess) && classState is GetSuccess) {
-              _classes = classState.classes; //TODO: this is receiving old classes from another (previously opened) course
+              _classes =
+                  classState.classes; //TODO: this is receiving old classes from another (previously opened) course
               return Form(
                   key: _formKey,
                   child: Scaffold(
@@ -107,6 +109,11 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                     showBackButton: true,
                                     showHeartButton: true,
                                     showShareButton: true,
+                                    onBackPressed: widget.fromCoach
+                                        ? () {
+                                            Navigator.pop(context);
+                                          }
+                                        : null,
                                   ),
                                 ),
                                 showEnrollButton(enrollmentState.courseEnrollment, context),
@@ -124,9 +131,12 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                             child: Text(
                                               //TODO: change weeks number
                                               TimeConverter.toCourseDuration(
-                                                  6, widget.course.classes != null ? widget.course.classes.length : 0, context),
+                                                  6,
+                                                  widget.course.classes != null ? widget.course.classes.length : 0,
+                                                  context),
                                               style: OlukoFonts.olukoBigFont(
-                                                  custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+                                                  custoFontWeight: FontWeight.normal,
+                                                  customColor: OlukoColors.grayColor),
                                             ),
                                           ),
                                           buildStatistics(),
@@ -135,7 +145,8 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                             child: Text(
                                               widget.course.description ?? '',
                                               style: OlukoFonts.olukoBigFont(
-                                                  custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+                                                  custoFontWeight: FontWeight.normal,
+                                                  customColor: OlukoColors.grayColor),
                                             ),
                                           ),
                                           Padding(
@@ -197,7 +208,8 @@ class _CourseMarketingState extends State<CourseMarketing> {
         return Padding(
             padding: EdgeInsets.symmetric(vertical: 15),
             child: StatisticChart(
-              courseStatistics: CourseStatistics(courseId: widget.course.id, takingUp: state.users.length, doing: state.users.length),
+              courseStatistics:
+                  CourseStatistics(courseId: widget.course.id, takingUp: state.users.length, doing: state.users.length),
               course: widget.course,
             ));
       }

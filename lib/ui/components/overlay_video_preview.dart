@@ -11,6 +11,7 @@ class OverlayVideoPreview extends StatefulWidget {
   final bool showBackButton;
   final bool showShareButton;
   final bool showHeartButton;
+  final Function() onBackPressed;
   //final Function() onSharePressed;
   //final Function() onHeartPressed;
   final List<Widget> bottomWidgets;
@@ -22,6 +23,7 @@ class OverlayVideoPreview extends StatefulWidget {
       this.showHeartButton = false,
       this.showShareButton = false,
       this.bottomWidgets,
+      this.onBackPressed,
       Key key})
       : super(key: key);
 
@@ -40,9 +42,7 @@ class _OverlayVideoPreviewState extends State<OverlayVideoPreview> {
   @override
   Widget build(BuildContext context) {
     return widget.bottomWidgets != null
-        ? Stack(
-            alignment: Alignment.bottomLeft,
-            children: [videoWithButtons()] + widget.bottomWidgets)
+        ? Stack(alignment: Alignment.bottomLeft, children: [videoWithButtons()] + widget.bottomWidgets)
         : videoWithButtons();
   }
 
@@ -70,10 +70,10 @@ class _OverlayVideoPreviewState extends State<OverlayVideoPreview> {
           children: [
             widget.showBackButton
                 ? IconButton(
-                    icon:
-                        Icon(Icons.chevron_left, size: 35, color: Colors.white),
-                    onPressed: () => Navigator.pushNamed(
-                        context, routeLabels[RouteEnum.root]))
+                    icon: Icon(Icons.chevron_left, size: 35, color: Colors.white),
+                    onPressed: () => widget.onBackPressed != null
+                        ? widget.onBackPressed()
+                        : Navigator.pushNamed(context, routeLabels[RouteEnum.root]))
                 : SizedBox(),
             Expanded(child: SizedBox()),
             widget.showShareButton
@@ -114,8 +114,7 @@ class _OverlayVideoPreviewState extends State<OverlayVideoPreview> {
               onTap: () => Navigator.of(context).push(
                 PageRouteBuilder(
                   opaque: false,
-                  pageBuilder: (_, __, ___) =>
-                      VideoOverlay(videoUrl: widget.video),
+                  pageBuilder: (_, __, ___) => VideoOverlay(videoUrl: widget.video),
                 ),
               ),
               child: Align(
