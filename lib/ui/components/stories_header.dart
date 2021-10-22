@@ -28,11 +28,16 @@ class _State extends State<StoriesHeader> {
               scrollDirection: Axis.horizontal,
               child: Row(
                   children: storyState.usersStories.map((userStory) {
-                return GestureDetector(onTap:() => {Navigator.pushNamed(context,
-                              routeLabels[RouteEnum.story],
-                              arguments: {'userStories': userStory, 'userId': widget.userId})}, child: Container(child: StoriesItem(stories: userStory.stories, imageUrl: userStory.avatar_thumbnail, maxRadius: 35, name: userStory.name), margin: EdgeInsets.only(top: 5),));
+                return GestureDetector(
+                    onTap: () => {
+                          Navigator.pushNamed(context, routeLabels[RouteEnum.story], arguments: {'userStories': userStory, 'userId': widget.userId})
+                        },
+                    child: Container(
+                      child: StoriesItem(stories: userStory.stories, imageUrl: userStory.avatar_thumbnail, maxRadius: 35, name: userStory.name),
+                      margin: EdgeInsets.only(top: 5),
+                    ));
               }).toList())),
-        ); 
+        );
       } else {
         return const SizedBox();
       }

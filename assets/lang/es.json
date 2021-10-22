@@ -124,6 +124,7 @@
     "assessment": "Evaluación",
     "private": "Privado",
     "done": "Hecho",
+    "doneThis": "hicieron este",
     "skip": "Saltar",
     "makeThisPublic": "Haga esto público",
     "retake": "Repetir",
@@ -146,6 +147,7 @@
     "inThis": "en este",
     "challenge": "Desafío",
     "challenges": "Desafíos",
+    "challengeTitle": "DESAFIO! ",
     "movesInThisClass": "Movimientos en esta clase",
     "viewDetails": "Ver Detalles",
     "noContent": "No hay contenido para mostrar",
@@ -227,5 +229,7 @@
     "coachRequest": "te solicitó grabar este segmento",
     "enterEmail": "Por favor ingrese email.",
     "hasMessage": "Tiene un mensaje para ti",
-    "movement": "Movimiento"
+    "movement": "Movimiento",
+    "personalRecord": "Record Personal",
+    "noPersonalRecords": "Sin Records Personales"
 }

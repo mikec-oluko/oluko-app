@@ -4,20 +4,24 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/models/dto/story_dto.dart';
 import 'package:oluko_app/models/dto/user_stories.dart';
 import 'package:oluko_app/models/segment_submission.dart';
+import 'package:oluko_app/models/submodels/enrollment_segment.dart';
 
 class StoryRepository {
   StoryRepository();
 
-  static Future<Story> createStory(SegmentSubmission segmentSubmission) async {
-    final DocumentReference docRef = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('users')
-        .doc(segmentSubmission.userId)
-        .collection('stories')
-        .doc();
-    final Story story =
-        Story(content_type: 'video', url: segmentSubmission.video.url, description: 'description', createdBy: segmentSubmission.userId);
+  static Future<Story> createStoryWithVideo(SegmentSubmission segmentSubmission) async {
+    final DocumentReference docRef =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users').doc(segmentSubmission.userId).collection('stories').doc();
+    final Story story = Story(content_type: 'video', url: segmentSubmission.video.url, description: 'description', createdBy: segmentSubmission.userId);
+    story.createdAt = Timestamp.now();
+    story.id = docRef.id;
+    docRef.set(story.toJson());
+    return story;
+  }
+
+  static Future<Story> createStoryForChallenge(EnrollmentSegment enrollmentSegment, String userId) async {
+    final DocumentReference docRef = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users').doc(userId).collection('stories').doc();
+    final Story story = Story(content_type: 'image', url: enrollmentSegment.challengeImage, description: enrollmentSegment.name, createdBy: userId);
     story.createdAt = Timestamp.now();
     story.id = docRef.id;
     docRef.set(story.toJson());
@@ -25,17 +29,12 @@ class StoryRepository {
   }
 
   static Future<void> setStoryAsSeen(String userId, String userStoryId, String storyId) async {
-    final docRef = FirebaseDatabase.instance
-        .reference()
-        .child('${GlobalConfiguration().getValue('projectId')}${'/users/$userId/userStories/$userStoryId/stories/$storyId'}');
+    final docRef = FirebaseDatabase.instance.reference().child('${GlobalConfiguration().getValue('projectId')}${'/users/$userId/userStories/$userStoryId/stories/$storyId'}');
     docRef.update({'seen': true});
   }
 
   Future<dynamic> getAll(String userId) async {
-    final DataSnapshot snapshot = await FirebaseDatabase.instance
-        .reference()
-        .child('${GlobalConfiguration().getValue('projectId')}${'/users/$userId/userStories'}')
-        .get();
+    final DataSnapshot snapshot = await FirebaseDatabase.instance.reference().child('${GlobalConfiguration().getValue('projectId')}${'/users/$userId/userStories'}').get();
     final List<UserStories> returnList = [];
     if (snapshot.value == null) {
       return returnList;
@@ -59,5 +58,16 @@ class StoryRepository {
       return 0;
     });
     return returnList;
+  }
+
+  static Future<List<Story>> getByUserId(String userId) async {
+    final QuerySnapshot docRef = await FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users').doc(userId).collection('stories').get();
+
+    List<Story> response = [];
+    docRef.docs.forEach((doc) {
+      final Map<String, dynamic> element = doc.data() as Map<String, dynamic>;
+      response.add(Story.fromJson(element));
+    });
+    return response;
   }
 }

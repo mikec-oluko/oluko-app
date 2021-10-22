@@ -58,27 +58,26 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
       // controls = OlukoMaterialControls();
       controls = MaterialControls();
     } else if (Platform.isIOS) {
-      controls = CupertinoControls(backgroundColor: Colors.grey[100].withOpacity(0.2), iconColor: Colors.black);
+      controls = CupertinoControls(backgroundColor: Colors.grey[200].withOpacity(0.3), iconColor: Colors.black);
     }
     if (_controller != null) {
-      _controller
-        ..initialize().then((value) {
-          chewieController = ChewieController(
-              customControls: controls,
-              videoPlayerController: _controller,
-              autoPlay: widget.autoPlay,
-              showControls: widget.showControls,
-              placeholder: Center(child: CircularProgressIndicator()),
-              deviceOrientationsAfterFullScreen: [DeviceOrientation.portraitUp],
-              cupertinoProgressColors: ChewieProgressColors(
-                  handleColor: Colors.black, backgroundColor: Colors.black, bufferedColor: Colors.black, playedColor: Colors.black),
-              materialProgressColors: ChewieProgressColors(
-                  handleColor: Colors.black, backgroundColor: Colors.black, bufferedColor: Colors.black, playedColor: Colors.black));
-          if (widget.whenInitialized != null) {
-            widget.whenInitialized(chewieController);
-          }
-          setState(() {});
-        });
+      _controller.initialize().then((value) {
+        chewieController = ChewieController(
+            customControls: controls,
+            videoPlayerController: _controller,
+            autoPlay: widget.autoPlay,
+            showControls: widget.showControls,
+            placeholder: Center(child: CircularProgressIndicator()),
+            deviceOrientationsAfterFullScreen: [DeviceOrientation.portraitUp],
+            cupertinoProgressColors: ChewieProgressColors(
+                handleColor: Colors.black, backgroundColor: Colors.black, bufferedColor: Colors.black, playedColor: Colors.black),
+            materialProgressColors: ChewieProgressColors(
+                handleColor: Colors.black, backgroundColor: Colors.black, bufferedColor: Colors.black, playedColor: Colors.black));
+        if (widget.whenInitialized != null) {
+          widget.whenInitialized(chewieController);
+        }
+        setState(() {});
+      });
     }
   }
 
