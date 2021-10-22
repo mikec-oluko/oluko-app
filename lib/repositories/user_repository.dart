@@ -40,6 +40,9 @@ class UserRepository {
   }
 
   Future<UserResponse> getById(String id) async {
+    if (id == null) {
+      return null;
+    }
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))

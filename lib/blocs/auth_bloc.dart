@@ -147,8 +147,9 @@ class AuthBloc extends Cubit<AuthState> {
   Future<void> loginWithFacebook(BuildContext context) async {
     UserCredential result = await _authRepository.signInWithFacebook();
     User firebaseUser = result.user;
-    UserResponse user = UserResponse();
-    List<String> splitDisplayName = firebaseUser.displayName.split(' ');
+    UserResponse user = await UserRepository().get(firebaseUser.email);
+
+    /*List<String> splitDisplayName = firebaseUser.displayName.split(' ');
     user.firstName = splitDisplayName[0];
     user.email = firebaseUser.email;
     user.firebaseId = firebaseUser.uid;
@@ -157,7 +158,27 @@ class AuthBloc extends Cubit<AuthState> {
     }
     AuthRepository().storeLoginData(user);
     navigateToNextScreen(context, firebaseUser.uid);
+    emit(AuthSuccess(user: user, firebaseUser: firebaseUser));*/
+
+    if (!firebaseUser.emailVerified) {
+      //TODO: trigger to send another email
+      FirebaseAuth.instance.signOut();
+      AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'pleaseCheckYourEmail'));
+      emit(AuthGuest());
+      return;
+    }
+
+    //If there is no associated user for this account
+    if (user == null) {
+      FirebaseAuth.instance.signOut();
+      AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'userForThisAccountNotFoundPleaseSignUp'));
+      emit(AuthGuest());
+      return;
+    }
+
+    AuthRepository().storeLoginData(user);
     emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
+    navigateToNextScreen(context, firebaseUser.uid);
   }
 
   Future<UserResponse> retrieveLoginData() {

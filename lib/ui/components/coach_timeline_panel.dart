@@ -165,7 +165,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Singl
               dateForContent,
               CoachTimelineVideoContent(
                   videoThumbnail: content.contentThumbnail,
-                  videoTitle: content.contentName,
+                  videoTitle: content.contentName ?? OlukoLocalizations.get(context, 'mentoredVideo'),
                   date: content.createdAt.toDate(),
                   fileType: CoachFileTypeEnum.mentoredVideo),
             ],
@@ -179,7 +179,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Singl
               dateForContent,
               CoachTimelineVideoContent(
                   videoThumbnail: content.contentThumbnail,
-                  videoTitle: content.contentName,
+                  videoTitle: content.contentName ?? OlukoLocalizations.get(context, 'sentVideo'),
                   date: content.createdAt.toDate(),
                   fileType: CoachFileTypeEnum.sentVideo),
             ],

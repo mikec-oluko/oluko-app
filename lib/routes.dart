@@ -11,10 +11,13 @@ import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
 import 'package:oluko_app/blocs/course/course_home_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
+import 'package:oluko_app/blocs/done_challenge_users_bloc.dart';
 import 'package:oluko_app/blocs/friends/chat_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/message_bloc.dart';
 import 'package:oluko_app/blocs/gallery_video_bloc.dart';
+import 'package:oluko_app/blocs/personal_record_bloc.dart';
+import 'package:oluko_app/blocs/segment_detail_content_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
@@ -91,7 +94,6 @@ import 'package:oluko_app/ui/screens/courses/segment_detail.dart';
 import 'blocs/coach/coach_assignment_bloc.dart';
 import 'blocs/coach/coach_interaction_timeline_bloc.dart';
 import 'blocs/coach/coach_mentored_videos_bloc.dart';
-import 'blocs/coach/coach_profile_bloc.dart';
 import 'blocs/coach/coach_sent_videos_bloc.dart';
 import 'blocs/movement_info_bloc.dart';
 import 'blocs/friends/hi_five_send_bloc.dart';
@@ -257,7 +259,6 @@ class Routes {
   final StoryBloc _storyBloc = StoryBloc();
   final StoryListBloc _storyListBloc = StoryListBloc();
   final CoachAssignmentBloc _coachAssignmentBloc = CoachAssignmentBloc();
-  final CoachProfileBloc _coachProfileBloc = CoachProfileBloc();
   final CoachSentVideosBloc _coachSentVideosBloc = CoachSentVideosBloc();
   final CoachMentoredVideosBloc _coachMentoredVideosBloc = CoachMentoredVideosBloc();
   final CoachTimelineItemsBloc _coachTimelineItemsBloc = CoachTimelineItemsBloc();
@@ -268,6 +269,9 @@ class Routes {
   final HiFiveBloc _hiFiveBloc = HiFiveBloc();
   final CoachRequestBloc _coachRequestBloc = CoachRequestBloc();
   final CoachUserBloc _coachUserBloc = CoachUserBloc();
+  final SegmentDetailContentBloc _segmentDetailContentBloc = SegmentDetailContentBloc();
+  final DoneChallengeUsersBloc _doneChallengeUsersBloc = DoneChallengeUsersBloc();
+  final PersonalRecordBloc _personalRecordBloc = PersonalRecordBloc();
   final CoachAudioBloc _coachAudioBloc = CoachAudioBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
@@ -306,7 +310,7 @@ class Routes {
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
           BlocProvider<StoryListBloc>.value(value: _storyListBloc),
           BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
-          BlocProvider<CoachProfileBloc>.value(value: _coachProfileBloc),
+          BlocProvider<CoachUserBloc>.value(value: _coachUserBloc),
           BlocProvider<CoachSentVideosBloc>.value(value: _coachSentVideosBloc),
           BlocProvider<CoachMentoredVideosBloc>.value(value: _coachMentoredVideosBloc),
           BlocProvider<CoachTimelineItemsBloc>.value(value: _coachTimelineItemsBloc),
@@ -475,6 +479,10 @@ class Routes {
           BlocProvider<MovementBloc>.value(value: _movementBloc),
           BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
           BlocProvider<CoachUserBloc>.value(value: _coachUserBloc),
+          BlocProvider<SegmentDetailContentBloc>.value(value: _segmentDetailContentBloc),
+          BlocProvider<DoneChallengeUsersBloc>.value(value: _doneChallengeUsersBloc),
+          BlocProvider<PersonalRecordBloc>.value(value: _personalRecordBloc),
+          BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SegmentDetail(
@@ -548,6 +556,7 @@ class Routes {
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
           BlocProvider<MovementBloc>.value(value: _movementBloc),
           BlocProvider<CoachAudioBloc>.value(value: _coachAudioBloc),
+          BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = InsideClass(
@@ -676,7 +685,7 @@ class Routes {
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
           BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
           BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
-          BlocProvider<CoachProfileBloc>.value(value: _coachProfileBloc),
+          BlocProvider<CoachUserBloc>.value(value: _coachUserBloc),
           BlocProvider<CoachSentVideosBloc>.value(value: _coachSentVideosBloc),
           BlocProvider<CoachMentoredVideosBloc>.value(value: _coachMentoredVideosBloc),
           BlocProvider<CoachTimelineItemsBloc>.value(value: _coachTimelineItemsBloc),
@@ -695,7 +704,7 @@ class Routes {
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
           BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
           BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
-          BlocProvider<CoachProfileBloc>.value(value: _coachProfileBloc),
+          BlocProvider<CoachUserBloc>.value(value: _coachUserBloc),
           BlocProvider<CoachSentVideosBloc>.value(value: _coachSentVideosBloc),
           BlocProvider<CoachMentoredVideosBloc>.value(value: _coachMentoredVideosBloc),
           BlocProvider<CoachTimelineItemsBloc>.value(value: _coachTimelineItemsBloc),
