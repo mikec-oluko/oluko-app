@@ -71,9 +71,7 @@ class _OverlayVideoPreviewState extends State<OverlayVideoPreview> {
             widget.showBackButton
                 ? IconButton(
                     icon: Icon(Icons.chevron_left, size: 35, color: Colors.white),
-                    onPressed: () => widget.onBackPressed != null
-                        ? widget.onBackPressed()
-                        : Navigator.pushNamed(context, routeLabels[RouteEnum.root]))
+                    onPressed: () => widget.onBackPressed != null ? widget.onBackPressed() : Navigator.pop(context))
                 : SizedBox(),
             Expanded(child: SizedBox()),
             widget.showShareButton
