@@ -203,7 +203,9 @@ class _CourseMarketingState extends State<CourseMarketing> {
   }
 
   Widget buildStatistics() {
-    return BlocBuilder<SubscribedCourseUsersBloc, SubscribedCourseUsersState>(builder: (context, state) {
+    return BlocBuilder<SubscribedCourseUsersBloc, SubscribedCourseUsersState>(
+      bloc: BlocProvider.of<SubscribedCourseUsersBloc>(context)..get(widget.course.id, _userState.user.id),
+      builder: (context, state) {
       if (state is SubscribedCourseUsersSuccess) {
         return Padding(
             padding: EdgeInsets.symmetric(vertical: 15),
