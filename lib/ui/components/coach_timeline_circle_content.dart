@@ -51,6 +51,7 @@ class _CoachTimelineCircleContentState extends State<CoachTimelineCircleContent>
                         Padding(
                           padding: const EdgeInsets.all(10.0),
                           child: Column(
+                            mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [

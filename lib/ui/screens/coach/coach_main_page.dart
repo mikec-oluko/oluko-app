@@ -19,15 +19,26 @@ class CoachMainPage extends StatefulWidget {
   _CoachMainPageState createState() => _CoachMainPageState();
 }
 
+// BlocProvider.of<AuthBloc>(context).checkCurrentUser();
 class _CoachMainPageState extends State<CoachMainPage> {
+  @override
+  void initState() {
+    BlocProvider.of<AuthBloc>(context).checkCurrentUser();
+    super.initState();
+  }
+
   UserResponse _currentUser;
   CoachAssignment _coachAssignment;
+  int counter = 0;
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         if (state is AuthSuccess) {
           _currentUser = state.user;
+          // if (_currentUser.assessmentsCompletedAt == null) {
+
+          // }
           BlocProvider.of<CoachAssignmentBloc>(context).getCoachAssignmentStatus(_currentUser.id);
         }
         return BlocBuilder<CoachAssignmentBloc, CoachAssignmentState>(

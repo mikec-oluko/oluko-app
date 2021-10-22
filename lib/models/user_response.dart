@@ -62,8 +62,16 @@ class UserResponse extends Base {
       notification: json['notification'] == null ? true : json['notification'] as bool,
       privacy: json['privacy'] == null ? 0 : json['privacy'] as int,
       currentPlan: json['current_plan'] == null ? -100 : double.tryParse((json['current_plan'] as num)?.toString()),
-      assessmentsCompletedAt: json['assessments_completed_at'] as Timestamp,
+      assessmentsCompletedAt: json['assessments_completed_at'] is Timestamp
+          ? json['assessments_completed_at'] as Timestamp
+          : json['assessments_completed_at'] is Map
+              ? Timestamp(
+                  json['assessments_completed_at']['_seconds'] as int, json['created_at']['_nanoseconds'] as int)
+              : json['assessments_completed_at'] is int
+                  ? Timestamp.fromMillisecondsSinceEpoch(json['assessments_completed_at'] as int)
+                  : null,
     );
+    // Timestamp.fromMillisecondsSinceEpoch(json['assessments_completed_at'] as int)
     userResponse.setBase(json);
     return userResponse;
   }
