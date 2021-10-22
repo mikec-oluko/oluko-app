@@ -305,19 +305,21 @@ class _CoachPageState extends State<CoachPage> {
   }
 
   void getRequiredSegments(List<CoachSegmentContent> allSegments) {
-    _coachRequestList.forEach((coachRequestItem) {
-      allSegments.forEach((segmentItem) {
-        if (segmentItem.segmentId == coachRequestItem.segmentId) {
-          if (requiredSegments
-              .where((requiredSegmentItem) =>
-                  requiredSegmentItem.segmentId == coachRequestItem.segmentId &&
-                  coachRequestItem.status == StatusEnum.requested)
-              .isEmpty) {
-            requiredSegments.add(segmentItem);
+    if (_coachRequestList.isNotEmpty) {
+      _coachRequestList.forEach((coachRequestItem) {
+        allSegments.forEach((segmentItem) {
+          if (segmentItem.segmentId == coachRequestItem.segmentId) {
+            if (requiredSegments
+                .where((requiredSegmentItem) =>
+                    requiredSegmentItem.segmentId == coachRequestItem.segmentId &&
+                    coachRequestItem.status == StatusEnum.requested)
+                .isEmpty) {
+              requiredSegments.add(segmentItem);
+            }
           }
-        }
+        });
       });
-    });
+    }
   }
 
   List<Widget> toDoContent() => TransformListOfItemsToWidget.coachChallengesAndSegments(

@@ -38,7 +38,7 @@ class TaskSubmissionRepository {
     taskSubmission.id = docRef.id;
 
     docRef.set(taskSubmission.toJson());
-    if (isLastTask) {
+    if (isLastTask != null && isLastTask) {
       UserResponse userToUpdate = await UserRepository().getById(assessmentAssignment.createdBy);
       await UserRepository().updateUserLastAssessmentUploaded(userToUpdate, Timestamp.now());
     }
