@@ -58,6 +58,7 @@ class _CoachTimelineCircleContentState extends State<CoachTimelineCircleContent>
                                   style: OlukoFonts.olukoMediumFont(
                                       customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
                               Text(widget.circleTitle,
+                                  overflow: TextOverflow.ellipsis,
                                   style: OlukoFonts.olukoMediumFont(
                                       customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
                             ],
