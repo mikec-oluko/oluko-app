@@ -230,5 +230,6 @@
     "enterEmail":"Please enter an email.",
     "personalRecord": "Personal Record",
     "noPersonalRecords": "No Personal Records",
-    "hasMessage": "Has a message for you"
+    "hasMessage": "Has a message for you",
+    "recordAMessage": "Record a message for "
 }

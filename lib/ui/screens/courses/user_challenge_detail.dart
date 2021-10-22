@@ -22,6 +22,7 @@ import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/screens/courses/challenge_detail_section.dart';
 import 'package:oluko_app/ui/screens/courses/course_info_section.dart';
 import 'package:oluko_app/ui/screens/courses/segment_detail.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:path_provider/path_provider.dart';
@@ -32,7 +33,8 @@ class UserChallengeDetail extends StatefulWidget {
   final Challenge challenge;
   final UserResponse userRequested;
 
-  UserChallengeDetail({this.challenge, this.userRequested, Key key}) : super(key: key);
+  UserChallengeDetail({this.challenge, this.userRequested, Key key})
+      : super(key: key);
 
   @override
   _UserChallengeDetailState createState() => _UserChallengeDetailState();
@@ -155,7 +157,8 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
                       padding: EdgeInsets.only(right: 15, left: 15),
                       child: Row(children: [
                         Text(
-                          "Record a message for " + widget.userRequested.firstName,
+                          OlukoLocalizations.get(context, 'recordAMessage') +
+                              widget.userRequested.firstName,
                           textAlign: TextAlign.left,
                           style: OlukoFonts.olukoBigFont(
                               custoFontWeight: FontWeight.normal),
@@ -214,7 +217,8 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
           padding: const EdgeInsets.only(bottom: 3),
           child: Column(children: [
             OverlayVideoPreview(
-                video: _class.video, //TODO: Change to challenge video
+                image: _segment.challengeImage,
+                video: _segment.challengeVideo,
                 showBackButton: true,
                 bottomWidgets: [
                   CourseInfoSection(
