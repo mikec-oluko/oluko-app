@@ -123,6 +123,7 @@ class _CoachPageState extends State<CoachPage> {
                                   sentVideos: sentVideosTimelineContent,
                                   allContent: allContent,
                                   context: context);
+                              allContent.addAll(sentVideosTimelineContent);
                             }
                             return BlocBuilder<CoachTimelineItemsBloc, CoachTimelineItemsState>(
                               builder: (context, timelineState) {
