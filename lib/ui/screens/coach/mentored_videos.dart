@@ -83,8 +83,7 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
                         }),
                   ),
                   IconButton(
-                      icon: Icon(isFavoriteSelected ? Icons.favorite : Icons.favorite_border,
-                          color: OlukoColors.grayColor),
+                      icon: Icon(isFavoriteSelected ? Icons.favorite : Icons.favorite_border, color: OlukoColors.grayColor),
                       onPressed: () {
                         setState(() {
                           isFavoriteSelected = !isFavoriteSelected;
@@ -131,7 +130,7 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
 
   Widget returnCardForSegment(Annotation coachAnnotation) {
     Widget contentForReturn = const SizedBox();
-    contentForReturn = Padding(
+    return contentForReturn = Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10),
@@ -155,7 +154,11 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
                   child: TextButton(
                       onPressed: () {
                         Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
-                          'videoUrl': coachAnnotation.video.url,
+                          //TODO: JOAQUIN UPDATE URL FOR NEW ONE
+                          // 'videoUrl': coachAnnotation.video.url,
+                          'videoUrl': "https://oluko-development.s3.us-west-1.amazonaws.com/annotations/5uqbLM8I44MeGgEdtH1G/master.m3u8",
+                          // 'videoUrl': "https://oluko-development.s3.us-west-1.amazonaws.com/04ZUOE5pWwPlVtBsE47q/master.m3u8",
+                          //'videoUrl': "https://oluko-development.s3.us-west-1.amazonaws.com/annotations/5uqbLM8I44MeGgEdtH1G/video.webm"
                           'titleForView': OlukoLocalizations.get(context, 'mentoredVideos')
                         });
                       },
@@ -182,22 +185,19 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
                             children: [
                               Text(
                                 OlukoLocalizations.get(context, 'date'),
-                                style: OlukoFonts.olukoMediumFont(
-                                    customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                               ),
                               SizedBox(
                                 height: 5,
                               ),
                               Text(
                                 DateFormat.yMMMd().format(coachAnnotation.createdAt.toDate()),
-                                style: OlukoFonts.olukoMediumFont(
-                                    customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                               )
                             ],
                           ),
                           IconButton(
-                              icon: Icon(coachAnnotation.favorite ? Icons.favorite : Icons.favorite_outline,
-                                  color: OlukoColors.white),
+                              icon: Icon(coachAnnotation.favorite ? Icons.favorite : Icons.favorite_outline, color: OlukoColors.white),
                               onPressed: () {
                                 BlocProvider.of<CoachMentoredVideosBloc>(context).updateCoachAnnotationFavoriteValue(
                                     coachAnnotation: coachAnnotation, currentMentoredVideosContent: content);
@@ -211,7 +211,6 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
         ),
       ),
     );
-    return contentForReturn;
   }
 
   ImageProvider getImage(Annotation coachAnnotation) {
