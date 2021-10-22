@@ -123,13 +123,13 @@ class AuthBloc extends Cubit<AuthState> {
     //   }
     // }
 
-    if (!firebaseUser.emailVerified) {
-      //TODO: trigger to send another email
-      FirebaseAuth.instance.signOut();
-      AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'pleaseCheckYourEmail'));
-      emit(AuthGuest());
-      return;
-    }
+    // if (!firebaseUser.emailVerified) {
+    //   //TODO: trigger to send another email
+    //   FirebaseAuth.instance.signOut();
+    //   AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'pleaseCheckYourEmail'));
+    //   emit(AuthGuest());
+    //   return;
+    // }
 
     //If there is no associated user for this account
     if (userResponse == null) {
@@ -160,13 +160,13 @@ class AuthBloc extends Cubit<AuthState> {
     navigateToNextScreen(context, firebaseUser.uid);
     emit(AuthSuccess(user: user, firebaseUser: firebaseUser));*/
 
-    if (!firebaseUser.emailVerified) {
-      //TODO: trigger to send another email
-      FirebaseAuth.instance.signOut();
-      AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'pleaseCheckYourEmail'));
-      emit(AuthGuest());
-      return;
-    }
+    // if (!firebaseUser.emailVerified) {
+    //   //TODO: trigger to send another email
+    //   FirebaseAuth.instance.signOut();
+    //   AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'pleaseCheckYourEmail'));
+    //   emit(AuthGuest());
+    //   return;
+    // }
 
     //If there is no associated user for this account
     if (user == null) {
