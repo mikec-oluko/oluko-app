@@ -6,6 +6,7 @@ import 'package:oluko_app/models/enums/file_type_enum.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/challenges_card.dart';
 import 'package:oluko_app/ui/components/coach_assessment_card.dart';
 import 'package:oluko_app/ui/components/coach_tab_challenge_card.dart';
@@ -22,7 +23,8 @@ class TransformListOfItemsToWidget {
       {List<TransformationJourneyUpload> tansformationJourneyData,
       List<TaskSubmission> assessmentVideoData,
       List<Challenge> upcomingChallenges,
-      ActualProfileRoute requestedFromRoute}) {
+      ActualProfileRoute requestedFromRoute,
+      UserResponse requestedUser}) {
     List<Widget> contentForSection = [];
 
     if (tansformationJourneyData != null &&
@@ -48,7 +50,8 @@ class TransformListOfItemsToWidget {
       upcomingChallenges.forEach((challenge) {
         contentForSection.add(getImageAndVideoCard(
             upcomingChallengesContent: challenge,
-            routeForContent: requestedFromRoute));
+            routeForContent: requestedFromRoute,
+            requestedUser: requestedUser));
       });
     }
     return contentForSection.toList();
@@ -59,7 +62,8 @@ class TransformListOfItemsToWidget {
       {TransformationJourneyUpload transformationJourneyContent,
       TaskSubmission taskSubmissionContent,
       Challenge upcomingChallengesContent,
-      ActualProfileRoute routeForContent}) {
+      ActualProfileRoute routeForContent,
+      UserResponse requestedUser}) {
     Widget contentForReturn = SizedBox();
 
     if (transformationJourneyContent != null) {
@@ -97,9 +101,9 @@ class TransformListOfItemsToWidget {
       contentForReturn = Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5),
         child: ChallengesCard(
-          challenge: upcomingChallengesContent,
-          routeToGo: "/",
-        ),
+            challenge: upcomingChallengesContent,
+            routeToGo: "/",
+            userRequested: requestedUser),
       );
     }
     return contentForReturn;

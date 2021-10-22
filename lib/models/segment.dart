@@ -4,7 +4,7 @@ import 'package:oluko_app/models/enums/segment_type_enum.dart';
 import 'package:oluko_app/models/submodels/section_submodel.dart';
 
 class Segment extends Base {
-  String video;
+  String challengeVideo;
   String name;
   String image;
   String description;
@@ -27,7 +27,7 @@ class Segment extends Base {
       this.isPublished,
       this.totalTime,
       this.isChallenge,
-      this.video,
+      this.challengeVideo,
       this.challengeImage,
       this.type,
       String id,
@@ -48,7 +48,7 @@ class Segment extends Base {
 
   factory Segment.fromJson(Map<String, dynamic> json) {
     Segment segment = Segment(
-        video: json['video']?.toString(),
+        challengeVideo: json['challenge_video']?.toString(),
         name: json['name']?.toString(),
         image: json['image']?.toString(),
         rounds: json['rounds'] as int,
@@ -78,7 +78,7 @@ class Segment extends Base {
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> segmentJson = {
-      'video': video,
+      'challenge_video': challengeVideo,
       'name': name,
       'image': image,
       'rounds': rounds,

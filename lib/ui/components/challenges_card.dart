@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/challenge.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/recorder_view.dart';
 
 class ChallengesCard extends StatefulWidget {
   final Challenge challenge;
   final String routeToGo;
+    final UserResponse userRequested;
 
-  ChallengesCard({this.challenge, this.routeToGo});
+  ChallengesCard({this.challenge, this.routeToGo, this.userRequested});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -27,7 +29,7 @@ class _State extends State<ChallengesCard> {
           child: GestureDetector(
               onTap: () => Navigator.pushNamed(
                   context, routeLabels[RouteEnum.userChallengeDetail],
-                  arguments: {'challenge': widget.challenge}),
+                  arguments: {'challenge': widget.challenge, 'userRequested': widget.userRequested}),
               child: Stack(alignment: Alignment.center, children: [
                 Image.asset(
                   'assets/courses/green_circle.png',

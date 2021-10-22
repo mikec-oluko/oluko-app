@@ -1,16 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/ui/components/course_poster.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/segment_utils.dart';
 
 class CourseInfoSection extends StatefulWidget {
   final int peopleQty;
   final int audioMessageQty;
   final String image;
   final Function() onAudioPressed;
+  final Function() clockAction;
 
   CourseInfoSection(
-      {this.peopleQty, this.audioMessageQty, this.image, this.onAudioPressed});
+      {this.peopleQty,
+      this.audioMessageQty,
+      this.image,
+      this.onAudioPressed,
+      this.clockAction});
 
   @override
   _State createState() => _State();
@@ -33,9 +41,35 @@ class _State extends State<CourseInfoSection> {
               widget.audioMessageQty != null
                   ? audioSection(context)
                   : SizedBox(),
+              widget.clockAction != null
+                  ? GestureDetector(
+                      onTap: widget.clockAction, child: clockSection())
+                  : SizedBox(),
             ])
           ])),
     ]);
+  }
+
+  Widget clockSection() {
+    return Container(
+      width: 60,
+      child: Column(children: [
+        Padding(
+            padding: const EdgeInsets.only(top: 7),
+            child: Image.asset(
+              'assets/courses/clock.png',
+              height: 24,
+              width: 27,
+            )),
+        const SizedBox(height: 5),
+        Text(
+          OlukoLocalizations.get(context, 'personalRecord'),
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+              fontSize: 13, fontWeight: FontWeight.w300, color: Colors.white),
+        )
+      ]),
+    );
   }
 
   Widget peopleSection() {

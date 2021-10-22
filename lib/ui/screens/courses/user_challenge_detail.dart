@@ -8,16 +8,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/class_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
+import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/overlay_video_preview.dart';
 import 'package:oluko_app/ui/components/recorded_list_view.dart';
 import 'package:oluko_app/ui/components/recorder_view.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
+import 'package:oluko_app/ui/screens/courses/challenge_detail_section.dart';
 import 'package:oluko_app/ui/screens/courses/course_info_section.dart';
+import 'package:oluko_app/ui/screens/courses/segment_detail.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:path_provider/path_provider.dart';
@@ -26,8 +30,9 @@ enum PanelEnum { audios, classDetail }
 
 class UserChallengeDetail extends StatefulWidget {
   final Challenge challenge;
+  final UserResponse userRequested;
 
-  UserChallengeDetail({this.challenge, Key key}) : super(key: key);
+  UserChallengeDetail({this.challenge, this.userRequested, Key key}) : super(key: key);
 
   @override
   _UserChallengeDetailState createState() => _UserChallengeDetailState();
@@ -39,6 +44,7 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
   final _formKey = GlobalKey<FormState>();
   ChewieController _controller;
   Class _class;
+  Segment _segment;
   CourseEnrollment _courseEnrollment;
   PanelController panelController = new PanelController();
   UserResponse _user;
@@ -100,18 +106,25 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
         BlocProvider.of<ClassBloc>(context)..get(widget.challenge.classId);
         BlocProvider.of<CourseEnrollmentBloc>(context)
           ..getById(widget.challenge.courseEnrollmentId);
+        BlocProvider.of<SegmentBloc>(context)
+          ..getById(widget.challenge.segmentId);
         return BlocBuilder<ClassBloc, ClassState>(
             builder: (context, classState) {
           return BlocBuilder<CourseEnrollmentBloc, CourseEnrollmentState>(
               builder: (context, enrollmentState) {
-            if (classState is GetByIdSuccess &&
-                enrollmentState is GetEnrollmentByIdSuccess) {
-              _class = classState.classObj;
-              _courseEnrollment = enrollmentState.courseEnrollment;
-              return form();
-            } else {
-              return SizedBox();
-            }
+            return BlocBuilder<SegmentBloc, SegmentState>(
+                builder: (context, segmentState) {
+              if (classState is GetByIdSuccess &&
+                  enrollmentState is GetEnrollmentByIdSuccess &&
+                  segmentState is GetSegmentSuccess) {
+                _class = classState.classObj;
+                _courseEnrollment = enrollmentState.courseEnrollment;
+                _segment = segmentState.segment;
+                return form();
+              } else {
+                return SizedBox();
+              }
+            });
           });
         });
       } else {
@@ -142,7 +155,7 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
                       padding: EdgeInsets.only(right: 15, left: 15),
                       child: Row(children: [
                         Text(
-                          "Record a message for " + _user.firstName,
+                          "Record a message for " + widget.userRequested.firstName,
                           textAlign: TextAlign.left,
                           style: OlukoFonts.olukoBigFont(
                               custoFontWeight: FontWeight.normal),
@@ -199,13 +212,19 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
     return ListView(children: [
       Padding(
           padding: const EdgeInsets.only(bottom: 3),
-          child: OverlayVideoPreview(
-              video: _class.video,
-              showBackButton: true,
-              bottomWidgets: [
-                CourseInfoSection(
-                    peopleQty: 50, image: _courseEnrollment.course.image),
-              ])),
+          child: Column(children: [
+            OverlayVideoPreview(
+                video: _class.video, //TODO: Change to challenge video
+                showBackButton: true,
+                bottomWidgets: [
+                  CourseInfoSection(
+                    peopleQty: 50,
+                    image: _courseEnrollment.course.image,
+                    clockAction: () {},
+                  ),
+                ]),
+            ChallengeDetailSection(segment: _segment)
+          ])),
     ]);
   }
 }

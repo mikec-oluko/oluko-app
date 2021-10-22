@@ -641,13 +641,15 @@ class Routes {
       case RouteEnum.userChallengeDetail:
         providers = [
           BlocProvider<ClassBloc>.value(value: _classBloc),
+          BlocProvider<SegmentBloc>.value(value: _segmentBloc),
           BlocProvider<CourseEnrollmentBloc>.value(
               value: _courseEnrollmentBloc),
         ];
         final Map<String, dynamic> argumentsToAdd =
             arguments as Map<String, dynamic>;
         newRouteView = UserChallengeDetail(
-            challenge: argumentsToAdd['challenge'] as Challenge);
+            challenge: argumentsToAdd['challenge'] as Challenge,
+            userRequested: argumentsToAdd['userRequested'] as UserResponse);
         break;
       case RouteEnum.assessmentVideos:
         providers = [

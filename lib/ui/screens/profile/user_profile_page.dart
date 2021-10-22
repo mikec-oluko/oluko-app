@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nil/nil.dart';
@@ -494,7 +492,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                     .getWidgetListFromContent(
                                         upcomingChallenges: _activeChallenges,
                                         requestedFromRoute:
-                                            ActualProfileRoute.userProfile))
+                                            ActualProfileRoute.userProfile,
+                                        requestedUser: widget.userRequested))
                             : const SizedBox();
                       },
                     ),
@@ -522,8 +521,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
       BlocProvider.of<CourseBloc>(context).getUserEnrolled(userRequested.id);
       BlocProvider.of<TransformationJourneyBloc>(context)
           .getContentByUserId(userRequested.id);
-      BlocProvider.of<ChallengeBloc>(context)
-          .get(userRequested.id);
+      BlocProvider.of<ChallengeBloc>(context).get(userRequested.id);
       BlocProvider.of<UserStatisticsBloc>(context)
           .getUserStatistics(userRequested.id);
     }
