@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:developer';
+import 'package:flutter/widgets.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:http/http.dart';
 import 'package:oluko_app/models/dto/api_response.dart';
@@ -11,6 +13,8 @@ import 'package:oluko_app/models/dto/user_dto.dart';
 import 'package:oluko_app/models/sign_up_request.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/dto/verify_token_request.dart';
+import 'package:oluko_app/utils/app_messages.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthRepository {
@@ -87,9 +91,15 @@ class AuthRepository {
     if (result.accessToken != null) {
       // Create a credential from the access token
       final facebookAuthCredential = FacebookAuthProvider.credential(result.accessToken.token);
-
-      // Once signed in, return the UserCredential
-      return await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
+      try {
+        //TODO: handle account with same email exception
+        // Once signed in, return the UserCredential
+        return await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
+      } on FirebaseAuthException catch (error) {
+        //   await FirebaseAuth.instance.sendSignInLinkToEmail(email: error.email);
+        //   log(error.toString());
+        rethrow;
+      }
     } else {
       return null;
     }

@@ -231,5 +231,6 @@
     "enterEmail":"Por favor ingrese email.",
     "personalRecord": "Record Personal",
     "noPersonalRecords": "Sin Records Personales",
-    "hasMessage": "Tiene un mensaje para ti"
+    "hasMessage": "Tiene un mensaje para ti",
+    "accountAlreadyExistsWithThisEmailUsingADifferentProvider": "Una cuenta ya existe con el mismo email pero con distintas credenciales de sign-in"
 }

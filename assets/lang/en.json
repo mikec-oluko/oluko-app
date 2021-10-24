@@ -232,5 +232,6 @@
     "enterEmail":"Please enter an email.",
     "personalRecord": "Personal Record",
     "noPersonalRecords": "No Personal Records",
-    "hasMessage": "Has a message for you"
+    "hasMessage": "Has a message for you",
+    "accountAlreadyExistsWithThisEmailUsingADifferentProvider": "An account already exists with the same email address but different sign-in credentials"
 }
