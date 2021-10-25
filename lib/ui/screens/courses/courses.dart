@@ -264,21 +264,26 @@ class _State extends State<Courses> {
                       height: carouselSectionHeight + 10,
                       children: recommendationState.recommendationsByUsers.entries
                           .map((MapEntry<String, List<UserResponse>> courseEntry) {
-                        final course = courseState.values.where((element) => element.id == courseEntry.key).toList()[0];
+                        var courseList = courseState.values.where((element) => element.id == courseEntry.key).toList();
+                        if (courseList.isNotEmpty) {
+                          final course = courseList[0];
 
-                        final List<String> userRecommendationAvatars =
-                            courseEntry.value.map((user) => user.avatar ?? defaultAvatar).toList();
+                          final List<String> userRecommendationAvatars =
+                              courseEntry.value.map((user) => user.avatar ?? defaultAvatar).toList();
 
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: GestureDetector(
-                            onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
-                                arguments: {'course': course, 'fromCoach': false}),
-                            child: _getCourseCard(_generateImageCourse(course.image),
-                                width: ScreenUtils.width(context) / (0.2 + _cardsToShow()),
-                                userRecommendationsAvatarUrls: userRecommendationAvatars),
-                          ),
-                        );
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: GestureDetector(
+                              onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
+                                  arguments: {'course': course, 'fromCoach': false}),
+                              child: _getCourseCard(_generateImageCourse(course.image),
+                                  width: ScreenUtils.width(context) / (0.2 + _cardsToShow()),
+                                  userRecommendationsAvatarUrls: userRecommendationAvatars),
+                            ),
+                          );
+                        } else {
+                          return const SizedBox();
+                        }
                       }).toList(),
                     )
                   : SizedBox();
