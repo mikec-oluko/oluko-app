@@ -2,6 +2,7 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:nil/nil.dart';
 import 'package:video_player/video_player.dart';
 import 'dart:io';
 
@@ -87,7 +88,7 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
         ? Chewie(
             controller: chewieController,
           )
-        : SizedBox();
+        : nil;
   }
 
   @override

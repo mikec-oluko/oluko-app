@@ -145,7 +145,13 @@ class AuthBloc extends Cubit<AuthState> {
   }
 
   Future<void> loginWithFacebook(BuildContext context) async {
-    UserCredential result = await _authRepository.signInWithFacebook();
+    UserCredential result;
+    try {
+      result = await _authRepository.signInWithFacebook();
+    } on FirebaseAuthException catch (error) {
+      AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'accountAlreadyExistsWithThisEmailUsingADifferentProvider'));
+      rethrow;
+    }
     User firebaseUser = result.user;
     UserResponse user = await UserRepository().get(firebaseUser.email);
 

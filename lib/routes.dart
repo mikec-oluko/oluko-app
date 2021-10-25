@@ -97,6 +97,7 @@ import 'package:oluko_app/ui/screens/courses/segment_detail.dart';
 import 'blocs/coach/coach_assignment_bloc.dart';
 import 'blocs/coach/coach_interaction_timeline_bloc.dart';
 import 'blocs/coach/coach_mentored_videos_bloc.dart';
+import 'blocs/coach/coach_recommendations_bloc.dart';
 import 'blocs/coach/coach_sent_videos_bloc.dart';
 import 'blocs/movement_info_bloc.dart';
 import 'blocs/friends/hi_five_send_bloc.dart';
@@ -292,6 +293,8 @@ class Routes {
   final PersonalRecordBloc _personalRecordBloc = PersonalRecordBloc();
   final CoachAudioBloc _coachAudioBloc = CoachAudioBloc();
   final ChallengeBloc _challengeBloc = ChallengeBloc();
+  final CoachRecommendationsBloc _coachRecommendationsBloc =
+      CoachRecommendationsBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -343,10 +346,16 @@ class Routes {
           BlocProvider<CoachTimelineItemsBloc>.value(
               value: _coachTimelineItemsBloc),
           BlocProvider<HiFiveBloc>.value(value: _hiFiveBloc),
+          BlocProvider<AssessmentAssignmentBloc>.value(
+              value: _assessmentAssignmentBloc),
+          BlocProvider<TaskSubmissionListBloc>.value(
+              value: _taskSubmissionListBloc),
           BlocProvider<HiFiveSendBloc>.value(
             value: _hiFiveSendBloc,
           ),
           BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
+          BlocProvider<CoachRecommendationsBloc>.value(
+              value: _coachRecommendationsBloc),
         ];
         newRouteView = MainPage();
         break;
@@ -608,9 +617,12 @@ class Routes {
           BlocProvider<SubscribedCourseUsersBloc>.value(
               value: _subscribedCourseUsersBloc)
         ];
-        final Map<String, Course> argumentsToAdd =
-            arguments as Map<String, Course>;
-        newRouteView = CourseMarketing(course: argumentsToAdd['course']);
+        final Map<String, dynamic> argumentsToAdd =
+            arguments as Map<String, dynamic>;
+        newRouteView = CourseMarketing(
+            course: argumentsToAdd['course'] as Course,
+            fromCoach: argumentsToAdd['fromCoach'] as bool);
+
         break;
       case RouteEnum.enrolledClass:
         providers = [
@@ -670,6 +682,7 @@ class Routes {
                     : argumentsToAdd['isFirstTime'] as bool);
         break;
       case RouteEnum.taskDetails:
+        //TODO: Pass flag for last assessments
         providers = [
           BlocProvider<AssessmentAssignmentBloc>.value(
               value: _assessmentAssignmentBloc),
@@ -677,12 +690,16 @@ class Routes {
           BlocProvider<TaskBloc>.value(value: _taskBloc),
           BlocProvider<GalleryVideoBloc>.value(value: _galleryVideoBloc),
         ];
-        final Map<String, int> argumentsToAdd = arguments as Map<String, int>;
+        final Map<String, dynamic> argumentsToAdd =
+            arguments as Map<String, dynamic>;
         newRouteView = TaskDetails(
-          taskIndex: argumentsToAdd['taskIndex'],
+          taskIndex: argumentsToAdd['taskIndex'] as int,
+          isLastTask: argumentsToAdd['isLastTask'] as bool,
         );
         break;
       case RouteEnum.selfRecording:
+        //TODO: Pass flag for last assessments
+
         providers = [
           BlocProvider<TaskBloc>.value(value: _taskBloc),
           BlocProvider<GalleryVideoBloc>.value(value: _galleryVideoBloc),
@@ -692,9 +709,12 @@ class Routes {
         newRouteView = SelfRecording(
           taskIndex: argumentsToAdd['taskIndex'] as int,
           isPublic: argumentsToAdd['isPublic'] as bool,
+          isLastTask: argumentsToAdd['isLastTask'] as bool,
         );
         break;
       case RouteEnum.selfRecordingPreview:
+        //TODO: Pass flag for last assessments
+
         providers = [
           BlocProvider<AssessmentAssignmentBloc>.value(
               value: _assessmentAssignmentBloc),
@@ -711,6 +731,7 @@ class Routes {
           filePath: argumentsToAdd['filePath'].toString(),
           taskIndex: argumentsToAdd['taskIndex'] as int,
           isPublic: argumentsToAdd['isPublic'] as bool,
+          isLastTask: argumentsToAdd['isLastTask'] as bool,
         );
         break;
       case RouteEnum.taskSubmissionVideo:
@@ -792,6 +813,8 @@ class Routes {
           BlocProvider<CoachTimelineItemsBloc>.value(
               value: _coachTimelineItemsBloc),
           BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
+          BlocProvider<CoachRecommendationsBloc>.value(
+              value: _coachRecommendationsBloc),
         ];
         newRouteView = CoachMainPage();
         break;
@@ -815,6 +838,8 @@ class Routes {
               value: _coachTimelineItemsBloc),
           BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
           BlocProvider<ChallengeBloc>.value(value: _challengeBloc),
+          BlocProvider<CoachRecommendationsBloc>.value(
+              value: _coachRecommendationsBloc),
         ];
         newRouteView = CoachPage();
         break;

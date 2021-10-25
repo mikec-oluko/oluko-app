@@ -12,6 +12,7 @@ class TitleBody extends StatelessWidget {
     return Text(
       title,
       textAlign: TextAlign.start,
+      overflow: TextOverflow.ellipsis,
       style: TextStyle(
           fontSize: 22,
           fontWeight: bold ? FontWeight.w700 : FontWeight.w400,

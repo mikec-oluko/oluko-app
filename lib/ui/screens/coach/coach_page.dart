@@ -6,6 +6,7 @@ import 'package:oluko_app/blocs/challenge_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_assignment_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_interaction_timeline_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_mentored_videos_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_recommendations_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_sent_videos_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
@@ -28,6 +29,7 @@ import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/coach_timeline_item.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/enums/status_enum.dart';
+import 'package:oluko_app/models/recommendation.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/submodels/course_timeline_submodel.dart';
 import 'package:oluko_app/models/task.dart';
@@ -63,6 +65,7 @@ List<TaskSubmission> _assessmentVideosContent = [];
 List<SegmentSubmission> _sentVideosContent = [];
 List<Annotation> _annotationVideosContent = [];
 List<CoachTimelineItem> _timelineItemsContent = [];
+List<Recommendation> _coachRecommendationContent = [];
 List<CoachRequest> _coachRequestList;
 UserStatistics _userStats;
 Assessment _assessment;
@@ -101,46 +104,64 @@ class _CoachPageState extends State<CoachPage> {
                     }
                     return BlocBuilder<CoachMentoredVideosBloc, CoachMentoredVideosState>(
                       builder: (context, state) {
+                        List<CoachTimelineItem> allContent = [];
                         if (state is CoachMentoredVideosSuccess) {
                           _annotationVideosContent = state.mentoredVideos;
-
-                          getMentoredVideoContent(mentoredVideoTimelineContent);
+                          CoachTimelineFunctions.getTimelineVideoContent(
+                              annotationContent: _annotationVideosContent,
+                              mentoredVideos: mentoredVideoTimelineContent,
+                              allContent: allContent,
+                              context: context);
                         }
                         return BlocBuilder<CoachSentVideosBloc, CoachSentVideosState>(
                           builder: (context, state) {
                             if (state is CoachSentVideosSuccess) {
                               _sentVideosContent =
                                   state.sentVideos.where((sentVideo) => sentVideo.video != null).toList();
-                              getSentVideoContent(sentVideosTimelineContent);
+                              CoachTimelineFunctions.getTimelineVideoContent(
+                                  segmentSubmittedContent: _sentVideosContent,
+                                  sentVideos: sentVideosTimelineContent,
+                                  allContent: allContent,
+                                  context: context);
+                              allContent.addAll(sentVideosTimelineContent);
                             }
                             return BlocBuilder<CoachTimelineItemsBloc, CoachTimelineItemsState>(
-                              builder: (context, state) {
+                              builder: (context, timelineState) {
                                 List<CoachTimelineGroup> timelinePanelContent = [];
-                                List<CoachTimelineItem> allContent = [];
 
-                                if (state is CoachTimelineItemsSuccess) {
-                                  _timelineItemsContent = state.timelineItems;
-                                  timelinePanelContent = buildContentForTimelinePanel(_timelineItemsContent);
+                                return BlocBuilder<CoachRecommendationsBloc, CoachRecommendationsState>(
+                                  builder: (context, state) {
+                                    if (state is CoachRecommendationsSuccess) {
+                                      _coachRecommendationContent = state.coachRecommendationList;
+                                      BlocProvider.of<CoachRecommendationsBloc>(context)
+                                          .getCoachRecommendationsAsTimelineItems(
+                                              coachRecommendationContent: _coachRecommendationContent);
+                                    }
+                                    if (state is CoachRecommendationsAsTimelineItem &&
+                                        timelineState is CoachTimelineItemsSuccess) {
+                                      _timelineItemsContent = timelineState.timelineItems;
+                                      timelinePanelContent =
+                                          CoachTimelineFunctions.buildContentForTimelinePanel(_timelineItemsContent);
 
-                                  timelinePanelContent.forEach((element) {
-                                    allContent.addAll(element.timelineElements);
-                                  });
-                                  allContent.addAll(sentVideosTimelineContent);
-                                  allContent.addAll(mentoredVideoTimelineContent);
-                                  CoachTimelineGroup allTabContent = CoachTimelineGroup(
-                                      courseId: defaultIdForAllContentTimeline,
-                                      courseName: OlukoLocalizations.get(context, 'all'),
-                                      timelineElements: allContent);
-                                  allContent.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
-                                  timelinePanelContent.insert(0, allTabContent);
-                                }
-
-                                return timelinePanelContent.isEmpty
-                                    ? Container(color: OlukoColors.black, child: OlukoCircularProgressIndicator())
-                                    : CoachSlidingUpPanel(
-                                        content: coachViewPageContent(context),
-                                        timelineItemsContent: timelinePanelContent,
-                                      );
+                                      timelinePanelContent.forEach((element) {
+                                        allContent.addAll(element.timelineElements);
+                                      });
+                                      allContent.addAll(state.coachRecommendationTimelineContent);
+                                      CoachTimelineGroup allTabContent = CoachTimelineGroup(
+                                          courseId: defaultIdForAllContentTimeline,
+                                          courseName: OlukoLocalizations.get(context, 'all'),
+                                          timelineElements: allContent);
+                                      allContent.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
+                                      timelinePanelContent.insert(0, allTabContent);
+                                    }
+                                    return timelinePanelContent.isEmpty
+                                        ? Container(color: OlukoColors.black, child: OlukoCircularProgressIndicator())
+                                        : CoachSlidingUpPanel(
+                                            content: coachViewPageContent(context),
+                                            timelineItemsContent: timelinePanelContent,
+                                          );
+                                  },
+                                );
                               },
                             );
                           },
@@ -164,44 +185,6 @@ class _CoachPageState extends State<CoachPage> {
     );
   }
 
-  void getMentoredVideoContent(List<CoachTimelineItem> mentoredVideos) {
-    _annotationVideosContent.forEach((element) {
-      CoachTimelineItem newItem = CoachTimelineItem(
-          coachId: element.coachId,
-          coachReference: element.coachReference,
-          contentDescription: OlukoLocalizations.get(context, 'mentoredVideo'),
-          contentName: OlukoLocalizations.get(context, 'mentoredVideo'),
-          contentThumbnail: element.video.thumbUrl,
-          contentType: 4,
-          course: CourseTimelineSubmodel(
-              id: defaultIdForAllContentTimeline, name: OlukoLocalizations.get(context, 'all'), reference: null),
-          id: defaultIdForAllContentTimeline,
-          createdAt: element.createdAt);
-      if (mentoredVideos.where((element) => element.contentThumbnail == newItem.contentThumbnail).isEmpty) {
-        mentoredVideos.add(newItem);
-      }
-    });
-  }
-
-  void getSentVideoContent(List<CoachTimelineItem> sentVideos) {
-    _sentVideosContent.forEach((element) {
-      CoachTimelineItem newItem = CoachTimelineItem(
-          coachId: element.coachId,
-          coachReference: element.coachReference,
-          contentDescription: OlukoLocalizations.get(context, 'sentVideo'),
-          contentName: OlukoLocalizations.get(context, 'sentVideo'),
-          contentThumbnail: element.video.thumbUrl,
-          contentType: 5,
-          course: CourseTimelineSubmodel(
-              id: defaultIdForAllContentTimeline, name: OlukoLocalizations.get(context, 'all'), reference: null),
-          id: defaultIdForAllContentTimeline,
-          createdAt: element.createdAt);
-      if (sentVideos.where((element) => element.contentThumbnail == newItem.contentThumbnail).isEmpty) {
-        sentVideos.add(newItem);
-      }
-    });
-  }
-
   void requestCurrentUserData(BuildContext context) {
     // BlocProvider.of<CoachProfileBloc>(context).getCoachProfile(widget.coachId);
 
@@ -223,6 +206,9 @@ class _CoachPageState extends State<CoachPage> {
     BlocProvider.of<AssessmentBloc>(context).getById('emnsmBgZ13UBRqTS26Qd');
 
     BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionByUserId(_currentAuthUser.id);
+
+    BlocProvider.of<CoachRecommendationsBloc>(context)
+        .getCoachRecommendations(_currentAuthUser.id, widget.coachAssignment.coachId);
   }
 
   Widget coachViewPageContent(BuildContext context) {
@@ -319,19 +305,21 @@ class _CoachPageState extends State<CoachPage> {
   }
 
   void getRequiredSegments(List<CoachSegmentContent> allSegments) {
-    _coachRequestList.forEach((coachRequestItem) {
-      allSegments.forEach((segmentItem) {
-        if (segmentItem.segmentId == coachRequestItem.segmentId) {
-          if (requiredSegments
-              .where((requiredSegmentItem) =>
-                  requiredSegmentItem.segmentId == coachRequestItem.segmentId &&
-                  coachRequestItem.status == StatusEnum.requested)
-              .isEmpty) {
-            requiredSegments.add(segmentItem);
+    if (_coachRequestList.isNotEmpty) {
+      _coachRequestList.forEach((coachRequestItem) {
+        allSegments.forEach((segmentItem) {
+          if (segmentItem.segmentId == coachRequestItem.segmentId) {
+            if (requiredSegments
+                .where((requiredSegmentItem) =>
+                    requiredSegmentItem.segmentId == coachRequestItem.segmentId &&
+                    coachRequestItem.status == StatusEnum.requested)
+                .isEmpty) {
+              requiredSegments.add(segmentItem);
+            }
           }
-        }
+        });
       });
-    });
+    }
   }
 
   List<Widget> toDoContent() => TransformListOfItemsToWidget.coachChallengesAndSegments(

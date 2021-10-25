@@ -140,6 +140,7 @@
     "helpAndSupport": "Ayuda y Soporte",
     "myAccount": "Mi Perfil",
     "subscription": "Subscripción",
+    "confirm": "Confirmar",
     "phone": "Teléfono",
     "message": "Mensaje",
     "submit": "Enviar",
@@ -227,10 +228,12 @@
     "storyCreated": "Historia creada con éxito",
     "storyBeingCreated": "La historia esta siendo creada",
     "coachRequest": "te solicitó grabar este segmento",
-    "enterEmail":"Por favor ingrese email.",
+    "enterEmail": "Por favor ingrese email.",
+    "movement": "Movimiento",
     "personalRecord": "Record Personal",
     "noPersonalRecords": "Sin Records Personales",
     "hasMessage": "Tiene un mensaje para ti",
     "recordAMessage": "Grabe un mensaje para ",
-    "saveFor": "Guardar para "
+    "saveFor": "Guardar para ",
+    "accountAlreadyExistsWithThisEmailUsingADifferentProvider": "Una cuenta ya existe con el mismo email pero con distintas credenciales de sign-in"
 }
