@@ -28,11 +28,8 @@ class AssessmentAssignmentBloc extends Cubit<AssessmentAssignmentState> {
       emit(AssessmentAssignmentLoading());
     }
     try {
-      AssessmentAssignment assessmentA =
-          await AssessmentAssignmentRepository.getByUserId(userId);
-      if (assessmentA == null) {
-        assessmentA = AssessmentAssignmentRepository.create(userId, assessment);
-      }
+      AssessmentAssignment assessmentA = await AssessmentAssignmentRepository.getByUserId(userId);
+      assessmentA ??= AssessmentAssignmentRepository.create(userId, assessment);
       emit(AssessmentAssignmentSuccess(assessmentAssignment: assessmentA));
     } catch (exception, stackTrace) {
       await Sentry.captureException(

@@ -5,8 +5,7 @@ class CoachSegmentContent {
   String className;
   String classImage;
   String segmentName;
-  Timestamp compleatedAt;
+  Timestamp completedAt;
   DocumentReference segmentReference;
-  CoachSegmentContent(
-      {this.segmentId, this.classImage, this.className, this.segmentName, this.compleatedAt, this.segmentReference});
+  CoachSegmentContent({this.segmentId, this.classImage, this.className, this.segmentName, this.completedAt, this.segmentReference});
 }
