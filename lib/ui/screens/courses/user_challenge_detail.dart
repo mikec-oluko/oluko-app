@@ -15,8 +15,9 @@ import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/overlay_video_preview.dart';
-import 'package:oluko_app/ui/components/recorded_list_view.dart';
+import 'package:oluko_app/ui/components/recorded_view.dart';
 import 'package:oluko_app/ui/components/recorder_view.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/screens/courses/challenge_detail_section.dart';
@@ -58,10 +59,12 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
   Directory appDirectory;
   List<String> records = [];
   String record;
+  bool audioRecorded;
 
   @override
   void initState() {
     super.initState();
+    audioRecorded = false;
     getApplicationDocumentsDirectory().then((value) {
       appDirectory = value;
       appDirectory.list().listen((onData) {
@@ -70,8 +73,8 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
           //record = onData.path;
         }
       }).onDone(() {
-        records = records.reversed.toList();
-        record = records[0];
+        //records = records.reversed.toList();
+        record = records[records.length - 1];
         setState(() {});
       });
     });
@@ -84,18 +87,17 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
   }
 
   _onRecordComplete() {
-    print("BEFORE" + records.length.toString());
     records.clear();
     appDirectory.list().listen((onData) {
       if (onData.path.contains('.aac')) {
         records.add(onData.path);
-        print("AFTER" + records.length.toString());
         //record = onData.path;
       }
     }).onDone(() {
       records.sort();
-      records = records.reversed.toList();
-      record = records[0];
+      //records = records.reversed.toList();
+      record = records[records.length - 1];
+      audioRecorded = true;
       setState(() {});
     });
   }
@@ -139,36 +141,6 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
     return Form(
         key: _formKey,
         child: Scaffold(
-            bottomNavigationBar: Container(
-                height: 140,
-                color: Colors.black,
-                child: Column(children: [
-                  Divider(
-                    height: 1,
-                    color: OlukoColors.divider,
-                    thickness: 1.5,
-                    indent: 0,
-                    endIndent: 0,
-                  ),
-                  RecordListView(
-                    record: record,
-                  ),
-                  Padding(
-                      padding: EdgeInsets.only(right: 15, left: 15),
-                      child: Row(children: [
-                        Text(
-                          OlukoLocalizations.get(context, 'recordAMessage') +
-                              widget.userRequested.firstName,
-                          textAlign: TextAlign.left,
-                          style: OlukoFonts.olukoBigFont(
-                              custoFontWeight: FontWeight.normal),
-                        ),
-                        Expanded(child: SizedBox()),
-                        RecorderView(
-                          onSaved: _onRecordComplete,
-                        )
-                      ]))
-                ])),
             body: SlidingUpPanel(
                 controller: panelController,
                 borderRadius: BorderRadius.only(
@@ -183,6 +155,76 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
                   color: Colors.black,
                   child: classInfoSection(),
                 ))));
+  }
+
+  Widget audioRecordedSection() {
+    return Container(
+        height: 140,
+        color: Colors.black,
+        child: Column(children: [
+          Divider(
+            height: 1,
+            color: OlukoColors.divider,
+            thickness: 1.5,
+            indent: 0,
+            endIndent: 0,
+          ),
+          RecordedView(
+            record: record,
+            showTicks: false,
+            binAction: () {
+              setState(() {
+                audioRecorded = false;
+              });
+            },
+          ),
+          _saveButton()
+        ]));
+  }
+
+  Widget _saveButton() {
+    return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 10),
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            OlukoPrimaryButton(
+              title: OlukoLocalizations.get(context, 'saveFor') +
+                  widget.userRequested.firstName,
+              onPressed: () {},
+            ),
+          ],
+        ));
+  }
+
+  Widget audioRecorderSection() {
+    return Container(
+        height: 70,
+        child: Column(children: [
+          Divider(
+            height: 1,
+            color: OlukoColors.divider,
+            thickness: 1.5,
+            indent: 0,
+            endIndent: 0,
+          ),
+          Padding(
+              padding:
+                  EdgeInsets.only(right: 15, left: 15, top: 15, bottom: 15),
+              child: Row(children: [
+                Text(
+                  OlukoLocalizations.get(context, 'recordAMessage') +
+                      widget.userRequested.firstName,
+                  textAlign: TextAlign.left,
+                  style: OlukoFonts.olukoBigFont(
+                      custoFontWeight: FontWeight.normal),
+                ),
+                Expanded(child: SizedBox()),
+                RecorderView(
+                  onSaved: _onRecordComplete,
+                )
+              ]))
+        ]));
   }
 
   Widget showVideoPlayer(String videoUrl) {
@@ -227,7 +269,8 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
                     clockAction: () {},
                   ),
                 ]),
-            ChallengeDetailSection(segment: _segment)
+            ChallengeDetailSection(segment: _segment),
+            audioRecorded ? audioRecordedSection() : audioRecorderSection()
           ])),
     ]);
   }

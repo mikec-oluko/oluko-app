@@ -231,5 +231,6 @@
     "personalRecord": "Personal Record",
     "noPersonalRecords": "No Personal Records",
     "hasMessage": "Has a message for you",
-    "recordAMessage": "Record a message for "
+    "recordAMessage": "Record a message for ",
+    "saveFor": "Save for "
 }

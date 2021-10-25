@@ -20,7 +20,7 @@ class _State extends State<ChallengeDetailSection> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: const EdgeInsets.only(top: 40, right: 15, left: 15, bottom: 150),
+        padding: const EdgeInsets.only(top: 40, right: 15, left: 15, bottom: 50),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
