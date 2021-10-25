@@ -15,6 +15,7 @@ import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/utils/app_messages.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class FriendsRequestPage extends StatefulWidget {
   @override
@@ -146,6 +147,7 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
                               .ignoreFriend(context, friendsRequestState.friendData, friendRequestModel);
                         },
                         onFriendConfirmation: (UserResponse friend) {
+                          AppMessages().showDialogActionMessage(context, OlukoLocalizations.of(context).find(''), 2);
                           FriendRequestModel friendRequestModel = friendsRequestState.friendData.friendRequestReceived
                               .where((friendRequest) => friendRequest.id == friend.id)
                               .toList()

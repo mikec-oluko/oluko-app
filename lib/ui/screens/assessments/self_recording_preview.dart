@@ -22,11 +22,13 @@ import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class SelfRecordingPreview extends StatefulWidget {
-  const SelfRecordingPreview({this.filePath, this.taskIndex, this.isPublic, Key key}) : super(key: key);
+  const SelfRecordingPreview({this.filePath, this.taskIndex, this.isLastTask = false, this.isPublic, Key key})
+      : super(key: key);
 
   final String filePath;
   final int taskIndex;
   final bool isPublic;
+  final bool isLastTask;
 
   @override
   _SelfRecordingPreviewState createState() => _SelfRecordingPreviewState();
@@ -95,11 +97,13 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
         key: _formKey,
         child: BlocConsumer<VideoBloc, VideoState>(listener: (context, state) {
           if (state is VideoSuccess) {
-            BlocProvider.of<TaskSubmissionBloc>(context).updateTaskSubmissionVideo(_assessmentAssignment, _taskSubmission.id, state.video);
+            BlocProvider.of<TaskSubmissionBloc>(context)
+                .updateTaskSubmissionVideo(_assessmentAssignment, _taskSubmission.id, state.video);
             BlocProvider.of<TaskSubmissionBloc>(context).checkCompleted(_assessmentAssignment, _assessment);
             BlocProvider.of<TaskSubmissionListBloc>(context).get(_assessmentAssignment);
             Navigator.pop(context);
-            Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {'taskIndex': widget.taskIndex});
+            Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails],
+                arguments: {'taskIndex': widget.taskIndex});
           }
         }, builder: (context, state) {
           if (state is VideoProcessing) {
@@ -164,7 +168,8 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
   Widget content() {
     return Column(children: [
       ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height / 1.5), child: Stack(children: showVideoPlayer())),
+          constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height / 1.5),
+          child: Stack(children: showVideoPlayer())),
       Padding(
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
           child: Row(children: [
@@ -173,9 +178,11 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
               onPressed: () async {
                 _controller.pause();
                 if (_taskSubmission == null) {
-                  BlocProvider.of<TaskSubmissionBloc>(context).createTaskSubmission(_assessmentAssignment, _task, widget.isPublic);
+                  BlocProvider.of<TaskSubmissionBloc>(context)
+                      .createTaskSubmission(_assessmentAssignment, _task, widget.isPublic, widget.isLastTask);
                 } else {
-                  BlocProvider.of<VideoBloc>(context).createVideo(context, File(widget.filePath), 3.0 / 4.0, _taskSubmission.id);
+                  BlocProvider.of<VideoBloc>(context)
+                      .createVideo(context, File(widget.filePath), 3.0 / 4.0, _taskSubmission.id);
                 }
               },
             )

@@ -13,11 +13,11 @@ import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/exception_codes.dart';
 
 class SelfRecording extends StatefulWidget {
-  const SelfRecording({this.taskIndex, this.isPublic, Key key})
-      : super(key: key);
+  const SelfRecording({this.taskIndex, this.isPublic, this.isLastTask = false, Key key}) : super(key: key);
 
   final int taskIndex;
   final bool isPublic;
+  final bool isLastTask;
 
   @override
   _State createState() => _State();
@@ -81,14 +81,11 @@ class _State extends State<SelfRecording> {
                   child: ListView(
                     children: [
                       ConstrainedBox(
-                          constraints: BoxConstraints(
-                              maxHeight: MediaQuery.of(context).size.height),
+                          constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height),
                           child: (!_isReady)
                               ? Container()
                               : Stack(alignment: Alignment.topRight, children: [
-                                  AspectRatio(
-                                      aspectRatio: 3.0 / 4.0,
-                                      child: CameraPreview(cameraController)),
+                                  AspectRatio(aspectRatio: 3.0 / 4.0, child: CameraPreview(cameraController)),
                                   Padding(
                                       padding: const EdgeInsets.all(10),
                                       child: IconButton(
@@ -118,8 +115,7 @@ class _State extends State<SelfRecording> {
                   child: Text(
                     _task.stepsTitle,
                     style: OlukoFonts.olukoSuperBigFont(
-                        customColor: OlukoColors.grayColor,
-                        custoFontWeight: FontWeight.normal),
+                        customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.normal),
                   ))
               : const SizedBox(),
         ),
@@ -128,9 +124,7 @@ class _State extends State<SelfRecording> {
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Text(
                 _task.stepsDescription.replaceAll('\\n', '\n'),
-                style: OlukoFonts.olukoSuperBigFont(
-                    customColor: OlukoColors.white,
-                    custoFontWeight: FontWeight.normal),
+                style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.normal),
               ))
         else
           const SizedBox(),
@@ -143,14 +137,12 @@ class _State extends State<SelfRecording> {
     final int cameraPos = isCameraFront ? 0 : 1;
     try {
       cameras = await availableCameras();
-      cameraController =
-          CameraController(cameras[cameraPos], ResolutionPreset.medium);
+      cameraController = CameraController(cameras[cameraPos], ResolutionPreset.medium);
       await cameraController.initialize();
     } on CameraException catch (e) {
       if (e.code == ExceptionCodes.cameraPermissionError) {
         Navigator.pop(context);
-        DialogUtils.getDialog(context, [OpenSettingsModal(context)],
-            showExitButton: false);
+        DialogUtils.getDialog(context, [OpenSettingsModal(context)], showExitButton: false);
         return;
       }
     }
@@ -191,17 +183,16 @@ class _State extends State<SelfRecording> {
             GestureDetector(
               onTap: () async {
                 if (_recording) {
-                  final XFile videopath =
-                      await cameraController.stopVideoRecording();
+                  final XFile videopath = await cameraController.stopVideoRecording();
                   final String path = videopath.path;
                   Navigator.pop(context);
-                  Navigator.pushNamed(
-                      context, routeLabels[RouteEnum.selfRecordingPreview],
-                      arguments: {
-                        'taskIndex': widget.taskIndex,
-                        'filePath': path,
-                        'isPublic': widget.isPublic,
-                      });
+                  //TODO: Send flag to set assesment as last upload
+                  Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecordingPreview], arguments: {
+                    'taskIndex': widget.taskIndex,
+                    'filePath': path,
+                    'isPublic': widget.isPublic,
+                    'isLastTask': widget.isLastTask
+                  });
                 } else {
                   await cameraController.startVideoRecording();
                 }
@@ -215,19 +206,16 @@ class _State extends State<SelfRecording> {
                 listener: (context, state) {
                   if (state is Success && state.pickedFile != null) {
                     Navigator.pop(context);
-                    Navigator.pushNamed(
-                        context, routeLabels[RouteEnum.selfRecordingPreview],
-                        arguments: {
-                          'taskIndex': widget.taskIndex,
-                          'filePath': state.pickedFile.path,
-                          'isPublic': widget.isPublic,
-                        });
+                    Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecordingPreview], arguments: {
+                      'taskIndex': widget.taskIndex,
+                      'filePath': state.pickedFile.path,
+                      'isPublic': widget.isPublic,
+                    });
                   }
                 },
                 child: GestureDetector(
                   onTap: () {
-                    BlocProvider.of<GalleryVideoBloc>(context)
-                        .getVideoFromGallery();
+                    BlocProvider.of<GalleryVideoBloc>(context).getVideoFromGallery();
                   },
                   child: const Icon(
                     Icons.file_upload,

@@ -141,6 +141,7 @@
     "helpAndSupport": "Help and Support",
     "myAccount": "My Account",
     "subscription": "Subscription",
+    "confirm": "Confirm",
     "phone": "Phone",
     "message": "Message",
     "submit": "Submit",
@@ -211,6 +212,7 @@
     "goToClass": "Go To Class",
     "nextSegment": "Next Segment",
     "errorLoadingImage": "Error loading image!",
+    "friendAdded": "Friend added",
     "exitConfirmationTitle": "Are you Sure?",
     "exitConfirmationBody": "Do you want to exit Oluko MVT?",
     "pleaseCheckYourEmail": "Please check your Email for account confirmation.",
@@ -227,8 +229,11 @@
     "storyCreated": "Story successfully created",
     "storyBeingCreated": "The story is being created",
     "coachRequest": "has requested you to record the segment",
-    "enterEmail":"Please enter an email.",
+    "enterEmail": "Please enter an email.",
+    "hasMessage": "Has a message for you",
+    "movement": "Movement",
     "personalRecord": "Personal Record",
     "noPersonalRecords": "No Personal Records",
-    "hasMessage": "Has a message for you"
+    "hasMessage": "Has a message for you",
+    "accountAlreadyExistsWithThisEmailUsingADifferentProvider": "An account already exists with the same email address but different sign-in credentials"
 }

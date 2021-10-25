@@ -4,6 +4,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/coach_timeline_content.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/coach_timeline_item.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/coach_timeline_circle_content.dart';
 import 'package:oluko_app/ui/components/coach_timeline_video_content.dart';
 import 'package:oluko_app/ui/components/tab_content_list.dart';
@@ -98,19 +99,23 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Singl
 
     switch (TimelineContentOption.getTimelineOption(content.contentType as int)) {
       case TimelineInteractionType.course:
-        return Container(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              dateForContent,
-              CoachTimelineCardContent(
-                cardImage: content.contentThumbnail,
-                cardTitle: content.contentName,
-                cardSubTitle: '',
-                date: content.createdAt.toDate(),
-                fileType: CoachFileTypeEnum.recommendedCourse,
-              ),
-            ],
+        return GestureDetector(
+          onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
+              arguments: {'course': content.courseForNavigation, 'fromCoach': true}),
+          child: Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                dateForContent,
+                CoachTimelineCardContent(
+                  cardImage: content.contentThumbnail,
+                  cardTitle: content.contentName,
+                  cardSubTitle: content.contentDescription,
+                  date: content.createdAt.toDate(),
+                  fileType: CoachFileTypeEnum.recommendedCourse,
+                ),
+              ],
+            ),
           ),
         );
       case TimelineInteractionType.classes:
@@ -144,17 +149,21 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Singl
           ),
         );
       case TimelineInteractionType.movement:
-        return Container(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              dateForContent,
-              CoachTimelineCircleContent(
-                  circleImage: content.contentThumbnail,
-                  circleTitle: content.contentName,
-                  date: content.createdAt.toDate(),
-                  fileType: CoachFileTypeEnum.recommendedMovement),
-            ],
+        return GestureDetector(
+          onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro],
+              arguments: {'movement': content.movementForNavigation}),
+          child: Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                dateForContent,
+                CoachTimelineCircleContent(
+                    circleImage: content.contentThumbnail,
+                    circleTitle: content.contentName,
+                    date: content.createdAt.toDate(),
+                    fileType: CoachFileTypeEnum.recommendedMovement),
+              ],
+            ),
           ),
         );
       case TimelineInteractionType.mentoredVideo:
