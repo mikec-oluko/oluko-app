@@ -71,6 +71,9 @@ Assessment _assessment;
 List<Task> _tasks = [];
 List<CoachTimelineItem> sentVideosTimelineContent = [];
 List<CoachTimelineItem> mentoredVideoTimelineContent = [];
+List<CoachTimelineGroup> timelinePanelContent = [];
+List<CoachTimelineItem> allContent = [];
+
 String defaultIdForAllContentTimeline = '0';
 
 class _CoachPageState extends State<CoachPage> {
@@ -78,6 +81,22 @@ class _CoachPageState extends State<CoachPage> {
   void initState() {
     BlocProvider.of<CoachUserBloc>(context).get(widget.coachAssignment.coachId);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    setState(() {
+      requiredSegments = [];
+      timelinePanelContent = [];
+      mentoredVideoTimelineContent = [];
+      allContent = [];
+      sentVideosTimelineContent = [];
+      _timelineItemsContent = [];
+      _sentVideosContent = [];
+      _assessmentVideosContent = [];
+      _annotationVideosContent = [];
+    });
+    super.dispose();
   }
 
   @override
@@ -115,7 +134,6 @@ class _CoachPageState extends State<CoachPage> {
                         return current != previous;
                       },
                       builder: (context, state) {
-                        List<CoachTimelineItem> allContent = [];
                         if (state is CoachMentoredVideosSuccess) {
                           _annotationVideosContent =
                               state.mentoredVideos.where((mentoredVideo) => mentoredVideo.video != null).toList();
@@ -136,15 +154,12 @@ class _CoachPageState extends State<CoachPage> {
                                   segmentSubmittedContent: _sentVideosContent,
                                   sentVideos: sentVideosTimelineContent,
                                   context: context);
-                              allContent.addAll(sentVideosTimelineContent);
                             }
                             return BlocBuilder<CoachTimelineItemsBloc, CoachTimelineItemsState>(
                               buildWhen: (current, previous) {
                                 return current != previous;
                               },
                               builder: (context, timelineState) {
-                                List<CoachTimelineGroup> timelinePanelContent = [];
-
                                 return BlocBuilder<CoachRecommendationsBloc, CoachRecommendationsState>(
                                   buildWhen: (current, previous) {
                                     return current != previous;
@@ -331,11 +346,7 @@ class _CoachPageState extends State<CoachPage> {
       _coachRequestList.forEach((coachRequestItem) {
         allSegments.forEach((segmentItem) {
           if (segmentItem.segmentId == coachRequestItem.segmentId) {
-            if (requiredSegments
-                .where((requiredSegmentItem) =>
-                    requiredSegmentItem.segmentId == coachRequestItem.segmentId &&
-                    coachRequestItem.status == StatusEnum.requested)
-                .isEmpty) {
+            if (coachRequestItem.status == StatusEnum.requested) {
               requiredSegments.add(segmentItem);
             }
           }
