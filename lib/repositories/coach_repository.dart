@@ -211,6 +211,7 @@ class CoachRepository {
     List<CoachTimelineItem> recommendationsAsTimelineItems = [];
     for (Recommendation recommendation in coachRecommendationContent) {
       DocumentSnapshot ds = await recommendation.entityReference.get();
+
       switch (TimelineContentOption.getTimelineOption(recommendation.entityType as int)) {
         case TimelineInteractionType.course:
           Course courseRecommended = Course.fromJson(ds.data() as Map<String, dynamic>);
@@ -265,7 +266,7 @@ class CoachRepository {
         contentName: contentName,
         contentThumbnail: contentThumbnail,
         contentType: contentType,
-        course: CourseTimelineSubmodel(id: '0', name: 'all', reference: null),
+        course: CourseTimelineSubmodel(),
         courseForNavigation: courseForNavigation ?? courseForNavigation,
         movementForNavigation: movementForNavigation ?? movementForNavigation,
         id: '0',

@@ -4,7 +4,7 @@ import 'package:oluko_app/constants/theme.dart';
 
 class CoachVideoContent extends StatefulWidget {
   const CoachVideoContent({this.videoThumbnail, this.isForGallery});
-  final String videoThumbnail;
+  final List<String> videoThumbnail;
   final bool isForGallery;
 
   @override
@@ -37,7 +37,7 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
                       decoration: BoxDecoration(
                           borderRadius: const BorderRadius.all(Radius.circular(5)),
                           image: DecorationImage(
-                            image: NetworkImage(widget.videoThumbnail),
+                            image: NetworkImage(widget.videoThumbnail[0]),
                             fit: BoxFit.fill,
                           )))),
               Positioned(
@@ -48,7 +48,8 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
                       decoration: BoxDecoration(
                           borderRadius: const BorderRadius.all(Radius.circular(5)),
                           image: DecorationImage(
-                            image: NetworkImage(widget.videoThumbnail),
+                            image: NetworkImage(
+                                widget.videoThumbnail.length > 1 ? widget.videoThumbnail[1] : widget.videoThumbnail[0]),
                             fit: BoxFit.fill,
                           )))),
               Positioned(
@@ -59,7 +60,9 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
                       decoration: BoxDecoration(
                           borderRadius: const BorderRadius.all(Radius.circular(5)),
                           image: DecorationImage(
-                            image: NetworkImage(widget.videoThumbnail),
+                            image: NetworkImage(widget.videoThumbnail.length >= 2
+                                ? widget.videoThumbnail[2]
+                                : widget.videoThumbnail[0]),
                             fit: BoxFit.cover,
                           )))),
               Align(
@@ -95,7 +98,7 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
                       decoration: BoxDecoration(
                           borderRadius: const BorderRadius.all(Radius.circular(5)),
                           image: DecorationImage(
-                            image: NetworkImage(widget.videoThumbnail),
+                            image: NetworkImage(widget.videoThumbnail[0]),
                             fit: BoxFit.cover,
                           )))),
               Align(

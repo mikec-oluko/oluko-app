@@ -11,9 +11,9 @@ String defaultIdForAllContentTimeline = '0';
 class CoachTimelineFunctions {
   static List<CoachTimelineGroup> buildContentForTimelinePanel(List<CoachTimelineItem> timelineItemsContent) {
     List<String> listOfCourseId = [];
-    List<CoachTimelineGroup> contentToReturn = [];
+    List<CoachTimelineGroup> timelineTabsAndContent = [];
     List<CoachTimelineItem> contentForItem = [];
-    CoachTimelineGroup newTimelineGroupItem;
+    CoachTimelineGroup newTimelineTabItem;
 
     timelineItemsContent.forEach((timelineItem) {
       !listOfCourseId.contains(timelineItem.course.id) ? listOfCourseId.add(timelineItem.course.id) : null;
@@ -31,18 +31,18 @@ class CoachTimelineFunctions {
           contentForItem.add(element);
         });
         contentForItem.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
-        newTimelineGroupItem =
+        newTimelineTabItem =
             CoachTimelineGroup(courseId: itemId, courseName: itemName, timelineElements: contentForItem);
       } else {
-        newTimelineGroupItem = CoachTimelineGroup(
+        newTimelineTabItem = CoachTimelineGroup(
             courseId: repeatedItemsQuery.first.course.id,
             courseName: repeatedItemsQuery.first.course.name,
             timelineElements: [repeatedItemsQuery.first]);
       }
-      contentToReturn.add(newTimelineGroupItem);
+      timelineTabsAndContent.add(newTimelineTabItem);
     });
 
-    return contentToReturn;
+    return timelineTabsAndContent;
   }
 
   static void getTimelineVideoContent(
@@ -50,7 +50,6 @@ class CoachTimelineFunctions {
       List<CoachTimelineItem> mentoredVideos,
       List<SegmentSubmission> segmentSubmittedContent,
       List<CoachTimelineItem> sentVideos,
-      List<CoachTimelineItem> allContent,
       BuildContext context}) {
     if (annotationContent != null) {
       annotationContent.forEach((element) {
@@ -62,8 +61,7 @@ class CoachTimelineFunctions {
             contentThumbnail: element.video.thumbUrl,
             contentType: 4,
             mentoredVideosForNavigation: annotationContent,
-            course: CourseTimelineSubmodel(
-                id: defaultIdForAllContentTimeline, name: OlukoLocalizations.get(context, 'all'), reference: null),
+            course: CourseTimelineSubmodel(),
             id: defaultIdForAllContentTimeline,
             createdAt: element.createdAt);
         if (mentoredVideos.where((element) => element.contentThumbnail == newItem.contentThumbnail).isEmpty) {
@@ -82,8 +80,7 @@ class CoachTimelineFunctions {
             contentThumbnail: element.video.thumbUrl,
             contentType: 5,
             sentVideosForNavigation: segmentSubmittedContent,
-            course: CourseTimelineSubmodel(
-                id: defaultIdForAllContentTimeline, name: OlukoLocalizations.get(context, 'all'), reference: null),
+            course: CourseTimelineSubmodel(),
             id: defaultIdForAllContentTimeline,
             createdAt: element.createdAt);
         if (sentVideos.where((element) => element.contentThumbnail == newItem.contentThumbnail).isEmpty) {

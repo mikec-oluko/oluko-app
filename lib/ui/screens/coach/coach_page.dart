@@ -31,7 +31,6 @@ import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/enums/status_enum.dart';
 import 'package:oluko_app/models/recommendation.dart';
 import 'package:oluko_app/models/segment_submission.dart';
-import 'package:oluko_app/models/submodels/course_timeline_submodel.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -57,15 +56,15 @@ class CoachPage extends StatefulWidget {
 
 UserResponse _currentAuthUser;
 UserResponse _coachUser;
-List<Challenge> _activeChallenges = [];
 List<CourseEnrollment> _courseEnrollmentList = [];
+List<Challenge> _activeChallenges = [];
+List<Annotation> _annotationVideosContent = [];
+List<SegmentSubmission> _sentVideosContent = [];
+List<Recommendation> _coachRecommendationContent = [];
 List<InfoForSegments> _toDoSegments = [];
 List<CoachSegmentContent> requiredSegments = [];
 List<TaskSubmission> _assessmentVideosContent = [];
-List<SegmentSubmission> _sentVideosContent = [];
-List<Annotation> _annotationVideosContent = [];
 List<CoachTimelineItem> _timelineItemsContent = [];
-List<Recommendation> _coachRecommendationContent = [];
 List<CoachRequest> _coachRequestList;
 UserStatistics _userStats;
 Assessment _assessment;
@@ -84,11 +83,17 @@ class _CoachPageState extends State<CoachPage> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
+      buildWhen: (current, previous) {
+        return current != previous;
+      },
       builder: (context, state) {
         if (state is AuthSuccess) {
           _currentAuthUser = state.user;
           requestCurrentUserData(context);
           return BlocBuilder<CoachUserBloc, CoachUserState>(
+            buildWhen: (current, previous) {
+              return current != previous;
+            },
             builder: (context, state) {
               if (state is CoachUserSuccess) {
                 _coachUser = state.coach;
@@ -98,22 +103,31 @@ class _CoachPageState extends State<CoachPage> {
                   coachUser: _coachUser,
                 ),
                 body: BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(
+                  buildWhen: (current, previous) {
+                    return current != previous;
+                  },
                   builder: (context, state) {
                     if (state is CourseEnrollmentsByUserSuccess) {
                       _courseEnrollmentList = state.courseEnrollments;
                     }
                     return BlocBuilder<CoachMentoredVideosBloc, CoachMentoredVideosState>(
+                      buildWhen: (current, previous) {
+                        return current != previous;
+                      },
                       builder: (context, state) {
                         List<CoachTimelineItem> allContent = [];
                         if (state is CoachMentoredVideosSuccess) {
-                          _annotationVideosContent = state.mentoredVideos;
+                          _annotationVideosContent =
+                              state.mentoredVideos.where((mentoredVideo) => mentoredVideo.video != null).toList();
                           CoachTimelineFunctions.getTimelineVideoContent(
                               annotationContent: _annotationVideosContent,
                               mentoredVideos: mentoredVideoTimelineContent,
-                              allContent: allContent,
                               context: context);
                         }
                         return BlocBuilder<CoachSentVideosBloc, CoachSentVideosState>(
+                          buildWhen: (current, previous) {
+                            return current != previous;
+                          },
                           builder: (context, state) {
                             if (state is CoachSentVideosSuccess) {
                               _sentVideosContent =
@@ -121,15 +135,20 @@ class _CoachPageState extends State<CoachPage> {
                               CoachTimelineFunctions.getTimelineVideoContent(
                                   segmentSubmittedContent: _sentVideosContent,
                                   sentVideos: sentVideosTimelineContent,
-                                  allContent: allContent,
                                   context: context);
                               allContent.addAll(sentVideosTimelineContent);
                             }
                             return BlocBuilder<CoachTimelineItemsBloc, CoachTimelineItemsState>(
+                              buildWhen: (current, previous) {
+                                return current != previous;
+                              },
                               builder: (context, timelineState) {
                                 List<CoachTimelineGroup> timelinePanelContent = [];
 
                                 return BlocBuilder<CoachRecommendationsBloc, CoachRecommendationsState>(
+                                  buildWhen: (current, previous) {
+                                    return current != previous;
+                                  },
                                   builder: (context, state) {
                                     if (state is CoachRecommendationsSuccess) {
                                       _coachRecommendationContent = state.coachRecommendationList;
@@ -147,11 +166,14 @@ class _CoachPageState extends State<CoachPage> {
                                         allContent.addAll(element.timelineElements);
                                       });
                                       allContent.addAll(state.coachRecommendationTimelineContent);
+
                                       CoachTimelineGroup allTabContent = CoachTimelineGroup(
                                           courseId: defaultIdForAllContentTimeline,
                                           courseName: OlukoLocalizations.get(context, 'all'),
                                           timelineElements: allContent);
+
                                       allContent.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
+
                                       timelinePanelContent.insert(0, allTabContent);
                                     }
                                     return timelinePanelContent.isEmpty

@@ -70,7 +70,7 @@ class _CoachContentPreviewContentState extends State<CoachContentPreviewContent>
                             color: Colors.black,
                             child: widget.segmentSubmissionContent.isNotEmpty
                                 ? CoachVideoContent(
-                                    videoThumbnail: widget.segmentSubmissionContent[0].video.thumbUrl,
+                                    videoThumbnail: [widget.segmentSubmissionContent[0].video.thumbUrl],
                                     isForGallery: widget.isForCarousel)
                                 : CoachContentSectionCard(
                                     title: widget.titleForSection,
@@ -85,7 +85,7 @@ class _CoachContentPreviewContentState extends State<CoachContentPreviewContent>
                         color: Colors.black,
                         child: widget.segmentSubmissionContent.isNotEmpty
                             ? CoachVideoContent(
-                                videoThumbnail: widget.segmentSubmissionContent[0].video.thumbUrl,
+                                videoThumbnail: getThumbnails(segments: widget.segmentSubmissionContent),
                                 isForGallery: widget.isForCarousel)
                             : CoachContentSectionCard(
                                 title: widget.titleForSection, isForCarousel: widget.isForCarousel, needTitle: false),
@@ -129,7 +129,7 @@ class _CoachContentPreviewContentState extends State<CoachContentPreviewContent>
                             color: Colors.black,
                             child: widget.coachAnnotationContent.isNotEmpty
                                 ? CoachVideoContent(
-                                    videoThumbnail: widget.coachAnnotationContent[0].video.thumbUrl,
+                                    videoThumbnail: [widget.coachAnnotationContent[0].video.thumbUrl],
                                     isForGallery: widget.isForCarousel)
                                 : CoachContentSectionCard(
                                     title: widget.titleForSection,
@@ -144,7 +144,7 @@ class _CoachContentPreviewContentState extends State<CoachContentPreviewContent>
                         color: Colors.black,
                         child: widget.coachAnnotationContent.isNotEmpty
                             ? CoachVideoContent(
-                                videoThumbnail: widget.coachAnnotationContent[0].video.thumbUrl,
+                                videoThumbnail: getThumbnails(annotations: widget.coachAnnotationContent),
                                 isForGallery: widget.isForCarousel)
                             : CoachContentSectionCard(
                                 title: widget.titleForSection, isForCarousel: widget.isForCarousel, needTitle: false),
@@ -172,5 +172,31 @@ class _CoachContentPreviewContentState extends State<CoachContentPreviewContent>
 
       default:
     }
+  }
+
+  List<String> getThumbnails({List<SegmentSubmission> segments, List<Annotation> annotations}) {
+    List<String> thumbnailsList = [];
+
+    if (segments != null && segments.isNotEmpty) {
+      List<SegmentSubmission> limitSegments = [];
+      segments.length >= 3 ? limitSegments = segments.getRange(0, 3).toList() : limitSegments = segments;
+
+      limitSegments.forEach((segment) {
+        if (segment.video.thumbUrl != null) {
+          thumbnailsList.add(segment.video.thumbUrl);
+        }
+      });
+    }
+
+    if (annotations != null && annotations.isNotEmpty) {
+      List<Annotation> limitAnnotations = [];
+      annotations.length >= 3 ? limitAnnotations = annotations.getRange(0, 3).toList() : limitAnnotations = annotations;
+      limitAnnotations.forEach((annotation) {
+        if (annotation.video.thumbUrl != null) {
+          thumbnailsList.add(annotation.video.thumbUrl);
+        }
+      });
+    }
+    return thumbnailsList;
   }
 }

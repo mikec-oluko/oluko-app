@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
@@ -19,29 +20,31 @@ class CoachMainPage extends StatefulWidget {
   _CoachMainPageState createState() => _CoachMainPageState();
 }
 
-// BlocProvider.of<AuthBloc>(context).checkCurrentUser();
 class _CoachMainPageState extends State<CoachMainPage> {
+  UserResponse _currentUser;
+  CoachAssignment _coachAssignment;
+
   @override
   void initState() {
     BlocProvider.of<AuthBloc>(context).checkCurrentUser();
     super.initState();
   }
 
-  UserResponse _currentUser;
-  CoachAssignment _coachAssignment;
-  int counter = 0;
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
+      buildWhen: (current, previous) {
+        return current != previous;
+      },
       builder: (context, state) {
         if (state is AuthSuccess) {
           _currentUser = state.user;
-          // if (_currentUser.assessmentsCompletedAt == null) {
-
-          // }
           BlocProvider.of<CoachAssignmentBloc>(context).getCoachAssignmentStatus(_currentUser.id);
         }
         return BlocBuilder<CoachAssignmentBloc, CoachAssignmentState>(
+          buildWhen: (current, previous) {
+            return current != previous;
+          },
           builder: (context, state) {
             if (state is CoachAssignmentResponse) {
               _coachAssignment = state.coachAssignmentResponse;
@@ -56,7 +59,7 @@ class _CoachMainPageState extends State<CoachMainPage> {
                   );
                 }
               } else {
-                return _currentUser.assessmentsCompletedAt != null
+                return _currentUser.assessmentsCompletedAt != null && _currentUser.assessmentsCompletedAt is Timestamp
                     ? CoachAssignedCountDown(
                         currentUser: _currentUser,
                         coachAssignment: _coachAssignment,
