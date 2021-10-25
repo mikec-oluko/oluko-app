@@ -190,7 +190,7 @@ class _State extends State<Courses> {
                         padding: const EdgeInsets.only(right: 8.0),
                         child: GestureDetector(
                           onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
-                              arguments: {'course': course}),
+                              arguments: {'course': course, 'fromCoach': false}),
                           child: _getCourseCard(_generateImageCourse(course.image),
                               width: ScreenUtils.width(context) / (0.2 + _cardsToShow())),
                         ),
