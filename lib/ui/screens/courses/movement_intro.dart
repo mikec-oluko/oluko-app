@@ -94,6 +94,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
+    BlocProvider.of<MovementInfoBloc>(context).get(widget.movement.id);
     return Scaffold(
       appBar: OlukoImageBar(actions: [], movements: [widget.movement], onPressedMovement: (context, movement) => {}),
       backgroundColor: Colors.black,
@@ -112,9 +113,8 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
 
   Widget _viewBody() {
     return BlocBuilder<MovementInfoBloc, MovementInfoState>(builder: (context, movementInfoState) {
-      if (_movementInfoSuccess == null && !(movementInfoState is MovementInfoSuccess)) {
-        BlocProvider.of<MovementInfoBloc>(context).get(widget.movement.id);
-      }
+      // if (_movementInfoSuccess == null && !(movementInfoState is MovementInfoSuccess)) {
+      // }
       if (movementInfoState is MovementInfoSuccess) {
         if (_movementInfoSuccess == null) {
           _movementInfoSuccess = movementInfoState;
@@ -193,7 +193,8 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
             Column(
               children: [
                 GestureDetector(
-                    onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing], arguments: {'course': course}),
+                    onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
+                        arguments: {'course': course, 'fromCoach': false}),
                     child: Container(height: 100, child: Image.network(course.image)))
               ],
             ),

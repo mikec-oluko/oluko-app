@@ -83,8 +83,7 @@ class _SentVideosPageState extends State<SentVideosPage> {
                         }),
                   ),
                   IconButton(
-                      icon: Icon(isFavoriteSelected ? Icons.favorite : Icons.favorite_border,
-                          color: OlukoColors.grayColor),
+                      icon: Icon(isFavoriteSelected ? Icons.favorite : Icons.favorite_border, color: OlukoColors.grayColor),
                       onPressed: () {
                         setState(() {
                           isFavoriteSelected = !isFavoriteSelected;
@@ -158,7 +157,7 @@ class _SentVideosPageState extends State<SentVideosPage> {
                       onPressed: () {
                         Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
                           'videoUrl': segmentSubmitted.video.url,
-                          'titleForView': OlukoLocalizations.get(context, 'sentVideos')
+                          'titleForContent': OlukoLocalizations.get(context, 'sentVideos')
                         });
                       },
                       child: Image.asset(
@@ -183,22 +182,19 @@ class _SentVideosPageState extends State<SentVideosPage> {
                             children: [
                               Text(
                                 OlukoLocalizations.get(context, 'date'),
-                                style: OlukoFonts.olukoMediumFont(
-                                    customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                               ),
                               SizedBox(
                                 height: 5,
                               ),
                               Text(
                                 DateFormat.yMMMd().format(segmentSubmitted.createdAt.toDate()),
-                                style: OlukoFonts.olukoMediumFont(
-                                    customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                               )
                             ],
                           ),
                           IconButton(
-                              icon: Icon(segmentSubmitted.favorite ? Icons.favorite : Icons.favorite_outline,
-                                  color: OlukoColors.white),
+                              icon: Icon(segmentSubmitted.favorite ? Icons.favorite : Icons.favorite_outline, color: OlukoColors.white),
                               onPressed: () {
                                 BlocProvider.of<CoachSentVideosBloc>(context).updateSegmentSubmissionFavoriteValue(
                                     segmentSubmitted: segmentSubmitted, currentSentVideosContent: content);

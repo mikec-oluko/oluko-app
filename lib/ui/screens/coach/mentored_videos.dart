@@ -153,13 +153,19 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
                   alignment: Alignment.center,
                   child: TextButton(
                       onPressed: () {
+                        var videoUrl = null;
+                        if (coachAnnotation.videoHLS != null) {
+                          videoUrl = coachAnnotation.videoHLS;
+                        } else {
+                          videoUrl = coachAnnotation.video.url;
+                        }
                         Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
-                          //TODO: JOAQUIN UPDATE URL FOR NEW ONE
-                          // 'videoUrl': coachAnnotation.video.url,
-                          'videoUrl': "https://oluko-development.s3.us-west-1.amazonaws.com/annotations/5uqbLM8I44MeGgEdtH1G/master.m3u8",
+                          'videoUrl': videoUrl,
+                          'aspectRatio': coachAnnotation.video.aspectRatio,
+                          // 'videoUrl': "https://oluko-development.s3.us-west-1.amazonaws.com/annotations/5uqbLM8I44MeGgEdtH1G/master.m3u8",
                           // 'videoUrl': "https://oluko-development.s3.us-west-1.amazonaws.com/04ZUOE5pWwPlVtBsE47q/master.m3u8",
-                          //'videoUrl': "https://oluko-development.s3.us-west-1.amazonaws.com/annotations/5uqbLM8I44MeGgEdtH1G/video.webm"
-                          'titleForView': OlukoLocalizations.get(context, 'mentoredVideos')
+                          // 'videoUrl': "https://oluko-development.s3.us-west-1.amazonaws.com/annotations/5uqbLM8I44MeGgEdtH1G/video.webm"
+                          'titleForContent': OlukoLocalizations.get(context, 'mentoredVideos')
                         });
                       },
                       child: Image.asset(
