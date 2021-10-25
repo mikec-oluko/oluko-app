@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/class_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_audio_bloc.dart';
@@ -68,13 +69,13 @@ class _InsideClassesState extends State<InsideClass> {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
-        BlocProvider.of<ClassBloc>(context)..get(widget.courseEnrollment.classes[widget.classIndex].id);
+        BlocProvider.of<ClassBloc>(context).get(widget.courseEnrollment.classes[widget.classIndex].id);
         BlocProvider.of<MovementBloc>(context)..getAll();
         return BlocBuilder<ClassBloc, ClassState>(builder: (context, classState) {
           if (classState is GetByIdSuccess) {
             _class = classState.classObj;
             BlocProvider.of<SegmentBloc>(context)..getAll(_class);
-            BlocProvider.of<CoachAudioBloc>(context)..getByAudios(widget.courseEnrollment.classes[widget.classIndex].audios);
+            BlocProvider.of<CoachAudioBloc>(context).getByAudios(widget.courseEnrollment.classes[widget.classIndex].audios);
             return form();
           } else {
             return SizedBox();
@@ -226,7 +227,7 @@ class _InsideClassesState extends State<InsideClass> {
                   }
                 },
                 peopleQty: 50,
-                audioMessageQty: widget.courseEnrollment.classes[widget.classIndex].audios != null
+                audioMessageQty: widget.courseEnrollment?.classes[widget.classIndex]?.audios != null
                     ? widget.courseEnrollment.classes[widget.classIndex].audios.length
                     : 0,
                 image: widget.courseEnrollment.course.image)
@@ -253,13 +254,20 @@ class _InsideClassesState extends State<InsideClass> {
                 Padding(
                     padding: const EdgeInsets.only(top: 10.0),
                     child: CourseProgressBar(value: CourseEnrollmentService.getClassProgress(widget.courseEnrollment, widget.classIndex))),
-                Padding(
-                  padding: const EdgeInsets.only(top: 20.0),
-                  child: Text(
-                    _class.description,
-                    style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
-                  ),
-                ),
+                (() {
+                  // your code here
+                  if (_class.description != null) {
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 20.0),
+                      child: Text(
+                        _class.description,
+                        style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+                      ),
+                    );
+                  } else {
+                    return SizedBox();
+                  }
+                }()),
                 buildChallengeSection(),
                 classMovementSection(),
               ]))),

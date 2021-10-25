@@ -11,27 +11,19 @@ Map<SettingsPrivacyOptions, String> privacySubtitles = {
 enum ProgressArea { courses, classes, challenges }
 
 //Enum for modal, to update images
-enum UploadFrom { profileImage, transformationJourney, profileCoverImage }
+enum UploadFrom { profileImage, transformationJourney, profileCoverImage, segmentDetail }
 //Enum to share route where data for user is Requested on Profile views
 enum ActualProfileRoute { rootProfile, userProfile, userAssessmentVideos, transformationJourney }
 //Enum of options for upload content
 enum DeviceContentFrom { camera, gallery }
 
-enum ProfileOptionsTitle {
-  myAccount,
-  assessmentVideos,
-  transformationJourney,
-  subscription,
-  settings,
-  helpAndSupport,
-  logout
-}
+enum ProfileOptionsTitle { myAccount, assessmentVideos, transformationJourney, subscription, settings, helpAndSupport, logout }
 
 enum ErrorTypeOption { noConnection, noContent }
 
 enum OlukoPanelAction { open, close, hide, show, loading, error, success }
 
-enum UserConnectStatus { connected, notConnected, requestPending }
+enum UserConnectStatus { connected, notConnected, requestPending, requestReceived }
 
 enum CoachContentSection { sentVideos, mentoredVideos, recomendedVideos, voiceMessages }
 

@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:oluko_app/models/annotations.dart';
 import 'package:oluko_app/models/base.dart';
-
+import 'package:oluko_app/models/course.dart';
+import 'package:oluko_app/models/movement.dart';
+import 'package:oluko_app/models/segment_submission.dart';
 import 'submodels/course_timeline_submodel.dart';
 
 class CoachTimelineItem extends Base {
@@ -11,6 +14,10 @@ class CoachTimelineItem extends Base {
   String contentThumbnail;
   num contentType;
   CourseTimelineSubmodel course;
+  Movement movementForNavigation;
+  Course courseForNavigation;
+  List<Annotation> mentoredVideosForNavigation;
+  List<SegmentSubmission> sentVideosForNavigation;
 
   CoachTimelineItem(
       {this.coachId,
@@ -20,6 +27,10 @@ class CoachTimelineItem extends Base {
       this.contentThumbnail,
       this.contentType,
       this.course,
+      this.courseForNavigation,
+      this.movementForNavigation,
+      this.mentoredVideosForNavigation,
+      this.sentVideosForNavigation,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -41,7 +52,7 @@ class CoachTimelineItem extends Base {
       coachId: json['coach_id'].toString(),
       coachReference: json['coach_reference'] as DocumentReference,
       contentDescription: json['content_description'].toString(),
-      contentName: json['content_name'].toString(),
+      contentName: json['content_name'] != null ? json['content_name'].toString() : null,
       contentThumbnail: json['content_thumbnail'].toString(),
       contentType: json['content_type'] as num,
       course: json['course'] == null ? null : CourseTimelineSubmodel.fromJson(json['course'] as Map<String, dynamic>),

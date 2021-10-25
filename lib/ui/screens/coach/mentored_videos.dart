@@ -130,7 +130,7 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
 
   Widget returnCardForSegment(Annotation coachAnnotation) {
     Widget contentForReturn = const SizedBox();
-    contentForReturn = Padding(
+    return contentForReturn = Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10),
@@ -153,6 +153,12 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
                   alignment: Alignment.center,
                   child: TextButton(
                       onPressed: () {
+                        var videoUrl = null;
+                        if (coachAnnotation.videoHLS != null) {
+                          videoUrl = coachAnnotation.videoHLS;
+                        } else {
+                          videoUrl = coachAnnotation.video.url;
+                        }
                         Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
                           //'videoUrl': videoUrl,
                           'videoUrl': "https://oluko-development.s3.us-west-1.amazonaws.com/annotations/5uqbLM8I44MeGgEdtH1G/master.m3u8",
@@ -210,7 +216,6 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
         ),
       ),
     );
-    return contentForReturn;
   }
 
   ImageProvider getImage(Annotation coachAnnotation) {

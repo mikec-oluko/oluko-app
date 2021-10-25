@@ -177,32 +177,35 @@ class _HiFivePageState extends State<HiFivePage> {
       showLogo: false,
       showBackButton: true,
       actions: [
-        GestureDetector(
-          onTap: () {
-            BlocProvider.of<HiFiveBloc>(context).sendHiFiveToAll(context, _authState.user.id, _hiFiveState.users.map((e) => e.id).toList());
-          },
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Row(
-                children: [
-                  Image.asset(
-                    'assets/profile/hiFive.png',
-                    fit: BoxFit.cover,
-                    colorBlendMode: BlendMode.lighten,
-                    height: 40,
-                    width: 40,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 16.0),
-                    child: Text(
-                      'Hi Five all',
-                      style: TextStyle(color: OlukoColors.primary),
+        Visibility(
+          visible: _hiFiveState.users.length > 1,
+          child: GestureDetector(
+            onTap: () {
+              BlocProvider.of<HiFiveBloc>(context).sendHiFiveToAll(context, _authState.user.id, _hiFiveState.users.map((e) => e.id).toList());
+            },
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Row(
+                  children: [
+                    Image.asset(
+                      'assets/profile/hiFive.png',
+                      fit: BoxFit.cover,
+                      colorBlendMode: BlendMode.lighten,
+                      height: 40,
+                      width: 40,
                     ),
-                  ),
-                ],
-              ),
-            ],
+                    const Padding(
+                      padding: const EdgeInsets.only(right: 16.0),
+                      child: Text(
+                        'Hi Five all',
+                        style: TextStyle(color: OlukoColors.primary),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         )
       ],

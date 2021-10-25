@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/coach_get_header_for_content.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class CoachTimelineCircleContent extends StatefulWidget {
   const CoachTimelineCircleContent({this.circleImage, this.circleTitle, this.date, this.fileType});
@@ -31,17 +32,26 @@ class _CoachTimelineCircleContentState extends State<CoachTimelineCircleContent>
                     Row(
                       children: [
                         SizedBox(
-                          width: 70,
-                          height: 70,
-                          child: CircleAvatar(
-                            backgroundImage: NetworkImage(widget.circleImage),
-                            backgroundColor: OlukoColors.black,
-                            radius: 30,
-                          ),
-                        ),
+                            width: 70,
+                            height: 70,
+                            child: widget.circleImage != null
+                                ? CircleAvatar(
+                                    backgroundImage: NetworkImage(widget.circleImage),
+                                    backgroundColor: OlukoColors.black,
+                                    radius: 30,
+                                  )
+                                : CircleAvatar(
+                                    backgroundColor: OlukoColors.grayColor,
+                                    radius: 30,
+                                    child: Text(OlukoLocalizations.get(context, 'movement'),
+                                        textAlign: TextAlign.center,
+                                        style: OlukoFonts.olukoSmallFont(
+                                            customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
+                                  )),
                         Padding(
                           padding: const EdgeInsets.all(10.0),
                           child: Column(
+                            mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -49,6 +59,7 @@ class _CoachTimelineCircleContentState extends State<CoachTimelineCircleContent>
                                   style: OlukoFonts.olukoMediumFont(
                                       customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
                               Text(widget.circleTitle,
+                                  overflow: TextOverflow.ellipsis,
                                   style: OlukoFonts.olukoMediumFont(
                                       customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
                             ],
