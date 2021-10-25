@@ -141,8 +141,7 @@ class _State extends State<Courses> {
             }),
             onSearchResults: (SearchResults results) => this.setState(() {
               showSearchSuggestions = true;
-              searchResults = SearchResults<Course>(
-                  query: results.query, suggestedItems: List<Course>.from(results.suggestedItems));
+              searchResults = SearchResults<Course>(query: results.query, suggestedItems: List<Course>.from(results.suggestedItems));
             }),
             suggestionMethod: CourseUtils.suggestionMethod,
             searchMethod: CourseUtils.searchMethod,
@@ -178,10 +177,8 @@ class _State extends State<Courses> {
             return nil;
           } else {
             return CarouselSection(
-              onOptionTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.viewAll], arguments: {
-                'courses': coursesList,
-                'title': courseState.coursesByCategories.keys.elementAt(index).name
-              }),
+              onOptionTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.viewAll],
+                  arguments: {'courses': coursesList, 'title': courseState.coursesByCategories.keys.elementAt(index).name}),
               height: carouselSectionHeight,
               title: courseState.coursesByCategories.keys.elementAt(index).name,
               optionLabel: OlukoLocalizations.get(context, 'viewAll'),
@@ -189,8 +186,7 @@ class _State extends State<Courses> {
                   .map((course) => Padding(
                         padding: const EdgeInsets.only(right: 8.0),
                         child: GestureDetector(
-                          onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
-                              arguments: {'course': course}),
+                          onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing], arguments: {'course': course}),
                           child: _getCourseCard(_generateImageCourse(course.image),
                               width: ScreenUtils.width(context) / (0.2 + _cardsToShow())),
                         ),
@@ -201,14 +197,9 @@ class _State extends State<Courses> {
         });
   }
 
-  CourseCard _getCourseCard(Image image,
-      {double progress, double width, double height, List<String> userRecommendationsAvatarUrls}) {
+  CourseCard _getCourseCard(Image image, {double progress, double width, double height, List<String> userRecommendationsAvatarUrls}) {
     return CourseCard(
-        width: width,
-        height: height,
-        imageCover: image,
-        progress: progress,
-        userRecommendationsAvatarUrls: userRecommendationsAvatarUrls);
+        width: width, height: height, imageCover: image, progress: progress, userRecommendationsAvatarUrls: userRecommendationsAvatarUrls);
   }
 
   Widget _filterWidget() {
@@ -262,23 +253,27 @@ class _State extends State<Courses> {
                   ? CarouselSection(
                       title: OlukoLocalizations.get(context, 'friendsRecommended'),
                       height: carouselSectionHeight + 10,
-                      children: recommendationState.recommendationsByUsers.entries
-                          .map((MapEntry<String, List<UserResponse>> courseEntry) {
-                        final course = courseState.values.where((element) => element.id == courseEntry.key).toList()[0];
+                      children: recommendationState.recommendationsByUsers.entries.map((MapEntry<String, List<UserResponse>> courseEntry) {
+                        var courseList = courseState.values.where((element) => element.id == courseEntry.key).toList();
+                        if (courseList.isNotEmpty) {
+                          final course = courseList[0];
 
-                        final List<String> userRecommendationAvatars =
-                            courseEntry.value.map((user) => user.avatar ?? defaultAvatar).toList();
+                          final List<String> userRecommendationAvatars =
+                              courseEntry.value.map((user) => user.avatar ?? defaultAvatar).toList();
 
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: GestureDetector(
-                            onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
-                                arguments: {'course': course, 'fromCoach': false}),
-                            child: _getCourseCard(_generateImageCourse(course.image),
-                                width: ScreenUtils.width(context) / (0.2 + _cardsToShow()),
-                                userRecommendationsAvatarUrls: userRecommendationAvatars),
-                          ),
-                        );
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: GestureDetector(
+                              onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
+                                  arguments: {'course': course, 'fromCoach': false}),
+                              child: _getCourseCard(_generateImageCourse(course.image),
+                                  width: ScreenUtils.width(context) / (0.2 + _cardsToShow()),
+                                  userRecommendationsAvatarUrls: userRecommendationAvatars),
+                            ),
+                          );
+                        } else {
+                          return const SizedBox();
+                        }
                       }).toList(),
                     )
                   : SizedBox();
@@ -304,8 +299,7 @@ class _State extends State<Courses> {
                   title: OlukoLocalizations.get(context, 'activeCourses'),
                   height: carouselSectionHeight + 10,
                   children: courseEnrollmentState.courseEnrollments.map((CourseEnrollment courseEnrollment) {
-                    final activeCourseList =
-                        courseState.values.where((element) => element.id == courseEnrollment.course.id).toList();
+                    final activeCourseList = courseState.values.where((element) => element.id == courseEnrollment.course.id).toList();
                     Course course;
                     if (activeCourseList.isNotEmpty) {
                       course = activeCourseList[0];
@@ -343,15 +337,12 @@ class _State extends State<Courses> {
             ? BlocBuilder<FavoriteBloc, FavoriteState>(
                 bloc: BlocProvider.of<FavoriteBloc>(context)..getByUser(authState.user.id),
                 builder: (context, favoriteState) {
-                  return favoriteState is FavoriteSuccess &&
-                          courseState is CourseSuccess &&
-                          favoriteState.favorites.length > 0
+                  return favoriteState is FavoriteSuccess && courseState is CourseSuccess && favoriteState.favorites.length > 0
                       ? CarouselSection(
                           title: OlukoLocalizations.get(context, 'myList'),
                           height: carouselSectionHeight,
                           children: favoriteState.favorites.map((Favorite favorite) {
-                            Course favoriteCourse =
-                                courseState.values.where((course) => course.id == favorite.course.id).toList()[0];
+                            Course favoriteCourse = courseState.values.where((course) => course.id == favorite.course.id).toList()[0];
                             return Padding(
                                 padding: const EdgeInsets.only(right: 8.0),
                                 child: GestureDetector(
