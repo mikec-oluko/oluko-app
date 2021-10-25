@@ -39,7 +39,8 @@ class _State extends State<ImageAndVideoPreviewCard> {
   @override
   void initState() {
     setState(() {
-      new Future.delayed(Duration.zero, () {
+      definePreviewTittleOfTaskSubmission();
+      Future.delayed(Duration.zero, () {
         definePreviewTitleByTypeOfContent(context);
       });
     });
@@ -71,9 +72,13 @@ class _State extends State<ImageAndVideoPreviewCard> {
     return Stack(children: [
       InkWell(
         onTap: () {
-          if (widget.originalContent is TransformationJourneyUpload && widget.showTitle) {
-            Navigator.pushNamed(context, routeLabels[RouteEnum.transformationJournetContentDetails],
-                arguments: {'TransformationJourneyUpload': transformationJourneyContent});
+          if (widget.originalContent is TransformationJourneyUpload &&
+              widget.showTitle) {
+            Navigator.pushNamed(context,
+                routeLabels[RouteEnum.transformationJournetContentDetails],
+                arguments: {
+                  'TransformationJourneyUpload': transformationJourneyContent
+                });
           }
         },
         child: Align(
@@ -84,7 +89,9 @@ class _State extends State<ImageAndVideoPreviewCard> {
                     height: 30,
                     child: Center(
                       child: Text(
-                        titleForPreviewImage != null ? titleForPreviewImage : '',
+                        titleForPreviewImage != null
+                            ? titleForPreviewImage
+                            : '',
                         style: OlukoFonts.olukoSmallFont(),
                       ),
                     ),
@@ -114,7 +121,8 @@ class _State extends State<ImageAndVideoPreviewCard> {
                                 child: GestureDetector(
                               onTap: () => Navigator.pop(context),
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 20),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 20),
                                 child: Image.asset(
                                   'assets/courses/video_cross.png',
                                   color: Colors.white,
@@ -156,18 +164,27 @@ class _State extends State<ImageAndVideoPreviewCard> {
             alignment: Alignment.center,
             image: Image(
               image: widget.backgroundImage.image,
-              frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
-                  ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 120),
+              frameBuilder: (BuildContext context, Widget child, int frame,
+                      bool wasSynchronouslyLoaded) =>
+                  ImageUtils.frameBuilder(
+                      context, child, frame, wasSynchronouslyLoaded,
+                      height: 120),
             ).image));
   }
 
   void definePreviewTitleByTypeOfContent(BuildContext context) {
     if (widget.originalContent is TransformationJourneyUpload) {
-      transformationJourneyContent = widget.originalContent as TransformationJourneyUpload;
+      transformationJourneyContent =
+          widget.originalContent as TransformationJourneyUpload;
       titleForPreviewImage = transformationJourneyContent.createdAt != null
-          ? TimeConverter.returnDateAndTimeOnStringFormat(dateToFormat: transformationJourneyContent.createdAt, context: context)
+          ? TimeConverter.returnDateAndTimeOnStringFormat(
+              dateToFormat: transformationJourneyContent.createdAt,
+              context: context)
           : '';
     }
+  }
+
+  void definePreviewTittleOfTaskSubmission() {
     if (widget.originalContent is TaskSubmission) {
       taskSubmissionContent = widget.originalContent as TaskSubmission;
       titleForPreviewImage = taskSubmissionContent.task.name;
@@ -182,18 +199,21 @@ class _State extends State<ImageAndVideoPreviewCard> {
     widgets.add(OlukoVideoPlayer(
         videoUrl: videoUrl,
         autoPlay: false,
-        whenInitialized: (ChewieController chewieController) => this.setState(() {
+        whenInitialized: (ChewieController chewieController) =>
+            this.setState(() {
               _controller = chewieController;
             })));
 
     return ConstrainedBox(
         constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).orientation == Orientation.portrait
-                ? ScreenUtils.height(context) / 4
-                : ScreenUtils.height(context) / 1.5,
-            minHeight: MediaQuery.of(context).orientation == Orientation.portrait
-                ? ScreenUtils.height(context) / 4
-                : ScreenUtils.height(context) / 1.5),
+            maxHeight:
+                MediaQuery.of(context).orientation == Orientation.portrait
+                    ? ScreenUtils.height(context) / 4
+                    : ScreenUtils.height(context) / 1.5,
+            minHeight:
+                MediaQuery.of(context).orientation == Orientation.portrait
+                    ? ScreenUtils.height(context) / 4
+                    : ScreenUtils.height(context) / 1.5),
         child: Container(height: 400, child: Stack(children: widgets)));
   }
 }
