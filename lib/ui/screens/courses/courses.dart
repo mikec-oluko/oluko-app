@@ -186,7 +186,8 @@ class _State extends State<Courses> {
                   .map((course) => Padding(
                         padding: const EdgeInsets.only(right: 8.0),
                         child: GestureDetector(
-                          onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing], arguments: {'course': course}),
+                          onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
+                              arguments: {'course': course, 'fromCoach': false}),
                           child: _getCourseCard(_generateImageCourse(course.image),
                               width: ScreenUtils.width(context) / (0.2 + _cardsToShow())),
                         ),
@@ -253,7 +254,8 @@ class _State extends State<Courses> {
                   ? CarouselSection(
                       title: OlukoLocalizations.get(context, 'friendsRecommended'),
                       height: carouselSectionHeight + 10,
-                      children: recommendationState.recommendationsByUsers.entries.map((MapEntry<String, List<UserResponse>> courseEntry) {
+                      children: recommendationState.recommendationsByUsers.entries
+                          .map((MapEntry<String, List<UserResponse>> courseEntry) {
                         var courseList = courseState.values.where((element) => element.id == courseEntry.key).toList();
                         if (courseList.isNotEmpty) {
                           final course = courseList[0];
