@@ -334,17 +334,12 @@ class Routes {
         providers = [BlocProvider<CourseEnrollmentUpdateBloc>.value(value: _courseEnrollmentUpdateBloc)];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = CompletedClass(
-            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
-            classIndex: argumentsToAdd['classIndex'] as int);
+            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment, classIndex: argumentsToAdd['classIndex'] as int);
         break;
       case RouteEnum.story:
-        providers = [
-          BlocProvider<StoryBloc>.value(value: _storyBloc),
-          BlocProvider<StoryListBloc>.value(value: _storyListBloc)
-        ];
+        providers = [BlocProvider<StoryBloc>.value(value: _storyBloc), BlocProvider<StoryListBloc>.value(value: _storyListBloc)];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
-        newRouteView = StoryPage(
-            userStories: argumentsToAdd['userStories'] as UserStories, userId: argumentsToAdd['userId'] as String);
+        newRouteView = StoryPage(userStories: argumentsToAdd['userStories'] as UserStories, userId: argumentsToAdd['userId'] as String);
         break;
       case RouteEnum.signUpWithEmail:
         newRouteView = SignUpWithMailPage();
@@ -466,8 +461,7 @@ class Routes {
         newRouteView = TransformationJourneyPostPage();
         break;
       case RouteEnum.transformationJournetContentDetails:
-        final Map<String, TransformationJourneyUpload> argumentsToAdd =
-            arguments as Map<String, TransformationJourneyUpload>;
+        final Map<String, TransformationJourneyUpload> argumentsToAdd = arguments as Map<String, TransformationJourneyUpload>;
         newRouteView = TransformationJourneyContentDetail(contentToShow: argumentsToAdd['TransformationJourneyUpload']);
         break;
       case RouteEnum.logIn:
@@ -542,8 +536,7 @@ class Routes {
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
-        newRouteView =
-            CourseMarketing(course: argumentsToAdd['course'] as Course, fromCoach: argumentsToAdd['fromCoach'] as bool);
+        newRouteView = CourseMarketing(course: argumentsToAdd['course'] as Course, fromCoach: argumentsToAdd['fromCoach'] as bool);
         break;
       case RouteEnum.enrolledClass:
         providers = [
@@ -564,8 +557,7 @@ class Routes {
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = InsideClass(
-            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
-            classIndex: argumentsToAdd['classIndex'] as int);
+            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment, classIndex: argumentsToAdd['classIndex'] as int);
         break;
       case RouteEnum.assessmentVideos:
         providers = [
@@ -577,9 +569,7 @@ class Routes {
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = AssessmentVideos(
-            isFirstTime: argumentsToAdd == null || argumentsToAdd['isFirstTime'] == null
-                ? false
-                : argumentsToAdd['isFirstTime'] as bool);
+            isFirstTime: argumentsToAdd == null || argumentsToAdd['isFirstTime'] == null ? false : argumentsToAdd['isFirstTime'] as bool);
         break;
       case RouteEnum.taskDetails:
         //TODO: Pass flag for last assessments
@@ -737,7 +727,8 @@ class Routes {
 
         newRouteView = CoachShowVideo(
           videoUrl: argumentsToAdd['videoUrl'].toString(),
-          titleForContent: argumentsToAdd['titleForView'].toString(),
+          titleForContent: argumentsToAdd['titleForContent'].toString(),
+          aspectRatio: double.parse(argumentsToAdd['aspectRatio'].toString()),
         );
         break;
       case RouteEnum.coachProfile:
