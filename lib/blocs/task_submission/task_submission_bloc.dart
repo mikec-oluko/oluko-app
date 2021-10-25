@@ -44,9 +44,11 @@ class Failure extends TaskSubmissionState {
 class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
   TaskSubmissionBloc() : super(Loading());
 
-  Future<void> createTaskSubmission(AssessmentAssignment assessmentAssignment, Task task, bool isPublic) async {
+  Future<void> createTaskSubmission(
+      AssessmentAssignment assessmentAssignment, Task task, bool isPublic, bool isLastTask) async {
     try {
-      TaskSubmission newTaskSubmission = await TaskSubmissionRepository.createTaskSubmission(assessmentAssignment, task, isPublic);
+      TaskSubmission newTaskSubmission =
+          await TaskSubmissionRepository.createTaskSubmission(assessmentAssignment, task, isPublic, isLastTask);
       emit(CreateSuccess(taskSubmission: newTaskSubmission));
     } catch (e, stackTrace) {
       await Sentry.captureException(
@@ -89,7 +91,8 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
 
   void getTaskSubmissionOfTask(AssessmentAssignment assessmentAssignment, Task task) async {
     try {
-      TaskSubmission taskSubmission = await TaskSubmissionRepository.getTaskSubmissionOfTask(assessmentAssignment, task);
+      TaskSubmission taskSubmission =
+          await TaskSubmissionRepository.getTaskSubmissionOfTask(assessmentAssignment, task);
       if (taskSubmission == null || taskSubmission.video == null || taskSubmission.video.url == null) {
         taskSubmission = null;
       }

@@ -1,9 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:oluko_app/helpers/coach_timeline_content.dart';
+import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/annotations.dart';
 import 'package:oluko_app/models/coach_assignment.dart';
 import 'package:oluko_app/models/coach_timeline_item.dart';
+import 'package:oluko_app/models/course.dart';
+import 'package:oluko_app/models/movement.dart';
+import 'package:oluko_app/models/recommendation.dart';
 import 'package:oluko_app/models/segment_submission.dart';
+import 'package:oluko_app/models/submodels/course_timeline_submodel.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 class CoachRepository {
@@ -175,5 +181,95 @@ class CoachRepository {
       );
       rethrow;
     }
+  }
+
+  Future<List<Recommendation>> getCoachRecommendationsForUser(String userId, String coachId) async {
+    try {
+      QuerySnapshot docRef = await FirebaseFirestore.instance
+          .collection('projects')
+          .doc(GlobalConfiguration().getValue('projectId'))
+          .collection('recommendations')
+          .where('destination_user_id', isEqualTo: userId)
+          .where('origin_user_id', isEqualTo: coachId)
+          .get();
+      List<Recommendation> coachRecommendations = [];
+      docRef.docs.forEach((doc) {
+        final Map<String, dynamic> content = doc.data() as Map<String, dynamic>;
+        coachRecommendations.add(Recommendation.fromJson(content));
+      });
+      return coachRecommendations;
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
+      rethrow;
+    }
+  }
+
+  Future<List<CoachTimelineItem>> getRecommendationsInfo(List<Recommendation> coachRecommendationContent) async {
+    List<CoachTimelineItem> recommendationsAsTimelineItems = [];
+    for (Recommendation recommendation in coachRecommendationContent) {
+      DocumentSnapshot ds = await recommendation.entityReference.get();
+      switch (TimelineContentOption.getTimelineOption(recommendation.entityType as int)) {
+        case TimelineInteractionType.course:
+          Course courseRecommended = Course.fromJson(ds.data() as Map<String, dynamic>);
+          CoachTimelineItem recommendedCourseItem = createAnCoachTimelineItem(
+              recommendation: recommendation,
+              contentDescription: courseRecommended.classes.length.toString(),
+              contentName: courseRecommended.name,
+              contentThumbnail: courseRecommended.image,
+              courseForNavigation: courseRecommended,
+              contentType: recommendation.entityType);
+
+          recommendationsAsTimelineItems.add(recommendedCourseItem);
+          break;
+        case TimelineInteractionType.classes:
+          break;
+        case TimelineInteractionType.segment:
+          break;
+        case TimelineInteractionType.movement:
+          Movement movementRecommended = Movement.fromJson(ds.data() as Map<String, dynamic>);
+          CoachTimelineItem recommendedMovementItem = createAnCoachTimelineItem(
+              recommendation: recommendation,
+              contentDescription: movementRecommended.description,
+              contentName: movementRecommended.name,
+              contentThumbnail: movementRecommended.image,
+              movementForNavigation: movementRecommended,
+              contentType: recommendation.entityType);
+          recommendationsAsTimelineItems.add(recommendedMovementItem);
+
+          break;
+        case TimelineInteractionType.mentoredVideo:
+          break;
+        case TimelineInteractionType.sentVideo:
+          break;
+        default:
+      }
+    }
+    return recommendationsAsTimelineItems;
+  }
+
+  CoachTimelineItem createAnCoachTimelineItem(
+      {Recommendation recommendation,
+      String contentDescription,
+      String contentName,
+      String contentThumbnail,
+      Course courseForNavigation,
+      Movement movementForNavigation,
+      num contentType}) {
+    CoachTimelineItem newItem = CoachTimelineItem(
+        coachId: recommendation.originUserId,
+        coachReference: recommendation.originUserReference,
+        contentDescription: contentDescription,
+        contentName: contentName,
+        contentThumbnail: contentThumbnail,
+        contentType: contentType,
+        course: CourseTimelineSubmodel(id: '0', name: 'all', reference: null),
+        courseForNavigation: courseForNavigation ?? courseForNavigation,
+        movementForNavigation: movementForNavigation ?? movementForNavigation,
+        id: '0',
+        createdAt: recommendation.createdAt);
+    return newItem;
   }
 }

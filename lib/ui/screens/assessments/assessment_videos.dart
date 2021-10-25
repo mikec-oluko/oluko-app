@@ -12,6 +12,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/oluko_permissions.dart';
 import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
+import 'package:oluko_app/models/submodels/assessment_task.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -24,14 +25,15 @@ import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/task_card.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/utils/app_messages.dart';
+import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class AssessmentVideos extends StatefulWidget {
-  const AssessmentVideos({this.isFirstTime, Key key}) : super(key: key);
+  const AssessmentVideos({this.isFirstTime, this.isForCoachPage = false, Key key}) : super(key: key);
 
-  final bool isFirstTime;
+  final bool isFirstTime, isForCoachPage;
 
   @override
   _AssessmentVideosState createState() => _AssessmentVideosState();
@@ -43,6 +45,9 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
   Assessment _assessment;
   UserResponse _user;
   AssessmentAssignment _assessmentAssignment;
+  List<TaskSubmission> taskSubmissionsCompleted;
+  List<AssessmentTask> assessmentsTasksList;
+  bool isLastTask = false;
 
   @override
   void initState() {
@@ -60,11 +65,15 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
       child: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
         if (authState is AuthSuccess) {
           _user = authState.user;
-          //TODO: Change this when we have multiple assessments
           BlocProvider.of<AssessmentBloc>(context).getById('emnsmBgZ13UBRqTS26Qd');
           return BlocBuilder<AssessmentBloc, AssessmentState>(builder: (context, assessmentState) {
             if (assessmentState is AssessmentSuccess) {
               _assessment = assessmentState.assessment;
+              if (_user.currentPlan < 1) {
+                assessmentsTasksList = _assessment.tasks.getRange(0, 2).toList();
+              } else {
+                assessmentsTasksList = _assessment.tasks;
+              }
               BlocProvider.of<TaskBloc>(context).get(_assessment);
               if (widget.isFirstTime) {
                 BlocProvider.of<AssessmentAssignmentBloc>(context).setAsSeen(_user.id);
@@ -87,8 +96,17 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
         key: _formKey,
         child: Scaffold(
             appBar: OlukoAppBar(
+              onPressed: widget.isForCoachPage
+                  ? () {
+                      AppNavigator().returnToHome(context);
+                    }
+                  : () {
+                      Navigator.pop(context);
+                    },
               showBackButton: !widget.isFirstTime,
-              title: OlukoLocalizations.get(context, 'assessment'),
+              title: widget.isForCoachPage
+                  ? OlukoLocalizations.get(context, 'coach')
+                  : OlukoLocalizations.get(context, 'assessment'),
               actions: [skipButton()],
             ),
             body: Container(
@@ -112,13 +130,16 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                               textAlign: TextAlign.justify,
                               style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white),
                             )),
-                        BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(builder: (context, assessmentAssignmentState) {
+                        BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(
+                            builder: (context, assessmentAssignmentState) {
                           if (assessmentAssignmentState is AssessmentAssignmentSuccess) {
                             _assessmentAssignment = assessmentAssignmentState.assessmentAssignment;
                             return Column(
                               children: [
-                                BlocBuilder<TaskSubmissionListBloc, TaskSubmissionListState>(builder: (context, taskSubmissionListState) {
+                                BlocBuilder<TaskSubmissionListBloc, TaskSubmissionListState>(
+                                    builder: (context, taskSubmissionListState) {
                                   if (taskSubmissionListState is GetTaskSubmissionSuccess) {
+                                    taskSubmissionsCompleted = taskSubmissionListState.taskSubmissions;
                                     final completedTask = taskSubmissionListState.taskSubmissions.length;
                                     var enabledTask = 0;
                                     for (var i = 0; i < _assessment.tasks.length; i++) {
@@ -127,17 +148,23 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                                       }
                                     }
                                     if (completedTask == enabledTask && _assessmentAssignment.completedAt == null) {
-                                      BlocProvider.of<TaskSubmissionBloc>(context).setCompleted(_assessmentAssignment.id).then((value) => {
-                                            _assessmentAssignment.completedAt = value,
-                                            BlocProvider.of<AssessmentAssignmentBloc>(context).getOrCreate(_user.id, _assessment)
-                                          });
-                                    } else if (completedTask != enabledTask && _assessmentAssignment.completedAt != null) {
-                                      BlocProvider.of<TaskSubmissionBloc>(context).setIncompleted(_assessmentAssignment.id);
+                                      BlocProvider.of<TaskSubmissionBloc>(context)
+                                          .setCompleted(_assessmentAssignment.id)
+                                          .then((value) => {
+                                                _assessmentAssignment.completedAt = value,
+                                                BlocProvider.of<AssessmentAssignmentBloc>(context)
+                                                    .getOrCreate(_user.id, _assessment)
+                                              });
+                                    } else if (completedTask != enabledTask &&
+                                        _assessmentAssignment.completedAt != null) {
+                                      BlocProvider.of<TaskSubmissionBloc>(context)
+                                          .setIncompleted(_assessmentAssignment.id);
                                       _assessmentAssignment.completedAt = null;
                                     }
                                     return taskCardsSection(taskSubmissionListState.taskSubmissions);
                                   } else {
-                                    return const Padding(padding: EdgeInsets.only(top: 30), child: CircularProgressIndicator());
+                                    return const Padding(
+                                        padding: EdgeInsets.only(top: 30), child: CircularProgressIndicator());
                                   }
                                 }),
                                 const SizedBox(
@@ -216,9 +243,16 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                             _controller.pause();
                           }
                           if (OlukoPermissions.isAssessmentTaskDisabled(_user, index)) {
-                            AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'yourCurrentPlanDoesntIncludeAssessment'));
+                            AppMessages.showSnackbar(
+                                context, OlukoLocalizations.get(context, 'yourCurrentPlanDoesntIncludeAssessment'));
                           } else {
-                            return Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {'taskIndex': index});
+                            if (assessmentsTasksList.length - taskSubmissionsCompleted.length == 1) {
+                              setState(() {
+                                isLastTask = true;
+                              });
+                            }
+                            return Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails],
+                                arguments: {'taskIndex': index, 'isLastTask': isLastTask});
                           }
                         },
                       ));

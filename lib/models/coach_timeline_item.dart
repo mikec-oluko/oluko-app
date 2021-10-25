@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:oluko_app/models/annotations.dart';
 import 'package:oluko_app/models/base.dart';
-
+import 'package:oluko_app/models/course.dart';
+import 'package:oluko_app/models/movement.dart';
+import 'package:oluko_app/models/segment_submission.dart';
 import 'submodels/course_timeline_submodel.dart';
 
 class CoachTimelineItem extends Base {
@@ -11,6 +14,10 @@ class CoachTimelineItem extends Base {
   String contentThumbnail;
   num contentType;
   CourseTimelineSubmodel course;
+  Movement movementForNavigation;
+  Course courseForNavigation;
+  List<Annotation> mentoredVideosForNavigation;
+  List<SegmentSubmission> sentVideosForNavigation;
 
   CoachTimelineItem(
       {this.coachId,
@@ -20,6 +27,10 @@ class CoachTimelineItem extends Base {
       this.contentThumbnail,
       this.contentType,
       this.course,
+      this.courseForNavigation,
+      this.movementForNavigation,
+      this.mentoredVideosForNavigation,
+      this.sentVideosForNavigation,
       String id,
       Timestamp createdAt,
       String createdBy,
