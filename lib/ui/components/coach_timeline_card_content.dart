@@ -74,7 +74,7 @@ class _CoachTimelineCardContentState extends State<CoachTimelineCardContent> {
                               widget.fileType == CoachFileTypeEnum.recommendedClass
                                   ? OlukoLocalizations.of(context).find('timelineCourse')
                                   : widget.fileType == CoachFileTypeEnum.recommendedCourse
-                                      ? OlukoLocalizations.of(context).find('timelineDuration')
+                                      ? OlukoLocalizations.of(context).find('classes')
                                       : '',
                               style: OlukoFonts.olukoMediumFont(
                                   customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
