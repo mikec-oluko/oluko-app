@@ -26,6 +26,8 @@ class UserDto {
     updatedBy = userReponse.updatedBy;
     isHidden = userReponse.isHidden;
     isDeleted = userReponse.isDeleted;
+    assessmentsCompletedAt =
+        userReponse.assessmentsCompletedAt != null ? userReponse.assessmentsCompletedAt.millisecondsSinceEpoch : null;
   }
 
   UserDto({
@@ -45,6 +47,7 @@ class UserDto {
     this.state,
     this.country,
     this.currentPlan,
+    Timestamp assessmentsCompletedAt,
     this.id,
     Timestamp createdAt,
     this.createdBy,
@@ -55,6 +58,7 @@ class UserDto {
   }) {
     this.createdAt = createdAt?.millisecondsSinceEpoch;
     this.updatedAt = updatedAt?.millisecondsSinceEpoch;
+    this.assessmentsCompletedAt = assessmentsCompletedAt?.millisecondsSinceEpoch;
   }
 
   String firstName, lastName, email, username, firebaseId, avatar, avatarThumbnail, coverImage, city, state, country;
@@ -70,6 +74,7 @@ class UserDto {
   String updatedBy;
   bool isDeleted = false;
   bool isHidden = false;
+  int assessmentsCompletedAt;
 
   factory UserDto.fromJson(Map<String, dynamic> json) {
     UserDto userDto = UserDto(
@@ -89,6 +94,7 @@ class UserDto {
       notification: json['notification'] == null ? true : json['notification'] as bool,
       privacy: json['privacy'] == null ? 0 : json['privacy'] as int,
       currentPlan: json['current_plan'] == null ? 0 : double.tryParse((json['current_plan'] as num)?.toString()),
+      assessmentsCompletedAt: json['assessments_completed_at'] as Timestamp,
       id: json['id']?.toString(),
       createdAt: json['created_at'] as Timestamp,
       createdBy: json['created_by']?.toString(),
@@ -118,6 +124,7 @@ class UserDto {
       'notification': notification ?? true,
       'privacy': privacy ?? 0,
       'current_plan': currentPlan,
+      'assessments_completed_at': assessmentsCompletedAt,
       'updated_by': updatedBy,
       'created_at': createdAt,
       'created_by': createdBy,

@@ -58,7 +58,7 @@ class RecommendationBloc extends Cubit<RecommendationState> {
 
       //Filter recommendations by Course recommendations
       List<Recommendation> courseRecommendations = recommendations
-          .where((Recommendation element) => element.typeId == RecommendationEntityType.course.index)
+          .where((Recommendation element) => element.entityType == RecommendationEntityType.course.index)
           .toList();
 
       //Get a Map of Courses and their recommender user ids (Map<CourseId, List<UserId>>)
