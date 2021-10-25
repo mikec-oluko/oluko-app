@@ -232,5 +232,7 @@
     "hasMessage": "Tiene un mensaje para ti",
     "movement": "Movimiento",
     "personalRecord": "Record Personal",
-    "noPersonalRecords": "Sin Records Personales"
+    "noPersonalRecords": "Sin Records Personales",
+    "hasMessage": "Tiene un mensaje para ti",
+    "accountAlreadyExistsWithThisEmailUsingADifferentProvider": "Una cuenta ya existe con el mismo email pero con distintas credenciales de sign-in"
 }
