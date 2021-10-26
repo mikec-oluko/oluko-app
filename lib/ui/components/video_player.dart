@@ -8,6 +8,7 @@ import 'dart:io';
 
 class OlukoVideoPlayer extends StatefulWidget {
   final String videoUrl;
+  final double aspectRatio;
   final bool showControls;
   final bool autoPlay;
   final String filePath;
@@ -23,6 +24,7 @@ class OlukoVideoPlayer extends StatefulWidget {
       this.filePath,
       this.whenInitialized,
       this.onVideoFinished,
+      this.aspectRatio,
       Key key})
       : super(key: key);
 
@@ -64,6 +66,7 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
     if (_controller != null) {
       _controller.initialize().then((value) {
         chewieController = ChewieController(
+            aspectRatio: widget.aspectRatio,
             customControls: controls,
             videoPlayerController: _controller,
             autoPlay: widget.autoPlay,
