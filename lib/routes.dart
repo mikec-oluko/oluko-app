@@ -624,7 +624,6 @@ class Routes {
         newRouteView = CourseMarketing(
             course: argumentsToAdd['course'] as Course,
             fromCoach: argumentsToAdd['fromCoach'] as bool);
-
         break;
       case RouteEnum.enrolledClass:
         providers = [
@@ -871,7 +870,8 @@ class Routes {
 
         newRouteView = CoachShowVideo(
           videoUrl: argumentsToAdd['videoUrl'].toString(),
-          titleForContent: argumentsToAdd['titleForView'].toString(),
+          titleForContent: argumentsToAdd['titleForContent'].toString(),
+          aspectRatio: double.parse(argumentsToAdd['aspectRatio'].toString()),
         );
         break;
       case RouteEnum.coachProfile:

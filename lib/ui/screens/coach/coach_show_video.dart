@@ -6,8 +6,9 @@ import 'package:oluko_app/utils/screen_utils.dart';
 
 class CoachShowVideo extends StatefulWidget {
   final String videoUrl;
+  final double aspectRatio;
   final String titleForContent;
-  const CoachShowVideo({this.videoUrl, this.titleForContent});
+  const CoachShowVideo({this.videoUrl, this.titleForContent, this.aspectRatio});
 
   @override
   _CoachShowVideoState createState() => _CoachShowVideoState();
@@ -42,20 +43,21 @@ class _CoachShowVideoState extends State<CoachShowVideo> {
         color: OlukoColors.black,
         child: Stack(
           children: [
-            Align(alignment: Alignment.center, child: showVideoPlayer(widget.videoUrl)),
+            Align(alignment: Alignment.center, child: showVideoPlayer(widget.videoUrl, widget.aspectRatio)),
           ],
         ),
       ),
     );
   }
 
-  Widget showVideoPlayer(String videoUrl) {
+  Widget showVideoPlayer(String videoUrl, double aspectRatio) {
     List<Widget> widgets = [];
     if (_controller == null) {
       widgets.add(Center(child: CircularProgressIndicator()));
     }
     widgets.add(OlukoVideoPlayer(
         videoUrl: videoUrl,
+        aspectRatio: aspectRatio,
         autoPlay: false,
         whenInitialized: (ChewieController chewieController) => this.setState(() {
               _controller = chewieController;

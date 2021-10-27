@@ -161,10 +161,11 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
                         }
                         Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
                           'videoUrl': videoUrl,
+                          'aspectRatio': coachAnnotation.video.aspectRatio,
                           // 'videoUrl': "https://oluko-development.s3.us-west-1.amazonaws.com/annotations/5uqbLM8I44MeGgEdtH1G/master.m3u8",
                           // 'videoUrl': "https://oluko-development.s3.us-west-1.amazonaws.com/04ZUOE5pWwPlVtBsE47q/master.m3u8",
                           // 'videoUrl': "https://oluko-development.s3.us-west-1.amazonaws.com/annotations/5uqbLM8I44MeGgEdtH1G/video.webm"
-                          'titleForView': OlukoLocalizations.get(context, 'mentoredVideos')
+                          'titleForContent': OlukoLocalizations.get(context, 'mentoredVideos')
                         });
                       },
                       child: Image.asset(
