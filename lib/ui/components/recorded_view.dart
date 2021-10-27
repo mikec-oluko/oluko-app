@@ -3,19 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/ui/components/course_progress_bar.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class RecordedView extends StatefulWidget {
   final List<String> records;
   final String record;
   final bool showTicks;
-  final Function() binAction;
+  final PanelController panelController;
 
   const RecordedView({
     Key key,
     this.records,
     this.record,
     this.showTicks,
-    this.binAction,
+    this.panelController,
   }) : super(key: key);
 
   @override
@@ -52,7 +53,7 @@ class _RecordedViewState extends State<RecordedView> {
                       scale: 3.5,
                     )),
                 GestureDetector(
-                    onTap: () => widget.binAction,
+                    onTap: () => widget.panelController.open(),
                     child: Padding(
                         padding: EdgeInsets.only(right: 10),
                         child: Image.asset(

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oluko_app/models/base.dart';
+import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/submodels/user_submodel.dart';
 
 class Challenge extends Base {
@@ -18,6 +19,7 @@ class Challenge extends Base {
   String image;
   String challengeName;
   UserSubmodel user;
+  List<Audio> audios;
 
   Challenge(
       {this.segmentId,
@@ -35,6 +37,7 @@ class Challenge extends Base {
       this.image,
       this.challengeName,
       this.user,
+      this.audios,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -72,6 +75,10 @@ class Challenge extends Base {
                 .map<String>((reqClass) => reqClass.toString())
                 .toList()
             : [],
+        audios: json['audios'] != null
+            ? List<Audio>.from((json['audios'] as Iterable)
+                .map((audio) => Audio.fromJson(audio as Map<String, dynamic>)))
+            : null,
         index: json['index'] as int,
         challengeType: json['type']?.toString(),
         image: json['image']?.toString(),
@@ -98,6 +105,9 @@ class Challenge extends Base {
       'type': challengeType,
       'image': image,
       'name': challengeName,
+      'audios': audios == null
+          ? null
+          : List<dynamic>.from(audios.map((audio) => audio.toJson())),
       'user': user.toJson()
     };
     challengeJson.addEntries(super.toJson().entries);

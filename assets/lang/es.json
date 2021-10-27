@@ -235,5 +235,6 @@
     "hasMessage": "Tiene un mensaje para ti",
     "recordAMessage": "Grabe un mensaje para ",
     "saveFor": "Guardar para ",
-    "accountAlreadyExistsWithThisEmailUsingADifferentProvider": "Una cuenta ya existe con el mismo email pero con distintas credenciales de sign-in"
+    "accountAlreadyExistsWithThisEmailUsingADifferentProvider": "Una cuenta ya existe con el mismo email pero con distintas credenciales de sign-in",
+    "deleteMessageConfirm": "Esta seguro de que quiere eliminar su mensaje de voz?"
 }

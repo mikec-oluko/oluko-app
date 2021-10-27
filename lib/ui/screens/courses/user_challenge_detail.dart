@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/audio_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/class_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
@@ -15,6 +16,7 @@ import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/overlay_video_preview.dart';
 import 'package:oluko_app/ui/components/recorded_view.dart';
@@ -60,11 +62,13 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
   List<String> records = [];
   String record;
   bool audioRecorded;
+  bool submitted;
 
   @override
   void initState() {
     super.initState();
     audioRecorded = false;
+    submitted = false;
     getApplicationDocumentsDirectory().then((value) {
       appDirectory = value;
       appDirectory.list().listen((onData) {
@@ -146,20 +150,66 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(20),
                     topRight: Radius.circular(20)),
+                maxHeight: 250,
                 minHeight: 5,
                 collapsed: Container(
                   color: Colors.black,
                 ),
-                panel: SizedBox(),
+                panel: dialogContent(),
                 body: Container(
                   color: Colors.black,
                   child: classInfoSection(),
                 ))));
   }
 
+  Widget dialogContent() {
+    return Container(
+        padding: EdgeInsets.symmetric(horizontal: 15),
+        decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/courses/gray_background.png'),
+              fit: BoxFit.cover,
+            ),
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+        child: Column(children: [
+          SizedBox(height: 10),
+          Icon(Icons.warning_amber_rounded,
+              color: OlukoColors.coral, size: 100),
+          SizedBox(height: 5),
+          Text(OlukoLocalizations.get(context, 'deleteMessageConfirm'),
+              textAlign: TextAlign.center,
+              style: OlukoFonts.olukoBigFont(
+                  custoFontWeight: FontWeight.w400,
+                  customColor: OlukoColors.grayColor)),
+          SizedBox(height: 25),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              OlukoOutlinedButton(
+                title: OlukoLocalizations.get(context, 'no'),
+                onPressed: () {
+                  panelController.close();
+                },
+              ),
+              SizedBox(width: 20),
+              OlukoPrimaryButton(
+                title: OlukoLocalizations.get(context, 'yes'),
+                onPressed: () {
+                  setState(() {
+                    audioRecorded = false;
+                  });
+                  panelController.close();
+                },
+              )
+            ],
+          ),
+        ]));
+  }
+
   Widget audioRecordedSection() {
     return Container(
-        height: 140,
+        height: !submitted ? 140 : 76,
         color: Colors.black,
         child: Column(children: [
           Divider(
@@ -170,15 +220,10 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
             endIndent: 0,
           ),
           RecordedView(
-            record: record,
-            showTicks: false,
-            binAction: () {
-              setState(() {
-                audioRecorded = false;
-              });
-            },
-          ),
-          _saveButton()
+              record: record,
+              showTicks: submitted,
+              panelController: panelController),
+          !submitted ? _saveButton() : SizedBox()
         ]));
   }
 
@@ -191,7 +236,13 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
             OlukoPrimaryButton(
               title: OlukoLocalizations.get(context, 'saveFor') +
                   widget.userRequested.firstName,
-              onPressed: () {},
+              onPressed: () {
+                BlocProvider.of<AudioBloc>(context)
+                  ..saveAudio(File(record), _user.id, widget.challenge.id);
+                setState(() {
+                  submitted = true;
+                });
+              },
             ),
           ],
         ));
@@ -199,7 +250,7 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
 
   Widget audioRecorderSection() {
     return Container(
-        height: 70,
+        height: 76,
         child: Column(children: [
           Divider(
             height: 1,
