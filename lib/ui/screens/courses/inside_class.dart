@@ -231,6 +231,7 @@ class _InsideClassesState extends State<InsideClass> {
                               coach: coaches[0], audio: widget.courseEnrollment.classes[widget.classIndex].audios[0]));
                     }
                   },
+                  //TODO: HARDCODED
                   peopleQty: 50,
                   audioMessageQty: widget.courseEnrollment?.classes[widget.classIndex]?.audios != null
                       ? widget.courseEnrollment.classes[widget.classIndex].audios.length
