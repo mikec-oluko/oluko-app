@@ -43,23 +43,15 @@ class _RecordedViewState extends State<RecordedView> {
                 playButton(),
                 SizedBox(width: 15),
                 Container(
-                    width: 200,
+                    width: 220,
                     child: CourseProgressBar(value: _completedPercentage)),
                 Expanded(child: SizedBox()),
                 Padding(
-                    padding: EdgeInsets.only(right: 10),
+                    padding: EdgeInsets.only(right: 15),
                     child: Image.asset(
                       'assets/courses/audio_horizontal_vector.png',
                       scale: 3.5,
                     )),
-                GestureDetector(
-                    onTap: () => widget.panelController.open(),
-                    child: Padding(
-                        padding: EdgeInsets.only(right: 10),
-                        child: Image.asset(
-                          'assets/courses/bin.png',
-                          scale: 16,
-                        ))),
                 widget.showTicks
                     ? Padding(
                         padding: EdgeInsets.only(right: 10),
@@ -67,7 +59,14 @@ class _RecordedViewState extends State<RecordedView> {
                           'assets/courses/coach_tick.png',
                           scale: 5,
                         ))
-                    : SizedBox(),
+                    : GestureDetector(
+                        onTap: () => widget.panelController.open(),
+                        child: Padding(
+                            padding: EdgeInsets.only(right: 10),
+                            child: Image.asset(
+                              'assets/courses/bin.png',
+                              scale: 16,
+                            ))),
               ],
             ),
           );
