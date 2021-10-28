@@ -27,6 +27,7 @@ import 'package:oluko_app/ui/screens/courses/course_info_section.dart';
 import 'package:oluko_app/ui/screens/courses/segment_detail.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/sound_recorder.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -58,52 +59,22 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
   PanelEnum panelState;
 
   //audio
-  Directory appDirectory;
-  List<String> records = [];
-  String record;
   bool audioRecorded;
   bool submitted;
+  final SoundRecorder recorder = SoundRecorder();
 
   @override
   void initState() {
     super.initState();
     audioRecorded = false;
     submitted = false;
-    getApplicationDocumentsDirectory().then((value) {
-      appDirectory = value;
-      appDirectory.list().listen((onData) {
-        if (onData.path.contains('.aac')) {
-          records.add(onData.path);
-          //record = onData.path;
-        }
-      }).onDone(() {
-        //records = records.reversed.toList();
-        record = records[records.length - 1];
-        setState(() {});
-      });
-    });
+    recorder.init();
   }
 
   @override
   void dispose() {
-    appDirectory.delete();
+    recorder.dispose();
     super.dispose();
-  }
-
-  _onRecordComplete() {
-    records.clear();
-    appDirectory.list().listen((onData) {
-      if (onData.path.contains('.aac')) {
-        records.add(onData.path);
-        //record = onData.path;
-      }
-    }).onDone(() {
-      records.sort();
-      //records = records.reversed.toList();
-      record = records[records.length - 1];
-      audioRecorded = true;
-      setState(() {});
-    });
   }
 
   @override
@@ -220,7 +191,7 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
             endIndent: 0,
           ),
           RecordedView(
-              record: record,
+              record: recorder.audioUrl /*record*/,
               showTicks: submitted,
               panelController: panelController),
           !submitted ? _saveButton() : SizedBox()
@@ -238,7 +209,8 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
                   widget.userRequested.firstName,
               onPressed: () {
                 BlocProvider.of<AudioBloc>(context)
-                  ..saveAudio(File(record), _user.id, widget.challenge.id);
+                  ..saveAudio(
+                      File(recorder.audioUrl), _user.id, widget.challenge.id);
                 setState(() {
                   submitted = true;
                 });
@@ -272,10 +244,17 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
                 ),
                 Expanded(child: SizedBox()),
                 RecorderView(
-                  onSaved: _onRecordComplete,
+                  recorder: recorder,
+                  onSaved: _onRecordCompleted,
                 )
               ]))
         ]));
+  }
+
+  _onRecordCompleted() {
+    setState(() {
+      audioRecorded = true;
+    });
   }
 
   Widget showVideoPlayer(String videoUrl) {

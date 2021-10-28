@@ -76,6 +76,7 @@ dependencies:
   audioplayers: ^0.20.1
   flutter_audio_recorder2: ^0.0.2
   uuid: ^3.0.5
+  flutter_sound_lite: ^8.3.9
 
 dev_dependencies:
   flutter_launcher_icons: "^0.9.0" 
