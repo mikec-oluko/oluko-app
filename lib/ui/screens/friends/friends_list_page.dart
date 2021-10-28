@@ -250,11 +250,11 @@ class _FriendsListPageState extends State<FriendsListPage> {
               ]
             : userListState.users
                 .where((e) =>
-                    e.id != _authStateData.user.id &&
+                    (e.id != _authStateData.user.id && friendState.friendUsers == null) || (e.id != _authStateData.user.id &&
                     !friendState.friendUsers
                         .map((fu) => fu.id)
                         .toList()
-                        .contains(e.id))
+                        .contains(e.id)))
                 .map((user) {
                 return GestureDetector(
                   onTap: () {
