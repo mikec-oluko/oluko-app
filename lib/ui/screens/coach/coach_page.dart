@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
@@ -40,6 +42,7 @@ import 'package:oluko_app/ui/components/coach_carousel_section.dart';
 import 'package:oluko_app/ui/components/coach_content_preview_content.dart';
 import 'package:oluko_app/ui/components/coach_content_section_card.dart';
 import 'package:oluko_app/ui/components/coach_horizontal_carousel_component.dart';
+import 'package:oluko_app/ui/components/coach_notification_panel_content_card.dart';
 import 'package:oluko_app/ui/components/coach_sliding_up_panel.dart';
 import 'package:oluko_app/ui/components/coach_user_progress_card.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
@@ -56,6 +59,10 @@ class CoachPage extends StatefulWidget {
 
 UserResponse _currentAuthUser;
 UserResponse _coachUser;
+UserStatistics _userStats;
+Assessment _assessment;
+List<CoachRequest> _coachRequestList;
+String defaultIdForAllContentTimeline = '0';
 List<CourseEnrollment> _courseEnrollmentList = [];
 List<Challenge> _activeChallenges = [];
 List<Annotation> _annotationVideosContent = [];
@@ -64,17 +71,13 @@ List<Recommendation> _coachRecommendationContent = [];
 List<InfoForSegments> _toDoSegments = [];
 List<CoachSegmentContent> requiredSegments = [];
 List<TaskSubmission> _assessmentVideosContent = [];
-List<CoachTimelineItem> _timelineItemsContent = [];
-List<CoachRequest> _coachRequestList;
-UserStatistics _userStats;
-Assessment _assessment;
 List<Task> _tasks = [];
+List<CoachTimelineItem> _timelineItemsContent = [];
+List<CoachTimelineItem> coachRecommendationTimelineContent = [];
 List<CoachTimelineItem> sentVideosTimelineContent = [];
 List<CoachTimelineItem> mentoredVideoTimelineContent = [];
-List<CoachTimelineGroup> timelinePanelContent = [];
 List<CoachTimelineItem> allContent = [];
-
-String defaultIdForAllContentTimeline = '0';
+List<CoachTimelineGroup> timelinePanelContent = [];
 
 class _CoachPageState extends State<CoachPage> {
   @override
@@ -173,6 +176,7 @@ class _CoachPageState extends State<CoachPage> {
                                     }
                                     if (state is CoachRecommendationsAsTimelineItem &&
                                         timelineState is CoachTimelineItemsSuccess) {
+                                      coachRecommendationTimelineContent = state.coachRecommendationTimelineContent;
                                       _timelineItemsContent = timelineState.timelineItems;
                                       timelinePanelContent =
                                           CoachTimelineFunctions.buildContentForTimelinePanel(_timelineItemsContent);
@@ -180,7 +184,7 @@ class _CoachPageState extends State<CoachPage> {
                                       timelinePanelContent.forEach((element) {
                                         allContent.addAll(element.timelineElements);
                                       });
-                                      allContent.addAll(state.coachRecommendationTimelineContent);
+                                      allContent.addAll(coachRecommendationTimelineContent);
 
                                       CoachTimelineGroup allTabContent = CoachTimelineGroup(
                                           courseId: defaultIdForAllContentTimeline,
@@ -223,8 +227,6 @@ class _CoachPageState extends State<CoachPage> {
   }
 
   void requestCurrentUserData(BuildContext context) {
-    // BlocProvider.of<CoachProfileBloc>(context).getCoachProfile(widget.coachId);
-
     BlocProvider.of<CoachTimelineItemsBloc>(context).getTimelineItemsForUser(_currentAuthUser.id);
 
     BlocProvider.of<UserStatisticsBloc>(context).getUserStatistics(_currentAuthUser.id);
@@ -254,17 +256,19 @@ class _CoachPageState extends State<CoachPage> {
         if (state is AssessmentSuccess) {
           _assessment = state.assessment;
           BlocProvider.of<TaskBloc>(context).get(_assessment);
+
           return ListView(
             children: [
+              //TODO: PASS LIST OF WIDGETS TO CAROUSEL, ONE EACH CONTENT TYPE, RECOMMENDATIONS AND MENTORED VIDEO
               CoachCarouselSliderSection(
-                contentForCarousel: listOfContentForUser(carousel: true),
+                contentForCarousel: getCarouselWidgets(coachRecommendationTimelineContent),
                 introductionCompleted: widget.coachAssignment.introductionCompleted,
                 introductionVideo: _assessment.video,
                 onVideoFinished: () =>
                     BlocProvider.of<CoachAssignmentBloc>(context).updateIntroductionVideoState(widget.coachAssignment),
               ),
               userProgressSection(),
-              CoachHorizontalCarousel(contentToDisplay: listOfContentForUser(carousel: false), isForVideoContent: true),
+              CoachHorizontalCarousel(contentToDisplay: listOfContentForUser(), isForVideoContent: true),
               carouselToDoSection(context),
               assessmentSection(context),
               const SizedBox(
@@ -277,6 +281,21 @@ class _CoachPageState extends State<CoachPage> {
         }
       },
     );
+  }
+
+  List<Widget> getCarouselWidgets(List<CoachTimelineItem> coachRecommendationTimelineContent) {
+    List<Widget> carouselContent = [];
+    if (mentoredVideoTimelineContent.isNotEmpty) {
+      coachRecommendationTimelineContent.forEach((element) {
+        carouselContent.add(CoachNotificationPanelContentCard(content: element));
+      });
+    }
+    if (mentoredVideoTimelineContent.isNotEmpty) {
+      mentoredVideoTimelineContent.forEach((element) {
+        carouselContent.add(CoachNotificationPanelContentCard(content: element));
+      });
+    }
+    return carouselContent;
   }
 
   BlocBuilder<UserStatisticsBloc, UserStatisticsState> userProgressSection() {
@@ -380,52 +399,38 @@ class _CoachPageState extends State<CoachPage> {
     );
   }
 
-  List<Widget> listOfContentForUser({bool carousel}) {
-    if (carousel) {
-      return [
-        mentoredVideos(isForCarousel: carousel),
-        sentVideos(isForCarousel: carousel),
-        CoachContentSectionCard(title: OlukoLocalizations.get(context, 'recomendedVideos'), isForCarousel: carousel),
-        CoachContentSectionCard(title: OlukoLocalizations.get(context, 'voiceMessages'), isForCarousel: carousel),
-      ];
-    }
+  List<Widget> listOfContentForUser() {
     const separatorBox = SizedBox(
       width: 5,
     );
     return [
-      mentoredVideos(isForCarousel: carousel),
+      mentoredVideos(),
       separatorBox,
-      sentVideos(isForCarousel: carousel),
+      sentVideos(),
       separatorBox,
-      CoachContentSectionCard(title: OlukoLocalizations.get(context, 'recomendedVideos'), isForCarousel: carousel),
+      CoachContentSectionCard(title: OlukoLocalizations.get(context, 'recomendedVideos')),
       separatorBox,
-      CoachContentSectionCard(title: OlukoLocalizations.get(context, 'voiceMessages'), isForCarousel: carousel),
+      CoachContentSectionCard(title: OlukoLocalizations.get(context, 'voiceMessages')),
     ];
   }
 
-  Widget sentVideos({bool isForCarousel}) {
+  Widget sentVideos() {
     return _sentVideosContent.length != null && _sentVideosContent.isNotEmpty
         ? CoachContentPreviewContent(
             contentFor: CoachContentSection.sentVideos,
             titleForSection: OlukoLocalizations.get(context, 'sentVideos'),
-            segmentSubmissionContent: _sentVideosContent,
-            isForCarousel: isForCarousel)
+            segmentSubmissionContent: _sentVideosContent)
         : CoachContentSectionCard(
             title: OlukoLocalizations.get(context, 'sentVideos'),
-            isForCarousel: isForCarousel,
           );
   }
 
-  Widget mentoredVideos({bool isForCarousel}) {
+  Widget mentoredVideos() {
     return _annotationVideosContent != null && _annotationVideosContent.isNotEmpty
         ? CoachContentPreviewContent(
             contentFor: CoachContentSection.mentoredVideos,
             titleForSection: OlukoLocalizations.get(context, 'mentoredVideos'),
-            coachAnnotationContent: _annotationVideosContent,
-            isForCarousel: isForCarousel)
-        : CoachContentSectionCard(
-            title: OlukoLocalizations.get(context, 'mentoredVideos'),
-            isForCarousel: isForCarousel,
-          );
+            coachAnnotationContent: _annotationVideosContent)
+        : CoachContentSectionCard(title: OlukoLocalizations.get(context, 'mentoredVideos'));
   }
 }

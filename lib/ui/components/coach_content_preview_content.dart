@@ -13,14 +13,9 @@ class CoachContentPreviewContent extends StatefulWidget {
   final String titleForSection;
   final List<SegmentSubmission> segmentSubmissionContent;
   final List<Annotation> coachAnnotationContent;
-  final bool isForCarousel;
 
   const CoachContentPreviewContent(
-      {this.contentFor,
-      this.titleForSection,
-      this.segmentSubmissionContent,
-      this.coachAnnotationContent,
-      this.isForCarousel = false});
+      {this.contentFor, this.titleForSection, this.segmentSubmissionContent, this.coachAnnotationContent});
 
   @override
   _CoachContentPreviewContentState createState() => _CoachContentPreviewContentState();
@@ -28,7 +23,7 @@ class CoachContentPreviewContent extends StatefulWidget {
 
 class _CoachContentPreviewContentState extends State<CoachContentPreviewContent> {
   Widget imageAndVideoContainer;
-
+  //TODO: CHECK UPDATE TO USE IT ON CAROUSEL COACH
   @override
   Widget build(BuildContext context) {
     return widget.segmentSubmissionContent != null
@@ -40,11 +35,9 @@ class _CoachContentPreviewContentState extends State<CoachContentPreviewContent>
 
   Row segmentSubmissionWidget() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Column(
-          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
@@ -56,40 +49,20 @@ class _CoachContentPreviewContentState extends State<CoachContentPreviewContent>
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(0),
+              padding: EdgeInsets.zero,
               child: GestureDetector(
                 onTap: () {
-                  widget.segmentSubmissionContent.length != null ? getRouteForContent(widget.contentFor) : () {};
+                  widget.segmentSubmissionContent.isNotEmpty ? getRouteForContent(widget.contentFor) : () {};
                 },
-                child: widget.isForCarousel
-                    ? Wrap(
-                        children: [
-                          Container(
-                            height: 150,
-                            width: 200,
-                            color: Colors.black,
-                            child: widget.segmentSubmissionContent.isNotEmpty
-                                ? CoachVideoContent(
-                                    videoThumbnail: [widget.segmentSubmissionContent[0].video.thumbUrl],
-                                    isForGallery: widget.isForCarousel)
-                                : CoachContentSectionCard(
-                                    title: widget.titleForSection,
-                                    isForCarousel: widget.isForCarousel,
-                                    needTitle: false),
-                          ),
-                        ],
-                      )
-                    : Container(
-                        width: 150,
-                        height: 115,
-                        color: Colors.black,
-                        child: widget.segmentSubmissionContent.isNotEmpty
-                            ? CoachVideoContent(
-                                videoThumbnail: getThumbnails(segments: widget.segmentSubmissionContent),
-                                isForGallery: widget.isForCarousel)
-                            : CoachContentSectionCard(
-                                title: widget.titleForSection, isForCarousel: widget.isForCarousel, needTitle: false),
-                      ),
+                child: Container(
+                  width: 150,
+                  height: 115,
+                  color: Colors.black,
+                  child: widget.segmentSubmissionContent.isNotEmpty
+                      ? CoachVideoContent(
+                          videoThumbnail: getThumbnails(segments: widget.segmentSubmissionContent), isForGallery: false)
+                      : CoachContentSectionCard(title: widget.titleForSection, needTitle: false),
+                ),
               ),
             )
           ],
@@ -100,11 +73,9 @@ class _CoachContentPreviewContentState extends State<CoachContentPreviewContent>
 
   Row mentoredVideosWidget() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Column(
-          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
@@ -115,40 +86,21 @@ class _CoachContentPreviewContentState extends State<CoachContentPreviewContent>
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(0),
+              padding: EdgeInsets.zero,
               child: GestureDetector(
                 onTap: () {
-                  widget.coachAnnotationContent.length != null ? getRouteForContent(widget.contentFor) : () {};
+                  widget.coachAnnotationContent.isNotEmpty ? getRouteForContent(widget.contentFor) : () {};
                 },
-                child: widget.isForCarousel
-                    ? Wrap(
-                        children: [
-                          Container(
-                            height: 150,
-                            width: 200,
-                            color: Colors.black,
-                            child: widget.coachAnnotationContent.isNotEmpty
-                                ? CoachVideoContent(
-                                    videoThumbnail: [widget.coachAnnotationContent[0].video.thumbUrl],
-                                    isForGallery: widget.isForCarousel)
-                                : CoachContentSectionCard(
-                                    title: widget.titleForSection,
-                                    isForCarousel: widget.isForCarousel,
-                                    needTitle: false),
-                          ),
-                        ],
-                      )
-                    : Container(
-                        width: 150,
-                        height: 115,
-                        color: Colors.black,
-                        child: widget.coachAnnotationContent.isNotEmpty
-                            ? CoachVideoContent(
-                                videoThumbnail: getThumbnails(annotations: widget.coachAnnotationContent),
-                                isForGallery: widget.isForCarousel)
-                            : CoachContentSectionCard(
-                                title: widget.titleForSection, isForCarousel: widget.isForCarousel, needTitle: false),
-                      ),
+                child: Container(
+                  width: 150,
+                  height: 115,
+                  color: Colors.black,
+                  child: widget.coachAnnotationContent.isNotEmpty
+                      ? CoachVideoContent(
+                          videoThumbnail: getThumbnails(annotations: widget.coachAnnotationContent),
+                          isForGallery: false)
+                      : CoachContentSectionCard(title: widget.titleForSection, needTitle: false),
+                ),
               ),
             )
           ],
