@@ -110,11 +110,13 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                     showBackButton: true,
                                     showHeartButton: true,
                                     showShareButton: true,
-                                    onBackPressed: widget.fromCoach
+                                    onBackPressed: widget.fromCoach != null && widget.fromCoach
                                         ? () {
                                             Navigator.pop(context);
                                           }
-                                        : null,
+                                        : () {
+                                            Navigator.pop(context);
+                                          },
                                   ),
                                 ),
                                 showEnrollButton(enrollmentState.courseEnrollment, context),
@@ -208,38 +210,38 @@ class _CourseMarketingState extends State<CourseMarketing> {
 
   Widget buildStatistics() {
     return BlocBuilder<SubscribedCourseUsersBloc, SubscribedCourseUsersState>(
-      bloc: BlocProvider.of<SubscribedCourseUsersBloc>(context)..get(widget.course.id, _userState.user.id),
-      builder: (context, state) {
-      if (state is SubscribedCourseUsersSuccess) {
-        return Padding(
-            padding: EdgeInsets.symmetric(vertical: 15),
-            child: StatisticChart(
-              courseStatistics:
-                  CourseStatistics(courseId: widget.course.id, takingUp: state.users.length, doing: state.users.length),
-              course: widget.course,
-            ));
-      }
-      if (state is SubscribedCourseUsersLoading) {
-        return Padding(
-          padding: const EdgeInsets.all(50.0),
-          child: Center(
-            child: Text(OlukoLocalizations.get(context, 'loadingWhithDots'),
-                style: TextStyle(
-                  color: Colors.white,
-                )),
-          ),
-        );
-      } else {
-        return Padding(
-            padding: const EdgeInsets.all(50.0),
-            child: Center(
-              child: Text('error',
-                  style: TextStyle(
-                    color: Colors.white,
-                  )),
-            ));
-      }
-    });
+        bloc: BlocProvider.of<SubscribedCourseUsersBloc>(context)..get(widget.course.id, _userState.user.id),
+        builder: (context, state) {
+          if (state is SubscribedCourseUsersSuccess) {
+            return Padding(
+                padding: EdgeInsets.symmetric(vertical: 15),
+                child: StatisticChart(
+                  courseStatistics: CourseStatistics(
+                      courseId: widget.course.id, takingUp: state.users.length, doing: state.users.length),
+                  course: widget.course,
+                ));
+          }
+          if (state is SubscribedCourseUsersLoading) {
+            return Padding(
+              padding: const EdgeInsets.all(50.0),
+              child: Center(
+                child: Text(OlukoLocalizations.get(context, 'loadingWhithDots'),
+                    style: TextStyle(
+                      color: Colors.white,
+                    )),
+              ),
+            );
+          } else {
+            return Padding(
+                padding: const EdgeInsets.all(50.0),
+                child: Center(
+                  child: Text('error',
+                      style: TextStyle(
+                        color: Colors.white,
+                      )),
+                ));
+          }
+        });
   }
 
   Widget buildClassExpansionPanels() {
