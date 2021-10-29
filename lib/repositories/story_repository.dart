@@ -49,8 +49,13 @@ class StoryRepository {
     });
 
     returnList.sort((a, b) {
-      final aLastStory = a.stories[a.stories.length - 1];
-      final bLastStory = b.stories[b.stories.length - 1];
+      final aLength = a?.stories?.length;
+      final bLength = b?.stories?.length;
+      if ((aLength == null || aLength == 0) && (bLength == null || bLength == 0)) return 0;
+      if ((aLength == null || aLength == 0) && (bLength != null && bLength > 0)) return 1;
+      if ((aLength != null && aLength > 0) && (bLength == null || bLength == 0)) return -1;
+      final aLastStory = a.stories[aLength - 1];
+      final bLastStory = b.stories[bLength - 1];
       if (aLastStory.seen && !bLastStory.seen) return 1;
       if (!aLastStory.seen && bLastStory.seen) return -1;
       if (aLastStory.createdAt != null && bLastStory.createdAt != null) return aLastStory.createdAt?.compareTo(bLastStory.createdAt);
@@ -58,6 +63,10 @@ class StoryRepository {
       return 0;
     });
     return returnList;
+  }
+
+  Stream<Event> getSubscription(String userId) {
+    return FirebaseDatabase.instance.reference().child('${GlobalConfiguration().getValue('projectId')}${'/users/$userId/userStories'}').onChildChanged;
   }
 
   static Future<List<Story>> getByUserId(String userId) async {

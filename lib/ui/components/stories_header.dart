@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/models/dto/user_stories.dart';
 import 'package:oluko_app/routes.dart';
@@ -19,8 +20,11 @@ class _State extends State<StoriesHeader> {
 
   @override
   Widget build(BuildContext context) {
+    BlocProvider.of<StoryListBloc>(context).getStream(widget.userId);
     BlocProvider.of<StoryListBloc>(context).get(widget.userId);
-    return BlocBuilder<StoryListBloc, StoryListState>(builder: (context, storyState) {
+    return BlocBuilder<StoryListBloc, StoryListState>(buildWhen: (_, state) {
+      return state is! StoryListUpdate;
+    }, builder: (context, storyState) {
       if (storyState is StoryListSuccess && storyState.usersStories.isNotEmpty) {
         return Padding(
           padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
@@ -33,13 +37,13 @@ class _State extends State<StoriesHeader> {
                           Navigator.pushNamed(context, routeLabels[RouteEnum.story], arguments: {'userStories': userStory, 'userId': widget.userId})
                         },
                     child: Container(
-                      child: StoriesItem(stories: userStory.stories, imageUrl: userStory.avatar_thumbnail, maxRadius: 35, name: userStory.name),
-                      margin: EdgeInsets.only(top: 5),
+                      margin: const EdgeInsets.only(top: 5),
+                      child: StoriesItem(stories: userStory.stories, imageUrl: userStory.avatar_thumbnail, maxRadius: 35, userStoryId: userStory.id, name: userStory.name),
                     ));
               }).toList())),
         );
       } else {
-        return const SizedBox();
+        return nil;
       }
     });
   }

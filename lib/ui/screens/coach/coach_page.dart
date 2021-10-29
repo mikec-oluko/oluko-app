@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
@@ -33,6 +34,7 @@ import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/enums/status_enum.dart';
 import 'package:oluko_app/models/recommendation.dart';
 import 'package:oluko_app/models/segment_submission.dart';
+import 'package:oluko_app/models/submodels/video.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -78,11 +80,24 @@ List<CoachTimelineItem> sentVideosTimelineContent = [];
 List<CoachTimelineItem> mentoredVideoTimelineContent = [];
 List<CoachTimelineItem> allContent = [];
 List<CoachTimelineGroup> timelinePanelContent = [];
+Annotation introductionVideo;
+final String defaultIntroductionVideoId = 'introVideo';
 
 class _CoachPageState extends State<CoachPage> {
   @override
   void initState() {
     BlocProvider.of<CoachUserBloc>(context).get(widget.coachAssignment.coachId);
+    if (widget.coachAssignment.introductionVideo != null) {
+      setState(() {
+        introductionVideo = Annotation(
+            createdAt: Timestamp.now(),
+            id: defaultIntroductionVideoId,
+            favorite: false,
+            video: Video(url: widget.coachAssignment.introductionVideo, aspectRatio: 0.60),
+            videoHLS: widget.coachAssignment.introductionVideo);
+      });
+    }
+
     super.initState();
   }
 
@@ -365,7 +380,11 @@ class _CoachPageState extends State<CoachPage> {
       _coachRequestList.forEach((coachRequestItem) {
         allSegments.forEach((segmentItem) {
           if (segmentItem.segmentId == coachRequestItem.segmentId) {
-            if (coachRequestItem.status == StatusEnum.requested) {
+            if (requiredSegments
+                .where((requiredSegmentItem) =>
+                    requiredSegmentItem.segmentId == coachRequestItem.segmentId &&
+                    coachRequestItem.status == StatusEnum.requested)
+                .isEmpty) {
               requiredSegments.add(segmentItem);
             }
           }
@@ -425,7 +444,15 @@ class _CoachPageState extends State<CoachPage> {
           );
   }
 
-  Widget mentoredVideos() {
+  Widget mentoredVideos({bool isForCarousel}) {
+    if (_annotationVideosContent != null && introductionVideo != null) {
+      if (_annotationVideosContent
+          .where((annotation) => annotation.id == defaultIntroductionVideoId)
+          .toList()
+          .isEmpty) {
+        _annotationVideosContent.insert(0, introductionVideo);
+      }
+    }
     return _annotationVideosContent != null && _annotationVideosContent.isNotEmpty
         ? CoachContentPreviewContent(
             contentFor: CoachContentSection.mentoredVideos,

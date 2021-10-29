@@ -8,6 +8,7 @@ class CoachAssignment extends Base {
       this.coachReference,
       this.coachAssignmentStatus,
       this.introductionCompleted,
+      this.introductionVideo,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -24,7 +25,7 @@ class CoachAssignment extends Base {
             isDeleted: isDeleted,
             isHidden: isHidden);
 
-  String userId, coachId;
+  String userId, coachId, introductionVideo;
   DocumentReference coachReference;
   num coachAssignmentStatus;
   bool introductionCompleted;
@@ -35,6 +36,7 @@ class CoachAssignment extends Base {
       coachId: json['coach_id'] as String,
       coachReference: json['coach_reference'] as DocumentReference,
       coachAssignmentStatus: json['status'] as num,
+      introductionVideo: json['introduction_video'] as String,
       introductionCompleted: json['introduction_completed'] == null ? false : json['introduction_completed'] as bool,
     );
     coachAssignmentObject.setBase(json);
@@ -47,6 +49,7 @@ class CoachAssignment extends Base {
       'coach_id': coachId,
       'coach_reference': coachReference,
       'status': coachAssignmentStatus,
+      'introduction_video': introductionVideo,
       'introduction_completed': introductionCompleted ?? false
     };
     coachAssignmentJson.addEntries(super.toJson().entries);
