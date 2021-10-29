@@ -33,6 +33,7 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
 
   List<UserResponse> friends = [];
   AuthSuccess _authStateData;
+  bool disabledActions = false;
 
   final List<String> userImages = [
     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrpM3UTTyyqIwGsPYB1gCDhfl3XVv0Cex2Lw&usqp=CAU',
@@ -67,6 +68,7 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
               child: BlocListener<ConfirmFriendBloc, ConfirmFriendState>(
                 listenWhen: (previousState, currentState) => currentState is ConfirmFriendSuccess,
                 listener: (context, confirmFriendState) {
+                  disabledActions = false;
                   if (confirmFriendState is ConfirmFriendSuccess) {
                     BlocProvider.of<FriendBloc>(context).getUserFriendsRequestByUserId(_authStateData.user.id);
                     AppMessages.showSnackbar(context, 'Friend added.');
@@ -147,6 +149,10 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
                               .ignoreFriend(context, friendsRequestState.friendData, friendRequestModel);
                         },
                         onFriendConfirmation: (UserResponse friend) {
+                          if(disabledActions){
+                            return;
+                          }
+                          disabledActions = true;
                           AppMessages().showDialogActionMessage(context, OlukoLocalizations.of(context).find(''), 2);
                           FriendRequestModel friendRequestModel = friendsRequestState.friendData.friendRequestReceived
                               .where((friendRequest) => friendRequest.id == friend.id)
