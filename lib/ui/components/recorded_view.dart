@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/ui/components/course_progress_bar.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/sound_player.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class RecordedView extends StatefulWidget {
@@ -29,52 +30,52 @@ class _RecordedViewState extends State<RecordedView> {
   double _completedPercentage = 0.0;
   bool _isPlaying = false;
   int _selectedIndex = -1;
+  AudioPlayer audioPlayer = AudioPlayer();
+  bool playedOnce = false;
 
   @override
   Widget build(BuildContext context) {
-    return widget.record == null
-        ? Center(child: Text('No records yet'))
-        : Container(
-            height: 75,
-            width: ScreenUtils.width(context),
-            padding: const EdgeInsets.all(10),
-            child: Row(
-              children: [
-                playButton(),
-                SizedBox(width: 15),
-                Container(
-                    width: 220,
-                    child: CourseProgressBar(value: _completedPercentage)),
-                Expanded(child: SizedBox()),
-                Padding(
-                    padding: EdgeInsets.only(right: 15),
-                    child: Image.asset(
-                      'assets/courses/audio_horizontal_vector.png',
-                      scale: 3.5,
-                    )),
-                widget.showTicks
-                    ? Padding(
-                        padding: EdgeInsets.only(right: 10),
-                        child: Image.asset(
-                          'assets/courses/coach_tick.png',
-                          scale: 5,
-                        ))
-                    : GestureDetector(
-                        onTap: () => widget.panelController.open(),
-                        child: Padding(
-                            padding: EdgeInsets.only(right: 10),
-                            child: Image.asset(
-                              'assets/courses/bin.png',
-                              scale: 16,
-                            ))),
-              ],
-            ),
-          );
+    return Container(
+      height: 75,
+      width: ScreenUtils.width(context),
+      padding: const EdgeInsets.all(10),
+      child: Row(
+        children: [
+          playButton(),
+          SizedBox(width: 15),
+          Container(
+              width: 220,
+              child: CourseProgressBar(value: _completedPercentage)),
+          Expanded(child: SizedBox()),
+          Padding(
+              padding: EdgeInsets.only(right: 15),
+              child: Image.asset(
+                'assets/courses/audio_horizontal_vector.png',
+                scale: 3.5,
+              )),
+          widget.showTicks
+              ? Padding(
+                  padding: EdgeInsets.only(right: 10),
+                  child: Image.asset(
+                    'assets/courses/coach_tick.png',
+                    scale: 5,
+                  ))
+              : GestureDetector(
+                  onTap: () => widget.panelController.open(),
+                  child: Padding(
+                      padding: EdgeInsets.only(right: 10),
+                      child: Image.asset(
+                        'assets/courses/bin.png',
+                        scale: 16,
+                      ))),
+        ],
+      ),
+    );
   }
 
   Widget playButton() {
     return GestureDetector(
-        onTap: () {
+        onTap: () async {
           _onPlay(filePath: widget.record);
         },
         child: Stack(alignment: Alignment.center, children: [
@@ -88,10 +89,16 @@ class _RecordedViewState extends State<RecordedView> {
   }
 
   Future<void> _onPlay({String filePath}) async {
-    AudioPlayer audioPlayer = AudioPlayer();
-
     if (!_isPlaying) {
-      audioPlayer.play(filePath, isLocal: true);
+      if (playedOnce) {
+        await audioPlayer.resume();
+      } else {
+        await audioPlayer.play(filePath, isLocal: true);
+        setState(() {
+          playedOnce = true;
+        });
+      }
+
       setState(() {
         _completedPercentage = 0.0;
         _isPlaying = true;
@@ -101,6 +108,7 @@ class _RecordedViewState extends State<RecordedView> {
         setState(() {
           _isPlaying = false;
           _completedPercentage = 0.0;
+          playedOnce = false;
         });
       });
       audioPlayer.onDurationChanged.listen((duration) {
@@ -117,7 +125,7 @@ class _RecordedViewState extends State<RecordedView> {
         });
       });
     } else {
-      audioPlayer.pause();
+      await audioPlayer.pause();
       setState(() {
         _isPlaying = false;
       });

@@ -74,7 +74,6 @@ dependencies:
   badges: ^2.0.1
   syncfusion_flutter_gauges: ^19.3.44
   audioplayers: ^0.20.1
-  flutter_audio_recorder2: ^0.0.2
   uuid: ^3.0.5
   flutter_sound_lite: ^8.3.9
 

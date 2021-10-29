@@ -107,21 +107,23 @@ class _State extends State<CourseInfoSection> {
                 height: 50,
                 width: 50,
               )),
-          Stack(alignment: Alignment.center, children: [
-            Image.asset(
-              'assets/courses/audio_notification.png',
-              height: 22,
-              width: 22,
-            ),
-            Text(
-              widget.audioMessageQty.toString(),
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w300,
-                  color: Colors.white),
-            ),
-          ]),
+          widget.audioMessageQty > 0
+              ? Stack(alignment: Alignment.center, children: [
+                  Image.asset(
+                    'assets/courses/audio_notification.png',
+                    height: 22,
+                    width: 22,
+                  ),
+                  Text(
+                    widget.audioMessageQty.toString(),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w300,
+                        color: Colors.white),
+                  ),
+                ])
+              : SizedBox(),
         ]));
   }
 
