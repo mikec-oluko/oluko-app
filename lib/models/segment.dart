@@ -15,6 +15,7 @@ class Segment extends Base {
   List<SectionSubmodel> sections;
   bool isChallenge;
   String challengeImage;
+  String challengeVideo;
 
   Segment(
       {this.name,
@@ -27,6 +28,7 @@ class Segment extends Base {
       this.totalTime,
       this.isChallenge,
       this.challengeImage,
+      this.challengeVideo,
       this.type,
       String id,
       Timestamp createdAt,
@@ -49,6 +51,7 @@ class Segment extends Base {
                 ? json['is_challenge'] as bool
                 : false,
         challengeImage: json['challenge_image'] == null ? null : json['challenge_image']?.toString(),
+        challengeVideo: json['challenge_video'] == null ? null : json['challenge_video']?.toString(),
         totalTime: json['total_time'] as int,
         initialTimer: json['initial_timer'] as int,
         isPublished: json['is_published'] as bool,
@@ -69,6 +72,7 @@ class Segment extends Base {
       'is_published': isPublished,
       'is_challenge': isChallenge,
       'challenge_image': challengeImage,
+      'challenge_video': challengeVideo,
       'type': type == null ? null : type.index,
       'movements': sections == null ? null : List<dynamic>.from(sections.map((section) => section.toJson()))
     };

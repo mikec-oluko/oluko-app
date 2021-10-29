@@ -5,9 +5,22 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "mvt_fitness",
+            "name": "mvt_fitness debug",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "flutterMode": "debug",
+        },
+        {
+            "name": "mvt_fitness release",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release",
+        },
+        {
+            "name": "mvt_fitness profile",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile",
         }
     ]
 }

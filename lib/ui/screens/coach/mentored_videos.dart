@@ -83,8 +83,7 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
                         }),
                   ),
                   IconButton(
-                      icon: Icon(isFavoriteSelected ? Icons.favorite : Icons.favorite_border,
-                          color: OlukoColors.grayColor),
+                      icon: Icon(isFavoriteSelected ? Icons.favorite : Icons.favorite_border, color: OlukoColors.grayColor),
                       onPressed: () {
                         setState(() {
                           isFavoriteSelected = !isFavoriteSelected;
@@ -192,22 +191,19 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
                             children: [
                               Text(
                                 OlukoLocalizations.get(context, 'date'),
-                                style: OlukoFonts.olukoMediumFont(
-                                    customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                               ),
                               SizedBox(
                                 height: 5,
                               ),
                               Text(
                                 DateFormat.yMMMd().format(coachAnnotation.createdAt.toDate()),
-                                style: OlukoFonts.olukoMediumFont(
-                                    customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                               )
                             ],
                           ),
                           IconButton(
-                              icon: Icon(coachAnnotation.favorite ? Icons.favorite : Icons.favorite_outline,
-                                  color: OlukoColors.white),
+                              icon: Icon(coachAnnotation.favorite ? Icons.favorite : Icons.favorite_outline, color: OlukoColors.white),
                               onPressed: () {
                                 BlocProvider.of<CoachMentoredVideosBloc>(context).updateCoachAnnotationFavoriteValue(
                                     coachAnnotation: coachAnnotation, currentMentoredVideosContent: content);
