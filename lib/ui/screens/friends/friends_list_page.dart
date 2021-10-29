@@ -358,7 +358,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                       children: [
                         StoriesItem(
                             maxRadius: 40,
-                            imageUrl: user.avatar,
+                            imageUrl: user.avatarThumbnail,
                             name: user.firstName,
                             lastname: user.lastName,
                             showName: false),
@@ -378,8 +378,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                                       fontWeight: FontWeight.w700,
                                       color: Colors.white),
                                 ),
-                                user.privacy == 0
-                                    ? Column(
+                                if (user.privacy == 0) Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
@@ -399,8 +398,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                                                     fontSize: 15)),
                                           )
                                         ],
-                                      )
-                                    : Padding(
+                                      ) else Padding(
                                         padding:
                                             const EdgeInsets.only(top: 8.0),
                                         child: Row(

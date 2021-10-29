@@ -98,14 +98,7 @@ class _HomeState extends State<Home> {
   Widget enrolled() {
     return CarouselSlider(
       items: courseSectionList(),
-      options: CarouselOptions(
-          height: 600,
-          autoPlay: false,
-          enlargeCenterPage: false,
-          disableCenter: true,
-          enableInfiniteScroll: false,
-          initialPage: 0,
-          viewportFraction: 1),
+      options: CarouselOptions(height: 600, autoPlay: false, enlargeCenterPage: false, disableCenter: true, enableInfiniteScroll: false, initialPage: 0, viewportFraction: 1),
     );
   }
 
@@ -116,8 +109,7 @@ class _HomeState extends State<Home> {
         // do nothing
       } else {
         if (_courses[i] != null) {
-          widgets.add(
-              CourseSection(qtyCourses: _courses.length, courseIndex: i, course: _courses[i], courseEnrollment: _courseEnrollments[i]));
+          widgets.add(CourseSection(qtyCourses: _courses.length, courseIndex: i, course: _courses[i], courseEnrollment: _courseEnrollments[i]));
         }
       }
     }
@@ -141,10 +133,8 @@ class _HomeState extends State<Home> {
               scale: 2,
             ),
             SizedBox(height: 70),
-            Text(OlukoLocalizations.get(context, 'enroll'),
-                style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold, customColor: OlukoColors.white)),
-            Text(OlukoLocalizations.get(context, 'toACourse'),
-                style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold, customColor: OlukoColors.white)),
+            Text(OlukoLocalizations.get(context, 'enroll'), style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold, customColor: OlukoColors.white)),
+            Text(OlukoLocalizations.get(context, 'toACourse'), style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold, customColor: OlukoColors.white)),
             SizedBox(height: 10),
             CourseStepSection(totalCourseSteps: 0, currentCourseStep: 0),
             SizedBox(height: 30),
@@ -169,8 +159,7 @@ class _HomeState extends State<Home> {
       return hiFiveState is HiFiveSuccess && hiFiveState.users.isNotEmpty
           ? GestureDetector(
               onTap: () {
-                Navigator.pushNamed(context, routeLabels[RouteEnum.hiFivePage])
-                    .then((value) => BlocProvider.of<HiFiveBloc>(context).get(_authState.user.id));
+                Navigator.pushNamed(context, routeLabels[RouteEnum.hiFivePage]).then((value) => BlocProvider.of<HiFiveBloc>(context).get(_authState.user.id));
               },
               child: Padding(
                 padding: const EdgeInsets.only(right: 20.0, top: 5),
