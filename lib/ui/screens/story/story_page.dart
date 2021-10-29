@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -177,7 +178,7 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
                       avatar_thumbnail: widget.userStories.avatar_thumbnail,
                       name: widget.userStories.name,
                       userId: widget.userId,
-                      hour: '1hr',
+                      hour: widget.userStories.stories[_currentIndex].createdAt?.toDate(),
                     ),
                   ),
                 ],
@@ -326,7 +327,7 @@ class UserInfo extends StatelessWidget {
   final String avatar_thumbnail;
   final String name;
   final String userId;
-  final String hour;
+  final DateTime hour;
 
   const UserInfo({
     Key key,
@@ -338,6 +339,12 @@ class UserInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String _hoursSinceCreation;
+    if (hour != null) {
+      _hoursSinceCreation = hour?.difference(DateTime.now())?.inHours?.toString();
+    } else {
+      _hoursSinceCreation = '1';
+    }
     return Row(
       children: <Widget>[
         CircleAvatar(
@@ -361,7 +368,7 @@ class UserInfo extends StatelessWidget {
               ),
               const SizedBox(width: 10.0),
               Text(
-                hour,
+                '${_hoursSinceCreation}h',
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 17.0,
