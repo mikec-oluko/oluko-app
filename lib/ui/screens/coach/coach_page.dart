@@ -84,7 +84,7 @@ class _CoachPageState extends State<CoachPage> {
     if (widget.coachAssignment.introductionVideo != null) {
       setState(() {
         introductionVideo = Annotation(
-            createdAt: Timestamp.now(),
+            createdAt: widget.coachAssignment.createdAt,
             id: defaultIntroductionVideoId,
             favorite: false,
             video: Video(url: widget.coachAssignment.introductionVideo, aspectRatio: 0.75),
