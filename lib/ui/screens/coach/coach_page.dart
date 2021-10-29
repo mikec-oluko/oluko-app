@@ -81,14 +81,16 @@ class _CoachPageState extends State<CoachPage> {
   @override
   void initState() {
     BlocProvider.of<CoachUserBloc>(context).get(widget.coachAssignment.coachId);
-    setState(() {
-      introductionVideo = Annotation(
-          createdAt: Timestamp.now(),
-          id: defaultIntroductionVideoId,
-          favorite: false,
-          video: Video(url: widget.coachAssignment.introductionVideo, aspectRatio: 0.75),
-          videoHLS: widget.coachAssignment.introductionVideo);
-    });
+    if (widget.coachAssignment.introductionVideo != null) {
+      setState(() {
+        introductionVideo = Annotation(
+            createdAt: Timestamp.now(),
+            id: defaultIntroductionVideoId,
+            favorite: false,
+            video: Video(url: widget.coachAssignment.introductionVideo, aspectRatio: 0.75),
+            videoHLS: widget.coachAssignment.introductionVideo);
+      });
+    }
 
     super.initState();
   }
@@ -396,7 +398,7 @@ class _CoachPageState extends State<CoachPage> {
   }
 
   Widget mentoredVideos({bool isForCarousel}) {
-    if (_annotationVideosContent != null) {
+    if (_annotationVideosContent != null && introductionVideo != null) {
       if (_annotationVideosContent
           .where((annotation) => annotation.id == defaultIntroductionVideoId)
           .toList()
