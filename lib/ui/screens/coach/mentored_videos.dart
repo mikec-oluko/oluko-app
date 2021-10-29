@@ -222,7 +222,7 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
   ImageProvider getImage(Annotation coachAnnotation) {
     return coachAnnotation.video.thumbUrl != null
         ? NetworkImage(coachAnnotation.video.thumbUrl)
-        : AssetImage("assets/home/mvt.png") as ImageProvider;
+        : AssetImage("assets/home/mvtthumbnail.png") as ImageProvider;
   }
 
   void contentSortedByDate() {

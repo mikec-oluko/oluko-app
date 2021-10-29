@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/dto/user_stories.dart';
 import 'package:oluko_app/repositories/story_repository.dart';
@@ -12,6 +15,11 @@ class StoryListSuccess extends StoryListState {
   final List<UserStories> usersStories;
 }
 
+class StoryListUpdate extends StoryListState {
+  StoryListUpdate({this.event});
+  final Event event;
+}
+
 class StoryListFailure extends StoryListState {
   StoryListFailure({this.exception});
   final dynamic exception;
@@ -19,6 +27,13 @@ class StoryListFailure extends StoryListState {
 
 class StoryListBloc extends Cubit<StoryListState> {
   StoryListBloc() : super(StoryListLoading());
+
+  StreamSubscription<Event> subscription;
+
+  @override
+  void dispose() {
+    subscription.cancel();
+  }
 
   void get(String userId) async {
     try {
@@ -33,5 +48,13 @@ class StoryListBloc extends Cubit<StoryListState> {
       rethrow;
     }
   }
-}
 
+  StreamSubscription<Event> getStream(String userId) {
+    if (subscription == null) {
+      subscription = StoryRepository().getSubscription(userId).listen((event) {
+        emit(StoryListUpdate(event: event));
+      });
+    }
+    return subscription;
+  }
+}
