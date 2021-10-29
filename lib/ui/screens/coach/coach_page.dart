@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
@@ -31,7 +32,7 @@ import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/enums/status_enum.dart';
 import 'package:oluko_app/models/recommendation.dart';
 import 'package:oluko_app/models/segment_submission.dart';
-import 'package:oluko_app/models/submodels/course_timeline_submodel.dart';
+import 'package:oluko_app/models/submodels/video.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -73,11 +74,24 @@ List<Task> _tasks = [];
 List<CoachTimelineItem> sentVideosTimelineContent = [];
 List<CoachTimelineItem> mentoredVideoTimelineContent = [];
 String defaultIdForAllContentTimeline = '0';
+Annotation introductionVideo;
+final String defaultIntroductionVideoId = 'introVideo';
 
 class _CoachPageState extends State<CoachPage> {
   @override
   void initState() {
     BlocProvider.of<CoachUserBloc>(context).get(widget.coachAssignment.coachId);
+    if (widget.coachAssignment.introductionVideo != null) {
+      setState(() {
+        introductionVideo = Annotation(
+            createdAt: widget.coachAssignment.createdAt,
+            id: defaultIntroductionVideoId,
+            favorite: false,
+            video: Video(url: widget.coachAssignment.introductionVideo, aspectRatio: 0.75),
+            videoHLS: widget.coachAssignment.introductionVideo);
+      });
+    }
+
     super.initState();
   }
 
@@ -384,6 +398,14 @@ class _CoachPageState extends State<CoachPage> {
   }
 
   Widget mentoredVideos({bool isForCarousel}) {
+    if (_annotationVideosContent != null && introductionVideo != null) {
+      if (_annotationVideosContent
+          .where((annotation) => annotation.id == defaultIntroductionVideoId)
+          .toList()
+          .isEmpty) {
+        _annotationVideosContent.insert(0, introductionVideo);
+      }
+    }
     return _annotationVideosContent != null && _annotationVideosContent.isNotEmpty
         ? CoachContentPreviewContent(
             contentFor: CoachContentSection.mentoredVideos,
