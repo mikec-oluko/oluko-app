@@ -41,39 +41,43 @@ class _CoachMainPageState extends State<CoachMainPage> {
           _currentUser = state.user;
           BlocProvider.of<CoachAssignmentBloc>(context).getCoachAssignmentStatus(_currentUser.id);
         }
-        return BlocBuilder<CoachAssignmentBloc, CoachAssignmentState>(
-          buildWhen: (current, previous) {
-            return current != previous;
-          },
-          builder: (context, state) {
-            if (state is CoachAssignmentResponse) {
-              _coachAssignment = state.coachAssignmentResponse;
-              if (_coachAssignment != null) {
-                if (CoachAssignmentStatus.getCoachAssignmentStatus(_coachAssignment.coachAssignmentStatus as int) ==
-                    CoachAssignmentStatusEnum.approved) {
-                  return CoachPage(coachId: _coachAssignment.coachId, coachAssignment: _coachAssignment);
-                } else {
-                  return CoachAssignedCountDown(
-                    currentUser: _currentUser,
-                    coachAssignment: _coachAssignment,
-                  );
-                }
-              } else {
-                return _currentUser.assessmentsCompletedAt != null && _currentUser.assessmentsCompletedAt is Timestamp
-                    ? CoachAssignedCountDown(
-                        currentUser: _currentUser,
-                        coachAssignment: _coachAssignment,
-                      )
-                    : const AssessmentVideos(
-                        isFirstTime: false,
-                        isForCoachPage: true,
-                      );
-              }
-            } else {
-              return Container(color: OlukoColors.black, child: OlukoCircularProgressIndicator());
-            }
-          },
-        );
+        return _currentUser.currentPlan > 1
+            ? BlocBuilder<CoachAssignmentBloc, CoachAssignmentState>(
+                buildWhen: (current, previous) {
+                  return current != previous;
+                },
+                builder: (context, state) {
+                  if (state is CoachAssignmentResponse) {
+                    _coachAssignment = state.coachAssignmentResponse;
+                    if (_coachAssignment != null) {
+                      if (CoachAssignmentStatus.getCoachAssignmentStatus(
+                              _coachAssignment.coachAssignmentStatus as int) ==
+                          CoachAssignmentStatusEnum.approved) {
+                        return CoachPage(coachId: _coachAssignment.coachId, coachAssignment: _coachAssignment);
+                      } else {
+                        return CoachAssignedCountDown(
+                          currentUser: _currentUser,
+                          coachAssignment: _coachAssignment,
+                        );
+                      }
+                    } else {
+                      return _currentUser.assessmentsCompletedAt != null &&
+                              _currentUser.assessmentsCompletedAt is Timestamp
+                          ? CoachAssignedCountDown(
+                              currentUser: _currentUser,
+                              coachAssignment: _coachAssignment,
+                            )
+                          : const AssessmentVideos(
+                              isFirstTime: false,
+                              isForCoachPage: true,
+                            );
+                    }
+                  } else {
+                    return Container(color: OlukoColors.black, child: OlukoCircularProgressIndicator());
+                  }
+                },
+              )
+            : Container();
       },
     );
   }
