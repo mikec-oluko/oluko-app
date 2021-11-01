@@ -146,7 +146,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               //TODO: Change to RouteEnum.courseMarketing
                               //when finish with enrolledClass
                               onTap: () =>
-                                  Navigator.pushNamed(context, routeLabels[RouteEnum.enrolledClass], arguments: {'course': course}),
+                                  Navigator.pushNamed(context, routeLabels[RouteEnum.enrolledClass], arguments: {'course': course, 'fromCoach': false}),
                               child: _getCourseCard(
                                   Image.network(
                                     course.image,

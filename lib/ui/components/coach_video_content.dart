@@ -12,6 +12,7 @@ class CoachVideoContent extends StatefulWidget {
 }
 
 class _CoachVideoContentState extends State<CoachVideoContent> {
+  final ImageProvider defaultImage = const AssetImage('assets/home/mvtthumbnail.png');
   @override
   Widget build(BuildContext context) {
     return widget.isForGallery ? galleryContent() : carouselContent();
@@ -37,7 +38,7 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
                       decoration: BoxDecoration(
                           borderRadius: const BorderRadius.all(Radius.circular(5)),
                           image: DecorationImage(
-                            image: NetworkImage(widget.videoThumbnail),
+                            image: widget.videoThumbnail != null ? NetworkImage(widget.videoThumbnail) : defaultImage,
                             fit: BoxFit.fill,
                           )))),
               Positioned(
@@ -48,7 +49,7 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
                       decoration: BoxDecoration(
                           borderRadius: const BorderRadius.all(Radius.circular(5)),
                           image: DecorationImage(
-                            image: NetworkImage(widget.videoThumbnail),
+                            image: widget.videoThumbnail != null ? NetworkImage(widget.videoThumbnail) : defaultImage,
                             fit: BoxFit.fill,
                           )))),
               Positioned(
@@ -59,7 +60,7 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
                       decoration: BoxDecoration(
                           borderRadius: const BorderRadius.all(Radius.circular(5)),
                           image: DecorationImage(
-                            image: NetworkImage(widget.videoThumbnail),
+                            image: widget.videoThumbnail != null ? NetworkImage(widget.videoThumbnail) : defaultImage,
                             fit: BoxFit.cover,
                           )))),
               Align(
@@ -95,7 +96,7 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
                       decoration: BoxDecoration(
                           borderRadius: const BorderRadius.all(Radius.circular(5)),
                           image: DecorationImage(
-                            image: NetworkImage(widget.videoThumbnail),
+                            image: widget.videoThumbnail != null ? NetworkImage(widget.videoThumbnail) : defaultImage,
                             fit: BoxFit.cover,
                           )))),
               Align(

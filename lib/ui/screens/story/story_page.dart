@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,7 +22,6 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
   AnimationController _animController;
   VideoPlayerController _videoController;
   Future<void> _initializeVideoPlayerFuture;
-  bool _updateState = false;
   int _currentIndex = 0;
 
   void initState() {
@@ -43,7 +43,6 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
             _loadStory(story: widget.userStories.stories[_currentIndex]);
           } else {
             Navigator.of(context).pop();
-            if (_updateState) BlocProvider.of<StoryListBloc>(context).get(widget.userId);
           }
         });
       }
@@ -178,9 +177,8 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
                     child: UserInfo(
                       avatar_thumbnail: widget.userStories.avatar_thumbnail,
                       name: widget.userStories.name,
-                      updateState: _updateState,
                       userId: widget.userId,
-                      hour: '1hr',
+                      hour: widget.userStories.stories[_currentIndex].createdAt?.toDate(),
                     ),
                   ),
                 ],
@@ -210,7 +208,6 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
           _loadStory(story: widget.userStories.stories[_currentIndex]);
         } else {
           Navigator.of(context).pop();
-          if (_updateState) BlocProvider.of<StoryListBloc>(context).get(widget.userId);
         }
       });
     } else {
@@ -228,8 +225,8 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
 
   void setStoryAsSeen() {
     if (!widget.userStories.stories[_currentIndex].seen) {
+      widget.userStories.stories[_currentIndex].seen = true;
       BlocProvider.of<StoryBloc>(context).setStoryAsSeen(widget.userId, widget.userStories.id, widget.userStories.stories[_currentIndex].id);
-      _updateState = true;
     }
   }
 
@@ -330,20 +327,24 @@ class UserInfo extends StatelessWidget {
   final String avatar_thumbnail;
   final String name;
   final String userId;
-  final bool updateState;
-  final String hour;
+  final DateTime hour;
 
   const UserInfo({
     Key key,
     @required this.avatar_thumbnail,
     @required this.name,
     @required this.userId,
-    @required this.updateState,
     @required this.hour,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    String _hoursSinceCreation;
+    if (hour != null) {
+      _hoursSinceCreation = hour?.difference(DateTime.now())?.inHours?.toString();
+    } else {
+      _hoursSinceCreation = '1';
+    }
     return Row(
       children: <Widget>[
         CircleAvatar(
@@ -367,7 +368,7 @@ class UserInfo extends StatelessWidget {
               ),
               const SizedBox(width: 10.0),
               Text(
-                hour,
+                '${_hoursSinceCreation}h',
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 17.0,
@@ -385,7 +386,6 @@ class UserInfo extends StatelessWidget {
           ),
           onPressed: () {
             Navigator.of(context).pop();
-            if (updateState) BlocProvider.of<StoryListBloc>(context).get(userId);
           },
         ),
       ],

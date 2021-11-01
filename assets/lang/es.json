@@ -229,10 +229,12 @@
     "storyBeingCreated": "La historia esta siendo creada",
     "coachRequest": "te solicitó grabar este segmento",
     "enterEmail": "Por favor ingrese email.",
-    "hasMessage": "Tiene un mensaje para ti",
     "movement": "Movimiento",
     "personalRecord": "Record Personal",
     "noPersonalRecords": "Sin Records Personales",
     "hasMessage": "Tiene un mensaje para ti",
-    "accountAlreadyExistsWithThisEmailUsingADifferentProvider": "Una cuenta ya existe con el mismo email pero con distintas credenciales de sign-in"
+    "recordAMessage": "Grabe un mensaje para ",
+    "saveFor": "Guardar para ",
+    "accountAlreadyExistsWithThisEmailUsingADifferentProvider": "Una cuenta ya existe con el mismo email pero con distintas credenciales de sign-in",
+    "deleteMessageConfirm": "Esta seguro de que quiere eliminar su mensaje de voz?"
 }

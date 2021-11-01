@@ -1,4 +1,4 @@
-git_url("git@bitbucket.org:mikec-oluko/apple-signing.git")
+git_url("git@github.com:pineapple-lab/oluko-signing.git")
 
 storage_mode("git")
 
