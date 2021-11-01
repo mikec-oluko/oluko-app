@@ -141,8 +141,7 @@ class _State extends State<Courses> {
             }),
             onSearchResults: (SearchResults results) => this.setState(() {
               showSearchSuggestions = true;
-              searchResults = SearchResults<Course>(
-                  query: results.query, suggestedItems: List<Course>.from(results.suggestedItems));
+              searchResults = SearchResults<Course>(query: results.query, suggestedItems: List<Course>.from(results.suggestedItems));
             }),
             suggestionMethod: CourseUtils.suggestionMethod,
             searchMethod: CourseUtils.searchMethod,
@@ -178,10 +177,8 @@ class _State extends State<Courses> {
             return nil;
           } else {
             return CarouselSection(
-              onOptionTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.viewAll], arguments: {
-                'courses': coursesList,
-                'title': courseState.coursesByCategories.keys.elementAt(index).name
-              }),
+              onOptionTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.viewAll],
+                  arguments: {'courses': coursesList, 'title': courseState.coursesByCategories.keys.elementAt(index).name}),
               height: carouselSectionHeight,
               title: courseState.coursesByCategories.keys.elementAt(index).name,
               optionLabel: OlukoLocalizations.get(context, 'viewAll'),
@@ -201,14 +198,9 @@ class _State extends State<Courses> {
         });
   }
 
-  CourseCard _getCourseCard(Image image,
-      {double progress, double width, double height, List<String> userRecommendationsAvatarUrls}) {
+  CourseCard _getCourseCard(Image image, {double progress, double width, double height, List<String> userRecommendationsAvatarUrls}) {
     return CourseCard(
-        width: width,
-        height: height,
-        imageCover: image,
-        progress: progress,
-        userRecommendationsAvatarUrls: userRecommendationsAvatarUrls);
+        width: width, height: height, imageCover: image, progress: progress, userRecommendationsAvatarUrls: userRecommendationsAvatarUrls);
   }
 
   Widget _filterWidget() {
@@ -309,8 +301,7 @@ class _State extends State<Courses> {
                   title: OlukoLocalizations.get(context, 'activeCourses'),
                   height: carouselSectionHeight + 10,
                   children: courseEnrollmentState.courseEnrollments.map((CourseEnrollment courseEnrollment) {
-                    final activeCourseList =
-                        courseState.values.where((element) => element.id == courseEnrollment.course.id).toList();
+                    final activeCourseList = courseState.values.where((element) => element.id == courseEnrollment.course.id).toList();
                     Course course;
                     if (activeCourseList.isNotEmpty) {
                       course = activeCourseList[0];
@@ -348,15 +339,12 @@ class _State extends State<Courses> {
             ? BlocBuilder<FavoriteBloc, FavoriteState>(
                 bloc: BlocProvider.of<FavoriteBloc>(context)..getByUser(authState.user.id),
                 builder: (context, favoriteState) {
-                  return favoriteState is FavoriteSuccess &&
-                          courseState is CourseSuccess &&
-                          favoriteState.favorites.length > 0
+                  return favoriteState is FavoriteSuccess && courseState is CourseSuccess && favoriteState.favorites.length > 0
                       ? CarouselSection(
                           title: OlukoLocalizations.get(context, 'myList'),
                           height: carouselSectionHeight,
                           children: favoriteState.favorites.map((Favorite favorite) {
-                            Course favoriteCourse =
-                                courseState.values.where((course) => course.id == favorite.course.id).toList()[0];
+                            Course favoriteCourse = courseState.values.where((course) => course.id == favorite.course.id).toList()[0];
                             return Padding(
                                 padding: const EdgeInsets.only(right: 8.0),
                                 child: GestureDetector(

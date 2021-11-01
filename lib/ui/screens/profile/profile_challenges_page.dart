@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/challenge_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/challenge.dart';
@@ -19,9 +20,9 @@ class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CourseEnrollmentBloc, CourseEnrollmentState>(
+    return BlocBuilder<ChallengeBloc, ChallengeState>(
       builder: (context, state) {
-        if (state is GetCourseEnrollmentChallenge) {
+        if (state is GetChallengeSuccess) {
           challenges = state.challenges;
         }
         return Scaffold(

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/challenge_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_assignment_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_interaction_timeline_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_mentored_videos_bloc.dart';
@@ -12,7 +13,6 @@ import 'package:oluko_app/blocs/coach/coach_recommendations_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_sent_videos_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
-import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
@@ -248,7 +248,7 @@ class _CoachPageState extends State<CoachPage> {
 
     BlocProvider.of<CourseEnrollmentListBloc>(context).getCourseEnrollmentsByUserId(_currentAuthUser.id);
 
-    BlocProvider.of<CourseEnrollmentBloc>(context).getChallengesForUser(_currentAuthUser.id);
+    BlocProvider.of<ChallengeBloc>(context).get(_currentAuthUser.id);
 
     BlocProvider.of<CoachRequestBloc>(context).get(_currentAuthUser.id);
 
@@ -342,9 +342,9 @@ class _CoachPageState extends State<CoachPage> {
           _toDoSegments = TransformListOfItemsToWidget.segments(_courseEnrollmentList);
           allSegments = TransformListOfItemsToWidget.createSegmentContentInforamtion(_toDoSegments);
         }
-        return BlocBuilder<CourseEnrollmentBloc, CourseEnrollmentState>(
+        return BlocBuilder<ChallengeBloc, ChallengeState>(
           builder: (context, state) {
-            if (state is GetCourseEnrollmentChallenge) {
+            if (state is GetChallengeSuccess) {
               if (_activeChallenges.isNotEmpty) {
                 _activeChallenges = state.challenges;
               }
