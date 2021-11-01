@@ -619,7 +619,8 @@ class Routes {
           BlocProvider<CourseEnrollmentListBloc>.value(
               value: _courseEnrollmentListBloc),
           BlocProvider<SubscribedCourseUsersBloc>.value(
-              value: _subscribedCourseUsersBloc)
+              value: _subscribedCourseUsersBloc),
+          BlocProvider<StoryListBloc>.value(value: _storyListBloc)
         ];
         final Map<String, dynamic> argumentsToAdd =
             arguments as Map<String, dynamic>;
