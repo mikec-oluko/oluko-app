@@ -32,14 +32,16 @@ class _CoachCarouselSliderSectionState extends State<CoachCarouselSliderSection>
           if (widget.introductionCompleted != null && widget.introductionCompleted)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 10),
-              child: CarouselSlider(
-                items: widget.contentForCarousel,
-                options: CarouselOptions(
-                    height: 250.0,
-                    autoPlay: true,
-                    autoPlayInterval: const Duration(seconds: 5),
-                    enlargeCenterPage: true),
-              ),
+              child: widget.contentForCarousel.isNotEmpty
+                  ? CarouselSlider(
+                      items: widget.contentForCarousel,
+                      options: CarouselOptions(
+                          height: 250.0,
+                          autoPlay: true,
+                          autoPlayInterval: const Duration(seconds: 5),
+                          enlargeCenterPage: true),
+                    )
+                  : SizedBox(),
             )
           else
             Align(child: showVideoPlayer(widget.introductionVideo)),

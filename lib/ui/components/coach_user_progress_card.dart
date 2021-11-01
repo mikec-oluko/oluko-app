@@ -7,7 +7,8 @@ import 'coach_user_progress_component.dart';
 
 class CoachUserProgressCard extends StatefulWidget {
   final UserStatistics userStats;
-  const CoachUserProgressCard({this.userStats});
+  final bool startExpanded;
+  const CoachUserProgressCard({this.userStats, this.startExpanded});
 
   @override
   _CoachUserProgressCardState createState() => _CoachUserProgressCardState();
@@ -15,6 +16,14 @@ class CoachUserProgressCard extends StatefulWidget {
 
 class _CoachUserProgressCardState extends State<CoachUserProgressCard> {
   bool _isUserStatisticExpanded = false;
+
+  @override
+  void initState() {
+    setState(() {
+      _isUserStatisticExpanded = widget.startExpanded;
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

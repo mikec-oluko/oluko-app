@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/models/coach_timeline_item.dart';
+import 'package:oluko_app/helpers/coach_recommendation_default.dart';
 import 'package:oluko_app/models/recommendation.dart';
 import 'package:oluko_app/repositories/coach_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -13,9 +13,9 @@ class CoachRecommendationsSuccess extends CoachRecommendationsState {
   final List<Recommendation> coachRecommendationList;
 }
 
-class CoachRecommendationsAsTimelineItem extends CoachRecommendationsState {
-  CoachRecommendationsAsTimelineItem({this.coachRecommendationTimelineContent});
-  final List<CoachTimelineItem> coachRecommendationTimelineContent;
+class CoachRecommendationsData extends CoachRecommendationsState {
+  CoachRecommendationsData({this.coachRecommendationContent});
+  final List<CoachRecommendationDefault> coachRecommendationContent;
 }
 
 class CoachRecommendationsFailure extends CoachRecommendationsState {
@@ -42,12 +42,13 @@ class CoachRecommendationsBloc extends Cubit<CoachRecommendationsState> {
     }
   }
 
-  void getCoachRecommendationsAsTimelineItems({List<Recommendation> coachRecommendationContent}) async {
+  void getCoachRecommendationsData({List<Recommendation> coachRecommendationContent}) async {
     try {
       emit(LoadingCoachRecommendations());
-      final List<CoachTimelineItem> coachRecommendations = await CoachRepository().getRecommendationsInfo(coachRecommendationContent);
+      final List<CoachRecommendationDefault> coachRecommendations =
+          await CoachRepository().getRecommendationsInfo(coachRecommendationContent);
 
-      emit(CoachRecommendationsAsTimelineItem(coachRecommendationTimelineContent: coachRecommendations));
+      emit(CoachRecommendationsData(coachRecommendationContent: coachRecommendations));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

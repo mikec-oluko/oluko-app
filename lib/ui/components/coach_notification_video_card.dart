@@ -13,6 +13,8 @@ class CoachNotificationVideoCard extends StatefulWidget {
 }
 
 class _CoachNotificationVideoCardState extends State<CoachNotificationVideoCard> {
+  final ImageProvider defaultImage = const AssetImage('assets/home/mvtthumbnail.png');
+
   bool isVisible = true;
   @override
   void initState() {
@@ -41,7 +43,7 @@ class _CoachNotificationVideoCardState extends State<CoachNotificationVideoCard>
               decoration: BoxDecoration(
                   borderRadius: const BorderRadius.all(Radius.circular(5)),
                   image: DecorationImage(
-                    image: NetworkImage(widget.cardImage),
+                    image: widget.cardImage != null ? NetworkImage(widget.cardImage) : defaultImage,
                     fit: BoxFit.cover,
                   )),
               child: Stack(

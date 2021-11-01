@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:oluko_app/helpers/coach_recommendation_default.dart';
 import 'package:oluko_app/helpers/coach_timeline_content.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/annotations.dart';
@@ -207,23 +208,26 @@ class CoachRepository {
     }
   }
 
-  Future<List<CoachTimelineItem>> getRecommendationsInfo(List<Recommendation> coachRecommendationContent) async {
-    List<CoachTimelineItem> recommendationsAsTimelineItems = [];
+  Future<List<CoachRecommendationDefault>> getRecommendationsInfo(
+      List<Recommendation> coachRecommendationContent) async {
+    List<CoachRecommendationDefault> coachRecommendations = [];
     for (Recommendation recommendation in coachRecommendationContent) {
       DocumentSnapshot ds = await recommendation.entityReference.get();
 
       switch (TimelineContentOption.getTimelineOption(recommendation.entityType as int)) {
         case TimelineInteractionType.course:
           Course courseRecommended = Course.fromJson(ds.data() as Map<String, dynamic>);
-          CoachTimelineItem recommendedCourseItem = createAnCoachTimelineItem(
-              recommendation: recommendation,
-              contentDescription: courseRecommended.classes.length.toString(),
-              contentName: courseRecommended.name,
-              contentThumbnail: courseRecommended.image,
-              courseForNavigation: courseRecommended,
-              contentType: recommendation.entityType);
 
-          recommendationsAsTimelineItems.add(recommendedCourseItem);
+          CoachRecommendationDefault recommendationItem = CoachRecommendationDefault(
+              coachRecommendation: recommendation,
+              contentTitle: courseRecommended.name,
+              contentSubtitle: courseRecommended.classes.length.toString(),
+              contentDescription: courseRecommended.description,
+              contentImage: courseRecommended.image,
+              contentTypeIndex: recommendation.entityType,
+              createdAt: recommendation.createdAt,
+              courseContent: courseRecommended);
+          coachRecommendations.add(recommendationItem);
           break;
         case TimelineInteractionType.classes:
           break;
@@ -231,15 +235,16 @@ class CoachRepository {
           break;
         case TimelineInteractionType.movement:
           Movement movementRecommended = Movement.fromJson(ds.data() as Map<String, dynamic>);
-          CoachTimelineItem recommendedMovementItem = createAnCoachTimelineItem(
-              recommendation: recommendation,
+          CoachRecommendationDefault recommendationItem = CoachRecommendationDefault(
+              coachRecommendation: recommendation,
+              contentTitle: movementRecommended.name,
+              contentSubtitle: '',
               contentDescription: movementRecommended.description,
-              contentName: movementRecommended.name,
-              contentThumbnail: movementRecommended.image,
-              movementForNavigation: movementRecommended,
-              contentType: recommendation.entityType);
-          recommendationsAsTimelineItems.add(recommendedMovementItem);
-
+              contentImage: movementRecommended.image,
+              contentTypeIndex: recommendation.entityType,
+              createdAt: recommendation.createdAt,
+              movementContent: movementRecommended);
+          coachRecommendations.add(recommendationItem);
           break;
         case TimelineInteractionType.mentoredVideo:
           break;
@@ -248,29 +253,6 @@ class CoachRepository {
         default:
       }
     }
-    return recommendationsAsTimelineItems;
-  }
-
-  CoachTimelineItem createAnCoachTimelineItem(
-      {Recommendation recommendation,
-      String contentDescription,
-      String contentName,
-      String contentThumbnail,
-      Course courseForNavigation,
-      Movement movementForNavigation,
-      num contentType}) {
-    CoachTimelineItem newItem = CoachTimelineItem(
-        coachId: recommendation.originUserId,
-        coachReference: recommendation.originUserReference,
-        contentDescription: contentDescription,
-        contentName: contentName,
-        contentThumbnail: contentThumbnail,
-        contentType: contentType,
-        course: CourseTimelineSubmodel(),
-        courseForNavigation: courseForNavigation ?? courseForNavigation,
-        movementForNavigation: movementForNavigation ?? movementForNavigation,
-        id: '0',
-        createdAt: recommendation.createdAt);
-    return newItem;
+    return coachRecommendations;
   }
 }
