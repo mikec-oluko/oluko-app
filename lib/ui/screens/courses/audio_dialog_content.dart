@@ -92,17 +92,22 @@ class _State extends State<AudioDialogContent> {
           Center(
               child: Column(children: [
             SizedBox(height: 30),
-            Stack(
-                alignment: Alignment.center,
-                children: [StoriesItem(maxRadius: 65, imageUrl: coach.avatar), Image.asset('assets/courses/photo_ellipse.png', scale: 4)]),
+            Stack(alignment: Alignment.center, children: [
+              StoriesItem(maxRadius: 65, imageUrl: coach.avatar),
+              Image.asset('assets/courses/photo_ellipse.png', scale: 4)
+            ]),
             SizedBox(height: 15),
             Text(coach.firstName + ' ' + coach.lastName,
-                textAlign: TextAlign.center, style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold)),
+                textAlign: TextAlign.center,
+                style: OlukoFonts.olukoSuperBigFont(
+                    custoFontWeight: FontWeight.bold)),
             SizedBox(height: 15),
             Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 50),
                 child: Text(OlukoLocalizations.get(context, 'hasMessage'),
-                    textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w300))),
+                    textAlign: TextAlign.center,
+                    style: OlukoFonts.olukoBigFont(
+                        custoFontWeight: FontWeight.w300))),
             SizedBox(height: 10),
             audioSlider(),
             SizedBox(height: 5),
@@ -112,6 +117,13 @@ class _State extends State<AudioDialogContent> {
                     audioPlayer.resume();
                     setState(() {
                       isPlaying = true;
+                    });
+
+                    audioPlayer.onPlayerCompletion.listen((_) {
+                      setState(() {
+                        isPlaying = false;
+                        _position = Duration.zero;
+                      });
                     });
                   } else {
                     audioPlayer.pause();
@@ -125,12 +137,15 @@ class _State extends State<AudioDialogContent> {
                     'assets/courses/green_circle.png',
                     scale: 4.5,
                   ),
-                  Icon(isPlaying ? Icons.pause : Icons.play_arrow, size: 32, color: OlukoColors.black)
+                  Icon(isPlaying ? Icons.pause : Icons.play_arrow,
+                      size: 32, color: OlukoColors.black)
                 ])),
           ])),
           Align(
               alignment: Alignment.topRight,
-              child: IconButton(icon: Icon(Icons.close, color: Colors.white), onPressed: () => Navigator.pop(context)))
+              child: IconButton(
+                  icon: Icon(Icons.close, color: Colors.white),
+                  onPressed: () => Navigator.pop(context)))
         ]));
   }
 }
