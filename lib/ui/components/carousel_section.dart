@@ -4,13 +4,21 @@ import 'package:oluko_app/ui/components/title_body.dart';
 
 class CarouselSection extends StatefulWidget {
   final String title;
+  final String subtitle;
   final List<Widget> children;
   final Function() onOptionTap;
   final String optionLabel;
   final double height;
   final double width;
 
-  CarouselSection({this.title, this.children, this.onOptionTap, this.optionLabel, this.height, this.width});
+  CarouselSection(
+      {this.title,
+      this.subtitle,
+      this.children,
+      this.onOptionTap,
+      this.optionLabel,
+      this.height,
+      this.width});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -29,6 +37,7 @@ class _State extends State<CarouselSection> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               widget.title != null ? TitleBody(widget.title) : SizedBox(),
+                            widget.subtitle != null ? TitleBody(widget.title) : SizedBox(),
               GestureDetector(
                 onTap: () => widget.onOptionTap(),
                 child: widget.optionLabel != null
@@ -36,7 +45,8 @@ class _State extends State<CarouselSection> {
                         padding: const EdgeInsets.only(top: 3.0),
                         child: Text(
                           widget.optionLabel != null ? widget.optionLabel : '',
-                          style: TextStyle(color: OlukoColors.primary, fontSize: 18),
+                          style: TextStyle(
+                              color: OlukoColors.primary, fontSize: 18),
                         ),
                       )
                     : SizedBox(),

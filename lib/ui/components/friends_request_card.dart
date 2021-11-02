@@ -76,7 +76,7 @@ class _FriendRequestCardState extends State<FriendRequestCard> {
                       onTap: () {
                         BlocProvider.of<TransformationJourneyBloc>(context).emitTransformationJourneyDefault(noValues: true);
                         BlocProvider.of<TaskSubmissionBloc>(context).setTaskSubmissionDefaultState();
-                        BlocProvider.of<CourseEnrollmentBloc>(context).setCourseEnrollmentChallengesDefaultValue();
+                        //BlocProvider.of<CourseEnrollmentBloc>(context).setCourseEnrollmentChallengesDefaultValue();
                         Navigator.pushNamed(context, routeLabels[RouteEnum.profileViewOwnProfile],
                             arguments: {'userRequested': widget.friendUser});
                       }),
