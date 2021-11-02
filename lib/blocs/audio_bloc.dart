@@ -30,6 +30,7 @@ class AudioBloc extends Cubit<AudioState> {
     try {
       Audio audio;
       audio = await _processAudio(audioFile, userId);
+      print("S3 bucket URL: " + audio.url);
       await ChallengeRepository.saveAudio(challengeId, audio);
       emit(AudioSuccess(audio: audio));
     } catch (e, stackTrace) {
