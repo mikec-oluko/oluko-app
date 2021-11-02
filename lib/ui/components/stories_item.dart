@@ -38,7 +38,7 @@ class StoriesItem extends StatefulWidget {
 class _State extends State<StoriesItem> {
   @override
   Widget build(BuildContext context) {
-    return BlocListener<StoryListBloc, StoryListState>(
+    return /*BlocListener<StoryListBloc, StoryListState>(
         listener: (BuildContext context, StoryListState state) {
           if (state is StoryListUpdate && state.event.snapshot.exists) {
             if (state.event.snapshot.key == widget.userStoryId) {
@@ -52,7 +52,7 @@ class _State extends State<StoriesItem> {
             }
           }
         },
-        child: Padding(
+        child: */Padding(
           padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -106,7 +106,7 @@ class _State extends State<StoriesItem> {
                 const SizedBox()
             ],
           ),
-        ));
+        )/*)*/;
   }
 
   void updateData(DataSnapshot snapshot) {
