@@ -159,6 +159,18 @@ class CoachRepository {
     }
   }
 
+  Future<void> updateMentoredVideoNotificationStatus(
+      String coachId, String annotationId, bool notificationValue) async {
+    DocumentReference reference = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('coachStatistics')
+        .doc(coachId)
+        .collection('annotations')
+        .doc(annotationId);
+    reference.update({'notification_viewed': notificationValue});
+  }
+
   Future<List<CoachTimelineItem>> getTimelineContent(String userId) async {
     try {
       QuerySnapshot docRef = await FirebaseFirestore.instance
@@ -206,6 +218,15 @@ class CoachRepository {
       );
       rethrow;
     }
+  }
+
+  Future<void> updateRecommendationNotificationStatus(String recommendationId, bool notificationValue) async {
+    DocumentReference reference = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('recommendations')
+        .doc(recommendationId);
+    reference.update({'notification_viewed': notificationValue});
   }
 
   Future<List<CoachRecommendationDefault>> getRecommendationsInfo(

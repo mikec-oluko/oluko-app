@@ -24,13 +24,14 @@ class CoachRecommendationsFailure extends CoachRecommendationsState {
 }
 
 class CoachRecommendationsBloc extends Cubit<CoachRecommendationsState> {
+  final CoachRepository _coachRepository = CoachRepository();
   CoachRecommendationsBloc() : super(LoadingCoachRecommendations());
 
   void getCoachRecommendations(String userId, String coachId) async {
     try {
       emit(LoadingCoachRecommendations());
       final List<Recommendation> coachRecommendations =
-          await CoachRepository().getCoachRecommendationsForUser(userId, coachId);
+          await _coachRepository.getCoachRecommendationsForUser(userId, coachId);
       emit(CoachRecommendationsSuccess(coachRecommendationList: coachRecommendations));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -46,9 +47,24 @@ class CoachRecommendationsBloc extends Cubit<CoachRecommendationsState> {
     try {
       emit(LoadingCoachRecommendations());
       final List<CoachRecommendationDefault> coachRecommendations =
-          await CoachRepository().getRecommendationsInfo(coachRecommendationContent);
+          await _coachRepository.getRecommendationsInfo(coachRecommendationContent);
 
       emit(CoachRecommendationsData(coachRecommendationContent: coachRecommendations));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(CoachRecommendationsFailure(exception: exception));
+      rethrow;
+    }
+  }
+
+  void setRecommendationNotificationAsViewed(
+      String recommendationId, String coachId, String userId, bool notificationValue) async {
+    try {
+      await _coachRepository.updateRecommendationNotificationStatus(recommendationId, notificationValue);
+      getCoachRecommendations(userId, coachId);
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

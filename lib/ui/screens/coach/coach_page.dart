@@ -81,6 +81,8 @@ List<CoachTimelineItem> _sentVideosTimelineContent = [];
 List<CoachTimelineItem> _mentoredVideoTimelineContent = [];
 List<CoachTimelineItem> _allContent = [];
 List<CoachTimelineGroup> _timelinePanelContent = [];
+List<CoachSegmentContent> allSegments = [];
+
 String _defaultIdForAllContentTimeline = '0';
 const String _defaultIntroductionVideoId = 'introVideo';
 
@@ -282,37 +284,62 @@ class _CoachPageState extends State<CoachPage> {
   }
 
   Widget coachViewPageContent(BuildContext context) {
-    return BlocBuilder<AssessmentBloc, AssessmentState>(
+    return BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(
       builder: (context, state) {
-        if (state is AssessmentSuccess) {
-          _assessment = state.assessment;
-          BlocProvider.of<TaskBloc>(context).get(_assessment);
-
-          final carouselNotificationWidgetList = carouselNotificationWidget(context);
-          return ListView(
-            children: [
-              if (carouselNotificationWidgetList.isEmpty)
-                CoachCarouselSliderSection(
-                  contentForCarousel: carouselNotificationWidgetList,
-                  introductionCompleted: widget.coachAssignment.introductionCompleted,
-                  introductionVideo: _assessment.video,
-                  onVideoFinished: () => BlocProvider.of<CoachAssignmentBloc>(context)
-                      .updateIntroductionVideoState(widget.coachAssignment),
-                )
-              else
-                const SizedBox.shrink(),
-              userProgressSection(carouselNotificationWidgetList.isNotEmpty),
-              CoachHorizontalCarousel(contentToDisplay: listOfContentForUser(), isForVideoContent: true),
-              carouselToDoSection(context),
-              assessmentSection(context),
-              const SizedBox(
-                height: 200,
-              )
-            ],
-          );
-        } else {
-          return const SizedBox();
+        if (state is CourseEnrollmentsByUserSuccess) {
+          _courseEnrollmentList = state.courseEnrollments;
+          _toDoSegments = TransformListOfItemsToWidget.segments(_courseEnrollmentList);
+          allSegments = TransformListOfItemsToWidget.createSegmentContentInforamtion(_toDoSegments);
         }
+        return BlocBuilder<ChallengeBloc, ChallengeState>(
+          builder: (context, state) {
+            if (state is GetChallengeSuccess) {
+              if (_activeChallenges.isNotEmpty) {
+                _activeChallenges = state.challenges;
+              }
+            }
+            return BlocBuilder<CoachRequestBloc, CoachRequestState>(
+              builder: (context, state) {
+                if (state is CoachRequestSuccess) {
+                  _coachRequestList = state.values;
+                  getRequiredSegments(allSegments);
+                }
+                return BlocBuilder<AssessmentBloc, AssessmentState>(
+                  builder: (context, state) {
+                    if (state is AssessmentSuccess) {
+                      _assessment = state.assessment;
+                      BlocProvider.of<TaskBloc>(context).get(_assessment);
+                      final carouselNotificationWidgetList = carouselNotificationWidget(context);
+                      return ListView(
+                        children: [
+                          if (carouselNotificationWidgetList.isNotEmpty)
+                            CoachCarouselSliderSection(
+                              contentForCarousel: carouselNotificationWidgetList,
+                              introductionCompleted: widget.coachAssignment.introductionCompleted,
+                              introductionVideo: _assessment.video,
+                              onVideoFinished: () => BlocProvider.of<CoachAssignmentBloc>(context)
+                                  .updateIntroductionVideoState(widget.coachAssignment),
+                            )
+                          else
+                            const SizedBox.shrink(),
+                          userProgressSection(carouselNotificationWidgetList.isEmpty),
+                          CoachHorizontalCarousel(contentToDisplay: listOfContentForUser(), isForVideoContent: true),
+                          carouselToDoSection(context),
+                          assessmentSection(context),
+                          const SizedBox(
+                            height: 200,
+                          )
+                        ],
+                      );
+                    } else {
+                      return const SizedBox();
+                    }
+                  },
+                );
+              },
+            );
+          },
+        );
       },
     );
   }
@@ -368,44 +395,15 @@ class _CoachPageState extends State<CoachPage> {
   }
 
   Widget toDoSection(BuildContext context) {
-    List<CoachSegmentContent> allSegments = [];
-
-    return BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(
-      builder: (context, state) {
-        if (state is CourseEnrollmentsByUserSuccess) {
-          _courseEnrollmentList = state.courseEnrollments;
-          _toDoSegments = TransformListOfItemsToWidget.segments(_courseEnrollmentList);
-          allSegments = TransformListOfItemsToWidget.createSegmentContentInforamtion(_toDoSegments);
-        }
-        return BlocBuilder<ChallengeBloc, ChallengeState>(
-          builder: (context, state) {
-            if (state is GetChallengeSuccess) {
-              if (_activeChallenges.isNotEmpty) {
-                _activeChallenges = state.challenges;
-              }
-            }
-            return BlocBuilder<CoachRequestBloc, CoachRequestState>(
-              builder: (context, state) {
-                if (state is CoachRequestSuccess) {
-                  _coachRequestList = state.values;
-                  getRequiredSegments(allSegments);
-                }
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      OlukoLocalizations.get(context, 'toDo'),
-                      style:
-                          OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
-                    ),
-                    CoachHorizontalCarousel(contentToDisplay: toDoContent()),
-                  ],
-                );
-              },
-            );
-          },
-        );
-      },
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          OlukoLocalizations.get(context, 'toDo'),
+          style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+        ),
+        CoachHorizontalCarousel(contentToDisplay: toDoContent()),
+      ],
     );
   }
 
@@ -419,6 +417,8 @@ class _CoachPageState extends State<CoachPage> {
                     requiredSegmentItem.segmentId == coachRequestItem.segmentId &&
                     coachRequestItem.status == StatusEnum.requested)
                 .isEmpty) {
+              segmentItem.coachRequest = coachRequestItem;
+              segmentItem.createdAt = coachRequestItem.createdAt;
               _requiredSegments.add(segmentItem);
             }
           }

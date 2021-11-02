@@ -51,7 +51,7 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
                           borderRadius: const BorderRadius.all(Radius.circular(5)),
                           image: DecorationImage(
                             image: widget.videoThumbnail != null
-                                ? NetworkImage(widget.videoThumbnail.length >= 1
+                                ? NetworkImage(widget.videoThumbnail.isNotEmpty
                                     ? widget.videoThumbnail[1]
                                     : widget.videoThumbnail[0])
                                 : defaultImage,
@@ -122,7 +122,8 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
               ),
               Align(
                 alignment: Alignment.topLeft,
-                child: SizedBox(child: IconButton(icon: Icon(Icons.close, color: OlukoColors.white), onPressed: () {})),
+                child: SizedBox(
+                    child: IconButton(icon: const Icon(Icons.close, color: OlukoColors.white), onPressed: () {})),
               ),
             ],
           ),

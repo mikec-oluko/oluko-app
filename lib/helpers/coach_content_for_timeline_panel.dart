@@ -117,18 +117,20 @@ class CoachTimelineFunctions {
     List<CoachNotificationContent> mentoredVideosAsNotification = [];
     if (annotationContent != null) {
       annotationContent.forEach((annotation) {
-        CoachNotificationContent newItem = CoachNotificationContent(
-            contentTitle: OlukoLocalizations.get(context, 'mentoredVideo'),
-            contentSubtitle: OlukoLocalizations.get(context, 'mentoredVideo'),
-            contentDescription: '',
-            contentImage: annotation.video.thumbUrl,
-            videoUrl: annotation.videoHLS ?? annotation.video.url,
-            contentTypeIndex: 4,
-            createdAt: annotation.createdAt,
-            mentoredContent: annotation);
+        if (annotation.notificationViewed == false) {
+          CoachNotificationContent newItem = CoachNotificationContent(
+              contentTitle: OlukoLocalizations.get(context, 'mentoredVideo'),
+              contentSubtitle: OlukoLocalizations.get(context, 'mentoredVideo'),
+              contentDescription: '',
+              contentImage: annotation.video.thumbUrl,
+              videoUrl: annotation.videoHLS ?? annotation.video.url,
+              contentTypeIndex: 4,
+              createdAt: annotation.createdAt,
+              mentoredContent: annotation);
 
-        if (mentoredVideosAsNotification.where((element) => element.videoUrl == newItem.videoUrl).isEmpty) {
-          mentoredVideosAsNotification.add(newItem);
+          if (mentoredVideosAsNotification.where((element) => element.videoUrl == newItem.videoUrl).isEmpty) {
+            mentoredVideosAsNotification.add(newItem);
+          }
         }
       });
     }
@@ -141,16 +143,18 @@ class CoachTimelineFunctions {
 
     if (requiredSegments != null) {
       requiredSegments.forEach((segment) {
-        CoachNotificationContent newItem = CoachNotificationContent(
-          contentTitle: segment.segmentName,
-          contentSubtitle: segment.className,
-          contentDescription: '',
-          contentImage: segment.classImage,
-          contentTypeIndex: 2,
-        );
+        if (segment.coachRequest.notificationViewed == false) {
+          CoachNotificationContent newItem = CoachNotificationContent(
+              contentTitle: segment.segmentName,
+              contentSubtitle: segment.className,
+              contentDescription: '',
+              contentImage: segment.classImage,
+              contentTypeIndex: 2,
+              coachRequest: segment.coachRequest);
 
-        if (requiredSegmentAsNotification.where((element) => element.contentTitle == newItem.contentTitle).isEmpty) {
-          requiredSegmentAsNotification.add(newItem);
+          if (requiredSegmentAsNotification.where((element) => element.contentTitle == newItem.contentTitle).isEmpty) {
+            requiredSegmentAsNotification.add(newItem);
+          }
         }
       });
     }
@@ -163,23 +167,26 @@ class CoachTimelineFunctions {
 
     if (coachRecommendations != null) {
       coachRecommendations.forEach((recommendation) {
-        CoachNotificationContent newItem = CoachNotificationContent(
-          contentTitle: recommendation.contentTitle,
-          contentSubtitle: recommendation.contentSubtitle,
-          contentDescription: recommendation.contentDescription,
-          contentImage: recommendation.contentImage,
-          contentTypeIndex: recommendation.contentTypeIndex,
-          createdAt: recommendation.createdAt,
-          classContent: recommendation.classContent ?? recommendation.classContent,
-          segmentContent: recommendation.segmentContent ?? recommendation.segmentContent,
-          coachRecommendation: recommendation.coachRecommendation,
-          movementContent: recommendation.movementContent ?? recommendation.movementContent,
-          mentoredContent: recommendation.mentoredContent ?? recommendation.mentoredContent,
-          courseContent: recommendation.courseContent ?? recommendation.courseContent,
-        );
+        if (recommendation.coachRecommendation.notificationViewed == false) {
+          CoachNotificationContent newItem = CoachNotificationContent(
+            contentTitle: recommendation.contentTitle,
+            contentSubtitle: recommendation.contentSubtitle,
+            contentDescription: recommendation.contentDescription,
+            contentImage: recommendation.contentImage,
+            contentTypeIndex: recommendation.contentTypeIndex,
+            createdAt: recommendation.createdAt,
+            classContent: recommendation.classContent ?? recommendation.classContent,
+            segmentContent: recommendation.segmentContent ?? recommendation.segmentContent,
+            coachRequest: recommendation.coachRequest ?? recommendation.coachRequest,
+            coachRecommendation: recommendation.coachRecommendation,
+            movementContent: recommendation.movementContent ?? recommendation.movementContent,
+            mentoredContent: recommendation.mentoredContent ?? recommendation.mentoredContent,
+            courseContent: recommendation.courseContent ?? recommendation.courseContent,
+          );
 
-        if (recommendationsAsNotification.where((element) => element.contentTitle == newItem.contentTitle).isEmpty) {
-          recommendationsAsNotification.add(newItem);
+          if (recommendationsAsNotification.where((element) => element.contentTitle == newItem.contentTitle).isEmpty) {
+            recommendationsAsNotification.add(newItem);
+          }
         }
       });
     }

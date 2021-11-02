@@ -19,11 +19,12 @@ class CoachMentoredVideoFailure extends CoachMentoredVideosState {
 }
 
 class CoachMentoredVideosBloc extends Cubit<CoachMentoredVideosState> {
+  final CoachRepository _coachRepository = CoachRepository();
   CoachMentoredVideosBloc() : super(Loading());
 
   void getMentoredVideosByUserId(String userId, String coachId) async {
     try {
-      final List<Annotation> coachAnnotations = await CoachRepository().getCoachAnnotationsByUserId(userId, coachId);
+      final List<Annotation> coachAnnotations = await _coachRepository.getCoachAnnotationsByUserId(userId, coachId);
       emit(CoachMentoredVideosSuccess(mentoredVideos: coachAnnotations));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -39,8 +40,27 @@ class CoachMentoredVideosBloc extends Cubit<CoachMentoredVideosState> {
       {Annotation coachAnnotation, List<Annotation> currentMentoredVideosContent}) async {
     try {
       final List<Annotation> coachAnnotationsUpdated =
-          await CoachRepository().setAnnotationAsFavorite(coachAnnotation, currentMentoredVideosContent);
+          await _coachRepository.setAnnotationAsFavorite(coachAnnotation, currentMentoredVideosContent);
       emit(CoachMentoredVideosSuccess(mentoredVideos: coachAnnotationsUpdated));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(CoachMentoredVideoFailure(exception: exception));
+      rethrow;
+    }
+  }
+
+  void setMentoredVideoNotificationAsViewed(
+    String coachId,
+    String userId,
+    String annotationId,
+    bool notificationValue,
+  ) async {
+    try {
+      await _coachRepository.updateMentoredVideoNotificationStatus(coachId, annotationId, notificationValue);
+      getMentoredVideosByUserId(userId, coachId);
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

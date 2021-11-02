@@ -12,6 +12,7 @@ class CoachRequest extends Base {
   DocumentReference segmentSubmissionReference;
   String courseEnrollmentId;
   DocumentReference courseEnrollmentReference;
+  bool notificationViewed;
 
   CoachRequest(
       {this.status,
@@ -23,6 +24,7 @@ class CoachRequest extends Base {
       this.segmentSubmissionReference,
       this.courseEnrollmentId,
       this.courseEnrollmentReference,
+      this.notificationViewed,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -47,10 +49,13 @@ class CoachRequest extends Base {
         coachId: json['coach_id']?.toString(),
         coachReference: json['coach_reference'] != null ? json['coach_reference'] as DocumentReference : null,
         segmentSubmissionId: json['segment_submission_id']?.toString(),
-        segmentSubmissionReference:
-            json['segment_submission_reference'] != null ? json['segment_submission_reference'] as DocumentReference : null,
+        segmentSubmissionReference: json['segment_submission_reference'] != null
+            ? json['segment_submission_reference'] as DocumentReference
+            : null,
         courseEnrollmentId: json['course_enrollment_id']?.toString(),
-        courseEnrollmentReference: json['course_enrollment_reference'] != null ? json['course_enrolled_reference'] as DocumentReference : null);
+        courseEnrollmentReference:
+            json['course_enrollment_reference'] != null ? json['course_enrolled_reference'] as DocumentReference : null,
+        notificationViewed: json['notification_viewed'] == null ? false : json['notification_viewed'] as bool);
     coachRequest.setBase(json);
     return coachRequest;
   }
@@ -67,6 +72,7 @@ class CoachRequest extends Base {
       'segment_submission_reference': segmentSubmissionReference,
       'course_enrollment_id': courseEnrollmentId,
       'course_enrollment_reference': courseEnrollmentReference,
+      'notification_viewed': notificationViewed
     };
     coachRequestJson.addEntries(super.toJson().entries);
     return coachRequestJson;
