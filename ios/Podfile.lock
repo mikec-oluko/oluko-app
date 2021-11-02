@@ -353,7 +353,7 @@ PODS:
   - BoringSSL-GRPC/Interface (0.0.7)
   - camera (0.0.1):
     - Flutter
-  - cloud_firestore (2.5.1):
+  - cloud_firestore (2.2.2):
     - Firebase/Firestore (= 8.7.0)
     - firebase_core
     - Flutter
@@ -721,7 +721,7 @@ SPEC CHECKSUMS:
   audioplayers: 455322b54050b30ea4b1af7cd9e9d105f74efa8c
   BoringSSL-GRPC: 8edf627ee524575e2f8d19d56f068b448eea3879
   camera: a0ca5080336f7af47b88436e5e26da3dee5568f0
-  cloud_firestore: 6ef724c1d02b9b34fa60fe3b52161ef41b478b79
+  cloud_firestore: fbefe2f4bf51a0a58613f658517735b28bda5409
   FBAEMKit: 5de0a7aaa854eec69bb5be20795952a63d38a5f6
   FBSDKCoreKit: bf655f808b040ed66a72b9922911b39d703e64f4
   FBSDKCoreKit_Basics: 73ebe3a27eb688ac5b5aa7e99f68992993042115
