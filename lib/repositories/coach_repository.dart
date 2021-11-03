@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/helpers/coach_recommendation_default.dart';
 import 'package:oluko_app/helpers/coach_timeline_content.dart';
@@ -39,7 +40,8 @@ class CoachRepository {
     return coachAssignmentResponse;
   }
 
-  Future<CoachAssignment> updateIntroductionStatus(CoachAssignment coachAssignment) async {
+  Future<CoachAssignment> updateIntroductionStatus(
+      CoachAssignment coachAssignment) async {
     try {
       coachAssignment.introductionCompleted = true;
       await FirebaseFirestore.instance
@@ -82,7 +84,8 @@ class CoachRepository {
   }
 
   Future<List<SegmentSubmission>> setSegmentSubmissionAsFavorite(
-      {SegmentSubmission segmentSubmittedToUpdate, List<SegmentSubmission> currentSentVideosContent}) async {
+      {SegmentSubmission segmentSubmittedToUpdate,
+      List<SegmentSubmission> currentSentVideosContent}) async {
     try {
       segmentSubmittedToUpdate.favorite = !segmentSubmittedToUpdate.favorite;
       await FirebaseFirestore.instance
@@ -92,8 +95,10 @@ class CoachRepository {
           .doc(segmentSubmittedToUpdate.id)
           .set(segmentSubmittedToUpdate.toJson());
 
-      currentSentVideosContent.forEach(
-          (sentVideo) => sentVideo.id == segmentSubmittedToUpdate.id ? sentVideo = segmentSubmittedToUpdate : null);
+      currentSentVideosContent.forEach((sentVideo) =>
+          sentVideo.id == segmentSubmittedToUpdate.id
+              ? sentVideo = segmentSubmittedToUpdate
+              : null);
 
       return currentSentVideosContent;
     } on Exception catch (e, stackTrace) {
@@ -105,9 +110,8 @@ class CoachRepository {
     }
   }
 
-//TODO:
-  Future<List<Annotation>> setAnnotationAsFavorite(
-      Annotation coachAnnotation, List<Annotation> actualMentoredVideosContent) async {
+  Future<List<Annotation>> setAnnotationAsFavorite(Annotation coachAnnotation,
+      List<Annotation> actualMentoredVideosContent) async {
     try {
       coachAnnotation.favorite = !coachAnnotation.favorite;
       await FirebaseFirestore.instance
@@ -134,30 +138,45 @@ class CoachRepository {
     }
   }
 
-  Future<List<Annotation>> getCoachAnnotationsByUserId(String userId, String coachId) async {
-    try {
-      QuerySnapshot docRef = await FirebaseFirestore.instance
-          .collection('projects')
-          .doc(GlobalConfiguration().getValue('projectId'))
-          .collection('coachStatistics')
-          .doc(coachId)
-          .collection('annotations')
-          .where('user_id', isEqualTo: userId)
-          .get();
-      List<Annotation> coachAnnotations = [];
-      docRef.docs.forEach((doc) {
-        final Map<String, dynamic> content = doc.data() as Map<String, dynamic>;
-        coachAnnotations.add(Annotation.fromJson(content));
-      });
-      return coachAnnotations;
-    } catch (e, stackTrace) {
-      await Sentry.captureException(
-        e,
-        stackTrace: stackTrace,
-      );
-      rethrow;
-    }
+  Stream<QuerySnapshot<Map<String, dynamic>>> getSubscription(
+      String userId, String coachId) {
+    Stream<QuerySnapshot<Map<String, dynamic>>> stream = FirebaseFirestore
+        .instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('coachStatistics')
+        .doc(coachId)
+        .collection('annotations')
+        .where('user_id', isEqualTo: userId)
+        .snapshots();
+    return stream;
   }
+
+  // Future<List<Annotation>> getCoachAnnotationsByUserId(
+  //     String userId, String coachId) async {
+  //   try {
+  //     QuerySnapshot docRef = await FirebaseFirestore.instance
+  //         .collection('projects')
+  //         .doc(GlobalConfiguration().getValue('projectId'))
+  //         .collection('coachStatistics')
+  //         .doc(coachId)
+  //         .collection('annotations')
+  //         .where('user_id', isEqualTo: userId)
+  //         .get();
+  //     List<Annotation> coachAnnotations = [];
+  //     docRef.docs.forEach((doc) {
+  //       final Map<String, dynamic> content = doc.data() as Map<String, dynamic>;
+  //       coachAnnotations.add(Annotation.fromJson(content));
+  //     });
+  //     return coachAnnotations;
+  //   } catch (e, stackTrace) {
+  //     await Sentry.captureException(
+  //       e,
+  //       stackTrace: stackTrace,
+  //     );
+  //     rethrow;
+  //   }
+  // }
 
   Future<void> updateMentoredVideoNotificationStatus(
       String coachId, String annotationId, bool notificationValue) async {
@@ -196,7 +215,8 @@ class CoachRepository {
     }
   }
 
-  Future<List<Recommendation>> getCoachRecommendationsForUser(String userId, String coachId) async {
+  Future<List<Recommendation>> getCoachRecommendationsForUser(
+      String userId, String coachId) async {
     try {
       QuerySnapshot docRef = await FirebaseFirestore.instance
           .collection('projects')
@@ -220,7 +240,8 @@ class CoachRepository {
     }
   }
 
-  Future<void> updateRecommendationNotificationStatus(String recommendationId, bool notificationValue) async {
+  Future<void> updateRecommendationNotificationStatus(
+      String recommendationId, bool notificationValue) async {
     DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
@@ -235,19 +256,22 @@ class CoachRepository {
     for (Recommendation recommendation in coachRecommendationContent) {
       DocumentSnapshot ds = await recommendation.entityReference.get();
 
-      switch (TimelineContentOption.getTimelineOption(recommendation.entityType as int)) {
+      switch (TimelineContentOption.getTimelineOption(
+          recommendation.entityType as int)) {
         case TimelineInteractionType.course:
-          Course courseRecommended = Course.fromJson(ds.data() as Map<String, dynamic>);
+          Course courseRecommended =
+              Course.fromJson(ds.data() as Map<String, dynamic>);
 
-          CoachRecommendationDefault recommendationItem = CoachRecommendationDefault(
-              coachRecommendation: recommendation,
-              contentTitle: courseRecommended.name,
-              contentSubtitle: courseRecommended.classes.length.toString(),
-              contentDescription: courseRecommended.description,
-              contentImage: courseRecommended.image,
-              contentTypeIndex: recommendation.entityType,
-              createdAt: recommendation.createdAt,
-              courseContent: courseRecommended);
+          CoachRecommendationDefault recommendationItem =
+              CoachRecommendationDefault(
+                  coachRecommendation: recommendation,
+                  contentTitle: courseRecommended.name,
+                  contentSubtitle: courseRecommended.classes.length.toString(),
+                  contentDescription: courseRecommended.description,
+                  contentImage: courseRecommended.image,
+                  contentTypeIndex: recommendation.entityType,
+                  createdAt: recommendation.createdAt,
+                  courseContent: courseRecommended);
           coachRecommendations.add(recommendationItem);
           break;
         case TimelineInteractionType.classes:
@@ -255,16 +279,18 @@ class CoachRepository {
         case TimelineInteractionType.segment:
           break;
         case TimelineInteractionType.movement:
-          Movement movementRecommended = Movement.fromJson(ds.data() as Map<String, dynamic>);
-          CoachRecommendationDefault recommendationItem = CoachRecommendationDefault(
-              coachRecommendation: recommendation,
-              contentTitle: movementRecommended.name,
-              contentSubtitle: '',
-              contentDescription: movementRecommended.description,
-              contentImage: movementRecommended.image,
-              contentTypeIndex: recommendation.entityType,
-              createdAt: recommendation.createdAt,
-              movementContent: movementRecommended);
+          Movement movementRecommended =
+              Movement.fromJson(ds.data() as Map<String, dynamic>);
+          CoachRecommendationDefault recommendationItem =
+              CoachRecommendationDefault(
+                  coachRecommendation: recommendation,
+                  contentTitle: movementRecommended.name,
+                  contentSubtitle: '',
+                  contentDescription: movementRecommended.description,
+                  contentImage: movementRecommended.image,
+                  contentTypeIndex: recommendation.entityType,
+                  createdAt: recommendation.createdAt,
+                  movementContent: movementRecommended);
           coachRecommendations.add(recommendationItem);
           break;
         case TimelineInteractionType.mentoredVideo:
