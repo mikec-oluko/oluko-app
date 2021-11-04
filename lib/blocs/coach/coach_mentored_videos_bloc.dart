@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:collection/collection.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -57,9 +57,24 @@ class CoachMentoredVideosBloc extends Cubit<CoachMentoredVideosState> {
           coachAnnotations.add(Annotation.fromJson(content));
         }
       }
+      List<Annotation> coachAnnotationsChangedItems = [];
 
-      if (coachAnnotationsUpdated.isNotEmpty) {
-        emit(CoachMentoredVideosUpdate(mentoredVideos: coachAnnotationsUpdated));
+      if (coachAnnotationsUpdated.length == coachAnnotations.length) {
+        coachAnnotationsUpdated.forEach((updateItem) {
+          coachAnnotations.forEach((annotationItem) {
+            if (annotationItem.id == updateItem.id) {
+              if (updateItem != annotationItem) {
+                coachAnnotationsChangedItems.add(updateItem);
+              }
+            }
+          });
+        });
+      } else {
+        coachAnnotationsChangedItems.addAll(coachAnnotationsUpdated);
+      }
+
+      if (coachAnnotationsChangedItems.isNotEmpty) {
+        emit(CoachMentoredVideosUpdate(mentoredVideos: coachAnnotationsChangedItems));
       } else {
         emit(CoachMentoredVideosSuccess(mentoredVideos: coachAnnotations));
       }

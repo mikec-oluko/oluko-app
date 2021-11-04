@@ -68,6 +68,7 @@ Annotation _introductionVideo;
 List<CourseEnrollment> _courseEnrollmentList = [];
 List<Challenge> _activeChallenges = [];
 List<Annotation> _annotationVideosContent = [];
+List<Annotation> _annotationUpdateListofContent = [];
 List<SegmentSubmission> _sentVideosContent = [];
 List<Recommendation> _coachRecommendationContent = [];
 List<InfoForSegments> _toDoSegments = [];
@@ -107,34 +108,33 @@ class _CoachPageState extends State<CoachPage> {
   void dispose() {
     BlocProvider.of<CoachMentoredVideosBloc>(context).dispose();
     setState(() {
-      _requiredSegments = [];
-      _timelinePanelContent = [];
-      _mentoredVideoTimelineContent = [];
-      _allContent = [];
-      _sentVideosTimelineContent = [];
-      _timelineItemsContent = [];
-      _sentVideosContent = [];
-      _assessmentVideosContent = [];
-      _annotationVideosContent = [];
+      clearContent([
+        _requiredSegments,
+        _timelinePanelContent,
+        _mentoredVideoTimelineContent,
+        _allContent,
+        _sentVideosTimelineContent,
+        _timelineItemsContent,
+        _sentVideosContent,
+        _assessmentVideosContent,
+        _annotationVideosContent
+      ]);
     });
-
     super.dispose();
+  }
+
+  clearContent(List<List<dynamic>> listToClear) {
+    listToClear.forEach((list) => list.clear());
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
-      buildWhen: (current, previous) {
-        return current != previous;
-      },
       builder: (context, state) {
         if (state is AuthSuccess) {
           _currentAuthUser = state.user;
           requestCurrentUserData(context);
           return BlocBuilder<CoachUserBloc, CoachUserState>(
-            buildWhen: (current, previous) {
-              return current != previous;
-            },
             builder: (context, state) {
               if (state is CoachUserSuccess) {
                 _coachUser = state.coach;
@@ -144,9 +144,6 @@ class _CoachPageState extends State<CoachPage> {
                   coachUser: _coachUser,
                 ),
                 body: BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(
-                  buildWhen: (current, previous) {
-                    return current != previous;
-                  },
                   builder: (context, state) {
                     if (state is CourseEnrollmentsByUserSuccess) {
                       _courseEnrollmentList = state.courseEnrollments;
@@ -156,42 +153,24 @@ class _CoachPageState extends State<CoachPage> {
                           current is CoachMentoredVideosUpdate,
                       listener: (context, state) {
                         if (state is CoachMentoredVideosUpdate) {
-                          _annotationVideosContent.addAll(state.mentoredVideos);
+                          _annotationUpdateListofContent = state.mentoredVideos;
+                          checkAnnotationUpdate(_annotationUpdateListofContent);
                         }
                       },
                       builder: (context, state) {
-                        if (state is CoachMentoredVideosSuccess && state.mentoredVideos.isNotEmpty) {
+                        if (state is CoachMentoredVideosSuccess) {
                           _annotationVideosContent =
                               state.mentoredVideos.where((mentoredVideo) => mentoredVideo.video != null).toList();
-                          CoachTimelineFunctions.getTimelineVideoContent(
-                              annotationContent: _annotationVideosContent,
-                              mentoredVideos: _mentoredVideoTimelineContent,
-                              context: context);
-                          addCoachAssignmentVideo();
                         }
-
                         return BlocBuilder<CoachSentVideosBloc, CoachSentVideosState>(
-                          buildWhen: (current, previous) {
-                            return current != previous;
-                          },
                           builder: (context, state) {
                             if (state is CoachSentVideosSuccess) {
                               _sentVideosContent =
                                   state.sentVideos.where((sentVideo) => sentVideo.video != null).toList();
-                              CoachTimelineFunctions.getTimelineVideoContent(
-                                  segmentSubmittedContent: _sentVideosContent,
-                                  sentVideos: _sentVideosTimelineContent,
-                                  context: context);
                             }
                             return BlocBuilder<CoachTimelineItemsBloc, CoachTimelineItemsState>(
-                              buildWhen: (current, previous) {
-                                return current != previous;
-                              },
                               builder: (context, timelineState) {
                                 return BlocBuilder<CoachRecommendationsBloc, CoachRecommendationsState>(
-                                  buildWhen: (current, previous) {
-                                    return current != previous;
-                                  },
                                   builder: (context, state) {
                                     if (state is CoachRecommendationsSuccess) {
                                       _coachRecommendationContent = state.coachRecommendationList;
@@ -235,6 +214,32 @@ class _CoachPageState extends State<CoachPage> {
     );
   }
 
+  void buildSentVideosForTimeline() {
+    CoachTimelineFunctions.getTimelineVideoContent(
+        segmentSubmittedContent: _sentVideosContent, sentVideos: _sentVideosTimelineContent, context: context);
+  }
+
+  void buildAnnotationsForTimeline() {
+    CoachTimelineFunctions.getTimelineVideoContent(
+        annotationContent: _annotationVideosContent, mentoredVideos: _mentoredVideoTimelineContent, context: context);
+    addCoachAssignmentVideo();
+  }
+
+  void checkAnnotationUpdate(List<Annotation> annotationUpdateListofContent) {
+    annotationUpdateListofContent.forEach((updatedOrNewAnnotation) {
+      List<Annotation> repeatedAnnotation =
+          _annotationVideosContent.where((element) => element.id == updatedOrNewAnnotation.id).toList();
+      if (repeatedAnnotation.isEmpty) {
+        _annotationVideosContent.add(updatedOrNewAnnotation);
+      } else {
+        if (repeatedAnnotation.first != updatedOrNewAnnotation) {
+          _annotationVideosContent[_annotationVideosContent
+              .indexWhere((element) => element.id == updatedOrNewAnnotation.id)] = updatedOrNewAnnotation;
+        }
+      }
+    });
+  }
+
   void addCoachAssignmentVideo() {
     if (_annotationVideosContent != null && _introductionVideo != null) {
       if (_annotationVideosContent
@@ -247,6 +252,9 @@ class _CoachPageState extends State<CoachPage> {
   }
 
   void timelineContentBuilding(BuildContext context) {
+    buildSentVideosForTimeline();
+    buildAnnotationsForTimeline();
+
     //TODO: CHECK CONTENT BEFORE ADD
     _coachRecommendations.forEach((recommendation) => _coachRecommendationTimelineContent
         .add(CoachTimelineFunctions.createAnCoachTimelineItem(recommendationItem: recommendation)));

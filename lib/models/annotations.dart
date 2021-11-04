@@ -3,8 +3,9 @@ import 'package:oluko_app/models/base.dart';
 import 'package:oluko_app/models/submodels/video.dart';
 import 'package:oluko_app/models/submodels/video_state.dart';
 import 'enums/annotation_status.dart';
+import 'package:equatable/equatable.dart';
 
-class Annotation extends Base {
+class Annotation extends Base with EquatableMixin {
   String segmentSubmissionId;
   DocumentReference segmentSubmissionReference;
   String userId;
@@ -85,4 +86,27 @@ class Annotation extends Base {
     annotation.addEntries(super.toJson().entries);
     return annotation;
   }
+
+  @override
+  List<Object> get props => [
+        userId,
+        segmentSubmissionId,
+        userReference,
+        coachId,
+        coachReference,
+        segmentSubmissionReference,
+        status,
+        favorite,
+        video,
+        videoHLS,
+        videoState,
+        notificationViewed,
+        id,
+        createdBy,
+        createdAt,
+        updatedAt,
+        updatedBy,
+        isDeleted,
+        isHidden
+      ];
 }
