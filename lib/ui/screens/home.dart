@@ -200,7 +200,7 @@ class _HomeState extends State<Home> {
                   opaque: false,
                   pageBuilder: (_, __, ___) => VideoOverlay(
                       videoUrl:
-                          "https://firebasestorage.googleapis.com/v0/b/oluko-development.appspot.com/o/gym-with-various-exercise.mp4?alt=media&token=8baa0afd-8475-473b-a383-9afde64d5b55"),
+                          "https://firebasestorage.googleapis.com/v0/b/oluko-development.appspot.com/o/Welcome%20to%20MVT.mp4?alt=media&token=534ec64b-822b-44b6-a014-1c8efe733ff9"),
                 ),
               ),
               child: Align(

@@ -34,12 +34,12 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
 
   @override
   void dispose() {
-    setState(() {
+    /*setState(() {
       content = [];
       filteredContent = [];
       isFavoriteSelected = false;
       isContentFilteredByDate = false;
-    });
+    });*/
     super.dispose();
   }
 

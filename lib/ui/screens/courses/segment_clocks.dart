@@ -624,7 +624,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   void _goToNextStep() {
     if (!SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) && timerEntries[timerTaskIndex].round == 0) {
-      if (timerTaskIndex == timerEntries.length || timerEntries[timerTaskIndex + 1].round == 1) {
+      if (timerTaskIndex == timerEntries.length - 1 || timerEntries[timerTaskIndex + 1].round == 1) {
         _saveSegmentRound(timerEntries[timerTaskIndex]);
       }
     }

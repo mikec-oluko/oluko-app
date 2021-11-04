@@ -601,7 +601,8 @@ class Routes {
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
           BlocProvider<SegmentSubmissionBloc>.value(
               value: _segmentSubmissionBloc),
-          BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
+          BlocProvider<CourseEnrollmentBloc>.value(
+              value: _courseEnrollmentBloc),
         ];
         final Map<String, dynamic> argumentsToAdd =
             arguments as Map<String, dynamic>;
@@ -879,7 +880,9 @@ class Routes {
         newRouteView = CoachShowVideo(
           videoUrl: argumentsToAdd['videoUrl'].toString(),
           titleForContent: argumentsToAdd['titleForContent'].toString(),
-          aspectRatio: double.parse(argumentsToAdd['aspectRatio'].toString()),
+          aspectRatio: argumentsToAdd['aspectRatio'] != null
+              ? double.parse(argumentsToAdd['aspectRatio'].toString())
+              : null,
         );
         break;
       case RouteEnum.coachProfile:
