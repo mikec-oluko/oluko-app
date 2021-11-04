@@ -17,8 +17,8 @@ class CoachMentoredVideosSuccess extends CoachMentoredVideosState {
   final List<Annotation> mentoredVideos;
 }
 
-class CoachMentoredVideosUpdated extends CoachMentoredVideosState {
-  CoachMentoredVideosUpdated({this.mentoredVideos});
+class CoachMentoredVideosUpdate extends CoachMentoredVideosState {
+  CoachMentoredVideosUpdate({this.mentoredVideos});
   final List<Annotation> mentoredVideos;
 }
 
@@ -39,35 +39,27 @@ class CoachMentoredVideosBloc extends Cubit<CoachMentoredVideosState> {
   }
 
 //TODO: GET STREAM
-  StreamSubscription<QuerySnapshot<Map<String, dynamic>>> getStream(
-      String userId, String coachId) {
-    subscription ??=
-        _coachRepository.getSubscription(userId, coachId).listen((snapshot) {
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>> getStream(String userId, String coachId) {
+    subscription ??= _coachRepository.getSubscription(userId, coachId).listen((snapshot) {
       List<Annotation> coachAnnotations = [];
       List<Annotation> coachAnnotationsUpdated = [];
 
       if (snapshot.docChanges.isNotEmpty) {
-        for (var doc in snapshot.docChanges) {
-          final Map<String, dynamic> content =
-              doc.doc.data() as Map<String, dynamic>;
+        for (DocumentChange<Map<String, dynamic>> doc in snapshot.docChanges) {
+          final Map<String, dynamic> content = doc.doc.data() as Map<String, dynamic>;
           coachAnnotationsUpdated.add(Annotation.fromJson(content));
         }
       }
 
       if (snapshot.docs.isNotEmpty) {
-        for (var doc in snapshot.docs) {
-          final Map<String, dynamic> content =
-              doc.data() as Map<String, dynamic>;
+        for (QueryDocumentSnapshot<Map<String, dynamic>> doc in snapshot.docs) {
+          final Map<String, dynamic> content = doc.data() as Map<String, dynamic>;
           coachAnnotations.add(Annotation.fromJson(content));
         }
       }
-      coachAnnotationsUpdated.forEach((elementUpdated) {
-        if (coachAnnotations.contains(elementUpdated)) {
-          coachAnnotationsUpdated.remove(elementUpdated);
-        }
-      });
+
       if (coachAnnotationsUpdated.isNotEmpty) {
-        emit(CoachMentoredVideosUpdated(mentoredVideos: coachAnnotations));
+        emit(CoachMentoredVideosUpdate(mentoredVideos: coachAnnotationsUpdated));
       } else {
         emit(CoachMentoredVideosSuccess(mentoredVideos: coachAnnotations));
       }
@@ -91,12 +83,10 @@ class CoachMentoredVideosBloc extends Cubit<CoachMentoredVideosState> {
   // }
 
   void updateCoachAnnotationFavoriteValue(
-      {Annotation coachAnnotation,
-      List<Annotation> currentMentoredVideosContent}) async {
+      {Annotation coachAnnotation, List<Annotation> currentMentoredVideosContent}) async {
     try {
       final List<Annotation> coachAnnotationsUpdated =
-          await _coachRepository.setAnnotationAsFavorite(
-              coachAnnotation, currentMentoredVideosContent);
+          await _coachRepository.setAnnotationAsFavorite(coachAnnotation, currentMentoredVideosContent);
       emit(CoachMentoredVideosSuccess(mentoredVideos: coachAnnotationsUpdated));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -115,8 +105,7 @@ class CoachMentoredVideosBloc extends Cubit<CoachMentoredVideosState> {
     bool notificationValue,
   ) async {
     try {
-      await _coachRepository.updateMentoredVideoNotificationStatus(
-          coachId, annotationId, notificationValue);
+      await _coachRepository.updateMentoredVideoNotificationStatus(coachId, annotationId, notificationValue);
       //getMentoredVideosByUserId(userId, coachId);
     } catch (exception, stackTrace) {
       await Sentry.captureException(
