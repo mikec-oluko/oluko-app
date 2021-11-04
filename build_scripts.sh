@@ -70,8 +70,21 @@ if [ "$1" = "deploy" ]
             then 
                 SetupQAEnv
         fi
-        echo "Starting deploy..." && \
-        cd android && bundle exec fastlane beta && \
-        cd .. && cd ios && pod install && bundle exec fastlane beta
+        if [ -z "$3" ] 
+            then
+                echo "Starting deploy..." && \
+                cd android && bundle exec fastlane beta && \
+                cd .. && cd ios && pod install && bundle exec fastlane beta
+        fi
+        if [ "$3" = "ios" ]
+            then 
+                echo "Starting iOS deploy..." && \
+                cd ios && pod install && bundle exec fastlane beta
+        fi
+        if [ "$3" = "android" ]
+            then 
+                echo "Starting android deploy..." && \
+                cd android && bundle exec fastlane beta && \
+        fi
     fi
 fi
