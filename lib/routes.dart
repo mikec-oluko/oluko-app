@@ -380,7 +380,9 @@ class Routes {
       case RouteEnum.story:
         providers = [
           BlocProvider<StoryBloc>.value(value: _storyBloc),
-          BlocProvider<StoryListBloc>.value(value: _storyListBloc)
+          BlocProvider<StoryListBloc>.value(value: _storyListBloc),
+          BlocProvider<HiFiveSendBloc>.value(value: _hiFiveSendBloc)
+
         ];
         final Map<String, dynamic> argumentsToAdd =
             arguments as Map<String, dynamic>;
