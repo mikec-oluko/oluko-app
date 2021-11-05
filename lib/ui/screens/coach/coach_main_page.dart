@@ -33,19 +33,13 @@ class _CoachMainPageState extends State<CoachMainPage> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
-      buildWhen: (current, previous) {
-        return current != previous;
-      },
       builder: (context, state) {
         if (state is AuthSuccess) {
           _currentUser = state.user;
           BlocProvider.of<CoachAssignmentBloc>(context).getCoachAssignmentStatus(_currentUser.id);
         }
-        return _currentUser.currentPlan > 1
+        return _currentUser.currentPlan >= 1
             ? BlocBuilder<CoachAssignmentBloc, CoachAssignmentState>(
-                buildWhen: (current, previous) {
-                  return current != previous;
-                },
                 builder: (context, state) {
                   if (state is CoachAssignmentResponse) {
                     _coachAssignment = state.coachAssignmentResponse;
@@ -77,7 +71,13 @@ class _CoachMainPageState extends State<CoachMainPage> {
                   }
                 },
               )
-            : Container();
+            : Container(
+                color: OlukoColors.black,
+                child: Container(
+                  color: OlukoColors.primary,
+                  width: 50,
+                  height: 50,
+                ));
       },
     );
   }
