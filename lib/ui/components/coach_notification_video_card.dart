@@ -30,57 +30,56 @@ class _CoachNotificationVideoCardState extends State<CoachNotificationVideoCard>
   Widget build(BuildContext context) {
     return Visibility(
       visible: isVisible,
-      child: GestureDetector(
-        onTap: widget.onOpenCard ?? () {},
-        child: SizedBox(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 5),
-                child: Text(headerForCard(widget.fileType),
-                    overflow: TextOverflow.ellipsis,
-                    style:
-                        OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
-              ),
-              Container(
-                height: 190,
-                decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(Radius.circular(5)),
-                    image: DecorationImage(
-                      image: widget.cardImage != null ? NetworkImage(widget.cardImage) : defaultImage,
-                      fit: BoxFit.cover,
-                    )),
-                child: Stack(
-                  children: [
-                    Positioned(
-                      top: 0,
-                      left: 0,
-                      child: IconButton(
-                          iconSize: 32,
-                          onPressed: widget.onCloseCard ??
-                              () {
-                                setState(() {
-                                  //TODO: Add logic to update notification state
-                                  isVisible = !isVisible;
-                                });
-                              },
-                          icon: const Icon(Icons.close, color: OlukoColors.grayColor)),
-                    ),
-                    Align(
-                      child: SizedBox(
-                          child: Image.asset(
+      child: SizedBox(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 5),
+              child: Text(headerForCard(widget.fileType),
+                  overflow: TextOverflow.ellipsis,
+                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
+            ),
+            Container(
+              height: 190,
+              decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(Radius.circular(5)),
+                  image: DecorationImage(
+                    image: widget.cardImage != null ? NetworkImage(widget.cardImage) : defaultImage,
+                    fit: BoxFit.cover,
+                  )),
+              child: Stack(
+                children: [
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    child: IconButton(
+                        iconSize: 32,
+                        onPressed: widget.onCloseCard ??
+                            () {
+                              setState(() {
+                                //TODO: Add logic to update notification state
+                                isVisible = !isVisible;
+                              });
+                            },
+                        icon: const Icon(Icons.close, color: OlukoColors.grayColor)),
+                  ),
+                  Align(
+                    child: SizedBox(
+                        child: GestureDetector(
+                      onTap: widget.onOpenCard ?? () {},
+                      child: Image.asset(
                         'assets/self_recording/play_button.png',
                         color: Colors.white,
                         height: 40,
                         width: 40,
-                      )),
-                    )
-                  ],
-                ),
+                      ),
+                    )),
+                  )
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
