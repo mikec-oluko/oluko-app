@@ -52,7 +52,6 @@ class _NoCoachPageState extends State<NoCoachPage> {
             Container(
                 color: Colors.black,
                 width: MediaQuery.of(context).size.width,
-                height: 250,
                 child: Column(
                   children: [
                     SizedBox(
