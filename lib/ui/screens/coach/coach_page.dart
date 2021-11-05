@@ -324,7 +324,15 @@ class _CoachPageState extends State<CoachPage> {
                       final carouselNotificationWidgetList = carouselNotificationWidget(context);
                       return ListView(
                         children: [
-                          if (carouselNotificationWidgetList.isNotEmpty)
+                          if (carouselNotificationWidgetList.isNotEmpty && widget.coachAssignment.introductionCompleted)
+                            CoachCarouselSliderSection(
+                              contentForCarousel: carouselNotificationWidgetList,
+                              introductionCompleted: widget.coachAssignment.introductionCompleted,
+                              introductionVideo: _assessment.video,
+                              onVideoFinished: () => BlocProvider.of<CoachAssignmentBloc>(context)
+                                  .updateIntroductionVideoState(widget.coachAssignment),
+                            )
+                          else if (!widget.coachAssignment.introductionCompleted)
                             CoachCarouselSliderSection(
                               contentForCarousel: carouselNotificationWidgetList,
                               introductionCompleted: widget.coachAssignment.introductionCompleted,
@@ -333,7 +341,7 @@ class _CoachPageState extends State<CoachPage> {
                                   .updateIntroductionVideoState(widget.coachAssignment),
                             )
                           else
-                            const SizedBox.shrink(),
+                            SizedBox.shrink(),
                           userProgressSection(carouselNotificationWidgetList.isEmpty),
                           CoachHorizontalCarousel(contentToDisplay: listOfContentForUser(), isForVideoContent: true),
                           carouselToDoSection(context),

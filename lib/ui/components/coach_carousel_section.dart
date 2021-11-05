@@ -41,7 +41,7 @@ class _CoachCarouselSliderSectionState extends State<CoachCarouselSliderSection>
                           autoPlayInterval: const Duration(seconds: 5),
                           enlargeCenterPage: true),
                     )
-                  : SizedBox(),
+                  : SizedBox.shrink(),
             )
           else
             Align(child: showVideoPlayer(widget.introductionVideo)),
