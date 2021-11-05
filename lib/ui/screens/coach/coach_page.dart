@@ -70,7 +70,6 @@ List<Challenge> _activeChallenges = [];
 List<Annotation> _annotationVideosContent = [];
 List<Annotation> _annotationUpdateListofContent = [];
 List<SegmentSubmission> _sentVideosContent = [];
-List<Recommendation> _coachRecommendationContent = [];
 List<InfoForSegments> _toDoSegments = [];
 List<CoachSegmentContent> _requiredSegments = [];
 List<TaskSubmission> _assessmentVideosContent = [];
@@ -173,13 +172,9 @@ class _CoachPageState extends State<CoachPage> {
                                 return BlocBuilder<CoachRecommendationsBloc, CoachRecommendationsState>(
                                   builder: (context, state) {
                                     if (state is CoachRecommendationsSuccess) {
-                                      _coachRecommendationContent = state.coachRecommendationList;
-                                      BlocProvider.of<CoachRecommendationsBloc>(context).getCoachRecommendationsData(
-                                          coachRecommendationContent: _coachRecommendationContent);
+                                      _coachRecommendations = state.coachRecommendationList;
                                     }
-                                    if (state is CoachRecommendationsData &&
-                                        timelineState is CoachTimelineItemsSuccess) {
-                                      _coachRecommendations = state.coachRecommendationContent;
+                                    if (timelineState is CoachTimelineItemsSuccess) {
                                       _timelineItemsContent = timelineState.timelineItems;
                                       timelineContentBuilding(context);
                                     }
@@ -412,16 +407,18 @@ class _CoachPageState extends State<CoachPage> {
   }
 
   Widget toDoSection(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          OlukoLocalizations.get(context, 'toDo'),
-          style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
-        ),
-        CoachHorizontalCarousel(contentToDisplay: toDoContent()),
-      ],
-    );
+    return toDoContent().isNotEmpty
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                OlukoLocalizations.get(context, 'toDo'),
+                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+              ),
+              CoachHorizontalCarousel(contentToDisplay: toDoContent()),
+            ],
+          )
+        : SizedBox.shrink();
   }
 
   void getRequiredSegments(List<CoachSegmentContent> allSegments) {

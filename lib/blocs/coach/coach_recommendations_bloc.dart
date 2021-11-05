@@ -10,11 +10,11 @@ class LoadingCoachRecommendations extends CoachRecommendationsState {}
 
 class CoachRecommendationsSuccess extends CoachRecommendationsState {
   CoachRecommendationsSuccess({this.coachRecommendationList});
-  final List<Recommendation> coachRecommendationList;
+  final List<CoachRecommendationDefault> coachRecommendationList;
 }
 
-class CoachRecommendationsData extends CoachRecommendationsState {
-  CoachRecommendationsData({this.coachRecommendationContent});
+class CoachRecommendationsUpdate extends CoachRecommendationsState {
+  CoachRecommendationsUpdate({this.coachRecommendationContent});
   final List<CoachRecommendationDefault> coachRecommendationContent;
 }
 
@@ -32,7 +32,9 @@ class CoachRecommendationsBloc extends Cubit<CoachRecommendationsState> {
       emit(LoadingCoachRecommendations());
       final List<Recommendation> coachRecommendations =
           await _coachRepository.getCoachRecommendationsForUser(userId, coachId);
-      emit(CoachRecommendationsSuccess(coachRecommendationList: coachRecommendations));
+      List<CoachRecommendationDefault> recommendationsFormatted =
+          await getCoachRecommendationsData(coachRecommendationContent: coachRecommendations);
+      emit(CoachRecommendationsSuccess(coachRecommendationList: recommendationsFormatted));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
@@ -43,13 +45,13 @@ class CoachRecommendationsBloc extends Cubit<CoachRecommendationsState> {
     }
   }
 
-  void getCoachRecommendationsData({List<Recommendation> coachRecommendationContent}) async {
+  Future<List<CoachRecommendationDefault>> getCoachRecommendationsData(
+      {List<Recommendation> coachRecommendationContent}) async {
     try {
       emit(LoadingCoachRecommendations());
       final List<CoachRecommendationDefault> coachRecommendations =
           await _coachRepository.getRecommendationsInfo(coachRecommendationContent);
-
-      emit(CoachRecommendationsData(coachRecommendationContent: coachRecommendations));
+      return coachRecommendations;
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
