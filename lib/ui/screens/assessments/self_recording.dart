@@ -191,7 +191,7 @@ class _State extends State<SelfRecording> {
                     'taskIndex': widget.taskIndex,
                     'filePath': path,
                     'isPublic': widget.isPublic,
-                    'isLastTask': widget.isLastTask
+                    'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : !widget.isLastTask
                   });
                 } else {
                   await cameraController.startVideoRecording();
@@ -210,6 +210,7 @@ class _State extends State<SelfRecording> {
                       'taskIndex': widget.taskIndex,
                       'filePath': state.pickedFile.path,
                       'isPublic': widget.isPublic,
+                      'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : !widget.isLastTask
                     });
                   }
                 },

@@ -40,7 +40,7 @@ class CoachMentoredVideosBloc extends Cubit<CoachMentoredVideosState> {
 
 //TODO: GET STREAM
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>> getStream(String userId, String coachId) {
-    subscription ??= _coachRepository.getSubscription(userId, coachId).listen((snapshot) {
+    subscription ??= _coachRepository.getAnnotationSubscription(userId, coachId).listen((snapshot) {
       List<Annotation> coachAnnotations = [];
       List<Annotation> coachAnnotationsUpdated = [];
 

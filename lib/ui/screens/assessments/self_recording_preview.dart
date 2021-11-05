@@ -102,8 +102,10 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
             BlocProvider.of<TaskSubmissionBloc>(context).checkCompleted(_assessmentAssignment, _assessment);
             BlocProvider.of<TaskSubmissionListBloc>(context).get(_assessmentAssignment);
             Navigator.pop(context);
-            Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails],
-                arguments: {'taskIndex': widget.taskIndex});
+            Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {
+              'taskIndex': widget.taskIndex,
+              'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : !widget.isLastTask
+            });
           }
         }, builder: (context, state) {
           if (state is VideoProcessing) {

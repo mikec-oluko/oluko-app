@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/helpers/coach_recommendation_default.dart';
 import 'package:oluko_app/models/recommendation.dart';
@@ -26,6 +29,12 @@ class CoachRecommendationsFailure extends CoachRecommendationsState {
 class CoachRecommendationsBloc extends Cubit<CoachRecommendationsState> {
   final CoachRepository _coachRepository = CoachRepository();
   CoachRecommendationsBloc() : super(LoadingCoachRecommendations());
+
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>> subscription;
+  @override
+  void dispose() {
+    subscription.cancel();
+  }
 
   void getCoachRecommendations(String userId, String coachId) async {
     try {
