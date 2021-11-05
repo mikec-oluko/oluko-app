@@ -2,11 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
 import 'package:oluko_app/blocs/story_bloc.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/dto/story_dto.dart';
 import 'package:oluko_app/models/dto/user_stories.dart';
+import 'package:oluko_app/utils/app_messages.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:video_player/video_player.dart';
 
 class StoryPage extends StatefulWidget {
@@ -124,6 +127,23 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
                             fontSize: 18.0,
                             fontWeight: FontWeight.w600,
                           ),
+                        ),
+                        const SizedBox(height: 20),
+                        Center(
+                          child: GestureDetector(
+                              onTap: () {
+                                BlocProvider.of<HiFiveSendBloc>(context).set(context, widget.userId, widget.userStories.createdBy);
+                                AppMessages().showHiFiveSentDialog(context);
+                              },
+                              child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
+                                bloc: BlocProvider.of(context),
+                                listener: (hiFiveSendContext, hiFiveSendState) {
+                                  if (hiFiveSendState is HiFiveSendSuccess) {
+                                    AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'hiFiveSent'));
+                                  }
+                                },
+                                child: SizedBox(width: 80, height: 80, child: Image.asset('assets/profile/hiFive.png')),
+                              )),
                         ),
                       ]),
                     );

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
-import 'package:oluko_app/models/annotations.dart';
+import 'package:oluko_app/models/annotation.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import '../../routes.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/models/annotations.dart';
+import 'package:oluko_app/models/annotation.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/repositories/coach_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';

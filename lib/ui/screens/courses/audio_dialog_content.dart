@@ -44,13 +44,6 @@ class _State extends State<AudioDialogContent> {
     audioPlayer.onAudioPositionChanged.listen((Duration p) {
       setState(() => _position = p);
     });
-
-    /* audioPlayer.onPlayerCompletion.listen((event) {
-      setState(() {
-        isPlaying = false;
-        _position = Duration.zero;
-      });
-    });*/
   }
 
   Widget audioSlider() {
@@ -118,11 +111,11 @@ class _State extends State<AudioDialogContent> {
                     setState(() {
                       isPlaying = true;
                     });
-
                     audioPlayer.onPlayerCompletion.listen((_) {
                       setState(() {
                         isPlaying = false;
                         _position = Duration.zero;
+                        audioPlayer.stop();
                       });
                     });
                   } else {
