@@ -11,6 +11,7 @@ import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/screens/assessments/assessment_videos.dart';
 import 'coach_no_assigned_timer_page.dart';
+import 'coach_no_coach_page.dart';
 import 'coach_page.dart';
 
 class CoachMainPage extends StatefulWidget {
@@ -71,13 +72,10 @@ class _CoachMainPageState extends State<CoachMainPage> {
                   }
                 },
               )
-            : Container(
-                color: OlukoColors.black,
-                child: Container(
-                  color: OlukoColors.primary,
-                  width: 50,
-                  height: 50,
-                ));
+            : NoCoachPage(
+                introductionVideo:
+                    "https://oluko-mvt.s3.us-west-1.amazonaws.com/assessments/emnsmBgZ13UBRqTS26Qd/video.mp4",
+              );
       },
     );
   }
