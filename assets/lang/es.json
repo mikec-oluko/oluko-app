@@ -240,5 +240,7 @@
     "notificationCourse": "Curso recomendado",
     "notificationClass": "Clase recomendada",
     "notificationMovement": "Movimiento recomendado",
-    "notificationSegment": "Segmento a grabar"
+    "notificationSegment": "Segmento a grabar",
+    "welcomeTo": "Bienvenido a",
+    "enrollToACourse": "Inscribirse a un Curso"
 }

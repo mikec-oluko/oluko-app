@@ -241,5 +241,7 @@
     "notificationCourse": "Recommended Course",
     "notificationClass": "Recommended Class",
     "notificationMovement": "Recommended Movement",
-    "notificationSegment": "Record Segment"
+    "notificationSegment": "Record Segment",
+    "welcomeTo": "Welcome to",
+    "enrollToACourse": "Enroll to a Course"
 }

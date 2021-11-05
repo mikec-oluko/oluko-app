@@ -1,1 +1,1 @@
-enum ParameterEnum { duration, reps }
+enum ParameterEnum { duration, reps, distance }

@@ -48,7 +48,9 @@ class Segment extends Base {
 
   factory Segment.fromJson(Map<String, dynamic> json) {
     Segment segment = Segment(
-        challengeVideo: json['challenge_video']?.toString(),
+        challengeVideo: json['challenge_video'] == null
+            ? null
+            : json['challenge_video'].toString(),
         name: json['name']?.toString(),
         image: json['image']?.toString(),
         rounds: json['rounds'] as int,
@@ -78,7 +80,7 @@ class Segment extends Base {
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> segmentJson = {
-      'challenge_video': challengeVideo,
+      'challenge_video': challengeVideo == null ? null : challengeVideo,
       'name': name,
       'image': image,
       'rounds': rounds,

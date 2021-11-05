@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/helpers/coach_notification_content.dart';
 import 'package:oluko_app/helpers/coach_segment_content.dart';
-import 'package:oluko_app/models/annotations.dart';
+import 'package:oluko_app/models/annotation.dart';
 import 'package:oluko_app/models/coach_timeline_item.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/movement.dart';
@@ -15,22 +15,18 @@ import 'coach_timeline_content.dart';
 String defaultIdForAllContentTimeline = '0';
 
 class CoachTimelineFunctions {
-  static List<CoachTimelineGroup> buildContentForTimelinePanel(
-      List<CoachTimelineItem> timelineItemsContent) {
+  static List<CoachTimelineGroup> buildContentForTimelinePanel(List<CoachTimelineItem> timelineItemsContent) {
     List<String> listOfCourseId = [];
     List<CoachTimelineGroup> timelineTabsAndContent = [];
     List<CoachTimelineItem> contentForItem = [];
     CoachTimelineGroup newTimelineTabItem;
 
     timelineItemsContent.forEach((timelineItem) {
-      !listOfCourseId.contains(timelineItem.course.id)
-          ? listOfCourseId.add(timelineItem.course.id)
-          : null;
+      !listOfCourseId.contains(timelineItem.course.id) ? listOfCourseId.add(timelineItem.course.id) : null;
     });
     listOfCourseId.forEach((courseId) {
-      final repeatedItemsQuery = timelineItemsContent
-          .where((timelineItem) => timelineItem.course.id == courseId)
-          .toList();
+      final repeatedItemsQuery =
+          timelineItemsContent.where((timelineItem) => timelineItem.course.id == courseId).toList();
       String itemId;
       String itemName;
       if (repeatedItemsQuery.length > 1) {
@@ -40,12 +36,9 @@ class CoachTimelineFunctions {
         repeatedItemsQuery.forEach((element) {
           contentForItem.add(element);
         });
-        contentForItem.sort(
-            (a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
-        newTimelineTabItem = CoachTimelineGroup(
-            courseId: itemId,
-            courseName: itemName,
-            timelineElements: contentForItem);
+        contentForItem.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
+        newTimelineTabItem =
+            CoachTimelineGroup(courseId: itemId, courseName: itemName, timelineElements: contentForItem);
       } else {
         newTimelineTabItem = CoachTimelineGroup(
             courseId: repeatedItemsQuery.first.course.id,
@@ -69,8 +62,7 @@ class CoachTimelineFunctions {
         CoachTimelineItem newItem = CoachTimelineItem(
             coachId: element.coachId,
             coachReference: element.coachReference,
-            contentDescription:
-                OlukoLocalizations.get(context, 'mentoredVideo'),
+            contentDescription: OlukoLocalizations.get(context, 'mentoredVideo'),
             contentName: OlukoLocalizations.get(context, 'mentoredVideo'),
             contentThumbnail: element.video.thumbUrl,
             contentType: 4,
@@ -78,10 +70,7 @@ class CoachTimelineFunctions {
             course: CourseTimelineSubmodel(),
             id: defaultIdForAllContentTimeline,
             createdAt: element.createdAt);
-        if (mentoredVideos
-            .where((element) =>
-                element.contentThumbnail == newItem.contentThumbnail)
-            .isEmpty) {
+        if (mentoredVideos.where((element) => element.contentThumbnail == newItem.contentThumbnail).isEmpty) {
           mentoredVideos.add(newItem);
         }
       });
@@ -100,31 +89,24 @@ class CoachTimelineFunctions {
             course: CourseTimelineSubmodel(),
             id: defaultIdForAllContentTimeline,
             createdAt: element.createdAt);
-        if (sentVideos
-            .where((element) =>
-                element.contentThumbnail == newItem.contentThumbnail)
-            .isEmpty) {
+        if (sentVideos.where((element) => element.contentThumbnail == newItem.contentThumbnail).isEmpty) {
           sentVideos.add(newItem);
         }
       });
     }
   }
 
-  static CoachTimelineItem createAnCoachTimelineItem(
-      {CoachRecommendationDefault recommendationItem}) {
+  static CoachTimelineItem createAnCoachTimelineItem({CoachRecommendationDefault recommendationItem}) {
     CoachTimelineItem newItem = CoachTimelineItem(
         coachId: recommendationItem.coachRecommendation.originUserId,
-        coachReference:
-            recommendationItem.coachRecommendation.originUserReference,
+        coachReference: recommendationItem.coachRecommendation.originUserReference,
         contentDescription: recommendationItem.contentSubtitle,
         contentName: recommendationItem.contentTitle,
         contentThumbnail: recommendationItem.contentImage,
         contentType: recommendationItem.contentTypeIndex,
         course: CourseTimelineSubmodel(),
-        courseForNavigation: recommendationItem.courseContent ??
-            recommendationItem.courseContent,
-        movementForNavigation: recommendationItem.movementContent ??
-            recommendationItem.movementContent,
+        courseForNavigation: recommendationItem.courseContent ?? recommendationItem.courseContent,
+        movementForNavigation: recommendationItem.movementContent ?? recommendationItem.movementContent,
         id: '0',
         createdAt: recommendationItem.createdAt);
     return newItem;
@@ -146,9 +128,7 @@ class CoachTimelineFunctions {
               createdAt: annotation.createdAt,
               mentoredContent: annotation);
 
-          if (mentoredVideosAsNotification
-              .where((element) => element.videoUrl == newItem.videoUrl)
-              .isEmpty) {
+          if (mentoredVideosAsNotification.where((element) => element.videoUrl == newItem.videoUrl).isEmpty) {
             mentoredVideosAsNotification.add(newItem);
           }
         }
@@ -172,9 +152,7 @@ class CoachTimelineFunctions {
               contentTypeIndex: 2,
               coachRequest: segment.coachRequest);
 
-          if (requiredSegmentAsNotification
-              .where((element) => element.contentTitle == newItem.contentTitle)
-              .isEmpty) {
+          if (requiredSegmentAsNotification.where((element) => element.contentTitle == newItem.contentTitle).isEmpty) {
             requiredSegmentAsNotification.add(newItem);
           }
         }
@@ -184,8 +162,7 @@ class CoachTimelineFunctions {
   }
 
   static List<CoachNotificationContent> coachRecommendationsForInteraction(
-      {List<CoachRecommendationDefault> coachRecommendations,
-      BuildContext context}) {
+      {List<CoachRecommendationDefault> coachRecommendations, BuildContext context}) {
     List<CoachNotificationContent> recommendationsAsNotification = [];
 
     if (coachRecommendations != null) {
@@ -198,24 +175,16 @@ class CoachTimelineFunctions {
             contentImage: recommendation.contentImage,
             contentTypeIndex: recommendation.contentTypeIndex,
             createdAt: recommendation.createdAt,
-            classContent:
-                recommendation.classContent ?? recommendation.classContent,
-            segmentContent:
-                recommendation.segmentContent ?? recommendation.segmentContent,
-            coachRequest:
-                recommendation.coachRequest ?? recommendation.coachRequest,
+            classContent: recommendation.classContent ?? recommendation.classContent,
+            segmentContent: recommendation.segmentContent ?? recommendation.segmentContent,
+            coachRequest: recommendation.coachRequest ?? recommendation.coachRequest,
             coachRecommendation: recommendation.coachRecommendation,
-            movementContent: recommendation.movementContent ??
-                recommendation.movementContent,
-            mentoredContent: recommendation.mentoredContent ??
-                recommendation.mentoredContent,
-            courseContent:
-                recommendation.courseContent ?? recommendation.courseContent,
+            movementContent: recommendation.movementContent ?? recommendation.movementContent,
+            mentoredContent: recommendation.mentoredContent ?? recommendation.mentoredContent,
+            courseContent: recommendation.courseContent ?? recommendation.courseContent,
           );
 
-          if (recommendationsAsNotification
-              .where((element) => element.contentTitle == newItem.contentTitle)
-              .isEmpty) {
+          if (recommendationsAsNotification.where((element) => element.contentTitle == newItem.contentTitle).isEmpty) {
             recommendationsAsNotification.add(newItem);
           }
         }
