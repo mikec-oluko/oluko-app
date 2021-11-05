@@ -242,5 +242,6 @@
     "notificationMovement": "Movimiento recomendado",
     "notificationSegment": "Segmento a grabar",
     "welcomeTo": "Bienvenido a",
-    "enrollToACourse": "Inscribirse a un Curso"
+    "enrollToACourse": "Inscribirse a un Curso",
+    "noCoachMessage": "para obtener tu entrenador personal"
 }

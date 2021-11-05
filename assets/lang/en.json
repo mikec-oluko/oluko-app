@@ -243,5 +243,6 @@
     "notificationMovement": "Recommended Movement",
     "notificationSegment": "Record Segment",
     "welcomeTo": "Welcome to",
-    "enrollToACourse": "Enroll to a Course"
+    "enrollToACourse": "Enroll to a Course",
+    "noCoachMessage": "to get your personal coach"
 }

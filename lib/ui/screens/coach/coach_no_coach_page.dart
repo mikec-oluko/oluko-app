@@ -58,13 +58,13 @@ class _NoCoachPageState extends State<NoCoachPage> {
                       height: 100,
                     ),
                     Text(
-                      "Click here",
+                      OlukoLocalizations.get(context, 'tapHere'),
                       textAlign: TextAlign.center,
                       style: OlukoFonts.olukoSubtitleFont(
                           customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
                     ),
                     Text(
-                      "to get your personal coach",
+                      OlukoLocalizations.get(context, 'noCoachMessage'),
                       textAlign: TextAlign.center,
                       style: OlukoFonts.olukoMediumFont(
                           customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
