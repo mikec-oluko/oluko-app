@@ -105,7 +105,7 @@ import 'blocs/movement_info_bloc.dart';
 import 'blocs/friends/hi_five_send_bloc.dart';
 import 'blocs/movement_info_bloc.dart';
 import 'blocs/views_bloc/hi_five_bloc.dart';
-import 'models/annotations.dart';
+import 'models/annotation.dart';
 import 'models/segment_submission.dart';
 import 'models/task.dart';
 import 'ui/screens/coach/coach_main_page.dart';
@@ -550,6 +550,7 @@ class Routes {
               value: _doneChallengeUsersBloc),
           BlocProvider<PersonalRecordBloc>.value(value: _personalRecordBloc),
           BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
+          BlocProvider<StoryListBloc>.value(value: _storyListBloc)
         ];
         final Map<String, dynamic> argumentsToAdd =
             arguments as Map<String, dynamic>;
@@ -561,7 +562,8 @@ class Routes {
         break;
       case RouteEnum.movementIntro:
         providers = [
-          BlocProvider<MovementInfoBloc>.value(value: _movementInfoBloc)
+          BlocProvider<MovementInfoBloc>.value(value: _movementInfoBloc),
+          BlocProvider<StoryListBloc>.value(value: _storyListBloc)
         ];
         final Map<String, Movement> argumentsToAdd =
             arguments as Map<String, Movement>;
@@ -582,6 +584,7 @@ class Routes {
               value: _courseEnrollmentUpdateBloc),
           BlocProvider<StoryBloc>.value(value: _storyBloc),
           BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
+          BlocProvider<StoryListBloc>.value(value: _storyListBloc)
         ];
         final Map<String, dynamic> argumentsToAdd =
             arguments as Map<String, dynamic>;
@@ -598,7 +601,8 @@ class Routes {
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
           BlocProvider<SegmentSubmissionBloc>.value(
               value: _segmentSubmissionBloc),
-          BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc)
+          BlocProvider<CourseEnrollmentBloc>.value(
+              value: _courseEnrollmentBloc),
         ];
         final Map<String, dynamic> argumentsToAdd =
             arguments as Map<String, dynamic>;
@@ -618,6 +622,7 @@ class Routes {
           BlocProvider<MovementBloc>.value(value: _movementBloc),
           BlocProvider<CourseEnrollmentListBloc>.value(
               value: _courseEnrollmentListBloc),
+          BlocProvider<StoryListBloc>.value(value: _storyListBloc),
           BlocProvider<SubscribedCourseUsersBloc>.value(
               value: _subscribedCourseUsersBloc),
           BlocProvider<StoryListBloc>.value(value: _storyListBloc)
@@ -646,6 +651,7 @@ class Routes {
           BlocProvider<MovementBloc>.value(value: _movementBloc),
           BlocProvider<CoachAudioBloc>.value(value: _coachAudioBloc),
           BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
+          BlocProvider<StoryListBloc>.value(value: _storyListBloc)
         ];
         final Map<String, dynamic> argumentsToAdd =
             arguments as Map<String, dynamic>;
@@ -874,7 +880,9 @@ class Routes {
         newRouteView = CoachShowVideo(
           videoUrl: argumentsToAdd['videoUrl'].toString(),
           titleForContent: argumentsToAdd['titleForContent'].toString(),
-          aspectRatio: double.parse(argumentsToAdd['aspectRatio'].toString()),
+          aspectRatio: argumentsToAdd['aspectRatio'] != null
+              ? double.parse(argumentsToAdd['aspectRatio'].toString())
+              : null,
         );
         break;
       case RouteEnum.coachProfile:
