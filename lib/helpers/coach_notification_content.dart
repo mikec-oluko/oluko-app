@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oluko_app/helpers/coach_recommendation_default.dart';
-import 'package:oluko_app/models/annotations.dart';
+import 'package:oluko_app/models/annotation.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/course.dart';
