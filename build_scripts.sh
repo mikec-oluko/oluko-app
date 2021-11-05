@@ -56,7 +56,7 @@ fi
 if [ "$1" = "deploy" ]
     then
     if [ -z "$2" ] 
-    then echo "No 2nd argument supplied"
+        then echo "No 2nd argument supplied"
     else
         if [ "$2" = "dev" ]
             then
@@ -84,7 +84,7 @@ if [ "$1" = "deploy" ]
         if [ "$3" = "android" ]
             then 
                 echo "Starting android deploy..." && \
-                cd android && bundle exec fastlane beta && \
+                cd android && bundle exec fastlane beta
         fi
     fi
 fi
