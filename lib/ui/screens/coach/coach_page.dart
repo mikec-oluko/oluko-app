@@ -433,7 +433,13 @@ class _CoachPageState extends State<CoachPage> {
                 .isEmpty) {
               segmentItem.coachRequest = coachRequestItem;
               segmentItem.createdAt = coachRequestItem.createdAt;
-              _requiredSegments.add(segmentItem);
+              if (_requiredSegments
+                  .where((element) =>
+                      element.segmentId == segmentItem.segmentId &&
+                      element.coachRequest.courseEnrollmentId == segmentItem.coachRequest.courseEnrollmentId)
+                  .isEmpty) {
+                _requiredSegments.add(segmentItem);
+              }
             }
           }
         });
