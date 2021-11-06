@@ -195,8 +195,11 @@ class _TaskDetailsState extends State<TaskDetails> {
               _controller.pause();
             }
             Navigator.pop(context);
-            return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording],
-                arguments: {'taskIndex': widget.taskIndex, 'isPublic': _makePublic, 'isLastTask': widget.isLastTask});
+            return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
+              'taskIndex': widget.taskIndex,
+              'isPublic': _makePublic,
+              'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
+            });
           },
         ),
         const SizedBox(width: 15),
@@ -208,7 +211,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                   'taskIndex': widget.taskIndex,
                   'filePath': state.pickedFile.path,
                   'isPublic': _makePublic,
-                  'isLastTask': widget.isLastTask
+                  'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
                 });
               }
             },
@@ -255,8 +258,10 @@ class _TaskDetailsState extends State<TaskDetails> {
                       }
                       if (widget.taskIndex < _tasks.length - 1) {
                         Navigator.pop(context);
-                        return Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails],
-                            arguments: {'taskIndex': widget.taskIndex + 1});
+                        Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {
+                          'taskIndex': widget.taskIndex + 1,
+                          'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
+                        });
                       } else {
                         Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos],
                             arguments: {'isFirstTime': false});
@@ -301,8 +306,10 @@ class _TaskDetailsState extends State<TaskDetails> {
                         }
                         Navigator.pop(context);
                         Navigator.pop(context);
-                        return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording],
-                            arguments: {'taskIndex': widget.taskIndex});
+                        return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
+                          'taskIndex': widget.taskIndex,
+                          'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
+                        });
                       },
                     ),
                   ],

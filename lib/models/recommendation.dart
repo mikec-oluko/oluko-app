@@ -12,6 +12,7 @@ class Recommendation extends Base {
       this.entityId,
       this.entityReference,
       this.entityType,
+      this.notificationViewed,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -36,17 +37,18 @@ class Recommendation extends Base {
   String entityId;
   DocumentReference entityReference;
   num entityType;
+  bool notificationViewed;
 
   factory Recommendation.fromJson(Map<String, dynamic> json) {
     Recommendation recommendation = Recommendation(
-      originUserId: json['origin_user_id']?.toString(),
-      originUserReference: json['origin_user_reference'] as DocumentReference,
-      destinationUserId: json['destination_user_id']?.toString(),
-      destinationUserReference: json['destination_user_reference'] as DocumentReference,
-      entityId: json['entity_id']?.toString(),
-      entityReference: json['entity_reference'] as DocumentReference,
-      entityType: json['entity_type'] as num,
-    );
+        originUserId: json['origin_user_id']?.toString(),
+        originUserReference: json['origin_user_reference'] as DocumentReference,
+        destinationUserId: json['destination_user_id']?.toString(),
+        destinationUserReference: json['destination_user_reference'] as DocumentReference,
+        entityId: json['entity_id']?.toString(),
+        entityReference: json['entity_reference'] as DocumentReference,
+        entityType: json['entity_type'] as num,
+        notificationViewed: json['notification_viewed'] == null ? false : json['notification_viewed'] as bool);
     recommendation.setBase(json);
     return recommendation;
   }
@@ -61,6 +63,7 @@ class Recommendation extends Base {
       'entity_id': entityId,
       'entity_reference': entityReference,
       'entity_type': entityType,
+      'notification_viewed': notificationViewed
     };
     recommendationJson.addEntries(super.toJson().entries);
     return recommendationJson;
