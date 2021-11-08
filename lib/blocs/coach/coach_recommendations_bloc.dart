@@ -119,7 +119,6 @@ class CoachRecommendationsBloc extends Cubit<CoachRecommendationsState> {
       String recommendationId, String coachId, String userId, bool notificationValue) async {
     try {
       await _coachRepository.updateRecommendationNotificationStatus(recommendationId, notificationValue);
-      getCoachRecommendations(userId, coachId);
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

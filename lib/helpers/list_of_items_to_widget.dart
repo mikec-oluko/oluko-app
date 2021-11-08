@@ -173,7 +173,8 @@ class TransformListOfItemsToWidget {
             className: segment.className,
             segmentName: actualSegment.name,
             completedAt: actualSegment.completedAt,
-            segmentReference: actualSegment.reference));
+            segmentReference: actualSegment.reference,
+            isChallenge: actualSegment.is_challenge));
       });
     });
     return coachSegmentContent;

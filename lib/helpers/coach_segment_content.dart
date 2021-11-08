@@ -6,6 +6,7 @@ class CoachSegmentContent {
   String className;
   String classImage;
   String segmentName;
+  bool isChallenge;
   Timestamp completedAt;
   Timestamp createdAt;
   DocumentReference segmentReference;
@@ -18,5 +19,6 @@ class CoachSegmentContent {
       this.completedAt,
       this.createdAt,
       this.segmentReference,
-      this.coachRequest});
+      this.coachRequest,
+      this.isChallenge});
 }

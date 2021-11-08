@@ -64,6 +64,7 @@ UserResponse _coachUser;
 UserStatistics _userStats;
 Assessment _assessment;
 List<CoachRequest> _coachRequestList;
+List<CoachRequest> _coachRequestUpdatedList = [];
 Annotation _introductionVideo;
 List<CourseEnrollment> _courseEnrollmentList = [];
 List<Challenge> _activeChallenges = [];
@@ -75,6 +76,7 @@ List<CoachSegmentContent> _requiredSegments = [];
 List<TaskSubmission> _assessmentVideosContent = [];
 List<Task> _tasks = [];
 List<CoachRecommendationDefault> _coachRecommendations = [];
+List<CoachRecommendationDefault> _coachRecommendationsFromUpload = [];
 List<CoachTimelineItem> _timelineItemsContent = [];
 List<CoachTimelineItem> _coachRecommendationTimelineContent = [];
 List<CoachTimelineItem> _sentVideosTimelineContent = [];
@@ -106,6 +108,7 @@ class _CoachPageState extends State<CoachPage> {
   @override
   void dispose() {
     BlocProvider.of<CoachMentoredVideosBloc>(context).dispose();
+    BlocProvider.of<CoachRecommendationsBloc>(context).dispose();
     setState(() {
       clearContent([
         _requiredSegments,
@@ -169,7 +172,15 @@ class _CoachPageState extends State<CoachPage> {
                             }
                             return BlocBuilder<CoachTimelineItemsBloc, CoachTimelineItemsState>(
                               builder: (context, timelineState) {
-                                return BlocBuilder<CoachRecommendationsBloc, CoachRecommendationsState>(
+                                return BlocConsumer<CoachRecommendationsBloc, CoachRecommendationsState>(
+                                  listenWhen: (CoachRecommendationsState previous, CoachRecommendationsState current) =>
+                                      current is CoachRecommendationsUpdate,
+                                  listener: (context, state) {
+                                    if (state is CoachRecommendationsUpdate) {
+                                      _coachRecommendationsFromUpload = state.coachRecommendationContent;
+                                      checkRecommendationUpdate(_coachRecommendationsFromUpload);
+                                    }
+                                  },
                                   builder: (context, state) {
                                     if (state is CoachRecommendationsSuccess) {
                                       _coachRecommendations = state.coachRecommendationList;
@@ -235,6 +246,38 @@ class _CoachPageState extends State<CoachPage> {
     });
   }
 
+  void checkCoachRequestUpdate(List<CoachRequest> coachRequestContent) {
+    coachRequestContent.forEach((coachRequestUpdatedItem) {
+      List<CoachRequest> repeatedCoachRequest =
+          _coachRequestList.where((element) => element.id == coachRequestUpdatedItem.id).toList();
+      if (repeatedCoachRequest.isEmpty) {
+        _coachRequestList.add(coachRequestUpdatedItem);
+      } else {
+        if (repeatedCoachRequest.first != coachRequestUpdatedItem) {
+          _coachRequestList[_coachRequestList.indexWhere((element) => element.id == coachRequestUpdatedItem.id)] =
+              coachRequestUpdatedItem;
+        }
+      }
+    });
+  }
+
+  void checkRecommendationUpdate(List<CoachRecommendationDefault> coachRecommendationContent) {
+    coachRecommendationContent.forEach((updatedOrNewRecommedation) {
+      List<CoachRecommendationDefault> repeatedRecommendation = _coachRecommendations
+          .where((element) => element.coachRecommendation.id == updatedOrNewRecommedation.coachRecommendation.id)
+          .toList();
+      if (repeatedRecommendation.isEmpty) {
+        _coachRecommendations.add(updatedOrNewRecommedation);
+      } else {
+        if (repeatedRecommendation.first != updatedOrNewRecommedation) {
+          _coachRecommendations[_coachRecommendations.indexWhere(
+                  (element) => element.coachRecommendation.id == updatedOrNewRecommedation.coachRecommendation.id)] =
+              updatedOrNewRecommedation;
+        }
+      }
+    });
+  }
+
   void addCoachAssignmentVideo() {
     if (_annotationVideosContent != null && _introductionVideo != null) {
       if (_annotationVideosContent
@@ -278,7 +321,7 @@ class _CoachPageState extends State<CoachPage> {
 
     BlocProvider.of<ChallengeBloc>(context).get(_currentAuthUser.id);
 
-    BlocProvider.of<CoachRequestBloc>(context).get(_currentAuthUser.id);
+    BlocProvider.of<CoachRequestBloc>(context).getStream(_currentAuthUser.id, widget.coachAssignment.coachId);
 
     // BlocProvider.of<CoachMentoredVideosBloc>(context).getMentoredVideosByUserId(
     //     _currentAuthUser.id, widget.coachAssignment.coachId);
@@ -312,7 +355,15 @@ class _CoachPageState extends State<CoachPage> {
                 _activeChallenges = state.challenges;
               }
             }
-            return BlocBuilder<CoachRequestBloc, CoachRequestState>(
+            return BlocConsumer<CoachRequestBloc, CoachRequestState>(
+              listenWhen: (CoachRequestState previous, CoachRequestState current) => current is GetCoachRequestUpdate,
+              listener: (context, state) {
+                if (state is GetCoachRequestUpdate) {
+                  _coachRequestUpdatedList = state.values;
+                  checkCoachRequestUpdate(_coachRequestUpdatedList);
+                  getRequiredSegments(allSegments);
+                }
+              },
               builder: (context, state) {
                 if (state is CoachRequestSuccess) {
                   _coachRequestList = state.values;
@@ -392,7 +443,11 @@ class _CoachPageState extends State<CoachPage> {
 
   void notificationsWidget(List<CoachNotificationContent> contentForNotificationPanel, List<Widget> carouselContent) {
     contentForNotificationPanel.forEach((notificationContent) {
-      carouselContent.add(CoachNotificationPanelContentCard(content: notificationContent));
+      carouselContent.add(CoachNotificationPanelContentCard(
+        content: notificationContent,
+        coachId: widget.coachId,
+        userId: widget.coachAssignment.userId,
+      ));
     });
   }
 
@@ -458,7 +513,7 @@ class _CoachPageState extends State<CoachPage> {
   }
 
   List<Widget> toDoContent() => TransformListOfItemsToWidget.coachChallengesAndSegments(
-      challenges: _activeChallenges, segments: _requiredSegments);
+      challenges: _activeChallenges, segments: _requiredSegments.where((segment) => segment.isChallenge).toList());
 
   Widget assessmentSection(BuildContext context) {
     return BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
