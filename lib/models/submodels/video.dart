@@ -1,4 +1,6 @@
-class Video {
+import 'package:equatable/equatable.dart';
+
+class Video extends Equatable {
   String url;
   String thumbUrl;
   double aspectRatio;
@@ -24,4 +26,8 @@ class Video {
         'name': name,
         'duration': duration,
       };
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [url, thumbUrl, aspectRatio, name, duration];
 }

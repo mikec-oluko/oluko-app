@@ -70,15 +70,16 @@ dependencies:
   nil: ^1.1.1
   permission_handler: ^8.2.2
   firebase_database: ^8.0.0
-  timeline_tile: ^2.0.0 
+  timeline_tile: ^2.0.0
   badges: ^2.0.1
   syncfusion_flutter_gauges: ^19.3.44
   audioplayers: ^0.20.1
   uuid: ^3.0.5
   flutter_sound_lite: ^8.3.9
+  equatable: ^2.0.3
 
 dev_dependencies:
-  flutter_launcher_icons: "^0.9.0" 
+  flutter_launcher_icons: "^0.9.0"
   image_test_utils: ^1.0.0
   flutter_test:
     sdk: flutter

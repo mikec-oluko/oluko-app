@@ -59,4 +59,15 @@ class CoachRequestRepository {
         .doc(coachRequest.id);
     reference.update({'status': StatusEnum.resolved.index});
   }
+
+  Future<void> updateNotificationStatus(String coachRequestId, String userId, bool notificationValue) async {
+    DocumentReference reference = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue("projectId"))
+        .collection('coachAssignments')
+        .doc(userId)
+        .collection('coachRequests')
+        .doc(coachRequestId);
+    reference.update({'notification_viewed': notificationValue});
+  }
 }
