@@ -283,6 +283,8 @@ class _CoachPageState extends State<CoachPage> {
     // BlocProvider.of<CoachMentoredVideosBloc>(context).getMentoredVideosByUserId(
     //     _currentAuthUser.id, widget.coachAssignment.coachId);
 
+    BlocProvider.of<CoachRecommendationsBloc>(context).getStream(_currentAuthUser.id, widget.coachAssignment.coachId);
+
     BlocProvider.of<CoachMentoredVideosBloc>(context).getStream(_currentAuthUser.id, widget.coachAssignment.coachId);
 
     BlocProvider.of<CoachSentVideosBloc>(context).getSentVideosByUserId(_currentAuthUser.id);
@@ -291,8 +293,8 @@ class _CoachPageState extends State<CoachPage> {
 
     BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionByUserId(_currentAuthUser.id);
 
-    BlocProvider.of<CoachRecommendationsBloc>(context)
-        .getCoachRecommendations(_currentAuthUser.id, widget.coachAssignment.coachId);
+    // BlocProvider.of<CoachRecommendationsBloc>(context)
+    //     .getCoachRecommendations(_currentAuthUser.id, widget.coachAssignment.coachId);
   }
 
   Widget coachViewPageContent(BuildContext context) {
