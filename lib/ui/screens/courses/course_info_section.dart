@@ -11,12 +11,14 @@ class CourseInfoSection extends StatefulWidget {
   final int audioMessageQty;
   final String image;
   final Function() onAudioPressed;
+  final Function() onPeoplePressed;
   final Function() clockAction;
 
   CourseInfoSection(
       {this.peopleQty,
       this.audioMessageQty,
       this.image,
+      this.onPeoplePressed,
       this.onAudioPressed,
       this.clockAction});
 
@@ -36,7 +38,10 @@ class _State extends State<CourseInfoSection> {
           child: Column(children: [
             SizedBox(height: 80),
             Row(children: [
-              peopleSection(),
+              widget.clockAction != null
+                  ? GestureDetector(
+                      onTap: widget.onPeoplePressed, child: peopleSection())
+                  : SizedBox(),
               verticalDivider(),
               widget.audioMessageQty != null
                   ? audioSection(context)
