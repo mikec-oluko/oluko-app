@@ -26,9 +26,12 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
-      if (authState is AuthSuccess && loggedUser == null && allEnrolledUsers == null) {
+      if (authState is AuthSuccess &&
+          loggedUser == null &&
+          allEnrolledUsers == null) {
         loggedUser = authState;
-        BlocProvider.of<SubscribedCourseUsersBloc>(context).get(widget.courseId, loggedUser.user.id);
+        BlocProvider.of<SubscribedCourseUsersBloc>(context)
+            .get(widget.courseId, loggedUser.user.id);
       }
       return Scaffold(
         backgroundColor: Colors.black,
@@ -40,18 +43,22 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Container(
-                child: BlocBuilder<SubscribedCourseUsersBloc, SubscribedCourseUsersState>(builder: (context, subscribedCourseUsersState) {
+                child: BlocBuilder<SubscribedCourseUsersBloc,
+                        SubscribedCourseUsersState>(
+                    builder: (context, subscribedCourseUsersState) {
                   return Column(
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(bottom: 16.0),
                         child: Row(
                           children: [
-                            TitleBody(OlukoLocalizations.get(context, "favourites")),
+                            TitleBody(
+                                OlukoLocalizations.get(context, "favourites")),
                           ],
                         ),
                       ),
-                      if (subscribedCourseUsersState is SubscribedCourseUsersSuccess)
+                      if (subscribedCourseUsersState
+                          is SubscribedCourseUsersSuccess)
                         usersGrid(subscribedCourseUsersState.favoriteUsers)
                       else
                         const SizedBox(),
@@ -59,11 +66,14 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
                         padding: const EdgeInsets.only(bottom: 16.0),
                         child: Row(
                           children: [
-                            TitleBody(OlukoLocalizations.get(context, "everyoneElse")),
+                            TitleBody(OlukoLocalizations.get(
+                                context, "everyoneElse")),
                           ],
                         ),
                       ),
-                      subscribedCourseUsersState is SubscribedCourseUsersSuccess ? usersGrid(subscribedCourseUsersState.users) : SizedBox()
+                      subscribedCourseUsersState is SubscribedCourseUsersSuccess
+                          ? usersGrid(subscribedCourseUsersState.users)
+                          : SizedBox()
                     ],
                   );
                 }),
@@ -94,20 +104,24 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
               .map((user) => Column(
                     children: [
                       StoriesItem(
-                        maxRadius: 30,
-                        imageUrl: user.avatar ?? UserUtils().defaultAvatarImageUrl,
-                      ),
+                          maxRadius: 30,
+                          imageUrl: user.avatar,
+                          name: user.firstName,
+                          lastname: user.lastName,
+                          showName: false),
                       Padding(
                         padding: const EdgeInsets.only(top: 8.0, bottom: 0.0),
                         child: Text(
                           '${user.firstName} ${user.lastName}',
-                          style: const TextStyle(color: Colors.white, fontSize: 13),
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 13),
                           textAlign: TextAlign.center,
                         ),
                       ),
                       Text(
                         user.username,
-                        style: const TextStyle(color: Colors.grey, fontSize: 10),
+                        style:
+                            const TextStyle(color: Colors.grey, fontSize: 10),
                         textAlign: TextAlign.center,
                       )
                     ],
