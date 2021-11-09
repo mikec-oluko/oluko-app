@@ -67,7 +67,6 @@ List<CoachRequest> _coachRequestList;
 List<CoachRequest> _coachRequestUpdatedList = [];
 Annotation _introductionVideo;
 List<CourseEnrollment> _courseEnrollmentList = [];
-List<Challenge> _activeChallenges = [];
 List<Annotation> _annotationVideosContent = [];
 List<Annotation> _annotationUpdateListofContent = [];
 List<SegmentSubmission> _sentVideosContent = [];
@@ -95,7 +94,7 @@ class _CoachPageState extends State<CoachPage> {
     if (widget.coachAssignment.introductionVideo != null) {
       setState(() {
         _introductionVideo = Annotation(
-            createdAt: Timestamp.now(),
+            createdAt: widget.coachAssignment.createdAt,
             id: _defaultIntroductionVideoId,
             favorite: false,
             video: Video(url: widget.coachAssignment.introductionVideo, aspectRatio: 0.60),
@@ -109,24 +108,8 @@ class _CoachPageState extends State<CoachPage> {
   void dispose() {
     BlocProvider.of<CoachMentoredVideosBloc>(context).dispose();
     BlocProvider.of<CoachRecommendationsBloc>(context).dispose();
-    setState(() {
-      clearContent([
-        _requiredSegments,
-        _timelinePanelContent,
-        _mentoredVideoTimelineContent,
-        _allContent,
-        _sentVideosTimelineContent,
-        _timelineItemsContent,
-        _sentVideosContent,
-        _assessmentVideosContent,
-        _annotationVideosContent
-      ]);
-    });
+    BlocProvider.of<CoachRequestBloc>(context).dispose();
     super.dispose();
-  }
-
-  clearContent(List<List<dynamic>> listToClear) {
-    listToClear.forEach((list) => list.clear());
   }
 
   @override
@@ -293,14 +276,23 @@ class _CoachPageState extends State<CoachPage> {
     buildSentVideosForTimeline();
     buildAnnotationsForTimeline();
 
-    //TODO: CHECK CONTENT BEFORE ADD
     _coachRecommendations.forEach((recommendation) => _coachRecommendationTimelineContent
         .add(CoachTimelineFunctions.createAnCoachTimelineItem(recommendationItem: recommendation)));
-    _allContent.addAll(_coachRecommendationTimelineContent);
+    _coachRecommendationTimelineContent.forEach((recomendationTimelineItem) {
+      if (_allContent
+          .where((contentElement) => contentElement.contentName == recomendationTimelineItem.contentName)
+          .isEmpty) {
+        _allContent.add(recomendationTimelineItem);
+      }
+    });
 
     _timelinePanelContent = CoachTimelineFunctions.buildContentForTimelinePanel(_timelineItemsContent);
-    _timelinePanelContent.forEach((element) {
-      _allContent.addAll(element.timelineElements);
+    _timelinePanelContent.forEach((panelElement) {
+      panelElement.timelineElements.forEach((timelineContent) {
+        if (_allContent.where((contentElement) => contentElement.contentName == timelineContent.contentName).isEmpty) {
+          _allContent.add(timelineContent);
+        }
+      });
     });
 
     CoachTimelineGroup allTabContent = CoachTimelineGroup(
@@ -314,30 +306,14 @@ class _CoachPageState extends State<CoachPage> {
 
   void requestCurrentUserData(BuildContext context) {
     BlocProvider.of<CoachTimelineItemsBloc>(context).getTimelineItemsForUser(_currentAuthUser.id);
-
     BlocProvider.of<UserStatisticsBloc>(context).getUserStatistics(_currentAuthUser.id);
-
     BlocProvider.of<CourseEnrollmentListBloc>(context).getCourseEnrollmentsByUserId(_currentAuthUser.id);
-
-    BlocProvider.of<ChallengeBloc>(context).get(_currentAuthUser.id);
-
     BlocProvider.of<CoachRequestBloc>(context).getStream(_currentAuthUser.id, widget.coachAssignment.coachId);
-
-    // BlocProvider.of<CoachMentoredVideosBloc>(context).getMentoredVideosByUserId(
-    //     _currentAuthUser.id, widget.coachAssignment.coachId);
-
     BlocProvider.of<CoachRecommendationsBloc>(context).getStream(_currentAuthUser.id, widget.coachAssignment.coachId);
-
     BlocProvider.of<CoachMentoredVideosBloc>(context).getStream(_currentAuthUser.id, widget.coachAssignment.coachId);
-
     BlocProvider.of<CoachSentVideosBloc>(context).getSentVideosByUserId(_currentAuthUser.id);
-
     BlocProvider.of<AssessmentBloc>(context).getById('emnsmBgZ13UBRqTS26Qd');
-
     BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionByUserId(_currentAuthUser.id);
-
-    // BlocProvider.of<CoachRecommendationsBloc>(context)
-    //     .getCoachRecommendations(_currentAuthUser.id, widget.coachAssignment.coachId);
   }
 
   Widget coachViewPageContent(BuildContext context) {
@@ -348,67 +324,58 @@ class _CoachPageState extends State<CoachPage> {
           _toDoSegments = TransformListOfItemsToWidget.segments(_courseEnrollmentList);
           allSegments = TransformListOfItemsToWidget.createSegmentContentInforamtion(_toDoSegments);
         }
-        return BlocBuilder<ChallengeBloc, ChallengeState>(
-          builder: (context, state) {
-            if (state is GetChallengeSuccess) {
-              if (_activeChallenges.isNotEmpty) {
-                _activeChallenges = state.challenges;
-              }
+        return BlocConsumer<CoachRequestBloc, CoachRequestState>(
+          listenWhen: (CoachRequestState previous, CoachRequestState current) => current is GetCoachRequestUpdate,
+          listener: (context, state) {
+            if (state is GetCoachRequestUpdate) {
+              _coachRequestUpdatedList = state.values;
+              checkCoachRequestUpdate(_coachRequestUpdatedList);
+              getRequiredSegments(allSegments);
             }
-            return BlocConsumer<CoachRequestBloc, CoachRequestState>(
-              listenWhen: (CoachRequestState previous, CoachRequestState current) => current is GetCoachRequestUpdate,
-              listener: (context, state) {
-                if (state is GetCoachRequestUpdate) {
-                  _coachRequestUpdatedList = state.values;
-                  checkCoachRequestUpdate(_coachRequestUpdatedList);
-                  getRequiredSegments(allSegments);
-                }
-              },
+          },
+          builder: (context, state) {
+            if (state is CoachRequestSuccess) {
+              _coachRequestList = state.values;
+              getRequiredSegments(allSegments);
+            }
+            return BlocBuilder<AssessmentBloc, AssessmentState>(
               builder: (context, state) {
-                if (state is CoachRequestSuccess) {
-                  _coachRequestList = state.values;
-                  getRequiredSegments(allSegments);
+                if (state is AssessmentSuccess) {
+                  _assessment = state.assessment;
+                  BlocProvider.of<TaskBloc>(context).get(_assessment);
+                  final carouselNotificationWidgetList = carouselNotificationWidget(context);
+                  return ListView(
+                    children: [
+                      if (carouselNotificationWidgetList.isNotEmpty && widget.coachAssignment.introductionCompleted)
+                        CoachCarouselSliderSection(
+                          contentForCarousel: carouselNotificationWidgetList,
+                          introductionCompleted: widget.coachAssignment.introductionCompleted,
+                          introductionVideo: _assessment.video,
+                          onVideoFinished: () => BlocProvider.of<CoachAssignmentBloc>(context)
+                              .updateIntroductionVideoState(widget.coachAssignment),
+                        )
+                      else if (!widget.coachAssignment.introductionCompleted)
+                        CoachCarouselSliderSection(
+                          contentForCarousel: carouselNotificationWidgetList,
+                          introductionCompleted: widget.coachAssignment.introductionCompleted,
+                          introductionVideo: _assessment.video,
+                          onVideoFinished: () => BlocProvider.of<CoachAssignmentBloc>(context)
+                              .updateIntroductionVideoState(widget.coachAssignment),
+                        )
+                      else
+                        SizedBox.shrink(),
+                      userProgressSection(carouselNotificationWidgetList.isEmpty),
+                      CoachHorizontalCarousel(contentToDisplay: listOfContentForUser(), isForVideoContent: true),
+                      carouselToDoSection(context),
+                      assessmentSection(context),
+                      const SizedBox(
+                        height: 200,
+                      )
+                    ],
+                  );
+                } else {
+                  return const SizedBox();
                 }
-                return BlocBuilder<AssessmentBloc, AssessmentState>(
-                  builder: (context, state) {
-                    if (state is AssessmentSuccess) {
-                      _assessment = state.assessment;
-                      BlocProvider.of<TaskBloc>(context).get(_assessment);
-                      final carouselNotificationWidgetList = carouselNotificationWidget(context);
-                      return ListView(
-                        children: [
-                          if (carouselNotificationWidgetList.isNotEmpty && widget.coachAssignment.introductionCompleted)
-                            CoachCarouselSliderSection(
-                              contentForCarousel: carouselNotificationWidgetList,
-                              introductionCompleted: widget.coachAssignment.introductionCompleted,
-                              introductionVideo: _assessment.video,
-                              onVideoFinished: () => BlocProvider.of<CoachAssignmentBloc>(context)
-                                  .updateIntroductionVideoState(widget.coachAssignment),
-                            )
-                          else if (!widget.coachAssignment.introductionCompleted)
-                            CoachCarouselSliderSection(
-                              contentForCarousel: carouselNotificationWidgetList,
-                              introductionCompleted: widget.coachAssignment.introductionCompleted,
-                              introductionVideo: _assessment.video,
-                              onVideoFinished: () => BlocProvider.of<CoachAssignmentBloc>(context)
-                                  .updateIntroductionVideoState(widget.coachAssignment),
-                            )
-                          else
-                            SizedBox.shrink(),
-                          userProgressSection(carouselNotificationWidgetList.isEmpty),
-                          CoachHorizontalCarousel(contentToDisplay: listOfContentForUser(), isForVideoContent: true),
-                          carouselToDoSection(context),
-                          assessmentSection(context),
-                          const SizedBox(
-                            height: 200,
-                          )
-                        ],
-                      );
-                    } else {
-                      return const SizedBox();
-                    }
-                  },
-                );
               },
             );
           },
@@ -513,7 +480,7 @@ class _CoachPageState extends State<CoachPage> {
   }
 
   List<Widget> toDoContent() => TransformListOfItemsToWidget.coachChallengesAndSegments(
-      challenges: _activeChallenges, segments: _requiredSegments.where((segment) => segment.isChallenge).toList());
+      segments: _requiredSegments.where((segment) => segment.isChallenge).toList());
 
   Widget assessmentSection(BuildContext context) {
     return BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(

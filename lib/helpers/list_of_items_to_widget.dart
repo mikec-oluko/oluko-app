@@ -92,16 +92,9 @@ class TransformListOfItemsToWidget {
     return contentForReturn;
   }
 
-  static List<Widget> coachChallengesAndSegments({List<Challenge> challenges, List<CoachSegmentContent> segments}) {
+  static List<Widget> coachChallengesAndSegments({List<CoachSegmentContent> segments}) {
     List<Widget> contentForSection = [];
-
-    if (challenges.length != 0) {
-      challenges.forEach((challenge) {
-        contentForSection.add(returnCardForChallenge(challenge));
-      });
-    }
-
-    if (segments.length != 0) {
+    if (segments.isNotEmpty) {
       segments.forEach((segment) {
         if (segment.completedAt == null) {
           contentForSection.add(returnCardForSegment(segment));

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:equatable/equatable.dart';
 import 'package:oluko_app/models/annotation.dart';
 import 'package:oluko_app/models/base.dart';
 import 'package:oluko_app/models/course.dart';
@@ -6,7 +7,7 @@ import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'submodels/course_timeline_submodel.dart';
 
-class CoachTimelineItem extends Base {
+class CoachTimelineItem extends Base with EquatableMixin {
   String coachId;
   DocumentReference coachReference;
   String contentDescription;
@@ -74,4 +75,27 @@ class CoachTimelineItem extends Base {
     coachTimelineItemJson.addEntries(super.toJson().entries);
     return coachTimelineItemJson;
   }
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [
+        coachId,
+        coachReference,
+        contentDescription,
+        contentName,
+        contentThumbnail,
+        contentType,
+        course,
+        courseForNavigation,
+        movementForNavigation,
+        mentoredVideosForNavigation,
+        sentVideosForNavigation,
+        id,
+        createdBy,
+        createdAt,
+        updatedAt,
+        updatedBy,
+        isDeleted,
+        isHidden,
+      ];
 }
