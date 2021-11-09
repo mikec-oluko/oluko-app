@@ -322,7 +322,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
               width: 15,
             ),
             OlukoPrimaryButton(
-              title: OlukoLocalizations.get(context, 'nextSegment'),
+              title: widget.segmentIndex == widget.segments.length - 1
+                  ? OlukoLocalizations.get(context, 'done')
+                  : OlukoLocalizations.get(context, 'nextSegment'),
               thinPadding: true,
               onPressed: () {
                 Navigator.pop(context);
