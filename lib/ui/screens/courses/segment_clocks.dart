@@ -113,6 +113,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   CoachRequest _coachRequest;
 
+  XFile videoRecorded;
+
   @override
   void initState() {
     workoutType = widget.workoutType;
@@ -320,7 +322,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
               width: 15,
             ),
             OlukoPrimaryButton(
-              title: OlukoLocalizations.get(context, 'nextSegment'),
+              title: widget.segmentIndex == widget.segments.length - 1
+                  ? OlukoLocalizations.get(context, 'done')
+                  : OlukoLocalizations.get(context, 'nextSegment'),
               thinPadding: true,
               onPressed: () {
                 Navigator.pop(context);
@@ -695,7 +699,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
             }
           });
           if (isSegmentWithRecording()) {
-            final XFile videopath = await cameraController.stopVideoRecording();
+            await cameraController.stopVideoRecording();
           }
           setState(() {
             workoutType = WorkoutType.segment;
@@ -734,16 +738,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
   //Timer Functions
   _saveSegmentRound(TimerEntry timerEntry) async {
     if (isSegmentWithRecording()) {
-      final XFile video = await cameraController.stopVideoRecording();
+      videoRecorded = await cameraController.stopVideoRecording();
       setState(() {
         workoutType = WorkoutType.segment;
       });
-      BlocProvider.of<SegmentSubmissionBloc>(context).create(
-          _user,
-          widget.courseEnrollment,
-          widget.segments[widget.segmentIndex],
-          video.path,
-          _coachRequest);
     }
   }
 
@@ -971,7 +969,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
               padding: const EdgeInsets.symmetric(vertical: 20.0),
               child: widget.workoutType == WorkoutType.segment || shareDone
                   ? FeedbackCard()
-                  : ShareCard(createStory: _createStory)),
+                  : ShareCard(
+                      createStory: _createStory,
+                      whistleAction: createSegmentSubmission)),
         ],
       ),
     );
@@ -982,6 +982,15 @@ class _SegmentClocksState extends State<SegmentClocks> {
     if (_isVideoUploaded) {
       callBlocToCreateStory(context, _segmentSubmission);
     }
+  }
+
+  createSegmentSubmission() {
+    BlocProvider.of<SegmentSubmissionBloc>(context).create(
+        _user,
+        widget.courseEnrollment,
+        widget.segments[widget.segmentIndex],
+        videoRecorded.path,
+        _coachRequest);
   }
 
   List<Widget> getScoresByRound() {
