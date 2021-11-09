@@ -669,6 +669,9 @@ class Routes {
           BlocProvider<CourseEnrollmentBloc>.value(
               value: _courseEnrollmentBloc),
           BlocProvider<AudioBloc>.value(value: _audioBloc),
+          BlocProvider<DoneChallengeUsersBloc>.value(value: _doneChallengeUsersBloc),
+          BlocProvider<SegmentDetailContentBloc>.value(value: _segmentDetailContentBloc),
+          BlocProvider<PersonalRecordBloc>.value(value: _personalRecordBloc)
         ];
         final Map<String, dynamic> argumentsToAdd =
             arguments as Map<String, dynamic>;
