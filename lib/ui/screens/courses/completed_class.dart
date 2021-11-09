@@ -74,7 +74,7 @@ class _CompletedClassState extends State<CompletedClass> {
                     OlukoPrimaryButton(
                         title: OlukoLocalizations.get(context, 'done'),
                         onPressed: () {
-                          Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.insideClass]));
+                          Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
                         })
                   ])),
               SizedBox(height: 20),
