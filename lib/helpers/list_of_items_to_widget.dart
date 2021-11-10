@@ -12,8 +12,6 @@ import 'package:oluko_app/ui/components/coach_assessment_card.dart';
 import 'package:oluko_app/ui/components/coach_tab_challenge_card.dart';
 import 'package:oluko_app/ui/components/coach_tab_segment_card.dart';
 import 'package:oluko_app/ui/components/image_and_video_container.dart';
-import 'package:oluko_app/utils/oluko_localizations.dart';
-
 import 'coach_segment_content.dart';
 import 'coach_segment_info.dart';
 import 'enum_collection.dart';
@@ -97,18 +95,18 @@ class TransformListOfItemsToWidget {
     if (segments.isNotEmpty) {
       segments.forEach((segment) {
         if (segment.completedAt == null) {
-          contentForSection.add(returnCardForSegment(segment));
+          contentForSection.add(returnCardForChallenge(segment));
         }
       });
     }
     return contentForSection;
   }
 
-  static Widget returnCardForChallenge(Challenge upcomingChallengesContent) {
+  static Widget returnCardForChallenge(CoachSegmentContent challengeSegment) {
     Widget contentForReturn = SizedBox();
     contentForReturn = Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5),
-      child: CoachTabChallengeCard(challenge: upcomingChallengesContent),
+      child: CoachTabChallengeCard(challenge: challengeSegment),
     );
     return contentForReturn;
   }
@@ -167,7 +165,7 @@ class TransformListOfItemsToWidget {
             segmentName: actualSegment.name,
             completedAt: actualSegment.completedAt,
             segmentReference: actualSegment.reference,
-            isChallenge: actualSegment.is_challenge));
+            isChallenge: actualSegment.isChallenge));
       });
     });
     return coachSegmentContent;
