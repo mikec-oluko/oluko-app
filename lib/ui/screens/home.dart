@@ -52,11 +52,15 @@ class _HomeState extends State<Home> {
               ..getByCourseEnrollments(_courseEnrollments);
             return form();
           } else {
-            return nil;
+            return Container(
+                color: Colors.black,
+                child: Center(child: CircularProgressIndicator()));
           }
         });
       } else {
-        return nil;
+        return Container(
+            color: Colors.black,
+            child: Center(child: CircularProgressIndicator()));
       }
     });
   }
