@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/models/dto/story_dto.dart';
 import 'package:oluko_app/models/dto/user_stories.dart';
 import 'package:oluko_app/repositories/story_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -46,6 +47,18 @@ class StoryListBloc extends Cubit<StoryListState> {
       );
       emit(StoryListFailure(exception: exception));
       rethrow;
+    }
+  }
+
+  Future<List<Story>> getStoriesFromUser(String userId, String userStoryId) async {
+    try {
+      return await StoryRepository().getStoriesFromUser(userId, userStoryId);
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      return null;
     }
   }
 

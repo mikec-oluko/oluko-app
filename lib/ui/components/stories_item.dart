@@ -6,23 +6,34 @@ import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/dto/story_dto.dart';
 
+import '../../routes.dart';
+
 class StoriesItem extends StatefulWidget {
-  String imageUrl;
   final double maxRadius;
-  double progressValue;
-  String userStoryId;
-  String name;
+  final double progressValue;
+  final String userStoryId;
+  final String userId;
   final bool showName;
+  final bool getStories;
+  String imageUrl;
+  String name;
   String lastname;
   List<Story> stories;
   bool _hasUnseenStories = false;
 
-  StoriesItem({this.maxRadius, this.imageUrl, this.userStoryId, this.name, this.lastname, this.stories, this.progressValue = 0, this.showName = true}) {
+  StoriesItem({this.maxRadius, this.imageUrl, this.userStoryId, this.name, this.lastname, this.stories, this.progressValue = 0, this.showName = true, this.getStories, this.userId}) {
+    if (getStories == true) {
+      getStoriesFromUser(userId);
+    }
     checkForUnseenStories();
   }
 
+  Future<void> getStoriesFromUser(String userId) async {
+    stories = await StoryListBloc().getStoriesFromUser(userId, userStoryId);
+  }
+
   void checkForUnseenStories() {
-    if (stories != null) {
+    if (stories != null && stories.isNotEmpty) {
       if (stories.where((element) => !element.seen).isNotEmpty) {
         _hasUnseenStories = true;
       } else {
@@ -38,7 +49,7 @@ class StoriesItem extends StatefulWidget {
 class _State extends State<StoriesItem> {
   @override
   Widget build(BuildContext context) {
-    return /*BlocListener<StoryListBloc, StoryListState>(
+    return BlocListener<StoryListBloc, StoryListState>(
         listener: (BuildContext context, StoryListState state) {
           if (state is StoryListUpdate && state.event.snapshot.exists) {
             if (state.event.snapshot.key == widget.userStoryId) {
@@ -52,7 +63,7 @@ class _State extends State<StoriesItem> {
             }
           }
         },
-        child: */Padding(
+        child: Padding(
           padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -71,26 +82,13 @@ class _State extends State<StoriesItem> {
                       valueColor: const AlwaysStoppedAnimation<Color>(OlukoColors.primary),
                     ),
                   ),
-                  if (widget.imageUrl != null)
-                    CircleAvatar(
-                      backgroundImage: NetworkImage(widget.imageUrl),
-                      maxRadius: widget.maxRadius,
-                    )
+                  if (widget.stories != null && widget.stories.isNotEmpty)
+                    GestureDetector(
+                        child: getCircularAvatar(),
+                        onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.story],
+                            arguments: {'stories': widget.stories, 'userId': widget.userId, 'userStoriesId': widget.userStoryId, 'name': widget.name, 'avatarThumbnail': widget.imageUrl}))
                   else
-                    CircleAvatar(
-                      maxRadius: widget.maxRadius,
-                      backgroundColor: OlukoColors.userColor(widget.name, widget.lastname),
-                      child: widget.name != null
-                          ? Text(
-                              widget.name?.characters?.first.toString().toUpperCase(),
-                              style: OlukoFonts.olukoBigFont(
-                                customColor: OlukoColors.white,
-                                custoFontWeight: FontWeight.w500,
-                              ),
-                              textAlign: TextAlign.center,
-                            )
-                          : nil,
-                    ),
+                    getCircularAvatar(),
                   if (widget._hasUnseenStories) Image.asset('assets/courses/photo_ellipse.png', scale: 7, color: OlukoColors.secondary)
                 ],
               ),
@@ -106,7 +104,7 @@ class _State extends State<StoriesItem> {
                 const SizedBox()
             ],
           ),
-        )/*)*/;
+        ));
   }
 
   void updateData(DataSnapshot snapshot) {
@@ -162,6 +160,30 @@ class _State extends State<StoriesItem> {
           widget.name = attrUpdated;
         }
       }
+    }
+  }
+
+  Widget getCircularAvatar() {
+    if (widget.imageUrl != null) {
+      return CircleAvatar(
+        backgroundImage: NetworkImage(widget.imageUrl),
+        maxRadius: widget.maxRadius,
+      );
+    } else {
+      return CircleAvatar(
+        maxRadius: widget.maxRadius,
+        backgroundColor: OlukoColors.userColor(widget.name, widget.lastname),
+        child: widget.name != null
+            ? Text(
+                widget.name?.characters?.first.toString().toUpperCase(),
+                style: OlukoFonts.olukoBigFont(
+                  customColor: OlukoColors.white,
+                  custoFontWeight: FontWeight.w500,
+                ),
+                textAlign: TextAlign.center,
+              )
+            : nil,
+      );
     }
   }
 }

@@ -67,13 +67,6 @@ class _ModalPeopleInChallengeState extends State<ModalPeopleInChallenge> {
           shrinkWrap: true,
           children: users
               .map((user) => GridTile(
-                    child: GestureDetector(
-                      onTap: () => {
-                        if (user?.stories?.stories?.isNotEmpty)
-                          {
-                            Navigator.pushNamed(context, routeLabels[RouteEnum.story], arguments: {'userStories': user.stories, 'userId': widget.userId})
-                          }
-                      },
                       child: Column(
                         children: [
                           StoriesItem(
@@ -86,7 +79,6 @@ class _ModalPeopleInChallengeState extends State<ModalPeopleInChallenge> {
                           Text(user.username, style: const TextStyle(color: Colors.grey, fontSize: 14), textAlign: TextAlign.center),
                         ],
                       ),
-                    ),
                   ))
               .toList());
     } else {

@@ -79,4 +79,20 @@ class StoryRepository {
     });
     return response;
   }
+
+  Future<List<Story>> getStoriesFromUser(String userId, String userStoryId) async {
+    final DataSnapshot snapshot = await FirebaseDatabase.instance.reference().child('${GlobalConfiguration().getValue('projectId')}${'/users/$userId/userStories/$userStoryId'}').get();
+    if (snapshot.value == null) {
+      return [];
+    }
+    final Map<String, dynamic> json = Map<String, dynamic>.from(snapshot.value['stories'] as Map);
+    if (json == null) {
+      return [];
+    }
+    List<Story> response = [];
+    json.forEach((key, story) {
+      response.add(Story.fromJson(Map<String, dynamic>.from(story as Map)));
+    });
+    return response;
+  }
 }
