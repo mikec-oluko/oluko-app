@@ -49,7 +49,9 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Singl
               tabs: widget.timelineContentItems
                   .map((content) => Tab(
                         child: Container(
+                          width: MediaQuery.of(context).size.width / widget.timelineContentItems.length,
                           child: Text(content.courseName.toUpperCase(),
+                              textAlign: TextAlign.center,
                               style: OlukoFonts.olukoMediumFont(
                                   customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
                         ),

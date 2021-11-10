@@ -237,6 +237,12 @@
     "recordAMessage": "Record a message for ",
     "saveFor": "Save for ",
     "accountAlreadyExistsWithThisEmailUsingADifferentProvider": "An account already exists with the same email address but different sign-in credentials",
-    "deleteMessageConfirm": "Are you sure you want to delete your voice message?"
-
+    "deleteMessageConfirm": "Are you sure you want to delete your voice message?",
+    "notificationCourse": "Recommended Course",
+    "notificationClass": "Recommended Class",
+    "notificationMovement": "Recommended Movement",
+    "notificationSegment": "Record Segment",
+    "welcomeTo": "Welcome to",
+    "enrollToACourse": "Enroll to a Course",
+    "noCoachMessage": "to get your personal coach"
 }

@@ -49,6 +49,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
   AuthSuccess _userState;
   List<Class> _classes;
   List<Movement> _movements;
+  bool _disableAction = false;
 
   @override
   void initState() {
@@ -194,7 +195,10 @@ class _CourseMarketingState extends State<CourseMarketing> {
                   OlukoPrimaryButton(
                     title: OlukoLocalizations.get(context, 'enroll'),
                     onPressed: () {
-                      BlocProvider.of<CourseEnrollmentBloc>(context)..create(_user, widget.course);
+                      if(_disableAction == false){
+                        BlocProvider.of<CourseEnrollmentBloc>(context)..create(_user, widget.course);
+                      }
+                      _disableAction = true;
                     },
                   ),
                 ],

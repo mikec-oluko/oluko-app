@@ -9,6 +9,7 @@ class CoachTimelineVideoContent extends StatefulWidget {
   final String videoTitle, videoThumbnail;
   final DateTime date;
   final CoachFileTypeEnum fileType;
+
   @override
   _CoachTimelineVideoContentState createState() => _CoachTimelineVideoContentState();
 }
