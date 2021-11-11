@@ -981,6 +981,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
     _wantsToCreateStory = true;
     if (_isVideoUploaded) {
       callBlocToCreateStory(context, _segmentSubmission);
+      AppMessages.showSnackbarTranslated(context, 'storyCreated');
     }
   }
 
