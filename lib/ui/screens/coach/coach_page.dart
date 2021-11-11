@@ -90,14 +90,18 @@ class _CoachPageState extends State<CoachPage> {
   @override
   void initState() {
     BlocProvider.of<CoachUserBloc>(context).get(widget.coachAssignment.coachId);
-    if (widget.coachAssignment.introductionVideo != null) {
+    if (widget.coachAssignment.videoHLS != null
+        ? true
+        : (widget.coachAssignment.video.url != null ? true : widget.coachAssignment.introductionVideo != null)) {
       setState(() {
         _introductionVideo = Annotation(
             createdAt: Timestamp.now(),
             id: _defaultIntroductionVideoId,
             favorite: false,
-            video: Video(url: widget.coachAssignment.introductionVideo, aspectRatio: 0.60),
-            videoHLS: widget.coachAssignment.introductionVideo);
+            video: Video(
+                url: widget.coachAssignment.videoHLS ?? (widget.coachAssignment.video.url ?? widget.coachAssignment.introductionVideo),
+                aspectRatio: 0.60),
+            videoHLS: widget.coachAssignment.videoHLS ?? (widget.coachAssignment.video.url ?? widget.coachAssignment.introductionVideo));
       });
     }
     super.initState();
