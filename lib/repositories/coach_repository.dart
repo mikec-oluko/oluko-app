@@ -157,6 +157,17 @@ class CoachRepository {
     return recommendationStream;
   }
 
+  Stream<QuerySnapshot<Map<String, dynamic>>> getTimelineItemsSubscription(String userId) {
+    Stream<QuerySnapshot<Map<String, dynamic>>> timelineItemsStream = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('users')
+        .doc(userId)
+        .collection('interactionTimelineItems')
+        .snapshots();
+    return timelineItemsStream;
+  }
+
   Future<void> updateMentoredVideoNotificationStatus(
       String coachId, String annotationId, bool notificationValue) async {
     DocumentReference reference = FirebaseFirestore.instance
@@ -241,7 +252,7 @@ class CoachRepository {
               coachRecommendation: recommendation,
               contentTitle: courseRecommended.name,
               contentSubtitle: courseRecommended.classes.length.toString(),
-              contentDescription: courseRecommended.description,
+              contentDescription: courseRecommended.classes.length.toString(),
               contentImage: courseRecommended.image,
               contentTypeIndex: recommendation.entityType,
               createdAt: recommendation.createdAt,
