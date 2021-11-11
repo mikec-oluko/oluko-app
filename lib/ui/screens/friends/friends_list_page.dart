@@ -6,9 +6,11 @@ import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
+import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/blocs/user_list_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/submodels/friend_model.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
@@ -158,11 +160,22 @@ class _FriendsListPageState extends State<FriendsListPage> {
                       UserResponse friendUser = friendState.friendUsers.where((fuser) => fuser.id == friend.id).first;
                       return GestureDetector(
                         onTap: () {
-                          BottomDialogUtils.showBottomDialog(content: dialogContainer(context: context, user: friendUser, friendState: friendState), context: context);
+                          BottomDialogUtils.showBottomDialog(
+                              content: dialogContainer(context: context, user: friendUser, friendState: friendState), context: context);
                         },
                         child: Column(
                           children: [
-                            StoriesItem(maxRadius: 30, imageUrl: friendUser.avatar, name: friendUser.firstName, lastname: friendUser.lastName, showName: false),
+                            StoriesItem(
+                              maxRadius: 30,
+                              imageUrl: friendUser.avatarThumbnail,
+                              name: friendUser.firstName,
+                              lastname: friendUser.lastName,
+                              currentUserId: _authStateData.user.id,
+                              itemUserId: friendUser.id,
+                              addUnseenStoriesRing: true,
+                              bloc: StoryListBloc(),
+                              from: StoriesItemFrom.friends,
+                            ),
                             Padding(
                               padding: const EdgeInsets.only(top: 8.0, bottom: 0.0),
                               child: Text(
@@ -223,15 +236,17 @@ class _FriendsListPageState extends State<FriendsListPage> {
               ]
             : userListState.users
                 .where((e) =>
-                    (e.id != _authStateData.user.id && friendState.friendUsers == null) || (e.id != _authStateData.user.id && !friendState.friendUsers.map((fu) => fu.id).toList().contains(e.id)))
+                    (e.id != _authStateData.user.id && friendState.friendUsers == null) ||
+                    (e.id != _authStateData.user.id && !friendState.friendUsers.map((fu) => fu.id).toList().contains(e.id)))
                 .map((user) {
                 return GestureDetector(
                   onTap: () {
-                    BottomDialogUtils.showBottomDialog(content: dialogContainer(context: context, user: user, friendState: friendState), context: context);
+                    BottomDialogUtils.showBottomDialog(
+                        content: dialogContainer(context: context, user: user, friendState: friendState), context: context);
                   },
                   child: Column(
                     children: [
-                      StoriesItem(maxRadius: 30, imageUrl: user.avatar, name: user.firstName, lastname: user.lastName, showName: false),
+                      StoriesItem(maxRadius: 30, imageUrl: user.avatarThumbnail, name: user.firstName, lastname: user.lastName),
                       Padding(
                         padding: const EdgeInsets.only(top: 8.0, bottom: 0.0),
                         child: Text(
@@ -274,13 +289,15 @@ class _FriendsListPageState extends State<FriendsListPage> {
   }
 
   Widget dialogContainer({BuildContext context, UserResponse user, FriendState friendState}) {
-    bool connectionRequested = friendState is GetFriendsSuccess && friendState.friendData.friendRequestSent.map((f) => f.id).toList().indexOf(user.id) > -1;
+    bool connectionRequested =
+        friendState is GetFriendsSuccess && friendState.friendData.friendRequestSent.map((f) => f.id).toList().indexOf(user.id) > -1;
     BlocProvider.of<HiFiveReceivedBloc>(context).get(context, _authStateData.user.id, user.id);
     BlocProvider.of<UserStatisticsBloc>(context).getUserStatistics(user.id);
     return BlocBuilder<FriendBloc, FriendState>(
         bloc: BlocProvider.of<FriendBloc>(context),
         builder: (friendContext, friendState) {
-          connectionRequested = friendState is GetFriendsSuccess && friendState.friendData.friendRequestSent.map((f) => f.id).toList().indexOf(user.id) > -1;
+          connectionRequested =
+              friendState is GetFriendsSuccess && friendState.friendData.friendRequestSent.map((f) => f.id).toList().indexOf(user.id) > -1;
           bool userIsFriend = friendState is GetFriendsSuccess && friendState.friendUsers.map((e) => e.id).toList().contains(user.id);
           return Container(
               height: 350,
@@ -296,24 +313,24 @@ class _FriendsListPageState extends State<FriendsListPage> {
                     SizedBox(height: 30),
                     Row(
                       children: [
-                        if (userIsFriend)
+                        if (!userIsFriend)
                           StoriesItem(
                             maxRadius: 40,
                             imageUrl: user.avatarThumbnail,
                             name: user.firstName,
                             lastname: user.lastName,
-                            showName: false,
                           )
                         else
                           StoriesItem(
+                            from: StoriesItemFrom.friendsModal,
+                            bloc: StoryListBloc(),
                             maxRadius: 40,
                             imageUrl: user.avatarThumbnail,
                             name: user.firstName,
                             lastname: user.lastName,
-                            showName: false,
                             getStories: true,
-                            userId: _authStateData.user.id,
-                            userStoryId: user.id,
+                            currentUserId: _authStateData.user.id,
+                            itemUserId: user.id,
                           ),
                         Expanded(
                           child: Padding(
@@ -337,7 +354,8 @@ class _FriendsListPageState extends State<FriendsListPage> {
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.only(top: 8.0),
-                                        child: Text('${user.city ?? ''}, ${user.country ?? ''}', style: TextStyle(color: Colors.grey, fontSize: 15)),
+                                        child: Text('${user.city ?? ''}, ${user.country ?? ''}',
+                                            style: TextStyle(color: Colors.grey, fontSize: 15)),
                                       )
                                     ],
                                   )
@@ -385,11 +403,15 @@ class _FriendsListPageState extends State<FriendsListPage> {
                                                   bloc: BlocProvider.of(context),
                                                   listener: (hiFiveSendContext, hiFiveSendState) {
                                                     if (hiFiveSendState is HiFiveSendSuccess) {
-                                                      AppMessages.showSnackbar(userStatisticsContext,
-                                                          hiFiveSendState.hiFive ? OlukoLocalizations.get(context, 'hiFiveSent') : OlukoLocalizations.get(context, 'hiFiveRemoved'));
+                                                      AppMessages.showSnackbar(
+                                                          userStatisticsContext,
+                                                          hiFiveSendState.hiFive
+                                                              ? OlukoLocalizations.get(context, 'hiFiveSent')
+                                                              : OlukoLocalizations.get(context, 'hiFiveRemoved'));
                                                     }
                                                     if (hiFiveSendState is HiFiveSendSuccess) {
-                                                      BlocProvider.of<HiFiveReceivedBloc>(context).get(context, _authStateData.user.id, user.id);
+                                                      BlocProvider.of<HiFiveReceivedBloc>(context)
+                                                          .get(context, _authStateData.user.id, user.id);
                                                     }
                                                   },
                                                   child: Container(width: 80, height: 80, child: Image.asset('assets/profile/hiFive.png')),
@@ -397,9 +419,15 @@ class _FriendsListPageState extends State<FriendsListPage> {
                                           ),
                                           Row(
                                             children: [
-                                              profileAccomplishments(achievementTitle: 'Challenges completed', achievementValue: userStats.userStats.completedChallenges.toString()),
-                                              profileAccomplishments(achievementTitle: 'Courses completed', achievementValue: userStats.userStats.completedChallenges.toString()),
-                                              profileAccomplishments(achievementTitle: 'Courses completed', achievementValue: userStats.userStats.completedCourses.toString()),
+                                              profileAccomplishments(
+                                                  achievementTitle: 'Challenges completed',
+                                                  achievementValue: userStats.userStats.completedChallenges.toString()),
+                                              profileAccomplishments(
+                                                  achievementTitle: 'Courses completed',
+                                                  achievementValue: userStats.userStats.completedChallenges.toString()),
+                                              profileAccomplishments(
+                                                  achievementTitle: 'Courses completed',
+                                                  achievementValue: userStats.userStats.completedCourses.toString()),
                                             ],
                                           )
                                         ],
@@ -421,7 +449,8 @@ class _FriendsListPageState extends State<FriendsListPage> {
                                   bool userIsFriend = friendState.friendUsers.map((e) => e.id).toList().contains(user.id);
                                   FriendModel friendModel = friendState.friendData.friends.where((element) => element.id == user.id).first;
                                   if (friendState is GetFriendsSuccess && userIsFriend) {
-                                    BlocProvider.of<FavoriteFriendBloc>(context).favoriteFriend(context, friendState.friendData, friendModel);
+                                    BlocProvider.of<FavoriteFriendBloc>(context)
+                                        .favoriteFriend(context, friendState.friendData, friendModel);
                                   }
                                 }
                               },
@@ -444,17 +473,23 @@ class _FriendsListPageState extends State<FriendsListPage> {
                                 thinPadding: true,
                                 title: 'Cancel',
                                 onPressed: () {
-                                  if (friendState is GetFriendsSuccess) BlocProvider.of<FriendBloc>(context).removeRequestSent(_authStateData.user.id, friendState.friendData, user.id);
+                                  if (friendState is GetFriendsSuccess)
+                                    BlocProvider.of<FriendBloc>(context)
+                                        .removeRequestSent(_authStateData.user.id, friendState.friendData, user.id);
                                 },
                               )
                             : OlukoOutlinedButton(
                                 thinPadding: true,
-                                title: userIsFriend ? OlukoLocalizations.of(context).find('remove') : OlukoLocalizations.of(context).find('connect'),
+                                title: userIsFriend
+                                    ? OlukoLocalizations.of(context).find('remove')
+                                    : OlukoLocalizations.of(context).find('connect'),
                                 onPressed: () {
                                   if (friendState is GetFriendsSuccess)
                                     userIsFriend
-                                        ? BlocProvider.of<FriendBloc>(context).removeFriend(_authStateData.user.id, friendState.friendData, user.id)
-                                        : BlocProvider.of<FriendBloc>(context).sendRequestOfConnect(_authStateData.user.id, friendState.friendData, user.id);
+                                        ? BlocProvider.of<FriendBloc>(context)
+                                            .removeFriend(_authStateData.user.id, friendState.friendData, user.id)
+                                        : BlocProvider.of<FriendBloc>(context)
+                                            .sendRequestOfConnect(_authStateData.user.id, friendState.friendData, user.id);
                                 }),
                         user.privacy == 0
                             ? SizedBox(
@@ -466,7 +501,8 @@ class _FriendsListPageState extends State<FriendsListPage> {
                                 thinPadding: true,
                                 title: 'View full profile',
                                 onPressed: () {
-                                  Navigator.pushNamed(context, routeLabels[RouteEnum.profileViewOwnProfile], arguments: {'userRequested': user});
+                                  Navigator.pushNamed(context, routeLabels[RouteEnum.profileViewOwnProfile],
+                                      arguments: {'userRequested': user});
                                 },
                               )
                             : SizedBox()
@@ -474,7 +510,9 @@ class _FriendsListPageState extends State<FriendsListPage> {
                     ),
                   ]),
                 ),
-                Align(alignment: Alignment.topRight, child: IconButton(icon: Icon(Icons.close, color: Colors.white), onPressed: () => Navigator.pop(context)))
+                Align(
+                    alignment: Alignment.topRight,
+                    child: IconButton(icon: Icon(Icons.close, color: Colors.white), onPressed: () => Navigator.pop(context)))
               ]));
         });
   }

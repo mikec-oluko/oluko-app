@@ -16,6 +16,16 @@ class StoryListSuccess extends StoryListState {
   final List<UserStories> usersStories;
 }
 
+class GetUnseenStories extends StoryListState {
+  GetUnseenStories({this.hasUnseenStories});
+  final bool hasUnseenStories;
+}
+
+class GetStoriesSuccess extends StoryListState {
+  GetStoriesSuccess({this.stories});
+  final List<Story> stories;
+}
+
 class StoryListUpdate extends StoryListState {
   StoryListUpdate({this.event});
   final Event event;
@@ -50,15 +60,31 @@ class StoryListBloc extends Cubit<StoryListState> {
     }
   }
 
-  Future<List<Story>> getStoriesFromUser(String userId, String userStoryId) async {
+  void getStoriesFromUser(String userId, String userStoryId) async {
     try {
-      return await StoryRepository().getStoriesFromUser(userId, userStoryId);
+      final List<Story> stories = await StoryRepository().getStoriesFromUser(userId, userStoryId);
+      emit(GetStoriesSuccess(stories: stories));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
         stackTrace: stackTrace,
       );
-      return null;
+      emit(StoryListFailure(exception: exception));
+      rethrow;
+    }
+  }
+
+  void checkForUnseenStories(String userId, String userStoryId) async {
+    try {
+      final bool hasUnseenStories = await StoryRepository().checkForUnseenStories(userId, userStoryId);
+      emit(GetUnseenStories(hasUnseenStories: hasUnseenStories));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(StoryListFailure(exception: exception));
+      rethrow;
     }
   }
 

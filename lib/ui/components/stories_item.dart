@@ -4,32 +4,49 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/dto/story_dto.dart';
 
 import '../../routes.dart';
 
 class StoriesItem extends StatefulWidget {
+  StoryListBloc bloc;
   final double maxRadius;
   final double progressValue;
-  final String userStoryId;
-  final String userId;
+  final String itemUserId;
+  final String currentUserId;
   final bool showName;
   final bool getStories;
+  final bool addUnseenStoriesRing;
   String imageUrl;
   String name;
   String lastname;
   List<Story> stories;
   bool _hasUnseenStories = false;
+  StoriesItemFrom from;
 
-  StoriesItem({this.maxRadius, this.imageUrl, this.userStoryId, this.name, this.lastname, this.stories, this.progressValue = 0, this.showName = true, this.getStories, this.userId}) {
+  StoriesItem(
+      {this.maxRadius,
+      this.imageUrl,
+      this.name,
+      this.lastname,
+      this.stories,
+      this.progressValue = 0,
+      this.showName = false,
+      this.getStories = false,
+      this.addUnseenStoriesRing = false,
+      this.currentUserId,
+      this.itemUserId,
+      this.bloc,
+      this.from = StoriesItemFrom.home}) {
     if (getStories == true) {
-      getStoriesFromUser(userId);
+      getStoriesFromUser();
     }
     checkForUnseenStories();
   }
 
-  Future<void> getStoriesFromUser(String userId) async {
-    stories = await StoryListBloc().getStoriesFromUser(userId, userStoryId);
+  void getStoriesFromUser() {
+    bloc.getStoriesFromUser(currentUserId, itemUserId);
   }
 
   void checkForUnseenStories() {
@@ -39,6 +56,8 @@ class StoriesItem extends StatefulWidget {
       } else {
         _hasUnseenStories = false;
       }
+    } else if (addUnseenStoriesRing) {
+      bloc.checkForUnseenStories(currentUserId, itemUserId);
     }
   }
 
@@ -50,9 +69,10 @@ class _State extends State<StoriesItem> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<StoryListBloc, StoryListState>(
+        bloc: widget.bloc,
         listener: (BuildContext context, StoryListState state) {
           if (state is StoryListUpdate && state.event.snapshot.exists) {
-            if (state.event.snapshot.key == widget.userStoryId) {
+            if (state.event.snapshot.key == widget.itemUserId) {
               final unchangedStories = widget.stories;
               updateData(state.event.snapshot);
               if (unchangedStories != widget.stories) {
@@ -61,6 +81,15 @@ class _State extends State<StoriesItem> {
                 });
               }
             }
+          } else if (state is GetStoriesSuccess) {
+            setState(() {
+              widget.stories = state.stories;
+              widget.checkForUnseenStories();
+            });
+          } else if (state is GetUnseenStories) {
+            setState(() {
+              widget._hasUnseenStories = state.hasUnseenStories;
+            });
           }
         },
         child: Padding(
@@ -71,6 +100,8 @@ class _State extends State<StoriesItem> {
               Stack(
                 alignment: Alignment.center,
                 children: [
+                  if (widget._hasUnseenStories)
+                    Image.asset('assets/courses/photo_ellipse.png', scale: getScale(), color: OlukoColors.secondary),
                   Positioned(
                     bottom: 0,
                     top: 0,
@@ -85,11 +116,15 @@ class _State extends State<StoriesItem> {
                   if (widget.stories != null && widget.stories.isNotEmpty)
                     GestureDetector(
                         child: getCircularAvatar(),
-                        onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.story],
-                            arguments: {'stories': widget.stories, 'userId': widget.userId, 'userStoriesId': widget.userStoryId, 'name': widget.name, 'avatarThumbnail': widget.imageUrl}))
+                        onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.story], arguments: {
+                              'stories': widget.stories,
+                              'userId': widget.currentUserId,
+                              'userStoriesId': widget.itemUserId,
+                              'name': widget.name,
+                              'avatarThumbnail': widget.imageUrl
+                            }))
                   else
-                    getCircularAvatar(),
-                  if (widget._hasUnseenStories) Image.asset('assets/courses/photo_ellipse.png', scale: 7, color: OlukoColors.secondary)
+                    getCircularAvatar()
                 ],
               ),
               if (widget.name != null && widget.showName)
@@ -100,8 +135,6 @@ class _State extends State<StoriesItem> {
                     style: const TextStyle(color: Colors.white60, fontWeight: FontWeight.w400, fontSize: 12, fontFamily: 'Open Sans'),
                   ),
                 )
-              else
-                const SizedBox()
             ],
           ),
         ));
@@ -184,6 +217,22 @@ class _State extends State<StoriesItem> {
               )
             : nil,
       );
+    }
+  }
+
+  double getScale() {
+    switch (widget.from) {
+      case StoriesItemFrom.home:
+        return 7;
+        break;
+      case StoriesItemFrom.friendsModal:
+        return 6.2;
+        break;
+      case StoriesItemFrom.friends:
+        return 7.3;
+        break;
+      default:
+        return 7;
     }
   }
 }

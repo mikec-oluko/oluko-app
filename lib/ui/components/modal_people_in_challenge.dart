@@ -70,6 +70,9 @@ class _ModalPeopleInChallengeState extends State<ModalPeopleInChallenge> {
                       child: Column(
                         children: [
                           StoriesItem(
+                            itemUserId: user.id, 
+                            name: user.username, 
+                            currentUserId: widget.userId,
                             maxRadius: 35,
                             imageUrl: user.avatarThumbnail ?? UserUtils().defaultAvatarImageUrl,
                             stories: user.stories?.stories,

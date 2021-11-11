@@ -34,7 +34,7 @@ class _State extends State<StoriesHeader> {
                   children: storyState.usersStories.map((userStory) {
                 return Container(
                   margin: const EdgeInsets.only(top: 5),
-                  child: StoriesItem(stories: userStory.stories, imageUrl: userStory.avatar_thumbnail, maxRadius: 35, userStoryId: userStory.id, name: userStory.name),
+                  child: StoriesItem(stories: userStory.stories, imageUrl: userStory.avatar_thumbnail, maxRadius: 35, itemUserId: userStory.id, name: userStory.name, currentUserId: widget.userId, showName: true),
                 );
               }).toList())),
         );

@@ -18,7 +18,7 @@ class StoryPage extends StatefulWidget {
   String userStoriesId;
   String name;
   String avatarThumbnail;
-  StoryPage({@required this.stories, @required this.userId, @required this.userStoriesId, @required this.avatarThumbnail});
+  StoryPage({@required this.stories, @required this.userId, @required this.userStoriesId, @required this.name, @required this.avatarThumbnail});
   @override
   _StoryPageState createState() => _StoryPageState();
 }
