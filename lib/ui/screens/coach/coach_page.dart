@@ -92,7 +92,7 @@ class _CoachPageState extends State<CoachPage> {
     BlocProvider.of<CoachUserBloc>(context).get(widget.coachAssignment.coachId);
     if (widget.coachAssignment.videoHLS != null
         ? true
-        : (widget.coachAssignment.video.url != null ? true : widget.coachAssignment.introductionVideo != null)) {
+        : (widget.coachAssignment.video?.url != null ? true : widget.coachAssignment.introductionVideo != null)) {
       setState(() {
         _introductionVideo = Annotation(
             createdAt: Timestamp.now(),
