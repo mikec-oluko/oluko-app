@@ -20,7 +20,7 @@ class _State extends State<StoriesHeader> {
 
   @override
   Widget build(BuildContext context) {
-    BlocProvider.of<StoryListBloc>(context).getStream(widget.userId);
+    //BlocProvider.of<StoryListBloc>(context).getStream(widget.userId);
     BlocProvider.of<StoryListBloc>(context).get(widget.userId);
     return BlocBuilder<StoryListBloc, StoryListState>(buildWhen: (_, state) {
       return state is! StoryListUpdate;
