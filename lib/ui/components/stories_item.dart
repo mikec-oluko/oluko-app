@@ -39,7 +39,7 @@ class StoriesItem extends StatefulWidget {
       this.itemUserId,
       this.bloc,
       this.from = StoriesItemFrom.home}) {
-    if (getStories == true) {
+    if (getStories == true && currentUserId != null && itemUserId != null && currentUserId.isNotEmpty && itemUserId.isNotEmpty) {
       getStoriesFromUser();
     }
     checkForUnseenStories();
@@ -56,7 +56,7 @@ class StoriesItem extends StatefulWidget {
       } else {
         _hasUnseenStories = false;
       }
-    } else if (addUnseenStoriesRing) {
+    } else if (addUnseenStoriesRing && currentUserId != null && itemUserId != null && currentUserId.isNotEmpty && itemUserId.isNotEmpty) {
       bloc.checkForUnseenStories(currentUserId, itemUserId);
     }
   }
@@ -71,8 +71,8 @@ class _State extends State<StoriesItem> {
     return BlocListener<StoryListBloc, StoryListState>(
         bloc: widget.bloc,
         listener: (BuildContext context, StoryListState state) {
-          if (state is StoryListUpdate && state.event.snapshot.exists) {
-            if (state.event.snapshot.key == widget.itemUserId) {
+          if (state is StoryListUpdate && state?.event?.snapshot?.exists == true) {
+            if (state?.event?.snapshot?.key == widget?.itemUserId) {
               final unchangedStories = widget.stories;
               updateData(state.event.snapshot);
               if (unchangedStories != widget.stories) {
@@ -113,7 +113,12 @@ class _State extends State<StoriesItem> {
                       valueColor: const AlwaysStoppedAnimation<Color>(OlukoColors.primary),
                     ),
                   ),
-                  if (widget.stories != null && widget.stories.isNotEmpty)
+                  if (widget.stories != null &&
+                      widget.stories.isNotEmpty &&
+                      widget.currentUserId.isNotEmpty &&
+                      widget.itemUserId.isNotEmpty &&
+                      widget.name.isNotEmpty &&
+                      widget.imageUrl.isNotEmpty)
                     GestureDetector(
                         child: getCircularAvatar(),
                         onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.story], arguments: {
@@ -127,11 +132,11 @@ class _State extends State<StoriesItem> {
                     getCircularAvatar()
                 ],
               ),
-              if (widget.name != null && widget.showName)
+              if (widget.showName && widget.name != null && widget.name.isNotEmpty) 
                 Padding(
                   padding: const EdgeInsets.only(top: 10, bottom: 5),
                   child: Text(
-                    widget.name ?? '',
+                    widget.name,
                     style: const TextStyle(color: Colors.white60, fontWeight: FontWeight.w400, fontSize: 12, fontFamily: 'Open Sans'),
                   ),
                 )
@@ -151,7 +156,7 @@ class _State extends State<StoriesItem> {
     final List<Story> updatedStories = [];
     if (snapshot.value['stories'] != null) {
       final Map<String, dynamic> storiesAsMap = Map<String, dynamic>.from(snapshot.value['stories'] as Map);
-      if (storiesAsMap == null) {
+      if (storiesAsMap == null || storiesAsMap.isEmpty) {
         return;
       }
 
@@ -170,7 +175,7 @@ class _State extends State<StoriesItem> {
     updatedStories.sort((a, b) {
       if (a.seen && !b.seen) return 1;
       if (!a.seen && b.seen) return -1;
-      if (a.createdAt != null && b.createdAt != null) return a.createdAt?.compareTo(b.createdAt);
+      if (a.createdAt != null && b.createdAt != null) return a.createdAt.compareTo(b.createdAt);
       return 0;
     });
   }
@@ -200,15 +205,15 @@ class _State extends State<StoriesItem> {
     if (widget.imageUrl != null) {
       return CircleAvatar(
         backgroundImage: NetworkImage(widget.imageUrl),
-        maxRadius: widget.maxRadius,
+        maxRadius: widget.maxRadius ?? 30,
       );
     } else {
       return CircleAvatar(
-        maxRadius: widget.maxRadius,
+        maxRadius: widget.maxRadius ?? 30,
         backgroundColor: OlukoColors.userColor(widget.name, widget.lastname),
-        child: widget.name != null
+        child: widget.name != null || widget.name.isEmpty
             ? Text(
-                widget.name?.characters?.first.toString().toUpperCase(),
+                widget.name.characters?.first?.toString()?.toUpperCase() ?? '',
                 style: OlukoFonts.olukoBigFont(
                   customColor: OlukoColors.white,
                   custoFontWeight: FontWeight.w500,
