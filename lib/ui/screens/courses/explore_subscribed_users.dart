@@ -93,10 +93,12 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
           children: users
               .map((user) => Column(
                     children: [
-                      StoriesItem(
-                        maxRadius: 30,
-                        imageUrl: user.avatar ?? UserUtils().defaultAvatarImageUrl,
-                      ),
+                       StoriesItem(
+                          maxRadius: 30,
+                          imageUrl: user.avatar,
+                          name: user.firstName,
+                          lastname: user.lastName,
+                          showName: false),
                       Padding(
                         padding: const EdgeInsets.only(top: 8.0, bottom: 0.0),
                         child: Text(
