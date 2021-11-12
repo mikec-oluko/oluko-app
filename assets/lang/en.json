@@ -130,7 +130,7 @@
     "retake": "Retake",
     "done!": "Done!",
     "assessmentMessagePart1": "Thank you for completing all the assessments.",
-    "assessmentMessagePart2": "We will review and get back to you shortly with suitable coach assignement.",
+    "assessmentMessagePart2": "We will review and get back to you shortly with suitable coach assignment.",
     "goBack": "Go Back",
     "ok": "Ok",
     "restricted": "Restricted",
@@ -244,5 +244,6 @@
     "notificationSegment": "Record Segment",
     "welcomeTo": "Welcome to",
     "enrollToACourse": "Enroll to a Course",
-    "noCoachMessage": "to get your personal coach"
+    "noCoachMessage": "to get your personal coach",
+    "roundInfo": "Only first round is recorded. We will prepare your video to send it to your coach!"
 }

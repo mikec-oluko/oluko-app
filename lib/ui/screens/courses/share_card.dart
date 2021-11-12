@@ -17,6 +17,7 @@ class ShareCard extends StatefulWidget {
 class _State extends State<ShareCard> {
   List<Movement> segmentMovements;
   bool _storyEnabled = true;
+  bool _whistleEnabled = true;
 
   @override
   void initState() {
@@ -72,73 +73,8 @@ class _State extends State<ShareCard> {
                             const SizedBox(height: 5),
                             Row(
                               children: [
-                                GestureDetector(
-                                  onTap: _storyEnabled ? _onTap : null,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(right: 10),
-                                    child: Column(
-                                      children: [
-                                        Image.asset(
-                                          'assets/courses/story.png',
-                                          scale: 8.4,
-                                          color: _storyEnabled
-                                              ? null
-                                              : Colors.grey,
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Row(
-                                            children: [
-                                              Text('Story',
-                                                  style: _storyEnabled
-                                                      ? OlukoFonts
-                                                          .olukoMediumFont()
-                                                      : OlukoFonts
-                                                          .olukoMediumFont(
-                                                              customColor:
-                                                                  Colors.grey)),
-                                              if (!_storyEnabled)
-                                                Stack(
-                                                  children: [
-                                                    Image.asset(
-                                                        'assets/assessment/check.png',
-                                                        scale: 5),
-                                                    Positioned(
-                                                        left: 4,
-                                                        child: Image.asset(
-                                                            'assets/assessment/check.png',
-                                                            scale: 5))
-                                                  ],
-                                                ),
-                                            ],
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                GestureDetector(
-                                    onTap: widget.whistleAction,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Column(
-                                        children: [
-                                          Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 8.0, bottom: 2.0),
-                                              child: Image.asset(
-                                                'assets/courses/whistle.png',
-                                                scale: 8,
-                                              )),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text('Coach',
-                                                style: OlukoFonts
-                                                    .olukoMediumFont()),
-                                          )
-                                        ],
-                                      ),
-                                    )),
+                                storyButton(),
+                                whistleButton(),
                               ],
                             )
                           ],
@@ -156,7 +92,87 @@ class _State extends State<ShareCard> {
   }
 
   void _onTap() {
-    widget.createStory();
+    if (_storyEnabled) {
+      widget.createStory();
+    }
     setState(() => _storyEnabled = false);
+  }
+
+  Widget whistleButton() {
+    return GestureDetector(
+        onTap: () {
+          if (_whistleEnabled) {
+            widget.whistleAction();
+          }
+
+          setState(() => _whistleEnabled = false);
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              Padding(
+                  padding: const EdgeInsets.only(top: 8.0, bottom: 2.0),
+                  child: Image.asset(
+                    'assets/courses/whistle.png',
+                    scale: 8,
+                    color: _whistleEnabled ? null : Colors.grey,
+                  )),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(children: [
+                  Text('Coach',
+                      style: _whistleEnabled
+                          ? OlukoFonts.olukoMediumFont()
+                          : OlukoFonts.olukoMediumFont(
+                              customColor: Colors.grey)),
+                  if (!_whistleEnabled) doubleCheck()
+                ]),
+              )
+            ],
+          ),
+        ));
+  }
+
+  Widget storyButton() {
+    return GestureDetector(
+      onTap: _storyEnabled ? _onTap : null,
+      child: Padding(
+        padding: const EdgeInsets.only(right: 10),
+        child: Column(
+          children: [
+            Image.asset(
+              'assets/courses/story.png',
+              scale: 8.4,
+              color: _storyEnabled ? null : Colors.grey,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Text('Story',
+                      style: _storyEnabled
+                          ? OlukoFonts.olukoMediumFont()
+                          : OlukoFonts.olukoMediumFont(
+                              customColor: Colors.grey)),
+                  if (!_storyEnabled) doubleCheck(),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget doubleCheck() {
+    return Stack(
+      children: [
+        Image.asset('assets/assessment/check.png', scale: 5),
+        Positioned(
+            left: 4,
+            child: Image.asset('assets/assessment/check.png', scale: 5))
+      ],
+    );
   }
 }
