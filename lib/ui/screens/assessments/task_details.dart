@@ -91,9 +91,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                   if (_controller != null) {
                     _controller.pause();
                   }
-                  Navigator.pushNamed(
-                      context, routeLabels[RouteEnum.assessmentVideos],
-                      arguments: {'isFirstTime': false});
+                  Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos],arguments: {'isFirstTime': false});
                 }),
             body: Container(
                 color: Colors.black,
@@ -388,9 +386,7 @@ class _TaskDetailsState extends State<TaskDetails> {
           if (_controller != null) {
             _controller.pause();
           }
-          Navigator.pushNamed(
-              context, routeLabels[RouteEnum.taskSubmissionVideo],
-              arguments: {'task': _task, 'videoUrl': taskSubmission.video.url});
+          Navigator.pushNamed(context, routeLabels[RouteEnum.taskSubmissionVideo],arguments: {'task': _task, 'videoUrl': taskSubmission.video.url});
         },
         child: Align(
           alignment: Alignment.centerLeft,
