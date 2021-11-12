@@ -39,7 +39,12 @@ class StoriesItem extends StatefulWidget {
       this.itemUserId,
       this.bloc,
       this.from = StoriesItemFrom.home}) {
-    if (getStories == true && currentUserId != null && itemUserId != null && currentUserId.isNotEmpty && itemUserId.isNotEmpty) {
+    if (getStories == true &&
+        currentUserId != null &&
+        itemUserId != null &&
+        currentUserId.isNotEmpty &&
+        itemUserId.isNotEmpty &&
+        bloc != null) {
       getStoriesFromUser();
     }
     checkForUnseenStories();
@@ -56,7 +61,12 @@ class StoriesItem extends StatefulWidget {
       } else {
         _hasUnseenStories = false;
       }
-    } else if (addUnseenStoriesRing && currentUserId != null && itemUserId != null && currentUserId.isNotEmpty && itemUserId.isNotEmpty) {
+    } else if (addUnseenStoriesRing &&
+        currentUserId != null &&
+        itemUserId != null &&
+        currentUserId.isNotEmpty &&
+        itemUserId.isNotEmpty &&
+        bloc != null) {
       bloc.checkForUnseenStories(currentUserId, itemUserId);
     }
   }
@@ -132,7 +142,7 @@ class _State extends State<StoriesItem> {
                     getCircularAvatar()
                 ],
               ),
-              if (widget.showName && widget.name != null && widget.name.isNotEmpty) 
+              if (widget.showName && widget.name != null && widget.name.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.only(top: 10, bottom: 5),
                   child: Text(
