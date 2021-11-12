@@ -193,8 +193,12 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
             Column(
               children: [
                 GestureDetector(
-                    onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
-                        arguments: {'course': course, 'fromCoach': false}),
+                    onTap: () {
+                      if (_videoControllers[tabController.index] != null) {
+                         _videoControllers[tabController.index].pause();
+                      }
+                      Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],arguments: {'course': course, 'fromCoach': false});
+                    },
                     child: Container(height: 100, child: Image.network(course.image)))
               ],
             ),
