@@ -13,9 +13,12 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:video_player/video_player.dart';
 
 class StoryPage extends StatefulWidget {
-  UserStories userStories;
+  List<Story> stories;
   String userId;
-  StoryPage({@required this.userStories, @required this.userId});
+  String userStoriesId;
+  String name;
+  String avatarThumbnail;
+  StoryPage({@required this.stories, @required this.userId, @required this.userStoriesId, @required this.name, @required this.avatarThumbnail});
   @override
   _StoryPageState createState() => _StoryPageState();
 }
@@ -32,7 +35,7 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
     _pageController = PageController();
     _animController = AnimationController(vsync: this);
     findFirstStory();
-    final Story firstStory = widget.userStories.stories[_currentIndex];
+    final Story firstStory = widget.stories[_currentIndex];
     _loadStory(story: firstStory, animateToPage: false);
 
     _animController.addStatusListener((status) {
@@ -41,9 +44,9 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
         _animController.reset();
         setStoryAsSeen();
         setState(() {
-          if (_currentIndex + 1 < widget.userStories.stories.length) {
+          if (_currentIndex + 1 < widget.stories.length) {
             _currentIndex += 1;
-            _loadStory(story: widget.userStories.stories[_currentIndex]);
+            _loadStory(story: widget.stories[_currentIndex]);
           } else {
             Navigator.of(context).pop();
           }
@@ -53,7 +56,7 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
   }
 
   void findFirstStory() {
-    final firstStoryIndex = widget.userStories.stories.indexWhere((element) => !element.seen);
+    final firstStoryIndex = widget.stories.indexWhere((element) => !element.seen);
     if (firstStoryIndex != -1) {
       _currentIndex = firstStoryIndex;
     } else {
@@ -72,7 +75,7 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
   @override
   Widget build(BuildContext context) {
     var loading = false;
-    final Story story = widget.userStories.stories[_currentIndex];
+    final Story story = widget.stories[_currentIndex];
     return Scaffold(
       backgroundColor: Colors.black,
       body: GestureDetector(
@@ -82,9 +85,9 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
             PageView.builder(
               controller: _pageController,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: widget.userStories.stories.length,
+              itemCount: widget.stories.length,
               itemBuilder: (context, i) {
-                final Story story = widget.userStories.stories[i];
+                final Story story = widget.stories[i];
                 switch (story.content_type) {
                   case 'image':
                     var img = Image.network(
@@ -121,7 +124,7 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
                         ),
                         const SizedBox(height: 30),
                         Text(
-                          widget.userStories.stories[_currentIndex].description,
+                          widget.stories[_currentIndex].description,
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 18.0,
@@ -132,7 +135,7 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
                         Center(
                           child: GestureDetector(
                               onTap: () {
-                                BlocProvider.of<HiFiveSendBloc>(context).set(context, widget.userId, widget.userStories.createdBy);
+                                BlocProvider.of<HiFiveSendBloc>(context).set(context, widget.userId, widget.userStoriesId);
                                 AppMessages().showHiFiveSentDialog(context);
                               },
                               child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
@@ -175,7 +178,7 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
               child: Column(
                 children: <Widget>[
                   Row(
-                      children: widget.userStories.stories
+                      children: widget.stories
                           .asMap()
                           .map((i, e) {
                             return MapEntry(
@@ -195,10 +198,10 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
                       vertical: 10.0,
                     ),
                     child: UserInfo(
-                      avatar_thumbnail: widget.userStories.avatar_thumbnail,
-                      name: widget.userStories.name,
+                      avatarThumbnail: widget.avatarThumbnail,
+                      name: widget.name,
                       userId: widget.userId,
-                      hour: widget.userStories.stories[_currentIndex].createdAt?.toDate(),
+                      hour: widget.stories[_currentIndex].createdAt?.toDate(),
                     ),
                   ),
                 ],
@@ -217,15 +220,15 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
       setState(() {
         if (_currentIndex - 1 >= 0) {
           _currentIndex -= 1;
-          _loadStory(story: widget.userStories.stories[_currentIndex]);
+          _loadStory(story: widget.stories[_currentIndex]);
         }
       });
     } else if (dx > 2 * screenWidth / 3) {
       setState(() {
         setStoryAsSeen();
-        if (_currentIndex + 1 < widget.userStories.stories.length) {
+        if (_currentIndex + 1 < widget.stories.length) {
           _currentIndex += 1;
-          _loadStory(story: widget.userStories.stories[_currentIndex]);
+          _loadStory(story: widget.stories[_currentIndex]);
         } else {
           Navigator.of(context).pop();
         }
@@ -244,9 +247,9 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
   }
 
   void setStoryAsSeen() {
-    if (!widget.userStories.stories[_currentIndex].seen) {
-      widget.userStories.stories[_currentIndex].seen = true;
-      BlocProvider.of<StoryBloc>(context).setStoryAsSeen(widget.userId, widget.userStories.id, widget.userStories.stories[_currentIndex].id);
+    if (!widget.stories[_currentIndex].seen) {
+      widget.stories[_currentIndex].seen = true;
+      BlocProvider.of<StoryBloc>(context).setStoryAsSeen(widget.userId, widget.userStoriesId, widget.stories[_currentIndex].id);
     }
   }
 
@@ -344,14 +347,14 @@ class AnimatedBar extends StatelessWidget {
 }
 
 class UserInfo extends StatelessWidget {
-  final String avatar_thumbnail;
+  final String avatarThumbnail;
   final String name;
   final String userId;
   final DateTime hour;
 
   const UserInfo({
     Key key,
-    @required this.avatar_thumbnail,
+    @required this.avatarThumbnail,
     @required this.name,
     @required this.userId,
     @required this.hour,
@@ -371,7 +374,7 @@ class UserInfo extends StatelessWidget {
           radius: 22.0,
           backgroundColor: Colors.grey[300],
           backgroundImage: Image.network(
-            avatar_thumbnail,
+            avatarThumbnail,
           ).image,
         ),
         const SizedBox(width: 16.0),
