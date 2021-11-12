@@ -37,6 +37,7 @@ import 'package:oluko_app/ui/screens/courses/feedback_card.dart';
 import 'package:oluko_app/ui/screens/courses/movement_videos_section.dart';
 import 'package:oluko_app/ui/screens/courses/share_card.dart';
 import 'package:oluko_app/utils/app_messages.dart';
+import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -744,7 +745,30 @@ class _SegmentClocksState extends State<SegmentClocks> {
       setState(() {
         workoutType = WorkoutType.segment;
       });
+      DialogUtils.getDialog(context, _confirmDialogContent(),
+          showExitButton: true);
     }
+  }
+
+  List<Widget> _confirmDialogContent() {
+    return [
+      Icon(Icons.info_outline, color: Colors.white, size: 60),
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(OlukoLocalizations.get(context, 'roundInfo'),
+            textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont()),
+      ),
+      Padding(
+          padding: const EdgeInsets.only(top: 8.0, right: 65, left: 65),
+          child: Row(children: [
+            OlukoPrimaryButton(
+              title: OlukoLocalizations.get(context, 'ok'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            )
+          ])),
+    ];
   }
 
   void _goToNextStep() {

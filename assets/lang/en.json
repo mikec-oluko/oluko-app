@@ -244,5 +244,6 @@
     "notificationSegment": "Record Segment",
     "welcomeTo": "Welcome to",
     "enrollToACourse": "Enroll to a Course",
-    "noCoachMessage": "to get your personal coach"
+    "noCoachMessage": "to get your personal coach",
+    "roundInfo": "Only first round is recorded to send to the coach"
 }

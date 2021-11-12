@@ -103,7 +103,7 @@ class _CoachPageState extends State<CoachPage> {
     super.initState();
   }
 
-  @override
+  /*@override
   void dispose() {
     BlocProvider.of<CoachMentoredVideosBloc>(context).dispose();
     setState(() {
@@ -120,7 +120,7 @@ class _CoachPageState extends State<CoachPage> {
       ]);
     });
     super.dispose();
-  }
+  }*/
 
   clearContent(List<List<dynamic>> listToClear) {
     listToClear.forEach((list) => list.clear());

@@ -108,17 +108,25 @@ class _HomeState extends State<Home> {
   }
 
   Widget enrolled() {
-    return CarouselSlider(
-      items: courseSectionList(),
-      options: CarouselOptions(
-          height: 600,
-          autoPlay: false,
-          enlargeCenterPage: false,
-          disableCenter: true,
-          enableInfiniteScroll: false,
-          initialPage: 0,
-          viewportFraction: 1),
-    );
+    return BlocBuilder<CourseHomeBloc, CourseHomeState>(
+        builder: (context, courseHomeState) {
+      if (courseHomeState is GetByCourseEnrollmentsSuccess) {
+        _courses = courseHomeState.courses;
+        return CarouselSlider(
+          items: courseSectionList(),
+          options: CarouselOptions(
+              height: 600,
+              autoPlay: false,
+              enlargeCenterPage: false,
+              disableCenter: true,
+              enableInfiniteScroll: false,
+              initialPage: 0,
+              viewportFraction: 1),
+        );
+      } else {
+        return SizedBox();
+      }
+    });
   }
 
   List<Widget> courseSectionList() {
