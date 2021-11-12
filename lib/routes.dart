@@ -558,6 +558,7 @@ class Routes {
           BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
           BlocProvider<MovementBloc>.value(value: _movementBloc),
           BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
+          BlocProvider<CourseHomeBloc>.value(value: _courseHomeBloc),
           BlocProvider<StoryListBloc>.value(value: _storyListBloc),
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
           BlocProvider<StoryListBloc>.value(value: _storyListBloc)
@@ -593,8 +594,10 @@ class Routes {
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
           BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
           BlocProvider<AudioBloc>.value(value: _audioBloc),
-          BlocProvider<DoneChallengeUsersBloc>.value(value: _doneChallengeUsersBloc),
-          BlocProvider<SegmentDetailContentBloc>.value(value: _segmentDetailContentBloc),
+          BlocProvider<DoneChallengeUsersBloc>.value(
+              value: _doneChallengeUsersBloc),
+          BlocProvider<SegmentDetailContentBloc>.value(
+              value: _segmentDetailContentBloc),
           BlocProvider<PersonalRecordBloc>.value(value: _personalRecordBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;

@@ -130,6 +130,7 @@ class _CoachPageState extends State<CoachPage> {
   //   listToClear.forEach((list) => list.clear());
   // }
 
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
