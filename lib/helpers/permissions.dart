@@ -10,17 +10,21 @@ class Permissions {
       }
     } else if (uploadedFrom == DeviceContentFrom.gallery) {
       if (Platform.isIOS) {
-       if(double.tryParse(Platform.version?.split(' ')[0]) > 14){
-         if (await Permission.photos.status.isDenied || await Permission.photos.status.isPermanentlyDenied) {
-          return false;
+        if (double.tryParse(Platform.version?.split(' ')[0]?.split('.')[0]) >= 14) {
+          if (await Permission.photos.status.isDenied || await Permission.photos.status.isPermanentlyDenied) {
+            return false;
+          }
+        } else {
+          return validateStorage();
         }
-       }
-      }else{
-        if (await Permission.storage.status.isDenied || await Permission.storage.status.isPermanentlyDenied) {
-          return false;
-        }
+      } else {
+        return validateStorage();
       }
     }
     return true;
+  }
+
+  static Future<bool> validateStorage() async {
+    return !await Permission.storage.status.isDenied && !await Permission.storage.status.isPermanentlyDenied;
   }
 }
