@@ -87,9 +87,14 @@ class _TaskDetailsState extends State<TaskDetails> {
             appBar: OlukoAppBar(
                 title: _task.name,
                 actions: [SizedBox(width: 30)],
-                onPressed: () => Navigator.pushNamed(
-                    context, routeLabels[RouteEnum.assessmentVideos],
-                    arguments: {'isFirstTime': false})),
+                onPressed: () {
+                  if (_controller != null) {
+                    _controller.pause();
+                  }
+                  Navigator.pushNamed(
+                      context, routeLabels[RouteEnum.assessmentVideos],
+                      arguments: {'isFirstTime': false});
+                }),
             body: Container(
                 color: Colors.black,
                 child: Padding(
@@ -379,9 +384,14 @@ class _TaskDetailsState extends State<TaskDetails> {
             )),
       ),
       GestureDetector(
-        onTap: () => Navigator.pushNamed(
-            context, routeLabels[RouteEnum.taskSubmissionVideo],
-            arguments: {'task': _task, 'videoUrl': taskSubmission.video.url}),
+        onTap: () {
+          if (_controller != null) {
+            _controller.pause();
+          }
+          Navigator.pushNamed(
+              context, routeLabels[RouteEnum.taskSubmissionVideo],
+              arguments: {'task': _task, 'videoUrl': taskSubmission.video.url});
+        },
         child: Align(
           alignment: Alignment.centerLeft,
           child: Container(
