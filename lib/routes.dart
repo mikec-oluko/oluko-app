@@ -356,7 +356,12 @@ class Routes {
           BlocProvider<HiFiveSendBloc>.value(value: _hiFiveSendBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
-        newRouteView = StoryPage(userStories: argumentsToAdd['userStories'] as UserStories, userId: argumentsToAdd['userId'] as String);
+        newRouteView = StoryPage(
+            stories: argumentsToAdd['stories'] as List<Story>,
+            userId: argumentsToAdd['userId'] as String,
+            name: argumentsToAdd['name'] as String,
+            avatarThumbnail: argumentsToAdd['avatarThumbnail'] as String,
+            userStoriesId: argumentsToAdd['userStoriesId'] as String);
         break;
       case RouteEnum.signUpWithEmail:
         newRouteView = SignUpWithMailPage();
@@ -556,6 +561,7 @@ class Routes {
           BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
           BlocProvider<MovementBloc>.value(value: _movementBloc),
           BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
+          BlocProvider<CourseHomeBloc>.value(value: _courseHomeBloc),
           BlocProvider<StoryListBloc>.value(value: _storyListBloc),
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
           BlocProvider<StoryListBloc>.value(value: _storyListBloc)
@@ -705,7 +711,10 @@ class Routes {
       case RouteEnum.exploreSubscribedUsers:
         Map<String, dynamic> args = arguments as Map<String, dynamic>;
         String courseId = args['courseId'].toString();
-        providers = [BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc)];
+        providers = [
+          BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
+          BlocProvider<StoryListBloc>.value(value: _storyListBloc)
+        ];
         newRouteView = ExploreSubscribedUsers(courseId: courseId);
         break;
       case RouteEnum.coach:
@@ -779,6 +788,7 @@ class Routes {
       case RouteEnum.hiFivePage:
         providers = [
           BlocProvider<HiFiveBloc>.value(value: _hiFiveBloc),
+          BlocProvider<StoryListBloc>.value(value: _storyListBloc),
         ];
         final Map<String, UserResponse> argumentsToAdd = arguments as Map<String, UserResponse>;
         newRouteView = const HiFivePage();

@@ -10,6 +10,7 @@ import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/blocs/segment_detail_content_bloc.dart';
+import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/coach_assignment.dart';
@@ -320,7 +321,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
             const SizedBox(height: 30),
             Stack(
                 alignment: Alignment.center,
-                children: [StoriesItem(maxRadius: 65, imageUrl: image), Image.asset('assets/courses/photo_ellipse.png', scale: 4)]),
+                children: [StoriesItem(maxRadius: 65, imageUrl: image/*, bloc: StoryListBloc()*/), Image.asset('assets/courses/photo_ellipse.png', scale: 4)]),
             const SizedBox(height: 15),
             Text('${OlukoLocalizations.get(context, 'coach')} $name',
                 textAlign: TextAlign.center, style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold)),

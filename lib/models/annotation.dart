@@ -60,8 +60,7 @@ class Annotation extends Base with EquatableMixin {
         favorite: json['favorite'] == null ? false : json['favorite'] as bool,
         video: json['video'] == null ? null : Video.fromJson(json['video'] as Map<String, dynamic>),
         videoHLS: json['video_hls'] == null ? null : json['video_hls'].toString(),
-        videoState:
-            json['video_state'] == null ? null : VideoState.fromJson(json['video_state'] as Map<String, dynamic>),
+        videoState: json['video_state'] == null ? null : VideoState.fromJson(json['video_state'] as Map<String, dynamic>),
         notificationViewed: json['notification_viewed'] == null ? false : json['notification_viewed'] as bool);
 
     annotation.setBase(json);
