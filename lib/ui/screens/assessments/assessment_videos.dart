@@ -109,7 +109,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                       AppNavigator().returnToHome(context);
                     }
                   : () {
-                      Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
+                      Navigator.pop(context);
                     },
               showBackButton: !widget.isFirstTime,
               title: widget.isForCoachPage
