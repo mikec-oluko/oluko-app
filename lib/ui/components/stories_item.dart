@@ -79,7 +79,7 @@ class _State extends State<StoriesItem> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<StoryListBloc, StoryListState>(
-        bloc: widget.bloc,
+        bloc: widget.bloc ?? StoryListBloc(),
         listener: (BuildContext context, StoryListState state) {
           if (state is StoryListUpdate && state?.event?.snapshot?.exists == true) {
             if (state?.event?.snapshot?.key == widget?.itemUserId) {
@@ -220,8 +220,10 @@ class _State extends State<StoriesItem> {
     } else {
       return CircleAvatar(
         maxRadius: widget.maxRadius ?? 30,
-        backgroundColor: OlukoColors.userColor(widget.name, widget.lastname),
-        child: widget.name != null || widget.name.isEmpty
+        backgroundColor: widget.name == null || widget.lastname == null
+            ? OlukoColors.userColor(null, null)
+            : OlukoColors.userColor(widget.name, widget.lastname),
+        child: widget.name != null && widget.name.isNotEmpty
             ? Text(
                 widget.name.characters?.first?.toString()?.toUpperCase() ?? '',
                 style: OlukoFonts.olukoBigFont(

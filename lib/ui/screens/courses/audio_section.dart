@@ -1,6 +1,7 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -137,7 +138,7 @@ class _State extends State<AudioSection> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            StoriesItem(maxRadius: 28, imageUrl: imageUrl),
+            StoriesItem(maxRadius: 28, imageUrl: imageUrl, bloc: StoryListBloc()),
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
               child: Text(
