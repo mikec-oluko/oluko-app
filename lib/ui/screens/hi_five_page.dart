@@ -178,10 +178,11 @@ class _HiFivePageState extends State<HiFivePage> {
       showBackButton: true,
       actions: [
         Visibility(
-          visible: _hiFiveState.users.length > 1,
+          visible: _hiFiveState != null && _hiFiveState.users.length > 1,
           child: GestureDetector(
             onTap: () {
-              BlocProvider.of<HiFiveBloc>(context).sendHiFiveToAll(context, _authState.user.id, _hiFiveState.users.map((e) => e.id).toList());
+              BlocProvider.of<HiFiveBloc>(context)
+                  .sendHiFiveToAll(context, _authState.user.id, _hiFiveState.users.map((e) => e.id).toList());
             },
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,

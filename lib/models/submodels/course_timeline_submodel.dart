@@ -5,7 +5,7 @@ class CourseTimelineSubmodel {
   String id;
   String name;
 
-  CourseTimelineSubmodel({this.id, this.name, this.reference});
+  CourseTimelineSubmodel({this.id = '0', this.name = 'all', this.reference});
 
   factory CourseTimelineSubmodel.fromJson(Map<String, dynamic> json) {
     return CourseTimelineSubmodel(

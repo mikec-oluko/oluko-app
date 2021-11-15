@@ -1,6 +1,7 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -44,13 +45,6 @@ class _State extends State<AudioDialogContent> {
     audioPlayer.onAudioPositionChanged.listen((Duration p) {
       setState(() => _position = p);
     });
-
-    /* audioPlayer.onPlayerCompletion.listen((event) {
-      setState(() {
-        isPlaying = false;
-        _position = Duration.zero;
-      });
-    });*/
   }
 
   Widget audioSlider() {
@@ -93,7 +87,7 @@ class _State extends State<AudioDialogContent> {
               child: Column(children: [
             SizedBox(height: 30),
             Stack(alignment: Alignment.center, children: [
-              StoriesItem(maxRadius: 65, imageUrl: coach.avatar),
+              StoriesItem(maxRadius: 65, imageUrl: coach.avatar, bloc: StoryListBloc()),
               Image.asset('assets/courses/photo_ellipse.png', scale: 4)
             ]),
             SizedBox(height: 15),
@@ -118,11 +112,11 @@ class _State extends State<AudioDialogContent> {
                     setState(() {
                       isPlaying = true;
                     });
-
                     audioPlayer.onPlayerCompletion.listen((_) {
                       setState(() {
                         isPlaying = false;
                         _position = Duration.zero;
+                        audioPlayer.stop();
                       });
                     });
                   } else {

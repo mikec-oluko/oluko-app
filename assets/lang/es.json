@@ -236,5 +236,13 @@
     "recordAMessage": "Grabe un mensaje para ",
     "saveFor": "Guardar para ",
     "accountAlreadyExistsWithThisEmailUsingADifferentProvider": "Una cuenta ya existe con el mismo email pero con distintas credenciales de sign-in",
-    "deleteMessageConfirm": "Esta seguro de que quiere eliminar su mensaje de voz?"
+    "deleteMessageConfirm": "Esta seguro de que quiere eliminar su mensaje de voz?",
+    "notificationCourse": "Curso recomendado",
+    "notificationClass": "Clase recomendada",
+    "notificationMovement": "Movimiento recomendado",
+    "notificationSegment": "Segmento a grabar",
+    "welcomeTo": "Bienvenido a",
+    "enrollToACourse": "Inscribirse a un Curso",
+    "noCoachMessage": "para obtener tu entrenador personal",
+    "roundInfo": "Solo la primera ronda se graba. Prepararemos el video para enviarlo a tu coach!"
 }

@@ -3,8 +3,9 @@ import 'package:oluko_app/models/base.dart';
 import 'package:oluko_app/models/submodels/video.dart';
 import 'package:oluko_app/models/submodels/video_state.dart';
 import 'enums/annotation_status.dart';
+import 'package:equatable/equatable.dart';
 
-class Annotation extends Base {
+class Annotation extends Base with EquatableMixin {
   String segmentSubmissionId;
   DocumentReference segmentSubmissionReference;
   String userId;
@@ -16,6 +17,7 @@ class Annotation extends Base {
   VideoState videoState;
   AnnotationStatusEnum status;
   bool favorite;
+  bool notificationViewed;
 
   Annotation(
       {this.segmentSubmissionId,
@@ -29,6 +31,7 @@ class Annotation extends Base {
       this.videoState,
       this.status,
       this.favorite,
+      this.notificationViewed,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -57,7 +60,8 @@ class Annotation extends Base {
         favorite: json['favorite'] == null ? false : json['favorite'] as bool,
         video: json['video'] == null ? null : Video.fromJson(json['video'] as Map<String, dynamic>),
         videoHLS: json['video_hls'] == null ? null : json['video_hls'].toString(),
-        videoState: json['video_state'] == null ? null : VideoState.fromJson(json['video_state'] as Map<String, dynamic>));
+        videoState: json['video_state'] == null ? null : VideoState.fromJson(json['video_state'] as Map<String, dynamic>),
+        notificationViewed: json['notification_viewed'] == null ? false : json['notification_viewed'] as bool);
 
     annotation.setBase(json);
     return annotation;
@@ -75,9 +79,33 @@ class Annotation extends Base {
       'favorite': favorite ?? false,
       'video': video == null ? null : video.toJson(),
       'video_hls': videoHLS,
-      'video_state': videoState == null ? null : videoState.toJson()
+      'video_state': videoState == null ? null : videoState.toJson(),
+      'notification_viewed': notificationViewed
     };
     annotation.addEntries(super.toJson().entries);
     return annotation;
   }
+
+  @override
+  List<Object> get props => [
+        userId,
+        segmentSubmissionId,
+        userReference,
+        coachId,
+        coachReference,
+        segmentSubmissionReference,
+        status,
+        favorite,
+        video,
+        videoHLS,
+        videoState,
+        notificationViewed,
+        id,
+        createdBy,
+        createdAt,
+        updatedAt,
+        updatedBy,
+        isDeleted,
+        isHidden
+      ];
 }
