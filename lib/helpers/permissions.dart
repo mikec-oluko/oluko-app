@@ -10,7 +10,7 @@ class Permissions {
       }
     } else if (uploadedFrom == DeviceContentFrom.gallery) {
       if (Platform.isIOS) {
-        if (double.tryParse(Platform.version?.split(' ')[0]?.split('.')[0]) >= 14) {
+        if (double.tryParse(Platform.operatingSystemVersion?.split('.')[0]) >= 14) {
           if (await Permission.photos.status.isDenied || await Permission.photos.status.isPermanentlyDenied) {
             return false;
           }
