@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
@@ -64,7 +65,7 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
         width: 85,
         child: Column(
           children: [
-            StoriesItem(maxRadius: 28, imageUrl: imageUrl),
+            StoriesItem(maxRadius: 28, imageUrl: imageUrl, bloc: StoryListBloc()),
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
               child: Text(

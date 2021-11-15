@@ -67,16 +67,12 @@ class _ModalPeopleInChallengeState extends State<ModalPeopleInChallenge> {
           shrinkWrap: true,
           children: users
               .map((user) => GridTile(
-                    child: GestureDetector(
-                      onTap: () => {
-                        if (user?.stories?.stories?.isNotEmpty)
-                          {
-                            Navigator.pushNamed(context, routeLabels[RouteEnum.story], arguments: {'userStories': user.stories, 'userId': widget.userId})
-                          }
-                      },
                       child: Column(
                         children: [
                           StoriesItem(
+                            itemUserId: user.id, 
+                            name: user.username, 
+                            currentUserId: widget.userId,
                             maxRadius: 35,
                             imageUrl: user.avatarThumbnail ?? UserUtils().defaultAvatarImageUrl,
                             stories: user.stories?.stories,
@@ -86,7 +82,6 @@ class _ModalPeopleInChallengeState extends State<ModalPeopleInChallenge> {
                           Text(user.username, style: const TextStyle(color: Colors.grey, fontSize: 14), textAlign: TextAlign.center),
                         ],
                       ),
-                    ),
                   ))
               .toList());
     } else {

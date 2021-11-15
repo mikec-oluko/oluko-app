@@ -26,9 +26,9 @@ class DoneChallengeUsersFailure extends DoneChallengeUsersState {
 
 class DoneChallengeUsersBloc extends Cubit<DoneChallengeUsersState> {
   DoneChallengeUsersBloc() : super(DoneChallengeUsersLoading());
-
   void get(String segmentId, String userId) async {
     try {
+      emit(DoneChallengeUsersLoading());
       final List<Challenge> challengesList = await ChallengeRepository.getBySegmentId(segmentId);
 
       List<UserSubmodel> uniqueUserList = [];

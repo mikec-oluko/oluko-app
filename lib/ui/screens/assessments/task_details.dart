@@ -27,7 +27,8 @@ import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 
 class TaskDetails extends StatefulWidget {
-  const TaskDetails({this.taskIndex, this.isLastTask = false, Key key}) : super(key: key);
+  const TaskDetails({this.taskIndex, this.isLastTask = false, Key key})
+      : super(key: key);
 
   final int taskIndex;
   final bool isLastTask;
@@ -56,12 +57,16 @@ class _TaskDetailsState extends State<TaskDetails> {
       if (authState is AuthSuccess) {
         return BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(
           builder: (context, assessmentAssignmentState) {
-            return BlocBuilder<TaskBloc, TaskState>(builder: (context, taskState) {
-              if (assessmentAssignmentState is AssessmentAssignmentSuccess && taskState is TaskSuccess) {
-                _assessmentAssignment = assessmentAssignmentState.assessmentAssignment;
+            return BlocBuilder<TaskBloc, TaskState>(
+                builder: (context, taskState) {
+              if (assessmentAssignmentState is AssessmentAssignmentSuccess &&
+                  taskState is TaskSuccess) {
+                _assessmentAssignment =
+                    assessmentAssignmentState.assessmentAssignment;
                 _tasks = taskState.values;
                 _task = _tasks[widget.taskIndex];
-                BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionOfTask(_assessmentAssignment, _task);
+                BlocProvider.of<TaskSubmissionBloc>(context)
+                    .getTaskSubmissionOfTask(_assessmentAssignment, _task);
                 return form();
               } else {
                 return const SizedBox();
@@ -79,14 +84,23 @@ class _TaskDetailsState extends State<TaskDetails> {
     return Form(
         key: _formKey,
         child: Scaffold(
-            appBar: OlukoAppBar(title: _task.name, actions: [SizedBox(width: 30)]),
+            appBar: OlukoAppBar(
+                title: _task.name,
+                actions: [SizedBox(width: 30)],
+                onPressed: () {
+                  if (_controller != null) {
+                    _controller.pause();
+                  }
+                  Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos],arguments: {'isFirstTime': false});
+                }),
             body: Container(
                 color: Colors.black,
                 child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15),
                     child: Container(
                       width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height - kToolbarHeight,
+                      height:
+                          MediaQuery.of(context).size.height - kToolbarHeight,
                       child: _content(),
                     )))));
   }
@@ -105,59 +119,68 @@ class _TaskDetailsState extends State<TaskDetails> {
 
     return ConstrainedBox(
         constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).orientation == Orientation.portrait
-                ? ScreenUtils.height(context) / 4
-                : ScreenUtils.height(context) / 1.5,
-            minHeight: MediaQuery.of(context).orientation == Orientation.portrait
-                ? ScreenUtils.height(context) / 4
-                : ScreenUtils.height(context) / 1.5),
+            maxHeight:
+                MediaQuery.of(context).orientation == Orientation.portrait
+                    ? ScreenUtils.height(context) / 4
+                    : ScreenUtils.height(context) / 1.5,
+            minHeight:
+                MediaQuery.of(context).orientation == Orientation.portrait
+                    ? ScreenUtils.height(context) / 4
+                    : ScreenUtils.height(context) / 1.5),
         child: Container(height: 400, child: Stack(children: widgets)));
   }
 
   Widget formSection([TaskSubmission taskSubmission]) {
     return Container(
         //height: MediaQuery.of(context).size.height / 1.75,
-        child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-      Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              OlukoLocalizations.get(context, 'makeThisPublic'),
-              style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold),
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  OlukoLocalizations.get(context, 'makeThisPublic'),
+                  style: OlukoFonts.olukoSuperBigFont(
+                      customColor: OlukoColors.white,
+                      custoFontWeight: FontWeight.bold),
+                ),
+                Switch(
+                  value: _makePublic,
+                  onChanged: (bool value) => setState(() {
+                    _makePublic = value;
+                    if (taskSubmission != null) {
+                      BlocProvider.of<TaskSubmissionBloc>(context)
+                          .updateTaskSubmissionPrivacity(
+                              _assessmentAssignment, taskSubmission.id, value);
+                    }
+                  }),
+                  trackColor: MaterialStateProperty.all(Colors.grey),
+                  activeColor: OlukoColors.primary,
+                )
+              ],
             ),
-            Switch(
-              value: _makePublic,
-              onChanged: (bool value) => setState(() {
-                _makePublic = value;
-                if (taskSubmission != null) {
-                  BlocProvider.of<TaskSubmissionBloc>(context)
-                      .updateTaskSubmissionPrivacity(_assessmentAssignment, taskSubmission.id, value);
-                }
-              }),
-              trackColor: MaterialStateProperty.all(Colors.grey),
-              activeColor: OlukoColors.primary,
-            )
-          ],
-        ),
-      ),
-      Text(
-        _task.description,
-        style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
-      ),
-      BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(builder: (context, state) {
-        if (state is GetSuccess && state.taskSubmission != null) {
-          return recordedVideos(state.taskSubmission);
-        } else {
-          return const SizedBox();
-        }
-      })
-    ]));
+          ),
+          Text(
+            _task.description,
+            style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
+          ),
+          BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
+              builder: (context, state) {
+            if (state is GetSuccess && state.taskSubmission != null) {
+              return recordedVideos(state.taskSubmission);
+            } else {
+              return const SizedBox();
+            }
+          })
+        ]));
   }
 
   Widget _content() {
-    return BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(builder: (context, state) {
+    return BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
+        builder: (context, state) {
       if (state is GetSuccess && state.taskSubmission != null) {
         _makePublic = state.taskSubmission.isPublic;
         return ListView(
@@ -178,7 +201,8 @@ class _TaskDetailsState extends State<TaskDetails> {
                 formSection(),
               ],
             ),
-            Positioned(bottom: 25, left: 0, right: 0, child: startRecordingButton()),
+            Positioned(
+                bottom: 25, left: 0, right: 0, child: startRecordingButton()),
           ],
         );
       }
@@ -195,11 +219,15 @@ class _TaskDetailsState extends State<TaskDetails> {
               _controller.pause();
             }
             Navigator.pop(context);
-            return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
-              'taskIndex': widget.taskIndex,
-              'isPublic': _makePublic,
-              'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
-            });
+            return Navigator.pushNamed(
+                context, routeLabels[RouteEnum.selfRecording],
+                arguments: {
+                  'taskIndex': widget.taskIndex,
+                  'isPublic': _makePublic,
+                  'isLastTask': _tasks.length - widget.taskIndex == 1
+                      ? true
+                      : widget.isLastTask
+                });
           },
         ),
         const SizedBox(width: 15),
@@ -207,17 +235,22 @@ class _TaskDetailsState extends State<TaskDetails> {
             listener: (context, state) {
               if (state is Success && state.pickedFile != null) {
                 Navigator.pop(context);
-                Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecordingPreview], arguments: {
-                  'taskIndex': widget.taskIndex,
-                  'filePath': state.pickedFile.path,
-                  'isPublic': _makePublic,
-                  'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
-                });
+                Navigator.pushNamed(
+                    context, routeLabels[RouteEnum.selfRecordingPreview],
+                    arguments: {
+                      'taskIndex': widget.taskIndex,
+                      'filePath': state.pickedFile.path,
+                      'isPublic': _makePublic,
+                      'isLastTask': _tasks.length - widget.taskIndex == 1
+                          ? true
+                          : widget.isLastTask
+                    });
               }
             },
             child: GestureDetector(
               onTap: () {
-                BlocProvider.of<GalleryVideoBloc>(context).getVideoFromGallery();
+                BlocProvider.of<GalleryVideoBloc>(context)
+                    .getVideoFromGallery();
               },
               child: const Icon(
                 Icons.file_upload,
@@ -238,7 +271,9 @@ class _TaskDetailsState extends State<TaskDetails> {
               thinPadding: true,
               title: OlukoLocalizations.get(context, 'recordAgain'),
               onPressed: () {
-                DialogUtils.getDialog(context, _confirmDialogContent(taskSubmission), showExitButton: false);
+                DialogUtils.getDialog(
+                    context, _confirmDialogContent(taskSubmission),
+                    showExitButton: false);
               },
             ),
             const SizedBox(width: 20),
@@ -246,24 +281,34 @@ class _TaskDetailsState extends State<TaskDetails> {
               if (authState is AuthSuccess) {
                 _user = authState.user;
                 return OlukoPrimaryButton(
-                  isDisabled: OlukoPermissions.isAssessmentTaskDisabled(_user, widget.taskIndex + 1),
+                  isDisabled: OlukoPermissions.isAssessmentTaskDisabled(
+                      _user, widget.taskIndex + 1),
                   title: OlukoLocalizations.get(context, 'next'),
                   onPressed: () {
-                    if (OlukoPermissions.isAssessmentTaskDisabled(_user, widget.taskIndex + 1)) {
+                    if (OlukoPermissions.isAssessmentTaskDisabled(
+                        _user, widget.taskIndex + 1)) {
                       AppMessages.showSnackbar(
-                          context, OlukoLocalizations.get(context, 'yourCurrentPlanDoesntIncludeAssessment'));
+                          context,
+                          OlukoLocalizations.get(context,
+                              'yourCurrentPlanDoesntIncludeAssessment'));
                     } else {
                       if (_controller != null) {
                         _controller.pause();
                       }
                       if (widget.taskIndex < _tasks.length - 1) {
                         Navigator.pop(context);
-                        Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {
-                          'taskIndex': widget.taskIndex + 1,
-                          'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
-                        });
+                        Navigator.pushNamed(
+                            context, routeLabels[RouteEnum.taskDetails],
+                            arguments: {
+                              'taskIndex': widget.taskIndex + 1,
+                              'isLastTask':
+                                  _tasks.length - widget.taskIndex == 1
+                                      ? true
+                                      : widget.isLastTask
+                            });
                       } else {
-                        Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos],
+                        Navigator.pushNamed(
+                            context, routeLabels[RouteEnum.assessmentVideos],
                             arguments: {'isFirstTime': false});
                       }
                     }
@@ -284,7 +329,9 @@ class _TaskDetailsState extends State<TaskDetails> {
           child: Column(children: [
             Padding(
                 padding: const EdgeInsets.only(bottom: 15.0),
-                child: TitleBody(OlukoLocalizations.get(context, 'recordAgainQuestion'), bold: true)),
+                child: TitleBody(
+                    OlukoLocalizations.get(context, 'recordAgainQuestion'),
+                    bold: true)),
             Text(OlukoLocalizations.get(context, 'recordAgainWarning'),
                 textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont()),
             Padding(
@@ -306,10 +353,15 @@ class _TaskDetailsState extends State<TaskDetails> {
                         }
                         Navigator.pop(context);
                         Navigator.pop(context);
-                        return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
-                          'taskIndex': widget.taskIndex,
-                          'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
-                        });
+                        return Navigator.pushNamed(
+                            context, routeLabels[RouteEnum.selfRecording],
+                            arguments: {
+                              'taskIndex': widget.taskIndex,
+                              'isLastTask':
+                                  _tasks.length - widget.taskIndex == 1
+                                      ? true
+                                      : widget.isLastTask
+                            });
                       },
                     ),
                   ],
@@ -330,14 +382,20 @@ class _TaskDetailsState extends State<TaskDetails> {
             )),
       ),
       GestureDetector(
-        onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.taskSubmissionVideo],
-            arguments: {'task': _task, 'videoUrl': taskSubmission.video.url}),
+        onTap: () {
+          if (_controller != null) {
+            _controller.pause();
+          }
+          Navigator.pushNamed(context, routeLabels[RouteEnum.taskSubmissionVideo],arguments: {'task': _task, 'videoUrl': taskSubmission.video.url});
+        },
         child: Align(
           alignment: Alignment.centerLeft,
           child: Container(
             height: 150,
             child: ListView(scrollDirection: Axis.horizontal, children: [
-              taskResponse(TimeConverter.durationToString(Duration(milliseconds: taskSubmission.video.duration)),
+              taskResponse(
+                  TimeConverter.durationToString(
+                      Duration(milliseconds: taskSubmission.video.duration)),
                   taskSubmission.video.thumbUrl),
             ]),
           ),
@@ -352,7 +410,10 @@ class _TaskDetailsState extends State<TaskDetails> {
       child: ClipRRect(
         borderRadius: const BorderRadius.all(Radius.circular(20)),
         child: Stack(alignment: AlignmentDirectional.center, children: [
-          if (thumbnail == null) const Icon(Icons.no_photography) else Image.network(thumbnail),
+          if (thumbnail == null)
+            const Icon(Icons.no_photography)
+          else
+            Image.network(thumbnail),
           Align(
               alignment: Alignment.center,
               child: Image.asset(
