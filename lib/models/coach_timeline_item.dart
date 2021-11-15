@@ -10,6 +10,7 @@ import 'submodels/course_timeline_submodel.dart';
 class CoachTimelineItem extends Base with EquatableMixin {
   String coachId;
   DocumentReference coachReference;
+  DocumentReference contentReference;
   String contentDescription;
   String contentName;
   String contentThumbnail;
@@ -23,6 +24,7 @@ class CoachTimelineItem extends Base with EquatableMixin {
   CoachTimelineItem(
       {this.coachId,
       this.coachReference,
+      this.contentReference,
       this.contentDescription,
       this.contentName,
       this.contentThumbnail,
@@ -52,13 +54,12 @@ class CoachTimelineItem extends Base with EquatableMixin {
     CoachTimelineItem coachTimelineItem = CoachTimelineItem(
       coachId: json['coach_id'].toString(),
       coachReference: json['coach_reference'] as DocumentReference,
+      contentReference: json['content_reference'] as DocumentReference,
       contentDescription: json['content_description'].toString(),
       contentName: json['content_name'] != null ? json['content_name'].toString() : null,
       contentThumbnail: json['content_thumbnail'] != null ? json['content_thumbnail'].toString() : null,
       contentType: json['content_type'] as num,
-      course: json['course'] == null
-          ? CourseTimelineSubmodel()
-          : CourseTimelineSubmodel.fromJson(json['course'] as Map<String, dynamic>),
+      course: json['course'] == null ? CourseTimelineSubmodel() : CourseTimelineSubmodel.fromJson(json['course'] as Map<String, dynamic>),
     );
     coachTimelineItem.setBase(json);
     return coachTimelineItem;
@@ -68,6 +69,7 @@ class CoachTimelineItem extends Base with EquatableMixin {
     Map<String, dynamic> coachTimelineItemJson = {
       'coach_id': coachId,
       'coach_reference': coachReference,
+      'content_reference': contentReference,
       'content_description': contentDescription,
       'content_name': contentName,
       'content_thumbnail': contentThumbnail,
@@ -83,6 +85,7 @@ class CoachTimelineItem extends Base with EquatableMixin {
   List<Object> get props => [
         coachId,
         coachReference,
+        contentReference,
         contentDescription,
         contentName,
         contentThumbnail,

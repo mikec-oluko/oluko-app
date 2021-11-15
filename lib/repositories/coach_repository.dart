@@ -93,8 +93,8 @@ class CoachRepository {
           .doc(segmentSubmittedToUpdate.id)
           .set(segmentSubmittedToUpdate.toJson());
 
-      currentSentVideosContent.forEach(
-          (sentVideo) => sentVideo.id == segmentSubmittedToUpdate.id ? sentVideo = segmentSubmittedToUpdate : null);
+      currentSentVideosContent
+          .forEach((sentVideo) => sentVideo.id == segmentSubmittedToUpdate.id ? sentVideo = segmentSubmittedToUpdate : null);
 
       return currentSentVideosContent;
     } on Exception catch (e, stackTrace) {
@@ -106,8 +106,7 @@ class CoachRepository {
     }
   }
 
-  Future<List<Annotation>> setAnnotationAsFavorite(
-      Annotation coachAnnotation, List<Annotation> actualMentoredVideosContent) async {
+  Future<List<Annotation>> setAnnotationAsFavorite(Annotation coachAnnotation, List<Annotation> actualMentoredVideosContent) async {
     try {
       coachAnnotation.favorite = !coachAnnotation.favorite;
       await FirebaseFirestore.instance
@@ -168,8 +167,7 @@ class CoachRepository {
     return timelineItemsStream;
   }
 
-  Future<void> updateMentoredVideoNotificationStatus(
-      String coachId, String annotationId, bool notificationValue) async {
+  Future<void> updateMentoredVideoNotificationStatus(String coachId, String annotationId, bool notificationValue) async {
     DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
@@ -205,6 +203,33 @@ class CoachRepository {
     }
   }
 
+  Future<List<CoachTimelineItem>> getTimelineItemsReferenceContent(List<CoachTimelineItem> timelineItemList) async {
+    for (CoachTimelineItem timelineItem in timelineItemList) {
+      final DocumentSnapshot ds = await timelineItem.contentReference.get();
+
+      switch (TimelineContentOption.getTimelineOption(timelineItem.contentType as int)) {
+        case TimelineInteractionType.course:
+          Course courseForItem = Course.fromJson(ds.data() as Map<String, dynamic>);
+          timelineItem.courseForNavigation = courseForItem;
+          break;
+        case TimelineInteractionType.classes:
+          break;
+        case TimelineInteractionType.segment:
+          break;
+        case TimelineInteractionType.movement:
+          Movement movementForItem = Movement.fromJson(ds.data() as Map<String, dynamic>);
+          timelineItem.movementForNavigation = movementForItem;
+          break;
+        case TimelineInteractionType.mentoredVideo:
+          break;
+        case TimelineInteractionType.sentVideo:
+          break;
+        default:
+      }
+    }
+    return timelineItemList;
+  }
+
   Future<List<Recommendation>> getCoachRecommendationsForUser(String userId, String coachId) async {
     try {
       QuerySnapshot docRef = await FirebaseFirestore.instance
@@ -238,8 +263,7 @@ class CoachRepository {
     reference.update({'notification_viewed': notificationValue});
   }
 
-  Future<List<CoachRecommendationDefault>> getRecommendationsInfo(
-      List<Recommendation> coachRecommendationContent) async {
+  Future<List<CoachRecommendationDefault>> getRecommendationsInfo(List<Recommendation> coachRecommendationContent) async {
     List<CoachRecommendationDefault> coachRecommendations = [];
     for (Recommendation recommendation in coachRecommendationContent) {
       DocumentSnapshot ds = await recommendation.entityReference.get();

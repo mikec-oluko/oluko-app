@@ -22,8 +22,7 @@ class CoachTimelineFunctions {
       !listOfCourseId.contains(timelineItem.course.id) ? listOfCourseId.add(timelineItem.course.id) : null;
     });
     listOfCourseId.forEach((courseId) {
-      final repeatedItemsQuery =
-          timelineItemsContent.where((timelineItem) => timelineItem.course.id == courseId).toList();
+      final repeatedItemsQuery = timelineItemsContent.where((timelineItem) => timelineItem.course.id == courseId).toList();
       String itemId;
       String itemName;
       if (repeatedItemsQuery.length > 1) {
@@ -34,8 +33,7 @@ class CoachTimelineFunctions {
           contentForItem.add(element);
         });
         contentForItem.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
-        newTimelineTabItem =
-            CoachTimelineGroup(courseId: itemId, courseName: itemName, timelineElements: contentForItem);
+        newTimelineTabItem = CoachTimelineGroup(courseId: itemId, courseName: itemName, timelineElements: contentForItem);
       } else {
         newTimelineTabItem = CoachTimelineGroup(
             courseId: repeatedItemsQuery.first.course.id,
@@ -109,8 +107,7 @@ class CoachTimelineFunctions {
     return newItem;
   }
 
-  static List<CoachNotificationContent> mentoredVideoForInteraction(
-      {List<Annotation> annotationContent, BuildContext context}) {
+  static List<CoachNotificationContent> mentoredVideoForInteraction({List<Annotation> annotationContent, BuildContext context}) {
     List<CoachNotificationContent> mentoredVideosAsNotification = [];
     if (annotationContent != null) {
       annotationContent.forEach((annotation) {
@@ -134,8 +131,7 @@ class CoachTimelineFunctions {
     return mentoredVideosAsNotification;
   }
 
-  static List<CoachNotificationContent> requiredSegmentsForInteraction(
-      {List<CoachSegmentContent> requiredSegments, BuildContext context}) {
+  static List<CoachNotificationContent> requiredSegmentsForInteraction({List<CoachSegmentContent> requiredSegments, BuildContext context}) {
     List<CoachNotificationContent> requiredSegmentAsNotification = [];
 
     if (requiredSegments != null) {
@@ -181,7 +177,10 @@ class CoachTimelineFunctions {
             courseContent: recommendation.courseContent ?? recommendation.courseContent,
           );
 
-          if (recommendationsAsNotification.where((element) => element.contentTitle == newItem.contentTitle).isEmpty) {
+          if (recommendationsAsNotification
+              .where((element) =>
+                  element.contentTitle == newItem.contentTitle && element.coachRecommendation.id == newItem.coachRecommendation.id)
+              .isEmpty) {
             recommendationsAsNotification.add(newItem);
           }
         }

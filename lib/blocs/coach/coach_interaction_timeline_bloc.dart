@@ -34,8 +34,10 @@ class CoachTimelineItemsBloc extends Cubit<CoachTimelineItemsState> {
     subscription.cancel();
   }
 
+  final CoachRepository _coachRepository = CoachRepository();
+
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>> getStream(String userId) {
-    subscription ??= CoachRepository().getTimelineItemsSubscription(userId).listen((snapshot) async {
+    subscription ??= _coachRepository.getTimelineItemsSubscription(userId).listen((snapshot) async {
       List<CoachTimelineItem> _timelineItems = [];
       List<CoachTimelineItem> _timelineItemsUpdated = [];
       List<CoachTimelineItem> _timelineItemsUpdatedContent = [];
@@ -55,9 +57,7 @@ class CoachTimelineItemsBloc extends Cubit<CoachTimelineItemsState> {
 
       if (_timelineItemsUpdated.length >= _timelineItems.length) {
         _timelineItemsUpdated.forEach((updatedTimelineItem) {
-          if (_timelineItems
-              .where((timelineItem) => updatedTimelineItem.contentName == timelineItem.contentName)
-              .isEmpty) {
+          if (_timelineItems.where((timelineItem) => updatedTimelineItem.contentName == timelineItem.contentName).isEmpty) {
             _timelineItems.add(updatedTimelineItem);
           }
         });
@@ -66,8 +66,9 @@ class CoachTimelineItemsBloc extends Cubit<CoachTimelineItemsState> {
       }
 
       _timelineItemsUpdatedContent.isNotEmpty
-          ? emit(CoachTimelineItemsUpdate(timelineItems: _timelineItemsUpdatedContent))
-          : emit(CoachTimelineItemsSuccess(timelineItems: _timelineItems));
+          ? emit(CoachTimelineItemsUpdate(
+              timelineItems: await _coachRepository.getTimelineItemsReferenceContent(_timelineItemsUpdatedContent)))
+          : emit(CoachTimelineItemsSuccess(timelineItems: await _coachRepository.getTimelineItemsReferenceContent(_timelineItems)));
     });
     return subscription;
   }
