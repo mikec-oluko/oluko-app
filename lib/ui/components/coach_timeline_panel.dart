@@ -68,20 +68,30 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
                           ))
                       .toList()),
             ),
-            body: _timelineContentItems.isNotEmpty
-                ? TabBarView(
-                    controller: _tabController,
-                    children: passContentToWidgets()
-                        .map((e) => Container(
-                              color: OlukoColors.black,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: TabContentList(contentToDisplay: e),
-                              ),
-                            ))
-                        .toList(),
-                  )
-                : Container(color: OlukoColors.black, child: OlukoCircularProgressIndicator()));
+            body: _timelineContentItems == null
+                ? Container(color: OlukoColors.black, child: OlukoCircularProgressIndicator())
+                : _timelineContentItems.isNotEmpty
+                    ? TabBarView(
+                        controller: _tabController,
+                        children: passContentToWidgets()
+                            .map((e) => Container(
+                                  color: OlukoColors.black,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: TabContentList(contentToDisplay: e),
+                                  ),
+                                ))
+                            .toList(),
+                      )
+                    : Container(
+                        color: OlukoColors.black,
+                        child: Center(
+                          child: Text(
+                            OlukoLocalizations.get(context, 'noContent'),
+                            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
+                          ),
+                        ),
+                      ));
       },
     );
   }

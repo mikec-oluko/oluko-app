@@ -90,13 +90,16 @@ class _CoachPageState extends State<CoachPage> {
         : (widget.coachAssignment.video?.url != null ? true : widget.coachAssignment.introductionVideo != null)) {
       setState(() {
         _introductionVideo = Annotation(
-            createdAt: widget.coachAssignment.createdAt,
-            id: _defaultIntroductionVideoId,
-            favorite: false,
-            video: Video(
-                url: widget.coachAssignment.videoHLS ?? (widget.coachAssignment.video.url ?? widget.coachAssignment.introductionVideo),
-                aspectRatio: 0.60),
-            videoHLS: widget.coachAssignment.videoHLS ?? (widget.coachAssignment.video.url ?? widget.coachAssignment.introductionVideo));
+          createdAt: widget.coachAssignment.createdAt,
+          id: _defaultIntroductionVideoId,
+          favorite: false,
+          video: Video(
+              url: widget.coachAssignment.videoHLS ??
+                  (widget.coachAssignment.video != null ? widget.coachAssignment.video.url : widget.coachAssignment.introductionVideo),
+              aspectRatio: 0.60),
+          videoHLS: widget.coachAssignment.videoHLS ??
+              (widget.coachAssignment.video != null ? widget.coachAssignment.video.url : widget.coachAssignment.introductionVideo),
+        );
       });
     }
     super.initState();
@@ -205,15 +208,15 @@ class _CoachPageState extends State<CoachPage> {
   }
 
   void requestCurrentUserData(BuildContext context) {
-    BlocProvider.of<CoachTimelineItemsBloc>(context).getStream(_currentAuthUser.id);
-    BlocProvider.of<UserStatisticsBloc>(context).getUserStatistics(_currentAuthUser.id);
-    BlocProvider.of<CourseEnrollmentListBloc>(context).getCourseEnrollmentsByUserId(_currentAuthUser.id);
+    BlocProvider.of<AssessmentBloc>(context).getById('emnsmBgZ13UBRqTS26Qd');
+    BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionByUserId(_currentAuthUser.id);
     BlocProvider.of<CoachRequestBloc>(context).getStream(_currentAuthUser.id, widget.coachAssignment.coachId);
     BlocProvider.of<CoachRecommendationsBloc>(context).getStream(_currentAuthUser.id, widget.coachAssignment.coachId);
     BlocProvider.of<CoachMentoredVideosBloc>(context).getStream(_currentAuthUser.id, widget.coachAssignment.coachId);
+    BlocProvider.of<CoachTimelineItemsBloc>(context).getStream(_currentAuthUser.id);
+    BlocProvider.of<CourseEnrollmentListBloc>(context).getCourseEnrollmentsByUserId(_currentAuthUser.id);
+    BlocProvider.of<UserStatisticsBloc>(context).getUserStatistics(_currentAuthUser.id);
     BlocProvider.of<CoachSentVideosBloc>(context).getSentVideosByUserId(_currentAuthUser.id);
-    BlocProvider.of<AssessmentBloc>(context).getById('emnsmBgZ13UBRqTS26Qd');
-    BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionByUserId(_currentAuthUser.id);
   }
 
   Widget coachViewPageContent(BuildContext context) {
@@ -398,8 +401,8 @@ class _CoachPageState extends State<CoachPage> {
   }
 
   void timelineContentBuilding(BuildContext context) {
-    // buildSentVideosForTimeline();
-    // buildAnnotationsForTimeline();
+    buildSentVideosForTimeline();
+    buildAnnotationsForTimeline();
 
     _coachRecommendations.forEach((recommendation) =>
         _coachRecommendationTimelineContent.add(CoachTimelineFunctions.createAnCoachTimelineItem(recommendationItem: recommendation)));
