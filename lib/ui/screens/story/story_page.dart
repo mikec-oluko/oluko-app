@@ -1,17 +1,24 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
 import 'package:oluko_app/blocs/story_bloc.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/dto/story_dto.dart';
 import 'package:oluko_app/models/dto/user_stories.dart';
+import 'package:oluko_app/utils/app_messages.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:video_player/video_player.dart';
 
 class StoryPage extends StatefulWidget {
-  UserStories userStories;
+  List<Story> stories;
   String userId;
-  StoryPage({@required this.userStories, @required this.userId});
+  String userStoriesId;
+  String name;
+  String avatarThumbnail;
+  StoryPage({@required this.stories, @required this.userId, @required this.userStoriesId, @required this.name, @required this.avatarThumbnail});
   @override
   _StoryPageState createState() => _StoryPageState();
 }
@@ -21,7 +28,6 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
   AnimationController _animController;
   VideoPlayerController _videoController;
   Future<void> _initializeVideoPlayerFuture;
-  bool _updateState = false;
   int _currentIndex = 0;
 
   void initState() {
@@ -29,7 +35,7 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
     _pageController = PageController();
     _animController = AnimationController(vsync: this);
     findFirstStory();
-    final Story firstStory = widget.userStories.stories[_currentIndex];
+    final Story firstStory = widget.stories[_currentIndex];
     _loadStory(story: firstStory, animateToPage: false);
 
     _animController.addStatusListener((status) {
@@ -38,12 +44,11 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
         _animController.reset();
         setStoryAsSeen();
         setState(() {
-          if (_currentIndex + 1 < widget.userStories.stories.length) {
+          if (_currentIndex + 1 < widget.stories.length) {
             _currentIndex += 1;
-            _loadStory(story: widget.userStories.stories[_currentIndex]);
+            _loadStory(story: widget.stories[_currentIndex]);
           } else {
             Navigator.of(context).pop();
-            if (_updateState) BlocProvider.of<StoryListBloc>(context).get(widget.userId);
           }
         });
       }
@@ -51,7 +56,7 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
   }
 
   void findFirstStory() {
-    final firstStoryIndex = widget.userStories.stories.indexWhere((element) => !element.seen);
+    final firstStoryIndex = widget.stories.indexWhere((element) => !element.seen);
     if (firstStoryIndex != -1) {
       _currentIndex = firstStoryIndex;
     } else {
@@ -70,7 +75,7 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
   @override
   Widget build(BuildContext context) {
     var loading = false;
-    final Story story = widget.userStories.stories[_currentIndex];
+    final Story story = widget.stories[_currentIndex];
     return Scaffold(
       backgroundColor: Colors.black,
       body: GestureDetector(
@@ -80,9 +85,9 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
             PageView.builder(
               controller: _pageController,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: widget.userStories.stories.length,
+              itemCount: widget.stories.length,
               itemBuilder: (context, i) {
-                final Story story = widget.userStories.stories[i];
+                final Story story = widget.stories[i];
                 switch (story.content_type) {
                   case 'image':
                     var img = Image.network(
@@ -119,12 +124,29 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
                         ),
                         const SizedBox(height: 30),
                         Text(
-                          widget.userStories.stories[_currentIndex].description,
+                          widget.stories[_currentIndex].description,
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 18.0,
                             fontWeight: FontWeight.w600,
                           ),
+                        ),
+                        const SizedBox(height: 20),
+                        Center(
+                          child: GestureDetector(
+                              onTap: () {
+                                BlocProvider.of<HiFiveSendBloc>(context).set(context, widget.userId, widget.userStoriesId);
+                                AppMessages().showHiFiveSentDialog(context);
+                              },
+                              child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
+                                bloc: BlocProvider.of(context),
+                                listener: (hiFiveSendContext, hiFiveSendState) {
+                                  if (hiFiveSendState is HiFiveSendSuccess) {
+                                    AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'hiFiveSent'));
+                                  }
+                                },
+                                child: SizedBox(width: 80, height: 80, child: Image.asset('assets/profile/hiFive.png')),
+                              )),
                         ),
                       ]),
                     );
@@ -156,7 +178,7 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
               child: Column(
                 children: <Widget>[
                   Row(
-                      children: widget.userStories.stories
+                      children: widget.stories
                           .asMap()
                           .map((i, e) {
                             return MapEntry(
@@ -176,11 +198,10 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
                       vertical: 10.0,
                     ),
                     child: UserInfo(
-                      avatar_thumbnail: widget.userStories.avatar_thumbnail,
-                      name: widget.userStories.name,
-                      updateState: _updateState,
+                      avatarThumbnail: widget.avatarThumbnail,
+                      name: widget.name,
                       userId: widget.userId,
-                      hour: '1hr',
+                      hour: widget.stories[_currentIndex].createdAt?.toDate(),
                     ),
                   ),
                 ],
@@ -199,18 +220,17 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
       setState(() {
         if (_currentIndex - 1 >= 0) {
           _currentIndex -= 1;
-          _loadStory(story: widget.userStories.stories[_currentIndex]);
+          _loadStory(story: widget.stories[_currentIndex]);
         }
       });
     } else if (dx > 2 * screenWidth / 3) {
       setState(() {
         setStoryAsSeen();
-        if (_currentIndex + 1 < widget.userStories.stories.length) {
+        if (_currentIndex + 1 < widget.stories.length) {
           _currentIndex += 1;
-          _loadStory(story: widget.userStories.stories[_currentIndex]);
+          _loadStory(story: widget.stories[_currentIndex]);
         } else {
           Navigator.of(context).pop();
-          if (_updateState) BlocProvider.of<StoryListBloc>(context).get(widget.userId);
         }
       });
     } else {
@@ -227,9 +247,9 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
   }
 
   void setStoryAsSeen() {
-    if (!widget.userStories.stories[_currentIndex].seen) {
-      BlocProvider.of<StoryBloc>(context).setStoryAsSeen(widget.userId, widget.userStories.id, widget.userStories.stories[_currentIndex].id);
-      _updateState = true;
+    if (!widget.stories[_currentIndex].seen) {
+      widget.stories[_currentIndex].seen = true;
+      BlocProvider.of<StoryBloc>(context).setStoryAsSeen(widget.userId, widget.userStoriesId, widget.stories[_currentIndex].id);
     }
   }
 
@@ -327,30 +347,34 @@ class AnimatedBar extends StatelessWidget {
 }
 
 class UserInfo extends StatelessWidget {
-  final String avatar_thumbnail;
+  final String avatarThumbnail;
   final String name;
   final String userId;
-  final bool updateState;
-  final String hour;
+  final DateTime hour;
 
   const UserInfo({
     Key key,
-    @required this.avatar_thumbnail,
+    @required this.avatarThumbnail,
     @required this.name,
     @required this.userId,
-    @required this.updateState,
     @required this.hour,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    String _hoursSinceCreation;
+    if (hour != null) {
+      _hoursSinceCreation = hour?.difference(DateTime.now())?.inHours?.toString();
+    } else {
+      _hoursSinceCreation = '1';
+    }
     return Row(
       children: <Widget>[
         CircleAvatar(
           radius: 22.0,
           backgroundColor: Colors.grey[300],
           backgroundImage: Image.network(
-            avatar_thumbnail,
+            avatarThumbnail,
           ).image,
         ),
         const SizedBox(width: 16.0),
@@ -367,7 +391,7 @@ class UserInfo extends StatelessWidget {
               ),
               const SizedBox(width: 10.0),
               Text(
-                hour,
+                '${_hoursSinceCreation}h',
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 17.0,
@@ -385,7 +409,6 @@ class UserInfo extends StatelessWidget {
           ),
           onPressed: () {
             Navigator.of(context).pop();
-            if (updateState) BlocProvider.of<StoryListBloc>(context).get(userId);
           },
         ),
       ],

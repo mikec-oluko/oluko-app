@@ -6,6 +6,7 @@ import 'package:oluko_app/models/enums/file_type_enum.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/challenges_card.dart';
 import 'package:oluko_app/ui/components/coach_assessment_card.dart';
 import 'package:oluko_app/ui/components/coach_tab_challenge_card.dart';
@@ -22,24 +23,28 @@ class TransformListOfItemsToWidget {
       {List<TransformationJourneyUpload> tansformationJourneyData,
       List<TaskSubmission> assessmentVideoData,
       List<Challenge> upcomingChallenges,
-      ActualProfileRoute requestedFromRoute}) {
+      ActualProfileRoute requestedFromRoute,
+      UserResponse requestedUser}) {
     List<Widget> contentForSection = [];
 
     if (tansformationJourneyData != null && (assessmentVideoData == null && upcomingChallenges == null)) {
       tansformationJourneyData.forEach((contentUploaded) {
-        contentForSection.add(getImageAndVideoCard(transformationJourneyContent: contentUploaded, routeForContent: requestedFromRoute));
+        contentForSection.add(
+            getImageAndVideoCard(transformationJourneyContent: contentUploaded, routeForContent: requestedFromRoute));
       });
     }
 
     if (assessmentVideoData != null && (tansformationJourneyData == null && upcomingChallenges == null)) {
       assessmentVideoData.forEach((assessmentVideo) {
-        contentForSection.add(getImageAndVideoCard(taskSubmissionContent: assessmentVideo, routeForContent: requestedFromRoute));
+        contentForSection
+            .add(getImageAndVideoCard(taskSubmissionContent: assessmentVideo, routeForContent: requestedFromRoute));
       });
     }
 
     if (upcomingChallenges != null && (tansformationJourneyData == null && assessmentVideoData == null)) {
       upcomingChallenges.forEach((challenge) {
-        contentForSection.add(getImageAndVideoCard(upcomingChallengesContent: challenge, routeForContent: requestedFromRoute));
+        contentForSection.add(getImageAndVideoCard(
+            upcomingChallengesContent: challenge, routeForContent: requestedFromRoute, requestedUser: requestedUser));
       });
     }
     return contentForSection.toList();
@@ -50,7 +55,8 @@ class TransformListOfItemsToWidget {
       {TransformationJourneyUpload transformationJourneyContent,
       TaskSubmission taskSubmissionContent,
       Challenge upcomingChallengesContent,
-      ActualProfileRoute routeForContent}) {
+      ActualProfileRoute routeForContent,
+      UserResponse requestedUser}) {
     Widget contentForReturn = SizedBox();
 
     if (transformationJourneyContent != null) {
@@ -80,7 +86,7 @@ class TransformListOfItemsToWidget {
     if (upcomingChallengesContent != null) {
       contentForReturn = Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5),
-        child: ChallengesCard(challenge: upcomingChallengesContent, routeToGo: "/"),
+        child: ChallengesCard(challenge: upcomingChallengesContent, routeToGo: "/", userRequested: requestedUser),
       );
     }
     return contentForReturn;
@@ -132,7 +138,8 @@ class TransformListOfItemsToWidget {
   }
 
   static Widget returnCardForAssessment(Task task, List<TaskSubmission> tasksSubmitted) {
-    return Padding(padding: const EdgeInsets.all(5.0), child: CoachAssessmentCard(task: task, assessmentVideos: tasksSubmitted));
+    return Padding(
+        padding: const EdgeInsets.all(5.0), child: CoachAssessmentCard(task: task, assessmentVideos: tasksSubmitted));
   }
 
   static List<InfoForSegments> segments(List<CourseEnrollment> courseEnrollments) {
@@ -144,7 +151,8 @@ class TransformListOfItemsToWidget {
       courseEnrollment.classes.forEach((classToCheck) {
         className = classToCheck.name;
         classImage = classToCheck.image;
-        InfoForSegments infoForSegmentElement = InfoForSegments(classImage: classImage, className: className, segments: []);
+        InfoForSegments infoForSegmentElement =
+            InfoForSegments(classImage: classImage, className: className, segments: []);
         classToCheck.segments.forEach((segment) {
           infoForSegmentElement.segments.add(segment);
         });

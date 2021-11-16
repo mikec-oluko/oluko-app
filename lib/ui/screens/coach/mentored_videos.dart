@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:oluko_app/blocs/coach/coach_mentored_videos_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/models/annotations.dart';
+import 'package:oluko_app/models/annotation.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -34,12 +34,12 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
 
   @override
   void dispose() {
-    setState(() {
+    /*setState(() {
       content = [];
       filteredContent = [];
       isFavoriteSelected = false;
       isContentFilteredByDate = false;
-    });
+    });*/
     super.dispose();
   }
 
@@ -160,11 +160,12 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
                           videoUrl = coachAnnotation.video.url;
                         }
                         Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
-                          //'videoUrl': videoUrl,
-                          'videoUrl': "https://oluko-development.s3.us-west-1.amazonaws.com/annotations/5uqbLM8I44MeGgEdtH1G/master.m3u8",
+                          'videoUrl': videoUrl,
+                          'aspectRatio': coachAnnotation.video.aspectRatio,
+                          // 'videoUrl': "https://oluko-development.s3.us-west-1.amazonaws.com/annotations/5uqbLM8I44MeGgEdtH1G/master.m3u8",
                           // 'videoUrl': "https://oluko-development.s3.us-west-1.amazonaws.com/04ZUOE5pWwPlVtBsE47q/master.m3u8",
                           // 'videoUrl': "https://oluko-development.s3.us-west-1.amazonaws.com/annotations/5uqbLM8I44MeGgEdtH1G/video.webm"
-                          'titleForView': OlukoLocalizations.get(context, 'mentoredVideos')
+                          'titleForContent': OlukoLocalizations.get(context, 'mentoredVideos')
                         });
                       },
                       child: Image.asset(
@@ -221,7 +222,7 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
   ImageProvider getImage(Annotation coachAnnotation) {
     return coachAnnotation.video.thumbUrl != null
         ? NetworkImage(coachAnnotation.video.thumbUrl)
-        : AssetImage("assets/home/mvt.png") as ImageProvider;
+        : AssetImage("assets/home/mvtthumbnail.png") as ImageProvider;
   }
 
   void contentSortedByDate() {

@@ -10,9 +10,15 @@ class StoryRepository {
   StoryRepository();
 
   static Future<Story> createStoryWithVideo(SegmentSubmission segmentSubmission) async {
-    final DocumentReference docRef =
-        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users').doc(segmentSubmission.userId).collection('stories').doc();
-    final Story story = Story(content_type: 'video', url: segmentSubmission.video.url, description: 'description', createdBy: segmentSubmission.userId);
+    final DocumentReference docRef = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('users')
+        .doc(segmentSubmission.userId)
+        .collection('stories')
+        .doc();
+    final Story story =
+        Story(content_type: 'video', url: segmentSubmission.video.url, description: 'description', createdBy: segmentSubmission.userId);
     story.createdAt = Timestamp.now();
     story.id = docRef.id;
     docRef.set(story.toJson());
@@ -20,8 +26,15 @@ class StoryRepository {
   }
 
   static Future<Story> createStoryForChallenge(EnrollmentSegment enrollmentSegment, String userId) async {
-    final DocumentReference docRef = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users').doc(userId).collection('stories').doc();
-    final Story story = Story(content_type: 'image', url: enrollmentSegment.challengeImage, description: enrollmentSegment.name, createdBy: userId);
+    final DocumentReference docRef = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('users')
+        .doc(userId)
+        .collection('stories')
+        .doc();
+    final Story story =
+        Story(content_type: 'image', url: enrollmentSegment.challengeImage, description: enrollmentSegment.name, createdBy: userId);
     story.createdAt = Timestamp.now();
     story.id = docRef.id;
     docRef.set(story.toJson());
@@ -29,12 +42,38 @@ class StoryRepository {
   }
 
   static Future<void> setStoryAsSeen(String userId, String userStoryId, String storyId) async {
-    final docRef = FirebaseDatabase.instance.reference().child('${GlobalConfiguration().getValue('projectId')}${'/users/$userId/userStories/$userStoryId/stories/$storyId'}');
+    final docRef = FirebaseDatabase.instance
+        .reference()
+        .child('${GlobalConfiguration().getValue('projectId')}${'/users/$userId/userStories/$userStoryId/stories/$storyId'}');
     docRef.update({'seen': true});
   }
 
+  Future<bool> checkForUnseenStories(String userId, String userStoryId) async {
+    final DataSnapshot snapshot = await FirebaseDatabase.instance
+        .reference()
+        .child('${GlobalConfiguration().getValue('projectId')}${'/users/$userId/userStories/$userStoryId'}')
+        .get();
+    if (snapshot.value == null) {
+      return false;
+    }
+    final Map<String, dynamic> json = Map<String, dynamic>.from(snapshot.value['stories'] as Map);
+    if (json == null) {
+      return false;
+    }
+    bool ret = false;
+    json.forEach((key, story) {
+      if (story['seen'] != null && story['seen'] is bool && story['seen'] as bool != true) {
+        ret = true;
+      }
+    });
+    return ret;
+  }
+
   Future<dynamic> getAll(String userId) async {
-    final DataSnapshot snapshot = await FirebaseDatabase.instance.reference().child('${GlobalConfiguration().getValue('projectId')}${'/users/$userId/userStories'}').get();
+    final DataSnapshot snapshot = await FirebaseDatabase.instance
+        .reference()
+        .child('${GlobalConfiguration().getValue('projectId')}${'/users/$userId/userStories'}')
+        .get();
     final List<UserStories> returnList = [];
     if (snapshot.value == null) {
       return returnList;
@@ -49,8 +88,13 @@ class StoryRepository {
     });
 
     returnList.sort((a, b) {
-      final aLastStory = a.stories[a.stories.length - 1];
-      final bLastStory = b.stories[b.stories.length - 1];
+      final aLength = a?.stories?.length;
+      final bLength = b?.stories?.length;
+      if ((aLength == null || aLength == 0) && (bLength == null || bLength == 0)) return 0;
+      if ((aLength == null || aLength == 0) && (bLength != null && bLength > 0)) return 1;
+      if ((aLength != null && aLength > 0) && (bLength == null || bLength == 0)) return -1;
+      final aLastStory = a.stories[aLength - 1];
+      final bLastStory = b.stories[bLength - 1];
       if (aLastStory.seen && !bLastStory.seen) return 1;
       if (!aLastStory.seen && bLastStory.seen) return -1;
       if (aLastStory.createdAt != null && bLastStory.createdAt != null) return aLastStory.createdAt?.compareTo(bLastStory.createdAt);
@@ -60,13 +104,45 @@ class StoryRepository {
     return returnList;
   }
 
+  Stream<Event> getSubscription(String userId) {
+    return FirebaseDatabase.instance
+        .reference()
+        .child('${GlobalConfiguration().getValue('projectId')}${'/users/$userId/userStories'}')
+        .onChildChanged;
+  }
+
   static Future<List<Story>> getByUserId(String userId) async {
-    final QuerySnapshot docRef = await FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users').doc(userId).collection('stories').get();
+    final QuerySnapshot docRef = await FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('users')
+        .doc(userId)
+        .collection('stories')
+        .get();
 
     List<Story> response = [];
     docRef.docs.forEach((doc) {
       final Map<String, dynamic> element = doc.data() as Map<String, dynamic>;
       response.add(Story.fromJson(element));
+    });
+    return response;
+  }
+
+  Future<List<Story>> getStoriesFromUser(String userId, String userStoryId) async {
+    final DataSnapshot snapshot = await FirebaseDatabase.instance
+        .reference()
+        .child('${GlobalConfiguration().getValue('projectId')}${'/users/$userId/userStories/$userStoryId'}')
+        .get();
+    if (snapshot.value == null) {
+      return [];
+    }
+    final Map<String, dynamic> json = Map<String, dynamic>.from(snapshot.value['stories'] as Map);
+    if (json == null) {
+      return [];
+    }
+    List<Story> response = [];
+    json.forEach((key, story) {
+      response.add(Story.fromJson(Map<String, dynamic>.from(story as Map)));
     });
     return response;
   }

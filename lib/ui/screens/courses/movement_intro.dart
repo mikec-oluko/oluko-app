@@ -94,6 +94,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
+    BlocProvider.of<MovementInfoBloc>(context).get(widget.movement.id);
     return Scaffold(
       appBar: OlukoImageBar(actions: [], movements: [widget.movement], onPressedMovement: (context, movement) => {}),
       backgroundColor: Colors.black,
@@ -112,9 +113,8 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
 
   Widget _viewBody() {
     return BlocBuilder<MovementInfoBloc, MovementInfoState>(builder: (context, movementInfoState) {
-      if (_movementInfoSuccess == null && !(movementInfoState is MovementInfoSuccess)) {
-        BlocProvider.of<MovementInfoBloc>(context).get(widget.movement.id);
-      }
+      // if (_movementInfoSuccess == null && !(movementInfoState is MovementInfoSuccess)) {
+      // }
       if (movementInfoState is MovementInfoSuccess) {
         if (_movementInfoSuccess == null) {
           _movementInfoSuccess = movementInfoState;
@@ -128,54 +128,50 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Row(children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: MovementUtils.movementTitle(widget.movement.name),
+                          ),
+                          SizedBox(height: 25),
+                          Column(
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: MovementUtils.movementTitle(widget.movement.name),
+                              Container(
+                                width: ScreenUtils.width(context),
+                                decoration: BoxDecoration(border: Border.symmetric(horizontal: BorderSide(color: Colors.white))),
+                                child: TabBar(
+                                  isScrollable: true,
+                                  onTap: (index) => this.setState(() {
+                                    this.setState(() {
+                                      tabController.index = index;
+                                    });
+                                  }),
+                                  controller: tabController,
+                                  indicatorSize: TabBarIndicatorSize.tab,
+                                  indicator: BoxDecoration(color: Colors.white),
+                                  tabs: _getTabs(),
+                                ),
                               ),
-                              SizedBox(height: 25),
-                              Column(
-                                children: [
-                                  Container(
-                                    width: ScreenUtils.width(context),
-                                    decoration: BoxDecoration(
-                                        border: Border.symmetric(horizontal: BorderSide(color: Colors.white))),
-                                    child: TabBar(
-                                      isScrollable: true,
-                                      onTap: (index) => this.setState(() {
-                                        this.setState(() {
-                                          tabController.index = index;
-                                        });
-                                      }),
-                                      controller: tabController,
-                                      indicatorSize: TabBarIndicatorSize.tab,
-                                      indicator: BoxDecoration(color: Colors.white),
-                                      tabs: _getTabs(),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Builder(builder: (context) {
-                                if (tabController.index == 0) {
-                                  return _firstTab(widget.movement);
-                                } else {
-                                  return _firstTab(movementInfoState.movementVariants[tabController.index - 1]);
-                                }
-                              })
                             ],
                           ),
-                        )
-                      ]),
-                    ]),
+                          Builder(builder: (context) {
+                            if (tabController.index == 0) {
+                              return _firstTab(widget.movement);
+                            } else {
+                              return _firstTab(movementInfoState.movementVariants[tabController.index - 1]);
+                            }
+                          })
+                        ],
+                      ),
+                    )
+                  ]),
+                ]),
               ),
             ],
           ),
@@ -197,8 +193,12 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
             Column(
               children: [
                 GestureDetector(
-                    onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
-                        arguments: {'course': course, 'fromCoach': false}),
+                    onTap: () {
+                      if (_videoControllers[tabController.index] != null) {
+                         _videoControllers[tabController.index].pause();
+                      }
+                      Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],arguments: {'course': course, 'fromCoach': false});
+                    },
                     child: Container(height: 100, child: Image.network(course.image)))
               ],
             ),
@@ -306,9 +306,12 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     MovementItemBubbles(
-                        onPressed: (context, movement) => Navigator.pushNamed(
-                            context, routeLabels[RouteEnum.movementIntro],
-                            arguments: {'movement': movement}),
+                        onPressed: (context, movement) {
+                          if (_videoControllers[tabController.index] != null) {
+                            _videoControllers[tabController.index].pause();
+                          }
+                          Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro],arguments: {'movement': movement});
+                        },
                         content: this._movementInfoSuccess.relatedMovements,
                         width: ScreenUtils.width(context) / 1.2),
                   ],
@@ -326,9 +329,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                   ),
                 ],
               ),
-              Column(
-                  children:
-                      this._movementInfoSuccess.relatedCourses.map((Course course) => courseRow(course)).toList()),
+              Column(children: this._movementInfoSuccess.relatedCourses.map((Course course) => courseRow(course)).toList()),
             ],
           ),
         )

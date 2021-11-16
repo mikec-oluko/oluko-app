@@ -28,6 +28,7 @@ class CoachRequestFailure extends CoachRequestState {
 }
 
 class CoachRequestBloc extends Cubit<CoachRequestState> {
+  final CoachRequestRepository _coachRequestRepository = CoachRequestRepository();
   CoachRequestBloc() : super(CoachRequestLoading());
 
   void get(String userId) async {
@@ -35,7 +36,7 @@ class CoachRequestBloc extends Cubit<CoachRequestState> {
       emit(CoachRequestLoading());
     }
     try {
-      List<CoachRequest> requests = await CoachRequestRepository().get(userId);
+      List<CoachRequest> requests = await _coachRequestRepository.get(userId);
       emit(CoachRequestSuccess(values: requests));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -51,7 +52,7 @@ class CoachRequestBloc extends Cubit<CoachRequestState> {
     emit(CoachRequestLoading());
     try {
       CoachRequest coachRequest =
-          await CoachRequestRepository().getBySegmentAndCoachId(userId, segmentId, courseEnrollmentId, coachId);
+          await _coachRequestRepository.getBySegmentAndCoachId(userId, segmentId, courseEnrollmentId, coachId);
       emit(GetCoachRequestSuccess(coachRequest: coachRequest));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -65,7 +66,21 @@ class CoachRequestBloc extends Cubit<CoachRequestState> {
 
   void resolve(CoachRequest coachRequest, String userId) async {
     try {
-      await CoachRequestRepository().resolve(coachRequest, userId);
+      await _coachRequestRepository.resolve(coachRequest, userId);
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(CoachRequestFailure(exception: exception));
+      rethrow;
+    }
+  }
+
+  void setRequestSegmentNotificationAsViewed(String coachRequestId, String userId, bool notificationValue) async {
+    try {
+      await _coachRequestRepository.updateNotificationStatus(coachRequestId, userId, notificationValue);
+      get(userId);
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

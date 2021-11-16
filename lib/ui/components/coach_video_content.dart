@@ -4,7 +4,7 @@ import 'package:oluko_app/constants/theme.dart';
 
 class CoachVideoContent extends StatefulWidget {
   const CoachVideoContent({this.videoThumbnail, this.isForGallery});
-  final String videoThumbnail;
+  final List<String> videoThumbnail;
   final bool isForGallery;
 
   @override
@@ -12,6 +12,7 @@ class CoachVideoContent extends StatefulWidget {
 }
 
 class _CoachVideoContentState extends State<CoachVideoContent> {
+  final ImageProvider defaultImage = const AssetImage('assets/home/mvtthumbnail.png');
   @override
   Widget build(BuildContext context) {
     return widget.isForGallery ? galleryContent() : carouselContent();
@@ -37,7 +38,9 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
                       decoration: BoxDecoration(
                           borderRadius: const BorderRadius.all(Radius.circular(5)),
                           image: DecorationImage(
-                            image: NetworkImage(widget.videoThumbnail),
+                            image: widget.videoThumbnail != null && widget.videoThumbnail.isNotEmpty
+                                ? NetworkImage(widget.videoThumbnail[0])
+                                : defaultImage,
                             fit: BoxFit.fill,
                           )))),
               Positioned(
@@ -48,7 +51,11 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
                       decoration: BoxDecoration(
                           borderRadius: const BorderRadius.all(Radius.circular(5)),
                           image: DecorationImage(
-                            image: NetworkImage(widget.videoThumbnail),
+                            image: widget.videoThumbnail != null && widget.videoThumbnail.isNotEmpty
+                                ? NetworkImage(widget.videoThumbnail.length > 1
+                                    ? widget.videoThumbnail[1]
+                                    : widget.videoThumbnail[0])
+                                : defaultImage,
                             fit: BoxFit.fill,
                           )))),
               Positioned(
@@ -59,7 +66,12 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
                       decoration: BoxDecoration(
                           borderRadius: const BorderRadius.all(Radius.circular(5)),
                           image: DecorationImage(
-                            image: NetworkImage(widget.videoThumbnail),
+                            image: widget.videoThumbnail != null && widget.videoThumbnail.isNotEmpty
+                                ? NetworkImage(widget.videoThumbnail.length > 2
+                                    ? widget.videoThumbnail[2]
+                                    : widget.videoThumbnail[0])
+                                : defaultImage,
+                            // image: widget.videoThumbnail != null ? NetworkImage(widget.videoThumbnail) : defaultImage,
                             fit: BoxFit.cover,
                           )))),
               Align(
@@ -95,7 +107,11 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
                       decoration: BoxDecoration(
                           borderRadius: const BorderRadius.all(Radius.circular(5)),
                           image: DecorationImage(
-                            image: NetworkImage(widget.videoThumbnail),
+                            image: widget.videoThumbnail != null && widget.videoThumbnail.isNotEmpty
+                                ? widget.videoThumbnail[0] != null
+                                    ? NetworkImage(widget.videoThumbnail[0])
+                                    : defaultImage
+                                : defaultImage,
                             fit: BoxFit.cover,
                           )))),
               Align(
@@ -109,7 +125,8 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
               ),
               Align(
                 alignment: Alignment.topLeft,
-                child: SizedBox(child: IconButton(icon: Icon(Icons.close, color: OlukoColors.white), onPressed: () {})),
+                child: SizedBox(
+                    child: IconButton(icon: const Icon(Icons.close, color: OlukoColors.white), onPressed: () {})),
               ),
             ],
           ),

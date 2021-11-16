@@ -1,6 +1,7 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -44,13 +45,6 @@ class _State extends State<AudioDialogContent> {
     audioPlayer.onAudioPositionChanged.listen((Duration p) {
       setState(() => _position = p);
     });
-
-    /* audioPlayer.onPlayerCompletion.listen((event) {
-      setState(() {
-        isPlaying = false;
-        _position = Duration.zero;
-      });
-    });*/
   }
 
   Widget audioSlider() {
@@ -92,17 +86,22 @@ class _State extends State<AudioDialogContent> {
           Center(
               child: Column(children: [
             SizedBox(height: 30),
-            Stack(
-                alignment: Alignment.center,
-                children: [StoriesItem(maxRadius: 65, imageUrl: coach.avatar), Image.asset('assets/courses/photo_ellipse.png', scale: 4)]),
+            Stack(alignment: Alignment.center, children: [
+              StoriesItem(maxRadius: 65, imageUrl: coach.avatar, bloc: StoryListBloc()),
+              Image.asset('assets/courses/photo_ellipse.png', scale: 4)
+            ]),
             SizedBox(height: 15),
             Text(coach.firstName + ' ' + coach.lastName,
-                textAlign: TextAlign.center, style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold)),
+                textAlign: TextAlign.center,
+                style: OlukoFonts.olukoSuperBigFont(
+                    custoFontWeight: FontWeight.bold)),
             SizedBox(height: 15),
             Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 50),
                 child: Text(OlukoLocalizations.get(context, 'hasMessage'),
-                    textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w300))),
+                    textAlign: TextAlign.center,
+                    style: OlukoFonts.olukoBigFont(
+                        custoFontWeight: FontWeight.w300))),
             SizedBox(height: 10),
             audioSlider(),
             SizedBox(height: 5),
@@ -112,6 +111,13 @@ class _State extends State<AudioDialogContent> {
                     audioPlayer.resume();
                     setState(() {
                       isPlaying = true;
+                    });
+                    audioPlayer.onPlayerCompletion.listen((_) {
+                      setState(() {
+                        isPlaying = false;
+                        _position = Duration.zero;
+                        audioPlayer.stop();
+                      });
                     });
                   } else {
                     audioPlayer.pause();
@@ -125,12 +131,15 @@ class _State extends State<AudioDialogContent> {
                     'assets/courses/green_circle.png',
                     scale: 4.5,
                   ),
-                  Icon(isPlaying ? Icons.pause : Icons.play_arrow, size: 32, color: OlukoColors.black)
+                  Icon(isPlaying ? Icons.pause : Icons.play_arrow,
+                      size: 32, color: OlukoColors.black)
                 ])),
           ])),
           Align(
               alignment: Alignment.topRight,
-              child: IconButton(icon: Icon(Icons.close, color: Colors.white), onPressed: () => Navigator.pop(context)))
+              child: IconButton(
+                  icon: Icon(Icons.close, color: Colors.white),
+                  onPressed: () => Navigator.pop(context)))
         ]));
   }
 }
