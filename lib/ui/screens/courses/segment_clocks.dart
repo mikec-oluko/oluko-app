@@ -745,8 +745,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
       setState(() {
         workoutType = WorkoutType.segment;
       });
-      DialogUtils.getDialog(context, _confirmDialogContent(),
-          showExitButton: true);
+      AppMessages.showSnackbar(
+          context, OlukoLocalizations.get(context, 'roundInfo'));
+      /*DialogUtils.getDialog(context, _confirmDialogContent(),
+          showExitButton: true);*/
     }
   }
 
