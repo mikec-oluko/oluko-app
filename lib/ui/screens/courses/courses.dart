@@ -250,12 +250,11 @@ class _State extends State<Courses> {
               return recommendationState is RecommendationSuccess &&
                       courseState is CourseSuccess &&
                       recommendationState.recommendations.isNotEmpty &&
-                      recommendationState.recommendationsByUsers.entries.length > 0
+                      recommendationState.recommendationsByUsers.entries.isNotEmpty
                   ? CarouselSection(
-                      title: OlukoLocalizations.get(context, 'friendsRecommended'),
+                      title: OlukoLocalizations.get(context, 'recommended'),
                       height: carouselSectionHeight + 10,
-                      children: recommendationState.recommendationsByUsers.entries
-                          .map((MapEntry<String, List<UserResponse>> courseEntry) {
+                      children: recommendationState.recommendationsByUsers.entries.map((MapEntry<String, List<UserResponse>> courseEntry) {
                         var courseList = courseState.values.where((element) => element.id == courseEntry.key).toList();
                         if (courseList.isNotEmpty) {
                           final course = courseList[0];
