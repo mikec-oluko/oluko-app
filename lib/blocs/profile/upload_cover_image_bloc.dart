@@ -9,12 +9,16 @@ abstract class ProfileCoverImageState {}
 
 class ProfileCoverImageOpen extends ProfileCoverImageState {}
 
-class ProfileCoverImageLoading extends ProfileCoverImageState {}
+class ProfileCoverImageLoading extends ProfileCoverImageState {
+  // bool lockPanel = false;
+  // ProfileCoverImageLoading({this.lockPanel = false});
+}
 
 class ProfileCoverImageDefault extends ProfileCoverImageState {}
 
 class ProfileCoverSuccess extends ProfileCoverImageState {
-  ProfileCoverSuccess();
+  // bool lockPanel = false;
+  // ProfileCoverSuccess({this.lockPanel = false});
 }
 
 class ProfileCoverImageFailure extends ProfileCoverImageState {
@@ -54,7 +58,8 @@ class ProfileCoverImageBloc extends Cubit<ProfileCoverImageState> {
       if (!await requiredCoverPermissionsEnabled(uploadedFrom)) return;
 
       emit(ProfileCoverImageFailure(exception: exception));
-      rethrow;
+      // rethrow;
+      return;
     }
   }
 

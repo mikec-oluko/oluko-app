@@ -74,10 +74,12 @@ class _UserProfilePageState extends State<UserProfilePage> {
   double _statePanelMaxHeight = 100.0;
   bool _isNewCoverImage = false;
   bool _friendsRequested = false;
+  bool canHidePanel = true;
 
   @override
   void initState() {
     setState(() {
+      canHidePanel = true;
       if (widget.userRequested == null) {
         _isCurrentUser = true;
       } else {
@@ -187,7 +189,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
             BlocProvider.of<ProfileAvatarBloc>(context).emitDefaultState();
             BlocProvider.of<ProfileCoverImageBloc>(context).emitDefaultState();
           },
-          backdropEnabled: true,
+          // backdropTapClosesPanel: false,
+          backdropEnabled: canHidePanel,
           isDraggable: false,
           margin: EdgeInsets.zero,
           header: const SizedBox(),
@@ -211,8 +214,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   }
                   if (state is ProfileCoverImageLoading) {
                     _contentForPanel = UploadingModalLoader(UploadFrom.profileCoverImage);
+                    // canHidePanel = state.lockPanel;
                   }
                   if (state is ProfileCoverSuccess) {
+                    // canHidePanel = state.lockPanel;
                     _contentForPanel = UploadingModalSuccess(goToPage: UploadFrom.profileImage, userRequested: _userProfileToDisplay);
                   }
                   if (state is ProfileCoverImageFailure) {
@@ -238,6 +243,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     _panelController.isPanelOpen ? _panelController.close() : null;
                   }
                   if (state is ProfileAvatarLoading) {
+                    // canHidePanel = state.lockPanel;
                     _contentForPanel = UploadingModalLoader(UploadFrom.profileImage);
                   }
                   if (state is ProfileAvatarSuccess) {
@@ -397,16 +403,27 @@ class _UserProfilePageState extends State<UserProfilePage> {
                             : const SizedBox();
                       },
                     ),
-                    BlocBuilder<CourseBloc, CourseState>(
+                    BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(
                       builder: (context, state) {
-                        if (state is UserEnrolledCoursesSuccess) {
-                          if (_coursesToUse.isEmpty) {
-                            _coursesToUse = state.courses;
+                        if (state is CourseEnrollmentsByUserSuccess) {
+                          if (_courseEnrollmentList.isEmpty) {
+                            _courseEnrollmentList = state.courseEnrollments;
                           }
                         }
-                        return _coursesToUse.isNotEmpty
-                            ? buildCourseSection(context: context, contentForCourse: returnCoursesWidget(listOfCourses: _coursesToUse))
-                            : const SizedBox();
+                        return BlocBuilder<CourseBloc, CourseState>(
+                          builder: (context, state) {
+                            if (state is UserEnrolledCoursesSuccess) {
+                              if (_coursesToUse.isEmpty) {
+                                _coursesToUse = state.courses;
+                              }
+                            }
+                            return _coursesToUse.isNotEmpty
+                                ? buildCourseSection(
+                                    context: context, contentForCourse: returnCoursesWidget(listOfCourses: _courseEnrollmentList))
+                                //  returnCoursesWidget(listOfCourses: _coursesToUse))
+                                : const SizedBox();
+                          },
+                        );
                       },
                     ),
                     BlocBuilder<ChallengeBloc, ChallengeState>(
@@ -504,7 +521,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   ]));
   }
 
-  List<Widget> returnCoursesWidget({List<Course> listOfCourses}) {
+  List<Widget> returnCoursesWidget({List<CourseEnrollment> listOfCourses}) {
     List<Widget> contentForCourseSection = [];
     listOfCourses.forEach((course) {
       if (course != null) {
@@ -513,22 +530,49 @@ class _UserProfilePageState extends State<UserProfilePage> {
     });
     return contentForCourseSection.toList();
   }
+  // List<Widget> returnCoursesWidget({List<Course> listOfCourses}) {
+  //   List<Widget> contentForCourseSection = [];
+  //   listOfCourses.forEach((course) {
+  //     if (course != null) {
+  //       contentForCourseSection.add(_getCourseCard(courseInfo: course));
+  //     }
+  //   });
+  //   return contentForCourseSection.toList();
+  // }
 
-  Widget _getCourseCard({Course courseInfo}) {
+  Widget _getCourseCard({CourseEnrollment courseInfo}) {
     return Padding(
       padding: const EdgeInsets.only(right: 15.0),
       child: CourseCard(
+        actualCourse: courseInfo,
         width: 120,
         height: 120,
         imageCover: Image.network(
-          courseInfo.image,
+          courseInfo.course.image,
           frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
               ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, width: 120),
         ),
-        progress: getCourseProgress(courseEnrollments: _courseEnrollmentList, course: courseInfo),
+        progress: getCourseProgress(
+            courseEnrollments: _courseEnrollmentList, course: _coursesToUse.where((element) => element.id == courseInfo.course.id).first),
       ),
     );
   }
+  // Widget _getCourseCard({Course courseInfo}) {
+  //   return Padding(
+  //     padding: const EdgeInsets.only(right: 15.0),
+  //     child: CourseCard(
+  //       actualCourse: courseInfo,
+  //       width: 120,
+  //       height: 120,
+  //       imageCover: Image.network(
+  //         courseInfo.image,
+  //         frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
+  //             ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, width: 120),
+  //       ),
+  //       progress: getCourseProgress(courseEnrollments: _courseEnrollmentList, course: courseInfo),
+  //     ),
+  //   );
+  // }
 
   double getCourseProgress({List<CourseEnrollment> courseEnrollments, Course course}) {
     double _completion = 0.0;

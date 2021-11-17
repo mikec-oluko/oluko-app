@@ -3,18 +3,24 @@ import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/permissions.dart';
 import 'package:oluko_app/repositories/profile_repository.dart';
+import 'package:oluko_app/utils/image_utils.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:path/path.dart' as p;
 
 abstract class ProfileAvatarState {}
 
-class ProfileAvatarLoading extends ProfileAvatarState {}
+class ProfileAvatarLoading extends ProfileAvatarState {
+  // bool lockPanel = false;
+  // ProfileAvatarLoading({this.lockPanel = false});
+}
 
 class ProfileAvatarDefault extends ProfileAvatarState {}
 
 class ProfileAvatarOpenPanel extends ProfileAvatarState {}
 
 class ProfileAvatarSuccess extends ProfileAvatarState {
-  ProfileAvatarSuccess();
+  // bool lockPanel = false;
+  // ProfileAvatarSuccess({this.lockPanel = false});
 }
 
 class ProfileAvatarFailure extends ProfileAvatarState {
@@ -41,6 +47,9 @@ class ProfileAvatarBloc extends Cubit<ProfileAvatarState> {
       if (_image == null && _image is! PickedFile) {
         emit(ProfileAvatarFailure(exception: Exception()));
         return;
+      } else if (p.extension(_image.path) != ImageUtils.jpegFormat && p.extension(_image.path) != ImageUtils.jpgFormat) {
+        emit(ProfileAvatarFailure(exception: Exception()));
+        return;
       }
       emit(ProfileAvatarLoading());
       await _profileRepository.updateProfileAvatar(_image);
@@ -54,7 +63,8 @@ class ProfileAvatarBloc extends Cubit<ProfileAvatarState> {
       if (!await requiredAvatarPermissionsEnabled(uploadedFrom)) return;
 
       emit(ProfileAvatarFailure(exception: exception));
-      rethrow;
+      // rethrow;
+      return;
     }
   }
 
