@@ -142,7 +142,7 @@ class _HiFivePageState extends State<HiFivePage> {
                 style: TextStyle(color: Colors.grey),
               )
             else
-              nil,
+              const SizedBox(),
             GestureDetector(
               onTap: () => BlocProvider.of<HiFiveBloc>(context).sendHiFive(context, user.id, targetUser.id),
               child: Image.asset(
