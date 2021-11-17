@@ -16,6 +16,7 @@ import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/course_section.dart';
 import 'package:oluko_app/ui/components/course_step_section.dart';
+import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/stories_header.dart';
 import 'package:oluko_app/ui/components/video_overlay.dart';
@@ -45,7 +46,16 @@ class _HomeState extends State<Home> {
         BlocProvider.of<CourseEnrollmentListBloc>(context)
             .getCourseEnrollmentsByUser(_user.uid);
         return BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(
-            builder: (context, courseEnrollmentListState) {
+            buildWhen: (previous, current) {
+          if (previous is CourseEnrollmentsByUserSuccess &&
+              current is CourseEnrollmentsByUserSuccess) {
+            if (previous.courseEnrollments.length ==
+                current.courseEnrollments.length) {
+              return false;
+            }
+          }
+          return true;
+        }, builder: (context, courseEnrollmentListState) {
           if (courseEnrollmentListState is CourseEnrollmentsByUserSuccess) {
             _courseEnrollments = courseEnrollmentListState.courseEnrollments;
             BlocProvider.of<CourseHomeBloc>(context)
@@ -108,29 +118,26 @@ class _HomeState extends State<Home> {
   }
 
   Widget enrolled() {
-    return BlocBuilder<CourseHomeBloc, CourseHomeState>(
-        builder: (context, courseHomeState) {
-      if (courseHomeState is GetByCourseEnrollmentsSuccess) {
-        _courses = courseHomeState.courses;
-        return CarouselSlider(
-          items: courseSectionList(),
-          options: CarouselOptions(
-              height: 600,
-              autoPlay: false,
-              enlargeCenterPage: false,
-              disableCenter: true,
-              enableInfiniteScroll: false,
-              initialPage: 0,
-              viewportFraction: 1),
-        );
-      } else {
-        return SizedBox();
-      }
-    });
+    if (_courseEnrollments.length == _courses.length) {
+      return CarouselSlider(
+        items: courseSectionList(),
+        options: CarouselOptions(
+            height: 600,
+            autoPlay: false,
+            enlargeCenterPage: false,
+            disableCenter: true,
+            enableInfiniteScroll: false,
+            initialPage: 0,
+            viewportFraction: 1),
+      );
+    } else {
+      return OlukoCircularProgressIndicator();
+    }
   }
 
   List<Widget> courseSectionList() {
     List<Widget> widgets = [];
+
     for (var i = 0; i < _courseEnrollments.length; i++) {
       if (_courses.length - 1 < i) {
         // do nothing
