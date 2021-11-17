@@ -91,7 +91,9 @@ class _TaskDetailsState extends State<TaskDetails> {
                   if (_controller != null) {
                     _controller.pause();
                   }
-                  Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos], arguments: {'isFirstTime': false});
+                  //TODO: check if first time
+                  Navigator.pop(context);
+                  // Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos], arguments: {'isFirstTime': false});
                 }),
             body: Container(
                 color: Colors.black,
