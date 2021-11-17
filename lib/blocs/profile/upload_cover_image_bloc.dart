@@ -38,7 +38,7 @@ class ProfileCoverImageBloc extends Cubit<ProfileCoverImageState> {
       } else if (uploadedFrom == DeviceContentFrom.camera) {
         _image = await imagePicker.getImage(source: ImageSource.camera);
       }
-      if (_image == null) {
+      if (_image == null && _image is! PickedFile) {
         emit(ProfileCoverImageFailure(exception: Exception()));
         return;
       }

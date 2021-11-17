@@ -16,6 +16,15 @@ class ModalUploadOptions extends StatefulWidget {
 }
 
 class _ModalUploadOptionsState extends State<ModalUploadOptions> {
+  bool isOptionSelected = false;
+  @override
+  void initState() {
+    setState(() {
+      isOptionSelected = false;
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return returnList(context);
@@ -32,9 +41,14 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
         children: [
           ListTile(
             onTap: () {
-              uploadContentFromCamera(context);
+              if (isOptionSelected == false) {
+                setState(() {
+                  isOptionSelected = true;
+                });
+                uploadContentFromCamera(context);
+              }
             },
-            leading: Icon(
+            leading: const Icon(
               Icons.camera_alt_outlined,
               color: Colors.white,
             ),
@@ -42,9 +56,14 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
           ),
           ListTile(
             onTap: () {
-              uploadContentFromGallery(context);
+              if (isOptionSelected == false) {
+                setState(() {
+                  isOptionSelected = true;
+                });
+                uploadContentFromGallery(context);
+              }
             },
-            leading: Icon(
+            leading: const Icon(
               Icons.image,
               color: Colors.white,
             ),
@@ -58,17 +77,16 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
   void uploadContentFromCamera(BuildContext context) {
     switch (widget.contentFrom) {
       case UploadFrom.profileImage:
-        BlocProvider.of<ProfileAvatarBloc>(context)..uploadProfileAvatarImage(uploadedFrom: DeviceContentFrom.camera);
+        BlocProvider.of<ProfileAvatarBloc>(context).uploadProfileAvatarImage(uploadedFrom: DeviceContentFrom.camera);
         break;
       case UploadFrom.profileCoverImage:
-        BlocProvider.of<ProfileCoverImageBloc>(context)
-          ..uploadProfileCoverImage(
-            uploadedFrom: DeviceContentFrom.camera,
-          );
+        BlocProvider.of<ProfileCoverImageBloc>(context).uploadProfileCoverImage(
+          uploadedFrom: DeviceContentFrom.camera,
+        );
         break;
       case UploadFrom.transformationJourney:
         BlocProvider.of<TransformationJourneyContentBloc>(context)
-          ..uploadTransformationJourneyContent(uploadedFrom: DeviceContentFrom.camera, indexForContent: widget.indexValue);
+            .uploadTransformationJourneyContent(uploadedFrom: DeviceContentFrom.camera, indexForContent: widget.indexValue);
         break;
       default:
     }
@@ -77,17 +95,16 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
   void uploadContentFromGallery(BuildContext context) {
     switch (widget.contentFrom) {
       case UploadFrom.profileImage:
-        BlocProvider.of<ProfileAvatarBloc>(context)..uploadProfileAvatarImage(uploadedFrom: DeviceContentFrom.gallery);
+        BlocProvider.of<ProfileAvatarBloc>(context).uploadProfileAvatarImage(uploadedFrom: DeviceContentFrom.gallery);
         break;
       case UploadFrom.profileCoverImage:
-        BlocProvider.of<ProfileCoverImageBloc>(context)
-          ..uploadProfileCoverImage(
-            uploadedFrom: DeviceContentFrom.gallery,
-          );
+        BlocProvider.of<ProfileCoverImageBloc>(context).uploadProfileCoverImage(
+          uploadedFrom: DeviceContentFrom.gallery,
+        );
         break;
       case UploadFrom.transformationJourney:
         BlocProvider.of<TransformationJourneyContentBloc>(context)
-          ..uploadTransformationJourneyContent(uploadedFrom: DeviceContentFrom.gallery, indexForContent: widget.indexValue);
+            .uploadTransformationJourneyContent(uploadedFrom: DeviceContentFrom.gallery, indexForContent: widget.indexValue);
         break;
       default:
         return;

@@ -30,7 +30,6 @@ class ProfileAvatarBloc extends Cubit<ProfileAvatarState> {
 
   void uploadProfileAvatarImage({DeviceContentFrom uploadedFrom, UploadFrom contentFor}) async {
     PickedFile _image;
-
     try {
       final imagePicker = ImagePicker();
       if (uploadedFrom == DeviceContentFrom.gallery) {
@@ -39,7 +38,7 @@ class ProfileAvatarBloc extends Cubit<ProfileAvatarState> {
         _image = await imagePicker.getImage(source: ImageSource.camera);
       }
 
-      if (_image == null) {
+      if (_image == null && _image is! PickedFile) {
         emit(ProfileAvatarFailure(exception: Exception()));
         return;
       }
