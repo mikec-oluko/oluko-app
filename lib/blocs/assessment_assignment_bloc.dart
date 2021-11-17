@@ -42,7 +42,6 @@ class AssessmentAssignmentBloc extends Cubit<AssessmentAssignmentState> {
   }
 
   void setAsSeen(String userId) async {
-    emit(AssessmentAssignmentLoading());
     try {
       await AssessmentAssignmentRepository.setAsSeen(userId);
     } catch (exception, stackTrace) {
