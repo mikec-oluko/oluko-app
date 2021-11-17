@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/gallery_video_bloc.dart';
@@ -42,6 +43,7 @@ class _TaskDetailsState extends State<TaskDetails> {
   ChewieController _controller;
   bool _makePublic = false;
   AssessmentAssignment _assessmentAssignment;
+  TaskSubmission _taskSubmission;
   Task _task;
   List<Task> _tasks;
   UserResponse _user;
@@ -53,12 +55,19 @@ class _TaskDetailsState extends State<TaskDetails> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
+    return BlocBuilder<AuthBloc, AuthState>(buildWhen: (previous, current) {
+      return true;
+    }, builder: (context, authState) {
       if (authState is AuthSuccess) {
         return BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(
+          buildWhen: (previous, current) {
+            return true;
+          },
           builder: (context, assessmentAssignmentState) {
             return BlocBuilder<TaskBloc, TaskState>(
-                builder: (context, taskState) {
+                buildWhen: (previous, current) {
+              return true;
+            }, builder: (context, taskState) {
               if (assessmentAssignmentState is AssessmentAssignmentSuccess &&
                   taskState is TaskSuccess) {
                 _assessmentAssignment =
@@ -69,13 +78,13 @@ class _TaskDetailsState extends State<TaskDetails> {
                     .getTaskSubmissionOfTask(_assessmentAssignment, _task);
                 return form();
               } else {
-                return const SizedBox();
+                return nil;
               }
             });
           },
         );
       } else {
-        return const SizedBox();
+        return nil;
       }
     });
   }
@@ -91,6 +100,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                   if (_controller != null) {
                     _controller.pause();
                   }
+
                   Navigator.pushNamed(
                       context, routeLabels[RouteEnum.assessmentVideos],
                       arguments: {'isFirstTime': false});
@@ -170,11 +180,26 @@ class _TaskDetailsState extends State<TaskDetails> {
             style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
           ),
           BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
-              builder: (context, state) {
+              buildWhen: (previous, current) {
+            if (current is GetSuccess) {
+              if (current.taskSubmission != null &&
+                  current.taskSubmission.task.id != _task.id) {
+                return false;
+              }
+            }
+            if (previous is GetSuccess && current is GetSuccess) {
+              if (current.taskSubmission != null &&
+                  previous.taskSubmission.task.id ==
+                      current.taskSubmission.task.id) {
+                return false;
+              }
+            }
+            return true;
+          }, builder: (context, state) {
             if (state is GetSuccess && state.taskSubmission != null) {
-              return recordedVideos(state.taskSubmission);
+              return recordedVideos(_taskSubmission);
             } else {
-              return const SizedBox();
+              return SizedBox();
             }
           })
         ]));
@@ -182,8 +207,16 @@ class _TaskDetailsState extends State<TaskDetails> {
 
   Widget _content() {
     return BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
-        builder: (context, state) {
+        buildWhen: (previous, current) {
+      if (current is GetSuccess) {
+        if (current.taskSubmission.task.id != _task.id) {
+          return false;
+        }
+      }
+      return true;
+    }, builder: (context, state) {
       if (state is GetSuccess && state.taskSubmission != null) {
+        _taskSubmission = state.taskSubmission;
         _makePublic = state.taskSubmission.isPublic;
         return ListView(
           children: [
