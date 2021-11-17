@@ -330,7 +330,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                   : OlukoLocalizations.get(context, 'nextSegment'),
               thinPadding: true,
               onPressed: () {
-                Navigator.pop(context);
+                //Navigator.pop(context);
                 widget.segmentIndex < widget.segments.length - 1
                     ? Navigator.pushNamed(
                         context, routeLabels[RouteEnum.segmentDetail],
