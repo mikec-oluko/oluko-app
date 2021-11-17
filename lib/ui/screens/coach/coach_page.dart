@@ -100,7 +100,7 @@ class _CoachPageState extends State<CoachPage> {
             favorite: false,
             video: Video(
                 url: widget.coachAssignment.videoHLS ?? (widget.coachAssignment.video.url ?? widget.coachAssignment.introductionVideo),
-                aspectRatio: 0.60),
+                aspectRatio: widget.coachAssignment.video.aspectRatio ?? 0.60),
             videoHLS: widget.coachAssignment.videoHLS ?? (widget.coachAssignment.video.url ?? widget.coachAssignment.introductionVideo));
       });
     }
@@ -129,7 +129,6 @@ class _CoachPageState extends State<CoachPage> {
   // clearContent(List<List<dynamic>> listToClear) {
   //   listToClear.forEach((list) => list.clear());
   // }
-
 
   @override
   Widget build(BuildContext context) {
