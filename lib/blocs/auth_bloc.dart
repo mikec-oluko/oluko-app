@@ -51,9 +51,7 @@ class AuthBloc extends Cubit<AuthState> {
   final _userRepository = UserRepository();
 
   Future<void> login(BuildContext context, LoginRequest request) async {
-    if (request.email == null &&
-        request.userName.isEmpty &&
-        request.password.isEmpty) {
+    if (request.email == null && request.userName.isEmpty && request.password.isEmpty) {
       AppMessages.showSnackbarTranslated(context, 'invalidUsernameOrPw');
       return;
     }
@@ -86,8 +84,7 @@ class AuthBloc extends Cubit<AuthState> {
     final firebaseUser = FirebaseAuth.instance.currentUser;
     if (user.currentPlan == -100) {
       FirebaseAuth.instance.signOut();
-      AppMessages.showSnackbarTranslated(
-          context, 'pleaseSubscribeToAPlanBeforeUsingTheApp');
+      AppMessages.showSnackbarTranslated(context, 'pleaseSubscribeToAPlanBeforeUsingTheApp');
       emit(AuthGuest());
       return;
     } else if (!firebaseUser.emailVerified) {
@@ -99,18 +96,15 @@ class AuthBloc extends Cubit<AuthState> {
       emit(AuthGuest());
     } else {
       AuthRepository().storeLoginData(user);
-      AppMessages.showSnackbar(context,
-          '${OlukoLocalizations.get(context, 'welcome')}, ${user.firstName}');
+      AppMessages.showSnackbar(context, '${OlukoLocalizations.get(context, 'welcome')}, ${user.firstName}');
       emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
       navigateToNextScreen(context, firebaseUser.uid);
     }
   }
 
   void navigateToNextScreen(BuildContext context, String userId) async {
-    AssessmentAssignment assessmentA =
-        await AssessmentAssignmentRepository.getByUserId(userId);
-    if (assessmentA != null &&
-        (assessmentA.seenByUser == null || !assessmentA.seenByUser)) {
+    AssessmentAssignment assessmentA = await AssessmentAssignmentRepository.getByUserId(userId);
+    if (assessmentA != null && (assessmentA.seenByUser == null || !assessmentA.seenByUser)) {
       await AppNavigator().goToAssessmentVideos(context);
     } else {
       await AppNavigator().returnToHome(context);
@@ -118,26 +112,34 @@ class AuthBloc extends Cubit<AuthState> {
   }
 
   Future<void> loginWithGoogle(BuildContext context) async {
+    UserCredential result;
     try {
-      UserCredential result = await _authRepository.signInWithGoogle();
+      try {
+        result = await _authRepository.signInWithGoogle();
+      } on FirebaseAuthException catch (error) {
+        AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'accountAlreadyExistsWithThisEmailUsingADifferentProvider'));
+        rethrow;
+      } catch (error) {
+        AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'errorOccurred'));
+        rethrow;
+      }
+      if (result == null) {
+        FirebaseAuth.instance.signOut();
+        AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'errorOccurred'));
+        emit(AuthGuest());
+        return;
+      }
       User firebaseUser = result.user;
-      UserResponse userResponse =
-          await UserRepository().get(firebaseUser.email);
+      UserResponse userResponse = await UserRepository().get(firebaseUser.email);
 
       //If there is no associated user for this account
       if (userResponse == null) {
         FirebaseAuth.instance.signOut();
-        AppMessages.showSnackbar(
-            context,
-            OlukoLocalizations.get(
-                context, 'userForThisAccountNotFoundPleaseSignUp'));
+        AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'userForThisAccountNotFoundPleaseSignUp'));
         emit(AuthGuest());
         return;
       }
-
-      AuthRepository().storeLoginData(userResponse);
-      emit(AuthSuccess(user: userResponse, firebaseUser: firebaseUser));
-      navigateToNextScreen(context, firebaseUser.uid);
+      // ignore: avoid_catching_errors
     } on NoSuchMethodError catch (e) {
       Navigator.pushNamed(context, '/log-in');
     }
@@ -148,11 +150,17 @@ class AuthBloc extends Cubit<AuthState> {
     try {
       result = await _authRepository.signInWithFacebook();
     } on FirebaseAuthException catch (error) {
-      AppMessages.showSnackbar(
-          context,
-          OlukoLocalizations.get(context,
-              'accountAlreadyExistsWithThisEmailUsingADifferentProvider'));
+      AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'accountAlreadyExistsWithThisEmailUsingADifferentProvider'));
       rethrow;
+    } catch (error) {
+      AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'errorOccurred'));
+      rethrow;
+    }
+    if (result == null) {
+      FirebaseAuth.instance.signOut();
+      AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'errorOccurred'));
+      emit(AuthGuest());
+      return;
     }
 
     if (result != null) {
@@ -162,10 +170,7 @@ class AuthBloc extends Cubit<AuthState> {
       //If there is no associated user for this account
       if (user == null) {
         FirebaseAuth.instance.signOut();
-        AppMessages.showSnackbar(
-            context,
-            OlukoLocalizations.get(
-                context, 'userForThisAccountNotFoundPleaseSignUp'));
+        AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'userForThisAccountNotFoundPleaseSignUp'));
         emit(AuthGuest());
         return;
       }
@@ -205,17 +210,14 @@ class AuthBloc extends Cubit<AuthState> {
     }
   }
 
-  Future<void> sendPasswordResetEmail(
-      BuildContext context, LoginRequest loginRequest) async {
+  Future<void> sendPasswordResetEmail(BuildContext context, LoginRequest loginRequest) async {
     if (loginRequest.email == null || loginRequest.email == '') {
-      AppMessages.showSnackbar(
-          context, OlukoLocalizations.get(context, 'enterEmail'));
+      AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'enterEmail'));
       return;
     }
 
     await AuthRepository().sendPasswordResetEmail(loginRequest.email);
-    AppMessages.showSnackbar(context,
-        OlukoLocalizations.get(context, 'pleaseCheckYourEmailForInstructions'));
+    AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'pleaseCheckYourEmailForInstructions'));
   }
 
   String getRandString(int len) {
