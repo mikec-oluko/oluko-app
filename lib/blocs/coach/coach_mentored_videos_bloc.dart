@@ -35,7 +35,9 @@ class CoachMentoredVideosBloc extends Cubit<CoachMentoredVideosState> {
 
   @override
   void dispose() {
-    subscription.cancel();
+    if (subscription != null) {
+      subscription.cancel();
+    }
   }
 
 //TODO: GET STREAM
