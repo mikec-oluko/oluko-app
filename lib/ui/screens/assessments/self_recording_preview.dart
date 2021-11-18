@@ -150,6 +150,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
   Widget retakeButton() {
     return GestureDetector(
         onTap: () {
+          _controller.pause();
           Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording],
               arguments: {'taskIndex': widget.taskIndex, 'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask});
         },
