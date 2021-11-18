@@ -91,16 +91,19 @@ class _CoachPageState extends State<CoachPage> {
         : (widget.coachAssignment.video?.url != null ? true : widget.coachAssignment.introductionVideo != null)) {
       setState(() {
         _introductionVideo = Annotation(
-            id: _defaultIntroductionVideoId,
-            favorite: false,
-            createdAt: widget.coachAssignment.createdAt ?? Timestamp.now(),
-            video: Video(
-                url: widget.coachAssignment.videoHLS ?? (widget.coachAssignment.video.url ?? widget.coachAssignment.introductionVideo),
-                aspectRatio: widget.coachAssignment.video.aspectRatio ?? 0.60),
-            videoHLS: widget.coachAssignment.videoHLS ?? (widget.coachAssignment.video.url ?? widget.coachAssignment.introductionVideo));
+          id: _defaultIntroductionVideoId,
+          favorite: false,
+          createdAt: widget.coachAssignment.createdAt ?? Timestamp.now(),
+          video: Video(
+              url: widget.coachAssignment.videoHLS ??
+                  (widget.coachAssignment.video != null ? widget.coachAssignment.video.url : widget.coachAssignment.introductionVideo),
+              aspectRatio: widget.coachAssignment.video.aspectRatio ?? 0.60),
+          videoHLS: widget.coachAssignment.videoHLS ??
+              (widget.coachAssignment.video != null ? widget.coachAssignment.video.url : widget.coachAssignment.introductionVideo),
+        );
+        super.initState();
       });
     }
-    super.initState();
   }
 
   @override
