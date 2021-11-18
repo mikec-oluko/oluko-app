@@ -78,7 +78,8 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                         assessmentAssignmentState.assessmentAssignment;
                     _tasks = taskState.values;
                     _task = _tasks[widget.taskIndex];
-                    if (taskSubmissionState is GetSuccess) {
+                    if (taskSubmissionState is GetSuccess &&
+                        taskSubmissionState.taskSubmission != null) {
                       _taskSubmission = taskSubmissionState.taskSubmission;
                     }
                     return BlocListener<TaskSubmissionBloc,
@@ -120,14 +121,15 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                 .checkCompleted(_assessmentAssignment, _assessment);
             BlocProvider.of<TaskSubmissionListBloc>(context)
                 .get(_assessmentAssignment);
-            Navigator.pop(context);
-            Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails],
+
+            Navigator.popUntil(context, ModalRoute.withName('/'));
+            /*Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails],
                 arguments: {
                   'taskIndex': widget.taskIndex,
                   'isLastTask': _tasks.length - widget.taskIndex == 1
                       ? true
                       : widget.isLastTask
-                });
+                });*/
           }
         }, builder: (context, state) {
           if (state is VideoProcessing) {
@@ -218,6 +220,11 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                   BlocProvider.of<VideoBloc>(context).createVideo(context,
                       File(widget.filePath), 3.0 / 4.0, _taskSubmission.id);
                 }
+                /*Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails],
+                    arguments: {
+                      'taskIndex': widget.taskIndex,
+                      'isLastTask': widget.isLastTask
+                    });*/
               },
             )
           ]))
