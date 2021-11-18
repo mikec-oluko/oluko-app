@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
@@ -92,6 +93,7 @@ class _CoachPageState extends State<CoachPage> {
         _introductionVideo = Annotation(
             id: _defaultIntroductionVideoId,
             favorite: false,
+            createdAt: widget.coachAssignment.createdAt ?? Timestamp.now(),
             video: Video(
                 url: widget.coachAssignment.videoHLS ?? (widget.coachAssignment.video.url ?? widget.coachAssignment.introductionVideo),
                 aspectRatio: widget.coachAssignment.video.aspectRatio ?? 0.60),
