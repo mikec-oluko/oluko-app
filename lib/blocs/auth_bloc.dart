@@ -112,7 +112,22 @@ class AuthBloc extends Cubit<AuthState> {
   }
 
   Future<void> loginWithGoogle(BuildContext context) async {
-    UserCredential result = await _authRepository.signInWithGoogle();
+    UserCredential result;
+    try {
+      result = await _authRepository.signInWithGoogle();
+    } on FirebaseAuthException catch (error) {
+      AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'accountAlreadyExistsWithThisEmailUsingADifferentProvider'));
+      rethrow;
+    } catch (error) {
+      AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'errorOccurred'));
+      rethrow;
+    }
+    if (result == null) {
+      FirebaseAuth.instance.signOut();
+      AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'errorOccurred'));
+      emit(AuthGuest());
+      return;
+    }
     User firebaseUser = result.user;
     UserResponse userResponse = await UserRepository().get(firebaseUser.email);
 
@@ -158,6 +173,15 @@ class AuthBloc extends Cubit<AuthState> {
     } on FirebaseAuthException catch (error) {
       AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'accountAlreadyExistsWithThisEmailUsingADifferentProvider'));
       rethrow;
+    } catch (error) {
+      AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'errorOccurred'));
+      rethrow;
+    }
+    if (result == null) {
+      FirebaseAuth.instance.signOut();
+      AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'errorOccurred'));
+      emit(AuthGuest());
+      return;
     }
     User firebaseUser = result.user;
     UserResponse user = await UserRepository().get(firebaseUser.email);
