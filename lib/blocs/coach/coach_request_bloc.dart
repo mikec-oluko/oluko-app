@@ -35,7 +35,8 @@ class CoachRequestFailure extends CoachRequestState {
 }
 
 class CoachRequestBloc extends Cubit<CoachRequestState> {
-  final CoachRequestRepository _coachRequestRepository = CoachRequestRepository();
+  final CoachRequestRepository _coachRequestRepository =
+      CoachRequestRepository();
   CoachRequestBloc() : super(CoachRequestLoading());
 
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>> subscription;
@@ -101,11 +102,17 @@ class CoachRequestBloc extends Cubit<CoachRequestState> {
     }
   }
 
-  void getSegmentCoachRequest({String userId, String segmentId, String coachId, String courseEnrollmentId}) async {
+  void getSegmentCoachRequest(
+      {String userId,
+      String segmentId,
+      String coachId,
+      String courseEnrollmentId,
+      String classId}) async {
     emit(CoachRequestLoading());
     try {
       CoachRequest coachRequest =
-          await _coachRequestRepository.getBySegmentAndCoachId(userId, segmentId, courseEnrollmentId, coachId);
+          await _coachRequestRepository.getBySegmentAndCoachId(
+              userId, segmentId, courseEnrollmentId, coachId, classId);
       emit(GetCoachRequestSuccess(coachRequest: coachRequest));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -130,10 +137,12 @@ class CoachRequestBloc extends Cubit<CoachRequestState> {
     }
   }
 
-  void setRequestSegmentNotificationAsViewed(String coachRequestId, String userId, bool notificationValue) async {
+  void setRequestSegmentNotificationAsViewed(
+      String coachRequestId, String userId, bool notificationValue) async {
     try {
-      await _coachRequestRepository.updateNotificationStatus(coachRequestId, userId, notificationValue);
-      // get(userId);
+      await _coachRequestRepository.updateNotificationStatus(
+          coachRequestId, userId, notificationValue);
+      get(userId);//TODO: check if needed
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
