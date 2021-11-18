@@ -22,13 +22,7 @@ import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class SelfRecordingPreview extends StatefulWidget {
-  const SelfRecordingPreview(
-      {this.filePath,
-      this.taskIndex,
-      this.isLastTask = false,
-      this.isPublic,
-      Key key})
-      : super(key: key);
+  const SelfRecordingPreview({this.filePath, this.taskIndex, this.isLastTask = false, this.isPublic, Key key}) : super(key: key);
 
   final String filePath;
   final int taskIndex;
@@ -58,43 +52,28 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
-        return BlocBuilder<AssessmentBloc, AssessmentState>(
-            builder: (context, assessmentState) {
-          return BlocBuilder<AssessmentAssignmentBloc,
-              AssessmentAssignmentState>(
+        return BlocBuilder<AssessmentBloc, AssessmentState>(builder: (context, assessmentState) {
+          return BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(
             builder: (context, assessmentAssignmentState) {
-              return BlocBuilder<TaskBloc, TaskState>(
-                  builder: (context, taskState) {
-                return BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
-                    builder: (context, taskSubmissionState) {
+              return BlocBuilder<TaskBloc, TaskState>(builder: (context, taskState) {
+                return BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(builder: (context, taskSubmissionState) {
                   if (assessmentState is AssessmentSuccess &&
-                      assessmentAssignmentState
-                          is AssessmentAssignmentSuccess &&
+                      assessmentAssignmentState is AssessmentAssignmentSuccess &&
                       taskState is TaskSuccess &&
-                      (taskSubmissionState is GetSuccess ||
-                          taskSubmissionState is CreateSuccess)) {
+                      (taskSubmissionState is GetSuccess || taskSubmissionState is CreateSuccess)) {
                     _assessment = assessmentState.assessment;
-                    _assessmentAssignment =
-                        assessmentAssignmentState.assessmentAssignment;
+                    _assessmentAssignment = assessmentAssignmentState.assessmentAssignment;
                     _tasks = taskState.values;
                     _task = _tasks[widget.taskIndex];
-                    if (taskSubmissionState is GetSuccess &&
-                        taskSubmissionState.taskSubmission != null) {
+                    if (taskSubmissionState is GetSuccess && taskSubmissionState.taskSubmission != null) {
                       _taskSubmission = taskSubmissionState.taskSubmission;
                     }
-                    return BlocListener<TaskSubmissionBloc,
-                            TaskSubmissionState>(
-                        listener: (context, state) {
-                          if (state is CreateSuccess) {
-                            _taskSubmission = state.taskSubmission;
-                            BlocProvider.of<VideoBloc>(context).createVideo(
-                                context,
-                                File(widget.filePath),
-                                3.0 / 4.0,
-                                state.taskSubmission.id);
-                          }
-                        },
-                        child: form());
+                    if (taskSubmissionState is CreateSuccess) {
+                      _taskSubmission = taskSubmissionState.taskSubmission;
+                      BlocProvider.of<VideoBloc>(context)
+                          .createVideo(context, File(widget.filePath), 3.0 / 4.0, taskSubmissionState.taskSubmission.id);
+                    }
+                    return form();
                   } else {
                     return const SizedBox();
                   }
@@ -114,22 +93,13 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
         key: _formKey,
         child: BlocConsumer<VideoBloc, VideoState>(listener: (context, state) {
           if (state is VideoSuccess) {
-            BlocProvider.of<TaskSubmissionBloc>(context)
-                .updateTaskSubmissionVideo(
-                    _assessmentAssignment, _taskSubmission.id, state.video);
-            BlocProvider.of<TaskSubmissionBloc>(context)
-                .checkCompleted(_assessmentAssignment, _assessment);
-            BlocProvider.of<TaskSubmissionListBloc>(context)
-                .get(_assessmentAssignment);
-
-            Navigator.popUntil(context, ModalRoute.withName('/'));
-            /*Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails],
-                arguments: {
-                  'taskIndex': widget.taskIndex,
-                  'isLastTask': _tasks.length - widget.taskIndex == 1
-                      ? true
-                      : widget.isLastTask
-                });*/
+            BlocProvider.of<TaskSubmissionBloc>(context).updateTaskSubmissionVideo(_assessmentAssignment, _taskSubmission.id, state.video);
+            BlocProvider.of<TaskSubmissionBloc>(context).checkCompleted(_assessmentAssignment, _assessment);
+            BlocProvider.of<TaskSubmissionListBloc>(context).get(_assessmentAssignment);
+            var route = routeLabels[RouteEnum.assessmentVideos];
+            Navigator.popUntil(context, ModalRoute.withName(route));
+            Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails],
+                arguments: {'taskIndex': widget.taskIndex, 'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask});
           }
         }, builder: (context, state) {
           if (state is VideoProcessing) {
@@ -159,8 +129,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
         body: Container(
           color: Colors.black,
           child: Container(
-            child: ProgressBar(
-                processPhase: state.processPhase, progress: state.progress),
+            child: ProgressBar(processPhase: state.processPhase, progress: state.progress),
           ),
         ));
   }
@@ -182,29 +151,21 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
     return GestureDetector(
         onTap: () {
           Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording],
-              arguments: {
-                'taskIndex': widget.taskIndex,
-                'isLastTask': _tasks.length - widget.taskIndex == 1
-                    ? true
-                    : widget.isLastTask
-              });
+              arguments: {'taskIndex': widget.taskIndex, 'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask});
         },
         child: Align(
             child: Padding(
                 padding: const EdgeInsets.only(left: 20, right: 8),
                 child: Text(
                   OlukoLocalizations.get(context, 'retake'),
-                  style:
-                      OlukoFonts.olukoBigFont(customColor: OlukoColors.primary),
+                  style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary),
                 ))));
   }
 
   Widget content() {
     return Column(children: [
       ConstrainedBox(
-          constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context).size.height / 1.5),
-          child: Stack(children: showVideoPlayer())),
+          constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height / 1.5), child: Stack(children: showVideoPlayer())),
       Padding(
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
           child: Row(children: [
@@ -214,11 +175,9 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                 _controller.pause();
                 if (_taskSubmission == null) {
                   BlocProvider.of<TaskSubmissionBloc>(context)
-                      .createTaskSubmission(_assessmentAssignment, _task,
-                          widget.isPublic, widget.isLastTask);
+                      .createTaskSubmission(_assessmentAssignment, _task, widget.isPublic, widget.isLastTask);
                 } else {
-                  BlocProvider.of<VideoBloc>(context).createVideo(context,
-                      File(widget.filePath), 3.0 / 4.0, _taskSubmission.id);
+                  BlocProvider.of<VideoBloc>(context).createVideo(context, File(widget.filePath), 3.0 / 4.0, _taskSubmission.id);
                 }
                 /*Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails],
                     arguments: {
