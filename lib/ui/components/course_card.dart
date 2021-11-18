@@ -13,8 +13,16 @@ class CourseCard extends StatefulWidget {
   final double height;
   final List<String> userRecommendationsAvatarUrls;
   final CourseEnrollment actualCourse;
+  final bool canUnenrollCourse;
 
-  CourseCard({this.imageCover, this.progress, this.width, this.height, this.userRecommendationsAvatarUrls, this.actualCourse});
+  CourseCard(
+      {this.imageCover,
+      this.progress,
+      this.width,
+      this.height,
+      this.userRecommendationsAvatarUrls,
+      this.actualCourse,
+      this.canUnenrollCourse = false});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -37,11 +45,14 @@ class _State extends State<CourseCard> {
             child: Stack(
               children: [
                 widget.imageCover,
-                Align(
-                    alignment: Alignment.topRight,
-                    child: UnenrollCourse(
-                      actualCourse: widget.actualCourse,
-                    ))
+                Visibility(
+                  visible: widget.canUnenrollCourse,
+                  child: Align(
+                      alignment: Alignment.topRight,
+                      child: UnenrollCourse(
+                        actualCourse: widget.actualCourse,
+                      )),
+                )
               ],
             )),
         if (widget.progress != null)

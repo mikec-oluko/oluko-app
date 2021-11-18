@@ -13,6 +13,7 @@ class CourseEnrollment extends Base {
   Timestamp finishedAt;
   List<EnrollmentClass> classes;
   List<Challenge> challenges;
+  bool isUnenrolled;
 
   CourseEnrollment(
       {this.userReference,
@@ -23,6 +24,7 @@ class CourseEnrollment extends Base {
       this.classes,
       this.challenges,
       this.userId,
+      this.isUnenrolled,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -43,9 +45,7 @@ class CourseEnrollment extends Base {
     CourseEnrollment courseEnrollment = CourseEnrollment(
         userReference: json['user_reference'] as DocumentReference,
         userId: json['user_id'] as String,
-        course: json['course'] != null
-            ? ObjectSubmodel.fromJson(json['course'] as Map<String, dynamic>)
-            : null,
+        course: json['course'] != null ? ObjectSubmodel.fromJson(json['course'] as Map<String, dynamic>) : null,
         completion: json['completion'] == null || json['completion'] == 0
             ? 0.0
             : json['completion'].toString() == '1'
@@ -54,13 +54,12 @@ class CourseEnrollment extends Base {
         completedAt: json['completed_at'] as Timestamp,
         finishedAt: json['finished_at'] as Timestamp,
         classes: json['classes'] != null
-            ? List<EnrollmentClass>.from((json['classes'] as Iterable).map(
-                (c) => EnrollmentClass.fromJson(c as Map<String, dynamic>)))
+            ? List<EnrollmentClass>.from((json['classes'] as Iterable).map((c) => EnrollmentClass.fromJson(c as Map<String, dynamic>)))
             : null,
         challenges: json['challenges'] != null
-            ? List<Challenge>.from((json['challenges'] as Iterable)
-                .map((c) => Challenge.fromJson(c as Map<String, dynamic>)))
-            : null);
+            ? List<Challenge>.from((json['challenges'] as Iterable).map((c) => Challenge.fromJson(c as Map<String, dynamic>)))
+            : null,
+        isUnenrolled: json['is_unenrolled'] == null ? false : json['is_unenrolled'] as bool);
     courseEnrollment.setBase(json);
     return courseEnrollment;
   }
@@ -73,12 +72,9 @@ class CourseEnrollment extends Base {
       'course': course.toJson(),
       'completed_at': completedAt,
       'finished_at': finishedAt,
-      'classes': classes == null
-          ? null
-          : List<dynamic>.from(classes.map((c) => c.toJson())),
-      'challenges': challenges == null
-          ? null
-          : List<dynamic>.from(challenges.map((c) => c.toJson())),
+      'classes': classes == null ? null : List<dynamic>.from(classes.map((c) => c.toJson())),
+      'challenges': challenges == null ? null : List<dynamic>.from(challenges.map((c) => c.toJson())),
+      'is_unenrolled': isUnenrolled ?? false
     };
     courseEnrollmentJson.addEntries(super.toJson().entries);
     return courseEnrollmentJson;

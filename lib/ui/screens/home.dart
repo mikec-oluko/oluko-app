@@ -42,25 +42,20 @@ class _HomeState extends State<Home> {
       if (authState is AuthSuccess) {
         _authState ??= authState;
         _user = authState.firebaseUser;
-        BlocProvider.of<CourseEnrollmentListBloc>(context)
-            .getCourseEnrollmentsByUser(_user.uid);
-        return BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(
-            builder: (context, courseEnrollmentListState) {
+        BlocProvider.of<CourseEnrollmentListBloc>(context).getCourseEnrollmentsByUser(_user.uid);
+        return BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(builder: (context, courseEnrollmentListState) {
           if (courseEnrollmentListState is CourseEnrollmentsByUserSuccess) {
-            _courseEnrollments = courseEnrollmentListState.courseEnrollments;
-            BlocProvider.of<CourseHomeBloc>(context)
-              ..getByCourseEnrollments(_courseEnrollments);
+            _courseEnrollments =
+                courseEnrollmentListState.courseEnrollments.where((courseEnroll) => courseEnroll.isUnenrolled != true).toList();
+            ;
+            BlocProvider.of<CourseHomeBloc>(context)..getByCourseEnrollments(_courseEnrollments);
             return form();
           } else {
-            return Container(
-                color: Colors.black,
-                child: Center(child: CircularProgressIndicator()));
+            return Container(color: Colors.black, child: Center(child: CircularProgressIndicator()));
           }
         });
       } else {
-        return Container(
-            color: Colors.black,
-            child: Center(child: CircularProgressIndicator()));
+        return Container(color: Colors.black, child: Center(child: CircularProgressIndicator()));
       }
     });
   }
@@ -87,13 +82,10 @@ class _HomeState extends State<Home> {
 
   Widget homeContainer() {
     if (_courseEnrollments.length > 0) {
-      return BlocBuilder<CourseHomeBloc, CourseHomeState>(
-          builder: (context, courseState) {
+      return BlocBuilder<CourseHomeBloc, CourseHomeState>(builder: (context, courseState) {
         if (courseState is GetByCourseEnrollmentsSuccess) {
           _courses = courseState.courses;
-          if (_courses != null &&
-              _courses.length > 0 &&
-              _courses.any((element) => element != null)) {
+          if (_courses != null && _courses.length > 0 && _courses.any((element) => element != null)) {
             return enrolled();
           } else {
             return notEnrolled();
@@ -108,8 +100,7 @@ class _HomeState extends State<Home> {
   }
 
   Widget enrolled() {
-    return BlocBuilder<CourseHomeBloc, CourseHomeState>(
-        builder: (context, courseHomeState) {
+    return BlocBuilder<CourseHomeBloc, CourseHomeState>(builder: (context, courseHomeState) {
       if (courseHomeState is GetByCourseEnrollmentsSuccess) {
         _courses = courseHomeState.courses;
         return CarouselSlider(
@@ -136,11 +127,8 @@ class _HomeState extends State<Home> {
         // do nothing
       } else {
         if (_courses[i] != null) {
-          widgets.add(CourseSection(
-              qtyCourses: _courses.length,
-              courseIndex: i,
-              course: _courses[i],
-              courseEnrollment: _courseEnrollments[i]));
+          widgets.add(
+              CourseSection(qtyCourses: _courses.length, courseIndex: i, course: _courses[i], courseEnrollment: _courseEnrollments[i]));
         }
       }
     }
@@ -182,8 +170,7 @@ class _HomeState extends State<Home> {
             OlukoPrimaryButton(
               title: OlukoLocalizations.get(context, 'enrollToACourse'),
               onPressed: () {
-                Navigator.pushNamed(context, routeLabels[RouteEnum.courses],
-                    arguments: {'homeEnrollTocourse': 'true'});
+                Navigator.pushNamed(context, routeLabels[RouteEnum.courses], arguments: {'homeEnrollTocourse': 'true'});
               },
             ),
           ],
@@ -195,9 +182,7 @@ class _HomeState extends State<Home> {
       children: [
         SizedBox(height: 85),
         Text(OlukoLocalizations.get(context, 'welcomeTo'),
-            style: OlukoFonts.olukoSubtitleFont(
-                custoFontWeight: FontWeight.bold,
-                customColor: OlukoColors.white)),
+            style: OlukoFonts.olukoSubtitleFont(custoFontWeight: FontWeight.bold, customColor: OlukoColors.white)),
         SizedBox(height: 25),
         Image.asset(
           'assets/home/mvt.png',
@@ -239,14 +224,12 @@ class _HomeState extends State<Home> {
   }
 
   Widget _handWidget() {
-    return BlocBuilder<HiFiveBloc, HiFiveState>(
-        builder: (context, hiFiveState) {
+    return BlocBuilder<HiFiveBloc, HiFiveState>(builder: (context, hiFiveState) {
       return hiFiveState is HiFiveSuccess && hiFiveState.users.isNotEmpty
           ? GestureDetector(
               onTap: () {
                 Navigator.pushNamed(context, routeLabels[RouteEnum.hiFivePage])
-                    .then((value) => BlocProvider.of<HiFiveBloc>(context)
-                        .get(_authState.user.id));
+                    .then((value) => BlocProvider.of<HiFiveBloc>(context).get(_authState.user.id));
               },
               child: Padding(
                 padding: const EdgeInsets.only(right: 20.0, top: 5),

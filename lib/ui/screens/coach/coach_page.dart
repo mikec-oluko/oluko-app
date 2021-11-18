@@ -129,7 +129,7 @@ class _CoachPageState extends State<CoachPage> {
                 body: BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(
                   builder: (context, state) {
                     if (state is CourseEnrollmentsByUserSuccess) {
-                      _courseEnrollmentList = state.courseEnrollments;
+                      _courseEnrollmentList = state.courseEnrollments.where((courseEnroll) => courseEnroll.isUnenrolled != true).toList();
                     }
                     return BlocConsumer<CoachMentoredVideosBloc, CoachMentoredVideosState>(
                       listenWhen: (CoachMentoredVideosState previous, CoachMentoredVideosState current) =>
@@ -223,7 +223,7 @@ class _CoachPageState extends State<CoachPage> {
     return BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(
       builder: (context, state) {
         if (state is CourseEnrollmentsByUserSuccess) {
-          _courseEnrollmentList = state.courseEnrollments;
+          _courseEnrollmentList = state.courseEnrollments.where((courseEnroll) => courseEnroll.isUnenrolled != true).toList();
           _segmentsFromCourseEnrollmentClasses = TransformListOfItemsToWidget.segments(_courseEnrollmentList);
           _allSegmentsForUser = TransformListOfItemsToWidget.createSegmentContentInforamtion(_segmentsFromCourseEnrollmentClasses);
         }

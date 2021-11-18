@@ -407,7 +407,15 @@ class _UserProfilePageState extends State<UserProfilePage> {
                       builder: (context, state) {
                         if (state is CourseEnrollmentsByUserSuccess) {
                           if (_courseEnrollmentList.isEmpty) {
-                            _courseEnrollmentList = state.courseEnrollments;
+                            _courseEnrollmentList =
+                                state.courseEnrollments.where((courseEnroll) => courseEnroll.isUnenrolled != true).toList();
+                            // _courseEnrollmentList.forEach((courseEnrolled) {
+                            //   courseEnrolled.classes.forEach((enrolledClass) {
+                            //     enrolledClass.segments.forEach((enrolledSegment) {
+                            //       if (enrolledSegment.isChallenge) {}
+                            //     });
+                            //   });
+                            // });
                           }
                         }
                         return BlocBuilder<CourseBloc, CourseState>(
@@ -417,7 +425,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                 _coursesToUse = state.courses;
                               }
                             }
-                            return _coursesToUse.isNotEmpty
+                            return _coursesToUse.isNotEmpty && _courseEnrollmentList.isNotEmpty
                                 ? buildCourseSection(
                                     context: context, contentForCourse: returnCoursesWidget(listOfCourses: _courseEnrollmentList))
                                 //  returnCoursesWidget(listOfCourses: _coursesToUse))
@@ -530,49 +538,25 @@ class _UserProfilePageState extends State<UserProfilePage> {
     });
     return contentForCourseSection.toList();
   }
-  // List<Widget> returnCoursesWidget({List<Course> listOfCourses}) {
-  //   List<Widget> contentForCourseSection = [];
-  //   listOfCourses.forEach((course) {
-  //     if (course != null) {
-  //       contentForCourseSection.add(_getCourseCard(courseInfo: course));
-  //     }
-  //   });
-  //   return contentForCourseSection.toList();
-  // }
 
   Widget _getCourseCard({CourseEnrollment courseInfo}) {
     return Padding(
       padding: const EdgeInsets.only(right: 15.0),
       child: CourseCard(
-        actualCourse: courseInfo,
-        width: 120,
-        height: 120,
-        imageCover: Image.network(
-          courseInfo.course.image,
-          frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
-              ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, width: 120),
-        ),
-        progress: getCourseProgress(
-            courseEnrollments: _courseEnrollmentList, course: _coursesToUse.where((element) => element.id == courseInfo.course.id).first),
-      ),
+          actualCourse: courseInfo,
+          width: 120,
+          height: 120,
+          imageCover: Image.network(
+            courseInfo.course.image,
+            frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
+                ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, width: 120),
+          ),
+          progress: getCourseProgress(
+              courseEnrollments: _courseEnrollmentList,
+              course: _coursesToUse.where((element) => element.id == courseInfo.course.id && !courseInfo.isUnenrolled).first),
+          canUnenrollCourse: true),
     );
   }
-  // Widget _getCourseCard({Course courseInfo}) {
-  //   return Padding(
-  //     padding: const EdgeInsets.only(right: 15.0),
-  //     child: CourseCard(
-  //       actualCourse: courseInfo,
-  //       width: 120,
-  //       height: 120,
-  //       imageCover: Image.network(
-  //         courseInfo.image,
-  //         frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
-  //             ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, width: 120),
-  //       ),
-  //       progress: getCourseProgress(courseEnrollments: _courseEnrollmentList, course: courseInfo),
-  //     ),
-  //   );
-  // }
 
   double getCourseProgress({List<CourseEnrollment> courseEnrollments, Course course}) {
     double _completion = 0.0;
