@@ -330,7 +330,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                   : OlukoLocalizations.get(context, 'nextSegment'),
               thinPadding: true,
               onPressed: () {
-                Navigator.pop(context);
+                //Navigator.pop(context);
                 widget.segmentIndex < widget.segments.length - 1
                     ? Navigator.pushNamed(
                         context, routeLabels[RouteEnum.segmentDetail],
@@ -745,8 +745,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
       setState(() {
         workoutType = WorkoutType.segment;
       });
-      DialogUtils.getDialog(context, _confirmDialogContent(),
-          showExitButton: true);
+      AppMessages.showSnackbar(
+          context, OlukoLocalizations.get(context, 'roundInfo'));
+      /*DialogUtils.getDialog(context, _confirmDialogContent(),
+          showExitButton: true);*/
     }
   }
 

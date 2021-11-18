@@ -98,10 +98,16 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
             appBar: OlukoAppBar(
               onPressed: widget.isForCoachPage
                   ? () {
+                      //TODO: PREVIOUS CHANGE
+                      //_controller.pause();
+                      Navigator.pop(context);
                       AppNavigator().returnToHome(context);
                     }
                   : () {
-                      Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
+                      Navigator.pop(context);
+                      //TODO: PREVIOUS CHANGE
+                      //_controller.pause();
+                      //Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
                     },
               showBackButton: !widget.isFirstTime,
               title: widget.isForCoachPage ? OlukoLocalizations.get(context, 'coach') : OlukoLocalizations.get(context, 'assessment'),
@@ -240,6 +246,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                                 isLastTask = true;
                               });
                             }
+                            BlocProvider.of<TaskSubmissionBloc>(context).setLoaderTaskSubmissionOfTask();
                             return Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails],
                                     arguments: {'taskIndex': index, 'isLastTask': isLastTask})
                                 .then((value) => BlocProvider.of<AssessmentBloc>(context).getById('emnsmBgZ13UBRqTS26Qd'));

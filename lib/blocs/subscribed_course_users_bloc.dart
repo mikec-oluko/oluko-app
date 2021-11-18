@@ -57,7 +57,9 @@ class SubscribedCourseUsersBloc extends Cubit<SubscribedCourseUsersState> {
         friends.forEach((friend) {
           if (friend.isFavorite) {
             int index = userListToShow.map((user) => user.id).toList().indexOf(friend.id);
-            favoriteUserList.add(userListToShow[index]);
+            if (index != -1) {
+              favoriteUserList.add(userListToShow[index]);
+            }
           }
         });
       }
