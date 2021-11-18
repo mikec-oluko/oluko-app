@@ -200,23 +200,4 @@ class ChatRepository {
       return false;
     }
   }
-
-  void removeAllHiFives(String userId, String targetUserId) async {
-    final QuerySnapshot messages = await FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('users')
-        .doc(userId)
-        .collection('chat')
-        .doc(targetUserId)
-        .collection('messages')
-        .where('message', isEqualTo: Message().hifiveMessageCode)
-        .get();
-
-    if (messages?.docs != null) {
-      for (final message in messages.docs) {
-        message.reference.delete();
-      }
-    }
-  }
 }

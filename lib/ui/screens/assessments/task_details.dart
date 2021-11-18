@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:chewie/chewie.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +21,6 @@ import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
-import 'package:oluko_app/utils/app_loader.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -57,11 +54,18 @@ class _TaskDetailsState extends State<TaskDetails> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
+    return BlocBuilder<AuthBloc, AuthState>(buildWhen: (previous, current) {
+      return true;
+    }, builder: (context, authState) {
       if (authState is AuthSuccess) {
         return BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(
+          buildWhen: (previous, current) {
+            return true;
+          },
           builder: (context, assessmentAssignmentState) {
-            return BlocBuilder<TaskBloc, TaskState>(builder: (context, taskState) {
+            return BlocBuilder<TaskBloc, TaskState>(buildWhen: (previous, current) {
+              return true;
+            }, builder: (context, taskState) {
               if (assessmentAssignmentState is AssessmentAssignmentSuccess && taskState is TaskSuccess) {
                 _assessmentAssignment = assessmentAssignmentState.assessmentAssignment;
                 _tasks = taskState.values;
@@ -91,7 +95,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                   if (_controller != null) {
                     _controller.pause();
                   }
-                  Navigator.pop(context);
+                  Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos], arguments: {'isFirstTime': false});
                 }),
             body: Container(
                 color: Colors.black,
@@ -105,7 +109,7 @@ class _TaskDetailsState extends State<TaskDetails> {
   }
 
   Widget showVideoPlayer(String videoUrl) {
-    final List<Widget> widgets = [];
+    List<Widget> widgets = [];
     if (_controller == null) {
       widgets.add(const Center(child: CircularProgressIndicator()));
     }
@@ -159,23 +163,32 @@ class _TaskDetailsState extends State<TaskDetails> {
         _task.description,
         style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
       ),
-      recordedVideos(_taskSubmission),
+      BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(buildWhen: (previous, current) {
+        if (current is GetSuccess) {
+          if (current.taskSubmission != null && current.taskSubmission.task.id != _task.id) {
+            return false;
+          }
+        }
+        if (previous is GetSuccess && current is GetSuccess) {
+          if (current.taskSubmission != null && previous.taskSubmission.task.id == current.taskSubmission.task.id) {
+            return false;
+          }
+        }
+        return true;
+      }, builder: (context, state) {
+        if (state is GetSuccess && state.taskSubmission != null) {
+          return recordedVideos(_taskSubmission);
+        } else {
+          return SizedBox();
+        }
+      })
     ]));
   }
 
   Widget _content() {
     return BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(buildWhen: (previous, current) {
       if (current is GetSuccess) {
-        if (current.taskSubmission != null && current.taskSubmission.task.id != _task.id) {
-          return false;
-        }
-        if (previous is GetSuccess && current.taskSubmission != null && current.taskSubmission.id == previous?.taskSubmission?.id) {
-          return false;
-        }
-        if (previous is! GetSuccess &&
-            _taskSubmission != null &&
-            current.taskSubmission != null &&
-            current.taskSubmission.id == _taskSubmission.id) {
+        if (current.taskSubmission.task.id != _task.id) {
           return false;
         }
       }
@@ -193,7 +206,6 @@ class _TaskDetailsState extends State<TaskDetails> {
           ],
         );
       } else {
-        _taskSubmission = null;
         return Stack(
           children: [
             ListView(
@@ -341,85 +353,72 @@ class _TaskDetailsState extends State<TaskDetails> {
   }
 
   Widget recordedVideos(TaskSubmission taskSubmission) {
-    return taskSubmission == null
-        ? const SizedBox()
-        : Column(children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 15.0),
-              child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: TitleBody(
-                    OlukoLocalizations.get(context, 'recordedVideo'),
-                    bold: true,
-                  )),
-            ),
-            GestureDetector(
-              onTap: () {
-                if (_controller != null) {
-                  _controller.pause();
-                }
-                if (taskSubmission.video != null && taskSubmission.video.url != null) {
-                  Navigator.pushNamed(context, routeLabels[RouteEnum.taskSubmissionVideo],
-                      arguments: {'task': _task, 'videoUrl': taskSubmission.video.url});
-                }
-              },
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Container(
-                  height: 150,
-                  child: ListView(scrollDirection: Axis.horizontal, children: [
-                    taskResponse(
-                        TimeConverter.durationToString(
-                            Duration(milliseconds: taskSubmission == null ? 0 : taskSubmission?.video?.duration)),
-                        taskSubmission?.video?.thumbUrl,
-                        taskSubmission),
-                  ]),
-                ),
-              ),
-            )
-          ]);
-  }
-
-  Widget taskResponse(String timeLabel, String thumbnail, TaskSubmission taskSubmission) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 8.0),
-      child: GestureDetector(
-          onTap: () {
-            if (_controller != null) {
-              _controller.pause();
-            }
+    return Column(children: [
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 15.0),
+        child: Align(
+            alignment: Alignment.centerLeft,
+            child: TitleBody(
+              OlukoLocalizations.get(context, 'recordedVideo'),
+              bold: true,
+            )),
+      ),
+      GestureDetector(
+        onTap: () {
+          if (_controller != null) {
+            _controller.pause();
+          }
+          if (taskSubmission.video != null && taskSubmission.video.url != null) {
             Navigator.pushNamed(context, routeLabels[RouteEnum.taskSubmissionVideo],
                 arguments: {'task': _task, 'videoUrl': taskSubmission.video.url});
-          },
-          child: ClipRRect(
-            borderRadius: const BorderRadius.all(Radius.circular(20)),
-            child: Stack(alignment: AlignmentDirectional.center, children: [
-              if (thumbnail == null) const Icon(Icons.no_photography) else Image.network(thumbnail),
-              Align(
-                  alignment: Alignment.center,
-                  child: Image.asset(
-                    'assets/assessment/play.png',
-                    height: 40,
-                    width: 60,
-                  )),
-              Positioned(
-                  bottom: 10,
-                  left: 10,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.black.withAlpha(150),
-                      borderRadius: const BorderRadius.all(Radius.circular(10)),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        timeLabel,
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  )),
+          }
+        },
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: Container(
+            height: 150,
+            child: ListView(scrollDirection: Axis.horizontal, children: [
+              taskResponse(
+                  TimeConverter.durationToString(Duration(milliseconds: taskSubmission.video.duration)), taskSubmission.video?.thumbUrl),
             ]),
-          )),
+          ),
+        ),
+      )
+    ]);
+  }
+
+  Widget taskResponse(String timeLabel, String thumbnail) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 8.0),
+      child: ClipRRect(
+        borderRadius: const BorderRadius.all(Radius.circular(20)),
+        child: Stack(alignment: AlignmentDirectional.center, children: [
+          if (thumbnail == null) const Icon(Icons.no_photography) else Image.network(thumbnail),
+          Align(
+              alignment: Alignment.center,
+              child: Image.asset(
+                'assets/assessment/play.png',
+                height: 40,
+                width: 60,
+              )),
+          Positioned(
+              bottom: 10,
+              left: 10,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.black.withAlpha(150),
+                  borderRadius: const BorderRadius.all(Radius.circular(10)),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    timeLabel,
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ),
+              )),
+        ]),
+      ),
     );
   }
 }

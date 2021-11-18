@@ -96,14 +96,9 @@ class CourseEnrollmentRepository {
 
     final bool isClassCompleted = CourseEnrollmentService.getFirstUncompletedSegmentIndex(classes[classIndex]) == -1;
     if (isClassCompleted) {
-      if (classIndex == courseEnrollment.classes.length - 1) {
-        courseEnrollment.completion = 1;
-      } else {
-        double courseProgress =
-            1 / courseEnrollment.classes.length;
-        courseEnrollment.completion += courseProgress;
-      }
+      final double courseProgress = 1 / courseEnrollment.classes.length * (classIndex + 1);
       classes[classIndex].completedAt = Timestamp.now();
+      courseEnrollment.completion = courseProgress;
     }
 
     reference.update(

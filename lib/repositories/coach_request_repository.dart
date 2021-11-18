@@ -41,8 +41,8 @@ class CoachRequestRepository {
     return response;
   }
 
-  Future<CoachRequest> getBySegmentAndCoachId(String userId, String segmentId,
-      String courseEnrollmentId, String coachId, String classId) async {
+  Future<CoachRequest> getBySegmentAndCoachId(
+      String userId, String segmentId, String courseEnrollmentId, String coachId) async {
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
@@ -50,14 +50,12 @@ class CoachRequestRepository {
         .doc(userId)
         .collection('coachRequests')
         .where('segment_id', isEqualTo: segmentId)
-        .where('class_id', isEqualTo: classId)
         .where('course_enrollment_id', isEqualTo: courseEnrollmentId)
         .where('created_by', isEqualTo: coachId)
         .get();
 
     if (docRef.docs.length > 0) {
-      return CoachRequest.fromJson(
-          docRef.docs[0].data() as Map<String, dynamic>);
+      return CoachRequest.fromJson(docRef.docs[0].data() as Map<String, dynamic>);
     } else {
       return null;
     }
@@ -74,8 +72,7 @@ class CoachRequestRepository {
     reference.update({'status': StatusEnum.resolved.index});
   }
 
-  Future<void> updateNotificationStatus(
-      String coachRequestId, String userId, bool notificationValue) async {
+  Future<void> updateNotificationStatus(String coachRequestId, String userId, bool notificationValue) async {
     DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue("projectId"))

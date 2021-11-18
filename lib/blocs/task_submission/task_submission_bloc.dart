@@ -78,6 +78,7 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
   }
 
   void updateTaskSubmissionPrivacity(AssessmentAssignment assessmentA, String taskSubmissionId, bool isPublic) async {
+    emit(Loading());
     try {
       await TaskSubmissionRepository.updateTaskSubmissionPrivacity(assessmentA, taskSubmissionId, isPublic);
     } catch (e, stackTrace) {
@@ -106,10 +107,6 @@ class TaskSubmissionBloc extends Cubit<TaskSubmissionState> {
       emit(Failure(exception: e));
       rethrow;
     }
-  }
-
-  void setLoaderTaskSubmissionOfTask() {
-    emit(Loading());
   }
 
   void getTaskSubmissionByUserId(String userId) async {

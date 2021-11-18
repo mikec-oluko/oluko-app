@@ -94,7 +94,7 @@ class HiFiveBloc extends Cubit<HiFiveState> {
   }
 
   void ignoreHiFive(BuildContext context, String userId, String targetUserId) async {
-    ChatRepository().removeAllHiFives(userId, targetUserId);
+    bool hiFiveMessage = await ChatRepository().removeHiFive(userId, targetUserId);
     if (_lastState != null && _chatExists(_lastState, targetUserId)) {
       _lastState.chat.removeWhere((key, value) => key.id == targetUserId);
       _lastState.users.removeWhere((element) => element.id == targetUserId);

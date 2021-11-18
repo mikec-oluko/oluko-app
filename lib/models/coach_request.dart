@@ -14,15 +14,11 @@ class CoachRequest extends Base with EquatableMixin {
   String courseEnrollmentId;
   DocumentReference courseEnrollmentReference;
   bool notificationViewed;
-  String classId;
-  DocumentReference classReference;
 
   CoachRequest(
       {this.status,
       this.segmentId,
       this.segmentReference,
-      this.classId,
-      this.classReference,
       this.coachId,
       this.coachReference,
       this.segmentSubmissionId,
@@ -50,28 +46,17 @@ class CoachRequest extends Base with EquatableMixin {
     final CoachRequest coachRequest = CoachRequest(
         status: StatusEnum.values[json['status'] as int],
         segmentId: json['segment_id']?.toString(),
-        segmentReference: json['segment_reference'] != null
-            ? json['class_reference'] as DocumentReference
-            : null,
-        classId: json['class_id']?.toString(),
-        classReference: json['class_reference'] != null
-            ? json['class_reference'] as DocumentReference
-            : null,
+        segmentReference: json['segment_reference'] != null ? json['segment_reference'] as DocumentReference : null,
         coachId: json['coach_id']?.toString(),
-        coachReference: json['coach_reference'] != null
-            ? json['coach_reference'] as DocumentReference
-            : null,
+        coachReference: json['coach_reference'] != null ? json['coach_reference'] as DocumentReference : null,
         segmentSubmissionId: json['segment_submission_id']?.toString(),
         segmentSubmissionReference: json['segment_submission_reference'] != null
             ? json['segment_submission_reference'] as DocumentReference
             : null,
         courseEnrollmentId: json['course_enrollment_id']?.toString(),
-        courseEnrollmentReference: json['course_enrollment_reference'] != null
-            ? json['course_enrolled_reference'] as DocumentReference
-            : null,
-        notificationViewed: json['notification_viewed'] == null
-            ? false
-            : json['notification_viewed'] as bool);
+        courseEnrollmentReference:
+            json['course_enrollment_reference'] != null ? json['course_enrolled_reference'] as DocumentReference : null,
+        notificationViewed: json['notification_viewed'] == null ? false : json['notification_viewed'] as bool);
     coachRequest.setBase(json);
     return coachRequest;
   }
@@ -82,8 +67,6 @@ class CoachRequest extends Base with EquatableMixin {
       'status': status,
       'segment_id': segmentId,
       'segment_reference': segmentReference,
-      'class_id': classId,
-      'class_reference': classReference,
       'coach_id': coachId,
       'coach_reference': coachReference,
       'segment_submission_id': segmentSubmissionId,
