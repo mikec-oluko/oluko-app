@@ -118,46 +118,29 @@ class AuthBloc extends Cubit<AuthState> {
   }
 
   Future<void> loginWithGoogle(BuildContext context) async {
-    UserCredential result = await _authRepository.signInWithGoogle();
-    User firebaseUser = result.user;
-    UserResponse userResponse = await UserRepository().get(firebaseUser.email);
+    try {
+      UserCredential result = await _authRepository.signInWithGoogle();
+      User firebaseUser = result.user;
+      UserResponse userResponse =
+          await UserRepository().get(firebaseUser.email);
 
-    //TODO (Not implemented in MVP) If Firebase user document not found, create one.
+      //If there is no associated user for this account
+      if (userResponse == null) {
+        FirebaseAuth.instance.signOut();
+        AppMessages.showSnackbar(
+            context,
+            OlukoLocalizations.get(
+                context, 'userForThisAccountNotFoundPleaseSignUp'));
+        emit(AuthGuest());
+        return;
+      }
 
-    // if (userResponse == null) {
-    //   UserResponse dbResponse = await _signUpWithSSO(firebaseUser);
-    //   if (dbResponse == null) {
-    //     FirebaseAuth.instance.signOut();
-    //     emit(AuthFailure(
-    //         exception: Exception('Error creating user in database.')));
-    //     return;
-    //   } else {
-    //     userResponse = dbResponse;
-    //   }
-    // }
-
-    // if (!firebaseUser.emailVerified) {
-    //   //TODO: trigger to send another email
-    //   FirebaseAuth.instance.signOut();
-    //   AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'pleaseCheckYourEmail'));
-    //   emit(AuthGuest());
-    //   return;
-    // }
-
-    //If there is no associated user for this account
-    if (userResponse == null) {
-      FirebaseAuth.instance.signOut();
-      AppMessages.showSnackbar(
-          context,
-          OlukoLocalizations.get(
-              context, 'userForThisAccountNotFoundPleaseSignUp'));
-      emit(AuthGuest());
-      return;
+      AuthRepository().storeLoginData(userResponse);
+      emit(AuthSuccess(user: userResponse, firebaseUser: firebaseUser));
+      navigateToNextScreen(context, firebaseUser.uid);
+    } on NoSuchMethodError catch (e) {
+      Navigator.pushNamed(context, '/log-in');
     }
-
-    AuthRepository().storeLoginData(userResponse);
-    emit(AuthSuccess(user: userResponse, firebaseUser: firebaseUser));
-    navigateToNextScreen(context, firebaseUser.uid);
   }
 
   Future<void> loginWithFacebook(BuildContext context) async {
