@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:equatable/equatable.dart';
 import 'base.dart';
 
 enum RecommendationEntityType { course, movement }
 
-class Recommendation extends Base {
+class Recommendation extends Base with EquatableMixin {
   Recommendation(
       {this.originUserId,
       this.originUserReference,
@@ -68,4 +69,24 @@ class Recommendation extends Base {
     recommendationJson.addEntries(super.toJson().entries);
     return recommendationJson;
   }
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [
+        originUserId,
+        originUserReference,
+        destinationUserId,
+        destinationUserReference,
+        entityId,
+        entityReference,
+        entityType,
+        notificationViewed,
+        id,
+        createdBy,
+        createdAt,
+        updatedAt,
+        updatedBy,
+        isDeleted,
+        isHidden
+      ];
 }

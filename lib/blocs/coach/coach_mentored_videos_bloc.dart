@@ -35,7 +35,9 @@ class CoachMentoredVideosBloc extends Cubit<CoachMentoredVideosState> {
 
   @override
   void dispose() {
-    subscription.cancel();
+    if (subscription != null) {
+      subscription.cancel();
+    }
   }
 
 //TODO: GET STREAM
@@ -97,8 +99,7 @@ class CoachMentoredVideosBloc extends Cubit<CoachMentoredVideosState> {
   //   }
   // }
 
-  void updateCoachAnnotationFavoriteValue(
-      {Annotation coachAnnotation, List<Annotation> currentMentoredVideosContent}) async {
+  void updateCoachAnnotationFavoriteValue({Annotation coachAnnotation, List<Annotation> currentMentoredVideosContent}) async {
     try {
       final List<Annotation> coachAnnotationsUpdated =
           await _coachRepository.setAnnotationAsFavorite(coachAnnotation, currentMentoredVideosContent);

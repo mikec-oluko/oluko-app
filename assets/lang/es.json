@@ -237,6 +237,7 @@
     "recordAMessage": "Grabe un mensaje para ",
     "saveFor": "Guardar para ",
     "accountAlreadyExistsWithThisEmailUsingADifferentProvider": "Una cuenta ya existe con el mismo email pero con distintas credenciales de sign-in",
+    "errorOccurred": "Ocurrio un error",
     "deleteMessageConfirm": "Esta seguro de que quiere eliminar su mensaje de voz?",
     "notificationCourse": "Curso recomendado",
     "notificationClass": "Clase recomendada",

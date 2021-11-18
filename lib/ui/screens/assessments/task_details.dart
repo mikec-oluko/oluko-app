@@ -91,7 +91,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                   if (_controller != null) {
                     _controller.pause();
                   }
-                  Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos], arguments: {'isFirstTime': false});
+                  Navigator.pop(context);
                 }),
             body: Container(
                 color: Colors.black,
@@ -371,7 +371,8 @@ class _TaskDetailsState extends State<TaskDetails> {
                     taskResponse(
                         TimeConverter.durationToString(
                             Duration(milliseconds: taskSubmission == null ? 0 : taskSubmission?.video?.duration)),
-                        taskSubmission?.video?.thumbUrl),
+                        taskSubmission?.video?.thumbUrl,
+                        taskSubmission),
                   ]),
                 ),
               ),
@@ -379,38 +380,46 @@ class _TaskDetailsState extends State<TaskDetails> {
           ]);
   }
 
-  Widget taskResponse(String timeLabel, String thumbnail) {
+  Widget taskResponse(String timeLabel, String thumbnail, TaskSubmission taskSubmission) {
     return Padding(
       padding: const EdgeInsets.only(right: 8.0),
-      child: ClipRRect(
-        borderRadius: const BorderRadius.all(Radius.circular(20)),
-        child: Stack(alignment: AlignmentDirectional.center, children: [
-          if (thumbnail == null) const Icon(Icons.no_photography) else Image.network(thumbnail),
-          Align(
-              alignment: Alignment.center,
-              child: Image.asset(
-                'assets/assessment/play.png',
-                height: 40,
-                width: 60,
-              )),
-          Positioned(
-              bottom: 10,
-              left: 10,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.black.withAlpha(150),
-                  borderRadius: const BorderRadius.all(Radius.circular(10)),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    timeLabel,
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                ),
-              )),
-        ]),
-      ),
+      child: GestureDetector(
+          onTap: () {
+            if (_controller != null) {
+              _controller.pause();
+            }
+            Navigator.pushNamed(context, routeLabels[RouteEnum.taskSubmissionVideo],
+                arguments: {'task': _task, 'videoUrl': taskSubmission.video.url});
+          },
+          child: ClipRRect(
+            borderRadius: const BorderRadius.all(Radius.circular(20)),
+            child: Stack(alignment: AlignmentDirectional.center, children: [
+              if (thumbnail == null) const Icon(Icons.no_photography) else Image.network(thumbnail),
+              Align(
+                  alignment: Alignment.center,
+                  child: Image.asset(
+                    'assets/assessment/play.png',
+                    height: 40,
+                    width: 60,
+                  )),
+              Positioned(
+                  bottom: 10,
+                  left: 10,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.black.withAlpha(150),
+                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        timeLabel,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  )),
+            ]),
+          )),
     );
   }
 }

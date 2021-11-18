@@ -5,6 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
+import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/models/dto/api_response.dart';
 import 'package:oluko_app/models/dto/login_request.dart';
@@ -17,6 +19,11 @@ import 'package:oluko_app/utils/app_loader.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+
+import 'coach/coach_interaction_timeline_bloc.dart';
+import 'coach/coach_mentored_videos_bloc.dart';
+import 'coach/coach_recommendations_bloc.dart';
+import 'coach/coach_request_bloc.dart';
 
 abstract class AuthState {}
 
@@ -105,7 +112,22 @@ class AuthBloc extends Cubit<AuthState> {
   }
 
   Future<void> loginWithGoogle(BuildContext context) async {
-    UserCredential result = await _authRepository.signInWithGoogle();
+    UserCredential result;
+    try {
+      result = await _authRepository.signInWithGoogle();
+    } on FirebaseAuthException catch (error) {
+      AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'accountAlreadyExistsWithThisEmailUsingADifferentProvider'));
+      rethrow;
+    } catch (error) {
+      AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'errorOccurred'));
+      rethrow;
+    }
+    if (result == null) {
+      FirebaseAuth.instance.signOut();
+      AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'errorOccurred'));
+      emit(AuthGuest());
+      return;
+    }
     User firebaseUser = result.user;
     UserResponse userResponse = await UserRepository().get(firebaseUser.email);
 
@@ -151,6 +173,15 @@ class AuthBloc extends Cubit<AuthState> {
     } on FirebaseAuthException catch (error) {
       AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'accountAlreadyExistsWithThisEmailUsingADifferentProvider'));
       rethrow;
+    } catch (error) {
+      AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'errorOccurred'));
+      rethrow;
+    }
+    if (result == null) {
+      FirebaseAuth.instance.signOut();
+      AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'errorOccurred'));
+      emit(AuthGuest());
+      return;
     }
     User firebaseUser = result.user;
     UserResponse user = await UserRepository().get(firebaseUser.email);
@@ -206,6 +237,11 @@ class AuthBloc extends Cubit<AuthState> {
   Future<void> logout(BuildContext context) async {
     final success = await AuthRepository().removeLoginData();
     if (success == true) {
+      BlocProvider.of<CoachMentoredVideosBloc>(context).dispose();
+      BlocProvider.of<CoachRecommendationsBloc>(context).dispose();
+      BlocProvider.of<CoachRequestBloc>(context).dispose();
+      BlocProvider.of<CoachTimelineItemsBloc>(context).dispose();
+      BlocProvider.of<StoryListBloc>(context).dispose();
       Navigator.pushNamedAndRemoveUntil(context, '/sign-up', (route) => false);
       emit(AuthGuest());
     }
