@@ -6,7 +6,6 @@ class Video extends Equatable {
   double aspectRatio;
   String name;
   int duration;
-  //TODO: Joaquin add me some urls
 
   Video({this.url, this.thumbUrl, this.aspectRatio, this.name, this.duration});
 
