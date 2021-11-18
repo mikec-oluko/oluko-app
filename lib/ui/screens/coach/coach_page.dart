@@ -90,7 +90,6 @@ class _CoachPageState extends State<CoachPage> {
         : (widget.coachAssignment.video?.url != null ? true : widget.coachAssignment.introductionVideo != null)) {
       setState(() {
         _introductionVideo = Annotation(
-            createdAt: Timestamp.now(),
             id: _defaultIntroductionVideoId,
             favorite: false,
             video: Video(
@@ -101,7 +100,7 @@ class _CoachPageState extends State<CoachPage> {
     }
     super.initState();
   }
-  
+
   @override
   void dispose() {
     super.dispose();
