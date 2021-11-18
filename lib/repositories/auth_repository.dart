@@ -72,6 +72,7 @@ class AuthRepository {
 
   Future<UserCredential> signInWithGoogle() async {
     try {
+      GoogleSignIn().disconnect();
       // Trigger the authentication flow
       final GoogleSignInAccount googleUser = await GoogleSignIn().signIn();
 
@@ -92,6 +93,7 @@ class AuthRepository {
   }
 
   Future<UserCredential> signInWithFacebook() async {
+    FacebookAuth.instance.logOut();
     // Trigger the sign-in flow
     final result = await FacebookAuth.instance.login(permissions: ["public_profile", "email"]);
 
