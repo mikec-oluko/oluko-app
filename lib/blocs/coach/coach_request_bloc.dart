@@ -103,10 +103,11 @@ class CoachRequestBloc extends Cubit<CoachRequestState> {
     }
   }
 
-  void getSegmentCoachRequest({String userId, String segmentId, String coachId, String courseEnrollmentId}) async {
+  void getSegmentCoachRequest({String userId, String segmentId, String coachId, String courseEnrollmentId, String classId}) async {
     emit(CoachRequestLoading());
     try {
-      CoachRequest coachRequest = await _coachRequestRepository.getBySegmentAndCoachId(userId, segmentId, courseEnrollmentId, coachId);
+      CoachRequest coachRequest =
+          await _coachRequestRepository.getBySegmentAndCoachId(userId, segmentId, courseEnrollmentId, coachId, classId);
       emit(GetCoachRequestSuccess(coachRequest: coachRequest));
     } catch (exception, stackTrace) {
       await Sentry.captureException(

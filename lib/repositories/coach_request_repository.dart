@@ -42,7 +42,7 @@ class CoachRequestRepository {
   }
 
   Future<CoachRequest> getBySegmentAndCoachId(
-      String userId, String segmentId, String courseEnrollmentId, String coachId) async {
+      String userId, String segmentId, String courseEnrollmentId, String coachId, String classId) async {
     QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
@@ -50,6 +50,7 @@ class CoachRequestRepository {
         .doc(userId)
         .collection('coachRequests')
         .where('segment_id', isEqualTo: segmentId)
+        .where('class_id', isEqualTo: classId)
         .where('course_enrollment_id', isEqualTo: courseEnrollmentId)
         .where('created_by', isEqualTo: coachId)
         .get();
