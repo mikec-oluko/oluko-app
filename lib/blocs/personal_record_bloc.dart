@@ -28,7 +28,9 @@ class PersonalRecordBloc extends Cubit<PersonalRecordState> {
       final List<Challenge> challengesList = await ChallengeRepository.getUserChallengesBySegmentId(segmentId, userId);
       final List<PersonalRecord> personalRecords = challengesList.map((challenge) {
         return PersonalRecord(
-            date: challenge.completedAt != null ? TimeConverter.returnDateOnStringFormat(dateToFormat: challenge.completedAt, context: context) : '',
+            date: challenge.completedAt != null
+                ? TimeConverter.returnDateOnStringFormat(dateToFormat: challenge.completedAt, context: context)
+                : '',
             image: challenge.image,
             title: challenge.challengeName);
       }).toList();
