@@ -32,21 +32,19 @@ class _CoachNotificationPanelContentCardState extends State<CoachNotificationPan
     switch (TimelineContentOption.getTimelineOption(content.contentTypeIndex as int)) {
       case TimelineInteractionType.course:
         return CoachNotificationCard(
-          cardImage: content.contentImage,
-          cardTitle: content.contentTitle,
-          cardSubTitle: content.courseContent.classes.length.toString(),
-          date: content.createdAt != null ? content.createdAt.toDate() : null,
-          fileType: CoachFileTypeEnum.recommendedCourse,
-          onCloseCard: () {
-            BlocProvider.of<CoachRecommendationsBloc>(context).setRecommendationNotificationAsViewed(
-                content.coachRecommendation.id,
-                content.coachRecommendation.originUserId,
-                content.coachRecommendation.destinationUserId,
-                true);
-          },
-          onOpenCard: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
-              arguments: {'course': content.courseContent, 'fromCoach': true}),
-        );
+            cardImage: content.contentImage,
+            cardTitle: content.contentTitle,
+            cardSubTitle: content.courseContent.classes.length.toString(),
+            date: content.createdAt != null ? content.createdAt.toDate() : null,
+            fileType: CoachFileTypeEnum.recommendedCourse,
+            onCloseCard: () {
+              updateRecommendationViewedProperty(content);
+            },
+            onOpenCard: () {
+              Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
+                  arguments: {'course': content.courseContent, 'fromCoach': true});
+              updateRecommendationViewedProperty(content);
+            });
       case TimelineInteractionType.classes:
         return CoachNotificationCard(
           cardImage: content.contentImage,
@@ -55,11 +53,7 @@ class _CoachNotificationPanelContentCardState extends State<CoachNotificationPan
           date: content.createdAt != null ? content.createdAt.toDate() : null,
           fileType: CoachFileTypeEnum.recommendedClass,
           onCloseCard: () {
-            BlocProvider.of<CoachRecommendationsBloc>(context).setRecommendationNotificationAsViewed(
-                content.coachRecommendation.id,
-                content.coachRecommendation.originUserId,
-                content.coachRecommendation.destinationUserId,
-                true);
+            updateRecommendationViewedProperty(content);
           },
           onOpenCard: () {},
         );
@@ -71,41 +65,40 @@ class _CoachNotificationPanelContentCardState extends State<CoachNotificationPan
             date: content.createdAt != null ? content.createdAt.toDate() : null,
             fileType: CoachFileTypeEnum.recommendedSegment,
             onCloseCard: () {
-              //TODO: GET NOTIFICATIONSTATUS AND USERID
               BlocProvider.of<CoachRequestBloc>(context)
-                  .setRequestSegmentNotificationAsViewed(content.coachRequest.id, content.coachRequest.coachId, true);
+                  .setRequestSegmentNotificationAsViewed(content.coachRequest.id, widget.userId, true);
             },
             onOpenCard: () {});
       case TimelineInteractionType.movement:
         return CoachNotificationCard(
-          cardImage: content.contentImage,
-          cardTitle: content.contentTitle,
-          cardSubTitle: '',
-          date: content.createdAt != null ? content.createdAt.toDate() : null,
-          fileType: CoachFileTypeEnum.recommendedMovement,
-          onCloseCard: () {
-            BlocProvider.of<CoachRecommendationsBloc>(context).setRecommendationNotificationAsViewed(
-                content.coachRecommendation.id,
-                content.coachRecommendation.originUserId,
-                content.coachRecommendation.destinationUserId,
-                true);
-          },
-          onOpenCard: () => Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro],
-              arguments: {'movement': content.movementContent}),
-        );
+            cardImage: content.contentImage,
+            cardTitle: content.contentTitle,
+            cardSubTitle: '',
+            date: content.createdAt != null ? content.createdAt.toDate() : null,
+            fileType: CoachFileTypeEnum.recommendedMovement,
+            onCloseCard: () {
+              updateRecommendationViewedProperty(content);
+            },
+            onOpenCard: () {
+              Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro],
+                  arguments: {'movement': content.movementContent});
+              updateRecommendationViewedProperty(content);
+            });
       case TimelineInteractionType.mentoredVideo:
         return CoachNotificationVideoCard(
             cardImage: content.contentImage,
             fileType: CoachFileTypeEnum.mentoredVideo,
             onCloseCard: () {
-              BlocProvider.of<CoachMentoredVideosBloc>(context).setMentoredVideoNotificationAsViewed(
-                  content.mentoredContent.createdBy, content.mentoredContent.userId, content.mentoredContent.id, true);
+              updateAnnotationNotificationAsViewed(content);
             },
-            onOpenCard: () => Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
-                  'videoUrl': content.videoUrl ?? content.mentoredContent.videoHLS,
-                  'aspectRatio': content.mentoredContent.video.aspectRatio,
-                  'titleForContent': OlukoLocalizations.get(context, 'mentoredVideos')
-                }));
+            onOpenCard: () {
+              Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
+                'videoUrl': content.videoUrl ?? content.mentoredContent.videoHLS,
+                'aspectRatio': content.mentoredContent.video.aspectRatio,
+                'titleForContent': OlukoLocalizations.get(context, 'mentoredVideos')
+              });
+              updateAnnotationNotificationAsViewed(content);
+            });
       case TimelineInteractionType.sentVideo:
         return CoachNotificationVideoCard(
           cardImage: content.contentImage,
@@ -116,5 +109,18 @@ class _CoachNotificationPanelContentCardState extends State<CoachNotificationPan
       //   break;
       default:
     }
+  }
+
+  void updateAnnotationNotificationAsViewed(CoachNotificationContent content) {
+    BlocProvider.of<CoachMentoredVideosBloc>(context).setMentoredVideoNotificationAsViewed(
+        content.mentoredContent.createdBy, content.mentoredContent.userId, content.mentoredContent.id, true);
+  }
+
+  void updateRecommendationViewedProperty(CoachNotificationContent content) {
+    BlocProvider.of<CoachRecommendationsBloc>(context).setRecommendationNotificationAsViewed(
+        content.coachRecommendation.id,
+        content.coachRecommendation.originUserId,
+        content.coachRecommendation.destinationUserId,
+        true);
   }
 }

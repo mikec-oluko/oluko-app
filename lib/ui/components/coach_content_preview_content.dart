@@ -14,8 +14,7 @@ class CoachContentPreviewContent extends StatefulWidget {
   final List<SegmentSubmission> segmentSubmissionContent;
   final List<Annotation> coachAnnotationContent;
 
-  const CoachContentPreviewContent(
-      {this.contentFor, this.titleForSection, this.segmentSubmissionContent, this.coachAnnotationContent});
+  const CoachContentPreviewContent({this.contentFor, this.titleForSection, this.segmentSubmissionContent, this.coachAnnotationContent});
 
   @override
   _CoachContentPreviewContentState createState() => _CoachContentPreviewContentState();
@@ -59,8 +58,7 @@ class _CoachContentPreviewContentState extends State<CoachContentPreviewContent>
                   height: 115,
                   color: Colors.black,
                   child: widget.segmentSubmissionContent.isNotEmpty
-                      ? CoachVideoContent(
-                          videoThumbnail: getThumbnails(segments: widget.segmentSubmissionContent), isForGallery: false)
+                      ? CoachVideoContent(videoThumbnail: getThumbnails(segments: widget.segmentSubmissionContent), isForGallery: false)
                       : CoachContentSectionCard(title: widget.titleForSection, needTitle: false),
                 ),
               ),
@@ -82,7 +80,7 @@ class _CoachContentPreviewContentState extends State<CoachContentPreviewContent>
               padding: const EdgeInsets.only(left: 5),
               child: Text(
                 widget.titleForSection,
-                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
               ),
             ),
             Padding(
@@ -96,9 +94,7 @@ class _CoachContentPreviewContentState extends State<CoachContentPreviewContent>
                   height: 115,
                   color: Colors.black,
                   child: widget.coachAnnotationContent.isNotEmpty
-                      ? CoachVideoContent(
-                          videoThumbnail: getThumbnails(annotations: widget.coachAnnotationContent),
-                          isForGallery: false)
+                      ? CoachVideoContent(videoThumbnail: getThumbnails(annotations: widget.coachAnnotationContent), isForGallery: false)
                       : CoachContentSectionCard(title: widget.titleForSection, needTitle: false),
                 ),
               ),

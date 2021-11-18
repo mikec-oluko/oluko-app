@@ -60,67 +60,101 @@ class _CoachNotificationCardState extends State<CoachNotificationCard> {
                             children: [
                               Padding(
                                 padding: const EdgeInsets.symmetric(vertical: 10.0),
-                                child: Container(
-                                  width: 140,
-                                  height: 170,
-                                  decoration: BoxDecoration(
-                                      borderRadius: const BorderRadius.all(Radius.circular(5)),
-                                      image: DecorationImage(
-                                        image: NetworkImage(widget.cardImage),
-                                        fit: BoxFit.cover,
-                                      )),
-                                  child: Stack(
-                                    children: [
-                                      Positioned(
-                                        top: -10,
-                                        left: -10,
-                                        child: IconButton(
-                                            iconSize: 32,
-                                            onPressed: widget.onCloseCard ??
-                                                () {
-                                                  setState(() {
-                                                    isVisible = !isVisible;
-                                                  });
-                                                },
-                                            icon: const Icon(Icons.close, color: OlukoColors.grayColor)),
+                                child: widget.cardImage != null
+                                    ? Container(
+                                        width: 140,
+                                        height: 170,
+                                        decoration: BoxDecoration(
+                                            borderRadius: const BorderRadius.all(Radius.circular(5)),
+                                            image: DecorationImage(
+                                              image: NetworkImage(widget.cardImage),
+                                              fit: BoxFit.cover,
+                                            )),
+                                        child: Stack(
+                                          children: [
+                                            Positioned(
+                                              top: -10,
+                                              left: -10,
+                                              child: IconButton(
+                                                  iconSize: 32,
+                                                  onPressed: widget.onCloseCard ??
+                                                      () {
+                                                        setState(() {
+                                                          isVisible = !isVisible;
+                                                        });
+                                                      },
+                                                  icon: const Icon(Icons.close, color: OlukoColors.grayColor)),
+                                            )
+                                          ],
+                                        ),
                                       )
-                                    ],
-                                  ),
-                                ),
+                                    : Container(
+                                        width: 140,
+                                        height: 170,
+                                        decoration: BoxDecoration(
+                                            borderRadius: const BorderRadius.all(Radius.circular(5)),
+                                            color: OlukoColors.randomColor()),
+                                        child: Stack(
+                                          children: [
+                                            Positioned(
+                                              top: -10,
+                                              left: -10,
+                                              child: IconButton(
+                                                  iconSize: 32,
+                                                  onPressed: widget.onCloseCard ??
+                                                      () {
+                                                        setState(() {
+                                                          isVisible = !isVisible;
+                                                        });
+                                                      },
+                                                  icon: const Icon(Icons.close, color: OlukoColors.grayColor)),
+                                            ),
+                                            Align(
+                                              child: Text(headerForCard(widget.fileType),
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: OlukoFonts.olukoSmallFont(
+                                                      customColor: OlukoColors.white,
+                                                      custoFontWeight: FontWeight.w500)),
+                                            )
+                                          ],
+                                        ),
+                                      ),
                               )
                             ],
                           ),
-                          Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 10),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(CoachHeders.getContentHeader(context: context, fileType: widget.fileType),
-                                        style: OlukoFonts.olukoMediumFont(
-                                            customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
-                                    Text(widget.cardTitle,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: OlukoFonts.olukoMediumFont(
-                                            customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
-                                    const SizedBox(height: 10),
-                                    Text(
-                                        widget.fileType == CoachFileTypeEnum.recommendedClass
-                                            ? OlukoLocalizations.of(context).find('timelineCourse')
-                                            : widget.fileType == CoachFileTypeEnum.recommendedCourse
-                                                ? OlukoLocalizations.of(context).find('classes')
-                                                : '',
-                                        style: OlukoFonts.olukoMediumFont(
-                                            customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
-                                    Text(widget.cardSubTitle,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: OlukoFonts.olukoMediumFont(
-                                            customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
-                                  ],
-                                ),
-                              )
-                            ],
+                          Flexible(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(CoachHeders.getContentHeader(context: context, fileType: widget.fileType),
+                                      style: OlukoFonts.olukoMediumFont(
+                                          customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
+                                  Text(widget.cardTitle,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: OlukoFonts.olukoMediumFont(
+                                          customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
+                                  const SizedBox(height: 10),
+                                  Text(
+                                      widget.fileType == CoachFileTypeEnum.recommendedClass
+                                          ? OlukoLocalizations.of(context).find('timelineCourse')
+                                          : widget.fileType == CoachFileTypeEnum.recommendedCourse
+                                              ? OlukoLocalizations.of(context).find('classes')
+                                              : widget.fileType == CoachFileTypeEnum.recommendedMovement
+                                                  ? ''
+                                                  : widget.fileType == CoachFileTypeEnum.recommendedSegment
+                                                      ? OlukoLocalizations.of(context).find('class')
+                                                      : '',
+                                      style: OlukoFonts.olukoMediumFont(
+                                          customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
+                                  Text(widget.cardSubTitle,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: OlukoFonts.olukoMediumFont(
+                                          customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
+                                ],
+                              ),
+                            ),
                           )
                         ],
                       )

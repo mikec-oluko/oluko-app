@@ -13,6 +13,18 @@ class CoachRequestRepository {
 
   CoachRequestRepository.test({this.firestoreInstance});
 
+  Stream<QuerySnapshot<Map<String, dynamic>>> getCoachRequestSubscription(String userId, String coachId) {
+    Stream<QuerySnapshot<Map<String, dynamic>>> coachRequestStream = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('coachAssignments')
+        .doc(userId)
+        .collection('coachRequests')
+        .where('coach_id', isEqualTo: coachId)
+        .snapshots();
+    return coachRequestStream;
+  }
+
   Future<List<CoachRequest>> get(String userId) async {
     final docRef = FirebaseFirestore.instance
         .collection('projects')

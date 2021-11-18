@@ -37,13 +37,13 @@ class _CoachTimelineCircleContentState extends State<CoachTimelineCircleContent>
                             child: widget.circleImage != null
                                 ? CircleAvatar(
                                     backgroundImage: NetworkImage(widget.circleImage),
-                                    backgroundColor: OlukoColors.black,
+                                    backgroundColor: OlukoColors.randomColor(),
                                     radius: 30,
                                   )
                                 : CircleAvatar(
-                                    backgroundColor: OlukoColors.grayColor,
+                                    backgroundColor: OlukoColors.randomColor(),
                                     radius: 30,
-                                    child: Text(OlukoLocalizations.get(context, 'movement'),
+                                    child: Text(titleForCircle(widget.fileType),
                                         textAlign: TextAlign.center,
                                         style: OlukoFonts.olukoSmallFont(
                                             customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
@@ -80,5 +80,14 @@ class _CoachTimelineCircleContentState extends State<CoachTimelineCircleContent>
         ),
       ),
     );
+  }
+
+  String titleForCircle(CoachFileTypeEnum fileType) {
+    switch (fileType) {
+      case CoachFileTypeEnum.recommendedMovement:
+        return OlukoLocalizations.get(context, 'movement');
+      case CoachFileTypeEnum.recommendedSegment:
+        return OlukoLocalizations.get(context, 'segment');
+    }
   }
 }

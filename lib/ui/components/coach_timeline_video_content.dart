@@ -15,6 +15,7 @@ class CoachTimelineVideoContent extends StatefulWidget {
 }
 
 class _CoachTimelineVideoContentState extends State<CoachTimelineVideoContent> {
+  final ImageProvider defaultImage = const AssetImage('assets/home/mvtthumbnail.png');
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -43,7 +44,9 @@ class _CoachTimelineVideoContentState extends State<CoachTimelineVideoContent> {
                                       decoration: BoxDecoration(
                                           borderRadius: const BorderRadius.all(Radius.circular(5)),
                                           image: DecorationImage(
-                                            image: NetworkImage(widget.videoThumbnail),
+                                            image: widget.videoThumbnail != null
+                                                ? NetworkImage(widget.videoThumbnail)
+                                                : defaultImage,
                                             fit: BoxFit.cover,
                                           )))),
                               Align(

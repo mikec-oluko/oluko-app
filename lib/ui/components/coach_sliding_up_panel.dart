@@ -106,9 +106,7 @@ class _CoachSlidingUpPanelState extends State<CoachSlidingUpPanel> {
         ),
         width: MediaQuery.of(context).size.width,
         height: 300,
-        child: CoachTimelinePanel(
-          timelineContentItems: widget.timelineItemsContent,
-        ),
+        child: const CoachTimelinePanel(),
       ),
       controller: _panelController,
       body: Container(
