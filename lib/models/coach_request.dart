@@ -1,8 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:equatable/equatable.dart';
 import 'package:oluko_app/models/base.dart';
 import 'enums/status_enum.dart';
 
-class CoachRequest extends Base {
+class CoachRequest extends Base with EquatableMixin {
   StatusEnum status;
   String segmentId;
   DocumentReference segmentReference;
@@ -77,4 +78,25 @@ class CoachRequest extends Base {
     coachRequestJson.addEntries(super.toJson().entries);
     return coachRequestJson;
   }
+
+  @override
+  List<Object> get props => [
+        status,
+        segmentId,
+        segmentReference,
+        coachId,
+        coachReference,
+        segmentSubmissionId,
+        segmentSubmissionReference,
+        courseEnrollmentId,
+        courseEnrollmentReference,
+        notificationViewed,
+        id,
+        createdBy,
+        createdAt,
+        updatedAt,
+        updatedBy,
+        isDeleted,
+        isHidden
+      ];
 }

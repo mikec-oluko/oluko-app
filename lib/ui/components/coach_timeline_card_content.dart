@@ -28,7 +28,7 @@ class _CoachTimelineCardContentState extends State<CoachTimelineCardContent> {
       color: OlukoColors.black,
       child: Padding(
         padding: const EdgeInsets.all(10.0),
-        child: Column(
+        child: Wrap(
           children: [
             Row(
               children: [
@@ -56,35 +56,34 @@ class _CoachTimelineCardContentState extends State<CoachTimelineCardContent> {
                     )
                   ],
                 ),
-                Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(CoachHeders.getContentHeader(context: context, fileType: widget.fileType),
-                              style: OlukoFonts.olukoMediumFont(
-                                  customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
-                          Text(widget.cardTitle,
-                              style: OlukoFonts.olukoMediumFont(
-                                  customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
-                          const SizedBox(height: 10),
-                          Text(
-                              widget.fileType == CoachFileTypeEnum.recommendedClass
-                                  ? OlukoLocalizations.of(context).find('timelineCourse')
-                                  : widget.fileType == CoachFileTypeEnum.recommendedCourse
-                                      ? OlukoLocalizations.of(context).find('classes')
-                                      : '',
-                              style: OlukoFonts.olukoMediumFont(
-                                  customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
-                          Text(widget.cardSubTitle,
-                              style: OlukoFonts.olukoMediumFont(
-                                  customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
-                        ],
-                      ),
-                    )
-                  ],
+                Flexible(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(CoachHeders.getContentHeader(context: context, fileType: widget.fileType),
+                            style: OlukoFonts.olukoMediumFont(
+                                customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
+                        Text(widget.cardTitle,
+                            style: OlukoFonts.olukoMediumFont(
+                                customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
+                        const SizedBox(height: 10),
+                        Text(
+                            widget.fileType == CoachFileTypeEnum.recommendedClass
+                                ? OlukoLocalizations.of(context).find('timelineCourse')
+                                : widget.fileType == CoachFileTypeEnum.recommendedCourse
+                                    ? OlukoLocalizations.of(context).find('classes')
+                                    : '',
+                            style: OlukoFonts.olukoMediumFont(
+                                customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
+                        Text(widget.cardSubTitle,
+                            overflow: TextOverflow.ellipsis,
+                            style: OlukoFonts.olukoMediumFont(
+                                customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
+                      ],
+                    ),
+                  ),
                 )
               ],
             )

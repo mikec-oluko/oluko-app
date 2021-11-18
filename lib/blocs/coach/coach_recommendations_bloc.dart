@@ -36,6 +36,50 @@ class CoachRecommendationsBloc extends Cubit<CoachRecommendationsState> {
     subscription.cancel();
   }
 
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>> getStream(String userId, String coachId) {
+    subscription ??= _coachRepository.getRecommendationSubscription(userId, coachId).listen((snapshot) async {
+      List<Recommendation> _recommendations = [];
+      List<Recommendation> _recommendationsUpdated = [];
+      List<Recommendation> _recommendationsUpdatedContent = [];
+
+      if (snapshot.docChanges.isNotEmpty) {
+        snapshot.docChanges.forEach((doc) {
+          final Map<String, dynamic> content = doc.doc.data();
+          _recommendationsUpdated.add(Recommendation.fromJson(content));
+        });
+      }
+      if (snapshot.docs.isNotEmpty) {
+        snapshot.docs.forEach((doc) {
+          final Map<String, dynamic> content = doc.data();
+          _recommendations.add(Recommendation.fromJson(content));
+        });
+      }
+
+      if (_recommendationsUpdated.length >= _recommendations.length) {
+        _recommendationsUpdated.forEach((updatedItem) {
+          _recommendations.forEach((recommendationItem) {
+            updatedItem.id == recommendationItem.id
+                ? updatedItem != recommendationItem
+                    ? _recommendationsUpdatedContent.add(updatedItem)
+                    : null
+                : null;
+          });
+        });
+      } else {
+        _recommendationsUpdatedContent.addAll(_recommendationsUpdated);
+      }
+
+      _recommendationsUpdatedContent.isNotEmpty
+          ? emit(CoachRecommendationsUpdate(
+              coachRecommendationContent:
+                  await getCoachRecommendationsData(coachRecommendationContent: _recommendationsUpdatedContent)))
+          : emit(CoachRecommendationsSuccess(
+              coachRecommendationList:
+                  await getCoachRecommendationsData(coachRecommendationContent: _recommendations)));
+    });
+    return subscription;
+  }
+
   void getCoachRecommendations(String userId, String coachId) async {
     try {
       emit(LoadingCoachRecommendations());
@@ -75,7 +119,6 @@ class CoachRecommendationsBloc extends Cubit<CoachRecommendationsState> {
       String recommendationId, String coachId, String userId, bool notificationValue) async {
     try {
       await _coachRepository.updateRecommendationNotificationStatus(recommendationId, notificationValue);
-      getCoachRecommendations(userId, coachId);
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

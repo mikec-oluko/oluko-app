@@ -101,6 +101,7 @@ import 'blocs/coach/coach_interaction_timeline_bloc.dart';
 import 'blocs/coach/coach_mentored_videos_bloc.dart';
 import 'blocs/coach/coach_recommendations_bloc.dart';
 import 'blocs/coach/coach_sent_videos_bloc.dart';
+import 'blocs/coach/coach_timeline_bloc.dart';
 import 'blocs/movement_info_bloc.dart';
 import 'blocs/friends/hi_five_send_bloc.dart';
 import 'blocs/movement_info_bloc.dart';
@@ -283,6 +284,7 @@ class Routes {
   final CoachAudioBloc _coachAudioBloc = CoachAudioBloc();
   final ChallengeBloc _challengeBloc = ChallengeBloc();
   final CoachRecommendationsBloc _coachRecommendationsBloc = CoachRecommendationsBloc();
+  final CoachTimelineBloc _coachTimelineBloc = CoachTimelineBloc();
   final AudioBloc _audioBloc = AudioBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
@@ -300,6 +302,7 @@ class Routes {
           BlocProvider<HiFiveReceivedBloc>.value(
             value: _hiFiveReceivedBloc,
           ),
+          BlocProvider<CoachTimelineBloc>.value(value: _coachTimelineBloc),
           BlocProvider<ChallengeBloc>.value(value: _challengeBloc),
           BlocProvider<CourseHomeBloc>.value(value: _courseHomeBloc),
           BlocProvider<CourseBloc>.value(value: _courseBloc),
@@ -594,10 +597,8 @@ class Routes {
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
           BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
           BlocProvider<AudioBloc>.value(value: _audioBloc),
-          BlocProvider<DoneChallengeUsersBloc>.value(
-              value: _doneChallengeUsersBloc),
-          BlocProvider<SegmentDetailContentBloc>.value(
-              value: _segmentDetailContentBloc),
+          BlocProvider<DoneChallengeUsersBloc>.value(value: _doneChallengeUsersBloc),
+          BlocProvider<SegmentDetailContentBloc>.value(value: _segmentDetailContentBloc),
           BlocProvider<PersonalRecordBloc>.value(value: _personalRecordBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
@@ -753,6 +754,7 @@ class Routes {
           BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
           BlocProvider<ChallengeBloc>.value(value: _challengeBloc),
           BlocProvider<CoachRecommendationsBloc>.value(value: _coachRecommendationsBloc),
+          BlocProvider<CoachTimelineBloc>.value(value: _coachTimelineBloc)
         ];
         newRouteView = CoachPage();
         break;
