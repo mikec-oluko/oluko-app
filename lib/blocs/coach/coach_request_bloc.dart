@@ -41,7 +41,9 @@ class CoachRequestBloc extends Cubit<CoachRequestState> {
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>> subscription;
   @override
   void dispose() {
-    subscription.cancel();
+    if (subscription != null) {
+      subscription.cancel();
+    }
   }
 
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>> getStream(String userId, String coachId) {
@@ -104,8 +106,7 @@ class CoachRequestBloc extends Cubit<CoachRequestState> {
   void getSegmentCoachRequest({String userId, String segmentId, String coachId, String courseEnrollmentId}) async {
     emit(CoachRequestLoading());
     try {
-      CoachRequest coachRequest =
-          await _coachRequestRepository.getBySegmentAndCoachId(userId, segmentId, courseEnrollmentId, coachId);
+      CoachRequest coachRequest = await _coachRequestRepository.getBySegmentAndCoachId(userId, segmentId, courseEnrollmentId, coachId);
       emit(GetCoachRequestSuccess(coachRequest: coachRequest));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
