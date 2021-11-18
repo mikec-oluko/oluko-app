@@ -91,7 +91,7 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
         ? Chewie(
             controller: chewieController,
           )
-        : nil;
+        : const SizedBox();
   }
 
   @override

@@ -90,21 +90,18 @@ class _CoachPageState extends State<CoachPage> {
         : (widget.coachAssignment.video?.url != null ? true : widget.coachAssignment.introductionVideo != null)) {
       setState(() {
         _introductionVideo = Annotation(
-          createdAt: widget.coachAssignment.createdAt,
-          id: _defaultIntroductionVideoId,
-          favorite: false,
-          video: Video(
-              url: widget.coachAssignment.videoHLS ??
-                  (widget.coachAssignment.video != null ? widget.coachAssignment.video.url : widget.coachAssignment.introductionVideo),
-              aspectRatio: 0.60),
-          videoHLS: widget.coachAssignment.videoHLS ??
-              (widget.coachAssignment.video != null ? widget.coachAssignment.video.url : widget.coachAssignment.introductionVideo),
-        );
+            createdAt: Timestamp.now(),
+            id: _defaultIntroductionVideoId,
+            favorite: false,
+            video: Video(
+                url: widget.coachAssignment.videoHLS ?? (widget.coachAssignment.video.url ?? widget.coachAssignment.introductionVideo),
+                aspectRatio: widget.coachAssignment.video.aspectRatio ?? 0.60),
+            videoHLS: widget.coachAssignment.videoHLS ?? (widget.coachAssignment.video.url ?? widget.coachAssignment.introductionVideo));
       });
     }
     super.initState();
   }
-
+  
   @override
   void dispose() {
     super.dispose();
