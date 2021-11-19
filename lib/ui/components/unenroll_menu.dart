@@ -34,6 +34,12 @@ class _UnenrollCourseState extends State<UnenrollCourse> {
         ];
       },
       color: OlukoColors.black,
+      icon: const Icon(
+        Icons.more_vert,
+        color: Colors.white,
+        size: 36,
+      ),
+      iconSize: 36,
       padding: EdgeInsets.zero,
     );
   }

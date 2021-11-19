@@ -47,14 +47,18 @@ class _State extends State<CourseCard> {
             child: Stack(
               children: [
                 widget.imageCover,
-                Visibility(
-                  visible: widget.canUnenrollCourse,
-                  child: Align(
-                      alignment: Alignment.topRight,
-                      child: UnenrollCourse(
-                        actualCourse: widget.actualCourse,
-                        unrolledFunction: widget.unrolledFunction,
-                      )),
+                Positioned(
+                  top: 0,
+                  right: -15,
+                  child: Visibility(
+                    visible: widget.canUnenrollCourse,
+                    child: Align(
+                        alignment: Alignment.topRight,
+                        child: UnenrollCourse(
+                          actualCourse: widget.actualCourse,
+                          unrolledFunction: widget.unrolledFunction,
+                        )),
+                  ),
                 )
               ],
             )),

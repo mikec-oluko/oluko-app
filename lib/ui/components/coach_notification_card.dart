@@ -7,8 +7,15 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class CoachNotificationCard extends StatefulWidget {
   const CoachNotificationCard(
-      {this.cardTitle, this.cardSubTitle, this.cardImage, this.date, this.fileType, this.onCloseCard, this.onOpenCard});
-  final String cardTitle, cardSubTitle, cardImage;
+      {this.cardTitle,
+      this.cardSubTitle,
+      this.cardDescription,
+      this.cardImage,
+      this.date,
+      this.fileType,
+      this.onCloseCard,
+      this.onOpenCard});
+  final String cardTitle, cardSubTitle, cardImage, cardDescription;
   final DateTime date;
   final CoachFileTypeEnum fileType;
   final Function() onCloseCard;
@@ -43,8 +50,7 @@ class _CoachNotificationCardState extends State<CoachNotificationCard> {
                 padding: const EdgeInsets.only(bottom: 5),
                 child: Text(headerForCard(widget.fileType),
                     overflow: TextOverflow.ellipsis,
-                    style:
-                        OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
+                    style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
               ),
               Container(
                 decoration: ContainerGradient.getContainerGradientDecoration(customBorder: true),
@@ -92,8 +98,7 @@ class _CoachNotificationCardState extends State<CoachNotificationCard> {
                                         width: 140,
                                         height: 170,
                                         decoration: BoxDecoration(
-                                            borderRadius: const BorderRadius.all(Radius.circular(5)),
-                                            color: OlukoColors.randomColor()),
+                                            borderRadius: const BorderRadius.all(Radius.circular(5)), color: OlukoColors.randomColor()),
                                         child: Stack(
                                           children: [
                                             Positioned(
@@ -113,8 +118,7 @@ class _CoachNotificationCardState extends State<CoachNotificationCard> {
                                               child: Text(headerForCard(widget.fileType),
                                                   overflow: TextOverflow.ellipsis,
                                                   style: OlukoFonts.olukoSmallFont(
-                                                      customColor: OlukoColors.white,
-                                                      custoFontWeight: FontWeight.w500)),
+                                                      customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
                                             )
                                           ],
                                         ),
@@ -129,12 +133,11 @@ class _CoachNotificationCardState extends State<CoachNotificationCard> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(CoachHeders.getContentHeader(context: context, fileType: widget.fileType),
-                                      style: OlukoFonts.olukoMediumFont(
-                                          customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
+                                      style:
+                                          OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
                                   Text(widget.cardTitle,
                                       overflow: TextOverflow.ellipsis,
-                                      style: OlukoFonts.olukoMediumFont(
-                                          customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
+                                      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
                                   const SizedBox(height: 10),
                                   Text(
                                       widget.fileType == CoachFileTypeEnum.recommendedClass
@@ -146,12 +149,18 @@ class _CoachNotificationCardState extends State<CoachNotificationCard> {
                                                   : widget.fileType == CoachFileTypeEnum.recommendedSegment
                                                       ? OlukoLocalizations.of(context).find('class')
                                                       : '',
-                                      style: OlukoFonts.olukoMediumFont(
-                                          customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
+                                      style:
+                                          OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
                                   Text(widget.cardSubTitle,
                                       overflow: TextOverflow.ellipsis,
-                                      style: OlukoFonts.olukoMediumFont(
-                                          customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
+                                      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
+                                  if (widget.fileType == CoachFileTypeEnum.recommendedCourse && widget.cardDescription != null)
+                                    Text(OlukoLocalizations.of(context).find('duration'),
+                                        style: OlukoFonts.olukoMediumFont(
+                                            customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
+                                  Text(widget.cardDescription,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500))
                                 ],
                               ),
                             ),
