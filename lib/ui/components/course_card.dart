@@ -14,6 +14,7 @@ class CourseCard extends StatefulWidget {
   final List<String> userRecommendationsAvatarUrls;
   final CourseEnrollment actualCourse;
   final bool canUnenrollCourse;
+  final Function() unrolledFunction;
 
   CourseCard(
       {this.imageCover,
@@ -22,6 +23,7 @@ class CourseCard extends StatefulWidget {
       this.height,
       this.userRecommendationsAvatarUrls,
       this.actualCourse,
+      this.unrolledFunction,
       this.canUnenrollCourse = false});
 
   @override
@@ -51,6 +53,7 @@ class _State extends State<CourseCard> {
                       alignment: Alignment.topRight,
                       child: UnenrollCourse(
                         actualCourse: widget.actualCourse,
+                        unrolledFunction: widget.unrolledFunction,
                       )),
                 )
               ],

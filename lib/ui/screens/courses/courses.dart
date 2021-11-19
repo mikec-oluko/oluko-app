@@ -295,8 +295,7 @@ class _State extends State<Courses> {
             builder: (context, courseEnrollmentState) {
               if (courseEnrollmentState is CourseEnrollmentsByUserSuccess &&
                   courseState is CourseSuccess &&
-                  (courseEnrollmentState.courseEnrollments.isNotEmpty &&
-                      courseEnrollmentState.courseEnrollments.where((element) => element.isUnenrolled != true).isNotEmpty)) {
+                  (courseEnrollmentState.courseEnrollments.isNotEmpty)) {
                 return CarouselSection(
                   title: OlukoLocalizations.get(context, 'activeCourses'),
                   height: carouselSectionHeight + 10,

@@ -409,23 +409,14 @@ class _UserProfilePageState extends State<UserProfilePage> {
                           if (_courseEnrollmentList.isEmpty) {
                             _courseEnrollmentList =
                                 state.courseEnrollments.where((courseEnroll) => courseEnroll.isUnenrolled != true).toList();
-                            // _courseEnrollmentList.forEach((courseEnrolled) {
-                            //   courseEnrolled.classes.forEach((enrolledClass) {
-                            //     enrolledClass.segments.forEach((enrolledSegment) {
-                            //       if (enrolledSegment.isChallenge) {}
-                            //     });
-                            //   });
-                            // });
                           }
                         }
                         return BlocBuilder<CourseBloc, CourseState>(
                           builder: (context, state) {
                             if (state is UserEnrolledCoursesSuccess) {
-                              if (_coursesToUse.isEmpty) {
-                                _coursesToUse = state.courses;
-                              }
+                              _coursesToUse = state.courses;
                             }
-                            return _coursesToUse.isNotEmpty && _courseEnrollmentList.isNotEmpty
+                            return _coursesToUse.isNotEmpty && _courseEnrollmentList != null
                                 ? buildCourseSection(
                                     context: context, contentForCourse: returnCoursesWidget(listOfCourses: _courseEnrollmentList))
                                 //  returnCoursesWidget(listOfCourses: _coursesToUse))
@@ -483,7 +474,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
           height: 250,
           width: MediaQuery.of(context).size.width,
           title: ProfileViewConstants.profileOwnProfileActiveCourses,
-          children: contentForCourse.isNotEmpty
+          children: contentForCourse != null
               ? contentForCourse
               : [
                   Padding(
@@ -531,11 +522,13 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   List<Widget> returnCoursesWidget({List<CourseEnrollment> listOfCourses}) {
     List<Widget> contentForCourseSection = [];
-    listOfCourses.forEach((course) {
-      if (course != null) {
-        contentForCourseSection.add(_getCourseCard(courseInfo: course));
-      }
-    });
+    if (listOfCourses.isNotEmpty) {
+      listOfCourses.forEach((course) {
+        if (course != null) {
+          contentForCourseSection.add(_getCourseCard(courseInfo: course));
+        }
+      });
+    }
     return contentForCourseSection.toList();
   }
 
@@ -553,16 +546,24 @@ class _UserProfilePageState extends State<UserProfilePage> {
           ),
           progress: getCourseProgress(
               courseEnrollments: _courseEnrollmentList,
-              course: _coursesToUse.where((element) => element.id == courseInfo.course.id && !courseInfo.isUnenrolled).first),
-          canUnenrollCourse: true),
+              // && !courseInfo.isUnenrolled
+              course: _coursesToUse.isNotEmpty
+                  ? _coursesToUse.where((element) => element.id == courseInfo.course.id && courseInfo.isUnenrolled != true).isNotEmpty
+                      ? _coursesToUse.where((element) => element.id == courseInfo.course.id && courseInfo.isUnenrolled != true).first
+                      : null
+                  : null),
+          canUnenrollCourse: true,
+          unrolledFunction: () => _requestContentForUser(context: context, userRequested: _userProfileToDisplay)),
     );
   }
 
   double getCourseProgress({List<CourseEnrollment> courseEnrollments, Course course}) {
     double _completion = 0.0;
-    for (CourseEnrollment courseEnrollment in courseEnrollments) {
-      if (courseEnrollment.course.id == course.id) {
-        _completion = courseEnrollment.completion / 100;
+    if (courseEnrollments.isNotEmpty && course != null) {
+      for (CourseEnrollment courseEnrollment in courseEnrollments) {
+        if (courseEnrollment.course.id == course.id) {
+          _completion = courseEnrollment.completion / 100;
+        }
       }
     }
     return _completion;

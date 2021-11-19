@@ -6,8 +6,9 @@ import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 
 class UnenrollCourse extends StatefulWidget {
-  const UnenrollCourse({this.actualCourse}) : super();
+  const UnenrollCourse({this.actualCourse, this.unrolledFunction}) : super();
   final CourseEnrollment actualCourse;
+  final Function() unrolledFunction;
 
   @override
   _UnenrollCourseState createState() => _UnenrollCourseState();
@@ -24,6 +25,7 @@ class _UnenrollCourseState extends State<UnenrollCourse> {
           PopupMenuItem(
             onTap: () {
               BlocProvider.of<CourseEnrollmentListBloc>(context).unenrollCourseForUser(widget.actualCourse, true);
+              widget.unrolledFunction();
             },
             value: Unenroll.unenroll,
             child: Center(child: Text('Unenroll', style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white))),

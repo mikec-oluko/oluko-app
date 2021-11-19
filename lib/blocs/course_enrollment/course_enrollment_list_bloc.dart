@@ -23,7 +23,6 @@ class CourseEnrollmentListBloc extends Cubit<CourseEnrollmentListState> {
   void getCourseEnrollmentsByUser(String userId) async {
     try {
       List<CourseEnrollment> courseEnrollments = await CourseEnrollmentRepository.getUserCourseEnrollments(userId);
-
       emit(CourseEnrollmentsByUserSuccess(courseEnrollments: courseEnrollments.where((element) => element.isUnenrolled != true).toList()));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -53,7 +52,6 @@ class CourseEnrollmentListBloc extends Cubit<CourseEnrollmentListState> {
     try {
       CourseEnrollment courseEnrollmentUpdated =
           await CourseEnrollmentRepository.markCourseEnrollmentAsUnenrolled(courseToUnenroll, isUnenrolledValue);
-      // getCourseEnrollmentsByUser(courseEnrollmentUpdated.userId);
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

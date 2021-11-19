@@ -44,7 +44,16 @@ class CourseEnrollmentRepository {
     final QuerySnapshot qs = await reference.where('course.id', isEqualTo: course.id).where('created_by', isEqualTo: user.uid).get();
 
     if (qs.docs.isNotEmpty) {
-      return CourseEnrollment.fromJson(qs.docs[0].data() as Map<String, dynamic>);
+      if (qs.docs.length > 1) {
+        List<CourseEnrollment> _listOfCourseEnrollmentsForCourse = [];
+        qs.docs.forEach((doc) {
+          _listOfCourseEnrollmentsForCourse.add(CourseEnrollment.fromJson(doc.data() as Map<String, dynamic>));
+        });
+        _listOfCourseEnrollmentsForCourse.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
+        return _listOfCourseEnrollmentsForCourse.first;
+      } else {
+        return CourseEnrollment.fromJson(qs.docs[0].data() as Map<String, dynamic>);
+      }
     }
     return null;
   }
