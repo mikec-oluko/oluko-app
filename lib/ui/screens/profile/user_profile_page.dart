@@ -552,7 +552,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                       ? _coursesToUse.where((element) => element.id == courseInfo.course.id && courseInfo.isUnenrolled != true).first
                       : null
                   : null),
-          canUnenrollCourse: true,
+          canUnenrollCourse: _isCurrentUser,
           unrolledFunction: () => _requestContentForUser(context: context, userRequested: _userProfileToDisplay)),
     );
   }
