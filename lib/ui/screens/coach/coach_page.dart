@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
@@ -90,9 +91,9 @@ class _CoachPageState extends State<CoachPage> {
         : (widget.coachAssignment.video?.url != null ? true : widget.coachAssignment.introductionVideo != null)) {
       setState(() {
         _introductionVideo = Annotation(
-          createdAt: widget.coachAssignment.createdAt,
           id: _defaultIntroductionVideoId,
           favorite: false,
+          createdAt: widget.coachAssignment.createdAt ?? Timestamp.now(),
           video: Video(
               url: widget.coachAssignment.videoHLS ??
                   (widget.coachAssignment.video != null ? widget.coachAssignment.video.url : widget.coachAssignment.introductionVideo),
@@ -100,9 +101,9 @@ class _CoachPageState extends State<CoachPage> {
           videoHLS: widget.coachAssignment.videoHLS ??
               (widget.coachAssignment.video != null ? widget.coachAssignment.video.url : widget.coachAssignment.introductionVideo),
         );
+        super.initState();
       });
     }
-    super.initState();
   }
 
   @override
