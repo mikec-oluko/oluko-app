@@ -2,6 +2,8 @@ import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/helpers/permissions.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/ui/components/open_settings_modal.dart';
@@ -165,15 +167,16 @@ class _State extends State<SegmentCameraPreview> {
   Future<void> _setupCameras() async {
     final int cameraPos = isCameraFront ? 0 : 1;
     try {
-      cameras = await availableCameras();
-      cameraController = CameraController(cameras[cameraPos], ResolutionPreset.medium);
-      await cameraController.initialize();
-    } on CameraException catch (e) {
-      if (e.code == ExceptionCodes.cameraPermissionError) {
+      if (!await Permissions.requiredPermissionsEnabled(DeviceContentFrom.camera)) {
         Navigator.pop(context);
         DialogUtils.getDialog(context, [OpenSettingsModal(context)], showExitButton: false);
         return;
       }
+      cameras = await availableCameras();
+      cameraController = CameraController(cameras[cameraPos], ResolutionPreset.medium);
+      await cameraController.initialize();
+    } on CameraException catch (e) {
+      return;
     }
     if (!mounted) return;
     setState(() {
