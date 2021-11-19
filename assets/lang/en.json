@@ -238,6 +238,7 @@
     "recordAMessage": "Record a message for ",
     "saveFor": "Save for ",
     "accountAlreadyExistsWithThisEmailUsingADifferentProvider": "An account already exists with the same email address but different sign-in credentials",
+    "errorOccurred": "An error ocurred",
     "deleteMessageConfirm": "Are you sure you want to delete your voice message?",
     "notificationCourse": "Recommended Course",
     "notificationClass": "Recommended Class",

@@ -31,7 +31,9 @@ class CoachTimelineItemsBloc extends Cubit<CoachTimelineItemsState> {
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>> subscription;
   @override
   void dispose() {
-    subscription.cancel();
+    if (subscription != null) {
+      subscription.cancel();
+    }
   }
 
   final CoachRepository _coachRepository = CoachRepository();

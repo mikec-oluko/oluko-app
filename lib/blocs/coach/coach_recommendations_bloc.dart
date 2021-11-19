@@ -33,7 +33,9 @@ class CoachRecommendationsBloc extends Cubit<CoachRecommendationsState> {
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>> subscription;
   @override
   void dispose() {
-    subscription.cancel();
+    if (subscription != null) {
+      subscription.cancel();
+    }
   }
 
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>> getStream(String userId, String coachId) {
@@ -71,11 +73,9 @@ class CoachRecommendationsBloc extends Cubit<CoachRecommendationsState> {
 
       _recommendationsUpdatedContent.isNotEmpty
           ? emit(CoachRecommendationsUpdate(
-              coachRecommendationContent:
-                  await getCoachRecommendationsData(coachRecommendationContent: _recommendationsUpdatedContent)))
+              coachRecommendationContent: await getCoachRecommendationsData(coachRecommendationContent: _recommendationsUpdatedContent)))
           : emit(CoachRecommendationsSuccess(
-              coachRecommendationList:
-                  await getCoachRecommendationsData(coachRecommendationContent: _recommendations)));
+              coachRecommendationList: await getCoachRecommendationsData(coachRecommendationContent: _recommendations)));
     });
     return subscription;
   }
@@ -83,8 +83,7 @@ class CoachRecommendationsBloc extends Cubit<CoachRecommendationsState> {
   void getCoachRecommendations(String userId, String coachId) async {
     try {
       emit(LoadingCoachRecommendations());
-      final List<Recommendation> coachRecommendations =
-          await _coachRepository.getCoachRecommendationsForUser(userId, coachId);
+      final List<Recommendation> coachRecommendations = await _coachRepository.getCoachRecommendationsForUser(userId, coachId);
       List<CoachRecommendationDefault> recommendationsFormatted =
           await getCoachRecommendationsData(coachRecommendationContent: coachRecommendations);
       emit(CoachRecommendationsSuccess(coachRecommendationList: recommendationsFormatted));
@@ -98,8 +97,7 @@ class CoachRecommendationsBloc extends Cubit<CoachRecommendationsState> {
     }
   }
 
-  Future<List<CoachRecommendationDefault>> getCoachRecommendationsData(
-      {List<Recommendation> coachRecommendationContent}) async {
+  Future<List<CoachRecommendationDefault>> getCoachRecommendationsData({List<Recommendation> coachRecommendationContent}) async {
     try {
       emit(LoadingCoachRecommendations());
       final List<CoachRecommendationDefault> coachRecommendations =
@@ -115,8 +113,7 @@ class CoachRecommendationsBloc extends Cubit<CoachRecommendationsState> {
     }
   }
 
-  void setRecommendationNotificationAsViewed(
-      String recommendationId, String coachId, String userId, bool notificationValue) async {
+  void setRecommendationNotificationAsViewed(String recommendationId, String coachId, String userId, bool notificationValue) async {
     try {
       await _coachRepository.updateRecommendationNotificationStatus(recommendationId, notificationValue);
     } catch (exception, stackTrace) {
