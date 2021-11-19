@@ -175,7 +175,8 @@ class _CourseMarketingState extends State<CourseMarketing> {
   }
 
   Widget showEnrollButton(CourseEnrollment courseEnrollment, BuildContext context) {
-    if (courseEnrollment.isUnenrolled == true || (courseEnrollment == null || courseEnrollment.completion >= 1)) {
+    if ((courseEnrollment != null && courseEnrollment.isUnenrolled == true) ||
+        (courseEnrollment == null || courseEnrollment.completion >= 1)) {
       return BlocListener<CourseEnrollmentBloc, CourseEnrollmentState>(
           listener: (context, courseEnrollmentState) {
             if (courseEnrollmentState is CreateEnrollmentSuccess) {
