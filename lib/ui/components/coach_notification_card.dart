@@ -154,13 +154,26 @@ class _CoachNotificationCardState extends State<CoachNotificationCard> {
                                   Text(widget.cardSubTitle,
                                       overflow: TextOverflow.ellipsis,
                                       style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
-                                  if (widget.fileType == CoachFileTypeEnum.recommendedCourse && widget.cardDescription != null)
-                                    Text(OlukoLocalizations.of(context).find('duration'),
-                                        style: OlukoFonts.olukoMediumFont(
-                                            customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
-                                  Text(widget.cardDescription,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500))
+                                  if (widget.fileType == CoachFileTypeEnum.recommendedCourse)
+                                    Column(
+                                      children: [
+                                        Text(
+                                            widget.fileType == CoachFileTypeEnum.recommendedCourse && widget.cardDescription != null
+                                                ? OlukoLocalizations.of(context).find('duration')
+                                                : '',
+                                            style: OlukoFonts.olukoMediumFont(
+                                                customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
+                                        Text(
+                                            widget.fileType == CoachFileTypeEnum.recommendedCourse && widget.cardDescription != null
+                                                ? widget.cardDescription.split(',')[0]
+                                                : '',
+                                            overflow: TextOverflow.ellipsis,
+                                            style: OlukoFonts.olukoMediumFont(
+                                                customColor: OlukoColors.white, custoFontWeight: FontWeight.w500))
+                                      ],
+                                    )
+                                  else
+                                    const SizedBox.shrink(),
                                 ],
                               ),
                             ),
