@@ -210,7 +210,9 @@ class CourseEnrollmentRepository {
     }
     try {
       for (var courseEnrollment in courseEnrollments) {
-        await getChallengesFromCourseEnrollment(courseEnrollment, challengeList);
+        if (courseEnrollment.isUnenrolled == false || courseEnrollment.isUnenrolled == null) {
+          await getChallengesFromCourseEnrollment(courseEnrollment, challengeList);
+        }
       }
     } catch (e, stackTrace) {
       await Sentry.captureException(

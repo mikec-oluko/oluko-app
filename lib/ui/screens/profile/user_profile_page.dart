@@ -20,6 +20,7 @@ import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/friend.dart';
+import 'package:oluko_app/models/submodels/enrollment_segment.dart';
 import 'package:oluko_app/models/submodels/friend_model.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
@@ -68,7 +69,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
   List<Course> _coursesToUse = [];
   List<CourseEnrollment> _courseEnrollmentList = [];
   UserStatistics userStats;
-
   final PanelController _panelController = PanelController();
   double _panelMaxHeight = 100.0;
   double _statePanelMaxHeight = 100.0;
@@ -406,10 +406,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(
                       builder: (context, state) {
                         if (state is CourseEnrollmentsByUserSuccess) {
-                          if (_courseEnrollmentList.isEmpty) {
-                            _courseEnrollmentList =
-                                state.courseEnrollments.where((courseEnroll) => courseEnroll.isUnenrolled != true).toList();
-                          }
+                          _courseEnrollmentList =
+                              state.courseEnrollments.where((courseEnroll) => courseEnroll.isUnenrolled != true).toList();
                         }
                         return BlocBuilder<CourseBloc, CourseState>(
                           builder: (context, state) {
@@ -419,7 +417,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
                             return _coursesToUse.isNotEmpty && _courseEnrollmentList != null
                                 ? buildCourseSection(
                                     context: context, contentForCourse: returnCoursesWidget(listOfCourses: _courseEnrollmentList))
-                                //  returnCoursesWidget(listOfCourses: _coursesToUse))
                                 : const SizedBox();
                           },
                         );
@@ -435,6 +432,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         /*if (state is CourseEnrollmentListSuccess) {
                           _courseEnrollmentList = state.courseEnrollmentList;
                         }*/
+
                         return _activeChallenges.isNotEmpty
                             ? buildChallengeSection(
                                 context: context,
