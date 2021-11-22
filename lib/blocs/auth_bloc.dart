@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,7 +18,7 @@ import 'package:oluko_app/utils/app_loader.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
-
+import 'dart:developer';
 import 'coach/coach_interaction_timeline_bloc.dart';
 import 'coach/coach_mentored_videos_bloc.dart';
 import 'coach/coach_recommendations_bloc.dart';
@@ -220,11 +219,11 @@ class AuthBloc extends Cubit<AuthState> {
     AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'pleaseCheckYourEmailForInstructions'));
   }
 
-  String getRandString(int len) {
-    var random = Random.secure();
-    var values = List<int>.generate(len, (i) => random.nextInt(255));
-    return base64UrlEncode(values);
-  }
+  // String getRandString(int len) {
+  //   var random = Random.secure();
+  //   var values = List<int>.generate(len, (i) => random.nextInt(255));
+  //   return base64UrlEncode(values);
+  // }
 
   Future<UserResponse> _signUpWithSSO(User firebaseUser) async {
     List<String> splitDisplayName = firebaseUser.displayName.split(' ');

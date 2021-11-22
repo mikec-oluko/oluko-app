@@ -71,15 +71,15 @@ class _ModalPeopleInChallengeState extends State<ModalPeopleInChallenge> {
                         children: [
                           StoriesItem(
                             itemUserId: user.id, 
-                            name: user.username, 
+                            name: user.username ?? user.firstName, 
                             currentUserId: widget.userId,
                             maxRadius: 35,
                             imageUrl: user.avatarThumbnail ?? UserUtils().defaultAvatarImageUrl,
                             stories: user.stories?.stories,
                           ),
-                          Text('${user.firstName} ${user.lastName}', textAlign: TextAlign.center, overflow: TextOverflow.ellipsis, style: OlukoFonts.olukoMediumFont()),
+                          Text('${user.firstName ?? ''} ${user.lastName ?? ''}', textAlign: TextAlign.center, overflow: TextOverflow.ellipsis, style: OlukoFonts.olukoMediumFont()),
                           const SizedBox(height: 1),
-                          Text(user.username, style: const TextStyle(color: Colors.grey, fontSize: 14), textAlign: TextAlign.center),
+                          Text(user.username ?? '', style: const TextStyle(color: Colors.grey, fontSize: 14), textAlign: TextAlign.center),
                         ],
                       ),
                   ))

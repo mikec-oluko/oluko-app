@@ -247,5 +247,6 @@
     "welcomeTo": "Welcome to",
     "enrollToACourse": "Enroll to a Course",
     "noCoachMessage": "to get your personal coach",
-    "roundInfo": "Only first round is recorded. We will prepare your video to send it to your coach!"
+    "roundInfo": "Only first round is recorded. We will prepare your video to send it to your coach!",
+    "stopProcessConfirmation": "El video aún sé está procesando, si se abandona esta vista el proceso se dará por terminado. ¿Desea salir?"
 }

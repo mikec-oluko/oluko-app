@@ -6,6 +6,9 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:path/path.dart' as p;
 
 class ImageUtils {
+  static const String jpgFormat = ".jpg";
+  static const  String jpegFormat = ".jepg";
+
   ///Used as a loading placeholder when a NetworkImage is loading
   static Widget frameBuilder(context, Widget child, int frame, bool wasSynchronouslyLoaded, {double height = 120, double width}) {
     return Stack(
