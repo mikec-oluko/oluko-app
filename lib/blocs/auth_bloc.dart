@@ -113,56 +113,35 @@ class AuthBloc extends Cubit<AuthState> {
   Future<void> loginWithGoogle(BuildContext context) async {
     UserCredential result;
     try {
-      result = await _authRepository.signInWithGoogle();
-    } on FirebaseAuthException catch (error) {
-      AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'accountAlreadyExistsWithThisEmailUsingADifferentProvider'));
-      rethrow;
-    } catch (error) {
-      AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'errorOccurred'));
-      rethrow;
+      try {
+        result = await _authRepository.signInWithGoogle();
+      } on FirebaseAuthException catch (error) {
+        AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'accountAlreadyExistsWithThisEmailUsingADifferentProvider'));
+        rethrow;
+      } catch (error) {
+        AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'errorOccurred'));
+        rethrow;
+      }
+      if (result == null) {
+        FirebaseAuth.instance.signOut();
+        AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'errorOccurred'));
+        emit(AuthGuest());
+        return;
+      }
+      User firebaseUser = result.user;
+      UserResponse userResponse = await UserRepository().get(firebaseUser.email);
+
+      //If there is no associated user for this account
+      if (userResponse == null) {
+        FirebaseAuth.instance.signOut();
+        AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'userForThisAccountNotFoundPleaseSignUp'));
+        emit(AuthGuest());
+        return;
+      }
+      // ignore: avoid_catching_errors
+    } on NoSuchMethodError catch (e) {
+      Navigator.pushNamed(context, '/log-in');
     }
-    if (result == null) {
-      FirebaseAuth.instance.signOut();
-      AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'errorOccurred'));
-      emit(AuthGuest());
-      return;
-    }
-    User firebaseUser = result.user;
-    UserResponse userResponse = await UserRepository().get(firebaseUser.email);
-
-    //TODO (Not implemented in MVP) If Firebase user document not found, create one.
-
-    // if (userResponse == null) {
-    //   UserResponse dbResponse = await _signUpWithSSO(firebaseUser);
-    //   if (dbResponse == null) {
-    //     FirebaseAuth.instance.signOut();
-    //     emit(AuthFailure(
-    //         exception: Exception('Error creating user in database.')));
-    //     return;
-    //   } else {
-    //     userResponse = dbResponse;
-    //   }
-    // }
-
-    // if (!firebaseUser.emailVerified) {
-    //   //TODO: trigger to send another email
-    //   FirebaseAuth.instance.signOut();
-    //   AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'pleaseCheckYourEmail'));
-    //   emit(AuthGuest());
-    //   return;
-    // }
-
-    //If there is no associated user for this account
-    if (userResponse == null) {
-      FirebaseAuth.instance.signOut();
-      AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'userForThisAccountNotFoundPleaseSignUp'));
-      emit(AuthGuest());
-      return;
-    }
-
-    AuthRepository().storeLoginData(userResponse);
-    emit(AuthSuccess(user: userResponse, firebaseUser: firebaseUser));
-    navigateToNextScreen(context, firebaseUser.uid);
   }
 
   Future<void> loginWithFacebook(BuildContext context) async {
@@ -182,39 +161,23 @@ class AuthBloc extends Cubit<AuthState> {
       emit(AuthGuest());
       return;
     }
-    User firebaseUser = result.user;
-    UserResponse user = await UserRepository().get(firebaseUser.email);
 
-    /*List<String> splitDisplayName = firebaseUser.displayName.split(' ');
-    user.firstName = splitDisplayName[0];
-    user.email = firebaseUser.email;
-    user.firebaseId = firebaseUser.uid;
-    if (splitDisplayName.length > 1) {
-      user.lastName = splitDisplayName[1];
+    if (result != null) {
+      User firebaseUser = result.user;
+      UserResponse user = await UserRepository().get(firebaseUser.email);
+
+      //If there is no associated user for this account
+      if (user == null) {
+        FirebaseAuth.instance.signOut();
+        AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'userForThisAccountNotFoundPleaseSignUp'));
+        emit(AuthGuest());
+        return;
+      }
+
+      AuthRepository().storeLoginData(user);
+      emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
+      navigateToNextScreen(context, firebaseUser.uid);
     }
-    AuthRepository().storeLoginData(user);
-    navigateToNextScreen(context, firebaseUser.uid);
-    emit(AuthSuccess(user: user, firebaseUser: firebaseUser));*/
-
-    // if (!firebaseUser.emailVerified) {
-    //   //TODO: trigger to send another email
-    //   FirebaseAuth.instance.signOut();
-    //   AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'pleaseCheckYourEmail'));
-    //   emit(AuthGuest());
-    //   return;
-    // }
-
-    //If there is no associated user for this account
-    if (user == null) {
-      FirebaseAuth.instance.signOut();
-      AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'userForThisAccountNotFoundPleaseSignUp'));
-      emit(AuthGuest());
-      return;
-    }
-
-    AuthRepository().storeLoginData(user);
-    emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
-    navigateToNextScreen(context, firebaseUser.uid);
   }
 
   Future<UserResponse> retrieveLoginData() {
