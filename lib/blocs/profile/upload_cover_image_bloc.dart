@@ -64,7 +64,7 @@ class ProfileCoverImageBloc extends Cubit<ProfileCoverImageState> {
   }
 
   Future<bool> requiredCoverPermissionsEnabled(DeviceContentFrom uploadedFrom) async {
-    if (!await Permissions.requiredPermissionsEnabled(uploadedFrom)) {
+    if (!await Permissions.requiredPermissionsEnabled(uploadedFrom, checkMicrophone: false)) {
       emit(ProfileCoverRequirePermissions());
       return false;
     }

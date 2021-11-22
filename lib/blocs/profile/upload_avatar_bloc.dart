@@ -69,7 +69,7 @@ class ProfileAvatarBloc extends Cubit<ProfileAvatarState> {
   }
 
   Future<bool> requiredAvatarPermissionsEnabled(DeviceContentFrom uploadedFrom) async {
-    if (!await Permissions.requiredPermissionsEnabled(uploadedFrom)) {
+    if (!await Permissions.requiredPermissionsEnabled(uploadedFrom, checkMicrophone: false)) {
       emit(ProfileAvatarRequirePermissions());
       return false;
     }
