@@ -62,7 +62,7 @@ class TransformationJourneyContentBloc extends Cubit<TransformationJourneyConten
   }
 
   Future<bool> requiredTJourneyPermissionsEnabled(DeviceContentFrom uploadedFrom) async {
-    if (!await Permissions.requiredPermissionsEnabled(uploadedFrom)) {
+    if (!await Permissions.requiredPermissionsEnabled(uploadedFrom, checkMicrophone: false)) {
       emit(TransformationJourneyRequirePermissions());
       return false;
     }

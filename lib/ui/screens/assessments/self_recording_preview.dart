@@ -78,22 +78,19 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                         assessmentAssignmentState.assessmentAssignment;
                     _tasks = taskState.values;
                     _task = _tasks[widget.taskIndex];
-                    if (taskSubmissionState is GetSuccess) {
+                    if (taskSubmissionState is GetSuccess &&
+                        taskSubmissionState.taskSubmission != null) {
                       _taskSubmission = taskSubmissionState.taskSubmission;
                     }
-                    return BlocListener<TaskSubmissionBloc,
-                            TaskSubmissionState>(
-                        listener: (context, state) {
-                          if (state is CreateSuccess) {
-                            _taskSubmission = state.taskSubmission;
-                            BlocProvider.of<VideoBloc>(context).createVideo(
-                                context,
-                                File(widget.filePath),
-                                3.0 / 4.0,
-                                state.taskSubmission.id);
-                          }
-                        },
-                        child: form());
+                    if (taskSubmissionState is CreateSuccess) {
+                      _taskSubmission = taskSubmissionState.taskSubmission;
+                      BlocProvider.of<VideoBloc>(context).createVideo(
+                          context,
+                          File(widget.filePath),
+                          3.0 / 4.0,
+                          taskSubmissionState.taskSubmission.id);
+                    }
+                    return form();
                   } else {
                     return const SizedBox();
                   }
@@ -120,7 +117,8 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                 .checkCompleted(_assessmentAssignment, _assessment);
             BlocProvider.of<TaskSubmissionListBloc>(context)
                 .get(_assessmentAssignment);
-            Navigator.pop(context);
+            var route = routeLabels[RouteEnum.assessmentVideos];
+            Navigator.popUntil(context, ModalRoute.withName(route));
             Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails],
                 arguments: {
                   'taskIndex': widget.taskIndex,
@@ -179,6 +177,8 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
   Widget retakeButton() {
     return GestureDetector(
         onTap: () {
+          _controller.pause();
+          Navigator.pop(context);
           Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording],
               arguments: {
                 'taskIndex': widget.taskIndex,
@@ -218,6 +218,11 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                   BlocProvider.of<VideoBloc>(context).createVideo(context,
                       File(widget.filePath), 3.0 / 4.0, _taskSubmission.id);
                 }
+                /*Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails],
+                    arguments: {
+                      'taskIndex': widget.taskIndex,
+                      'isLastTask': widget.isLastTask
+                    });*/
               },
             )
           ]))

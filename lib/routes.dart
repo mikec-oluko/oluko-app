@@ -632,6 +632,7 @@ class Routes {
         newRouteView = TaskDetails(
           taskIndex: argumentsToAdd['taskIndex'] as int,
           isLastTask: argumentsToAdd['isLastTask'] as bool,
+          isPublic: argumentsToAdd['isPublic'] as bool
         );
         break;
       case RouteEnum.selfRecording:
