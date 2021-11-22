@@ -21,6 +21,7 @@ class AuthRepository {
   Client http;
   FirebaseAuth firebaseAuthInstance;
   final String url = GlobalConfiguration().getValue('firebaseFunctions').toString() + '/auth';
+  GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
 
   AuthRepository.test({Client http, FirebaseAuth firebaseAuthInstance}) {
     this.http = http;
@@ -69,10 +70,16 @@ class AuthRepository {
 
   Future<UserCredential> signInWithGoogle() async {
     try {
-      GoogleSignIn().disconnect();
+      try {
+        // _googleSignIn.disconnect();
+        await _googleSignIn.signOut();
+        _googleSignIn = GoogleSignIn(scopes: ['email']);
+      } catch (e) {
+        print(e);
+      }
+      GoogleSignInAccount googleUser;
       // Trigger the authentication flow
-      final GoogleSignInAccount googleUser = await GoogleSignIn().signIn();
-
+      googleUser = await _googleSignIn.signIn();
       // Obtain the auth details from the request
       final GoogleSignInAuthentication googleAuth = await googleUser?.authentication;
 
@@ -81,16 +88,16 @@ class AuthRepository {
         accessToken: googleAuth?.accessToken,
         idToken: googleAuth?.idToken,
       );
-
       // Once signed in, return the UserCredential
       return await FirebaseAuth.instance.signInWithCredential(credential);
     } catch (e) {
+      print(e.toString());
       return null;
     }
   }
 
   Future<UserCredential> signInWithFacebook() async {
-    FacebookAuth.instance.logOut();
+    await FacebookAuth.instance.logOut();
     // Trigger the sign-in flow
     final result = await FacebookAuth.instance.login(permissions: ["public_profile", "email"]);
 
