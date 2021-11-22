@@ -82,7 +82,9 @@ class CourseRepository {
     List<CourseEnrollment> coruseEnrollments = await CourseEnrollmentRepository.getUserCourseEnrollments(userId);
     for (CourseEnrollment courseEnrollment in coruseEnrollments) {
       final DocumentSnapshot ds = await courseEnrollment.course.reference.get();
-      coursesList.add(Course.fromJson(ds.data() as Map<String, dynamic>));
+      if (courseEnrollment.isUnenrolled != true) {
+        coursesList.add(Course.fromJson(ds.data() as Map<String, dynamic>));
+      }
     }
     return coursesList;
   }
@@ -91,7 +93,9 @@ class CourseRepository {
     List<Course> courses = [];
     for (CourseEnrollment courseEnrollment in courseEnrollments) {
       DocumentSnapshot ds = await courseEnrollment.course.reference.get();
-      courses.add(Course.fromJson(ds.data() as Map<String, dynamic>));
+      if (courseEnrollment.isUnenrolled != true) {
+        courses.add(Course.fromJson(ds.data() as Map<String, dynamic>));
+      }
     }
     return courses;
   }

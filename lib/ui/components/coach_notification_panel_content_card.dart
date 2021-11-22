@@ -35,6 +35,7 @@ class _CoachNotificationPanelContentCardState extends State<CoachNotificationPan
             cardImage: content.contentImage,
             cardTitle: content.contentTitle,
             cardSubTitle: content.courseContent.classes.length.toString(),
+            cardDescription: content.courseContent.duration,
             date: content.createdAt != null ? content.createdAt.toDate() : null,
             fileType: CoachFileTypeEnum.recommendedCourse,
             onCloseCard: () {
@@ -80,8 +81,7 @@ class _CoachNotificationPanelContentCardState extends State<CoachNotificationPan
               updateRecommendationViewedProperty(content);
             },
             onOpenCard: () {
-              Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro],
-                  arguments: {'movement': content.movementContent});
+              Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': content.movementContent});
               updateRecommendationViewedProperty(content);
             });
       case TimelineInteractionType.mentoredVideo:
@@ -118,9 +118,6 @@ class _CoachNotificationPanelContentCardState extends State<CoachNotificationPan
 
   void updateRecommendationViewedProperty(CoachNotificationContent content) {
     BlocProvider.of<CoachRecommendationsBloc>(context).setRecommendationNotificationAsViewed(
-        content.coachRecommendation.id,
-        content.coachRecommendation.originUserId,
-        content.coachRecommendation.destinationUserId,
-        true);
+        content.coachRecommendation.id, content.coachRecommendation.originUserId, content.coachRecommendation.destinationUserId, true);
   }
 }

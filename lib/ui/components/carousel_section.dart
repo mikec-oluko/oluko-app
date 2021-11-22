@@ -11,14 +11,7 @@ class CarouselSection extends StatefulWidget {
   final double height;
   final double width;
 
-  CarouselSection(
-      {this.title,
-      this.subtitle,
-      this.children,
-      this.onOptionTap,
-      this.optionLabel,
-      this.height,
-      this.width});
+  CarouselSection({this.title, this.subtitle, this.children, this.onOptionTap, this.optionLabel, this.height, this.width});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -27,49 +20,50 @@ class CarouselSection extends StatefulWidget {
 class _State extends State<CarouselSection> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: widget.height,
-      child: Column(children: [
-        Flexible(
-          flex: 1,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              widget.title != null ? TitleBody(widget.title) : SizedBox(),
-                            widget.subtitle != null ? TitleBody(widget.title) : SizedBox(),
-              GestureDetector(
-                onTap: () => widget.onOptionTap(),
-                child: widget.optionLabel != null
-                    ? Padding(
-                        padding: const EdgeInsets.only(top: 3.0),
-                        child: Text(
-                          widget.optionLabel != null ? widget.optionLabel : '',
-                          style: TextStyle(
-                              color: OlukoColors.primary, fontSize: 18),
-                        ),
-                      )
-                    : SizedBox(),
-              )
-            ],
-          ),
-        ),
-        Flexible(
-          flex: 9,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            child: Container(
-                child: Align(
-              alignment: Alignment.centerLeft,
-              child: ListView(
-                shrinkWrap: true,
-                scrollDirection: Axis.horizontal,
-                children: widget.children,
+    return widget.children.isNotEmpty
+        ? Container(
+            height: widget.height,
+            child: Column(children: [
+              Flexible(
+                flex: 1,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    widget.title != null ? TitleBody(widget.title) : SizedBox(),
+                    widget.subtitle != null ? TitleBody(widget.title) : SizedBox(),
+                    GestureDetector(
+                      onTap: () => widget.onOptionTap(),
+                      child: widget.optionLabel != null
+                          ? Padding(
+                              padding: const EdgeInsets.only(top: 3.0),
+                              child: Text(
+                                widget.optionLabel != null ? widget.optionLabel : '',
+                                style: TextStyle(color: OlukoColors.primary, fontSize: 18),
+                              ),
+                            )
+                          : SizedBox(),
+                    )
+                  ],
+                ),
               ),
-            )),
-          ),
-        )
-      ]),
-    );
+              Flexible(
+                flex: 9,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Container(
+                      child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: ListView(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.horizontal,
+                      children: widget.children,
+                    ),
+                  )),
+                ),
+              )
+            ]),
+          )
+        : SizedBox.shrink();
   }
 }
