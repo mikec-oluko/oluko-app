@@ -99,7 +99,9 @@ class _State extends State<SelfRecording> {
                                           size: 30,
                                           color: Colors.white,
                                         ),
-                                        onPressed: () => Navigator.pushNamed(
+                                        onPressed: () { 
+                                          Navigator.pop(context);
+                                          Navigator.pushNamed(
                                             context,
                                             routeLabels[RouteEnum.taskDetails],
                                             arguments: {
@@ -109,7 +111,7 @@ class _State extends State<SelfRecording> {
                                                       1
                                                   ? true
                                                   : widget.isLastTask
-                                            }),
+                                            });},
                                       )),
                                 ])),
                       formSection(),
