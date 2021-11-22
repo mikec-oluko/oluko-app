@@ -13,8 +13,9 @@ class CoachContentPreviewContent extends StatefulWidget {
   final String titleForSection;
   final List<SegmentSubmission> segmentSubmissionContent;
   final List<Annotation> coachAnnotationContent;
-
-  const CoachContentPreviewContent({this.contentFor, this.titleForSection, this.segmentSubmissionContent, this.coachAnnotationContent});
+  final Function() onNavigation;
+  const CoachContentPreviewContent(
+      {this.contentFor, this.titleForSection, this.segmentSubmissionContent, this.coachAnnotationContent, this.onNavigation});
 
   @override
   _CoachContentPreviewContentState createState() => _CoachContentPreviewContentState();
@@ -43,7 +44,6 @@ class _CoachContentPreviewContentState extends State<CoachContentPreviewContent>
               padding: const EdgeInsets.only(left: 5),
               child: Text(
                 widget.titleForSection,
-                // OlukoLocalizations.of(context).find('sentVideos'),
                 style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
               ),
             ),
@@ -51,6 +51,7 @@ class _CoachContentPreviewContentState extends State<CoachContentPreviewContent>
               padding: EdgeInsets.zero,
               child: GestureDetector(
                 onTap: () {
+                  widget.onNavigation();
                   widget.segmentSubmissionContent.isNotEmpty ? getRouteForContent(widget.contentFor) : () {};
                 },
                 child: Container(
@@ -87,6 +88,7 @@ class _CoachContentPreviewContentState extends State<CoachContentPreviewContent>
               padding: EdgeInsets.zero,
               child: GestureDetector(
                 onTap: () {
+                  widget.onNavigation();
                   widget.coachAnnotationContent.isNotEmpty ? getRouteForContent(widget.contentFor) : () {};
                 },
                 child: Container(

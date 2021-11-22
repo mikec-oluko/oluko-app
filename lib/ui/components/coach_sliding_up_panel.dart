@@ -7,7 +7,8 @@ import 'coach_timeline_panel.dart';
 import 'dart:math' as math;
 
 class CoachSlidingUpPanel extends StatefulWidget {
-  const CoachSlidingUpPanel({this.content, this.timelineItemsContent});
+  const CoachSlidingUpPanel({this.content, this.timelineItemsContent, this.isIntroductionVideoComplete});
+  final bool isIntroductionVideoComplete;
   final Widget content;
   final List<CoachTimelineGroup> timelineItemsContent;
 
@@ -106,7 +107,9 @@ class _CoachSlidingUpPanelState extends State<CoachSlidingUpPanel> {
         ),
         width: MediaQuery.of(context).size.width,
         height: 300,
-        child: const CoachTimelinePanel(),
+        child: CoachTimelinePanel(
+          isIntroductionVideoComplete: widget.isIntroductionVideoComplete,
+        ),
       ),
       controller: _panelController,
       body: Container(

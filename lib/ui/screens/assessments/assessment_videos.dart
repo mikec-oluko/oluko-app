@@ -117,6 +117,9 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                         _controller.pause();
                       }
                       Navigator.pop(context);
+                      if (_controller != null) {
+                        _controller.pause();
+                      }
                     },
               showBackButton: !widget.isFirstTime,
               title: widget.isForCoachPage

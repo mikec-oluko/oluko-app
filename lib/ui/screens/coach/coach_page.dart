@@ -5,6 +5,7 @@ import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_assignment_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_interaction_timeline_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_introduction_video_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_mentored_videos_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_recommendations_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
@@ -97,7 +98,7 @@ class _CoachPageState extends State<CoachPage> {
           video: Video(
               url: widget.coachAssignment.videoHLS ??
                   (widget.coachAssignment.video != null ? widget.coachAssignment.video.url : widget.coachAssignment.introductionVideo),
-              aspectRatio: widget.coachAssignment.video.aspectRatio ?? 0.60),
+              aspectRatio: widget.coachAssignment.video != null ? widget.coachAssignment.video.aspectRatio ?? 0.60 : 0.60),
           videoHLS: widget.coachAssignment.videoHLS ??
               (widget.coachAssignment.video != null ? widget.coachAssignment.video.url : widget.coachAssignment.introductionVideo),
         );
@@ -126,6 +127,9 @@ class _CoachPageState extends State<CoachPage> {
               return Scaffold(
                 appBar: CoachAppBar(
                   coachUser: _coachUser,
+                  onNavigation: () => !widget.coachAssignment.introductionCompleted
+                      ? BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation()
+                      : () {},
                 ),
                 body: BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(
                   builder: (context, state) {
@@ -181,7 +185,9 @@ class _CoachPageState extends State<CoachPage> {
                                           numberOfTabsForPanel: _timelinePanelContent.length,
                                           contentForTimelinePanel: _timelinePanelContent);
                                       return CoachSlidingUpPanel(
-                                          content: coachViewPageContent(context), timelineItemsContent: _timelinePanelContent);
+                                          content: coachViewPageContent(context),
+                                          timelineItemsContent: _timelinePanelContent,
+                                          isIntroductionVideoComplete: widget.coachAssignment.introductionCompleted);
                                     }
                                   },
                                 );
@@ -349,7 +355,10 @@ class _CoachPageState extends State<CoachPage> {
               _tasks = state.values;
             }
             return CoachHorizontalCarousel(
-              contentToDisplay: TransformListOfItemsToWidget.getAssessmentCards(tasks: _tasks, tasksSubmitted: _assessmentVideosContent),
+              contentToDisplay: TransformListOfItemsToWidget.getAssessmentCards(
+                  tasks: _tasks,
+                  tasksSubmitted: _assessmentVideosContent,
+                  introductionVideoDone: widget.coachAssignment.introductionCompleted),
               isAssessmentContent: true,
             );
           },
@@ -491,7 +500,11 @@ class _CoachPageState extends State<CoachPage> {
         ? CoachContentPreviewContent(
             contentFor: CoachContentSection.sentVideos,
             titleForSection: OlukoLocalizations.get(context, 'sentVideos'),
-            segmentSubmissionContent: _sentVideosContent)
+            segmentSubmissionContent: _sentVideosContent,
+            onNavigation: () => !widget.coachAssignment.introductionCompleted
+                ? BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation()
+                : () {},
+          )
         : CoachContentSectionCard(
             title: OlukoLocalizations.get(context, 'sentVideos'),
           );
@@ -502,7 +515,10 @@ class _CoachPageState extends State<CoachPage> {
         ? CoachContentPreviewContent(
             contentFor: CoachContentSection.mentoredVideos,
             titleForSection: OlukoLocalizations.get(context, 'mentoredVideos'),
-            coachAnnotationContent: _annotationVideosContent)
+            coachAnnotationContent: _annotationVideosContent,
+            onNavigation: () => !widget.coachAssignment.introductionCompleted
+                ? BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation()
+                : () {})
         : CoachContentSectionCard(title: OlukoLocalizations.get(context, 'mentoredVideos'));
   }
 
