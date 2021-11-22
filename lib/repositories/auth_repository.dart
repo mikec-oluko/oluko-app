@@ -70,13 +70,8 @@ class AuthRepository {
 
   Future<UserCredential> signInWithGoogle() async {
     try {
-      try {
-        // _googleSignIn.disconnect();
-        await _googleSignIn.signOut();
-        _googleSignIn = GoogleSignIn(scopes: ['email']);
-      } catch (e) {
-        print(e);
-      }
+      await _googleSignIn.signOut();
+      _googleSignIn = GoogleSignIn(scopes: ['email']);
       GoogleSignInAccount googleUser;
       // Trigger the authentication flow
       googleUser = await _googleSignIn.signIn();
