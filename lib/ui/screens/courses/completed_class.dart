@@ -157,8 +157,8 @@ class _CompletedClassState extends State<CompletedClass> {
   }
 
   showCameraAndSaveSelfie() async {
-    _image = await imagePicker.getImage(source: ImageSource.camera);
-    BlocProvider.of<CourseEnrollmentUpdateBloc>(context)..saveSelfie(widget.courseEnrollment, widget.classIndex, _image);
+    _image = await imagePicker.getImage(source: ImageSource.camera, preferredCameraDevice: CameraDevice.front);
+    BlocProvider.of<CourseEnrollmentUpdateBloc>(context).saveSelfie(widget.courseEnrollment, widget.classIndex, _image);
   }
 
   Widget getAddPhotoFrame() {
