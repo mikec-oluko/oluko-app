@@ -18,6 +18,11 @@ class _CoachShowVideoState extends State<CoachShowVideo> {
   ChewieController _controller;
   bool isMentored = true;
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(

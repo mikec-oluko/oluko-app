@@ -118,16 +118,22 @@ class TransformListOfItemsToWidget {
     return contentForReturn;
   }
 
-  static List<Widget> getAssessmentCards({List<Task> tasks, List<TaskSubmission> tasksSubmitted}) {
+  static List<Widget> getAssessmentCards({List<Task> tasks, List<TaskSubmission> tasksSubmitted, bool introductionVideoDone}) {
     List<Widget> contentForSection = [];
     tasks.forEach((task) {
-      contentForSection.add(returnCardForAssessment(task, tasksSubmitted));
+      contentForSection.add(returnCardForAssessment(task, tasksSubmitted, introductionVideoDone));
     });
     return contentForSection;
   }
 
-  static Widget returnCardForAssessment(Task task, List<TaskSubmission> tasksSubmitted) {
-    return Padding(padding: const EdgeInsets.all(5.0), child: CoachAssessmentCard(task: task, assessmentVideos: tasksSubmitted));
+  static Widget returnCardForAssessment(Task task, List<TaskSubmission> tasksSubmitted, bool introductionVideoDone) {
+    return Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: CoachAssessmentCard(
+          task: task,
+          assessmentVideos: tasksSubmitted,
+          introductionVideoDone: introductionVideoDone,
+        ));
   }
 
   static List<InfoForSegments> segments(List<CourseEnrollment> courseEnrollments) {

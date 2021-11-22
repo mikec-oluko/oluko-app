@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_introduction_video_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/list_of_items_to_widget.dart';
 import 'package:oluko_app/models/task.dart';
@@ -8,8 +10,9 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class CoachAssessmentCard extends StatefulWidget {
   final Task task;
+  final bool introductionVideoDone;
   final List<TaskSubmission> assessmentVideos;
-  const CoachAssessmentCard({this.task, this.assessmentVideos});
+  const CoachAssessmentCard({this.task, this.assessmentVideos, this.introductionVideoDone});
 
   @override
   _CoachAssessmentCardState createState() => _CoachAssessmentCardState();
@@ -20,8 +23,10 @@ class _CoachAssessmentCardState extends State<CoachAssessmentCard> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos],
-            arguments: {'isFirstTime': false});
+        if (widget.introductionVideoDone != null && widget.introductionVideoDone == false) {
+          BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation();
+        }
+        Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos], arguments: {'isFirstTime': false});
       },
       child: Container(
         width: 250,
@@ -37,13 +42,9 @@ class _CoachAssessmentCardState extends State<CoachAssessmentCard> {
                 children: [
                   Text(
                     widget.task.name,
-                    style: OlukoFonts.olukoBigFont(
-                        customColor: OlukoColors.white,
-                        custoFontWeight: FontWeight.w500),
+                    style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                   ),
-                  checkAssessmentSubmitted(
-                              widget.task, widget.assessmentVideos) ==
-                          false
+                  checkAssessmentSubmitted(widget.task, widget.assessmentVideos) == false
                       ? Image.asset(
                           'assets/assessment/check_ellipse.png',
                           scale: 4,
@@ -68,9 +69,7 @@ class _CoachAssessmentCardState extends State<CoachAssessmentCard> {
                 children: [
                   Text(
                     widget.task.description,
-                    style: OlukoFonts.olukoMediumFont(
-                        customColor: OlukoColors.grayColor,
-                        custoFontWeight: FontWeight.w500),
+                    style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
                   ),
                 ],
               ),
@@ -79,9 +78,7 @@ class _CoachAssessmentCardState extends State<CoachAssessmentCard> {
                 children: [
                   Text(
                     OlukoLocalizations.get(context, 'public'),
-                    style: OlukoFonts.olukoBigFont(
-                        customColor: OlukoColors.grayColor,
-                        custoFontWeight: FontWeight.w500),
+                    style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
                   ),
                   Stack(alignment: Alignment.center, children: [
                     Image.asset(
@@ -107,9 +104,7 @@ class _CoachAssessmentCardState extends State<CoachAssessmentCard> {
     if (tasksSubmitted.length == null || tasksSubmitted.length == 0) {
       result = false;
     } else {
-      if (tasksSubmitted
-          .where((element) => element.task.id == task.id)
-          .isNotEmpty) {
+      if (tasksSubmitted.where((element) => element.task.id == task.id).isNotEmpty) {
         result = true;
       } else {
         result = false;

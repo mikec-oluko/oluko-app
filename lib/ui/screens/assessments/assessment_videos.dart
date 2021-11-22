@@ -98,13 +98,17 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
             appBar: OlukoAppBar(
               onPressed: widget.isForCoachPage
                   ? () {
-                      _controller.pause();
+                      if (_controller != null) {
+                        _controller.pause();
+                      }
                       Navigator.pop(context);
                       AppNavigator().returnToHome(context);
                     }
                   : () {
                       Navigator.pop(context);
-                      _controller.pause();
+                      if (_controller != null) {
+                        _controller.pause();
+                      }
                     },
               showBackButton: !widget.isFirstTime,
               title: widget.isForCoachPage ? OlukoLocalizations.get(context, 'coach') : OlukoLocalizations.get(context, 'assessment'),
