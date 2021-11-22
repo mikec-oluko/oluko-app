@@ -276,7 +276,7 @@ class CoachRepository {
               coachRecommendation: recommendation,
               contentTitle: courseRecommended.name,
               contentSubtitle: courseRecommended.classes.length.toString(),
-              contentDescription: courseRecommended.classes.length.toString(),
+              contentDescription: courseRecommended.duration,
               contentImage: courseRecommended.image,
               contentTypeIndex: recommendation.entityType,
               createdAt: recommendation.createdAt,
