@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oluko_app/models/base.dart';
 import 'package:oluko_app/models/enums/segment_type_enum.dart';
@@ -47,10 +49,9 @@ class Segment extends Base {
             isHidden: isHidden);
 
   factory Segment.fromJson(Map<String, dynamic> json) {
+    if (json == null) return null;
     Segment segment = Segment(
-        challengeVideo: json['challenge_video'] == null
-            ? null
-            : json['challenge_video'].toString(),
+        challengeVideo: json['challenge_video'] == null ? null : json['challenge_video'].toString(),
         name: json['name']?.toString(),
         image: json['image']?.toString(),
         rounds: json['rounds'] as int,
@@ -60,20 +61,15 @@ class Segment extends Base {
             : json['is_challenge'] is bool
                 ? json['is_challenge'] as bool
                 : false,
-        challengeImage: json['challenge_image'] == null
-            ? null
-            : json['challenge_image']?.toString(),
+        challengeImage: json['challenge_image'] == null ? null : json['challenge_image']?.toString(),
         totalTime: json['total_time'] as int,
         initialTimer: json['initial_timer'] as int,
         isPublished: json['is_published'] as bool,
-        type: json['type'] == null
-            ? null
-            : SegmentTypeEnum.values[json['type'] as int],
+        type: json['type'] == null ? null : SegmentTypeEnum.values[json['type'] as int],
         sections: json['sections'] == null
             ? null
-            : List<SectionSubmodel>.from((json['sections'] as Iterable).map(
-                (section) => SectionSubmodel.fromJson(
-                    section as Map<String, dynamic>))));
+            : List<SectionSubmodel>.from(
+                (json['sections'] as Iterable).map((section) => SectionSubmodel.fromJson(section as Map<String, dynamic>))));
     segment.setBase(json);
     return segment;
   }
@@ -91,9 +87,7 @@ class Segment extends Base {
       'is_challenge': isChallenge,
       'challenge_image': challengeImage,
       'type': type == null ? null : type.index,
-      'movements': sections == null
-          ? null
-          : List<dynamic>.from(sections.map((section) => section.toJson()))
+      'movements': sections == null ? null : List<dynamic>.from(sections.map((section) => section.toJson()))
     };
     segmentJson.addEntries(super.toJson().entries);
     return segmentJson;
