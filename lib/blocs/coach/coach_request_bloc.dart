@@ -135,7 +135,7 @@ class CoachRequestBloc extends Cubit<CoachRequestState> {
   void setRequestSegmentNotificationAsViewed(String coachRequestId, String userId, bool notificationValue) async {
     try {
       await _coachRequestRepository.updateNotificationStatus(coachRequestId, userId, notificationValue);
-      // get(userId);
+      get(userId); //TODO: check if needed
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
