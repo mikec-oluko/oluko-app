@@ -167,7 +167,7 @@ class _State extends State<SegmentCameraPreview> {
   Future<void> _setupCameras() async {
     final int cameraPos = isCameraFront ? 0 : 1;
     try {
-      if (!await Permissions.requiredPermissionsEnabled(DeviceContentFrom.camera)) {
+      if (!await Permissions.requiredPermissionsEnabled(DeviceContentFrom.camera, checkMicrophone: false)) {
         Navigator.pop(context);
         DialogUtils.getDialog(context, [OpenSettingsModal(context)], showExitButton: false);
         return;
