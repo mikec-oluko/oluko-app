@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:oluko_app/blocs/coach/coach_introduction_video_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_timeline_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/coach_timeline_content.dart';
@@ -16,7 +17,8 @@ import 'coach_timeline_card_content.dart';
 import 'oluko_circular_progress_indicator.dart';
 
 class CoachTimelinePanel extends StatefulWidget {
-  const CoachTimelinePanel();
+  final bool isIntroductionVideoComplete;
+  const CoachTimelinePanel({this.isIntroductionVideoComplete});
   @override
   _CoachTimelinePanelConteState createState() => _CoachTimelinePanelConteState();
 }
@@ -126,8 +128,13 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
     switch (TimelineContentOption.getTimelineOption(content.contentType as int)) {
       case TimelineInteractionType.course:
         return GestureDetector(
-          onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
-              arguments: {'course': content.courseForNavigation, 'fromCoach': true}),
+          onTap: () {
+            if (!widget.isIntroductionVideoComplete) {
+              BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation();
+            }
+            Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
+                arguments: {'course': content.courseForNavigation, 'fromCoach': true});
+          },
           child: Container(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -176,8 +183,12 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
         );
       case TimelineInteractionType.movement:
         return GestureDetector(
-          onTap: () =>
-              Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': content.movementForNavigation}),
+          onTap: () {
+            if (!widget.isIntroductionVideoComplete) {
+              BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation();
+            }
+            Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': content.movementForNavigation});
+          },
           child: Container(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

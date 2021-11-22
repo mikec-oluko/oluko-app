@@ -185,7 +185,9 @@ class _CoachPageState extends State<CoachPage> {
                                           numberOfTabsForPanel: _timelinePanelContent.length,
                                           contentForTimelinePanel: _timelinePanelContent);
                                       return CoachSlidingUpPanel(
-                                          content: coachViewPageContent(context), timelineItemsContent: _timelinePanelContent);
+                                          content: coachViewPageContent(context),
+                                          timelineItemsContent: _timelinePanelContent,
+                                          isIntroductionVideoComplete: widget.coachAssignment.introductionCompleted);
                                     }
                                   },
                                 );
