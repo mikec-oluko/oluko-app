@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/challenge_bloc.dart';
 import 'package:oluko_app/blocs/course/course_bloc.dart';
@@ -138,6 +139,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
             color: Colors.white,
           ),
           onPressed: () {
+            if (_panelController != null) {
+              _panelController.close();
+            }
             Navigator.pop(context);
           },
         ),
@@ -210,7 +214,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   }
                   if (state is ProfileCoverImageDefault) {
                     _contentForPanel = const SizedBox();
-                    _panelController.isPanelOpen ? _panelController.close() : null;
+                    if (_panelController.isPanelOpen) {
+                      _panelController.close();
+                    }
                   }
                   if (state is ProfileCoverImageLoading) {
                     _contentForPanel = UploadingModalLoader(UploadFrom.profileCoverImage);
@@ -221,7 +227,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     _contentForPanel = UploadingModalSuccess(goToPage: UploadFrom.profileImage, userRequested: _userProfileToDisplay);
                   }
                   if (state is ProfileCoverImageFailure) {
-                    _panelController.close();
+                    if (_panelController != null) {
+                      _panelController.close();
+                    }
                   }
                   if (state is ProfileCoverRequirePermissions) {
                     _panelController.close().then((value) =>
@@ -239,8 +247,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
                   if (state is ProfileAvatarDefault) {
                     _contentForPanel = const SizedBox();
-
-                    _panelController.isPanelOpen ? _panelController.close() : null;
+                    if (_panelController.isPanelOpen) {
+                      _panelController.close();
+                    }
                   }
                   if (state is ProfileAvatarLoading) {
                     // canHidePanel = state.lockPanel;
@@ -250,7 +259,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     _contentForPanel = UploadingModalSuccess(goToPage: UploadFrom.profileImage, userRequested: _userProfileToDisplay);
                   }
                   if (state is ProfileAvatarFailure) {
-                    _panelController.close();
+                    if (_panelController != null) {
+                      _panelController.close();
+                    }
                   }
                   if (state is ProfileAvatarRequirePermissions) {
                     _panelController.close().then((value) =>
@@ -264,7 +275,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
               clipBehavior: Clip.none,
               padding: EdgeInsets.zero,
               shrinkWrap: true,
-              children: [
+            children: [
                 Container(
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height / 2,

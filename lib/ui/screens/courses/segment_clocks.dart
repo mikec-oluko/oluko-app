@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -320,12 +321,12 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   void nextSegmentAction() {
     widget.segmentIndex < widget.segments.length - 1
-        ? Navigator.popAndPushNamed(context, routeLabels[RouteEnum.segmentDetail], arguments: {
+        ? Navigator.of(context).popAndPushNamed(routeLabels[RouteEnum.segmentDetail], arguments: {
             'segmentIndex': widget.segmentIndex + 1,
             'classIndex': widget.classIndex,
             'courseEnrollment': widget.courseEnrollment,
           })
-        : Navigator.popAndPushNamed(context, routeLabels[RouteEnum.completedClass], arguments: {
+        : Navigator.of(context).popAndPushNamed(routeLabels[RouteEnum.completedClass], arguments: {
             'classIndex': widget.classIndex,
             'courseEnrollment': widget.courseEnrollment,
           });
