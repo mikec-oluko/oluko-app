@@ -15,12 +15,26 @@ class CoachProfile extends StatefulWidget {
 
 class _CoachProfileState extends State<CoachProfile> {
   String _userLocation;
+  String defaultCoachPic = '';
 
   @override
   void initState() {
     _userLocation = getUserLocation(widget.coachUser);
+    setState(() {
+      if (widget.coachUser != null) {
+        defaultCoachPic =
+            '${widget.coachUser.firstName.characters.first.toUpperCase()}${widget.coachUser.lastName.characters.first.toUpperCase()}';
+      }
+    });
+    // TODO: implement initState
     super.initState();
   }
+
+  // @override
+  // void initState() {
+  //   _userLocation = getUserLocation(widget.coachUser);
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -163,8 +177,7 @@ class _CoachProfileState extends State<CoachProfile> {
                         children: [
                           Text(
                             "Ask your coach",
-                            style: OlukoFonts.olukoMediumFont(
-                                customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                           ),
                           Container(
                             clipBehavior: Clip.none,
@@ -303,19 +316,26 @@ class _CoachProfileState extends State<CoachProfile> {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10),
                           child: widget.coachUser.coverImage == null
-                              ? CircleAvatar(
-                                  backgroundColor: OlukoColors.black,
-                                  radius: 30.0,
-                                )
+                              ? Stack(children: [
+                                  CircleAvatar(
+                                    backgroundColor: widget.coachUser != null
+                                        ? OlukoColors.userColor(widget.coachUser.firstName, widget.coachUser.lastName)
+                                        : OlukoColors.black,
+                                    radius: 24.0,
+                                    child: Text(
+                                        widget.coachUser != null
+                                            ? '${widget.coachUser.firstName.characters.first.toUpperCase()}${widget.coachUser.lastName.characters.first.toUpperCase()}'
+                                            : defaultCoachPic,
+                                        style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500)),
+                                  ),
+                                ])
                               : CircleAvatar(
                                   backgroundColor: OlukoColors.black,
                                   backgroundImage: Image.network(
                                     widget.coachUser.avatarThumbnail,
                                     fit: BoxFit.contain,
-                                    frameBuilder:
-                                        (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
-                                            ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded,
-                                                height: 30, width: 30),
+                                    frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
+                                        ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 30, width: 30),
                                     height: 30,
                                     width: 30,
                                   ).image,
@@ -335,8 +355,7 @@ class _CoachProfileState extends State<CoachProfile> {
                             children: [
                               Text(
                                 OlukoLocalizations.get(context, 'coach'),
-                                style: OlukoFonts.olukoBigFont(
-                                    customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
+                                style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
                               ),
                               SizedBox(
                                 width: 5.0,
@@ -345,8 +364,7 @@ class _CoachProfileState extends State<CoachProfile> {
                                   ? Text(
                                       // widget.coachUser.lastName,
                                       widget.coachUser.firstName,
-                                      style: OlukoFonts.olukoBigFont(
-                                          customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
+                                      style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
                                     )
                                   : Container(),
                             ],
@@ -357,8 +375,7 @@ class _CoachProfileState extends State<CoachProfile> {
                                 padding: const EdgeInsets.only(left: 10.0),
                                 child: Text(
                                   _userLocation,
-                                  style: OlukoFonts.olukoMediumFont(
-                                      customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300),
+                                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300),
                                 ),
                               )
                             : Container()
