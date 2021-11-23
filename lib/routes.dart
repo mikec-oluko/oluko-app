@@ -7,6 +7,7 @@ import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/challenge_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_audio_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_introduction_video_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
 import 'package:oluko_app/blocs/course/course_home_bloc.dart';
@@ -286,6 +287,7 @@ class Routes {
   final CoachRecommendationsBloc _coachRecommendationsBloc = CoachRecommendationsBloc();
   final CoachTimelineBloc _coachTimelineBloc = CoachTimelineBloc();
   final AudioBloc _audioBloc = AudioBloc();
+  final CoachIntroductionVideoBloc _coachIntroductionVideo = CoachIntroductionVideoBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -337,6 +339,7 @@ class Routes {
           ),
           BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
           BlocProvider<CoachRecommendationsBloc>.value(value: _coachRecommendationsBloc),
+          BlocProvider<CoachIntroductionVideoBloc>.value(value: _coachIntroductionVideo),
         ];
         newRouteView = MainPage();
         break;
@@ -629,6 +632,7 @@ class Routes {
         newRouteView = TaskDetails(
           taskIndex: argumentsToAdd['taskIndex'] as int,
           isLastTask: argumentsToAdd['isLastTask'] as bool,
+          isPublic: argumentsToAdd['isPublic'] as bool
         );
         break;
       case RouteEnum.selfRecording:
@@ -719,6 +723,7 @@ class Routes {
         break;
       case RouteEnum.coach:
         providers = [
+          BlocProvider<CoachIntroductionVideoBloc>.value(value: _coachIntroductionVideo),
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
           BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
@@ -739,6 +744,7 @@ class Routes {
         break;
       case RouteEnum.coach2:
         providers = [
+          BlocProvider<CoachIntroductionVideoBloc>.value(value: _coachIntroductionVideo),
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
           BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),

@@ -18,10 +18,19 @@ class SegmentRepository {
   static Future<List<Segment>> getAll(Class classObj) async {
     List<Segment> segments = [];
     for (SegmentSubmodel segment in classObj.segments) {
-      DocumentSnapshot ds = await segment.reference.get();
-      Segment retrievedSegment =
-          Segment.fromJson(ds.data() as Map<String, dynamic>);
-      segments.add(retrievedSegment);
+      QuerySnapshot qs = await FirebaseFirestore.instance
+          .collection('projects')
+          .doc(GlobalConfiguration().getValue('projectId'))
+          .collection('segments')
+          .where('id', isEqualTo: segment.id)
+          .limit(1)
+          .get();
+      //TODO: IDEAL BUT ERROR BECAUSE OF DELETED SEGEMTNS await segment.reference.get();
+      if (qs.size > 0) {
+        DocumentSnapshot ds = qs.docs[0];
+        Segment retrievedSegment = Segment.fromJson(ds.data() as Map<String, dynamic>);
+        segments.add(retrievedSegment);
+      }
     }
     return segments;
   }
@@ -33,11 +42,8 @@ class SegmentRepository {
   }
 
   static Future<Segment> get(String id) async {
-    DocumentReference reference = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('segments')
-        .doc(id);
+    DocumentReference reference =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('segments').doc(id);
     DocumentSnapshot ds = await reference.get();
     return Segment.fromJson(ds.data() as Map<String, dynamic>);
   }

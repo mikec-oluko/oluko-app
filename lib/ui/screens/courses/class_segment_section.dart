@@ -42,7 +42,7 @@ class _State extends State<ClassSegmentSection> {
             Padding(
               padding: const EdgeInsets.only(bottom: 20.0),
               child: Text(
-                widget.segment.name,
+                widget.segment?.name ?? "",
                 style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.white),
               ),
             ),

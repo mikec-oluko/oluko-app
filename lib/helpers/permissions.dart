@@ -3,9 +3,11 @@ import 'package:permission_handler/permission_handler.dart';
 import 'dart:io';
 
 class Permissions {
-  static Future<bool> requiredPermissionsEnabled(DeviceContentFrom uploadedFrom) async {
+  static Future<bool> requiredPermissionsEnabled(DeviceContentFrom uploadedFrom, {bool checkMicrophone = true}) async {
     if (uploadedFrom == DeviceContentFrom.camera) {
-      if (await Permission.camera.status.isDenied || await Permission.camera.status.isPermanentlyDenied) {
+      if (await Permission.camera.status.isDenied ||
+          await Permission.camera.status.isPermanentlyDenied ||
+          checkMicrophone && (await Permission.microphone.status.isDenied || await Permission.microphone.status.isPermanentlyDenied)) {
         return false;
       }
     } else if (uploadedFrom == DeviceContentFrom.gallery) {

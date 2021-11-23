@@ -7,7 +7,8 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class CoachAppBar extends StatefulWidget implements PreferredSizeWidget {
   final UserResponse coachUser;
-  const CoachAppBar({this.coachUser});
+  final Function() onNavigation;
+  const CoachAppBar({this.coachUser, this.onNavigation});
 
   @override
   _CoachAppBarState createState() => _CoachAppBarState();
@@ -27,8 +28,8 @@ class _CoachAppBarState extends State<CoachAppBar> {
               padding: const EdgeInsets.symmetric(horizontal: 5),
               child: GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(context, routeLabels[RouteEnum.coachProfile],
-                      arguments: {'coachUser': widget.coachUser});
+                  widget.onNavigation();
+                  Navigator.pushNamed(context, routeLabels[RouteEnum.coachProfile], arguments: {'coachUser': widget.coachUser});
                 },
                 child: Text(
                   OlukoLocalizations.get(context, 'hiCoach'),
