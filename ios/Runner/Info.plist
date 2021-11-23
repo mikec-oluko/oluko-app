@@ -21,9 +21,11 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>98</string>
+	<string>106</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>To record user workouts</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Need access to camera</string>
 	<key>NSMicrophoneUsageDescription</key>
