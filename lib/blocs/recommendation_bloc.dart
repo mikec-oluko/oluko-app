@@ -38,6 +38,14 @@ class RecommendationBloc extends Cubit<RecommendationState> {
     }
   }
 
+  void removeRecomendedCourse(String userId, String courseId) {
+    try {
+      RecommendationRepository().removeRecomendedCourse(userId, courseId);
+    } catch (e) {
+      return;
+    }
+  }
+
   void getByDestinationUser(String userId) async {
     try {
       List<Recommendation> recommendations = await RecommendationRepository().getByDestinationUser(userId);
@@ -57,9 +65,8 @@ class RecommendationBloc extends Cubit<RecommendationState> {
       List<Recommendation> recommendations = await RecommendationRepository().getByDestinationUser(userId);
 
       //Filter recommendations by Course recommendations
-      List<Recommendation> courseRecommendations = recommendations
-          .where((Recommendation element) => element.entityType == RecommendationEntityType.course.index)
-          .toList();
+      List<Recommendation> courseRecommendations =
+          recommendations.where((Recommendation element) => element.entityType == RecommendationEntityType.course.index && element.isDeleted != true).toList();
 
       //Get a Map of Courses and their recommender user ids (Map<CourseId, List<UserId>>)
       Map<String, List<String>> coursesRecommendedByUserIds = _getCoursesRecommendedByUsers(courseRecommendations);

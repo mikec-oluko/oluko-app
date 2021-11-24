@@ -14,6 +14,7 @@ import 'package:oluko_app/blocs/course/course_home_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
+import 'package:oluko_app/blocs/recommendation_bloc.dart';
 import 'package:oluko_app/blocs/statistics_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -180,7 +181,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
       return BlocListener<CourseEnrollmentBloc, CourseEnrollmentState>(
           listener: (context, courseEnrollmentState) {
             if (courseEnrollmentState is CreateEnrollmentSuccess) {
-              BlocProvider.of<CourseEnrollmentListBloc>(context)..getCourseEnrollmentsByUser(_user.uid);
+              BlocProvider.of<CourseEnrollmentListBloc>(context).getCourseEnrollmentsByUser(_user.uid);
               Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
             }
           },
@@ -193,7 +194,8 @@ class _CourseMarketingState extends State<CourseMarketing> {
                     title: OlukoLocalizations.get(context, 'enroll'),
                     onPressed: () {
                       if (_disableAction == false) {
-                        BlocProvider.of<CourseEnrollmentBloc>(context)..create(_user, widget.course);
+                        BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
+                        BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
                       }
                       _disableAction = true;
                     },
@@ -201,7 +203,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                 ],
               )));
     } else {
-      return SizedBox();
+      return const SizedBox();
     }
   }
 
