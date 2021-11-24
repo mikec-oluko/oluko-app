@@ -101,6 +101,7 @@ import 'blocs/coach/coach_assignment_bloc.dart';
 import 'blocs/coach/coach_interaction_timeline_bloc.dart';
 import 'blocs/coach/coach_mentored_videos_bloc.dart';
 import 'blocs/coach/coach_recommendations_bloc.dart';
+import 'blocs/coach/coach_review_pending_bloc.dart';
 import 'blocs/coach/coach_sent_videos_bloc.dart';
 import 'blocs/coach/coach_timeline_bloc.dart';
 import 'blocs/movement_info_bloc.dart';
@@ -288,6 +289,7 @@ class Routes {
   final CoachTimelineBloc _coachTimelineBloc = CoachTimelineBloc();
   final AudioBloc _audioBloc = AudioBloc();
   final CoachIntroductionVideoBloc _coachIntroductionVideo = CoachIntroductionVideoBloc();
+  final CoachReviewPendingBloc _coachReviewPendingBloc = CoachReviewPendingBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -340,6 +342,7 @@ class Routes {
           BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
           BlocProvider<CoachRecommendationsBloc>.value(value: _coachRecommendationsBloc),
           BlocProvider<CoachIntroductionVideoBloc>.value(value: _coachIntroductionVideo),
+          BlocProvider<CoachReviewPendingBloc>.value(value: _coachReviewPendingBloc),
         ];
         newRouteView = MainPage();
         break;
@@ -630,10 +633,9 @@ class Routes {
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = TaskDetails(
-          taskIndex: argumentsToAdd['taskIndex'] as int,
-          isLastTask: argumentsToAdd['isLastTask'] as bool,
-          isPublic: argumentsToAdd['isPublic'] as bool
-        );
+            taskIndex: argumentsToAdd['taskIndex'] as int,
+            isLastTask: argumentsToAdd['isLastTask'] as bool,
+            isPublic: argumentsToAdd['isPublic'] as bool);
         break;
       case RouteEnum.selfRecording:
         //TODO: Pass flag for last assessments
@@ -724,6 +726,7 @@ class Routes {
       case RouteEnum.coach:
         providers = [
           BlocProvider<CoachIntroductionVideoBloc>.value(value: _coachIntroductionVideo),
+          BlocProvider<CoachReviewPendingBloc>.value(value: _coachReviewPendingBloc),
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
           BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
@@ -745,6 +748,7 @@ class Routes {
       case RouteEnum.coach2:
         providers = [
           BlocProvider<CoachIntroductionVideoBloc>.value(value: _coachIntroductionVideo),
+          BlocProvider<CoachReviewPendingBloc>.value(value: _coachReviewPendingBloc),
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
           BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),

@@ -10,9 +10,9 @@ class CoachIntroductionVideoPause extends CoachIntroductionVideoState {
   CoachIntroductionVideoPause({this.pauseVideo});
 }
 
-class CoachAudioFailure extends CoachIntroductionVideoState {
+class CoachIntroductionVideoFailure extends CoachIntroductionVideoState {
   final dynamic exception;
-  CoachAudioFailure({this.exception});
+  CoachIntroductionVideoFailure({this.exception});
 }
 
 class CoachIntroductionVideoBloc extends Cubit<CoachIntroductionVideoState> {
@@ -27,7 +27,7 @@ class CoachIntroductionVideoBloc extends Cubit<CoachIntroductionVideoState> {
         exception,
         stackTrace: stackTrace,
       );
-      emit(CoachAudioFailure(exception: exception));
+      emit(CoachIntroductionVideoFailure(exception: exception));
       rethrow;
     }
   }

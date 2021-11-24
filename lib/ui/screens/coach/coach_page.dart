@@ -9,6 +9,7 @@ import 'package:oluko_app/blocs/coach/coach_introduction_video_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_mentored_videos_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_recommendations_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_review_pending_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_sent_videos_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_timeline_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
@@ -80,6 +81,7 @@ List<CoachTimelineItem> _mentoredVideoTimelineContent = [];
 List<CoachTimelineItem> _allContent = [];
 List<CoachTimelineGroup> _timelinePanelContent = [];
 List<CoachSegmentContent> _allSegmentsForUser = [];
+List<SegmentSubmission> segmentsWithReview = [];
 String _defaultIdForAllContentTimeline = '0';
 const String _defaultIntroductionVideoId = 'introVideo';
 
@@ -98,7 +100,7 @@ class _CoachPageState extends State<CoachPage> {
           video: Video(
               url: widget.coachAssignment.videoHLS ??
                   (widget.coachAssignment.video != null ? widget.coachAssignment.video.url : widget.coachAssignment.introductionVideo),
-              aspectRatio: widget.coachAssignment.video != null ? widget.coachAssignment.video.aspectRatio ?? 0.60 : 0.60),
+              aspectRatio: widget.coachAssignment.video != null ? widget.coachAssignment.video.aspectRatio ?? 16.9 : 16.9),
           videoHLS: widget.coachAssignment.videoHLS ??
               (widget.coachAssignment.video != null ? widget.coachAssignment.video.url : widget.coachAssignment.introductionVideo),
         );
@@ -151,7 +153,17 @@ class _CoachPageState extends State<CoachPage> {
                         return BlocBuilder<CoachSentVideosBloc, CoachSentVideosState>(
                           builder: (context, state) {
                             if (state is CoachSentVideosSuccess) {
-                              _sentVideosContent = state.sentVideos.where((sentVideo) => sentVideo.video != null).toList();
+                              _sentVideosContent = state.sentVideos
+                                  .where((sentVideo) => sentVideo.video != null && sentVideo.coachId == _coachUser.id)
+                                  .toList();
+
+                              _sentVideosContent.forEach((sentVideo) {
+                                checkPendingReviewsForSentVideos(sentVideo);
+                              });
+                              BlocProvider.of<CoachReviewPendingBloc>(context).updateReviewPendingMessage(
+                                  _sentVideosContent != null && segmentsWithReview != null
+                                      ? _sentVideosContent.length - segmentsWithReview.length
+                                      : 0);
                             }
                             return BlocConsumer<CoachTimelineItemsBloc, CoachTimelineItemsState>(
                               listenWhen: (CoachTimelineItemsState previous, CoachTimelineItemsState current) =>
@@ -214,6 +226,21 @@ class _CoachPageState extends State<CoachPage> {
     );
   }
 
+  void checkPendingReviewsForSentVideos(SegmentSubmission sentVideo) {
+    _annotationVideosContent.forEach((annotation) {
+      if (annotation.segmentSubmissionId == sentVideo.id) {
+        if (segmentsWithReview
+            .where((reviewSegment) => reviewSegment.id == sentVideo.segmentId && reviewSegment.coachId == sentVideo.coachId)
+            .toList()
+            .isEmpty) {
+          if (segmentsWithReview.where((reviewedSegment) => reviewedSegment.id == sentVideo.id).toList().isEmpty) {
+            segmentsWithReview.add(sentVideo);
+          }
+        }
+      }
+    });
+  }
+
   void requestCurrentUserData(BuildContext context) {
     BlocProvider.of<AssessmentBloc>(context).getById('emnsmBgZ13UBRqTS26Qd');
     BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionByUserId(_currentAuthUser.id);
@@ -274,7 +301,9 @@ class _CoachPageState extends State<CoachPage> {
                         )
                       else
                         const SizedBox.shrink(),
-                      userProgressSection(carouselNotificationWidgetList.isEmpty),
+                      widget.coachAssignment.introductionCompleted
+                          ? userProgressSection(carouselNotificationWidgetList.isEmpty && widget.coachAssignment.introductionCompleted)
+                          : SizedBox.shrink(),
                       CoachHorizontalCarousel(contentToDisplay: listOfContentForUser(), isForVideoContent: true),
                       carouselToDoSection(context),
                       assessmentSection(context),
@@ -430,6 +459,11 @@ class _CoachPageState extends State<CoachPage> {
         }
       });
     });
+    _mentoredVideoTimelineContent.forEach((mentoredVideo) {
+      if (_allContent.where((allContentItem) => allContentItem.contentThumbnail == mentoredVideo.contentThumbnail).isEmpty) {
+        _allContent.add(mentoredVideo);
+      }
+    });
 
     CoachTimelineGroup allTabContent = CoachTimelineGroup(
         courseId: _defaultIdForAllContentTimeline, courseName: OlukoLocalizations.get(context, 'all'), timelineElements: _allContent);
@@ -440,6 +474,8 @@ class _CoachPageState extends State<CoachPage> {
         allTabContent.timelineElements.forEach((allTabNewContent) {
           addContentToTimeline(timelineGroup: _timelinePanelContent[indexForAllTab], newContent: allTabNewContent);
         });
+        _timelinePanelContent.insert(0, _timelinePanelContent[indexForAllTab]);
+        _timelinePanelContent.removeAt(indexForAllTab + 1);
       } else {
         if (_timelinePanelContent[0] != null && _timelinePanelContent[0].courseId == allTabContent.courseId) {
           allTabContent.timelineElements.forEach((allTabNewContent) {
@@ -450,6 +486,9 @@ class _CoachPageState extends State<CoachPage> {
           _timelinePanelContent.insert(0, allTabContent);
         }
       }
+    } else {
+      allTabContent.timelineElements.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
+      _timelinePanelContent.insert(0, allTabContent);
     }
   }
 
