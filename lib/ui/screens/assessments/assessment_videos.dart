@@ -59,7 +59,9 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
     return WillPopScope(
         onWillPop: () async {
           if (widget.isFirstTime) {
-            BlocProvider.of<AuthBloc>(context).logout(context);
+            //TODO: check wanted flow BlocProvider.of<AuthBloc>(context).logout(context);
+            Navigator.popAndPushNamed(context, routeLabels[RouteEnum.root]);
+            return false;
           }
           return true;
         },
