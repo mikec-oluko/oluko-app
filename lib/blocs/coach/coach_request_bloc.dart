@@ -43,6 +43,7 @@ class CoachRequestBloc extends Cubit<CoachRequestState> {
   void dispose() {
     if (subscription != null) {
       subscription.cancel();
+      subscription = null;
     }
   }
 
