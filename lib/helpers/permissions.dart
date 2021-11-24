@@ -32,6 +32,7 @@ class Permissions {
   }
 
   static Future<bool> validateStorage() async {
+    await Permission.storage.request();
     return !await Permission.storage.status.isDenied && !await Permission.storage.status.isPermanentlyDenied;
   }
 }
