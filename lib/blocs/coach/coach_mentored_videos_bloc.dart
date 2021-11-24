@@ -37,6 +37,7 @@ class CoachMentoredVideosBloc extends Cubit<CoachMentoredVideosState> {
   void dispose() {
     if (subscription != null) {
       subscription.cancel();
+      subscription = null;
     }
   }
 

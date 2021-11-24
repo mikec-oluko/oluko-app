@@ -35,6 +35,7 @@ class CoachRecommendationsBloc extends Cubit<CoachRecommendationsState> {
   void dispose() {
     if (subscription != null) {
       subscription.cancel();
+      subscription = null;
     }
   }
 
