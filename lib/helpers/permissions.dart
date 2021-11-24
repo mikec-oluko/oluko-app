@@ -16,23 +16,10 @@ class Permissions {
       }
     } else if (uploadedFrom == DeviceContentFrom.gallery) {
       await Permission.storage.request();
-      if (Platform.isIOS) {
-        if (double.tryParse(Platform.operatingSystemVersion?.split('.')[0]) >= 14) {
-          if (await Permission.photos.status.isDenied || await Permission.photos.status.isPermanentlyDenied) {
-            return false;
-          }
-        } else {
-          return validateStorage();
-        }
-      } else {
-        return validateStorage();
+      if (await Permission.storage.status.isDenied && await Permission.storage.status.isPermanentlyDenied) {
+        return false;
       }
     }
     return true;
-  }
-
-  static Future<bool> validateStorage() async {
-    await Permission.storage.request();
-    return !await Permission.storage.status.isDenied && !await Permission.storage.status.isPermanentlyDenied;
   }
 }
