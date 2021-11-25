@@ -18,6 +18,20 @@ class CoachAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _CoachAppBarState extends State<CoachAppBar> {
+  String defaultCoachPic = '';
+
+  @override
+  void initState() {
+    setState(() {
+      if (widget.coachUser != null) {
+        defaultCoachPic =
+            '${widget.coachUser.firstName.characters.first.toUpperCase()}${widget.coachUser.lastName.characters.first.toUpperCase()}';
+      }
+    });
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return AppBar(
@@ -54,13 +68,19 @@ class _CoachAppBarState extends State<CoachAppBar> {
                 ),
               )
             else
-              const Padding(
-                padding: EdgeInsets.only(right: 5),
-                child: CircleAvatar(
-                  backgroundColor: OlukoColors.black,
+              Stack(children: [
+                CircleAvatar(
+                  backgroundColor: widget.coachUser != null
+                      ? OlukoColors.userColor(widget.coachUser.firstName, widget.coachUser.lastName)
+                      : OlukoColors.black,
                   radius: 24.0,
+                  child: Text(
+                      widget.coachUser != null
+                          ? '${widget.coachUser.firstName.characters.first.toUpperCase()}${widget.coachUser.lastName.characters.first.toUpperCase()}'
+                          : defaultCoachPic,
+                      style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500)),
                 ),
-              ),
+              ]),
           ],
         )
       ],

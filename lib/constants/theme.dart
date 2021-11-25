@@ -80,6 +80,8 @@ class OlukoColors {
 
   static const Color disabled = Color.fromRGBO(30, 30, 30, 0.8);
 
+  static const Color coachTabIndicatorColor = Color.fromRGBO(247, 177, 171, 1);
+
   static Color randomColor() {
     var list = [grayColorSemiTransparent, skyblue, coral, searchSuggestionsAlreadyWrittenText, inputError, purple, orange];
     final _random = new Random();
