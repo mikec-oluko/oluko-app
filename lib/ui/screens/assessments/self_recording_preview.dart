@@ -42,6 +42,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
   AssessmentAssignment _assessmentAssignment;
   TaskSubmission _taskSubmission;
   Assessment _assessment;
+  VideoState videoState;
 
   @override
   void initState() {
@@ -50,48 +51,56 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
-      if (authState is AuthSuccess) {
-        return BlocBuilder<AssessmentBloc, AssessmentState>(builder: (context, assessmentState) {
-          return BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(
-            builder: (context, assessmentAssignmentState) {
-              return BlocBuilder<TaskBloc, TaskState>(builder: (context, taskState) {
-                return BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(builder: (context, taskSubmissionState) {
-                  if (assessmentState is AssessmentSuccess &&
-                      assessmentAssignmentState is AssessmentAssignmentSuccess &&
-                      taskState is TaskSuccess &&
-                      (taskSubmissionState is GetSuccess || taskSubmissionState is CreateSuccess)) {
-                    _assessment = assessmentState.assessment;
-                    _assessmentAssignment = assessmentAssignmentState.assessmentAssignment;
-                    _tasks = taskState.values;
-                    _task = _tasks[widget.taskIndex];
-                    if (taskSubmissionState is GetSuccess && taskSubmissionState.taskSubmission != null) {
-                      _taskSubmission = taskSubmissionState.taskSubmission;
-                    }
-                    if (taskSubmissionState is CreateSuccess) {
-                      _taskSubmission = taskSubmissionState.taskSubmission;
-                      BlocProvider.of<VideoBloc>(context)
-                          .createVideo(context, File(widget.filePath), 3.0 / 4.0, taskSubmissionState.taskSubmission.id);
-                    }
-                    return form();
-                  } else {
-                    return const SizedBox();
-                  }
-                });
-              });
-            },
-          );
-        });
-      } else {
-        return const SizedBox();
-      }
-    });
+    return WillPopScope(
+        onWillPop: () => () async {
+              if (videoState is VideoSuccess) {
+                return true;
+              }
+              return false;
+            }(),
+        child: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
+          if (authState is AuthSuccess) {
+            return BlocBuilder<AssessmentBloc, AssessmentState>(builder: (context, assessmentState) {
+              return BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(
+                builder: (context, assessmentAssignmentState) {
+                  return BlocBuilder<TaskBloc, TaskState>(builder: (context, taskState) {
+                    return BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(builder: (context, taskSubmissionState) {
+                      if (assessmentState is AssessmentSuccess &&
+                          assessmentAssignmentState is AssessmentAssignmentSuccess &&
+                          taskState is TaskSuccess &&
+                          (taskSubmissionState is GetSuccess || taskSubmissionState is CreateSuccess)) {
+                        _assessment = assessmentState.assessment;
+                        _assessmentAssignment = assessmentAssignmentState.assessmentAssignment;
+                        _tasks = taskState.values;
+                        _task = _tasks[widget.taskIndex];
+                        if (taskSubmissionState is GetSuccess && taskSubmissionState.taskSubmission != null) {
+                          _taskSubmission = taskSubmissionState.taskSubmission;
+                        }
+                        if (taskSubmissionState is CreateSuccess) {
+                          _taskSubmission = taskSubmissionState.taskSubmission;
+                          BlocProvider.of<VideoBloc>(context)
+                              .createVideo(context, File(widget.filePath), 3.0 / 4.0, taskSubmissionState.taskSubmission.id);
+                        }
+                        return form();
+                      } else {
+                        return const SizedBox();
+                      }
+                    });
+                  });
+                },
+              );
+            });
+          } else {
+            return const SizedBox();
+          }
+        }));
   }
 
   Widget form() {
     return Form(
         key: _formKey,
         child: BlocConsumer<VideoBloc, VideoState>(listener: (context, state) {
+          videoState = state;
           if (state is VideoSuccess) {
             BlocProvider.of<TaskSubmissionBloc>(context).updateTaskSubmissionVideo(_assessmentAssignment, _taskSubmission.id, state.video);
             BlocProvider.of<TaskSubmissionBloc>(context).checkCompleted(_assessmentAssignment, _assessment);
