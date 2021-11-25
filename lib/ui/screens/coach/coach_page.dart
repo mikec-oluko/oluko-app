@@ -310,7 +310,7 @@ class _CoachPageState extends State<CoachPage> {
 
   List<Widget> listOfContentForUser() {
     const separatorBox = SizedBox(
-      width: 5,
+      width: 10,
     );
     return [
       mentoredVideos(),

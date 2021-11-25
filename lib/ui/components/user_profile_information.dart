@@ -89,7 +89,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
         connectStatus: widget.connectStatus);
 
     final profileDefaultProfilePicContent =
-        '${widget.userToDisplayInformation.firstName.characters.first.toUpperCase()} ${widget.userToDisplayInformation.lastName.characters.first.toUpperCase()}';
+        '${widget.userToDisplayInformation.firstName.characters.first.toUpperCase()}${widget.userToDisplayInformation.lastName.characters.first.toUpperCase()}';
     return Column(
       children: [
         //PROFILE IMAGE AND INFO
@@ -122,10 +122,11 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                     padding: const EdgeInsets.all(5.0),
                     child: Stack(children: [
                       CircleAvatar(
-                        backgroundColor:
-                            OlukoColors.userColor(widget.userToDisplayInformation.firstName, widget.userToDisplayInformation.lastName),
+                        backgroundColor: widget.userToDisplayInformation != null
+                            ? OlukoColors.userColor(widget.userToDisplayInformation.firstName, widget.userToDisplayInformation.lastName)
+                            : OlukoColors.black,
                         radius: 30.0,
-                        child: Text(profileDefaultProfilePicContent,
+                        child: Text(widget.userToDisplayInformation != null ? profileDefaultProfilePicContent : '',
                             style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500)),
                       ),
                       getVisibility(widget, context, _isOwner),

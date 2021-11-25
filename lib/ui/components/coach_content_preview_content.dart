@@ -44,7 +44,7 @@ class _CoachContentPreviewContentState extends State<CoachContentPreviewContent>
               padding: const EdgeInsets.only(left: 5),
               child: Text(
                 widget.titleForSection,
-                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
               ),
             ),
             Padding(

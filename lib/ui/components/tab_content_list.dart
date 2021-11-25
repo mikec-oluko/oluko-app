@@ -14,11 +14,11 @@ class _TabContentListState extends State<TabContentList> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: ListView(children: testFunction()),
+      child: ListView(children: buildContentToShow()),
     );
   }
 
-  List<Widget> testFunction() {
+  List<Widget> buildContentToShow() {
     List<Widget> contentToShow = [];
     setState(() {
       contentToShow.addAll(createTimelineContent(widget.contentToDisplay));
@@ -36,8 +36,8 @@ List<Widget> createTimelineContent(List<Widget> contentToDisplay) {
         child: TimelineTile(
             lineXY: 0.0,
             indicatorStyle: const IndicatorStyle(width: 15, height: 15, indicatorXY: 0.0),
-            beforeLineStyle: const LineStyle(thickness: 2),
-            afterLineStyle: const LineStyle(thickness: 2),
+            beforeLineStyle: const LineStyle(thickness: 1.5),
+            afterLineStyle: const LineStyle(thickness: 1.5),
             isFirst: true,
             endChild: content),
       ));
@@ -48,8 +48,8 @@ List<Widget> createTimelineContent(List<Widget> contentToDisplay) {
             lineXY: 0.0,
             isLast: true,
             indicatorStyle: const IndicatorStyle(width: 15, height: 15, indicatorXY: 0),
-            beforeLineStyle: const LineStyle(thickness: 2),
-            afterLineStyle: const LineStyle(thickness: 2),
+            beforeLineStyle: const LineStyle(thickness: 1.5),
+            afterLineStyle: const LineStyle(thickness: 1.5),
             endChild: content),
       ));
     } else {
@@ -58,8 +58,8 @@ List<Widget> createTimelineContent(List<Widget> contentToDisplay) {
         child: TimelineTile(
             lineXY: 0.0,
             indicatorStyle: const IndicatorStyle(width: 15, height: 15, indicatorXY: 0),
-            beforeLineStyle: const LineStyle(thickness: 2),
-            afterLineStyle: const LineStyle(thickness: 2),
+            beforeLineStyle: const LineStyle(thickness: 1.5),
+            afterLineStyle: const LineStyle(thickness: 1.5),
             endChild: content),
       ));
     }
