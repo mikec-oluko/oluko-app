@@ -21,6 +21,8 @@ import 'package:oluko_app/ui/components/progress_bar.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
+import '../../../utils/app_messages.dart';
+
 class SelfRecordingPreview extends StatefulWidget {
   const SelfRecordingPreview({this.filePath, this.taskIndex, this.isLastTask = false, this.isPublic, Key key}) : super(key: key);
 
@@ -56,6 +58,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
               if (videoState is VideoSuccess) {
                 return true;
               }
+              AppMessages.showSnackbar(context, OlukoLocalizations.of(context).find('videoIsStillProcessing'));
               return false;
             }(),
         child: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
