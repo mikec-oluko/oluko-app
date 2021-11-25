@@ -18,5 +18,11 @@
         "statusBarItem.remoteBackground": "#137b7b",
         "statusBarItem.remoteForeground": "#e7e7e7"
     },
-    "peacock.color": "#137b7b"
+    "peacock.color": "#137b7b",
+    "cSpell.words": [
+        "appbundle",
+        "fastlane",
+        "oluko",
+        "testflight"
+    ]
 }
