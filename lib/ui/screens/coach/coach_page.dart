@@ -100,7 +100,7 @@ class _CoachPageState extends State<CoachPage> {
           video: Video(
               url: widget.coachAssignment.videoHLS ??
                   (widget.coachAssignment.video != null ? widget.coachAssignment.video.url : widget.coachAssignment.introductionVideo),
-              aspectRatio: widget.coachAssignment.video != null ? widget.coachAssignment.video.aspectRatio ?? 16.9 : 16.9),
+              aspectRatio: widget.coachAssignment.video != null ? widget.coachAssignment.video.aspectRatio ?? 0.60 : 0.60),
           videoHLS: widget.coachAssignment.videoHLS ??
               (widget.coachAssignment.video != null ? widget.coachAssignment.video.url : widget.coachAssignment.introductionVideo),
         );
