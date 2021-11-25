@@ -6,6 +6,8 @@
 
 A Flutter project for Android and iOS app Oluko
 
+## Getting Started
+
 For help getting started with Flutter, view our
 [online documentation](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
@@ -31,7 +33,8 @@ assets/lang u need to create the resource file.
 use: OlukoLocalizations.get(context, translationKey)
 
 ## Date Formatting
-https://pub.dev/documentation/intl/latest/intl/DateFormat-class.html
+
+<https://pub.dev/documentation/intl/latest/intl/DateFormat-class.html>
 
 ## Create new appbundle build (Android)
 
@@ -40,6 +43,18 @@ flutter build appbundle
 ```
 
 ## iOS Testflight
+
+### Install Ruby
+
+<https://www.ruby-lang.org/en/documentation/installation/>
+
+### Setup Fastlane
+
+<https://docs.fastlane.tools/#:~:text=Getting%20Started-,Installing,-fastlane>
+
+(request access to repo with certificates to project owner / tech lead / architect)
+
+### Deploy to App Store (Testflight)
 
 *only when fastlane is setup correctly
 
@@ -50,7 +65,7 @@ bundle exec fastlane beta
 
 (this builds app and deploys to app store testflight)
 
-## Build Scritps
+## Complete Build Scripts
 
 build_scripts.sh contains scripts to build for different environments
 
