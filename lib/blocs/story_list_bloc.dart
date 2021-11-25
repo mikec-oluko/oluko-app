@@ -45,6 +45,7 @@ class StoryListBloc extends Cubit<StoryListState> {
   void dispose() {
     if (subscription != null) {
       subscription.cancel();
+      subscription = null;
     }
   }
 

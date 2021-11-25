@@ -64,6 +64,7 @@
     "encodingVideo": "Codificando el video",
     "uploadingThumbnail": "Subiendo vista previa al almacenamiento en la nube",
     "uploadingVideoFile": "Subiendo archivo de video ",
+    "videoIsStillProcessing": "El video se está procesando",
     "outOf": " de ",
     "yetToUnlock": "Por 'Desbloquear'",
     "tapToUpload": "Toca para Subir",
@@ -247,5 +248,5 @@
     "enrollToACourse": "Inscribirse a un Curso",
     "noCoachMessage": "para obtener tu entrenador personal",
     "roundInfo": "Solo la primera ronda se graba. Prepararemos el video para enviarlo a tu coach!",
-    "stopProcessConfirmation": "The video is still being processed, if this view is abandoned the process will be terminated. Do you want to leave?"
+    "stopProcessConfirmation": "El video aún sé está procesando, si se abandona esta vista el proceso se dará por terminado. ¿Desea salir?"
 }

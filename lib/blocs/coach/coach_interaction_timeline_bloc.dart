@@ -33,6 +33,7 @@ class CoachTimelineItemsBloc extends Cubit<CoachTimelineItemsState> {
   void dispose() {
     if (subscription != null) {
       subscription.cancel();
+      subscription = null;
     }
   }
 
