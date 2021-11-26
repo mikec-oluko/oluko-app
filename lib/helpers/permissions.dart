@@ -1,6 +1,5 @@
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'dart:io';
 
 class Permissions {
   static Future<bool> requiredPermissionsEnabled(DeviceContentFrom uploadedFrom, {bool checkMicrophone = true}) async {
