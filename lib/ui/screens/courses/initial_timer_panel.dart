@@ -7,8 +7,9 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class InitialTimerPanel extends StatefulWidget {
   final PanelController panelController;
+  final Function() onShowAgainPressed;
 
-  InitialTimerPanel({this.panelController});
+  InitialTimerPanel({this.panelController, this.onShowAgainPressed});
 
   @override
   _State createState() => _State();
@@ -48,6 +49,7 @@ class _State extends State<InitialTimerPanel> {
                     setState(() {
                       isChecked = value;
                     });
+                    widget.onShowAgainPressed();
                   },
                 ))
           ]),

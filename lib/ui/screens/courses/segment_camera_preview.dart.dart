@@ -1,11 +1,15 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/recording_alert_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/permissions.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/segment.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/open_settings_modal.dart';
 import 'package:oluko_app/ui/screens/courses/segment_clocks.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
@@ -35,6 +39,7 @@ class _State extends State<SegmentCameraPreview> {
   bool _isReady = false;
   bool _recording = false;
   bool isCameraFront = false;
+  UserResponse _user;
 
   @override
   void initState() {
@@ -50,7 +55,14 @@ class _State extends State<SegmentCameraPreview> {
 
   @override
   Widget build(BuildContext context) {
-    return form();
+    return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
+      if (authState is AuthSuccess) {
+        _user = authState.user;
+        return form();
+      } else {
+        return SizedBox();
+      }
+    });
   }
 
   Widget form() {
@@ -116,7 +128,11 @@ class _State extends State<SegmentCameraPreview> {
     return GestureDetector(
         onTap: () {
           TimerUtils.startCountdown(WorkoutType.segmentWithRecording, context, getArguments(),
-              widget.segments[widget.segmentIndex].initialTimer, widget.segments[widget.segmentIndex].rounds, 0);
+              widget.segments[widget.segmentIndex].initialTimer, widget.segments[widget.segmentIndex].rounds, 0,
+              showPanel: _user.showRecordingAlert, onShowAgainPressed: () {
+            BlocProvider.of<RecordingAlertBloc>(context).updateRecordingAlert(_user);
+            _user.showRecordingAlert = !_user.showRecordingAlert;
+          });
         },
         child: Stack(alignment: Alignment.center, children: [
           Image.asset(

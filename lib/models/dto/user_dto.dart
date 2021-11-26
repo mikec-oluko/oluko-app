@@ -25,9 +25,9 @@ class UserDto {
     createdBy = userReponse.createdBy;
     updatedBy = userReponse.updatedBy;
     isHidden = userReponse.isHidden;
+    showRecordingAlert = userReponse.showRecordingAlert == null ? true : userReponse.showRecordingAlert;
     isDeleted = userReponse.isDeleted;
-    assessmentsCompletedAt =
-        userReponse.assessmentsCompletedAt != null ? userReponse.assessmentsCompletedAt.millisecondsSinceEpoch : null;
+    assessmentsCompletedAt = userReponse.assessmentsCompletedAt != null ? userReponse.assessmentsCompletedAt.millisecondsSinceEpoch : null;
   }
 
   UserDto({
@@ -47,6 +47,7 @@ class UserDto {
     this.state,
     this.country,
     this.currentPlan,
+    this.showRecordingAlert,
     Timestamp assessmentsCompletedAt,
     this.id,
     Timestamp createdAt,
@@ -75,6 +76,7 @@ class UserDto {
   bool isDeleted = false;
   bool isHidden = false;
   int assessmentsCompletedAt;
+  bool showRecordingAlert;
 
   factory UserDto.fromJson(Map<String, dynamic> json) {
     UserDto userDto = UserDto(
@@ -91,6 +93,7 @@ class UserDto {
       firebaseId: json['firebase_id']?.toString(),
       hubspotCompanyId: json['hubspot_company_id'] as num,
       hubspotContactId: json['hubspot_contact_id'] as num,
+      showRecordingAlert: json['show_recording_alert'] == null ? true : json['show_recording_alert'] as bool,
       notification: json['notification'] == null ? true : json['notification'] as bool,
       privacy: json['privacy'] == null ? 0 : json['privacy'] as int,
       currentPlan: json['current_plan'] == null ? 0 : double.tryParse((json['current_plan'] as num)?.toString()),
@@ -128,6 +131,7 @@ class UserDto {
       'updated_by': updatedBy,
       'created_at': createdAt,
       'created_by': createdBy,
+      'show_recording_alert': showRecordingAlert == null ? true : showRecordingAlert,
       'id': id,
       'is_deleted': isDeleted,
       'is_hidden': isHidden,
