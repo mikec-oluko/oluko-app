@@ -248,5 +248,6 @@
     "enrollToACourse": "Inscribirse a un Curso",
     "noCoachMessage": "para obtener tu entrenador personal",
     "roundInfo": "Solo la primera ronda se graba. Prepararemos el video para enviarlo a tu coach!",
-    "stopProcessConfirmation": "El video aún sé está procesando, si se abandona esta vista el proceso se dará por terminado. ¿Desea salir?"
+    "stopProcessConfirmation": "El video aún sé está procesando, si se abandona esta vista el proceso se dará por terminado. ¿Desea salir?",
+    "noVideoUploaded": "Aún no subiste un video"
 }
