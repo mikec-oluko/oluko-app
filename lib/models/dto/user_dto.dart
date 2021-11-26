@@ -25,7 +25,7 @@ class UserDto {
     createdBy = userReponse.createdBy;
     updatedBy = userReponse.updatedBy;
     isHidden = userReponse.isHidden;
-    showRecordingAlert = userReponse.showRecordingAlert == null ? true : userReponse.showRecordingAlert;
+    showRecordingAlert = userReponse.showRecordingAlert ?? true;
     isDeleted = userReponse.isDeleted;
     assessmentsCompletedAt = userReponse.assessmentsCompletedAt != null ? userReponse.assessmentsCompletedAt.millisecondsSinceEpoch : null;
   }
@@ -131,7 +131,7 @@ class UserDto {
       'updated_by': updatedBy,
       'created_at': createdAt,
       'created_by': createdBy,
-      'show_recording_alert': showRecordingAlert == null ? true : showRecordingAlert,
+      'show_recording_alert': showRecordingAlert ?? true,
       'id': id,
       'is_deleted': isDeleted,
       'is_hidden': isHidden,
