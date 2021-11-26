@@ -20,7 +20,6 @@ import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/friend.dart';
-import 'package:oluko_app/models/submodels/enrollment_segment.dart';
 import 'package:oluko_app/models/submodels/friend_model.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
@@ -46,7 +45,7 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class UserProfilePage extends StatefulWidget {
   final UserResponse userRequested;
-  UserProfilePage({this.userRequested});
+  const UserProfilePage({this.userRequested});
   @override
   _UserProfilePageState createState() => _UserProfilePageState();
 }
@@ -60,9 +59,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   Friend friendData;
   FriendModel friendModel;
   List<UserResponse> friendUsers = [];
-
   String _connectButtonTitle = '';
-
   List<TransformationJourneyUpload> _transformationJourneyContent = [];
   List<TaskSubmission> _assessmentVideosContent = [];
   List<Challenge> _activeChallenges = [];
@@ -75,11 +72,11 @@ class _UserProfilePageState extends State<UserProfilePage> {
   bool _isNewCoverImage = false;
   bool _friendsRequested = false;
   bool canHidePanel = true;
+  Widget defaultWidgetNoContent = const SizedBox.shrink();
 
   @override
   void initState() {
     setState(() {
-      canHidePanel = true;
       if (widget.userRequested == null) {
         _isCurrentUser = true;
       } else {
@@ -120,9 +117,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
     });
   }
 
-  bool _isOwnerProfile({@required UserResponse authUser, @required UserResponse userRequested}) {
-    return authUser.id == userRequested.id;
-  }
+  bool _isOwnerProfile({@required UserResponse authUser, @required UserResponse userRequested}) => authUser.id == userRequested.id;
 
   Widget _buildUserProfileView({BuildContext profileViewContext, UserResponse authUser, UserResponse userRequested, bool isOwnProfile}) {
     return Scaffold(
@@ -147,18 +142,26 @@ class _UserProfilePageState extends State<UserProfilePage> {
           BlocListener<ProfileCoverImageBloc, ProfileCoverImageState>(
             listener: (context, state) {
               if (state is ProfileCoverImageDefault || state is ProfileCoverImageOpen) {
-                _statePanelMaxHeight = 100;
+                setState(() {
+                  updatePanelProperties(100, true);
+                });
               } else {
-                _statePanelMaxHeight = 300;
+                setState(() {
+                  updatePanelProperties(300, false);
+                });
               }
             },
           ),
           BlocListener<ProfileAvatarBloc, ProfileAvatarState>(
             listener: (context, state) {
               if (state is ProfileAvatarDefault || state is ProfileAvatarOpenPanel) {
-                _statePanelMaxHeight = 100;
+                setState(() {
+                  updatePanelProperties(100, true);
+                });
               } else {
-                _statePanelMaxHeight = 300;
+                setState(() {
+                  updatePanelProperties(300, false);
+                });
               }
             },
           ),
@@ -177,47 +180,41 @@ class _UserProfilePageState extends State<UserProfilePage> {
           ),
         ],
         child: SlidingUpPanel(
-          onPanelOpened: () {
-            setState(() {
-              _panelMaxHeight = _statePanelMaxHeight;
-            });
-          },
           onPanelClosed: () {
-            setState(() {
-              _isNewCoverImage = false;
-            });
-            BlocProvider.of<ProfileAvatarBloc>(context).emitDefaultState();
-            BlocProvider.of<ProfileCoverImageBloc>(context).emitDefaultState();
+            if (_isNewCoverImage) {
+              setState(() {
+                _isNewCoverImage = !_isNewCoverImage;
+              });
+              BlocProvider.of<ProfileCoverImageBloc>(context).emitDefaultState();
+            } else {
+              BlocProvider.of<ProfileAvatarBloc>(context).emitDefaultState();
+            }
           },
-          // backdropTapClosesPanel: false,
           backdropEnabled: canHidePanel,
           isDraggable: false,
           margin: EdgeInsets.zero,
-          header: const SizedBox(),
+          header: defaultWidgetNoContent,
           padding: EdgeInsets.zero,
           color: OlukoColors.black,
           minHeight: 0.0,
           maxHeight: _panelMaxHeight,
-          collapsed: const SizedBox(),
+          collapsed: defaultWidgetNoContent,
           controller: _panelController,
           panel: _isNewCoverImage
               ? BlocBuilder<ProfileCoverImageBloc, ProfileCoverImageState>(builder: (context, state) {
-                  Widget _contentForPanel = const SizedBox();
+                  Widget _contentForPanel = defaultWidgetNoContent;
                   if (state is ProfileCoverImageOpen) {
-                    _panelController.open();
-
+                    _panelController.isPanelClosed ? _panelController.open() : null;
                     _contentForPanel = ModalUploadOptions(contentFrom: UploadFrom.profileCoverImage);
                   }
                   if (state is ProfileCoverImageDefault) {
-                    _contentForPanel = const SizedBox();
+                    _contentForPanel = defaultWidgetNoContent;
                     _panelController.isPanelOpen ? _panelController.close() : null;
                   }
                   if (state is ProfileCoverImageLoading) {
                     _contentForPanel = UploadingModalLoader(UploadFrom.profileCoverImage);
-                    // canHidePanel = state.lockPanel;
                   }
                   if (state is ProfileCoverSuccess) {
-                    // canHidePanel = state.lockPanel;
                     _contentForPanel = UploadingModalSuccess(goToPage: UploadFrom.profileImage, userRequested: _userProfileToDisplay);
                   }
                   if (state is ProfileCoverImageFailure) {
@@ -230,20 +227,18 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   return _contentForPanel;
                 })
               : BlocBuilder<ProfileAvatarBloc, ProfileAvatarState>(builder: (context, state) {
-                  Widget _contentForPanel = const SizedBox();
+                  Widget _contentForPanel = defaultWidgetNoContent;
 
                   if (state is ProfileAvatarOpenPanel) {
-                    _panelController.open();
+                    _panelController.isPanelClosed ? _panelController.open() : null;
                     _contentForPanel = ModalUploadOptions(contentFrom: UploadFrom.profileImage);
                   }
-
                   if (state is ProfileAvatarDefault) {
-                    _contentForPanel = const SizedBox();
+                    _contentForPanel = defaultWidgetNoContent;
 
                     _panelController.isPanelOpen ? _panelController.close() : null;
                   }
                   if (state is ProfileAvatarLoading) {
-                    // canHidePanel = state.lockPanel;
                     _contentForPanel = UploadingModalLoader(UploadFrom.profileImage);
                   }
                   if (state is ProfileAvatarSuccess) {
@@ -275,7 +270,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         width: MediaQuery.of(context).size.width,
                         height: MediaQuery.of(context).size.height / 3,
                         child: _userProfileToDisplay.coverImage == null
-                            ? const SizedBox()
+                            ? defaultWidgetNoContent
                             : Image.network(
                                 _userProfileToDisplay.coverImage,
                                 fit: BoxFit.cover,
@@ -345,7 +340,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                 child: Icon(_isFollow ? Icons.favorite : Icons.favorite_border, color: OlukoColors.primary),
                               )
                             else
-                              const SizedBox.shrink(),
+                              defaultWidgetNoContent,
                             Container(
                               child: OlukoOutlinedButton(
                                   onPressed: () {
@@ -374,7 +369,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         ),
                       )
                     else
-                      const SizedBox(),
+                      defaultWidgetNoContent,
                     BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(builder: (context, state) {
                       if (state is GetUserTaskSubmissionSuccess) {
                         _assessmentVideosContent = state.taskSubmissions;
@@ -386,7 +381,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                               routeForSection: RouteEnum.profileAssessmentVideos,
                               contentForSection: TransformListOfItemsToWidget.getWidgetListFromContent(
                                   assessmentVideoData: _assessmentVideosContent, requestedFromRoute: ActualProfileRoute.userProfile))
-                          : const SizedBox();
+                          : defaultWidgetNoContent;
                     }),
                     BlocBuilder<TransformationJourneyBloc, TransformationJourneyState>(
                       builder: (context, state) {
@@ -400,7 +395,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                 contentForSection: TransformListOfItemsToWidget.getWidgetListFromContent(
                                     tansformationJourneyData: _transformationJourneyContent,
                                     requestedFromRoute: ActualProfileRoute.userProfile))
-                            : const SizedBox();
+                            : defaultWidgetNoContent;
                       },
                     ),
                     BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(
@@ -417,7 +412,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                             return _coursesToUse.isNotEmpty && _courseEnrollmentList != null
                                 ? buildCourseSection(
                                     context: context, contentForCourse: returnCoursesWidget(listOfCourses: _courseEnrollmentList))
-                                : const SizedBox();
+                                : defaultWidgetNoContent;
                           },
                         );
                       },
@@ -440,7 +435,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                     upcomingChallenges: _activeChallenges,
                                     requestedFromRoute: ActualProfileRoute.userProfile,
                                     requestedUser: widget.userRequested))
-                            : const SizedBox();
+                            : defaultWidgetNoContent;
                       },
                     ),
                   ],
@@ -451,6 +446,11 @@ class _UserProfilePageState extends State<UserProfilePage> {
         ),
       ),
     );
+  }
+
+  void updatePanelProperties(double panelHeight, bool hidePanel) {
+    _panelMaxHeight = panelHeight;
+    canHidePanel = hidePanel;
   }
 
   void _requestContentForUser({BuildContext context, UserResponse userRequested}) {
