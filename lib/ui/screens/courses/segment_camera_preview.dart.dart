@@ -131,7 +131,7 @@ class _State extends State<SegmentCameraPreview> {
               widget.segments[widget.segmentIndex].initialTimer, widget.segments[widget.segmentIndex].rounds, 0,
               showPanel: _user.showRecordingAlert, onShowAgainPressed: () {
             BlocProvider.of<RecordingAlertBloc>(context).updateRecordingAlert(_user);
-            _user.showRecordingAlert = !_user.showRecordingAlert;
+            // TODO: VICTORIA _user.showRecordingAlert = !_user.showRecordingAlert;
           });
         },
         child: Stack(alignment: Alignment.center, children: [

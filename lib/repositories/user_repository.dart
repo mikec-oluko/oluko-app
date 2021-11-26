@@ -194,9 +194,8 @@ class UserRepository {
     DocumentReference<Object> userReference = getUserReference(user);
     user.showRecordingAlert = !user.showRecordingAlert;
     try {
-      print("1st USER: " + user.showRecordingAlert.toString());
-      await userReference.update(user.toJson());
-      print("2nd USER: " + user.showRecordingAlert.toString());
+      var userJson = user.toJson();
+      await userReference.update(userJson);
       AuthRepository().storeLoginData(user);
       return user;
     } on Exception catch (e, stackTrace) {
