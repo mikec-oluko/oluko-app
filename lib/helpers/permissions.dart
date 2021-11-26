@@ -16,7 +16,7 @@ class Permissions {
       }
     } else if (uploadedFrom == DeviceContentFrom.gallery) {
       await Permission.storage.request();
-      if (await Permission.storage.status.isDenied && await Permission.storage.status.isPermanentlyDenied) {
+      if (await Permission.storage.status.isDenied || await Permission.storage.status.isPermanentlyDenied) {
         return false;
       }
     }
