@@ -57,6 +57,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
               automaticallyImplyLeading: false,
               bottom: TabBar(
                   labelColor: OlukoColors.black,
+                  indicatorColor: OlukoColors.coachTabIndicatorColor,
                   isScrollable: true,
                   controller: _tabController,
                   tabs: _timelineContentItems

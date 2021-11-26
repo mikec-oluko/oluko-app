@@ -13,7 +13,7 @@ class CoachContentSectionCard extends StatefulWidget {
 
 class _CoachContentSectionCardState extends State<CoachContentSectionCard> {
   final ImageProvider _defaultImage = const AssetImage('assets/home/mvtthumbnail.png');
-  final _filterForDefaultImage = false;
+  final _filterForDefaultImage = true;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +39,7 @@ class _CoachContentSectionCardState extends State<CoachContentSectionCard> {
                       borderRadius: const BorderRadius.all(Radius.circular(10)),
                       color: OlukoColors.blackColorSemiTransparent,
                       image: DecorationImage(
-                        colorFilter: _filterForDefaultImage ? ColorFilter.mode(Colors.black.withOpacity(0.8), BlendMode.dstATop) : null,
+                        colorFilter: _filterForDefaultImage ? ColorFilter.mode(Colors.black.withOpacity(0.15), BlendMode.dstATop) : null,
                         image: _defaultImage,
                         fit: BoxFit.fill,
                       )),
