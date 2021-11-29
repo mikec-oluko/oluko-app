@@ -21,7 +21,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>109</string>
+	<string>110</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppleMusicUsageDescription</key>
@@ -54,9 +54,7 @@
 	<!-- Google Sign-in Section -->
 <key>CFBundleURLTypes</key>
 <!-- End of the Google Sign-in Section -->
-		<!-- <key>ITSAppUsesNonExemptEncryption</key> -->
-		<!-- <false/> -->
-<array>
+<!-- <array> -->
     <!--
     <dict>
     ... Some other CFBundleURLTypes definition.
