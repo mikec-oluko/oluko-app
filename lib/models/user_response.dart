@@ -20,6 +20,7 @@ class UserResponse extends Base {
       this.country,
       this.currentPlan,
       this.assessmentsCompletedAt,
+      this.showRecordingAlert,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -42,6 +43,7 @@ class UserResponse extends Base {
   num hubspotContactId;
   int privacy;
   bool notification;
+  bool showRecordingAlert;
   Timestamp assessmentsCompletedAt;
 
   factory UserResponse.fromJson(Map<String, dynamic> json) {
@@ -60,13 +62,13 @@ class UserResponse extends Base {
       hubspotCompanyId: json['hubspot_company_id'] as num,
       hubspotContactId: json['hubspot_contact_id'] as num,
       notification: json['notification'] == null ? true : json['notification'] as bool,
+      showRecordingAlert: json['show_recording_alert'] == null ? true : json['show_recording_alert'] as bool,
       privacy: json['privacy'] == null ? 0 : json['privacy'] as int,
       currentPlan: json['current_plan'] == null ? -100 : double.tryParse((json['current_plan'] as num)?.toString()),
       assessmentsCompletedAt: json['assessments_completed_at'] is Timestamp
           ? json['assessments_completed_at'] as Timestamp
           : json['assessments_completed_at'] is Map
-              ? Timestamp(
-                  json['assessments_completed_at']['_seconds'] as int, json['created_at']['_nanoseconds'] as int)
+              ? Timestamp(json['assessments_completed_at']['_seconds'] as int, json['created_at']['_nanoseconds'] as int)
               : json['assessments_completed_at'] is int
                   ? Timestamp.fromMillisecondsSinceEpoch(json['assessments_completed_at'] as int)
                   : null,
@@ -96,6 +98,7 @@ class UserResponse extends Base {
       'hubspot_company_id': hubspotCompanyId,
       'hubspot_contact_id': hubspotContactId,
       'notification': notification == null ? true : notification,
+      'show_recording_alert': showRecordingAlert == null ? true : showRecordingAlert,
       'privacy': privacy == null ? 0 : privacy,
       'current_plan': currentPlan,
       'assessments_completed_at': assessmentsCompletedAt
