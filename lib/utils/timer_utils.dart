@@ -269,7 +269,8 @@ class TimerUtils {
   }
 
   static startCountdown(WorkoutType workoutType, BuildContext context,
-      Object arguments, int initialTimer, int totalRounds, int currentRound) {
+      Object arguments, int initialTimer, int totalRounds, int currentRound,
+      {Function() onShowAgainPressed, bool showPanel}) {
     return Navigator.of(context)
         .push(PageRouteBuilder(
             opaque: false,
@@ -278,6 +279,8 @@ class TimerUtils {
                   totalRounds: totalRounds != null ? totalRounds : 1,
                   currentRound: currentRound != null ? currentRound : 0,
                   recording: workoutType == WorkoutType.segmentWithRecording,
+                  onShowAgainPressed: onShowAgainPressed,
+                  showPanel: showPanel,
                 )))
         .then((value) => Navigator.pushNamed(
             context, routeLabels[RouteEnum.segmentClocks],

@@ -35,8 +35,11 @@ class _CompletedClassState extends State<CompletedClass> {
 
   DateTime _date;
 
+  bool newSelfieUploaded;
+
   @override
   void initState() {
+    newSelfieUploaded = false;
     super.initState();
   }
 
@@ -83,7 +86,7 @@ class _CompletedClassState extends State<CompletedClass> {
 
   Widget showPhotoFrame() {
     return BlocBuilder<CourseEnrollmentUpdateBloc, CourseEnrollmentUpdateState>(builder: (context, courseEnrollmentUpdateState) {
-      if (courseEnrollmentUpdateState is SaveSelfieSuccess) {
+      if (newSelfieUploaded && courseEnrollmentUpdateState is SaveSelfieSuccess) {
         _imageUrl = courseEnrollmentUpdateState.courseEnrollment.classes[widget.classIndex].selfieThumbnailUrl;
         _date = DateTime.now();
         return getPhotoFrame();
@@ -158,7 +161,12 @@ class _CompletedClassState extends State<CompletedClass> {
 
   showCameraAndSaveSelfie() async {
     _image = await imagePicker.getImage(source: ImageSource.camera, preferredCameraDevice: CameraDevice.front);
-    BlocProvider.of<CourseEnrollmentUpdateBloc>(context).saveSelfie(widget.courseEnrollment, widget.classIndex, _image);
+    if (_image != null) {
+      BlocProvider.of<CourseEnrollmentUpdateBloc>(context).saveSelfie(widget.courseEnrollment, widget.classIndex, _image);
+      setState(() {
+        newSelfieUploaded = true;
+      });
+    }
   }
 
   Widget getAddPhotoFrame() {

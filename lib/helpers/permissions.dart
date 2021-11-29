@@ -1,6 +1,5 @@
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'dart:io';
 
 class Permissions {
   static Future<bool> requiredPermissionsEnabled(DeviceContentFrom uploadedFrom, {bool checkMicrophone = true}) async {
@@ -16,7 +15,7 @@ class Permissions {
       }
     } else if (uploadedFrom == DeviceContentFrom.gallery) {
       await Permission.storage.request();
-      if (await Permission.storage.status.isDenied && await Permission.storage.status.isPermanentlyDenied) {
+      if (await Permission.storage.status.isDenied || await Permission.storage.status.isPermanentlyDenied) {
         return false;
       }
     }

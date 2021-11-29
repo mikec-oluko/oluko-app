@@ -140,11 +140,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
 
   Widget progressScaffold(VideoProcessing state) {
     return Scaffold(
-        appBar: OlukoAppBar(
-          title: _task.name,
-          actions: [SizedBox(width: 30)],
-          showBackButton: false,
-        ),
+        appBar: OlukoAppBar(title: _task.name, showBackButton: false, actions: [SizedBox(width: 30)]),
         body: Container(
           color: Colors.black,
           child: Container(
