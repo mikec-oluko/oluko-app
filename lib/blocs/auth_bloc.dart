@@ -138,6 +138,10 @@ class AuthBloc extends Cubit<AuthState> {
         emit(AuthGuest());
         return;
       }
+
+      AuthRepository().storeLoginData(userResponse);
+      emit(AuthSuccess(user: userResponse, firebaseUser: firebaseUser));
+      navigateToNextScreen(context, firebaseUser.uid);
       // ignore: avoid_catching_errors
     } on NoSuchMethodError catch (e) {
       Navigator.pushNamed(context, '/log-in');
