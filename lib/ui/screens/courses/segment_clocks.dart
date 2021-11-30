@@ -500,7 +500,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
     final Duration actualTime = Duration(seconds: timerEntries[timerTaskIndex].value) - timeLeft;
 
-    final double circularProgressIndicatorValue = actualTime.inSeconds / timerEntries[timerTaskIndex].value;
+    double circularProgressIndicatorValue = actualTime.inSeconds / timerEntries[timerTaskIndex].value;
+    if (circularProgressIndicatorValue.isNaN) circularProgressIndicatorValue = 0;
 
     if (isWorkStatePaused()) {
       return TimerUtils.pausedTimer(context, TimeConverter.durationToString(timeLeft));
