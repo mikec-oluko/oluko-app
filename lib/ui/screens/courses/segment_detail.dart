@@ -151,6 +151,9 @@ class _SegmentDetailState extends State<SegmentDetail> {
     return BlocListener<SegmentDetailContentBloc, SegmentDetailContentState>(
       listener: (context, state) {},
       child: SlidingUpPanel(
+        onPanelClosed: () {
+          BlocProvider.of<SegmentDetailContentBloc>(context).emitDefaultState();
+        },
         backdropEnabled: true,
         isDraggable: false,
         header: const SizedBox(),
