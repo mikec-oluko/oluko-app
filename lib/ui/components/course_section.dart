@@ -60,7 +60,7 @@ class _CourseSectionState extends State<CourseSection> {
           SizedBox(height: 2),
           CourseStepSection(totalCourseSteps: widget.qtyCourses, currentCourseStep: widget.courseIndex + 1),
           SizedBox(height: 25),
-          ClassCarouselGallery(courseEnrollment: widget.courseEnrollment),
+          ClassCarouselGallery(courseEnrollment: widget.courseEnrollment, courseIndex: widget.courseIndex),
         ]));
   }
 }

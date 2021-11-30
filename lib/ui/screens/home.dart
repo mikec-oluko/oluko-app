@@ -25,7 +25,9 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class Home extends StatefulWidget {
-  Home({Key key}) : super(key: key);
+  Home({this.index, Key key}) : super(key: key);
+
+  final int index;
 
   @override
   _HomeState createState() => _HomeState();
@@ -117,7 +119,7 @@ class _HomeState extends State<Home> {
             enlargeCenterPage: false,
             disableCenter: true,
             enableInfiniteScroll: false,
-            initialPage: 0,
+            initialPage: widget.index == null ? 0 : widget.index,
             viewportFraction: 1),
       );
     } else {
