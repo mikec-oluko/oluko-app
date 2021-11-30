@@ -317,9 +317,12 @@ class _CoachPageState extends State<CoachPage> {
                         )
                       else
                         const SizedBox.shrink(),
-                      widget.coachAssignment.introductionCompleted
-                          ? userProgressSection(carouselNotificationWidgetList.isEmpty && widget.coachAssignment.introductionCompleted)
-                          : SizedBox.shrink(),
+                      if (widget.coachAssignment.introductionCompleted)
+                        carouselNotificationWidgetList.isNotEmpty && widget.coachAssignment.introductionCompleted
+                            ? userProgressSection(false)
+                            : userProgressSection(carouselNotificationWidgetList.isEmpty && widget.coachAssignment.introductionCompleted)
+                      else
+                        const SizedBox.shrink(),
                       CoachHorizontalCarousel(contentToDisplay: listOfContentForUser(), isForVideoContent: true),
                       carouselToDoSection(context),
                       assessmentSection(context),

@@ -33,12 +33,6 @@ class _SentVideosPageState extends State<SentVideosPage> {
 
   @override
   void dispose() {
-    setState(() {
-      content = [];
-      filteredContent = [];
-      isFavoriteSelected = false;
-      isContentFilteredByDate = false;
-    });
     super.dispose();
   }
 
