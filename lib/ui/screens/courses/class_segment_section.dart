@@ -24,6 +24,9 @@ class ClassSegmentSection extends StatefulWidget {
 class _State extends State<ClassSegmentSection> {
   @override
   Widget build(BuildContext context) {
+    if (widget.segment == null) {
+      return Container();
+    }
     return Container(
       width: MediaQuery.of(context).size.width,
       child: Container(
@@ -46,7 +49,7 @@ class _State extends State<ClassSegmentSection> {
                 style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.white),
               ),
             ),
-            widget.segment.isChallenge
+            (widget.segment != null && widget.segment.isChallenge)
                 ? Padding(
                     padding: const EdgeInsets.only(bottom: 35.0),
                     child: Row(
@@ -61,7 +64,9 @@ class _State extends State<ClassSegmentSection> {
                         onPressed: widget.onPressedMovement, content: widget.movements, width: ScreenUtils.width(context) / 1)),
               ],
             ),
-            !widget.segment.isChallenge ? Padding(padding: const EdgeInsets.only(top: 10.0), child: getSegmentSummary()) : SizedBox()
+            (widget.segment != null && !widget.segment.isChallenge)
+                ? Padding(padding: const EdgeInsets.only(top: 10.0), child: getSegmentSummary())
+                : const SizedBox()
           ],
         ),
       ),
