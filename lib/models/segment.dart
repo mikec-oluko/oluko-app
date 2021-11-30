@@ -50,6 +50,10 @@ class Segment extends Base {
 
   factory Segment.fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
+    // debugger(when: json['total_time'] is! int, message: 'total_time is not int');
+    if (json['total_time'] == '') {
+      json['total_time'] = null;
+    }
     Segment segment = Segment(
         challengeVideo: json['challenge_video'] == null ? null : json['challenge_video'].toString(),
         name: json['name']?.toString(),
