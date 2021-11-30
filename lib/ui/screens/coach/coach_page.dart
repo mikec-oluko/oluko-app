@@ -94,8 +94,10 @@ class _CoachPageState extends State<CoachPage> {
         : (widget.coachAssignment.video?.url != null ? true : widget.coachAssignment.introductionVideo != null)) {
       setState(() {
         _introductionVideo = Annotation(
+          coachId: widget.coachAssignment.coachId,
+          userId: widget.coachAssignment.userId,
           id: _defaultIntroductionVideoId,
-          favorite: false,
+          favorite: widget.coachAssignment.isFavorite,
           createdAt: widget.coachAssignment.createdAt ?? Timestamp.now(),
           video: Video(
               url: widget.coachAssignment.videoHLS ??
@@ -148,7 +150,21 @@ class _CoachPageState extends State<CoachPage> {
                       },
                       builder: (context, state) {
                         if (state is CoachMentoredVideosSuccess) {
-                          _annotationVideosContent = state.mentoredVideos.where((mentoredVideo) => mentoredVideo.video != null).toList();
+                          if (_annotationVideosContent.isEmpty) {
+                            _annotationVideosContent = state.mentoredVideos.where((mentoredVideo) => mentoredVideo.video != null).toList();
+                          } else {
+                            state.mentoredVideos.forEach((mentoredVideo) {
+                              final sameElement =
+                                  _annotationVideosContent.where((contentElement) => contentElement.id == mentoredVideo.id).toList();
+                              if (sameElement.isNotEmpty) {
+                                if (_annotationVideosContent[_annotationVideosContent.indexOf(sameElement.first)] != mentoredVideo) {
+                                  _annotationVideosContent[_annotationVideosContent.indexOf(sameElement.first)] = mentoredVideo;
+                                }
+                              } else {
+                                _annotationVideosContent.add(mentoredVideo);
+                              }
+                            });
+                          }
                         }
                         return BlocBuilder<CoachSentVideosBloc, CoachSentVideosState>(
                           builder: (context, state) {

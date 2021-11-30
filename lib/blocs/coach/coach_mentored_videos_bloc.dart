@@ -104,7 +104,7 @@ class CoachMentoredVideosBloc extends Cubit<CoachMentoredVideosState> {
     try {
       final List<Annotation> coachAnnotationsUpdated =
           await _coachRepository.setAnnotationAsFavorite(coachAnnotation, currentMentoredVideosContent);
-      emit(CoachMentoredVideosSuccess(mentoredVideos: coachAnnotationsUpdated));
+      emit(CoachMentoredVideosSuccess(mentoredVideos: coachAnnotationsUpdated.reversed.toList()));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

@@ -34,12 +34,6 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
 
   @override
   void dispose() {
-    /*setState(() {
-      content = [];
-      filteredContent = [];
-      isFavoriteSelected = false;
-      isContentFilteredByDate = false;
-    });*/
     super.dispose();
   }
 
@@ -48,7 +42,14 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
     return BlocBuilder<CoachMentoredVideosBloc, CoachMentoredVideosState>(
       builder: (context, state) {
         if (state is CoachMentoredVideosSuccess) {
-          content = state.mentoredVideos;
+          state.mentoredVideos.forEach((mentoredVideo) {
+            final sameElement = content.where((contentElement) => contentElement.id == mentoredVideo.id).toList();
+            if (sameElement.isNotEmpty) {
+              content[content.indexOf(sameElement.first)] = mentoredVideo;
+            } else {
+              content.insert(0, mentoredVideo);
+            }
+          });
         }
         return Scaffold(
           appBar: AppBar(

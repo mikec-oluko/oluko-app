@@ -12,6 +12,7 @@ class CoachVideoContent extends StatefulWidget {
 }
 
 class _CoachVideoContentState extends State<CoachVideoContent> {
+  final String useDefaultImage = 'defaultImage';
   final ImageProvider defaultImage = const AssetImage('assets/home/mvtthumbnail.png');
   @override
   Widget build(BuildContext context) {
@@ -30,34 +31,49 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
           Stack(
             alignment: Alignment.center,
             children: [
-              Positioned(
-                  bottom: 5,
-                  child: Container(
-                      height: 100,
-                      width: 130,
-                      decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.all(Radius.circular(5)),
-                          image: DecorationImage(
-                            image: widget.videoThumbnail != null && widget.videoThumbnail.isNotEmpty
-                                ? NetworkImage(widget.videoThumbnail[0])
-                                : defaultImage,
-                            fit: BoxFit.fill,
-                          )))),
-              Positioned(
-                  bottom: 10,
-                  child: Container(
-                      height: 100,
-                      width: 140,
-                      decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.all(Radius.circular(5)),
-                          image: DecorationImage(
-                            image: widget.videoThumbnail != null && widget.videoThumbnail.isNotEmpty
-                                ? NetworkImage(widget.videoThumbnail.length > 1
-                                    ? widget.videoThumbnail[1]
-                                    : widget.videoThumbnail[0])
-                                : defaultImage,
-                            fit: BoxFit.fill,
-                          )))),
+              if (widget.videoThumbnail.length > 2)
+                Positioned(
+                    bottom: 5,
+                    child: Container(
+                        height: 100,
+                        width: 130,
+                        decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.all(Radius.circular(5)),
+                            image: DecorationImage(
+                              image: widget.videoThumbnail != null && widget.videoThumbnail.isNotEmpty
+                                  ? widget.videoThumbnail.first == useDefaultImage
+                                      ? defaultImage
+                                      : widget.videoThumbnail[2] == useDefaultImage
+                                          ? defaultImage
+                                          : NetworkImage(
+                                              widget.videoThumbnail.length > 2 ? widget.videoThumbnail[2] : widget.videoThumbnail[1])
+                                  : defaultImage,
+                              fit: BoxFit.fill,
+                            ))))
+              else
+                const SizedBox.shrink(),
+              if (widget.videoThumbnail.length > 1)
+                Positioned(
+                    bottom: 10,
+                    child: Container(
+                        height: 100,
+                        width: 140,
+                        decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.all(Radius.circular(5)),
+                            image: DecorationImage(
+                              image: widget.videoThumbnail != null && widget.videoThumbnail.isNotEmpty
+                                  ? widget.videoThumbnail.length == 2
+                                      ? widget.videoThumbnail.first == useDefaultImage
+                                          ? defaultImage
+                                          : NetworkImage(widget.videoThumbnail[1])
+                                      : widget.videoThumbnail[1] == useDefaultImage
+                                          ? defaultImage
+                                          : NetworkImage(widget.videoThumbnail[1])
+                                  : defaultImage,
+                              fit: BoxFit.fill,
+                            ))))
+              else
+                const SizedBox.shrink(),
               Positioned(
                   bottom: 15,
                   child: Container(
@@ -67,11 +83,10 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
                           borderRadius: const BorderRadius.all(Radius.circular(5)),
                           image: DecorationImage(
                             image: widget.videoThumbnail != null && widget.videoThumbnail.isNotEmpty
-                                ? NetworkImage(widget.videoThumbnail.length > 2
-                                    ? widget.videoThumbnail[2]
-                                    : widget.videoThumbnail[0])
+                                ? widget.videoThumbnail.last == useDefaultImage
+                                    ? defaultImage
+                                    : NetworkImage(widget.videoThumbnail.last)
                                 : defaultImage,
-                            // image: widget.videoThumbnail != null ? NetworkImage(widget.videoThumbnail) : defaultImage,
                             fit: BoxFit.cover,
                           )))),
               Align(
@@ -125,8 +140,7 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
               ),
               Align(
                 alignment: Alignment.topLeft,
-                child: SizedBox(
-                    child: IconButton(icon: const Icon(Icons.close, color: OlukoColors.white), onPressed: () {})),
+                child: SizedBox(child: IconButton(icon: const Icon(Icons.close, color: OlukoColors.white), onPressed: () {})),
               ),
             ],
           ),

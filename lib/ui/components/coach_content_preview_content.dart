@@ -22,6 +22,7 @@ class CoachContentPreviewContent extends StatefulWidget {
 }
 
 class _CoachContentPreviewContentState extends State<CoachContentPreviewContent> {
+  final String _useDefaultImage = 'defaultImage';
   Widget imageAndVideoContainer;
   //TODO: CHECK UPDATE TO USE IT ON CAROUSEL COACH
   @override
@@ -126,7 +127,6 @@ class _CoachContentPreviewContentState extends State<CoachContentPreviewContent>
 
   List<String> getThumbnails({List<SegmentSubmission> segments, List<Annotation> annotations}) {
     List<String> thumbnailsList = [];
-
     if (segments != null && segments.isNotEmpty) {
       List<SegmentSubmission> limitSegments = [];
       segments.length >= 3 ? limitSegments = segments.getRange(0, 3).toList() : limitSegments = segments;
@@ -144,6 +144,8 @@ class _CoachContentPreviewContentState extends State<CoachContentPreviewContent>
       limitAnnotations.forEach((annotation) {
         if (annotation.video.thumbUrl != null) {
           thumbnailsList.add(annotation.video.thumbUrl);
+        } else {
+          thumbnailsList.insert(0, _useDefaultImage);
         }
       });
     }
