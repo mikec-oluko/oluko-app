@@ -84,6 +84,7 @@ List<CoachSegmentContent> _allSegmentsForUser = [];
 List<SegmentSubmission> segmentsWithReview = [];
 String _defaultIdForAllContentTimeline = '0';
 const String _defaultIntroductionVideoId = 'introVideo';
+bool hideAssessmentsTab = true;
 
 class _CoachPageState extends State<CoachPage> {
   @override
@@ -325,9 +326,9 @@ class _CoachPageState extends State<CoachPage> {
                         const SizedBox.shrink(),
                       CoachHorizontalCarousel(contentToDisplay: listOfContentForUser(), isForVideoContent: true),
                       carouselToDoSection(context),
-                      assessmentSection(context),
+                      if (hideAssessmentsTab) const SizedBox.shrink() else assessmentSection(context),
                       const SizedBox(
-                        height: 200,
+                        height: 220,
                       )
                     ],
                   );
