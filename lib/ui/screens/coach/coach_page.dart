@@ -327,8 +327,8 @@ class _CoachPageState extends State<CoachPage> {
                       CoachHorizontalCarousel(contentToDisplay: listOfContentForUser(), isForVideoContent: true),
                       carouselToDoSection(context),
                       if (hideAssessmentsTab) const SizedBox.shrink() else assessmentSection(context),
-                      const SizedBox(
-                        height: 220,
+                      SizedBox(
+                        height: hideAssessmentsTab ? 220 : 200,
                       )
                     ],
                   );
