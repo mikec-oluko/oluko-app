@@ -19,7 +19,7 @@ class CompletedClass extends StatefulWidget {
   final CourseEnrollment courseEnrollment;
   final int classIndex;
 
-  CompletedClass({Key key, this.courseEnrollment, this.classIndex}) : super(key: key);
+  CompletedClass({Key key,  this.courseEnrollment, this.classIndex}) : super(key: key);
 
   @override
   _CompletedClassState createState() => _CompletedClassState();

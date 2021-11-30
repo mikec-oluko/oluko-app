@@ -6,10 +6,12 @@ import 'package:oluko_app/ui/components/class_card.dart';
 class ClassCarouselGallery extends StatefulWidget {
   final CourseEnrollment courseEnrollment;
   final int courseIndex;
+  final int classIndex;
 
   const ClassCarouselGallery({
     Key key,
     @required this.courseEnrollment,
+    this.classIndex,
     this.courseIndex,
   }) : super(key: key);
 
@@ -36,7 +38,7 @@ class _ClassCarouselGalleryState extends State<ClassCarouselGallery> {
           enlargeCenterPage: false,
           disableCenter: false,
           enableInfiniteScroll: false,
-          initialPage: 0,
+          initialPage: widget.classIndex == null ? 0 : widget.classIndex,
           viewportFraction: 0.32,
           onPageChanged: (index, reason) {
             setState(() {
