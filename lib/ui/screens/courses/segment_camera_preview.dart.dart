@@ -23,8 +23,9 @@ class SegmentCameraPreview extends StatefulWidget {
   final int classIndex;
   final int segmentIndex;
   final List<Segment> segments;
+  final int courseIndex;
 
-  SegmentCameraPreview({Key key, this.classIndex, this.segmentIndex, this.courseEnrollment, this.segments}) : super(key: key);
+  SegmentCameraPreview({Key key, this.courseIndex, this.classIndex, this.segmentIndex, this.courseEnrollment, this.segments}) : super(key: key);
 
   @override
   _State createState() => _State();
@@ -150,6 +151,7 @@ class _State extends State<SegmentCameraPreview> {
       'segmentIndex': widget.segmentIndex,
       'classIndex': widget.classIndex,
       'courseEnrollment': widget.courseEnrollment,
+      'courseIndex': widget.courseIndex,
       'workoutType': WorkoutType.segmentWithRecording,
       'segments': widget.segments,
     };

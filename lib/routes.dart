@@ -516,7 +516,8 @@ class Routes {
         newRouteView = SegmentDetail(
             courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
             classIndex: argumentsToAdd['classIndex'] as int,
-            segmentIndex: argumentsToAdd['segmentIndex'] as int);
+            segmentIndex: argumentsToAdd['segmentIndex'] as int,
+            courseIndex: argumentsToAdd['courseIndex'] as int);
         break;
       case RouteEnum.movementIntro:
         providers = [
@@ -544,6 +545,7 @@ class Routes {
         newRouteView = SegmentClocks(
             courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
             classIndex: argumentsToAdd['classIndex'] as int,
+            courseIndex: argumentsToAdd['courseIndex'] as int,
             segmentIndex: argumentsToAdd['segmentIndex'] as int,
             workoutType: argumentsToAdd['workoutType'] as WorkoutType,
             segments: argumentsToAdd['segments'] as List<Segment>);
@@ -560,6 +562,7 @@ class Routes {
             courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
             classIndex: argumentsToAdd['classIndex'] as int,
             segmentIndex: argumentsToAdd['segmentIndex'] as int,
+            courseIndex: argumentsToAdd['courseIndex'] as int,
             segments: argumentsToAdd['segments'] as List<Segment>);
         break;
       case RouteEnum.courseMarketing:
