@@ -212,13 +212,21 @@ class _CompletedClassState extends State<CompletedClass> {
                     height: 174,
                     width: 120,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(5)),
-                      color: OlukoColors.challengeLockedFilterColor,
-                      image: new DecorationImage(
-                        fit: BoxFit.cover,
-                        image: new NetworkImage(widget.courseEnrollment.classes[widget.classIndex].image),
-                      ),
-                    ),
+                        borderRadius: BorderRadius.all(Radius.circular(5)),
+                        color: OlukoColors.challengeLockedFilterColor,
+                        image: () {
+                          if (widget.courseEnrollment != null &&
+                              widget.courseEnrollment.classes[widget.classIndex] != null &&
+                              widget.courseEnrollment.classes[widget.classIndex].image != null) {
+                            return DecorationImage(
+                              fit: BoxFit.cover,
+                              image: NetworkImage(widget.courseEnrollment.classes[widget.classIndex].image),
+                            );
+                          } else {
+                            final ImageProvider defaultImage = const AssetImage('assets/home/mvtthumbnail.png');
+                            return DecorationImage(fit: BoxFit.cover, image: defaultImage);
+                          }
+                        }()),
                   ),
                   Expanded(
                       child: Padding(
