@@ -61,7 +61,7 @@ class _State extends State<ClassExpansionPanel> {
                     ),
                   );
                 },
-                body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: getClassWidgets(_classItems.indexOf(item))),
+                body: getSubpanel(item),
                 isExpanded: item.expanded,
               );
             }).toList(),
@@ -83,6 +83,10 @@ class _State extends State<ClassExpansionPanel> {
     return classItems;
   }
 
+  Widget getSubpanel(ClassItem item) {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: getClassWidgets(_classItems.indexOf(item)));
+  }
+
   List<Widget> getClassWidgets(int classIndex) {
     List<Widget> widgets = [];
     if (widget.classes.length - 1 < classIndex) {
@@ -92,8 +96,7 @@ class _State extends State<ClassExpansionPanel> {
     classObj.segments.forEach((segment) {
       List<Movement> movements = ClassService.getClassSegmentMovements(segment.sections, widget.movements);
       widgets.add(ListTile(
-        title: CourseSegmentSection(segmentName: segment.name, movements: movements, onPressedMovement: widget.onPressedMovement),
-        subtitle: segment.challengeImage != null ? ChallengeSection(challenges: [segment]) : SizedBox(),
+        title: CourseSegmentSection(segment: segment, movements: movements, onPressedMovement: widget.onPressedMovement),
       ));
     });
     return widgets;
