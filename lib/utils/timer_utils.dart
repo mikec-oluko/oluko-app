@@ -10,49 +10,30 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 enum InitialTimerType { Start, End }
 
 class TimerUtils {
-  static Widget initialTimer(InitialTimerType type, int round, int totalTime,
-      int countDown, BuildContext context) {
+  static Widget initialTimer(InitialTimerType type, int round, int totalTime, int countDown, BuildContext context) {
     return Stack(alignment: Alignment.center, children: [
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 98.0),
         child: AspectRatio(
             aspectRatio: 1,
             child: CircularProgressIndicator(
-                value: getProgress(totalTime, countDown),
-                color: OlukoColors.coral,
-                backgroundColor: OlukoColors.grayColorSemiTransparent)),
+                value: getProgress(totalTime, countDown), color: OlukoColors.coral, backgroundColor: OlukoColors.grayColorSemiTransparent)),
       ),
       Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Text(countDown.toString(),
             textAlign: TextAlign.center,
-            style: TextStyle(
-                fontSize: 80,
-                fontWeight: FontWeight.bold,
-                fontStyle: FontStyle.italic,
-                color: OlukoColors.coral)),
+            style: TextStyle(fontSize: 80, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic, color: OlukoColors.coral)),
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           Text(OlukoLocalizations.get(context, 'round') + "  ",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white)),
+              textAlign: TextAlign.center, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white)),
           Text((round + 1).toString(),
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white))
+              textAlign: TextAlign.center, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white))
         ]),
         SizedBox(height: 2),
         Padding(
             padding: const EdgeInsets.only(bottom: 5),
             child: Text(getRepsTimerText(type, context),
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white)))
+                textAlign: TextAlign.center, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)))
       ])
     ]);
   }
@@ -73,12 +54,11 @@ class TimerUtils {
       height: 340,
       width: 340,
       child: SegmentedIndeterminateProgressbar(
-          max: totalRounds.toDouble(),
-          progress: currentRound.toDouble()));
+        max: totalRounds.toDouble() > 0 ? totalRounds.toDouble() : 1,
+        progress: currentRound.toDouble() < totalRounds.toDouble() ? currentRound.toDouble() : 1,
+      ));
 
-  static Widget timeTimer(
-      double progressValue, String duration, BuildContext context,
-      [String counter]) {
+  static Widget timeTimer(double progressValue, String duration, BuildContext context, [String counter]) {
     return Container(
         child: SizedBox(
             height: 180,
@@ -87,27 +67,16 @@ class TimerUtils {
               AspectRatio(
                   aspectRatio: 1,
                   child: CircularProgressIndicator(
-                      value: progressValue,
-                      color: OlukoColors.coral,
-                      backgroundColor: OlukoColors.grayColorSemiTransparent)),
+                      value: progressValue, color: OlukoColors.coral, backgroundColor: OlukoColors.grayColorSemiTransparent)),
               Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Text(duration,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white)),
+                    textAlign: TextAlign.center, style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Colors.white)),
                 counter != null
                     ? Padding(
                         padding: EdgeInsets.only(top: 5),
-                        child: Text(
-                            OlukoLocalizations.get(context, 'countYour') +
-                                counter,
+                        child: Text(OlukoLocalizations.get(context, 'countYour') + counter,
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w300,
-                                color: OlukoColors.coral)))
+                            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300, color: OlukoColors.coral)))
                     : SizedBox()
               ])
             ])));
@@ -117,19 +86,11 @@ class TimerUtils {
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
       Text('Round',
           textAlign: TextAlign.center,
-          style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              fontStyle: FontStyle.italic,
-              color: OlukoColors.primary)),
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic, color: OlukoColors.primary)),
       SizedBox(width: 10),
       Text((round + 1).toString(),
           textAlign: TextAlign.center,
-          style: TextStyle(
-              fontSize: 50,
-              fontWeight: FontWeight.bold,
-              fontStyle: FontStyle.italic,
-              color: OlukoColors.white)),
+          style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic, color: OlukoColors.white)),
     ]);
   }
 
@@ -142,16 +103,10 @@ class TimerUtils {
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image(
-                      image: AssetImage(
-                          'assets/self_recording/completed_tick.png')),
+                  Image(image: AssetImage('assets/self_recording/completed_tick.png')),
                   SizedBox(height: 8),
                   Text(OlukoLocalizations.get(context, 'completed'),
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white)),
+                      textAlign: TextAlign.center, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white)),
                 ],
               )
             ])));
@@ -166,31 +121,20 @@ class TimerUtils {
               AspectRatio(
                   aspectRatio: 1,
                   child: CircularProgressIndicator(
-                      value: 0,
-                      color: OlukoColors.skyblue,
-                      backgroundColor: OlukoColors.grayColorSemiTransparent)),
+                      value: 0, color: OlukoColors.skyblue, backgroundColor: OlukoColors.grayColorSemiTransparent)),
               Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Text(OlukoLocalizations.get(context, 'paused').toUpperCase(),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: OlukoColors.skyblue)),
+                    textAlign: TextAlign.center, style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: OlukoColors.skyblue)),
                 duration != null ? SizedBox(height: 12) : SizedBox(),
                 duration != null
                     ? Text(duration,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white))
+                        textAlign: TextAlign.center, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white))
                     : SizedBox()
               ])
             ])));
   }
 
-  static Widget restTimer(
-      double progressValue, String duration, BuildContext context) {
+  static Widget restTimer(double progressValue, String duration, BuildContext context) {
     //double ellipseScale = 4.5;
     return Container(
         child: SizedBox(
@@ -212,23 +156,13 @@ class TimerUtils {
               AspectRatio(
                   aspectRatio: 1,
                   child: CircularProgressIndicator(
-                      value: progressValue,
-                      color: OlukoColors.skyblue,
-                      backgroundColor: OlukoColors.grayColorSemiTransparent)),
+                      value: progressValue, color: OlukoColors.skyblue, backgroundColor: OlukoColors.grayColorSemiTransparent)),
               Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Text(OlukoLocalizations.get(context, 'rest').toUpperCase(),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: OlukoColors.skyblue)),
+                    textAlign: TextAlign.center, style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: OlukoColors.skyblue)),
                 SizedBox(height: 12),
                 Text(duration,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white))
+                    textAlign: TextAlign.center, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white))
               ])
             ])));
   }
@@ -244,32 +178,21 @@ class TimerUtils {
                   AspectRatio(
                       aspectRatio: 1,
                       child: CircularProgressIndicator(
-                          value: 0,
-                          color: OlukoColors.skyblue,
-                          backgroundColor:
-                              OlukoColors.grayColorSemiTransparent)),
-                  Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(OlukoLocalizations.get(context, 'tapHere'),
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontSize: 32,
-                                fontWeight: FontWeight.bold,
-                                color: OlukoColors.primary)),
-                        SizedBox(height: 5),
-                        Text(OlukoLocalizations.get(context, 'whenDone'),
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w400,
-                                color: OlukoColors.primary))
-                      ])
+                          value: 0, color: OlukoColors.skyblue, backgroundColor: OlukoColors.grayColorSemiTransparent)),
+                  Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                    Text(OlukoLocalizations.get(context, 'tapHere'),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: OlukoColors.primary)),
+                    SizedBox(height: 5),
+                    Text(OlukoLocalizations.get(context, 'whenDone'),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400, color: OlukoColors.primary))
+                  ])
                 ]))));
   }
 
-  static startCountdown(WorkoutType workoutType, BuildContext context,
-      Object arguments, int initialTimer, int totalRounds, int currentRound,
+  static startCountdown(
+      WorkoutType workoutType, BuildContext context, Object arguments, int initialTimer, int totalRounds, int currentRound,
       {Function() onShowAgainPressed, bool showPanel}) {
     return Navigator.of(context)
         .push(PageRouteBuilder(
@@ -282,13 +205,10 @@ class TimerUtils {
                   onShowAgainPressed: onShowAgainPressed,
                   showPanel: showPanel,
                 )))
-        .then((value) => Navigator.pushNamed(
-            context, routeLabels[RouteEnum.segmentClocks],
-            arguments: arguments));
+        .then((value) => Navigator.pushNamed(context, routeLabels[RouteEnum.segmentClocks], arguments: arguments));
   }
 
-  static Widget AMRAPTimer(double progressValue, String duration,
-      BuildContext context, Function() onTap) {
+  static Widget AMRAPTimer(double progressValue, String duration, BuildContext context, Function() onTap) {
     return GestureDetector(
         onTap: onTap,
         child: Container(
@@ -299,34 +219,19 @@ class TimerUtils {
                   AspectRatio(
                       aspectRatio: 1,
                       child: CircularProgressIndicator(
-                          value: progressValue,
-                          color: OlukoColors.coral,
-                          backgroundColor:
-                              OlukoColors.grayColorSemiTransparent)),
-                  Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(duration,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontSize: 25,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white)),
-                        SizedBox(height: 12),
-                        Text(OlukoLocalizations.get(context, 'tapHere'),
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontSize: 26,
-                                fontWeight: FontWeight.bold,
-                                color: OlukoColors.primary)),
-                        SizedBox(height: 3),
-                        Text(OlukoLocalizations.get(context, 'forNextRound'),
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w400,
-                                color: OlukoColors.primary))
-                      ])
+                          value: progressValue, color: OlukoColors.coral, backgroundColor: OlukoColors.grayColorSemiTransparent)),
+                  Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                    Text(duration,
+                        textAlign: TextAlign.center, style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Colors.white)),
+                    SizedBox(height: 12),
+                    Text(OlukoLocalizations.get(context, 'tapHere'),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: OlukoColors.primary)),
+                    SizedBox(height: 3),
+                    Text(OlukoLocalizations.get(context, 'forNextRound'),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: OlukoColors.primary))
+                  ])
                 ]))));
   }
 }
