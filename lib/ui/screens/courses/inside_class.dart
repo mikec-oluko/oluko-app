@@ -38,10 +38,11 @@ import 'audio_panel.dart';
 enum PanelEnum { audios, classDetail }
 
 class InsideClass extends StatefulWidget {
-  InsideClass({this.courseEnrollment, this.classIndex, Key key}) : super(key: key);
+  InsideClass({this.courseEnrollment, this.classIndex, this.courseIndex, Key key}) : super(key: key);
 
   final CourseEnrollment courseEnrollment;
   final int classIndex;
+  final int courseIndex;
 
   @override
   _InsideClassesState createState() => _InsideClassesState();
@@ -75,8 +76,7 @@ class _InsideClassesState extends State<InsideClass> {
           if (classState is GetByIdSuccess) {
             _class = classState.classObj;
             BlocProvider.of<SegmentBloc>(context)..getAll(_class);
-            BlocProvider.of<CoachAudioBloc>(context)
-                .getByAudios(widget.courseEnrollment.classes[widget.classIndex].audios);
+            BlocProvider.of<CoachAudioBloc>(context).getByAudios(widget.courseEnrollment.classes[widget.classIndex].audios);
             return form();
           } else {
             return SizedBox();
@@ -148,8 +148,7 @@ class _InsideClassesState extends State<InsideClass> {
         OlukoPrimaryButton(
           title: OlukoLocalizations.get(context, 'start'),
           onPressed: () {
-            int segmentIndex = CourseEnrollmentService.getFirstUncompletedSegmentIndex(
-                widget.courseEnrollment.classes[widget.classIndex]);
+            int segmentIndex = CourseEnrollmentService.getFirstUncompletedSegmentIndex(widget.courseEnrollment.classes[widget.classIndex]);
             if (segmentIndex == -1) {
               segmentIndex = 0;
             }
@@ -157,6 +156,7 @@ class _InsideClassesState extends State<InsideClass> {
               'segmentIndex': segmentIndex,
               'classIndex': widget.classIndex,
               'courseEnrollment': widget.courseEnrollment,
+              'courseIndex': widget.courseIndex
             });
           },
         ),
@@ -227,8 +227,8 @@ class _InsideClassesState extends State<InsideClass> {
                     if (!coaches.isEmpty) {
                       BottomDialogUtils.showBottomDialog(
                           context: context,
-                          content: AudioDialogContent(
-                              coach: coaches[0], audio: widget.courseEnrollment.classes[widget.classIndex].audios[0]));
+                          content:
+                              AudioDialogContent(coach: coaches[0], audio: widget.courseEnrollment.classes[widget.classIndex].audios[0]));
                     }
                   },
                   //TODO: HARDCODED
@@ -238,7 +238,9 @@ class _InsideClassesState extends State<InsideClass> {
                       : 0,
                   image: widget.courseEnrollment.course.image)
             ],
-            onBackPressed: () => Navigator.pushNamed(context, routeLabels[RouteEnum.root]),
+            onBackPressed: () => Navigator.pushNamed(context, routeLabels[RouteEnum.root], arguments: {
+              'index': widget.courseIndex,
+            }),
           )),
       Padding(
           padding: EdgeInsets.only(right: 15, left: 15, top: 25),
@@ -256,14 +258,12 @@ class _InsideClassesState extends State<InsideClass> {
                   padding: const EdgeInsets.only(top: 10.0, right: 10),
                   child: Text(
                     TimeConverter.toClassProgress(widget.classIndex, widget.courseEnrollment.classes.length, context),
-                    style:
-                        OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.primary),
+                    style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.primary),
                   ),
                 ),
                 Padding(
                     padding: const EdgeInsets.only(top: 10.0),
-                    child: CourseProgressBar(
-                        value: CourseEnrollmentService.getClassProgress(widget.courseEnrollment, widget.classIndex))),
+                    child: CourseProgressBar(value: CourseEnrollmentService.getClassProgress(widget.courseEnrollment, widget.classIndex))),
                 (() {
                   // your code here
                   if (_class.description != null) {
@@ -271,8 +271,7 @@ class _InsideClassesState extends State<InsideClass> {
                       padding: const EdgeInsets.only(top: 20.0),
                       child: Text(
                         _class.description,
-                        style: OlukoFonts.olukoBigFont(
-                            custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+                        style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
                       ),
                     );
                   } else {

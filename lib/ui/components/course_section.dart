@@ -14,6 +14,7 @@ class CourseSection extends StatefulWidget {
   final CourseEnrollment courseEnrollment;
   final int courseIndex;
   final int qtyCourses;
+  final int classIndex;
 
   const CourseSection({
     Key key,
@@ -21,6 +22,7 @@ class CourseSection extends StatefulWidget {
     @required this.courseEnrollment,
     @required this.courseIndex,
     @required this.qtyCourses,
+    this.classIndex,
   }) : super(key: key);
 
   @override
@@ -60,7 +62,7 @@ class _CourseSectionState extends State<CourseSection> {
           SizedBox(height: 2),
           CourseStepSection(totalCourseSteps: widget.qtyCourses, currentCourseStep: widget.courseIndex + 1),
           SizedBox(height: 25),
-          ClassCarouselGallery(courseEnrollment: widget.courseEnrollment),
+          ClassCarouselGallery(courseEnrollment: widget.courseEnrollment, courseIndex: widget.courseIndex, classIndex: widget.classIndex),
         ]));
   }
 }
