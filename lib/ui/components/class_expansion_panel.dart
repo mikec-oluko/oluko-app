@@ -28,16 +28,18 @@ class ClassExpansionPanel extends StatefulWidget {
 
 class _State extends State<ClassExpansionPanel> {
   List<ClassItem> _classItems = [];
+  List<Widget> _subClassItems = [];
 
   @override
   void initState() {
     super.initState();
-    // _classItems = generateClassItems(); //TODO: this is receiving old classes from another course
+    _classItems = generateClassItems(); //TODO: this is receiving old classes from another course
+    _subClassItems = generateSubClassItems();
   }
 
   @override
   Widget build(BuildContext context) {
-    _classItems = generateClassItems();
+    //_classItems = generateClassItems();
     return _classItems.length > 0
         ? ExpansionPanelList(
             expansionCallback: (int index, bool isExpanded) {
@@ -61,7 +63,7 @@ class _State extends State<ClassExpansionPanel> {
                     ),
                   );
                 },
-                body: getSubpanel(item),
+                body: _subClassItems[_classItems.indexOf(item)],
                 isExpanded: item.expanded,
               );
             }).toList(),
@@ -72,6 +74,14 @@ class _State extends State<ClassExpansionPanel> {
               child: TitleBody(OlukoLocalizations.get(context, "noClasses")),
             ),
           );
+  }
+
+  List<Widget> generateSubClassItems() {
+    List<Widget> subClassItems = [];
+    _classItems.forEach((element) {
+      subClassItems.add(getSubpanel(element));
+    });
+    return subClassItems;
   }
 
   List<ClassItem> generateClassItems() {
