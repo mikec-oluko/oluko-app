@@ -346,7 +346,9 @@ class Routes {
           BlocProvider<CoachIntroductionVideoBloc>.value(value: _coachIntroductionVideo),
           BlocProvider<CoachReviewPendingBloc>.value(value: _coachReviewPendingBloc),
         ];
-        newRouteView = MainPage();
+
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        newRouteView = MainPage(index: argumentsToAdd == null || argumentsToAdd['index'] == null ? null : argumentsToAdd['index'] as int);
         break;
       case RouteEnum.signUp:
         newRouteView = SignUpPage();
@@ -517,7 +519,8 @@ class Routes {
         newRouteView = SegmentDetail(
             courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
             classIndex: argumentsToAdd['classIndex'] as int,
-            segmentIndex: argumentsToAdd['segmentIndex'] as int);
+            segmentIndex: argumentsToAdd['segmentIndex'] as int,
+            courseIndex: argumentsToAdd['courseIndex'] as int);
         break;
       case RouteEnum.movementIntro:
         providers = [
@@ -545,6 +548,7 @@ class Routes {
         newRouteView = SegmentClocks(
             courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
             classIndex: argumentsToAdd['classIndex'] as int,
+            courseIndex: argumentsToAdd['courseIndex'] as int,
             segmentIndex: argumentsToAdd['segmentIndex'] as int,
             workoutType: argumentsToAdd['workoutType'] as WorkoutType,
             segments: argumentsToAdd['segments'] as List<Segment>);
@@ -561,6 +565,7 @@ class Routes {
             courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
             classIndex: argumentsToAdd['classIndex'] as int,
             segmentIndex: argumentsToAdd['segmentIndex'] as int,
+            courseIndex: argumentsToAdd['courseIndex'] as int,
             segments: argumentsToAdd['segments'] as List<Segment>);
         break;
       case RouteEnum.courseMarketing:
@@ -599,7 +604,9 @@ class Routes {
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = InsideClass(
-            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment, classIndex: argumentsToAdd['classIndex'] as int);
+            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
+            classIndex: argumentsToAdd['classIndex'] as int,
+            courseIndex: argumentsToAdd['courseIndex'] as int);
         break;
       case RouteEnum.userChallengeDetail:
         providers = [
