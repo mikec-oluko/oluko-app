@@ -33,7 +33,7 @@ class _State extends State<ChallengeSection> {
                   style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
                 )
               : SizedBox(),
-          widget.addName
+          widget.addName!= null && widget.addName
               ? Text(
                   widget.challenges[0].name,
                   style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),

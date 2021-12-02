@@ -9,8 +9,7 @@ import 'package:oluko_app/models/submodels/user_submodel.dart';
 import 'package:oluko_app/ui/components/audio_section.dart';
 import 'package:oluko_app/ui/components/people_section.dart';
 import 'package:oluko_app/ui/components/segment_step_section.dart';
-import 'package:oluko_app/ui/components/vertical_divider.dart'
-    as verticalDivider;
+import 'package:oluko_app/ui/components/vertical_divider.dart' as verticalDivider;
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
 
@@ -22,8 +21,7 @@ class SegmentImageSection extends StatefulWidget {
   final int totalSegmentStep;
   final String userId;
   final Function() audioAction;
-  final Function(List<UserSubmodel> users, List<UserSubmodel> favorites)
-      peopleAction;
+  final Function(List<UserSubmodel> users, List<UserSubmodel> favorites) peopleAction;
   final Function() clockAction;
 
   SegmentImageSection(
@@ -46,8 +44,7 @@ class SegmentImageSection extends StatefulWidget {
 class _SegmentImageSectionState extends State<SegmentImageSection> {
   @override
   void initState() {
-    BlocProvider.of<DoneChallengeUsersBloc>(context)
-        .get(widget.segment.id, widget.userId);
+    BlocProvider.of<DoneChallengeUsersBloc>(context).get(widget.segment.id, widget.userId);
     super.initState();
   }
 
@@ -68,27 +65,21 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
             children: [
               Text(
                 widget.segment.isChallenge
-                    ? (OlukoLocalizations.get(context, 'challengeTitle') +
-                        widget.segment.name)
+                    ? (OlukoLocalizations.get(context, 'challengeTitle') + widget.segment.name)
                     : widget.segment.name,
-                style:
-                    OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
+                style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 10),
               Text(
                 widget.segment.description,
-                style:
-                    OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400),
+                style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400),
               ),
-              SegmentStepSection(
-                  currentSegmentStep: widget.currentSegmentStep,
-                  totalSegmentStep: widget.totalSegmentStep),
+              SegmentStepSection(currentSegmentStep: widget.currentSegmentStep, totalSegmentStep: widget.totalSegmentStep),
               Padding(
                   padding: const EdgeInsets.symmetric(vertical: 20),
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: SegmentUtils.getSegmentSummary(
-                          widget.segment, context, OlukoColors.white))),
+                      children: SegmentUtils.getSegmentSummary(widget.segment, context, OlukoColors.white))),
             ],
           ))
     ]);
@@ -101,14 +92,13 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
           children: [
             if (widget.showBackButton)
               IconButton(
-                  icon: const Icon(Icons.chevron_left,
-                      size: 35, color: Colors.white),
-                  onPressed: () => {
-                        if (widget.onPressed == null)
-                          {Navigator.pop(context)}
-                        else
-                          {widget.onPressed()}
-                      })
+                  icon: const Icon(Icons.chevron_left, size: 35, color: Colors.white),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    if (widget.onPressed != null) {
+                      widget.onPressed();
+                    }
+                  })
             else
               const SizedBox(),
             const Expanded(child: SizedBox()),
@@ -119,10 +109,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                     'assets/courses/outlined_camera.png',
                     scale: 3,
                   ),
-                  const Padding(
-                      padding: EdgeInsets.only(top: 1),
-                      child: Icon(Icons.circle_outlined,
-                          size: 16, color: OlukoColors.primary))
+                  const Padding(padding: EdgeInsets.only(top: 1), child: Icon(Icons.circle_outlined, size: 16, color: OlukoColors.primary))
                 ]))
           ],
         ));
@@ -154,33 +141,21 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
       padding: const EdgeInsets.only(left: 20, top: 190),
       child: Column(children: [
         Row(children: [
-          GestureDetector(
-              onTap: widget.audioAction,
-              child: const AudioSection(audioMessageQty: 10)),
+          GestureDetector(onTap: widget.audioAction, child: const AudioSection(audioMessageQty: 10)),
           const verticalDivider.VerticalDivider(
             width: 30,
             height: 60,
           ),
-          BlocBuilder<DoneChallengeUsersBloc, DoneChallengeUsersState>(
-              builder: (context, doneChallengeUsersState) {
+          BlocBuilder<DoneChallengeUsersBloc, DoneChallengeUsersState>(builder: (context, doneChallengeUsersState) {
             if (doneChallengeUsersState is DoneChallengeUsersSuccess) {
-              final int favorites =
-                  doneChallengeUsersState.favoriteUsers != null
-                      ? doneChallengeUsersState.favoriteUsers.length
-                      : 0;
-              final int normalUsers = doneChallengeUsersState.users != null
-                  ? doneChallengeUsersState.users.length
-                  : 0;
+              final int favorites = doneChallengeUsersState.favoriteUsers != null ? doneChallengeUsersState.favoriteUsers.length : 0;
+              final int normalUsers = doneChallengeUsersState.users != null ? doneChallengeUsersState.users.length : 0;
               final int qty = favorites + normalUsers;
               return GestureDetector(
-                  onTap: () => widget.peopleAction(
-                      doneChallengeUsersState.users,
-                      doneChallengeUsersState.favoriteUsers),
-                  child: PeopleSection(
-                      peopleQty: qty, isChallenge: widget.segment.isChallenge));
+                  onTap: () => widget.peopleAction(doneChallengeUsersState.users, doneChallengeUsersState.favoriteUsers),
+                  child: PeopleSection(peopleQty: qty, isChallenge: widget.segment.isChallenge));
             } else {
-              return PeopleSection(
-                  peopleQty: 0, isChallenge: widget.segment.isChallenge);
+              return PeopleSection(peopleQty: 0, isChallenge: widget.segment.isChallenge);
             }
           }),
           const verticalDivider.VerticalDivider(
@@ -208,8 +183,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
         Text(
           OlukoLocalizations.get(context, 'personalRecord'),
           textAlign: TextAlign.center,
-          style: const TextStyle(
-              fontSize: 13, fontWeight: FontWeight.w300, color: Colors.white),
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w300, color: Colors.white),
         )
       ]),
     );
