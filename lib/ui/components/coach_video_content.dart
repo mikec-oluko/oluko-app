@@ -43,10 +43,10 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
                               image: widget.videoThumbnail != null && widget.videoThumbnail.isNotEmpty
                                   ? widget.videoThumbnail.first == useDefaultImage
                                       ? defaultImage
-                                      : widget.videoThumbnail[2] == useDefaultImage
+                                      : widget.videoThumbnail.first == useDefaultImage
                                           ? defaultImage
                                           : NetworkImage(
-                                              widget.videoThumbnail.length > 2 ? widget.videoThumbnail[2] : widget.videoThumbnail[1])
+                                              widget.videoThumbnail.length > 2 ? widget.videoThumbnail.first : widget.videoThumbnail.first)
                                   : defaultImage,
                               fit: BoxFit.fill,
                             ))))
@@ -65,7 +65,7 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
                                   ? widget.videoThumbnail.length == 2
                                       ? widget.videoThumbnail.first == useDefaultImage
                                           ? defaultImage
-                                          : NetworkImage(widget.videoThumbnail[1])
+                                          : NetworkImage(widget.videoThumbnail.first)
                                       : widget.videoThumbnail[1] == useDefaultImage
                                           ? defaultImage
                                           : NetworkImage(widget.videoThumbnail[1])

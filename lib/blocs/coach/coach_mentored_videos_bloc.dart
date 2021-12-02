@@ -85,26 +85,11 @@ class CoachMentoredVideosBloc extends Cubit<CoachMentoredVideosState> {
     return subscription;
   }
 
-  // void getMentoredVideosByUserId(String userId, String coachId) async {
-  //   try {
-  //     final List<Annotation> coachAnnotations =
-  //         await _coachRepository.getCoachAnnotationsByUserId(userId, coachId);
-  //     emit(CoachMentoredVideosSuccess(mentoredVideos: coachAnnotations));
-  //   } catch (exception, stackTrace) {
-  //     await Sentry.captureException(
-  //       exception,
-  //       stackTrace: stackTrace,
-  //     );
-  //     emit(CoachMentoredVideoFailure(exception: exception));
-  //     rethrow;
-  //   }
-  // }
-
   void updateCoachAnnotationFavoriteValue({Annotation coachAnnotation, List<Annotation> currentMentoredVideosContent}) async {
     try {
       final List<Annotation> coachAnnotationsUpdated =
           await _coachRepository.setAnnotationAsFavorite(coachAnnotation, currentMentoredVideosContent);
-      emit(CoachMentoredVideosSuccess(mentoredVideos: coachAnnotationsUpdated.reversed.toList()));
+      emit(CoachMentoredVideosSuccess(mentoredVideos: coachAnnotationsUpdated));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
@@ -123,7 +108,6 @@ class CoachMentoredVideosBloc extends Cubit<CoachMentoredVideosState> {
   ) async {
     try {
       await _coachRepository.updateMentoredVideoNotificationStatus(coachId, annotationId, notificationValue);
-      //getMentoredVideosByUserId(userId, coachId);
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

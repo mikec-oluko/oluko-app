@@ -23,8 +23,8 @@ class _SentVideosPageState extends State<SentVideosPage> {
   @override
   void initState() {
     setState(() {
-      content = widget.segmentSubmissions;
-      filteredContent = widget.segmentSubmissions;
+      content.addAll(widget.segmentSubmissions);
+      filteredContent = content;
     });
     contentSortedByDate();
 

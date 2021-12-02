@@ -25,10 +25,9 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
   @override
   void initState() {
     setState(() {
-      content = widget.coachAnnotation;
-      filteredContent = widget.coachAnnotation;
+      content.addAll(widget.coachAnnotation);
+      filteredContent = content;
     });
-    contentSortedByDate();
     super.initState();
   }
 
@@ -50,6 +49,7 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
               content.insert(0, mentoredVideo);
             }
           });
+          filteredContent = contentSortedByDate();
         }
         return Scaffold(
           appBar: AppBar(
@@ -226,9 +226,10 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
         : AssetImage("assets/home/mvtthumbnail.png") as ImageProvider;
   }
 
-  void contentSortedByDate() {
+  List<Annotation> contentSortedByDate() {
     isContentFilteredByDate
         ? filteredContent.sort((a, b) => a.createdAt.toDate().compareTo(b.createdAt.toDate()))
         : filteredContent.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
+    return filteredContent;
   }
 }

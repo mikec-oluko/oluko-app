@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_assignment_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_mentored_videos_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/coach_assignment_status.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
@@ -32,6 +33,11 @@ class _CoachMainPageState extends State<CoachMainPage> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
@@ -45,8 +51,7 @@ class _CoachMainPageState extends State<CoachMainPage> {
                   if (state is CoachAssignmentResponse) {
                     _coachAssignment = state.coachAssignmentResponse;
                     if (_coachAssignment != null) {
-                      if (CoachAssignmentStatus.getCoachAssignmentStatus(
-                              _coachAssignment.coachAssignmentStatus as int) ==
+                      if (CoachAssignmentStatus.getCoachAssignmentStatus(_coachAssignment.coachAssignmentStatus as int) ==
                           CoachAssignmentStatusEnum.approved) {
                         return CoachPage(coachId: _coachAssignment.coachId, coachAssignment: _coachAssignment);
                       } else {
@@ -56,8 +61,7 @@ class _CoachMainPageState extends State<CoachMainPage> {
                         );
                       }
                     } else {
-                      return _currentUser.assessmentsCompletedAt != null &&
-                              _currentUser.assessmentsCompletedAt is Timestamp
+                      return _currentUser.assessmentsCompletedAt != null && _currentUser.assessmentsCompletedAt is Timestamp
                           ? CoachAssignedCountDown(
                               currentUser: _currentUser,
                               coachAssignment: _coachAssignment,
@@ -73,8 +77,7 @@ class _CoachMainPageState extends State<CoachMainPage> {
                 },
               )
             : NoCoachPage(
-                introductionVideo:
-                    "https://oluko-mvt.s3.us-west-1.amazonaws.com/assessments/emnsmBgZ13UBRqTS26Qd/video.mp4",
+                introductionVideo: "https://oluko-mvt.s3.us-west-1.amazonaws.com/assessments/emnsmBgZ13UBRqTS26Qd/video.mp4",
               );
       },
     );

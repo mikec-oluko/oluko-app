@@ -129,7 +129,7 @@ class _CoachContentPreviewContentState extends State<CoachContentPreviewContent>
     List<String> thumbnailsList = [];
     if (segments != null && segments.isNotEmpty) {
       List<SegmentSubmission> limitSegments = [];
-      segments.length >= 3 ? limitSegments = segments.getRange(0, 3).toList() : limitSegments = segments;
+      segments.length >= 3 ? limitSegments = segments.getRange(segments.length - 3, segments.length).toList() : limitSegments = segments;
 
       limitSegments.forEach((segment) {
         if (segment.video.thumbUrl != null) {
@@ -140,7 +140,9 @@ class _CoachContentPreviewContentState extends State<CoachContentPreviewContent>
 
     if (annotations != null && annotations.isNotEmpty) {
       List<Annotation> limitAnnotations = [];
-      annotations.length >= 3 ? limitAnnotations = annotations.getRange(0, 3).toList() : limitAnnotations = annotations;
+      annotations.length >= 3
+          ? limitAnnotations = annotations.getRange(annotations.length - 3, annotations.length).toList()
+          : limitAnnotations = annotations;
       limitAnnotations.forEach((annotation) {
         if (annotation.video.thumbUrl != null) {
           thumbnailsList.add(annotation.video.thumbUrl);
