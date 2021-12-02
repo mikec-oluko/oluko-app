@@ -331,15 +331,14 @@ class _SegmentClocksState extends State<SegmentClocks> {
         : Navigator.popAndPushNamed(context, routeLabels[RouteEnum.completedClass], arguments: {
             'classIndex': widget.classIndex,
             'courseEnrollment': widget.courseEnrollment,
-                        'courseIndex': widget.courseIndex,
+            'courseIndex': widget.courseIndex,
           });
   }
 
   void goToClassAction() {
     Navigator.popUntil(context, ModalRoute.withName('/inside-class'));
     Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.insideClass],
-        arguments: {'courseEnrollment': widget.courseEnrollment, 'classIndex': widget.classIndex,
-        'courseIndex': widget.courseIndex});
+        arguments: {'courseEnrollment': widget.courseEnrollment, 'classIndex': widget.classIndex, 'courseIndex': widget.courseIndex});
   }
 
   ///Countdown & movements information
@@ -908,7 +907,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
       if (_isVideoUploaded) {
         callBlocToCreateStory(context, _segmentSubmission);
       }
-    } else {
+    } else if (_segmentSubmission == null) {
       createSegmentSubmission();
     }
   }
