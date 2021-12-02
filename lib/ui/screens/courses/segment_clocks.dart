@@ -56,7 +56,8 @@ class SegmentClocks extends StatefulWidget {
   final int segmentIndex;
   final List<Segment> segments;
 
-  SegmentClocks({Key key, this.workoutType, this.classIndex, this.segmentIndex, this.courseEnrollment, this.segments}) : super(key: key);
+  const SegmentClocks({Key key, this.workoutType, this.classIndex, this.segmentIndex, this.courseEnrollment, this.segments})
+      : super(key: key);
 
   @override
   _SegmentClocksState createState() => _SegmentClocksState();
@@ -166,12 +167,12 @@ class _SegmentClocksState extends State<SegmentClocks> {
                             },
                             child: form())));
               } else {
-                return SizedBox();
+                return const SizedBox();
               }
             });
           });
         } else {
-          return SizedBox();
+          return const SizedBox();
         }
       }),
     );

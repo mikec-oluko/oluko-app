@@ -42,7 +42,7 @@ class SegmentDetail extends StatefulWidget {
   SegmentDetail({this.courseEnrollment, this.segmentIndex, this.classIndex, Key key}) : super(key: key);
 
   final CourseEnrollment courseEnrollment;
-  final int segmentIndex;
+  int segmentIndex;
   final int classIndex;
 
   @override
@@ -53,6 +53,8 @@ class _SegmentDetailState extends State<SegmentDetail> {
   final toolbarHeight = kToolbarHeight * 2;
   int currentSegmentStep;
   int totalSegmentStep;
+  int totalSegments;
+  bool hasCourseStructureDiscrepancies = false;
   UserResponse _user;
   List<Segment> _segments;
   List<Movement> _movements;
@@ -81,6 +83,14 @@ class _SegmentDetailState extends State<SegmentDetail> {
             if (segmentState is GetSegmentsSuccess && movementState is GetAllSuccess) {
               _segments = segmentState.segments;
               _movements = movementState.movements;
+              totalSegments = _segments.length - 1;
+              if (totalSegments < widget.segmentIndex) {
+                widget.segmentIndex = 0; //TODO: restarts if segment wanted doesn't exists
+                currentSegmentStep = 1;
+                totalSegmentStep = totalSegments + 1;
+              } else if (totalSegments < totalSegmentStep - 1) {
+                totalSegmentStep = totalSegments + 1;
+              }
               return BlocBuilder<CoachAssignmentBloc, CoachAssignmentState>(
                 builder: (context, state) {
                   if (state is CoachAssignmentResponse) {
@@ -133,12 +143,17 @@ class _SegmentDetailState extends State<SegmentDetail> {
                 minHeight: 90,
                 maxHeight: 185,
                 collapsed: CollapsedMovementVideosSection(action: getAction()),
-                panel: MovementVideosSection(
-                    action: downButton(),
-                    segment: _segments[widget.segmentIndex],
-                    movements: _movements,
-                    onPressedMovement: (BuildContext context, Movement movement) =>
-                        Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement})),
+                panel: () {
+                  if (_segments.length - 1 >= widget.segmentIndex) {
+                    return MovementVideosSection(
+                        action: downButton(),
+                        segment: _segments[widget.segmentIndex],
+                        movements: _movements,
+                        onPressedMovement: (BuildContext context, Movement movement) =>
+                            Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement}));
+                  }
+                  return const SizedBox();
+                }(),
                 body: _viewBody()),
             slidingUpPanelComponent(context),
           ],
@@ -240,17 +255,22 @@ class _SegmentDetailState extends State<SegmentDetail> {
   Widget _viewBody() {
     return Container(
       child: ListView(children: [
-        SegmentImageSection(
-          onPressed: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass],
-              arguments: {'courseEnrollment': widget.courseEnrollment, 'classIndex': widget.classIndex}),
-          segment: _segments[widget.segmentIndex],
-          currentSegmentStep: currentSegmentStep,
-          totalSegmentStep: totalSegmentStep,
-          userId: _user.id,
-          audioAction: _audioAction,
-          peopleAction: _peopleAction,
-          clockAction: _clockAction,
-        ),
+        () {
+          if (_segments.length - 1 >= widget.segmentIndex) {
+            return SegmentImageSection(
+              onPressed: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass],
+                  arguments: {'courseEnrollment': widget.courseEnrollment, 'classIndex': widget.classIndex}),
+              segment: _segments[widget.segmentIndex],
+              currentSegmentStep: currentSegmentStep,
+              totalSegmentStep: totalSegmentStep,
+              userId: _user.id,
+              audioAction: _audioAction,
+              peopleAction: _peopleAction,
+              clockAction: _clockAction,
+            );
+          }
+          return const SizedBox();
+        }(),
         _menuOptions()
       ]),
     );
