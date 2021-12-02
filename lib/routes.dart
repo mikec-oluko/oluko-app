@@ -345,7 +345,9 @@ class Routes {
         ];
 
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
-        newRouteView = MainPage(index: argumentsToAdd == null || argumentsToAdd['index'] == null ? null : argumentsToAdd['index'] as int);
+        newRouteView = MainPage(
+            index: argumentsToAdd == null || argumentsToAdd['index'] == null ? null : argumentsToAdd['index'] as int,
+            classIndex: argumentsToAdd == null || argumentsToAdd['classIndex'] == null ? null : argumentsToAdd['classIndex'] as int);
         break;
       case RouteEnum.signUp:
         newRouteView = SignUpPage();
