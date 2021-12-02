@@ -271,7 +271,8 @@ class _SegmentDetailState extends State<SegmentDetail> {
                 onPressed: () {
                   if (_coachRequest != null &&
                       _coach != null &&
-                      widget.courseEnrollment.classes[widget.classIndex].id == _coachRequest.classId) {
+                      widget.courseEnrollment.classes[widget.classIndex].id == _coachRequest.classId &&
+                      widget.courseEnrollment.classes[widget.classIndex].segments[widget.segmentIndex].id == _coachRequest.segmentId) {
                     BottomDialogUtils.showBottomDialog(context: context, content: dialogContainer(_coach.firstName, _coach.avatar));
                   } else {
                     navigateToSegmentWithoutRecording();
