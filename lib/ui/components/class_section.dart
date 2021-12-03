@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:nil/nil.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -31,10 +30,6 @@ class _State extends State<ClassSection> {
           ),
           child: Column(
             children: [
-              /*Divider(
-                color: OlukoColors.grayColor,
-                height: 50,
-              ),*/
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -65,13 +60,6 @@ class _State extends State<ClassSection> {
                               "${OlukoLocalizations.get(context, 'class').toUpperCase()} ${widget.index + 1}/${widget.total}",
                               style: OlukoFonts.olukoSmallFont(custoFontWeight: FontWeight.bold, customColor: OlukoColors.white),
                             )),
-                        /*widget.classProgresss > 0
-                            ? Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 15.0, right: 160.0),
-                                child: CourseProgressBar(
-                                    value: widget.classProgresss))
-                            : SizedBox()*/
                       ],
                     ),
                   ),
@@ -97,21 +85,6 @@ class _State extends State<ClassSection> {
                   ),
                 ),
               ]),
-              /*for (var segment in widget.classObj.segments)
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 5),
-                  child: Row(
-                    children: [
-                      OlukoPrimaryButton(
-                        title: segment.name,
-                        color: OlukoColors.listGrayColor,
-                        textColor: Colors.white,
-                        textAlign: TextAlign.start,
-                        onPressed: () => widget.onPressed(),
-                      ),
-                    ],
-                  ),
-                ),*/
             ],
           ),
         ),
