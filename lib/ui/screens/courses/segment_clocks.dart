@@ -57,7 +57,8 @@ class SegmentClocks extends StatefulWidget {
   final List<Segment> segments;
   final int courseIndex;
 
-  SegmentClocks({Key key, this.courseIndex, this.workoutType, this.classIndex, this.segmentIndex, this.courseEnrollment, this.segments})
+  const SegmentClocks(
+      {Key key, this.courseIndex, this.workoutType, this.classIndex, this.segmentIndex, this.courseEnrollment, this.segments})
       : super(key: key);
 
   @override
@@ -168,12 +169,12 @@ class _SegmentClocksState extends State<SegmentClocks> {
                             },
                             child: form())));
               } else {
-                return SizedBox();
+                return const SizedBox();
               }
             });
           });
         } else {
-          return SizedBox();
+          return const SizedBox();
         }
       }),
     );
@@ -331,15 +332,14 @@ class _SegmentClocksState extends State<SegmentClocks> {
         : Navigator.popAndPushNamed(context, routeLabels[RouteEnum.completedClass], arguments: {
             'classIndex': widget.classIndex,
             'courseEnrollment': widget.courseEnrollment,
-                        'courseIndex': widget.courseIndex,
+            'courseIndex': widget.courseIndex,
           });
   }
 
   void goToClassAction() {
     Navigator.popUntil(context, ModalRoute.withName('/inside-class'));
     Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.insideClass],
-        arguments: {'courseEnrollment': widget.courseEnrollment, 'classIndex': widget.classIndex,
-        'courseIndex': widget.courseIndex});
+        arguments: {'courseEnrollment': widget.courseEnrollment, 'classIndex': widget.classIndex, 'courseIndex': widget.courseIndex});
   }
 
   ///Countdown & movements information
@@ -778,6 +778,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
     //Reset countdown variables
     timerTaskIndex = 0;
     timerEntries = SegmentUtils.getExercisesList(widget.segments[widget.segmentIndex]);
+    if (timerEntries.isEmpty) {
+      _finishWorkout();
+      return;
+    }
     _playTask();
   }
 
