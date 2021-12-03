@@ -778,6 +778,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
     //Reset countdown variables
     timerTaskIndex = 0;
     timerEntries = SegmentUtils.getExercisesList(widget.segments[widget.segmentIndex]);
+    if (timerEntries.isEmpty) {
+      _finishWorkout();
+      return;
+    }
     _playTask();
   }
 
