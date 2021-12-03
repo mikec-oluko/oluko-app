@@ -14,8 +14,9 @@ class ClassCard extends StatefulWidget {
   final int classIndex;
   final CourseEnrollment courseEnrollment;
   final bool selected;
+  final int courseIndex;
 
-  ClassCard({this.enrollmentClass, this.classIndex, this.courseEnrollment, this.selected = false});
+  ClassCard({this.enrollmentClass, this.classIndex, this.courseIndex, this.courseEnrollment, this.selected = false});
 
   @override
   _State createState() => _State();
@@ -38,8 +39,11 @@ class _State extends State<ClassCard> {
             classRectangle(),
             SizedBox(height: 6),
             GestureDetector(
-                onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass],
-                    arguments: {'courseEnrollment': widget.courseEnrollment, 'classIndex': widget.classIndex}),
+                onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
+                      'courseEnrollment': widget.courseEnrollment,
+                      'classIndex': widget.classIndex,
+                      'courseIndex': widget.courseIndex,
+                    }),
                 child: classContainer(150.0, 110.0))
           ]));
     } else {

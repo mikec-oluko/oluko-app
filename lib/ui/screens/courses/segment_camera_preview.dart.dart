@@ -23,8 +23,9 @@ class SegmentCameraPreview extends StatefulWidget {
   final int classIndex;
   final int segmentIndex;
   final List<Segment> segments;
+  final int courseIndex;
 
-  SegmentCameraPreview({Key key, this.classIndex, this.segmentIndex, this.courseEnrollment, this.segments}) : super(key: key);
+  SegmentCameraPreview({Key key, this.courseIndex, this.classIndex, this.segmentIndex, this.courseEnrollment, this.segments}) : super(key: key);
 
   @override
   _State createState() => _State();
@@ -131,7 +132,6 @@ class _State extends State<SegmentCameraPreview> {
               widget.segments[widget.segmentIndex].initialTimer, widget.segments[widget.segmentIndex].rounds, 0,
               showPanel: _user.showRecordingAlert, onShowAgainPressed: () {
             BlocProvider.of<RecordingAlertBloc>(context).updateRecordingAlert(_user);
-            // TODO: VICTORIA _user.showRecordingAlert = !_user.showRecordingAlert;
           });
         },
         child: Stack(alignment: Alignment.center, children: [
@@ -151,6 +151,7 @@ class _State extends State<SegmentCameraPreview> {
       'segmentIndex': widget.segmentIndex,
       'classIndex': widget.classIndex,
       'courseEnrollment': widget.courseEnrollment,
+      'courseIndex': widget.courseIndex,
       'workoutType': WorkoutType.segmentWithRecording,
       'segments': widget.segments,
     };

@@ -295,6 +295,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                           'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
                         });
                       } else {
+                        Navigator.pop(context);
                         Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos], arguments: {'isFirstTime': false});
                       }
                     }
@@ -362,30 +363,29 @@ class _TaskDetailsState extends State<TaskDetails> {
                     bold: true,
                   )),
             ),
-            GestureDetector(
-              onTap: () {
-                if (_controller != null) {
-                  _controller.pause();
-                }
-                if (taskSubmission.video != null && taskSubmission.video.url != null) {
-                  Navigator.pushNamed(context, routeLabels[RouteEnum.taskSubmissionVideo],
-                      arguments: {'task': _task, 'videoUrl': taskSubmission.video.url});
-                }
-              },
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Container(
-                  height: 150,
-                  child: ListView(scrollDirection: Axis.horizontal, children: [
-                    taskResponse(
-                        TimeConverter.durationToString(
-                            Duration(milliseconds: taskSubmission == null ? 0 : taskSubmission?.video?.duration)),
-                        taskSubmission?.video?.thumbUrl,
-                        taskSubmission),
-                  ]),
-                ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Container(
+                height: 150,
+                child: ListView(scrollDirection: Axis.horizontal, children: [
+                  GestureDetector(
+                      onTap: () {
+                        if (_controller != null) {
+                          _controller.pause();
+                        }
+                        if (taskSubmission.video != null && taskSubmission.video.url != null) {
+                          Navigator.pushNamed(context, routeLabels[RouteEnum.taskSubmissionVideo],
+                              arguments: {'task': _task, 'videoUrl': taskSubmission.video.url});
+                        }
+                      },
+                      child: taskResponse(
+                          TimeConverter.durationToString(
+                              Duration(milliseconds: taskSubmission == null ? 0 : taskSubmission?.video?.duration)),
+                          taskSubmission?.video?.thumbUrl,
+                          taskSubmission)),
+                ]),
               ),
-            )
+            ),
           ]);
   }
 

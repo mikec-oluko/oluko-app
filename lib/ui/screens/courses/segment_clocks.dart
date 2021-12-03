@@ -55,8 +55,10 @@ class SegmentClocks extends StatefulWidget {
   final int classIndex;
   final int segmentIndex;
   final List<Segment> segments;
+  final int courseIndex;
 
-  const SegmentClocks({Key key, this.workoutType, this.classIndex, this.segmentIndex, this.courseEnrollment, this.segments})
+  const SegmentClocks(
+      {Key key, this.courseIndex, this.workoutType, this.classIndex, this.segmentIndex, this.courseEnrollment, this.segments})
       : super(key: key);
 
   @override
@@ -325,17 +327,19 @@ class _SegmentClocksState extends State<SegmentClocks> {
             'segmentIndex': widget.segmentIndex + 1,
             'classIndex': widget.classIndex,
             'courseEnrollment': widget.courseEnrollment,
+            'courseIndex': widget.courseIndex,
           })
         : Navigator.popAndPushNamed(context, routeLabels[RouteEnum.completedClass], arguments: {
             'classIndex': widget.classIndex,
             'courseEnrollment': widget.courseEnrollment,
+            'courseIndex': widget.courseIndex,
           });
   }
 
   void goToClassAction() {
     Navigator.popUntil(context, ModalRoute.withName('/inside-class'));
     Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.insideClass],
-        arguments: {'courseEnrollment': widget.courseEnrollment, 'classIndex': widget.classIndex});
+        arguments: {'courseEnrollment': widget.courseEnrollment, 'classIndex': widget.classIndex, 'courseIndex': widget.courseIndex});
   }
 
   ///Countdown & movements information
@@ -774,6 +778,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
     //Reset countdown variables
     timerTaskIndex = 0;
     timerEntries = SegmentUtils.getExercisesList(widget.segments[widget.segmentIndex]);
+    if (timerEntries.isEmpty) {
+      _finishWorkout();
+      return;
+    }
     _playTask();
   }
 

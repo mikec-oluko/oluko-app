@@ -39,11 +39,12 @@ import 'package:oluko_app/utils/timer_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class SegmentDetail extends StatefulWidget {
-  SegmentDetail({this.courseEnrollment, this.segmentIndex, this.classIndex, Key key}) : super(key: key);
+  SegmentDetail({this.courseIndex, this.courseEnrollment, this.segmentIndex, this.classIndex, Key key}) : super(key: key);
 
   final CourseEnrollment courseEnrollment;
   int segmentIndex;
   final int classIndex;
+  final int courseIndex;
 
   @override
   _SegmentDetailState createState() => _SegmentDetailState();
@@ -258,8 +259,11 @@ class _SegmentDetailState extends State<SegmentDetail> {
         () {
           if (_segments.length - 1 >= widget.segmentIndex) {
             return SegmentImageSection(
-              onPressed: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass],
-                  arguments: {'courseEnrollment': widget.courseEnrollment, 'classIndex': widget.classIndex}),
+              onPressed: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
+                'courseEnrollment': widget.courseEnrollment,
+                'classIndex': widget.classIndex,
+                'courseIndex': widget.courseIndex
+              }),
               segment: _segments[widget.segmentIndex],
               currentSegmentStep: currentSegmentStep,
               totalSegmentStep: totalSegmentStep,
@@ -391,6 +395,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
       'segmentIndex': widget.segmentIndex,
       'classIndex': widget.classIndex,
       'courseEnrollment': widget.courseEnrollment,
+      'courseIndex': widget.courseIndex,
       'segments': _segments,
     });
   }
@@ -405,6 +410,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
       'segmentIndex': widget.segmentIndex,
       'classIndex': widget.classIndex,
       'courseEnrollment': widget.courseEnrollment,
+      'courseIndex': widget.courseIndex,
       'workoutType': WorkoutType.segment,
       'segments': _segments,
     };
