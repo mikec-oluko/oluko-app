@@ -22,19 +22,20 @@ class TransformationJourneyContentFailure extends TransformationJourneyContentSt
   dynamic exception;
   TransformationJourneyContentFailure({this.exception});
 }
+
 class TransformationJourneyRequirePermissions extends TransformationJourneyContentState {}
 
 class TransformationJourneyContentBloc extends Cubit<TransformationJourneyContentState> {
   TransformationJourneyContentBloc() : super(TransformationJourneyContentDefault());
 
   void uploadTransformationJourneyContent({DeviceContentFrom uploadedFrom, int indexForContent}) async {
-    PickedFile _image;
+    XFile _image;
     try {
-      final imagePicker = ImagePicker();
+      final ImagePicker imagePicker = ImagePicker();
       if (uploadedFrom == DeviceContentFrom.gallery) {
-        _image = await imagePicker.getImage(source: ImageSource.gallery);
+        _image = await imagePicker.pickImage(source: ImageSource.gallery);
       } else if (uploadedFrom == DeviceContentFrom.camera) {
-        _image = await imagePicker.getImage(source: ImageSource.camera);
+        _image = await imagePicker.pickImage(source: ImageSource.camera);
       }
       if (_image == null) {
         emit(TransformationJourneyContentFailure(exception: new Exception()));
@@ -44,8 +45,7 @@ class TransformationJourneyContentBloc extends Cubit<TransformationJourneyConten
 
       UserResponse user = await AuthRepository().retrieveLoginData();
 
-      await TransformationJourneyRepository.createTransformationJourneyUpload(
-          FileTypeEnum.image, _image, user.id, indexForContent);
+      await TransformationJourneyRepository.createTransformationJourneyUpload(FileTypeEnum.image, _image, user.id, indexForContent);
 
       emit(TransformationJourneyContentSuccess());
     } catch (e, stackTrace) {

@@ -17,6 +17,11 @@ class CoachMentoredVideosSuccess extends CoachMentoredVideosState {
   final List<Annotation> mentoredVideos;
 }
 
+class CoachMentoredVideosDefault extends CoachMentoredVideosState {
+  CoachMentoredVideosDefault({this.defaultContent});
+  final List<Annotation> defaultContent;
+}
+
 class CoachMentoredVideosUpdate extends CoachMentoredVideosState {
   CoachMentoredVideosUpdate({this.mentoredVideos});
   final List<Annotation> mentoredVideos;
@@ -38,6 +43,7 @@ class CoachMentoredVideosBloc extends Cubit<CoachMentoredVideosState> {
     if (subscription != null) {
       subscription.cancel();
       subscription = null;
+      emitMentoredVideoDefaultValue();
     }
   }
 
@@ -108,6 +114,19 @@ class CoachMentoredVideosBloc extends Cubit<CoachMentoredVideosState> {
   ) async {
     try {
       await _coachRepository.updateMentoredVideoNotificationStatus(coachId, annotationId, notificationValue);
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(CoachMentoredVideoFailure(exception: exception));
+      rethrow;
+    }
+  }
+
+  void emitMentoredVideoDefaultValue() async {
+    try {
+      emit(CoachMentoredVideosDefault(defaultContent: []));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

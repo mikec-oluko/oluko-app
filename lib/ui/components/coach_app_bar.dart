@@ -40,6 +40,9 @@ class _CoachAppBarState extends State<CoachAppBar> {
   Widget build(BuildContext context) {
     return BlocBuilder<CoachReviewPendingBloc, CoachReviewPendingState>(
       builder: (context, state) {
+        if (state is CoachReviewPendingDefault) {
+          numberOfReviewPendingItems = state.reviewsPendingDefaultValue;
+        }
         if (state is CoachReviewPendingSuccess) {
           numberOfReviewPendingItems = state.reviewsPending;
         }

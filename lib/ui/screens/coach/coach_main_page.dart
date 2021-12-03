@@ -48,17 +48,24 @@ class _CoachMainPageState extends State<CoachMainPage> {
         return _currentUser.currentPlan >= 1
             ? BlocBuilder<CoachAssignmentBloc, CoachAssignmentState>(
                 builder: (context, state) {
+                  if (state is CoachAssignmentResponseDefault) {
+                    _coachAssignment = state.coachAssignmentDefault;
+                  }
                   if (state is CoachAssignmentResponse) {
                     _coachAssignment = state.coachAssignmentResponse;
                     if (_coachAssignment != null) {
-                      if (CoachAssignmentStatus.getCoachAssignmentStatus(_coachAssignment.coachAssignmentStatus as int) ==
-                          CoachAssignmentStatusEnum.approved) {
-                        return CoachPage(coachId: _coachAssignment.coachId, coachAssignment: _coachAssignment);
+                      if (_coachAssignment.userId == _currentUser.id) {
+                        if (CoachAssignmentStatus.getCoachAssignmentStatus(_coachAssignment.coachAssignmentStatus as int) ==
+                            CoachAssignmentStatusEnum.approved) {
+                          return CoachPage(userId: _currentUser.id, coachId: _coachAssignment.coachId, coachAssignment: _coachAssignment);
+                        } else {
+                          return CoachAssignedCountDown(
+                            currentUser: _currentUser,
+                            coachAssignment: _coachAssignment,
+                          );
+                        }
                       } else {
-                        return CoachAssignedCountDown(
-                          currentUser: _currentUser,
-                          coachAssignment: _coachAssignment,
-                        );
+                        return Container(color: OlukoColors.black, child: OlukoCircularProgressIndicator());
                       }
                     } else {
                       return _currentUser.assessmentsCompletedAt != null && _currentUser.assessmentsCompletedAt is Timestamp

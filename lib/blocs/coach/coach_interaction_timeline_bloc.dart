@@ -20,6 +20,11 @@ class CoachTimelineItemsUpdate extends CoachTimelineItemsState {
   final List<CoachTimelineItem> timelineItems;
 }
 
+class CoachTimelineItemsDefault extends CoachTimelineItemsState {
+  CoachTimelineItemsDefault({this.timelineItemsDefault});
+  final List<CoachTimelineItem> timelineItemsDefault;
+}
+
 class CoachTimelineItemsFailure extends CoachTimelineItemsState {
   CoachTimelineItemsFailure({this.exception});
   final dynamic exception;
@@ -29,11 +34,11 @@ class CoachTimelineItemsBloc extends Cubit<CoachTimelineItemsState> {
   CoachTimelineItemsBloc() : super(Loading());
 
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>> subscription;
-  @override
   void dispose() {
     if (subscription != null) {
       subscription.cancel();
       subscription = null;
+      emitTimelineItemsDefaultValue();
     }
   }
 
@@ -80,6 +85,19 @@ class CoachTimelineItemsBloc extends Cubit<CoachTimelineItemsState> {
     try {
       final List<CoachTimelineItem> timelineContent = await CoachRepository().getTimelineContent(userId);
       emit(CoachTimelineItemsSuccess(timelineItems: timelineContent));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(CoachTimelineItemsFailure(exception: exception));
+      rethrow;
+    }
+  }
+
+  void emitTimelineItemsDefaultValue() async {
+    try {
+      emit(CoachTimelineItemsDefault(timelineItemsDefault: []));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

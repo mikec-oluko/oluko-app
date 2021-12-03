@@ -51,7 +51,8 @@ import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class CoachPage extends StatefulWidget {
-  const CoachPage({this.coachId, this.coachAssignment});
+  const CoachPage({this.userId, this.coachId, this.coachAssignment});
+  final String userId;
   final String coachId;
   final CoachAssignment coachAssignment;
 
@@ -94,19 +95,23 @@ class _CoachPageState extends State<CoachPage> {
         ? true
         : (widget.coachAssignment.video?.url != null ? true : widget.coachAssignment.introductionVideo != null)) {
       setState(() {
-        _introductionVideo = Annotation(
-          coachId: widget.coachAssignment.coachId,
-          userId: widget.coachAssignment.userId,
-          id: _defaultIntroductionVideoId,
-          favorite: widget.coachAssignment.isFavorite,
-          createdAt: widget.coachAssignment.createdAt ?? Timestamp.now(),
-          video: Video(
-              url: widget.coachAssignment.videoHLS ??
-                  (widget.coachAssignment.video != null ? widget.coachAssignment.video.url : widget.coachAssignment.introductionVideo),
-              aspectRatio: widget.coachAssignment.video != null ? widget.coachAssignment.video.aspectRatio ?? 0.60 : 0.60),
-          videoHLS: widget.coachAssignment.videoHLS ??
-              (widget.coachAssignment.video != null ? widget.coachAssignment.video.url : widget.coachAssignment.introductionVideo),
-        );
+        widget.coachAssignment.userId == widget.userId
+            ? _introductionVideo = Annotation(
+                coachId: widget.coachAssignment.coachId,
+                userId: widget.coachAssignment.userId,
+                id: _defaultIntroductionVideoId,
+                favorite: widget.coachAssignment.isFavorite,
+                createdAt: widget.coachAssignment.createdAt ?? Timestamp.now(),
+                video: Video(
+                    url: widget.coachAssignment.videoHLS ??
+                        (widget.coachAssignment.video != null
+                            ? widget.coachAssignment.video.url
+                            : widget.coachAssignment.introductionVideo),
+                    aspectRatio: widget.coachAssignment.video != null ? widget.coachAssignment.video.aspectRatio ?? 0.60 : 0.60),
+                videoHLS: widget.coachAssignment.videoHLS ??
+                    (widget.coachAssignment.video != null ? widget.coachAssignment.video.url : widget.coachAssignment.introductionVideo),
+              )
+            : null;
         super.initState();
       });
     }
@@ -167,8 +172,15 @@ class _CoachPageState extends State<CoachPage> {
                             });
                           }
                         }
+                        if (state is CoachMentoredVideosDefault) {
+                          _annotationVideosContent = state.defaultContent;
+                          segmentsWithReview.clear();
+                        }
                         return BlocBuilder<CoachSentVideosBloc, CoachSentVideosState>(
                           builder: (context, state) {
+                            if (state is CoachSentVideosDefault) {
+                              _sentVideosContent = state.sentVideos;
+                            }
                             if (state is CoachSentVideosSuccess) {
                               _sentVideosContent = state.sentVideos
                                   .where((sentVideo) => sentVideo.video != null && sentVideo.coachId == _coachUser.id)
@@ -191,6 +203,14 @@ class _CoachPageState extends State<CoachPage> {
                                 }
                               },
                               builder: (context, timelineState) {
+                                if (timelineState is CoachTimelineItemsDefault) {
+                                  _timelineItemsContent = timelineState.timelineItemsDefault;
+                                  _allContent.clear();
+                                  _coachRecommendationTimelineContent.clear();
+                                  _mentoredVideoTimelineContent.clear();
+                                  _coachRecommendationTimelineContent.clear();
+                                  _timelinePanelContent.clear();
+                                }
                                 if (timelineState is CoachTimelineItemsSuccess) {
                                   _timelineItemsContent = timelineState.timelineItems;
                                 }
@@ -198,6 +218,9 @@ class _CoachPageState extends State<CoachPage> {
                                   listenWhen: (CoachRecommendationsState previous, CoachRecommendationsState current) =>
                                       current is CoachRecommendationsUpdate,
                                   listener: (context, state) {
+                                    if (state is CoachRecommendationsDefaultValue) {
+                                      _coachRecommendations = state.coachRecommendationListDefaultValue;
+                                    }
                                     if (state is CoachRecommendationsUpdate) {
                                       checkRecommendationUpdate(state.coachRecommendationContent);
                                     }
@@ -210,9 +233,8 @@ class _CoachPageState extends State<CoachPage> {
                                     if (_timelinePanelContent == null) {
                                       return Container(color: OlukoColors.black, child: OlukoCircularProgressIndicator());
                                     } else {
-                                      BlocProvider.of<CoachTimelineBloc>(context).emitTimelineTabsUpdate(
-                                          numberOfTabsForPanel: _timelinePanelContent.length,
-                                          contentForTimelinePanel: _timelinePanelContent);
+                                      BlocProvider.of<CoachTimelineBloc>(context)
+                                          .emitTimelineTabsUpdate(contentForTimelinePanel: _timelinePanelContent);
                                       return CoachSlidingUpPanel(
                                           content: coachViewPageContent(context),
                                           timelineItemsContent: _timelinePanelContent,
@@ -281,6 +303,9 @@ class _CoachPageState extends State<CoachPage> {
         return BlocConsumer<CoachRequestBloc, CoachRequestState>(
           listenWhen: (CoachRequestState previous, CoachRequestState current) => current is GetCoachRequestUpdate,
           listener: (context, state) {
+            if (state is GetCoachRequestDefault) {
+              _coachRequestUpdateList = state.coachRequestDefaultValue;
+            }
             if (state is GetCoachRequestUpdate) {
               _coachRequestUpdateList = state.values;
               checkCoachRequestUpdate(_coachRequestUpdateList);

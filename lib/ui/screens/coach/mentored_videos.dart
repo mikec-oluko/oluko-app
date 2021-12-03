@@ -27,6 +27,7 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
     setState(() {
       content.addAll(widget.coachAnnotation);
       filteredContent = content;
+      filteredContent = contentSortedByDate();
     });
     super.initState();
   }
@@ -49,8 +50,9 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
               content.insert(0, mentoredVideo);
             }
           });
-          filteredContent = contentSortedByDate();
+          filteredContent = content;
         }
+
         return Scaffold(
           appBar: AppBar(
             title: Text(

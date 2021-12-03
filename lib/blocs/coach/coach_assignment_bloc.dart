@@ -17,8 +17,17 @@ class CoachAssignmentFailure extends CoachAssignmentState {
   final dynamic exception;
 }
 
+class CoachAssignmentResponseDefault extends CoachAssignmentState {
+  CoachAssignmentResponseDefault({this.coachAssignmentDefault});
+  final CoachAssignment coachAssignmentDefault;
+}
+
 class CoachAssignmentBloc extends Cubit<CoachAssignmentState> {
   CoachAssignmentBloc() : super(Loading());
+
+  void dispose() {
+    emitCoachAssignmentDefaultValue();
+  }
 
   void getCoachAssignmentStatus(String userId) async {
     try {
@@ -38,6 +47,19 @@ class CoachAssignmentBloc extends Cubit<CoachAssignmentState> {
     try {
       final CoachAssignment coachAssignmentUpdated = await CoachRepository().updateIntroductionStatus(coachAssignment);
       emit(CoachAssignmentResponse(coachAssignmentResponse: coachAssignmentUpdated));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(CoachAssignmentFailure(exception: exception));
+      rethrow;
+    }
+  }
+
+  void emitCoachAssignmentDefaultValue() async {
+    try {
+      emit(CoachAssignmentResponseDefault());
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
