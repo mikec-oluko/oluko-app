@@ -125,36 +125,43 @@ class _SegmentDetailState extends State<SegmentDetail> {
         coachId: _coachAssignment?.coachId,
         courseEnrollmentId: widget.courseEnrollment.id,
         classId: widget.courseEnrollment.classes[widget.classIndex].id);
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: SizedBox(
-        width: ScreenUtils.width(context),
-        height: ScreenUtils.height(context),
-        child: Stack(
-          children: [
-            SlidingUpPanel(
-                controller: panelController,
-                borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-                minHeight: 90,
-                maxHeight: 185,
-                collapsed: CollapsedMovementVideosSection(action: getAction()),
-                panel: () {
-                  if (_segments.length - 1 >= widget.segmentIndex) {
-                    return MovementVideosSection(
-                        action: downButton(),
-                        segment: _segments[widget.segmentIndex],
-                        movements: _movements,
-                        onPressedMovement: (BuildContext context, Movement movement) =>
-                            Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement}));
-                  }
-                  return const SizedBox();
-                }(),
-                body: _viewBody()),
-            slidingUpPanelComponent(context),
-          ],
-        ),
-      ),
-    );
+    return BlocBuilder<CoachRequestBloc, CoachRequestState>(builder: (context, coachRequestState) {
+      if (coachRequestState is GetCoachRequestSuccess) {
+        _coachRequest = coachRequestState.coachRequest;
+        return Scaffold(
+          backgroundColor: Colors.black,
+          body: SizedBox(
+            width: ScreenUtils.width(context),
+            height: ScreenUtils.height(context),
+            child: Stack(
+              children: [
+                SlidingUpPanel(
+                    controller: panelController,
+                    borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                    minHeight: 90,
+                    maxHeight: 185,
+                    collapsed: CollapsedMovementVideosSection(action: getAction()),
+                    panel: () {
+                      if (_segments.length - 1 >= widget.segmentIndex) {
+                        return MovementVideosSection(
+                            action: downButton(),
+                            segment: _segments[widget.segmentIndex],
+                            movements: _movements,
+                            onPressedMovement: (BuildContext context, Movement movement) =>
+                                Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement}));
+                      }
+                      return const SizedBox();
+                    }(),
+                    body: _viewBody()),
+                slidingUpPanelComponent(context),
+              ],
+            ),
+          ),
+        );
+      } else {
+        return SizedBox();
+      }
+    });
   }
 
   BlocListener<SegmentDetailContentBloc, SegmentDetailContentState> slidingUpPanelComponent(BuildContext context) {
