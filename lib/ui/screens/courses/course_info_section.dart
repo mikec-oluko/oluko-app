@@ -43,7 +43,9 @@ class _State extends State<CourseInfoSection> {
                       onTap: widget.onPeoplePressed, child: peopleSection())
                   : SizedBox(),
               verticalDivider(),
-              audioSection(context),
+              widget.audioMessageQty != null
+                  ? audioSection(context)
+                  : SizedBox(),
               widget.clockAction != null
                   ? GestureDetector(
                       onTap: widget.clockAction, child: clockSection())
