@@ -18,6 +18,7 @@ import 'package:oluko_app/blocs/friends/chat_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/message_bloc.dart';
 import 'package:oluko_app/blocs/gallery_video_bloc.dart';
+import 'package:oluko_app/blocs/inside_class_content_bloc.dart';
 import 'package:oluko_app/blocs/personal_record_bloc.dart';
 import 'package:oluko_app/blocs/segment_detail_content_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
@@ -290,6 +291,7 @@ class Routes {
   final AudioBloc _audioBloc = AudioBloc();
   final CoachIntroductionVideoBloc _coachIntroductionVideo = CoachIntroductionVideoBloc();
   final RecordingAlertBloc _recordingAlertBloc = RecordingAlertBloc();
+  final InsideClassContentBloc _insideClassContentBloc = InsideClassContentBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -597,7 +599,9 @@ class Routes {
           BlocProvider<MovementBloc>.value(value: _movementBloc),
           BlocProvider<CoachAudioBloc>.value(value: _coachAudioBloc),
           BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
-          BlocProvider<StoryListBloc>.value(value: _storyListBloc)
+          BlocProvider<StoryListBloc>.value(value: _storyListBloc),
+          BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
+          BlocProvider<InsideClassContentBloc>.value(value: _insideClassContentBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = InsideClass(
@@ -613,7 +617,8 @@ class Routes {
           BlocProvider<AudioBloc>.value(value: _audioBloc),
           BlocProvider<DoneChallengeUsersBloc>.value(value: _doneChallengeUsersBloc),
           BlocProvider<SegmentDetailContentBloc>.value(value: _segmentDetailContentBloc),
-          BlocProvider<PersonalRecordBloc>.value(value: _personalRecordBloc)
+          BlocProvider<PersonalRecordBloc>.value(value: _personalRecordBloc),
+          BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = UserChallengeDetail(
@@ -626,6 +631,7 @@ class Routes {
           BlocProvider<AssessmentAssignmentBloc>.value(value: _assessmentAssignmentBloc),
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
           BlocProvider<TaskBloc>.value(value: _taskBloc),
+          BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = AssessmentVideos(

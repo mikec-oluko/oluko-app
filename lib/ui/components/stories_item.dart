@@ -125,10 +125,10 @@ class _State extends State<StoriesItem> {
                   ),
                   if (widget.stories != null &&
                       widget.stories.isNotEmpty &&
-                      widget.currentUserId.isNotEmpty &&
-                      widget.itemUserId.isNotEmpty &&
-                      widget.name.isNotEmpty &&
-                      widget.imageUrl.isNotEmpty)
+                      widget.currentUserId != null &&
+                      widget.itemUserId != null &&
+                      widget.name != null &&
+                      widget.imageUrl != null)
                     GestureDetector(
                         child: getCircularAvatar(),
                         onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.story], arguments: {
