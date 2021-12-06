@@ -91,34 +91,39 @@ class _CoachPageState extends State<CoachPage> {
   @override
   void initState() {
     BlocProvider.of<CoachUserBloc>(context).get(widget.coachAssignment.coachId);
+    setState(() {
+      createWelcomeVideo();
+    });
+    super.initState();
+  }
+
+  void createWelcomeVideo() {
     if (widget.coachAssignment.videoHLS != null
         ? true
         : (widget.coachAssignment.video?.url != null ? true : widget.coachAssignment.introductionVideo != null)) {
-      setState(() {
-        widget.coachAssignment.userId == widget.userId
-            ? _introductionVideo = Annotation(
-                coachId: widget.coachAssignment.coachId,
-                userId: widget.coachAssignment.userId,
-                id: _defaultIntroductionVideoId,
-                favorite: widget.coachAssignment.isFavorite,
-                createdAt: widget.coachAssignment.createdAt ?? Timestamp.now(),
-                video: Video(
-                    url: widget.coachAssignment.videoHLS ??
-                        (widget.coachAssignment.video != null
-                            ? widget.coachAssignment.video.url
-                            : widget.coachAssignment.introductionVideo),
-                    aspectRatio: widget.coachAssignment.video != null ? widget.coachAssignment.video.aspectRatio ?? 0.60 : 0.60),
-                videoHLS: widget.coachAssignment.videoHLS ??
-                    (widget.coachAssignment.video != null ? widget.coachAssignment.video.url : widget.coachAssignment.introductionVideo),
-              )
-            : null;
-        super.initState();
-      });
+      // setState(() {
+      widget.coachAssignment.userId == widget.userId
+          ? _introductionVideo = Annotation(
+              coachId: widget.coachAssignment.coachId,
+              userId: widget.coachAssignment.userId,
+              id: _defaultIntroductionVideoId,
+              favorite: widget.coachAssignment.isFavorite,
+              createdAt: widget.coachAssignment.createdAt ?? Timestamp.now(),
+              video: Video(
+                  url: widget.coachAssignment.videoHLS ??
+                      (widget.coachAssignment.video != null ? widget.coachAssignment.video.url : widget.coachAssignment.introductionVideo),
+                  aspectRatio: widget.coachAssignment.video != null ? widget.coachAssignment.video.aspectRatio ?? 0.60 : 0.60),
+              videoHLS: widget.coachAssignment.videoHLS ??
+                  (widget.coachAssignment.video != null ? widget.coachAssignment.video.url : widget.coachAssignment.introductionVideo),
+            )
+          : null;
+      // });
     }
   }
 
   @override
   void dispose() {
+    _introductionVideo = null;
     super.dispose();
   }
 
@@ -210,6 +215,7 @@ class _CoachPageState extends State<CoachPage> {
                                   _mentoredVideoTimelineContent.clear();
                                   _coachRecommendationTimelineContent.clear();
                                   _timelinePanelContent.clear();
+                                  _introductionVideo == null ? createWelcomeVideo() : _introductionVideo = null;
                                 }
                                 if (timelineState is CoachTimelineItemsSuccess) {
                                   _timelineItemsContent = timelineState.timelineItems;
