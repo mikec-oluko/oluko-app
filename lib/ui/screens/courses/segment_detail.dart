@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -10,7 +9,6 @@ import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/blocs/segment_detail_content_bloc.dart';
-import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/coach_assignment.dart';
@@ -127,7 +125,12 @@ class _SegmentDetailState extends State<SegmentDetail> {
         classId: widget.courseEnrollment.classes[widget.classIndex].id);
     return BlocBuilder<CoachRequestBloc, CoachRequestState>(builder: (context, coachRequestState) {
       if (coachRequestState is GetCoachRequestSuccess) {
-        _coachRequest = coachRequestState.coachRequest;
+        if (coachRequestState.coachRequest != null &&
+            widget.courseEnrollment.classes[widget.classIndex].id == coachRequestState.coachRequest.classId &&
+            widget.courseEnrollment.classes[widget.classIndex].segments[widget.segmentIndex].id ==
+                coachRequestState.coachRequest.segmentId) {
+          _coachRequest = coachRequestState.coachRequest;
+        }
         return Scaffold(
           backgroundColor: Colors.black,
           body: SizedBox(
@@ -292,10 +295,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
                 title: OlukoLocalizations.get(context, 'startWorkouts'),
                 color: OlukoColors.primary,
                 onPressed: () {
-                  if (_coachRequest != null &&
-                      _coach != null &&
-                      widget.courseEnrollment.classes[widget.classIndex].id == _coachRequest.classId &&
-                      widget.courseEnrollment.classes[widget.classIndex].segments[widget.segmentIndex].id == _coachRequest.segmentId) {
+                  if (_coachRequest != null && _coach != null) {
                     BottomDialogUtils.showBottomDialog(context: context, content: dialogContainer(_coach.firstName, _coach.avatar));
                   } else {
                     navigateToSegmentWithoutRecording();
