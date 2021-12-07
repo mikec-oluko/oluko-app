@@ -28,16 +28,18 @@ class ClassExpansionPanel extends StatefulWidget {
 
 class _State extends State<ClassExpansionPanel> {
   List<ClassItem> _classItems = [];
+  List<Widget> _subClassItems = [];
 
   @override
   void initState() {
     super.initState();
-    // _classItems = generateClassItems(); //TODO: this is receiving old classes from another course
+    _classItems = generateClassItems(); //TODO: this is receiving old classes from another course
+    _subClassItems = generateSubClassItems();
   }
 
   @override
   Widget build(BuildContext context) {
-    _classItems = generateClassItems();
+    //_classItems = generateClassItems();
     return _classItems.length > 0
         ? ExpansionPanelList(
             expansionCallback: (int index, bool isExpanded) {
@@ -61,7 +63,7 @@ class _State extends State<ClassExpansionPanel> {
                     ),
                   );
                 },
-                body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: getClassWidgets(_classItems.indexOf(item))),
+                body: _subClassItems[_classItems.indexOf(item)],
                 isExpanded: item.expanded,
               );
             }).toList(),
@@ -74,6 +76,14 @@ class _State extends State<ClassExpansionPanel> {
           );
   }
 
+  List<Widget> generateSubClassItems() {
+    List<Widget> subClassItems = [];
+    _classItems.forEach((element) {
+      subClassItems.add(getSubpanel(element));
+    });
+    return subClassItems;
+  }
+
   List<ClassItem> generateClassItems() {
     List<ClassItem> classItems = [];
     widget.classes.forEach((element) {
@@ -81,6 +91,10 @@ class _State extends State<ClassExpansionPanel> {
       classItems.add(classItem);
     });
     return classItems;
+  }
+
+  Widget getSubpanel(ClassItem item) {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: getClassWidgets(_classItems.indexOf(item)));
   }
 
   List<Widget> getClassWidgets(int classIndex) {
@@ -92,8 +106,7 @@ class _State extends State<ClassExpansionPanel> {
     classObj.segments.forEach((segment) {
       List<Movement> movements = ClassService.getClassSegmentMovements(segment.sections, widget.movements);
       widgets.add(ListTile(
-        title: CourseSegmentSection(segmentName: segment.name, movements: movements, onPressedMovement: widget.onPressedMovement),
-        subtitle: segment.challengeImage != null ? ChallengeSection(challenges: [segment]) : SizedBox(),
+        title: CourseSegmentSection(segment: segment, movements: movements, onPressedMovement: widget.onPressedMovement),
       ));
     });
     return widgets;

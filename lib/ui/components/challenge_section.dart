@@ -7,8 +7,9 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 class ChallengeSection extends StatefulWidget {
   final List<SegmentSubmodel> challenges;
   final bool addTitle;
+  final bool addName;
 
-  ChallengeSection({this.challenges, this.addTitle = false});
+  ChallengeSection({this.addName, this.challenges, this.addTitle = false});
 
   @override
   _State createState() => _State();
@@ -32,7 +33,13 @@ class _State extends State<ChallengeSection> {
                   style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
                 )
               : SizedBox(),
-          SizedBox(height: widget.addTitle ? 20 : 0),
+          widget.addName!= null && widget.addName
+              ? Text(
+                  widget.challenges[0].name,
+                  style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
+                )
+              : SizedBox(),
+          SizedBox(height: widget.addTitle || widget.addName ? 20 : 0),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(mainAxisAlignment: MainAxisAlignment.start, children: getChallengesCards()),

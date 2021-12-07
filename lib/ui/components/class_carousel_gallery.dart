@@ -24,7 +24,7 @@ class _ClassCarouselGalleryState extends State<ClassCarouselGallery> {
 
   @override
   void initState() {
-    items = buildClassCards(0);
+    items = buildClassCards(widget.classIndex == null ? 0 : widget.classIndex);
     super.initState();
   }
 
