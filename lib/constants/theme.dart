@@ -3,6 +3,15 @@ import 'dart:ui' show Color;
 
 import 'package:flutter/material.dart';
 
+class OlukoNeumorphism {
+  static const bool isNeumorphismDesign = true;
+  static const Radius radiusValue = Radius.circular(15.0);
+}
+
+class OlukoNeumorphismColors {
+  static const Color bottomNavigationBarBg = Color.fromRGBO(43, 47, 52, 1);
+}
+
 class OlukoColors {
   static const Color black = Color(0xFF000000);
 

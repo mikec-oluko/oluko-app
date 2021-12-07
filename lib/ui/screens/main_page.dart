@@ -73,6 +73,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
           children: tabs,
         );
       }),
+      extendBody: false,
       bottomNavigationBar: OlukoBottomNavigationBar(
         selectedIndex: this.tabController.index,
         onPressed: (index) => this.setState(() {

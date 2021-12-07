@@ -19,6 +19,17 @@ class OlukoBottomNavigationBar extends StatefulWidget {
 class _State extends State<OlukoBottomNavigationBar> {
   @override
   Widget build(BuildContext context) {
+    return OlukoNeumorphism.isNeumorphismDesign
+        ? ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: OlukoNeumorphism.radiusValue,
+              topRight: OlukoNeumorphism.radiusValue,
+            ),
+            child: getBottomNavigationBar())
+        : getBottomNavigationBar();
+  }
+
+  BottomNavigationBar getBottomNavigationBar() {
     return BottomNavigationBar(
         currentIndex: widget.selectedIndex,
         showUnselectedLabels: true,
@@ -40,35 +51,74 @@ class _State extends State<OlukoBottomNavigationBar> {
   BottomNavigationBarItem getBottomNavigationBarWidget(OlukoBottomNavigationBarItem olukoBottomNavigationBarItem) {
     double blockSize =
         MediaQuery.of(context).orientation == Orientation.portrait ? ScreenUtils.width(context) / 5 : ScreenUtils.width(context) / 5;
-    return BottomNavigationBarItem(
-        icon: Container(
-          decoration: BoxDecoration(
-            border: Border(top: BorderSide(color: Colors.white24, width: 1)),
-            color: olukoBottomNavigationBarItem.selected ? OlukoColors.primary : Colors.black,
-          ),
-          width: blockSize,
-          height: MediaQuery.of(context).orientation == Orientation.portrait ? blockSize : blockSize / 3,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ImageIcon(AssetImage(olukoBottomNavigationBarItem.assetImageUrl),
-                  color: olukoBottomNavigationBarItem.disabled ? Colors.grey.shade800 : null),
-              Padding(
-                padding: const EdgeInsets.only(top: 5.0),
-                child: Text(
-                  olukoBottomNavigationBarItem.title,
-                  style: TextStyle(
-                      color: olukoBottomNavigationBarItem.disabled
-                          ? Colors.grey.shade800
-                          : olukoBottomNavigationBarItem.selected
-                              ? Colors.black
-                              : Colors.white),
+    return BottomNavigationBarItem(icon: buildBottomNavigationItem(olukoBottomNavigationBarItem, blockSize), label: '');
+  }
+
+  Container buildBottomNavigationItem(OlukoBottomNavigationBarItem olukoBottomNavigationBarItem, double blockSize) {
+    return OlukoNeumorphism.isNeumorphismDesign
+        ? Container(
+            child: Column(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: OlukoNeumorphismColors.bottomNavigationBarBg,
+                  ),
+                  width: blockSize,
+                  height: MediaQuery.of(context).orientation == Orientation.portrait ? blockSize : blockSize / 3,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ImageIcon(AssetImage(olukoBottomNavigationBarItem.assetImageUrl),
+                          color: olukoBottomNavigationBarItem.disabled
+                              ? Colors.grey.shade800
+                              : olukoBottomNavigationBarItem.selected
+                                  ? OlukoColors.primary
+                                  : Colors.grey),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 5.0),
+                        child: Text(
+                          !olukoBottomNavigationBarItem.selected ? '' : olukoBottomNavigationBarItem.title,
+                          style: TextStyle(
+                              color: olukoBottomNavigationBarItem.disabled
+                                  ? Colors.grey.shade800
+                                  : olukoBottomNavigationBarItem.selected
+                                      ? OlukoColors.primary
+                                      : Colors.white),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-              )
-            ],
-          ),
-        ),
-        label: '');
+              ],
+            ),
+          )
+        : Container(
+            decoration: BoxDecoration(
+              border: Border(top: BorderSide(color: Colors.white24, width: 1)),
+              color: olukoBottomNavigationBarItem.selected ? OlukoColors.primary : Colors.black,
+            ),
+            width: blockSize,
+            height: MediaQuery.of(context).orientation == Orientation.portrait ? blockSize : blockSize / 3,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ImageIcon(AssetImage(olukoBottomNavigationBarItem.assetImageUrl),
+                    color: olukoBottomNavigationBarItem.disabled ? Colors.grey.shade800 : null),
+                Padding(
+                  padding: const EdgeInsets.only(top: 5.0),
+                  child: Text(
+                    olukoBottomNavigationBarItem.title,
+                    style: TextStyle(
+                        color: olukoBottomNavigationBarItem.disabled
+                            ? Colors.grey.shade800
+                            : olukoBottomNavigationBarItem.selected
+                                ? Colors.black
+                                : Colors.white),
+                  ),
+                )
+              ],
+            ),
+          );
   }
 
   List<OlukoBottomNavigationBarItem> getBottomNavigationBarItems() {
