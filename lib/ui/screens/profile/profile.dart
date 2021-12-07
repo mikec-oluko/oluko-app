@@ -54,7 +54,12 @@ class _ProfilePageState extends State<ProfilePage> {
     return Form(
         key: _formKey,
         child: Scaffold(
-          appBar: OlukoAppBar(showBackButton: false, title: ProfileViewConstants.profileTitle, showSearchBar: false),
+          appBar: OlukoAppBar(
+            showBackButton: false,
+            title: ProfileViewConstants.profileTitle,
+            showSearchBar: false,
+            showTitle: true,
+          ),
           body: WillPopScope(
             onWillPop: () => AppNavigator.onWillPop(context),
             child: Container(

@@ -1,15 +1,62 @@
 import 'dart:math';
 import 'dart:ui' show Color;
-
 import 'package:flutter/material.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
 class OlukoNeumorphism {
   static const bool isNeumorphismDesign = true;
   static const Radius radiusValue = Radius.circular(15.0);
+
+  //TODO: MOVE TO UTILS, USE ENUMS FOR STYLES EASIER WAY TO USE PARAMETERS
+  static NeumorphicStyle neumorphicStyle(
+      {Color backgroundColor,
+      NeumorphicShape buttonShape,
+      NeumorphicBoxShape boxShape,
+      bool ligthShadow = true,
+      bool darkShadow = true,
+      bool useBorder = false}) {
+    return NeumorphicStyle(
+        border: useBorder ? NeumorphicBorder(width: 1.5, color: OlukoColors.black) : NeumorphicBorder.none(),
+        depth: 5,
+        intensity: 1,
+        color: backgroundColor,
+        shape: buttonShape,
+        lightSource: LightSource.top,
+        boxShape: boxShape,
+        shadowDarkColorEmboss: OlukoNeumorphismColors.finalGradientColorPrimary,
+        shadowLightColorEmboss: OlukoColors.black,
+        surfaceIntensity: 1,
+        shadowLightColor: ligthShadow ? Colors.white : Colors.transparent,
+        shadowDarkColor: darkShadow ? Colors.black : Colors.transparent);
+  }
+
+  static LinearGradient OlukoNeumorphicGradientPrimary() {
+    return const LinearGradient(
+        colors: [OlukoNeumorphismColors.initialGradientColorPrimary, OlukoNeumorphismColors.finalGradientColorPrimary],
+        stops: [0.0, 1],
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter);
+  }
+
+  static LinearGradient OlukoNeumorphicGradientDark() {
+    return const LinearGradient(
+        colors: [OlukoNeumorphismColors.initialGradientColorDark, OlukoNeumorphismColors.finalGradientColorDark],
+        stops: [0.0, 1],
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter);
+  }
 }
 
 class OlukoNeumorphismColors {
-  static const Color bottomNavigationBarBg = Color.fromRGBO(43, 47, 52, 1);
+  static const Color olukoNeumorphicBackgroundLigth = Color.fromRGBO(43, 47, 52, 1);
+  static const Color olukoNeumorphicBackgroundDark = Color.fromRGBO(26, 30, 33, 1);
+  static const Color olukoNeumorphicBackgroundDarker = Color.fromRGBO(32, 36, 39, 1);
+
+  static const Color initialGradientColorPrimary = Color.fromRGBO(192, 198, 155, 1);
+  static const Color finalGradientColorPrimary = Color.fromRGBO(192, 131, 98, 1);
+
+  static const Color initialGradientColorDark = Color.fromRGBO(47, 53, 58, 1);
+  static const Color finalGradientColorDark = Color.fromRGBO(28, 31, 34, 1);
 }
 
 class OlukoColors {

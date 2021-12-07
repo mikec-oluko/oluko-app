@@ -38,6 +38,7 @@ import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/user_statistics.dart';
+import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/coach_app_bar.dart';
 import 'package:oluko_app/ui/components/coach_carousel_section.dart';
 import 'package:oluko_app/ui/components/coach_content_preview_content.dart';
@@ -125,11 +126,17 @@ class _CoachPageState extends State<CoachPage> {
                 _coachUser = state.coach;
               }
               return Scaffold(
-                appBar: CoachAppBar(
-                  coachUser: _coachUser,
-                  onNavigation: () => !widget.coachAssignment.introductionCompleted
-                      ? BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation()
-                      : () {},
+                // appBar: CoachAppBar(
+                //   coachUser: _coachUser,
+                //   onNavigation: () => !widget.coachAssignment.introductionCompleted
+                //       ? BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation()
+                //       : () {},
+                // ),
+                appBar: OlukoAppBar(
+                  showBackButton: false,
+                  title: 'Coach',
+                  showSearchBar: false,
+                  showTitle: true,
                 ),
                 body: BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(
                   builder: (context, state) {

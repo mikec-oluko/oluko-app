@@ -16,8 +16,7 @@ class FriendsPage extends StatefulWidget {
   _FriendsPageState createState() => _FriendsPageState();
 }
 
-class _FriendsPageState extends State<FriendsPage>
-    with SingleTickerProviderStateMixin {
+class _FriendsPageState extends State<FriendsPage> with SingleTickerProviderStateMixin {
   TabController _tabController;
   int _activeTabIndex;
   List<Widget> _pages = [FriendsListPage(), FriendsRequestPage()];
@@ -47,6 +46,7 @@ class _FriendsPageState extends State<FriendsPage>
       appBar: OlukoAppBar(
         showBackButton: false,
         title: _title,
+        showTitle: true,
       ),
       body: Container(
         color: OlukoColors.black,
@@ -76,20 +76,13 @@ class _FriendsPageState extends State<FriendsPage>
                                 indicatorColor: OlukoColors.grayColor,
                                 indicator: BoxDecoration(
                                     borderRadius: _activeTabIndex == 0
-                                        ? BorderRadius.only(
-                                            topLeft: Radius.circular(5),
-                                            bottomLeft: Radius.circular(5))
-                                        : BorderRadius.only(
-                                            topRight: Radius.circular(5),
-                                            bottomRight: Radius.circular(5)),
+                                        ? BorderRadius.only(topLeft: Radius.circular(5), bottomLeft: Radius.circular(5))
+                                        : BorderRadius.only(topRight: Radius.circular(5), bottomRight: Radius.circular(5)),
                                     color: OlukoColors.primary),
                                 unselectedLabelColor: OlukoColors.white,
                                 labelColor: OlukoColors.black,
                                 controller: _tabController,
-                                tabs: [
-                                  Tab(text: 'Friends'),
-                                  Tab(text: 'Requests')
-                                ],
+                                tabs: [Tab(text: 'Friends'), Tab(text: 'Requests')],
                               ),
                             ),
                           ],

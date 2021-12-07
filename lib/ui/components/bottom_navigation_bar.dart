@@ -61,7 +61,7 @@ class _State extends State<OlukoBottomNavigationBar> {
               children: [
                 Container(
                   decoration: BoxDecoration(
-                    color: OlukoNeumorphismColors.bottomNavigationBarBg,
+                    color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
                   ),
                   width: blockSize,
                   height: MediaQuery.of(context).orientation == Orientation.portrait ? blockSize : blockSize / 3,
