@@ -136,18 +136,23 @@ class SegmentUtils {
   }
 
   static String getLabel(MovementSubmodel movement) {
-    String label = movement.value.toString();
-    switch (movement.parameter) {
-      case ParameterEnum.duration:
-        label += "s";
-        break;
-      case ParameterEnum.reps:
-        label += "x";
-        break;
-      case ParameterEnum.distance:
-        label += "m";
-        break;
+    String label = movement.value == null ? "5" : movement.value.toString();
+    if (movement.parameter != null) {
+      switch (movement.parameter) {
+        case ParameterEnum.duration:
+          label += "s";
+          break;
+        case ParameterEnum.reps:
+          label += "x";
+          break;
+        case ParameterEnum.distance:
+          label += "m";
+          break;
+      }
+    } else {
+      label += "x";
     }
+
     label += " " + movement.name;
     return label;
   }
