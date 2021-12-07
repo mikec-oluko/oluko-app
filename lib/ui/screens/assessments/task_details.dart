@@ -296,7 +296,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                         });
                       } else {
                         Navigator.pop(context);
-                        Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos], arguments: {'isFirstTime': false});
+                        Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.assessmentVideos], arguments: {'isFirstTime': false});
                       }
                     }
                   },

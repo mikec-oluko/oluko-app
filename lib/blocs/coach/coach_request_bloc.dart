@@ -14,6 +14,11 @@ class CoachRequestSuccess extends CoachRequestState {
   CoachRequestSuccess({this.values});
 }
 
+class ClassCoachRequestsSuccess extends CoachRequestState {
+  final List<CoachRequest> coachRequests;
+  ClassCoachRequestsSuccess({this.coachRequests});
+}
+
 class ResolveSuccess extends CoachRequestState {
   ResolveSuccess();
 }
@@ -137,6 +142,21 @@ class CoachRequestBloc extends Cubit<CoachRequestState> {
     try {
       await _coachRequestRepository.updateNotificationStatus(coachRequestId, userId, notificationValue);
       get(userId); //TODO: check if needed
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(CoachRequestFailure(exception: exception));
+      rethrow;
+    }
+  }
+
+  void getClassCoachRequest({String userId, String classId, String coachId, String courseEnrollmentId}) async {
+    emit(CoachRequestLoading());
+    try {
+      List<CoachRequest> coachRequests = await _coachRequestRepository.getByClassAndCoach(userId, courseEnrollmentId, coachId, classId);
+      emit(ClassCoachRequestsSuccess(coachRequests: coachRequests));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
