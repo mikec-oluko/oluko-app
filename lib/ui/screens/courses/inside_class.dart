@@ -266,6 +266,7 @@ class _InsideClassesState extends State<InsideClass> {
             ],
             onBackPressed: () => Navigator.pushNamed(context, routeLabels[RouteEnum.root], arguments: {
               'index': widget.courseIndex,
+              'classIndex': widget.classIndex,
             }),
           )),
       Padding(

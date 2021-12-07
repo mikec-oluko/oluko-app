@@ -379,11 +379,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   Widget getRoundsTimer() {
     if (SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) && isWorkStateFinished()) {
-      return TimerUtils.roundsTimer(AMRAPRound, AMRAPRound + 1);
+      return TimerUtils.roundsTimer(AMRAPRound, AMRAPRound);
     } else if (isWorkStateFinished()) {
-      return TimerUtils.roundsTimer(widget.segments[widget.segmentIndex].rounds, widget.segments[widget.segmentIndex].rounds + 1);
+      return TimerUtils.roundsTimer(widget.segments[widget.segmentIndex].rounds, widget.segments[widget.segmentIndex].rounds);
     } else if (SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex])) {
-      return TimerUtils.roundsTimer(AMRAPRound + 1, AMRAPRound);
+      return TimerUtils.roundsTimer(AMRAPRound, AMRAPRound);
     } else {
       return TimerUtils.roundsTimer(widget.segments[widget.segmentIndex].rounds, timerEntries[timerTaskIndex].round);
     }
