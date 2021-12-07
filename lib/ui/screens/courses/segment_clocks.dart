@@ -168,12 +168,12 @@ class _SegmentClocksState extends State<SegmentClocks> {
                             },
                             child: form())));
               } else {
-                return SizedBox();
+                return const SizedBox();
               }
             });
           });
         } else {
-          return SizedBox();
+          return const SizedBox();
         }
       }),
     );
@@ -504,7 +504,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
     final Duration actualTime = Duration(seconds: timerEntries[timerTaskIndex].value) - timeLeft;
 
-    double circularProgressIndicatorValue = actualTime?.inSeconds != 0 ? actualTime.inSeconds / timerEntries[timerTaskIndex].value : 0;
+    double circularProgressIndicatorValue = actualTime.inSeconds / timerEntries[timerTaskIndex].value;
     if (circularProgressIndicatorValue.isNaN) circularProgressIndicatorValue = 0;
 
     if (isWorkStatePaused()) {
@@ -777,6 +777,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
     //Reset countdown variables
     timerTaskIndex = 0;
     timerEntries = SegmentUtils.getExercisesList(widget.segments[widget.segmentIndex]);
+    if (timerEntries.isEmpty) {
+      _finishWorkout();
+      return;
+    }
     _playTask();
   }
 
