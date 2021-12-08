@@ -458,8 +458,8 @@ class Routes {
             value: _hiFiveSendBloc,
           )
         ];
-        final Map<String, UserResponse> argumentsToAdd = arguments as Map<String, UserResponse>;
-        newRouteView = UserProfilePage(userRequested: argumentsToAdd['userRequested']);
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        newRouteView = UserProfilePage(userRequested: argumentsToAdd['userRequested'] as UserResponse, isFriend: argumentsToAdd['isFriend'] as bool);
         break;
       case RouteEnum.profileChallenges:
         providers = [BlocProvider<ChallengeBloc>.value(value: _challengeBloc)];
