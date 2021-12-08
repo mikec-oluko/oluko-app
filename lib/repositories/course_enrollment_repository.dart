@@ -99,8 +99,7 @@ class CourseEnrollmentRepository {
       if (classIndex == courseEnrollment.classes.length - 1) {
         courseEnrollment.completion = 1;
       } else {
-        double courseProgress =
-            1 / courseEnrollment.classes.length;
+        double courseProgress = 1 / courseEnrollment.classes.length;
         courseEnrollment.completion += courseProgress;
       }
       classes[classIndex].completedAt = Timestamp.now();
@@ -317,5 +316,16 @@ class CourseEnrollmentRepository {
       );
       rethrow;
     }
+  }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getUserCourseEnrollmentsSubscription(String userId) {
+    Stream<QuerySnapshot<Map<String, dynamic>>> courseEnrollmentsStream = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('courseEnrollments')
+        .where('created_by', isEqualTo: userId)
+        .orderBy('created_at', descending: true)
+        .snapshots();
+    return courseEnrollmentsStream;
   }
 }
