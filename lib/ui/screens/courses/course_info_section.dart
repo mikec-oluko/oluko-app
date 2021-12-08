@@ -103,7 +103,7 @@ class _State extends State<CourseInfoSection> {
 
   Widget audioSection(BuildContext context) {
     return GestureDetector(
-        onTap: widget.onAudioPressed,
+        onTap: widget.audioMessageQty != null && widget.audioMessageQty > 0 ? widget.onAudioPressed : null,
         child: Stack(alignment: Alignment.topRight, children: [
           Padding(
               padding: const EdgeInsets.only(top: 7),
@@ -112,7 +112,7 @@ class _State extends State<CourseInfoSection> {
                 height: 50,
                 width: 50,
               )),
-          widget.audioMessageQty > 0
+          widget.audioMessageQty != null && widget.audioMessageQty > 0
               ? Stack(alignment: Alignment.center, children: [
                   Image.asset(
                     'assets/courses/audio_notification.png',
