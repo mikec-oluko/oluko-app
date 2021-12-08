@@ -17,15 +17,22 @@ class CoachAssignmentFailure extends CoachAssignmentState {
   final dynamic exception;
 }
 
+class CoachAssignmentResponseDispose extends CoachAssignmentState {
+  CoachAssignmentResponseDispose({this.coachAssignmentDisposeValue});
+  final CoachAssignment coachAssignmentDisposeValue;
+}
+
 class CoachAssignmentBloc extends Cubit<CoachAssignmentState> {
   CoachAssignmentBloc() : super(Loading());
 
+  void dispose() {
+    emitCoachAssignmentDispose();
+  }
+
   void getCoachAssignmentStatus(String userId) async {
     try {
-      final CoachAssignment coachAssignmentResponse =
-          await CoachRepository().getCoachAssignmentByUserId(userId);
-      emit(CoachAssignmentResponse(
-          coachAssignmentResponse: coachAssignmentResponse));
+      final CoachAssignment coachAssignmentResponse = await CoachRepository().getCoachAssignmentByUserId(userId);
+      emit(CoachAssignmentResponse(coachAssignmentResponse: coachAssignmentResponse));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
@@ -38,10 +45,21 @@ class CoachAssignmentBloc extends Cubit<CoachAssignmentState> {
 
   void updateIntroductionVideoState(CoachAssignment coachAssignment) async {
     try {
-      final CoachAssignment coachAssignmentUpdated =
-          await CoachRepository().updateIntroductionStatus(coachAssignment);
-      emit(CoachAssignmentResponse(
-          coachAssignmentResponse: coachAssignmentUpdated));
+      final CoachAssignment coachAssignmentUpdated = await CoachRepository().updateIntroductionStatus(coachAssignment);
+      emit(CoachAssignmentResponse(coachAssignmentResponse: coachAssignmentUpdated));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(CoachAssignmentFailure(exception: exception));
+      rethrow;
+    }
+  }
+
+  void emitCoachAssignmentDispose() async {
+    try {
+      emit(CoachAssignmentResponseDispose());
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

@@ -23,6 +23,11 @@ class GetCoachRequestSuccess extends CoachRequestState {
   GetCoachRequestSuccess({this.coachRequest});
 }
 
+class GetCoachRequestDispose extends CoachRequestState {
+  final List<CoachRequest> coachRequestDisposeValue;
+  GetCoachRequestDispose({this.coachRequestDisposeValue});
+}
+
 class GetCoachRequestUpdate extends CoachRequestState {
   final List<CoachRequest> values;
   GetCoachRequestUpdate({this.values});
@@ -44,6 +49,7 @@ class CoachRequestBloc extends Cubit<CoachRequestState> {
     if (subscription != null) {
       subscription.cancel();
       subscription = null;
+      emitCoachRequestDispose();
     }
   }
 
@@ -137,6 +143,19 @@ class CoachRequestBloc extends Cubit<CoachRequestState> {
     try {
       await _coachRequestRepository.updateNotificationStatus(coachRequestId, userId, notificationValue);
       get(userId); //TODO: check if needed
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(CoachRequestFailure(exception: exception));
+      rethrow;
+    }
+  }
+
+  void emitCoachRequestDispose() async {
+    try {
+      emit(GetCoachRequestDispose(coachRequestDisposeValue: []));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
