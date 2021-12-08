@@ -102,6 +102,7 @@ import 'blocs/coach/coach_assignment_bloc.dart';
 import 'blocs/coach/coach_interaction_timeline_bloc.dart';
 import 'blocs/coach/coach_mentored_videos_bloc.dart';
 import 'blocs/coach/coach_recommendations_bloc.dart';
+import 'blocs/coach/coach_review_pending_bloc.dart';
 import 'blocs/coach/coach_sent_videos_bloc.dart';
 import 'blocs/coach/coach_timeline_bloc.dart';
 import 'blocs/movement_info_bloc.dart';
@@ -290,6 +291,7 @@ class Routes {
   final CoachTimelineBloc _coachTimelineBloc = CoachTimelineBloc();
   final AudioBloc _audioBloc = AudioBloc();
   final CoachIntroductionVideoBloc _coachIntroductionVideo = CoachIntroductionVideoBloc();
+  final CoachReviewPendingBloc _coachReviewPendingBloc = CoachReviewPendingBloc();
   final RecordingAlertBloc _recordingAlertBloc = RecordingAlertBloc();
   final InsideClassContentBloc _insideClassContentBloc = InsideClassContentBloc();
 
@@ -344,6 +346,7 @@ class Routes {
           BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
           BlocProvider<CoachRecommendationsBloc>.value(value: _coachRecommendationsBloc),
           BlocProvider<CoachIntroductionVideoBloc>.value(value: _coachIntroductionVideo),
+          BlocProvider<CoachReviewPendingBloc>.value(value: _coachReviewPendingBloc),
         ];
 
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
@@ -744,6 +747,7 @@ class Routes {
       case RouteEnum.coach:
         providers = [
           BlocProvider<CoachIntroductionVideoBloc>.value(value: _coachIntroductionVideo),
+          BlocProvider<CoachReviewPendingBloc>.value(value: _coachReviewPendingBloc),
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
           BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
@@ -765,6 +769,7 @@ class Routes {
       case RouteEnum.coach2:
         providers = [
           BlocProvider<CoachIntroductionVideoBloc>.value(value: _coachIntroductionVideo),
+          BlocProvider<CoachReviewPendingBloc>.value(value: _coachReviewPendingBloc),
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
           BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),

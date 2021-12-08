@@ -23,8 +23,8 @@ class _SentVideosPageState extends State<SentVideosPage> {
   @override
   void initState() {
     setState(() {
-      content = widget.segmentSubmissions;
-      filteredContent = widget.segmentSubmissions;
+      content.addAll(widget.segmentSubmissions);
+      filteredContent = content;
     });
     contentSortedByDate();
 
@@ -33,12 +33,6 @@ class _SentVideosPageState extends State<SentVideosPage> {
 
   @override
   void dispose() {
-    setState(() {
-      content = [];
-      filteredContent = [];
-      isFavoriteSelected = false;
-      isContentFilteredByDate = false;
-    });
     super.dispose();
   }
 

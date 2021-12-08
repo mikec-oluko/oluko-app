@@ -33,16 +33,16 @@ class ProfileCoverImageBloc extends Cubit<ProfileCoverImageState> {
   ProfileRepository _profileRepository = ProfileRepository();
 
   void uploadProfileCoverImage({DeviceContentFrom uploadedFrom}) async {
-    PickedFile _image;
+    XFile _image;
 
     try {
-      final imagePicker = ImagePicker();
+      final ImagePicker imagePicker = ImagePicker();
       if (uploadedFrom == DeviceContentFrom.gallery) {
-        _image = await imagePicker.getImage(source: ImageSource.gallery);
+        _image = await imagePicker.pickImage(source: ImageSource.gallery);
       } else if (uploadedFrom == DeviceContentFrom.camera) {
-        _image = await imagePicker.getImage(source: ImageSource.camera);
+        _image = await imagePicker.pickImage(source: ImageSource.camera);
       }
-      if (_image == null && _image is! PickedFile) {
+      if (_image == null && _image is! XFile) {
         emit(ProfileCoverImageFailure(exception: Exception()));
         return;
       }

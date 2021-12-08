@@ -6,8 +6,8 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:path/path.dart' as p;
 
 class ImageUtils {
-  static const String jpgFormat = ".jpg";
-  static const  String jpegFormat = ".jepg";
+  static const String jpgFormat = '.jpg';
+  static const String jpegFormat = '.jepg';
 
   ///Used as a loading placeholder when a NetworkImage is loading
   static Widget frameBuilder(context, Widget child, int frame, bool wasSynchronouslyLoaded, {double height = 120, double width}) {
@@ -21,7 +21,7 @@ class ImageUtils {
   }
 
   ///Generate a thumbnail for an Image with the specified width & height.
-  Future<String> getThumbnailForImage(PickedFile image, int width, {int height}) async {
+  Future<String> getThumbnailForImage(XFile image, int width, {int height}) async {
     //Image.file(File(image.path)); TODO: does nothing?
     if (height == null) {
       var decodedImage = await decodeImageFromList(File(image.path).readAsBytesSync());
