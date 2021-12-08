@@ -40,7 +40,7 @@ class CourseEnrollmentUpdateBloc extends Cubit<CourseEnrollmentUpdateState> {
     }
   }
 
-  void saveSelfie(CourseEnrollment courseEnrollment, int classIndex, PickedFile file) async {
+  void saveSelfie(CourseEnrollment courseEnrollment, int classIndex, XFile file) async {
     emit(Loading());
     try {
       CourseEnrollment courseUpdated = await CourseEnrollmentRepository.updateSelfie(courseEnrollment, classIndex, file);

@@ -57,8 +57,8 @@ class CoachTimelineFunctions {
         CoachTimelineItem newItem = CoachTimelineItem(
             coachId: element.coachId,
             coachReference: element.coachReference,
-            contentDescription: OlukoLocalizations.get(context, 'mentoredVideo'),
-            contentName: OlukoLocalizations.get(context, 'mentoredVideo'),
+            contentDescription: element.id == 'introVideo' ? 'Introduction Video' : OlukoLocalizations.get(context, 'mentoredVideo'),
+            contentName: element.id == 'introVideo' ? 'Introduction Video' : OlukoLocalizations.get(context, 'mentoredVideo'),
             contentThumbnail: element.video.thumbUrl,
             contentType: 4,
             mentoredVideosForNavigation: annotationContent,

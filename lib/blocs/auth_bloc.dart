@@ -23,6 +23,8 @@ import 'coach/coach_interaction_timeline_bloc.dart';
 import 'coach/coach_mentored_videos_bloc.dart';
 import 'coach/coach_recommendations_bloc.dart';
 import 'coach/coach_request_bloc.dart';
+import 'coach/coach_review_pending_bloc.dart';
+import 'coach/coach_sent_videos_bloc.dart';
 
 abstract class AuthState {}
 
@@ -208,6 +210,8 @@ class AuthBloc extends Cubit<AuthState> {
       BlocProvider.of<CoachRequestBloc>(context).dispose();
       BlocProvider.of<CoachTimelineItemsBloc>(context).dispose();
       BlocProvider.of<StoryListBloc>(context).dispose();
+      BlocProvider.of<CoachSentVideosBloc>(context).dispose();
+      BlocProvider.of<CoachReviewPendingBloc>(context).dispose();
       Navigator.pushNamedAndRemoveUntil(context, '/sign-up', (route) => false);
       emit(AuthGuest());
     }

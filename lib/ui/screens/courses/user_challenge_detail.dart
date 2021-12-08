@@ -20,7 +20,7 @@ import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/user_submodel.dart';
 import 'package:oluko_app/models/user_response.dart';
-import 'package:oluko_app/ui/components/modal_people_in_challenge.dart';
+import 'package:oluko_app/ui/components/modal_people_enrolled.dart';
 import 'package:oluko_app/ui/components/modal_personal_record.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
@@ -141,6 +141,9 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
     return BlocListener<SegmentDetailContentBloc, SegmentDetailContentState>(
       listener: (context, state) {},
       child: SlidingUpPanel(
+        onPanelClosed: () {
+          BlocProvider.of<SegmentDetailContentBloc>(context).emitDefaultState();
+        },
         backdropEnabled: true,
         isDraggable: false,
         header: const SizedBox(),
@@ -160,7 +163,7 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
           }
           if (state is SegmentDetailContentPeopleOpen) {
             _challengePanelController.open();
-            _contentForPanel = ModalPeopleInChallenge(segmentId: widget.challenge.segmentId, userId: _user.id, favorites: state.favorites, users: state.users);
+            _contentForPanel = ModalPeopleEnrolled(userId: _user.id, favorites: state.favorites, users: state.users);
           }
           if (state is SegmentDetailContentClockOpen) {
             _challengePanelController.open();

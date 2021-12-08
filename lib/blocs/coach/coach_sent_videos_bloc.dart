@@ -12,6 +12,11 @@ class CoachSentVideosSuccess extends CoachSentVideosState {
   final List<SegmentSubmission> sentVideos;
 }
 
+class CoachSentVideosDispose extends CoachSentVideosState {
+  CoachSentVideosDispose({this.sentVideosDisposeValue});
+  final List<SegmentSubmission> sentVideosDisposeValue;
+}
+
 class CoachProfileFailure extends CoachSentVideosState {
   CoachProfileFailure({this.exception});
   final dynamic exception;
@@ -19,6 +24,10 @@ class CoachProfileFailure extends CoachSentVideosState {
 
 class CoachSentVideosBloc extends Cubit<CoachSentVideosState> {
   CoachSentVideosBloc() : super(Loading());
+  @override
+  void dispose() {
+    sentVideoDispose();
+  }
 
   void getSentVideosByUserId(String coachId) async {
     try {
@@ -34,12 +43,24 @@ class CoachSentVideosBloc extends Cubit<CoachSentVideosState> {
     }
   }
 
-  void updateSegmentSubmissionFavoriteValue(
-      {SegmentSubmission segmentSubmitted, List<SegmentSubmission> currentSentVideosContent}) async {
+  void updateSegmentSubmissionFavoriteValue({SegmentSubmission segmentSubmitted, List<SegmentSubmission> currentSentVideosContent}) async {
     try {
-      final List<SegmentSubmission> sentVideosListUpdated = await CoachRepository().setSegmentSubmissionAsFavorite(
-          segmentSubmittedToUpdate: segmentSubmitted, currentSentVideosContent: currentSentVideosContent);
+      final List<SegmentSubmission> sentVideosListUpdated = await CoachRepository()
+          .setSegmentSubmissionAsFavorite(segmentSubmittedToUpdate: segmentSubmitted, currentSentVideosContent: currentSentVideosContent);
       emit(CoachSentVideosSuccess(sentVideos: sentVideosListUpdated));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(CoachProfileFailure(exception: exception));
+      rethrow;
+    }
+  }
+
+  void sentVideoDispose() async {
+    try {
+      emit(CoachSentVideosDispose(sentVideosDisposeValue: []));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

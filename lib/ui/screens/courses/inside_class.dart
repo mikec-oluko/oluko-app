@@ -3,13 +3,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/class_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_audio_bloc.dart';
+import 'package:oluko_app/blocs/inside_class_content_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
+import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/movement.dart';
@@ -22,12 +24,15 @@ import 'package:oluko_app/services/course_enrollment_service.dart';
 import 'package:oluko_app/ui/components/challenge_section.dart';
 import 'package:oluko_app/ui/components/class_movements_section.dart';
 import 'package:oluko_app/ui/components/course_progress_bar.dart';
+import 'package:oluko_app/ui/components/modal_people_enrolled.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/overlay_video_preview.dart';
+import 'package:oluko_app/ui/components/uploading_modal_loader.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/screens/courses/audio_dialog_content.dart';
 import 'package:oluko_app/ui/screens/courses/class_detail_section.dart';
 import 'package:oluko_app/ui/screens/courses/course_info_section.dart';
+import 'package:oluko_app/ui/screens/courses/explore_subscribed_users.dart';
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -55,7 +60,8 @@ class _InsideClassesState extends State<InsideClass> {
   ChewieController _controller;
   Class _class;
   List<Movement> _movements;
-  PanelController panelController = new PanelController();
+  PanelController panelController = PanelController();
+  final PanelController _buttonController = PanelController();
   List<Movement> _classMovements;
 
   Widget panelContent;
@@ -77,7 +83,7 @@ class _InsideClassesState extends State<InsideClass> {
             _class = classState.classObj;
             BlocProvider.of<SegmentBloc>(context)..getAll(_class);
             BlocProvider.of<CoachAudioBloc>(context).getByAudios(widget.courseEnrollment.classes[widget.classIndex].audios);
-            return form();
+            return form(authState.user.id);
           } else {
             return SizedBox();
           }
@@ -88,7 +94,7 @@ class _InsideClassesState extends State<InsideClass> {
     });
   }
 
-  Widget form() {
+  Widget form(String userId) {
     return Form(
         key: _formKey,
         child: Scaffold(body: BlocBuilder<MovementBloc, MovementState>(builder: (context, movementState) {
@@ -96,18 +102,23 @@ class _InsideClassesState extends State<InsideClass> {
             _movements = movementState.movements;
             return BlocBuilder<CoachAudioBloc, CoachAudioState>(builder: (context, coachState) {
               if (coachState is CoachesByAudiosSuccess) {
-                return SlidingUpPanel(
-                    controller: panelController,
-                    borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-                    minHeight: 5,
-                    collapsed: Container(
-                      color: Colors.black,
-                    ),
-                    panel: /*audioSection(coachState.coaches)*/ classDetailSection(),
-                    body: Container(
-                      color: Colors.black,
-                      child: classInfoSection(coachState.coaches),
-                    ));
+                return Stack(
+                  children: [
+                    SlidingUpPanel(
+                        controller: panelController,
+                        borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                        minHeight: 5,
+                        collapsed: Container(
+                          color: Colors.black,
+                        ),
+                        panel: /*audioSection(coachState.coaches)*/ classDetailSection(),
+                        body: Container(
+                          color: Colors.black,
+                          child: classInfoSection(coachState.coaches, userId),
+                        )),
+                    slidingUpPanelComponent(context, userId)
+                  ],
+                );
               } else {
                 return SizedBox();
               }
@@ -214,7 +225,7 @@ class _InsideClassesState extends State<InsideClass> {
     );
   }
 
-  Widget classInfoSection(List<UserResponse> coaches) {
+  Widget classInfoSection(List<UserResponse> coaches, String userId) {
     return ListView(children: [
       Padding(
           padding: const EdgeInsets.only(bottom: 3),
@@ -222,21 +233,36 @@ class _InsideClassesState extends State<InsideClass> {
             video: _class.video,
             showBackButton: true,
             bottomWidgets: [
-              CourseInfoSection(
-                  onAudioPressed: () {
-                    if (!coaches.isEmpty) {
-                      BottomDialogUtils.showBottomDialog(
-                          context: context,
-                          content:
-                              AudioDialogContent(coach: coaches[0], audio: widget.courseEnrollment.classes[widget.classIndex].audios[0]));
+              BlocBuilder<SubscribedCourseUsersBloc, SubscribedCourseUsersState>(
+                  bloc: BlocProvider.of<SubscribedCourseUsersBloc>(context)..get(widget.courseEnrollment.course.id, userId),
+                  builder: (context, subscribedCourseUsersState) {
+                    if (subscribedCourseUsersState is SubscribedCourseUsersSuccess) {
+                      final int favorites =
+                          subscribedCourseUsersState.favoriteUsers != null ? subscribedCourseUsersState.favoriteUsers.length : 0;
+                      final int normalUsers = subscribedCourseUsersState.users != null ? subscribedCourseUsersState.users.length : 0;
+                      final int qty = favorites + normalUsers;
+                      return CourseInfoSection(
+                          onAudioPressed: () => coaches.isNotEmpty
+                              ? _audioAction(coaches[0], widget.courseEnrollment.classes[widget.classIndex].audios[0])
+                              : null,
+                          peopleQty: qty,
+                          onPeoplePressed: () => _peopleAction(subscribedCourseUsersState.users, subscribedCourseUsersState.favoriteUsers),
+                          audioMessageQty: widget.courseEnrollment?.classes[widget.classIndex]?.audios != null
+                              ? widget.courseEnrollment.classes[widget.classIndex].audios.length
+                              : 0,
+                          image: widget.courseEnrollment.course.image);
+                    } else {
+                      return CourseInfoSection(
+                          onAudioPressed: () => coaches.isNotEmpty
+                              ? _audioAction(coaches[0], widget.courseEnrollment.classes[widget.classIndex].audios[0])
+                              : null,
+                          peopleQty: 0,
+                          audioMessageQty: widget.courseEnrollment?.classes[widget.classIndex]?.audios != null
+                              ? widget.courseEnrollment.classes[widget.classIndex].audios.length
+                              : 0,
+                          image: widget.courseEnrollment.course.image);
                     }
-                  },
-                  //TODO: HARDCODED
-                  peopleQty: 50,
-                  audioMessageQty: widget.courseEnrollment?.classes[widget.classIndex]?.audios != null
-                      ? widget.courseEnrollment.classes[widget.classIndex].audios.length
-                      : 0,
-                  image: widget.courseEnrollment.course.image)
+                  })
             ],
             onBackPressed: () => Navigator.pushNamed(context, routeLabels[RouteEnum.root], arguments: {
               'index': widget.courseIndex,
@@ -283,5 +309,54 @@ class _InsideClassesState extends State<InsideClass> {
                 classMovementSection(),
               ]))),
     ]);
+  }
+
+  BlocListener<InsideClassContentBloc, InsideClassContentState> slidingUpPanelComponent(BuildContext context, String userId) {
+    return BlocListener<InsideClassContentBloc, InsideClassContentState>(
+      listener: (context, state) {},
+      child: SlidingUpPanel(
+        onPanelClosed: () {
+          BlocProvider.of<InsideClassContentBloc>(context).emitDefaultState();
+        },
+        backdropEnabled: true,
+        isDraggable: false,
+        header: const SizedBox(),
+        padding: EdgeInsets.zero,
+        color: OlukoColors.black,
+        minHeight: 0.0,
+        maxHeight: 450, //TODO
+        collapsed: const SizedBox(),
+        controller: _buttonController,
+        panel: BlocBuilder<InsideClassContentBloc, InsideClassContentState>(builder: (context, state) {
+          Widget _contentForPanel = const SizedBox();
+          if (state is InsideClassContentDefault) {
+            if (_buttonController.isPanelOpen) {
+              _buttonController.close();
+            }
+            _contentForPanel = const SizedBox();
+          }
+          if (state is InsideClassContentPeopleOpen) {
+            _buttonController.open();
+            _contentForPanel = ModalPeopleEnrolled(userId: userId, users: state.users, favorites: state.favorites);
+          }
+          if (state is InsideClassContentAudioOpen) {
+            _buttonController.open();
+            _contentForPanel = AudioDialogContent(coach: state.coach, audio: state.audio);
+          }
+          if (state is InsideClassContentLoading) {
+            _contentForPanel = UploadingModalLoader(UploadFrom.segmentDetail);
+          }
+          return _contentForPanel;
+        }),
+      ),
+    );
+  }
+
+  _peopleAction(List<dynamic> users, List<dynamic> favorites) {
+    BlocProvider.of<InsideClassContentBloc>(context).openPeoplePanel(users, favorites);
+  }
+
+  _audioAction(UserResponse coach, Audio audio) {
+    BlocProvider.of<InsideClassContentBloc>(context).openAudioPanel(coach, audio);
   }
 }

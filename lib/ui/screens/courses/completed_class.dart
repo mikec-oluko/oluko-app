@@ -29,7 +29,7 @@ class CompletedClass extends StatefulWidget {
 class _CompletedClassState extends State<CompletedClass> {
   User _user;
 
-  PickedFile _image;
+  XFile _image;
   final imagePicker = ImagePicker();
 
   String _imageUrl;
@@ -168,7 +168,7 @@ class _CompletedClassState extends State<CompletedClass> {
   }
 
   showCameraAndSaveSelfie() async {
-    _image = await imagePicker.getImage(source: ImageSource.camera, preferredCameraDevice: CameraDevice.front);
+    _image = await imagePicker.pickImage(source: ImageSource.camera, preferredCameraDevice: CameraDevice.front);
     if (_image != null) {
       BlocProvider.of<CourseEnrollmentUpdateBloc>(context).saveSelfie(widget.courseEnrollment, widget.classIndex, _image);
       setState(() {

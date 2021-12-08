@@ -51,7 +51,7 @@ class TransformationJourneyRepository {
   }
 
   static Future<TransformationJourneyUpload> createTransformationJourneyUpload(
-      FileTypeEnum type, PickedFile file, String userId, int index) async {
+      FileTypeEnum type, XFile file, String userId, int index) async {
     try {
       CollectionReference transformationJourneyUploadsReference =
           projectReference.collection('users').doc(userId).collection('transformationJourneyUploads');
