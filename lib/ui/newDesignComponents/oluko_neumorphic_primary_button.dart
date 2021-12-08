@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/constants/theme.dart';
 
-class OlukoNeumorphicButton extends StatefulWidget {
+class OlukoNeumorphicPrimaryButton extends StatefulWidget {
   final Function() onPressed;
   final String title;
   final Color color;
@@ -13,7 +13,7 @@ class OlukoNeumorphicButton extends StatefulWidget {
   final bool isDisabled;
   final bool isPrimary;
   final bool useBorder;
-  const OlukoNeumorphicButton(
+  const OlukoNeumorphicPrimaryButton(
       {this.title,
       this.onPressed,
       this.thinPadding = false,
@@ -27,10 +27,10 @@ class OlukoNeumorphicButton extends StatefulWidget {
       : super();
 
   @override
-  _OlukoNeumorphicButtonState createState() => _OlukoNeumorphicButtonState();
+  _OlukoNeumorphicPrimaryButtonState createState() => _OlukoNeumorphicPrimaryButtonState();
 }
 
-class _OlukoNeumorphicButtonState extends State<OlukoNeumorphicButton> {
+class _OlukoNeumorphicPrimaryButtonState extends State<OlukoNeumorphicPrimaryButton> {
   Color buttonColor = OlukoColors.primary;
 
   @override

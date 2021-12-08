@@ -17,8 +17,8 @@ class OlukoNeumorphism {
       bool useBorder = false}) {
     return NeumorphicStyle(
         border: useBorder ? NeumorphicBorder(width: 1.5, color: OlukoColors.black) : NeumorphicBorder.none(),
-        depth: 5,
-        intensity: 1,
+        depth: 3,
+        intensity: 0.5,
         color: backgroundColor,
         shape: buttonShape,
         lightSource: LightSource.top,

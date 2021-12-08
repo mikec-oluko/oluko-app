@@ -45,8 +45,7 @@ class _CoachMainPageState extends State<CoachMainPage> {
                   if (state is CoachAssignmentResponse) {
                     _coachAssignment = state.coachAssignmentResponse;
                     if (_coachAssignment != null) {
-                      if (CoachAssignmentStatus.getCoachAssignmentStatus(
-                              _coachAssignment.coachAssignmentStatus as int) ==
+                      if (CoachAssignmentStatus.getCoachAssignmentStatus(_coachAssignment.coachAssignmentStatus as int) ==
                           CoachAssignmentStatusEnum.approved) {
                         return CoachPage(coachId: _coachAssignment.coachId, coachAssignment: _coachAssignment);
                       } else {
@@ -56,14 +55,13 @@ class _CoachMainPageState extends State<CoachMainPage> {
                         );
                       }
                     } else {
-                      return _currentUser.assessmentsCompletedAt != null &&
-                              _currentUser.assessmentsCompletedAt is Timestamp
+                      return _currentUser.assessmentsCompletedAt != null && _currentUser.assessmentsCompletedAt is Timestamp
                           ? CoachAssignedCountDown(
                               currentUser: _currentUser,
                               coachAssignment: _coachAssignment,
                             )
                           : const AssessmentVideos(
-                              isFirstTime: false,
+                              isFirstTime: true,
                               isForCoachPage: true,
                             );
                     }
@@ -73,8 +71,7 @@ class _CoachMainPageState extends State<CoachMainPage> {
                 },
               )
             : NoCoachPage(
-                introductionVideo:
-                    "https://oluko-mvt.s3.us-west-1.amazonaws.com/assessments/emnsmBgZ13UBRqTS26Qd/video.mp4",
+                introductionVideo: "https://oluko-mvt.s3.us-west-1.amazonaws.com/assessments/emnsmBgZ13UBRqTS26Qd/video.mp4",
               );
       },
     );

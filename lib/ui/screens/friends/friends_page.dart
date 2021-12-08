@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/friends/confirm_friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -49,7 +50,7 @@ class _FriendsPageState extends State<FriendsPage> with SingleTickerProviderStat
         showTitle: true,
       ),
       body: Container(
-        color: OlukoColors.black,
+        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
         child: WillPopScope(
           onWillPop: () => AppNavigator.onWillPop(context),
           child: Stack(
@@ -57,42 +58,18 @@ class _FriendsPageState extends State<FriendsPage> with SingleTickerProviderStat
               Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                    padding: OlukoNeumorphism.isNeumorphismDesign
+                        ? const EdgeInsets.symmetric(horizontal: 5, vertical: 20)
+                        : const EdgeInsets.symmetric(horizontal: 5),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 5),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
-                          color: OlukoColors.grayColor,
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: TabBar(
-                                onTap: (int value) {
-                                  _setActiveTabIndex(value: value);
-                                },
-                                labelPadding: EdgeInsets.all(0),
-                                indicatorColor: OlukoColors.grayColor,
-                                indicator: BoxDecoration(
-                                    borderRadius: _activeTabIndex == 0
-                                        ? BorderRadius.only(topLeft: Radius.circular(5), bottomLeft: Radius.circular(5))
-                                        : BorderRadius.only(topRight: Radius.circular(5), bottomRight: Radius.circular(5)),
-                                    color: OlukoColors.primary),
-                                unselectedLabelColor: OlukoColors.white,
-                                labelColor: OlukoColors.black,
-                                controller: _tabController,
-                                tabs: [Tab(text: 'Friends'), Tab(text: 'Requests')],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      child: OlukoNeumorphism.isNeumorphismDesign ? neumoprhicTabs() : defaultTabs(),
                     ),
                   ),
                   Expanded(
                     child: Container(
-                      color: OlukoColors.black,
+                      color:
+                          OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
                       child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10),
                           child: TabBarView(
@@ -107,6 +84,66 @@ class _FriendsPageState extends State<FriendsPage> with SingleTickerProviderStat
           ),
         ),
       ),
+    );
+  }
+
+  Neumorphic neumoprhicTabs() {
+    return Neumorphic(
+      style: NeumorphicStyle(
+          shape: NeumorphicShape.flat,
+          boxShape: NeumorphicBoxShape.stadium(),
+          depth: 5,
+          intensity: 0.35,
+          // lightSource: LightSource.topLeft,
+          color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+          lightSource: LightSource.topLeft,
+          // boxShape: boxShape,
+          shadowDarkColorEmboss: Colors.black,
+          shadowLightColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+          surfaceIntensity: 1,
+          shadowLightColor: Colors.white,
+          shadowDarkColor: Colors.black),
+      // decoration: BoxDecoration(
+      //   borderRadius: BorderRadius.circular(5),
+      //   color: OlukoColors.grayColor,
+      // ),
+      child: friendsTabs(),
+    );
+  }
+
+  Widget defaultTabs() {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(5),
+        color: OlukoColors.grayColor,
+      ),
+      child: friendsTabs(),
+    );
+  }
+
+  Row friendsTabs() {
+    return Row(
+      children: [
+        Expanded(
+          child: TabBar(
+            onTap: (int value) {
+              _setActiveTabIndex(value: value);
+            },
+            labelPadding: EdgeInsets.all(0),
+            indicatorColor: OlukoColors.grayColor,
+            indicator: BoxDecoration(
+                borderRadius: _activeTabIndex == 0
+                    ? BorderRadius.only(topLeft: Radius.circular(5), bottomLeft: Radius.circular(5))
+                    : BorderRadius.only(topRight: Radius.circular(5), bottomRight: Radius.circular(5)),
+                color: OlukoColors.primary),
+            unselectedLabelColor: OlukoColors.white,
+            labelColor: OlukoColors.white,
+            controller: _tabController,
+            tabs: [Tab(text: 'Friends'), Tab(text: 'Requests')],
+          ),
+          // Tab(text: 'Friends'), Tab(text: 'Requests')
+        ),
+      ],
     );
   }
 }

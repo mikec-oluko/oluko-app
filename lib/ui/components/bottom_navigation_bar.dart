@@ -25,7 +25,9 @@ class _State extends State<OlukoBottomNavigationBar> {
               topLeft: OlukoNeumorphism.radiusValue,
               topRight: OlukoNeumorphism.radiusValue,
             ),
-            child: getBottomNavigationBar())
+            child: Container(
+                decoration: const BoxDecoration(border: Border(top: BorderSide(color: OlukoColors.grayColorFadeTop))),
+                child: getBottomNavigationBar()))
         : getBottomNavigationBar();
   }
 
@@ -36,7 +38,7 @@ class _State extends State<OlukoBottomNavigationBar> {
         unselectedItemColor: Colors.white,
         selectedItemColor: Colors.black,
         type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.black,
+        backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
         selectedFontSize: 0,
         unselectedFontSize: 0,
         onTap: (int index) => this.setState(() {

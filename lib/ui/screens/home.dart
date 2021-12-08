@@ -22,7 +22,7 @@ import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/stories_header.dart';
 import 'package:oluko_app/ui/components/video_overlay.dart';
-import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -186,20 +186,21 @@ class _HomeState extends State<Home> {
         padding: const EdgeInsets.symmetric(horizontal: 90),
         child: Row(
           children: [
-            OlukoNeumorphicButton(
-              useBorder: true,
-              color: OlukoColors.primary,
-              title: OlukoLocalizations.get(context, 'enrollToACourse'),
-              onPressed: () {
-                Navigator.pushNamed(context, routeLabels[RouteEnum.courses], arguments: {'homeEnrollTocourse': 'true'});
-              },
-            ),
-            // OlukoPrimaryButton(
-            //   title: OlukoLocalizations.get(context, 'enrollToACourse'),
-            //   onPressed: () {
-            //     Navigator.pushNamed(context, routeLabels[RouteEnum.courses], arguments: {'homeEnrollTocourse': 'true'});
-            //   },
-            // ),
+            OlukoNeumorphism.isNeumorphismDesign
+                ? OlukoNeumorphicPrimaryButton(
+                    useBorder: true,
+                    color: OlukoColors.primary,
+                    title: OlukoLocalizations.get(context, 'enrollToACourse'),
+                    onPressed: () {
+                      Navigator.pushNamed(context, routeLabels[RouteEnum.courses], arguments: {'homeEnrollTocourse': 'true'});
+                    },
+                  )
+                : OlukoPrimaryButton(
+                    title: OlukoLocalizations.get(context, 'enrollToACourse'),
+                    onPressed: () {
+                      Navigator.pushNamed(context, routeLabels[RouteEnum.courses], arguments: {'homeEnrollTocourse': 'true'});
+                    },
+                  ),
           ],
         ));
   }
@@ -230,19 +231,37 @@ class _HomeState extends State<Home> {
               child: Align(
                   alignment: Alignment.center,
                   child: Stack(alignment: Alignment.center, children: [
-                    // Image.asset('assets/courses/play_ellipse.png', height: 85, width: 85, color: Colors.red),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(50),
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                        child: Container(
-                          width: 100,
-                          height: 100,
-                          color: Colors.black.withOpacity(0.5),
-                          child: Padding(
-                              padding: const EdgeInsets.only(left: 3.5),
-                              child:
-                                  Image.asset('assets/courses/play_arrow.png', height: 20, width: 20, color: OlukoColors.white, scale: 2)),
+                    Visibility(
+                        visible: !OlukoNeumorphism.isNeumorphismDesign,
+                        child: Stack(children: [
+                          Align(alignment: Alignment.center, child: Image.asset('assets/courses/play_ellipse.png', height: 85, width: 85)),
+                          Align(
+                            alignment: Alignment.center,
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 25),
+                              child: Image.asset(
+                                'assets/courses/play_arrow.png',
+                                height: 30,
+                                width: 30,
+                              ),
+                            ),
+                          ),
+                        ])),
+                    Visibility(
+                      visible: OlukoNeumorphism.isNeumorphismDesign,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(50),
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                          child: Container(
+                            width: 100,
+                            height: 100,
+                            color: Colors.black.withOpacity(0.5),
+                            child: Padding(
+                                padding: const EdgeInsets.only(left: 3.5),
+                                child: Image.asset('assets/courses/play_arrow.png',
+                                    height: 20, width: 20, scale: 2, color: OlukoColors.white)),
+                          ),
                         ),
                       ),
                     ),
