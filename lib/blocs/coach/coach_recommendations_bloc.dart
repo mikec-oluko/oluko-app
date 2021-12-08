@@ -16,9 +16,9 @@ class CoachRecommendationsSuccess extends CoachRecommendationsState {
   final List<CoachRecommendationDefault> coachRecommendationList;
 }
 
-class CoachRecommendationsDefaultValue extends CoachRecommendationsState {
-  CoachRecommendationsDefaultValue({this.coachRecommendationListDefaultValue});
-  final List<CoachRecommendationDefault> coachRecommendationListDefaultValue;
+class CoachRecommendationsDispose extends CoachRecommendationsState {
+  CoachRecommendationsDispose({this.coachRecommendationListDisposeValue});
+  final List<CoachRecommendationDefault> coachRecommendationListDisposeValue;
 }
 
 class CoachRecommendationsUpdate extends CoachRecommendationsState {
@@ -41,7 +41,7 @@ class CoachRecommendationsBloc extends Cubit<CoachRecommendationsState> {
     if (subscription != null) {
       subscription.cancel();
       subscription = null;
-      emitCoachRecommendationDefaultValue();
+      emitCoachRecommendationDispose();
     }
   }
 
@@ -133,9 +133,9 @@ class CoachRecommendationsBloc extends Cubit<CoachRecommendationsState> {
     }
   }
 
-  void emitCoachRecommendationDefaultValue() async {
+  void emitCoachRecommendationDispose() async {
     try {
-      emit(CoachRecommendationsDefaultValue(coachRecommendationListDefaultValue: []));
+      emit(CoachRecommendationsDispose(coachRecommendationListDisposeValue: []));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

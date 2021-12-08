@@ -17,16 +17,16 @@ class CoachAssignmentFailure extends CoachAssignmentState {
   final dynamic exception;
 }
 
-class CoachAssignmentResponseDefault extends CoachAssignmentState {
-  CoachAssignmentResponseDefault({this.coachAssignmentDefault});
-  final CoachAssignment coachAssignmentDefault;
+class CoachAssignmentResponseDispose extends CoachAssignmentState {
+  CoachAssignmentResponseDispose({this.coachAssignmentDisposeValue});
+  final CoachAssignment coachAssignmentDisposeValue;
 }
 
 class CoachAssignmentBloc extends Cubit<CoachAssignmentState> {
   CoachAssignmentBloc() : super(Loading());
 
   void dispose() {
-    emitCoachAssignmentDefaultValue();
+    emitCoachAssignmentDispose();
   }
 
   void getCoachAssignmentStatus(String userId) async {
@@ -57,9 +57,9 @@ class CoachAssignmentBloc extends Cubit<CoachAssignmentState> {
     }
   }
 
-  void emitCoachAssignmentDefaultValue() async {
+  void emitCoachAssignmentDispose() async {
     try {
-      emit(CoachAssignmentResponseDefault());
+      emit(CoachAssignmentResponseDispose());
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

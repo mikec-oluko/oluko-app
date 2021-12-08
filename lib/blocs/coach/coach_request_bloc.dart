@@ -23,9 +23,9 @@ class GetCoachRequestSuccess extends CoachRequestState {
   GetCoachRequestSuccess({this.coachRequest});
 }
 
-class GetCoachRequestDefault extends CoachRequestState {
-  final List<CoachRequest> coachRequestDefaultValue;
-  GetCoachRequestDefault({this.coachRequestDefaultValue});
+class GetCoachRequestDispose extends CoachRequestState {
+  final List<CoachRequest> coachRequestDisposeValue;
+  GetCoachRequestDispose({this.coachRequestDisposeValue});
 }
 
 class GetCoachRequestUpdate extends CoachRequestState {
@@ -49,7 +49,7 @@ class CoachRequestBloc extends Cubit<CoachRequestState> {
     if (subscription != null) {
       subscription.cancel();
       subscription = null;
-      emitCoachRequestDefaultValue();
+      emitCoachRequestDispose();
     }
   }
 
@@ -153,9 +153,9 @@ class CoachRequestBloc extends Cubit<CoachRequestState> {
     }
   }
 
-  void emitCoachRequestDefaultValue() async {
+  void emitCoachRequestDispose() async {
     try {
-      emit(GetCoachRequestDefault(coachRequestDefaultValue: []));
+      emit(GetCoachRequestDispose(coachRequestDisposeValue: []));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

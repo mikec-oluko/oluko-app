@@ -12,9 +12,9 @@ class CoachSentVideosSuccess extends CoachSentVideosState {
   final List<SegmentSubmission> sentVideos;
 }
 
-class CoachSentVideosDefault extends CoachSentVideosState {
-  CoachSentVideosDefault({this.sentVideos});
-  final List<SegmentSubmission> sentVideos;
+class CoachSentVideosDispose extends CoachSentVideosState {
+  CoachSentVideosDispose({this.sentVideosDisposeValue});
+  final List<SegmentSubmission> sentVideosDisposeValue;
 }
 
 class CoachProfileFailure extends CoachSentVideosState {
@@ -26,7 +26,7 @@ class CoachSentVideosBloc extends Cubit<CoachSentVideosState> {
   CoachSentVideosBloc() : super(Loading());
   @override
   void dispose() {
-    sentVideoDefaultValue();
+    sentVideoDispose();
   }
 
   void getSentVideosByUserId(String coachId) async {
@@ -58,9 +58,9 @@ class CoachSentVideosBloc extends Cubit<CoachSentVideosState> {
     }
   }
 
-  void sentVideoDefaultValue() async {
+  void sentVideoDispose() async {
     try {
-      emit(CoachSentVideosDefault(sentVideos: []));
+      emit(CoachSentVideosDispose(sentVideosDisposeValue: []));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

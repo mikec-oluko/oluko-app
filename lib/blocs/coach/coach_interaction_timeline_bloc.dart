@@ -20,9 +20,9 @@ class CoachTimelineItemsUpdate extends CoachTimelineItemsState {
   final List<CoachTimelineItem> timelineItems;
 }
 
-class CoachTimelineItemsDefault extends CoachTimelineItemsState {
-  CoachTimelineItemsDefault({this.timelineItemsDefault});
-  final List<CoachTimelineItem> timelineItemsDefault;
+class CoachTimelineItemsDispose extends CoachTimelineItemsState {
+  CoachTimelineItemsDispose({this.timelineItemsDisposeValue});
+  final List<CoachTimelineItem> timelineItemsDisposeValue;
 }
 
 class CoachTimelineItemsFailure extends CoachTimelineItemsState {
@@ -38,7 +38,7 @@ class CoachTimelineItemsBloc extends Cubit<CoachTimelineItemsState> {
     if (subscription != null) {
       subscription.cancel();
       subscription = null;
-      emitTimelineItemsDefaultValue();
+      emitTimelineItemsDispose();
     }
   }
 
@@ -95,9 +95,9 @@ class CoachTimelineItemsBloc extends Cubit<CoachTimelineItemsState> {
     }
   }
 
-  void emitTimelineItemsDefaultValue() async {
+  void emitTimelineItemsDispose() async {
     try {
-      emit(CoachTimelineItemsDefault(timelineItemsDefault: []));
+      emit(CoachTimelineItemsDispose(timelineItemsDisposeValue: []));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

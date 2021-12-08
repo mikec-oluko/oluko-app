@@ -10,9 +10,9 @@ class CoachReviewPendingSuccess extends CoachReviewPendingState {
   CoachReviewPendingSuccess({this.reviewsPending});
 }
 
-class CoachReviewPendingDefault extends CoachReviewPendingState {
-  final num reviewsPendingDefaultValue;
-  CoachReviewPendingDefault({this.reviewsPendingDefaultValue});
+class CoachReviewPendingDispose extends CoachReviewPendingState {
+  final num reviewsPendingDisposeValue;
+  CoachReviewPendingDispose({this.reviewsPendingDisposeValue});
 }
 
 class CoachReviewPendingFailure extends CoachReviewPendingState {
@@ -24,7 +24,7 @@ class CoachReviewPendingBloc extends Cubit<CoachReviewPendingState> {
   CoachReviewPendingBloc() : super(CoachReviewPendingLoading());
   @override
   void dispose() {
-    coachReviewPendingDefaultValue();
+    coachReviewPendingDispose();
   }
 
   void updateReviewPendingMessage(num numberOfPendingReviewItems) async {
@@ -41,9 +41,9 @@ class CoachReviewPendingBloc extends Cubit<CoachReviewPendingState> {
     }
   }
 
-  void coachReviewPendingDefaultValue() async {
+  void coachReviewPendingDispose() async {
     try {
-      emit(CoachReviewPendingDefault(reviewsPendingDefaultValue: 0));
+      emit(CoachReviewPendingDispose(reviewsPendingDisposeValue: 0));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

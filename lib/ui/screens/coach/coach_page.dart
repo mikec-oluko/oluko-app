@@ -177,14 +177,14 @@ class _CoachPageState extends State<CoachPage> {
                             });
                           }
                         }
-                        if (state is CoachMentoredVideosDefault) {
-                          _annotationVideosContent = state.defaultContent;
+                        if (state is CoachMentoredVideosDispose) {
+                          _annotationVideosContent = state.mentoredVideosDisposeValue;
                           segmentsWithReview.clear();
                         }
                         return BlocBuilder<CoachSentVideosBloc, CoachSentVideosState>(
                           builder: (context, state) {
-                            if (state is CoachSentVideosDefault) {
-                              _sentVideosContent = state.sentVideos;
+                            if (state is CoachSentVideosDispose) {
+                              _sentVideosContent = state.sentVideosDisposeValue;
                             }
                             if (state is CoachSentVideosSuccess) {
                               _sentVideosContent = state.sentVideos
@@ -208,8 +208,8 @@ class _CoachPageState extends State<CoachPage> {
                                 }
                               },
                               builder: (context, timelineState) {
-                                if (timelineState is CoachTimelineItemsDefault) {
-                                  _timelineItemsContent = timelineState.timelineItemsDefault;
+                                if (timelineState is CoachTimelineItemsDispose) {
+                                  _timelineItemsContent = timelineState.timelineItemsDisposeValue;
                                   _allContent.clear();
                                   _coachRecommendationTimelineContent.clear();
                                   _mentoredVideoTimelineContent.clear();
@@ -224,8 +224,8 @@ class _CoachPageState extends State<CoachPage> {
                                   listenWhen: (CoachRecommendationsState previous, CoachRecommendationsState current) =>
                                       current is CoachRecommendationsUpdate,
                                   listener: (context, state) {
-                                    if (state is CoachRecommendationsDefaultValue) {
-                                      _coachRecommendations = state.coachRecommendationListDefaultValue;
+                                    if (state is CoachRecommendationsDisposeValue) {
+                                      _coachRecommendations = state.coachRecommendationListDisposeValue;
                                     }
                                     if (state is CoachRecommendationsUpdate) {
                                       checkRecommendationUpdate(state.coachRecommendationContent);
@@ -309,8 +309,8 @@ class _CoachPageState extends State<CoachPage> {
         return BlocConsumer<CoachRequestBloc, CoachRequestState>(
           listenWhen: (CoachRequestState previous, CoachRequestState current) => current is GetCoachRequestUpdate,
           listener: (context, state) {
-            if (state is GetCoachRequestDefault) {
-              _coachRequestUpdateList = state.coachRequestDefaultValue;
+            if (state is GetCoachRequestDispose) {
+              _coachRequestUpdateList = state.coachRequestDisposeValue;
             }
             if (state is GetCoachRequestUpdate) {
               _coachRequestUpdateList = state.values;

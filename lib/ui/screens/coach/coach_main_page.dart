@@ -48,8 +48,8 @@ class _CoachMainPageState extends State<CoachMainPage> {
         return _currentUser.currentPlan >= 1
             ? BlocBuilder<CoachAssignmentBloc, CoachAssignmentState>(
                 builder: (context, state) {
-                  if (state is CoachAssignmentResponseDefault) {
-                    _coachAssignment = state.coachAssignmentDefault;
+                  if (state is CoachAssignmentResponseDispose) {
+                    _coachAssignment = state.coachAssignmentDisposeValue;
                   }
                   if (state is CoachAssignmentResponse) {
                     _coachAssignment = state.coachAssignmentResponse;
