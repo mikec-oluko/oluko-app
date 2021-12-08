@@ -55,7 +55,7 @@ class TimerUtils {
       width: 340,
       child: SegmentedIndeterminateProgressbar(
         max: totalRounds.toDouble() > 0 ? totalRounds.toDouble() : 1,
-        progress: currentRound.toDouble() < totalRounds.toDouble() ? currentRound.toDouble() : 1,
+        progress: currentRound.toDouble() <= totalRounds.toDouble() ? currentRound.toDouble() : 1,
       ));
 
   static Widget timeTimer(double progressValue, String duration, BuildContext context, [String counter]) {
