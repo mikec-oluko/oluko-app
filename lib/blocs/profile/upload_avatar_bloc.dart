@@ -35,16 +35,17 @@ class ProfileAvatarBloc extends Cubit<ProfileAvatarState> {
   ProfileRepository _profileRepository = ProfileRepository();
 
   void uploadProfileAvatarImage({DeviceContentFrom uploadedFrom, UploadFrom contentFor}) async {
-    PickedFile _image;
+    XFile _image;
     try {
-      final imagePicker = ImagePicker();
+      final ImagePicker imagePicker = ImagePicker();
+
       if (uploadedFrom == DeviceContentFrom.gallery) {
-        _image = await imagePicker.getImage(source: ImageSource.gallery);
+        _image = await imagePicker.pickImage(source: ImageSource.gallery, maxWidth: 360, maxHeight: 360, imageQuality: 75);
       } else if (uploadedFrom == DeviceContentFrom.camera) {
-        _image = await imagePicker.getImage(source: ImageSource.camera);
+        _image = await imagePicker.pickImage(source: ImageSource.camera, maxWidth: 360, maxHeight: 360, imageQuality: 75);
       }
 
-      if (_image == null && _image is! PickedFile) {
+      if (_image == null && _image is! XFile) {
         emit(ProfileAvatarFailure(exception: Exception()));
         return;
       } else if (p.extension(_image.path) != ImageUtils.jpegFormat && p.extension(_image.path) != ImageUtils.jpgFormat) {

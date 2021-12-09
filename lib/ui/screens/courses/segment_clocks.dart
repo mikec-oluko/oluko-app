@@ -57,8 +57,7 @@ class SegmentClocks extends StatefulWidget {
   final List<Segment> segments;
   final int courseIndex;
 
-  const SegmentClocks(
-      {Key key, this.courseIndex, this.workoutType, this.classIndex, this.segmentIndex, this.courseEnrollment, this.segments})
+  SegmentClocks({Key key, this.courseIndex, this.workoutType, this.classIndex, this.segmentIndex, this.courseEnrollment, this.segments})
       : super(key: key);
 
   @override
@@ -912,7 +911,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
       if (_isVideoUploaded) {
         callBlocToCreateStory(context, _segmentSubmission);
       }
-    } else {
+    } else if (_segmentSubmission == null) {
       createSegmentSubmission();
     }
   }

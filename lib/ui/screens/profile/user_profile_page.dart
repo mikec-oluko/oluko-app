@@ -45,7 +45,8 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class UserProfilePage extends StatefulWidget {
   final UserResponse userRequested;
-  const UserProfilePage({this.userRequested});
+  final bool isFriend;
+  const UserProfilePage({this.userRequested, this.isFriend});
   @override
   _UserProfilePageState createState() => _UserProfilePageState();
 }
@@ -380,7 +381,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
                               titleForSection: OlukoLocalizations.get(context, 'assessmentVideos'),
                               routeForSection: RouteEnum.profileAssessmentVideos,
                               contentForSection: TransformListOfItemsToWidget.getWidgetListFromContent(
-                                  assessmentVideoData: _assessmentVideosContent, requestedFromRoute: ActualProfileRoute.userProfile))
+                                  assessmentVideoData: _assessmentVideosContent,
+                                  requestedFromRoute: ActualProfileRoute.userProfile,
+                                  isFriend: widget.isFriend))
                           : defaultWidgetNoContent;
                     }),
                     BlocBuilder<TransformationJourneyBloc, TransformationJourneyState>(
@@ -504,18 +507,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
   Padding _buildCarouselSection({RouteEnum routeForSection, String titleForSection, List<Widget> contentForSection}) {
     return Padding(
         padding: const EdgeInsets.only(top: 25),
-        child: CarouselSmallSection(
-            routeToGo: routeForSection,
-            title: titleForSection,
-            userToGetData: _userProfileToDisplay,
-            children: contentForSection.isNotEmpty
-                ? contentForSection
-                : [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 150),
-                      child: OlukoCircularProgressIndicator(),
-                    )
-                  ]));
+        child: contentForSection.isNotEmpty
+            ? CarouselSmallSection(
+                routeToGo: routeForSection, title: titleForSection, userToGetData: _userProfileToDisplay, children: contentForSection)
+            : const SizedBox());
   }
 
   List<Widget> returnCoursesWidget({List<CourseEnrollment> listOfCourses}) {

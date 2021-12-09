@@ -51,7 +51,7 @@ class _CoachCarouselSliderSectionState extends State<CoachCarouselSliderSection>
                           options: CarouselOptions(
                               height: 250.0, autoPlay: true, autoPlayInterval: const Duration(seconds: 5), enlargeCenterPage: true),
                         )
-                      : SizedBox.shrink(),
+                      : const SizedBox.shrink(),
                 )
               else
                 Align(child: showVideoPlayer(widget.introductionVideo)),

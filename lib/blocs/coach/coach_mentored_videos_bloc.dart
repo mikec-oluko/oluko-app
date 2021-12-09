@@ -17,6 +17,11 @@ class CoachMentoredVideosSuccess extends CoachMentoredVideosState {
   final List<Annotation> mentoredVideos;
 }
 
+class CoachMentoredVideosDispose extends CoachMentoredVideosState {
+  CoachMentoredVideosDispose({this.mentoredVideosDisposeValue});
+  final List<Annotation> mentoredVideosDisposeValue;
+}
+
 class CoachMentoredVideosUpdate extends CoachMentoredVideosState {
   CoachMentoredVideosUpdate({this.mentoredVideos});
   final List<Annotation> mentoredVideos;
@@ -38,6 +43,7 @@ class CoachMentoredVideosBloc extends Cubit<CoachMentoredVideosState> {
     if (subscription != null) {
       subscription.cancel();
       subscription = null;
+      emitMentoredVideoDispose();
     }
   }
 
@@ -85,21 +91,6 @@ class CoachMentoredVideosBloc extends Cubit<CoachMentoredVideosState> {
     return subscription;
   }
 
-  // void getMentoredVideosByUserId(String userId, String coachId) async {
-  //   try {
-  //     final List<Annotation> coachAnnotations =
-  //         await _coachRepository.getCoachAnnotationsByUserId(userId, coachId);
-  //     emit(CoachMentoredVideosSuccess(mentoredVideos: coachAnnotations));
-  //   } catch (exception, stackTrace) {
-  //     await Sentry.captureException(
-  //       exception,
-  //       stackTrace: stackTrace,
-  //     );
-  //     emit(CoachMentoredVideoFailure(exception: exception));
-  //     rethrow;
-  //   }
-  // }
-
   void updateCoachAnnotationFavoriteValue({Annotation coachAnnotation, List<Annotation> currentMentoredVideosContent}) async {
     try {
       final List<Annotation> coachAnnotationsUpdated =
@@ -123,7 +114,19 @@ class CoachMentoredVideosBloc extends Cubit<CoachMentoredVideosState> {
   ) async {
     try {
       await _coachRepository.updateMentoredVideoNotificationStatus(coachId, annotationId, notificationValue);
-      //getMentoredVideosByUserId(userId, coachId);
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(CoachMentoredVideoFailure(exception: exception));
+      rethrow;
+    }
+  }
+
+  void emitMentoredVideoDispose() async {
+    try {
+      emit(CoachMentoredVideosDispose(mentoredVideosDisposeValue: []));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

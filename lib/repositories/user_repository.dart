@@ -116,7 +116,7 @@ class UserRepository {
     return null;
   }
 
-  Future<UserResponse> updateUserAvatar(UserResponse user, PickedFile file) async {
+  Future<UserResponse> updateUserAvatar(UserResponse user, XFile file) async {
     DocumentReference<Object> userReference = getUserReference(user);
 
     final thumbnail = await ImageUtils().getThumbnailForImage(file, 250);
@@ -138,7 +138,7 @@ class UserRepository {
     }
   }
 
-  Future<UserResponse> updateUserCoverImage({UserResponse user, PickedFile coverImage}) async {
+  Future<UserResponse> updateUserCoverImage({UserResponse user, XFile coverImage}) async {
     DocumentReference<Object> userReference = getUserReference(user);
 
     final coverDownloadImage = await _uploadFile(coverImage.path, userReference.path);
