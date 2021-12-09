@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/course_category.dart';
@@ -22,6 +25,15 @@ class CourseCategoryFailure extends CourseCategoryState {
 class CourseCategoryBloc extends Cubit<CourseCategoryState> {
   CourseCategoryBloc() : super(CourseCategoryLoading());
 
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>> subscription;
+  @override
+  void dispose() {
+    if (subscription != null) {
+      subscription.cancel();
+      subscription = null;
+    }
+  }
+
   void get() async {
     if (!(state is CourseCategorySuccess)) {
       emit(CourseCategoryLoading());
@@ -37,5 +49,17 @@ class CourseCategoryBloc extends Cubit<CourseCategoryState> {
       emit(CourseCategoryFailure(exception: exception));
       rethrow;
     }
+  }
+
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>> getStream() {
+    subscription ??= CourseCategoryRepository().getCategoriesSubscription().listen((snapshot) async {
+      List<CourseCategory> courseCategories = [];
+      snapshot.docs.forEach((doc) {
+        final Map<String, dynamic> content = doc.data();
+        courseCategories.add(CourseCategory.fromJson(content));
+      });
+      emit(CourseCategorySuccess(values: courseCategories));
+    });
+    return subscription;
   }
 }
