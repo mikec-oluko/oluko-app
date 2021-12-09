@@ -98,9 +98,10 @@ class _State extends State<TaskCard> {
                                         width: 80,
                                         height: 40,
                                         child: OlukoNeumorphicSecondaryButton(
+                                          thinPadding: true,
+                                          textColor: OlukoColors.primary,
                                           isExpanded: false,
                                           useBorder: false,
-                                          color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
                                           title: OlukoLocalizations.get(context, 'start'),
                                           onPressed: () {
                                             print('done');

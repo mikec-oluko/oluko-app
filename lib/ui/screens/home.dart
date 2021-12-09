@@ -22,6 +22,7 @@ import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/stories_header.dart';
 import 'package:oluko_app/ui/components/video_overlay.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -189,7 +190,6 @@ class _HomeState extends State<Home> {
             OlukoNeumorphism.isNeumorphismDesign
                 ? OlukoNeumorphicPrimaryButton(
                     useBorder: true,
-                    color: OlukoColors.primary,
                     title: OlukoLocalizations.get(context, 'enrollToACourse'),
                     onPressed: () {
                       Navigator.pushNamed(context, routeLabels[RouteEnum.courses], arguments: {'homeEnrollTocourse': 'true'});
@@ -249,21 +249,8 @@ class _HomeState extends State<Home> {
                         ])),
                     Visibility(
                       visible: OlukoNeumorphism.isNeumorphismDesign,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(50),
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                          child: Container(
-                            width: 100,
-                            height: 100,
-                            color: Colors.black.withOpacity(0.5),
-                            child: Padding(
-                                padding: const EdgeInsets.only(left: 3.5),
-                                child: Image.asset('assets/courses/play_arrow.png',
-                                    height: 20, width: 20, scale: 2, color: OlukoColors.white)),
-                          ),
-                        ),
-                      ),
+                      child: OlukoBlurredButton(childContent: Image.asset('assets/courses/play_arrow.png',
+                  height: 20, width: 20, scale: 2, color: OlukoColors.white)),
                     ),
                   ])),
             )),

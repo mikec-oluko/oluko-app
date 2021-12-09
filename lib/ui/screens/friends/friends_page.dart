@@ -89,24 +89,19 @@ class _FriendsPageState extends State<FriendsPage> with SingleTickerProviderStat
 
   Neumorphic neumoprhicTabs() {
     return Neumorphic(
-      style: NeumorphicStyle(
+      style: const NeumorphicStyle(
           shape: NeumorphicShape.flat,
           boxShape: NeumorphicBoxShape.stadium(),
           depth: 5,
           intensity: 0.35,
-          // lightSource: LightSource.topLeft,
+          border: NeumorphicBorder(width: 1.5, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark),
           color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
           lightSource: LightSource.topLeft,
-          // boxShape: boxShape,
           shadowDarkColorEmboss: Colors.black,
           shadowLightColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
           surfaceIntensity: 1,
           shadowLightColor: Colors.white,
           shadowDarkColor: Colors.black),
-      // decoration: BoxDecoration(
-      //   borderRadius: BorderRadius.circular(5),
-      //   color: OlukoColors.grayColor,
-      // ),
       child: friendsTabs(),
     );
   }

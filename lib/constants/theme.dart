@@ -7,19 +7,44 @@ class OlukoNeumorphism {
   static const bool isNeumorphismDesign = true;
   static const Radius radiusValue = Radius.circular(15.0);
 
-  //TODO: MOVE TO UTILS, USE ENUMS FOR STYLES EASIER WAY TO USE PARAMETERS
-  static NeumorphicStyle neumorphicStyle(
-      {Color backgroundColor,
-      NeumorphicShape buttonShape,
-      NeumorphicBoxShape boxShape,
+  static NeumorphicStyle primaryButtonStyle(
+      {bool useBorder = false,
       bool ligthShadow = true,
       bool darkShadow = true,
-      bool useBorder = false}) {
+      num depth = 3,
+      NeumorphicShape buttonShape,
+      NeumorphicBoxShape boxShape}) {
     return NeumorphicStyle(
-        border: useBorder ? NeumorphicBorder(width: 1.5, color: OlukoColors.black) : NeumorphicBorder.none(),
+        border: useBorder
+            ? const NeumorphicBorder(width: 1.5, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark)
+            : const NeumorphicBorder.none(),
         depth: 3,
         intensity: 0.5,
-        color: backgroundColor,
+        color: OlukoNeumorphismColors.initialGradientColorPrimary,
+        shape: buttonShape,
+        lightSource: LightSource.top,
+        boxShape: boxShape,
+        shadowDarkColorEmboss: OlukoNeumorphismColors.finalGradientColorPrimary,
+        shadowLightColorEmboss: OlukoColors.black,
+        surfaceIntensity: 1,
+        shadowLightColor: ligthShadow ? Colors.white : Colors.transparent,
+        shadowDarkColor: darkShadow ? Colors.black : Colors.transparent);
+  }
+
+  static NeumorphicStyle secondaryButtonStyle(
+      {bool useBorder = false,
+      bool ligthShadow = true,
+      bool darkShadow = true,
+      num depth = 3,
+      NeumorphicShape buttonShape,
+      NeumorphicBoxShape boxShape}) {
+    return NeumorphicStyle(
+        border: useBorder
+            ? const NeumorphicBorder(width: 1.5, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark)
+            : const NeumorphicBorder.none(),
+        depth: 3,
+        intensity: 0.5,
+        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
         shape: buttonShape,
         lightSource: LightSource.top,
         boxShape: boxShape,

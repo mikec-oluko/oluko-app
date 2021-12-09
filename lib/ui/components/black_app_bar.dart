@@ -152,10 +152,14 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
   Container neumorphicDivider(BuildContext context) {
     return Container(
         width: MediaQuery.of(context).size.width,
-        height: 2,
+        height: 1.5,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [OlukoColors.grayColorFadeBottom, OlukoColors.grayColor, OlukoColors.grayColorFadeBottom],
+            colors: [
+              OlukoColors.grayColorFadeBottom,
+              OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+              OlukoColors.grayColorFadeBottom
+            ],
             stops: [0.0, 0.5, 1],
           ),
         ));

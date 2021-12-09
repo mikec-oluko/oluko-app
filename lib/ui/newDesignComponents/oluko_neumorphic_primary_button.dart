@@ -5,22 +5,26 @@ import 'package:oluko_app/constants/theme.dart';
 class OlukoNeumorphicPrimaryButton extends StatefulWidget {
   final Function() onPressed;
   final String title;
-  final Color color;
+  // final Color color;
   final Color textColor;
   final TextAlign textAlign;
   final Widget icon;
   final bool thinPadding;
+  final bool onlyIcon;
   final bool isDisabled;
   final bool isPrimary;
   final bool useBorder;
+  final bool isExpanded;
   const OlukoNeumorphicPrimaryButton(
       {this.title,
       this.onPressed,
-      this.thinPadding = false,
-      this.color,
+      // this.color,
       this.textColor = Colors.black,
       this.textAlign = TextAlign.center,
       this.icon,
+      this.thinPadding = false,
+      this.onlyIcon = false,
+      this.isExpanded = true,
       this.isDisabled = false,
       this.useBorder = false,
       this.isPrimary = true})
@@ -35,28 +39,33 @@ class _OlukoNeumorphicPrimaryButtonState extends State<OlukoNeumorphicPrimaryBut
 
   @override
   Widget build(BuildContext context) {
-    if (widget.color != null && !widget.isPrimary) {
-      buttonColor = widget.color;
-    }
-    if (widget.isDisabled) {
-      buttonColor = OlukoColors.disabled;
-    }
-    return Expanded(
-      child: NeumorphicButton(
-        onPressed: () {
-          print('working..');
-        },
-        padding: EdgeInsets.all(10),
-        style: OlukoNeumorphism.neumorphicStyle(
-            useBorder: widget.useBorder,
-            backgroundColor: widget.color,
-            buttonShape: NeumorphicShape.convex,
-            boxShape: NeumorphicBoxShape.stadium(),
-            ligthShadow: false,
-            darkShadow: true),
-        child: Center(
-          child: _textLabel(),
-        ),
+    // if (widget.color != null && !widget.isPrimary) {
+    //   buttonColor = widget.color;
+    // }
+    // if (widget.isDisabled) {
+    //   buttonColor = OlukoColors.disabled;
+    // }
+    return widget.isExpanded
+        ? Expanded(
+            child: primaryButton(),
+          )
+        : primaryButton();
+  }
+
+  NeumorphicButton primaryButton() {
+    return NeumorphicButton(
+      onPressed: () {
+        widget.onPressed != null ? widget.onPressed() : () {};
+      },
+      padding: EdgeInsets.all(10),
+      style: OlukoNeumorphism.primaryButtonStyle(
+          useBorder: widget.useBorder,
+          buttonShape: NeumorphicShape.convex,
+          boxShape: NeumorphicBoxShape.stadium(),
+          ligthShadow: false,
+          darkShadow: true),
+      child: Center(
+        child: widget.onlyIcon ? widget.icon : _textLabel(),
       ),
     );
   }
