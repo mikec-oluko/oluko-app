@@ -87,11 +87,11 @@ class _InsideClassesState extends State<InsideClass> {
             BlocProvider.of<SubscribedCourseUsersBloc>(context).get(widget.courseEnrollment.course.id, authState.user.id);
             return form();
           } else {
-            return SizedBox();
+            return const SizedBox();
           }
         });
       } else {
-        return SizedBox();
+        return const SizedBox();
       }
     });
   }
@@ -108,7 +108,7 @@ class _InsideClassesState extends State<InsideClass> {
                   children: [
                     SlidingUpPanel(
                         controller: panelController,
-                        borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                        borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
                         minHeight: 5,
                         collapsed: Container(
                           color: Colors.black,
@@ -272,10 +272,13 @@ class _InsideClassesState extends State<InsideClass> {
                 }
               })
             ],
-            onBackPressed: () => Navigator.pushNamed(context, routeLabels[RouteEnum.root], arguments: {
-              'index': widget.courseIndex,
-              'classIndex': widget.classIndex,
-            }),
+            onBackPressed: () {
+              Navigator.pop(context);
+              Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.root], arguments: {
+                'index': widget.courseIndex,
+                'classIndex': widget.classIndex,
+              });
+            },
           )),
       Padding(
           padding: EdgeInsets.only(right: 15, left: 15, top: 25),
