@@ -31,11 +31,12 @@ import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 
 class TaskDetails extends StatefulWidget {
-  const TaskDetails({this.taskIndex, this.isLastTask = false, this.isPublic, Key key}) : super(key: key);
+  const TaskDetails({this.taskIndex, this.isLastTask = false, this.isPublic, Key key, this.isComingFromCoach = false}) : super(key: key);
 
   final int taskIndex;
   final bool isLastTask;
   final bool isPublic;
+  final bool isComingFromCoach;
 
   @override
   _TaskDetailsState createState() => _TaskDetailsState();
@@ -60,7 +61,14 @@ class _TaskDetailsState extends State<TaskDetails> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
+    return WillPopScope(onWillPop: () async {
+      if (Navigator.canPop(context)) {
+        return true;
+      } else {
+        Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
+        return false;
+      }
+    }, child: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
         return BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(
           builder: (context, assessmentAssignmentState) {
@@ -80,7 +88,7 @@ class _TaskDetailsState extends State<TaskDetails> {
       } else {
         return nil;
       }
-    });
+    }));
   }
 
   Widget form() {
@@ -95,6 +103,11 @@ class _TaskDetailsState extends State<TaskDetails> {
                     _controller.pause();
                   }
                   Navigator.pop(context);
+                  if (!Navigator.canPop(context)) {
+                    Navigator.pushNamed(context, routeLabels[RouteEnum.root], arguments: {
+                      'tab': 1,
+                    });
+                  }
                 }),
             body: Container(
                 color: Colors.black,
@@ -295,8 +308,11 @@ class _TaskDetailsState extends State<TaskDetails> {
                           'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
                         });
                       } else {
-                        Navigator.pop(context);
-                        Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos], arguments: {'isFirstTime': false});
+                        if (Navigator.canPop(context)) {
+                          Navigator.pop(context);
+                        } else {
+                          Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos], arguments: {'isFirstTime': false});
+                        }
                       }
                     }
                   },
@@ -336,7 +352,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                           _controller.pause();
                         }
                         Navigator.pop(context);
-                        Navigator.pop(context);
+                        //Navigator.pop(context);
                         return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
                           'taskIndex': widget.taskIndex,
                           'isPublic': widget.isPublic,

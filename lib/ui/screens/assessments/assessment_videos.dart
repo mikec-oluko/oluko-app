@@ -60,10 +60,14 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
         onWillPop: () async {
           if (widget.isFirstTime) {
             //TODO: check wanted flow BlocProvider.of<AuthBloc>(context).logout(context);
-            Navigator.popAndPushNamed(context, routeLabels[RouteEnum.root]);
             return false;
           }
-          return true;
+          if (Navigator.canPop(context)) {
+            return true;
+          } else {
+            Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
+            return false;
+          }
         },
         child: BlocListener<AssessmentAssignmentBloc, AssessmentAssignmentState>(
           listener: (context, assessmentAssignmentState) {
@@ -118,6 +122,12 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                         _controller.pause();
                       }
                       Navigator.pop(context);
+                      //TODO: fix for case in which there is no more screen in navigation stack
+                      if (!Navigator.canPop(context)) {
+                        Navigator.pushNamed(context, routeLabels[RouteEnum.root], arguments: {
+                          'tab': 1,
+                        });
+                      }
                       if (_controller != null) {
                         _controller.pause();
                       }
@@ -340,7 +350,11 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                       title: OlukoLocalizations.get(context, 'goBack'),
                       thinPadding: true,
                       onPressed: () {
-                        Navigator.pop(context);
+                        if (Navigator.canPop(context)) {
+                          Navigator.pop(context);
+                        } else {
+                          Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
+                        }
                       },
                     ),
                     const SizedBox(width: 20),

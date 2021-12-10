@@ -351,8 +351,10 @@ class Routes {
 
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = MainPage(
-            index: argumentsToAdd == null || argumentsToAdd['index'] == null ? null : argumentsToAdd['index'] as int,
-            classIndex: argumentsToAdd == null || argumentsToAdd['classIndex'] == null ? null : argumentsToAdd['classIndex'] as int);
+          index: argumentsToAdd == null || argumentsToAdd['index'] == null ? null : argumentsToAdd['index'] as int,
+          classIndex: argumentsToAdd == null || argumentsToAdd['classIndex'] == null ? null : argumentsToAdd['classIndex'] as int,
+          tab: argumentsToAdd == null || argumentsToAdd['tab'] == null ? null : argumentsToAdd['tab'] as int,
+        );
         break;
       case RouteEnum.signUp:
         newRouteView = SignUpPage();
@@ -459,7 +461,8 @@ class Routes {
           )
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
-        newRouteView = UserProfilePage(userRequested: argumentsToAdd['userRequested'] as UserResponse, isFriend: argumentsToAdd['isFriend'] as bool);
+        newRouteView =
+            UserProfilePage(userRequested: argumentsToAdd['userRequested'] as UserResponse, isFriend: argumentsToAdd['isFriend'] as bool);
         break;
       case RouteEnum.profileChallenges:
         providers = [BlocProvider<ChallengeBloc>.value(value: _challengeBloc)];
