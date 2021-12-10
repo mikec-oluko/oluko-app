@@ -109,6 +109,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
             BlocProvider.of<TaskSubmissionBloc>(context).checkCompleted(_assessmentAssignment, _assessment);
             BlocProvider.of<TaskSubmissionListBloc>(context).get(_assessmentAssignment);
             var route = routeLabels[RouteEnum.assessmentVideos];
+            //TODO: issue here if route isn't in the stack example: coming from coach tab
             Navigator.popUntil(context, ModalRoute.withName(route));
             Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {
               'taskIndex': widget.taskIndex,

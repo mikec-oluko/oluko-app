@@ -61,7 +61,14 @@ class _TaskDetailsState extends State<TaskDetails> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
+    return WillPopScope(onWillPop: () async {
+      if (Navigator.canPop(context)) {
+        return true;
+      } else {
+        Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
+        return false;
+      }
+    }, child: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
         return BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(
           builder: (context, assessmentAssignmentState) {
@@ -81,7 +88,7 @@ class _TaskDetailsState extends State<TaskDetails> {
       } else {
         return nil;
       }
-    });
+    }));
   }
 
   Widget form() {
@@ -96,6 +103,11 @@ class _TaskDetailsState extends State<TaskDetails> {
                     _controller.pause();
                   }
                   Navigator.pop(context);
+                  if (!Navigator.canPop(context)) {
+                    Navigator.pushNamed(context, routeLabels[RouteEnum.root], arguments: {
+                      'tab': 1,
+                    });
+                  }
                 }),
             body: Container(
                 color: Colors.black,
@@ -298,9 +310,8 @@ class _TaskDetailsState extends State<TaskDetails> {
                       } else {
                         if (Navigator.canPop(context)) {
                           Navigator.pop(context);
-                          Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos], arguments: {'isFirstTime': false});
                         } else {
-                          Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
+                          Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos], arguments: {'isFirstTime': false});
                         }
                       }
                     }
@@ -341,7 +352,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                           _controller.pause();
                         }
                         Navigator.pop(context);
-                        Navigator.pop(context);
+                        //Navigator.pop(context);
                         return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
                           'taskIndex': widget.taskIndex,
                           'isPublic': widget.isPublic,
