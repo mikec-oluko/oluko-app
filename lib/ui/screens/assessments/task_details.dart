@@ -31,11 +31,12 @@ import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 
 class TaskDetails extends StatefulWidget {
-  const TaskDetails({this.taskIndex, this.isLastTask = false, this.isPublic, Key key}) : super(key: key);
+  const TaskDetails({this.taskIndex, this.isLastTask = false, this.isPublic, Key key, this.isComingFromCoach = false}) : super(key: key);
 
   final int taskIndex;
   final bool isLastTask;
   final bool isPublic;
+  final bool isComingFromCoach;
 
   @override
   _TaskDetailsState createState() => _TaskDetailsState();
@@ -295,8 +296,12 @@ class _TaskDetailsState extends State<TaskDetails> {
                           'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
                         });
                       } else {
-                        Navigator.pop(context);
-                        Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos], arguments: {'isFirstTime': false});
+                        if (Navigator.canPop(context)) {
+                          Navigator.pop(context);
+                          Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos], arguments: {'isFirstTime': false});
+                        } else {
+                          Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
+                        }
                       }
                     }
                   },
