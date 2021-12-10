@@ -122,6 +122,12 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                         _controller.pause();
                       }
                       Navigator.pop(context);
+                      //TODO: fix for case in which there is no more screen in navigation stack
+                      if (!Navigator.canPop(context)) {
+                        Navigator.pushNamed(context, routeLabels[RouteEnum.root], arguments: {
+                          'tab': 1,
+                        });
+                      }
                       if (_controller != null) {
                         _controller.pause();
                       }
