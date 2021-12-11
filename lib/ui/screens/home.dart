@@ -58,7 +58,7 @@ class _HomeState extends State<Home> {
         }, builder: (context, courseEnrollmentListState) {
           if (courseEnrollmentListState is CourseEnrollmentsByUserSuccess) {
             _courseEnrollments =
-                courseEnrollmentListState.courseEnrollments.where((courseEnroll) => courseEnroll.isUnenrolled != true).toList();
+                courseEnrollmentListState.courseEnrollments/*.where((courseEnroll) => courseEnroll.isUnenrolled != true).toList()*/;
             ;
             BlocProvider.of<CourseHomeBloc>(context)..getByCourseEnrollments(_courseEnrollments);
             return form();

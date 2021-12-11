@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
+import 'package:oluko_app/blocs/course_category_bloc.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/models/dto/api_response.dart';
@@ -25,6 +26,7 @@ import 'coach/coach_recommendations_bloc.dart';
 import 'coach/coach_request_bloc.dart';
 import 'coach/coach_review_pending_bloc.dart';
 import 'coach/coach_sent_videos_bloc.dart';
+import 'course/course_bloc.dart';
 import 'course_enrollment/course_enrollment_list_bloc.dart';
 
 abstract class AuthState {}
@@ -214,6 +216,8 @@ class AuthBloc extends Cubit<AuthState> {
       BlocProvider.of<CoachSentVideosBloc>(context).dispose();
       BlocProvider.of<CoachReviewPendingBloc>(context).dispose();
       BlocProvider.of<CourseEnrollmentListBloc>(context).dispose();
+      BlocProvider.of<CourseBloc>(context).dispose();
+      BlocProvider.of<CourseCategoryBloc>(context).dispose();
       Navigator.pushNamedAndRemoveUntil(context, '/sign-up', (route) => false);
       emit(AuthGuest());
     }

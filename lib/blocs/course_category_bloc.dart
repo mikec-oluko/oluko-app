@@ -16,6 +16,11 @@ class CourseCategorySuccess extends CourseCategoryState {
   CourseCategorySuccess({this.values});
 }
 
+class CourseCategorySubscriptionSuccess extends CourseCategoryState {
+  final List<CourseCategory> values;
+  CourseCategorySubscriptionSuccess({this.values});
+}
+
 class CourseCategoryFailure extends CourseCategoryState {
   final dynamic exception;
 
@@ -58,7 +63,7 @@ class CourseCategoryBloc extends Cubit<CourseCategoryState> {
         final Map<String, dynamic> content = doc.data();
         courseCategories.add(CourseCategory.fromJson(content));
       });
-      emit(CourseCategorySuccess(values: courseCategories));
+      emit(CourseCategorySubscriptionSuccess(values: courseCategories));
     });
     return subscription;
   }

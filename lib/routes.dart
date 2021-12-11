@@ -11,6 +11,7 @@ import 'package:oluko_app/blocs/coach/coach_introduction_video_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
 import 'package:oluko_app/blocs/course/course_home_bloc.dart';
+import 'package:oluko_app/blocs/course_category_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
 import 'package:oluko_app/blocs/done_challenge_users_bloc.dart';
@@ -294,6 +295,7 @@ class Routes {
   final CoachReviewPendingBloc _coachReviewPendingBloc = CoachReviewPendingBloc();
   final RecordingAlertBloc _recordingAlertBloc = RecordingAlertBloc();
   final InsideClassContentBloc _insideClassContentBloc = InsideClassContentBloc();
+  final CourseCategoryBloc _courseCategoryBloc = CourseCategoryBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -338,6 +340,7 @@ class Routes {
           BlocProvider<CoachMentoredVideosBloc>.value(value: _coachMentoredVideosBloc),
           BlocProvider<CoachTimelineItemsBloc>.value(value: _coachTimelineItemsBloc),
           BlocProvider<HiFiveBloc>.value(value: _hiFiveBloc),
+          BlocProvider<CourseCategoryBloc>.value(value: _courseCategoryBloc),
           BlocProvider<AssessmentAssignmentBloc>.value(value: _assessmentAssignmentBloc),
           BlocProvider<TaskSubmissionListBloc>.value(value: _taskSubmissionListBloc),
           BlocProvider<HiFiveSendBloc>.value(
@@ -705,12 +708,12 @@ class Routes {
         providers = [
           BlocProvider<FavoriteBloc>.value(value: _favoriteBloc),
           BlocProvider<CourseBloc>.value(value: _courseBloc),
+          BlocProvider<CourseCategoryBloc>.value(value: _courseCategoryBloc),
           BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
           BlocProvider<TagBloc>.value(value: _tagBloc),
           BlocProvider<RecommendationBloc>.value(value: _recommendationBloc),
           BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
         ];
-
         final Map<String, dynamic> args = arguments as Map<String, dynamic>;
         newRouteView = Courses(homeEnrollTocourse: args['homeEnrollTocourse'] == 'true');
         break;

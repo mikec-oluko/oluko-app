@@ -73,13 +73,14 @@ class _State extends State<Courses> {
   @override
   Widget build(BuildContext context) {
     carouselSectionHeight = ((ScreenUtils.width(context) / _cardsToShow()) / cardsAspectRatio) + 75;
-    BlocProvider.of<CourseBloc>(context)..getByCategories();
-    return BlocBuilder<CourseBloc, CourseState>(
-        //bloc: BlocProvider.of<CourseBloc>(context)..getByCategories(),
-        builder: (context, courseState) {
-      if (courseState is CourseSuccess) {
+    //BlocProvider.of<CourseBloc>(context)..getByCategories();
+    BlocProvider.of<CourseBloc>(context).getStream();
+    BlocProvider.of<CourseCategoryBloc>(context).getStream();
+    return BlocBuilder<CourseBloc, CourseState>(builder: (context, courseState) {
+      return BlocBuilder<CourseCategoryBloc, CourseCategoryState>(builder: (context, courseCategoryState) {
+      if (courseState is CourseSubscriptionSuccess && courseCategoryState is CourseCategorySubscriptionSuccess) {
         _courses = courseState.values;
-        _coursesByCategories = courseState.coursesByCategories;
+        _coursesByCategories = CourseUtils.mapCoursesByCategories(_courses, courseCategoryState.values);
         return BlocBuilder<TagBloc, TagState>(
             bloc: BlocProvider.of<TagBloc>(context)..getByCategories(),
             builder: (context, tagState) {
@@ -92,6 +93,7 @@ class _State extends State<Courses> {
         return SizedBox();
       }
     });
+        });
   }
 
   int _cardsToShow() {

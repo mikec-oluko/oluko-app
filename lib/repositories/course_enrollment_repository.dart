@@ -324,6 +324,7 @@ class CourseEnrollmentRepository {
         .doc(GlobalConfiguration().getValue('projectId'))
         .collection('courseEnrollments')
         .where('created_by', isEqualTo: userId)
+        .where('is_unenrolled', isEqualTo: false)
         .orderBy('created_at', descending: true)
         .snapshots();
     return courseEnrollmentsStream;
