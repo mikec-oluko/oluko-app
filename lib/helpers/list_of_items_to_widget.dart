@@ -22,7 +22,8 @@ class TransformListOfItemsToWidget {
       List<TaskSubmission> assessmentVideoData,
       List<Challenge> upcomingChallenges,
       ActualProfileRoute requestedFromRoute,
-      UserResponse requestedUser}) {
+      UserResponse requestedUser,
+      bool isFriend}) {
     List<Widget> contentForSection = [];
 
     if (tansformationJourneyData != null && (assessmentVideoData == null && upcomingChallenges == null)) {
@@ -33,7 +34,9 @@ class TransformListOfItemsToWidget {
 
     if (assessmentVideoData != null && (tansformationJourneyData == null && upcomingChallenges == null)) {
       assessmentVideoData.forEach((assessmentVideo) {
-        contentForSection.add(getImageAndVideoCard(taskSubmissionContent: assessmentVideo, routeForContent: requestedFromRoute));
+        if (assessmentVideo.isPublic && isFriend != false) {
+          contentForSection.add(getImageAndVideoCard(taskSubmissionContent: assessmentVideo, routeForContent: requestedFromRoute));
+        }
       });
     }
 
