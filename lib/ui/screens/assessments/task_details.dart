@@ -308,8 +308,12 @@ class _TaskDetailsState extends State<TaskDetails> {
                           'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
                         });
                       } else {
-                        Navigator.pop(context);
-                        Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.assessmentVideos], arguments: {'isFirstTime': false});
+                        if (Navigator.canPop(context)) {
+                          Navigator.pop(context);
+                        } else {
+                          Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.assessmentVideos],
+                              arguments: {'isFirstTime': false});
+                        }
                       }
                     }
                   },
