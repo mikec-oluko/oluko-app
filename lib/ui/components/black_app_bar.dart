@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:nil/nil.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/search_results.dart';
 import 'package:oluko_app/ui/components/search_bar.dart';
 import 'package:oluko_app/ui/components/title_header.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 
 class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
   final Function() onPressed;
@@ -120,6 +122,7 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
       preferredSize: Size.fromHeight(kToolbarHeight),
       child: SafeArea(
         child: AppBar(
+          automaticallyImplyLeading: false,
           backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
           bottom: PreferredSize(preferredSize: Size.fromHeight(kToolbarHeight), child: neumorphicDivider(context)),
           flexibleSpace: showLogo
@@ -134,35 +137,70 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
                   ),
                 )
               : showTitle
-                  ? Center(
-                      child: FittedBox(
-                          fit: BoxFit.fitWidth,
-                          child: TitleHeader(
-                            title,
-                            bold: false,
-                            isNeumorphic: true,
-                          )),
-                    )
+                  ? showBackButton
+                      ? Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Neumorphic(
+                                  style: NeumorphicStyle(
+                                      depth: 5,
+                                      intensity: 0.6,
+                                      color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+                                      shape: NeumorphicShape.flat,
+                                      lightSource: LightSource.topLeft,
+                                      boxShape: NeumorphicBoxShape.circle(),
+                                      shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                                      shadowLightColorEmboss: OlukoColors.black,
+                                      surfaceIntensity: 1,
+                                      shadowLightColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                                      shadowDarkColor: Colors.black),
+                                  child: IconButton(
+                                      icon: Icon(Icons.arrow_back, size: 24, color: OlukoColors.grayColor),
+                                      onPressed: () => {
+                                            if (this.onPressed == null) {Navigator.pop(context)} else {this.onPressed()}
+                                          }),
+                                ),
+                              ),
+                              Expanded(
+                                child: SizedBox(),
+                              ),
+                              Align(
+                                alignment: Alignment.center,
+                                child: FittedBox(
+                                    fit: BoxFit.fitWidth,
+                                    child: TitleHeader(
+                                      title,
+                                      bold: false,
+                                      isNeumorphic: true,
+                                    )),
+                              ),
+                              Expanded(
+                                child: SizedBox(),
+                              ),
+                            ],
+                          ),
+                        )
+                      : Center(
+                          child: FittedBox(
+                              fit: BoxFit.fitWidth,
+                              child: TitleHeader(
+                                title,
+                                bold: false,
+                                isNeumorphic: true,
+                              )),
+                        )
                   : SizedBox.shrink(),
         ),
       ),
     );
   }
 
-  Container neumorphicDivider(BuildContext context) {
-    return Container(
-        width: MediaQuery.of(context).size.width,
-        height: 1.5,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              OlukoColors.grayColorFadeBottom,
-              OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-              OlukoColors.grayColorFadeBottom
-            ],
-            stops: [0.0, 0.5, 1],
-          ),
-        ));
+  OlukoNeumorphicDivider neumorphicDivider(BuildContext context) {
+    return const OlukoNeumorphicDivider();
   }
 
   @override

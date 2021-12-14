@@ -53,7 +53,7 @@ class _CoachNotificationCardState extends State<CoachNotificationCard> {
                     style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
               ),
               Container(
-                decoration: ContainerGradient.getContainerGradientDecoration(customBorder: true),
+                decoration: UserInformationBackground.getContainerGradientDecoration(customBorder: true),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Column(

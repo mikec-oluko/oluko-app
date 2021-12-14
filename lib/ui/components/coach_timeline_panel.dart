@@ -52,7 +52,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
             appBar: AppBar(
               backgroundColor: OlukoColors.black,
               flexibleSpace: Container(
-                decoration: ContainerGradient.getContainerGradientDecoration(customBorder: true),
+                decoration: UserInformationBackground.getContainerGradientDecoration(customBorder: true),
               ),
               automaticallyImplyLeading: false,
               bottom: TabBar(

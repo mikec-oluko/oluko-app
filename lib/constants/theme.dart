@@ -76,12 +76,11 @@ class OlukoNeumorphismColors {
   static const Color olukoNeumorphicBackgroundLigth = Color.fromRGBO(43, 47, 52, 1);
   static const Color olukoNeumorphicBackgroundDark = Color.fromRGBO(26, 30, 33, 1);
   static const Color olukoNeumorphicBackgroundDarker = Color.fromRGBO(32, 36, 39, 1);
-
   static const Color initialGradientColorPrimary = Color.fromRGBO(192, 198, 155, 1);
   static const Color finalGradientColorPrimary = Color.fromRGBO(192, 131, 98, 1);
-
   static const Color initialGradientColorDark = Color.fromRGBO(47, 53, 58, 1);
   static const Color finalGradientColorDark = Color.fromRGBO(28, 31, 34, 1);
+  static const Color olukoNeumorphicGreyBackgroundFlat = Color.fromRGBO(42, 45, 47, 1);
 }
 
 class OlukoColors {

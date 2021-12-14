@@ -307,7 +307,7 @@ class _CoachProfileState extends State<CoachProfile> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Container(
-                decoration: ContainerGradient.getContainerGradientDecoration(),
+                decoration: UserInformationBackground.getContainerGradientDecoration(),
                 child: Row(
                   children: [
                     Column(
