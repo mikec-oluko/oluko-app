@@ -71,10 +71,13 @@ class _CourseMarketingState extends State<CourseMarketing> {
           _userState = authState;
           /*BlocProvider.of<SubscribedCourseUsersBloc>(context)
               .get(widget.course.id, _userState.user.id);*/
+              
           BlocProvider.of<ClassBloc>(context)..getAll(widget.course);
           BlocProvider.of<StatisticsBloc>(context)..get(widget.course.statisticsReference);
-          BlocProvider.of<MovementBloc>(context)..getAll();
           BlocProvider.of<CourseEnrollmentBloc>(context).get(authState.firebaseUser, widget.course);
+
+          //BlocProvider.of<MovementBloc>(context)..getAll();
+          BlocProvider.of<MovementBloc>(context).getStream();
         }
 
         return form();
