@@ -86,7 +86,9 @@ class CourseEnrollmentListBloc extends Cubit<CourseEnrollmentListState> {
         final Map<String, dynamic> content = doc.data();
         courseEnrollments.add(CourseEnrollment.fromJson(content));
       });
-      emit(CourseEnrollmentsByUserSuccess(courseEnrollments: courseEnrollments/*.where((element) => element.isUnenrolled != true).toList()*/));
+      emit(CourseEnrollmentsByUserSuccess(
+          courseEnrollments:
+              courseEnrollments.where((element) => element.completion < 1).where((element) => element.isUnenrolled != true).toList()));
     });
     return subscription;
   }

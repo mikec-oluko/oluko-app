@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course.dart';
@@ -27,6 +30,15 @@ class Failure extends ClassState {
 class ClassBloc extends Cubit<ClassState> {
   ClassBloc() : super(Loading());
 
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>> subscription;
+  @override
+  void dispose() {
+    if (subscription != null) {
+      subscription.cancel();
+      subscription = null;
+    }
+  }
+
   void getAll(Course course) async {
     emit(Loading());
     try {
@@ -55,5 +67,17 @@ class ClassBloc extends Cubit<ClassState> {
       emit(Failure(exception: exception));
       rethrow;
     }
+  }
+
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>> getStream() {
+    subscription ??= ClassRepository.getClassesSubscription().listen((snapshot) async {
+      List<Class> classes = [];
+      snapshot.docs.forEach((doc) {
+        final Map<String, dynamic> content = doc.data();
+        classes.add(Class.fromJson(content));
+      });
+      emit(GetSuccess(classes: classes));
+    });
+    return subscription;
   }
 }
