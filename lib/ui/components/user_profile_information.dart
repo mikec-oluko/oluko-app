@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
@@ -110,17 +111,32 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                   Padding(
                     padding: const EdgeInsets.all(5.0),
                     child: Stack(clipBehavior: Clip.none, children: [
-                      CircleAvatar(
-                        backgroundColor: OlukoColors.black,
-                        backgroundImage: Image.network(
-                          widget.userToDisplayInformation.avatarThumbnail,
-                          fit: BoxFit.contain,
-                          frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
-                              ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 45, width: 45),
-                          height: 45,
-                          width: 45,
-                        ).image,
-                        radius: 45.0,
+                      Neumorphic(
+                        style: NeumorphicStyle(
+                            border: NeumorphicBorder(width: 1.5, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark),
+                            depth: 5,
+                            intensity: 0.5,
+                            color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+                            shape: NeumorphicShape.flat,
+                            lightSource: LightSource.topLeft,
+                            boxShape: NeumorphicBoxShape.circle(),
+                            shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                            shadowLightColorEmboss: OlukoColors.black,
+                            surfaceIntensity: 1,
+                            shadowLightColor: OlukoColors.grayColor,
+                            shadowDarkColor: Colors.black),
+                        child: CircleAvatar(
+                          backgroundColor: OlukoColors.black,
+                          backgroundImage: Image.network(
+                            widget.userToDisplayInformation.avatarThumbnail,
+                            fit: BoxFit.contain,
+                            frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
+                                ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 45, width: 45),
+                            height: 45,
+                            width: 45,
+                          ).image,
+                          radius: 45.0,
+                        ),
                       ),
                       getVisibility(widget, context, _isOwner),
                     ]),

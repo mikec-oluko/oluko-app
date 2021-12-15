@@ -7,6 +7,7 @@ import 'package:oluko_app/models/search_results.dart';
 import 'package:oluko_app/ui/components/search_bar.dart';
 import 'package:oluko_app/ui/components/title_header.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 
 class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
   final Function() onPressed;
@@ -145,25 +146,7 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
                             children: [
                               Align(
                                 alignment: Alignment.centerLeft,
-                                child: Neumorphic(
-                                  style: NeumorphicStyle(
-                                      depth: 5,
-                                      intensity: 0.6,
-                                      color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-                                      shape: NeumorphicShape.flat,
-                                      lightSource: LightSource.topLeft,
-                                      boxShape: NeumorphicBoxShape.circle(),
-                                      shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-                                      shadowLightColorEmboss: OlukoColors.black,
-                                      surfaceIntensity: 1,
-                                      shadowLightColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-                                      shadowDarkColor: Colors.black),
-                                  child: IconButton(
-                                      icon: Icon(Icons.arrow_back, size: 24, color: OlukoColors.grayColor),
-                                      onPressed: () => {
-                                            if (this.onPressed == null) {Navigator.pop(context)} else {this.onPressed()}
-                                          }),
-                                ),
+                                child: OlukoNeumorphicBackButton(onPressed: onPressed),
                               ),
                               Expanded(
                                 child: SizedBox(),

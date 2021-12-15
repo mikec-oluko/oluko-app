@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 
 class UserInformationBackground {
-  static BoxDecoration getContainerGradientDecoration({bool customBorder = false, bool isNeumorphic}) {
+  static BoxDecoration getContainerGradientDecoration({bool customBorder = false, bool isNeumorphic = false}) {
     return isNeumorphic
         ? const BoxDecoration(
             color: OlukoNeumorphismColors.olukoNeumorphicGreyBackgroundFlat, borderRadius: BorderRadius.all(OlukoNeumorphism.radiusValue))

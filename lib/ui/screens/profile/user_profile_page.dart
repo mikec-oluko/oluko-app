@@ -36,6 +36,7 @@ import 'package:oluko_app/ui/components/open_settings_modal.dart';
 import 'package:oluko_app/ui/components/uploading_modal_loader.dart';
 import 'package:oluko_app/ui/components/uploading_modal_success.dart';
 import 'package:oluko_app/ui/components/user_profile_information.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
@@ -125,17 +126,20 @@ class _UserProfilePageState extends State<UserProfilePage> {
       backgroundColor: Colors.transparent,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
+        automaticallyImplyLeading: !OlukoNeumorphism.isNeumorphismDesign,
         elevation: 0.0,
         backgroundColor: Colors.transparent,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            color: Colors.white,
-          ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+        leading: OlukoNeumorphism.isNeumorphismDesign
+            ? SizedBox.shrink()
+            : IconButton(
+                icon: const Icon(
+                  Icons.arrow_back_ios,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
       ),
       body: MultiBlocListener(
         listeners: [
@@ -200,251 +204,316 @@ class _UserProfilePageState extends State<UserProfilePage> {
           maxHeight: _panelMaxHeight,
           collapsed: defaultWidgetNoContent,
           controller: _panelController,
-          panel: _isNewCoverImage
-              ? BlocBuilder<ProfileCoverImageBloc, ProfileCoverImageState>(builder: (context, state) {
-                  Widget _contentForPanel = defaultWidgetNoContent;
-                  if (state is ProfileCoverImageOpen) {
-                    _panelController.isPanelClosed ? _panelController.open() : null;
-                    _contentForPanel = ModalUploadOptions(contentFrom: UploadFrom.profileCoverImage);
-                  }
-                  if (state is ProfileCoverImageDefault) {
-                    _contentForPanel = defaultWidgetNoContent;
-                    _panelController.isPanelOpen ? _panelController.close() : null;
-                  }
-                  if (state is ProfileCoverImageLoading) {
-                    _contentForPanel = UploadingModalLoader(UploadFrom.profileCoverImage);
-                  }
-                  if (state is ProfileCoverSuccess) {
-                    _contentForPanel = UploadingModalSuccess(goToPage: UploadFrom.profileImage, userRequested: _userProfileToDisplay);
-                  }
-                  if (state is ProfileCoverImageFailure) {
-                    _panelController.close();
-                  }
-                  if (state is ProfileCoverRequirePermissions) {
-                    _panelController.close().then((value) =>
-                        DialogUtils.getDialog(profileViewContext, [OpenSettingsModal(profileViewContext)], showExitButton: false));
-                  }
-                  return _contentForPanel;
-                })
-              : BlocBuilder<ProfileAvatarBloc, ProfileAvatarState>(builder: (context, state) {
-                  Widget _contentForPanel = defaultWidgetNoContent;
+          panel: _isNewCoverImage ? profileCoverImageBuilder(profileViewContext) : profileAvatarBuilder(profileViewContext),
+          body: buildProfileView(userRequested),
+        ),
+      ),
+    );
+  }
 
-                  if (state is ProfileAvatarOpenPanel) {
-                    _panelController.isPanelClosed ? _panelController.open() : null;
-                    _contentForPanel = ModalUploadOptions(contentFrom: UploadFrom.profileImage);
-                  }
-                  if (state is ProfileAvatarDefault) {
-                    _contentForPanel = defaultWidgetNoContent;
+  BlocBuilder<ProfileCoverImageBloc, ProfileCoverImageState> profileCoverImageBuilder(BuildContext profileViewContext) {
+    return BlocBuilder<ProfileCoverImageBloc, ProfileCoverImageState>(builder: (context, state) {
+      Widget _contentForPanel = defaultWidgetNoContent;
+      if (state is ProfileCoverImageOpen) {
+        _panelController.isPanelClosed ? _panelController.open() : null;
+        _contentForPanel = ModalUploadOptions(contentFrom: UploadFrom.profileCoverImage);
+      }
+      if (state is ProfileCoverImageDefault) {
+        _contentForPanel = defaultWidgetNoContent;
+        _panelController.isPanelOpen ? _panelController.close() : null;
+      }
+      if (state is ProfileCoverImageLoading) {
+        _contentForPanel = UploadingModalLoader(UploadFrom.profileCoverImage);
+      }
+      if (state is ProfileCoverSuccess) {
+        _contentForPanel = UploadingModalSuccess(goToPage: UploadFrom.profileImage, userRequested: _userProfileToDisplay);
+      }
+      if (state is ProfileCoverImageFailure) {
+        _panelController.close();
+      }
+      if (state is ProfileCoverRequirePermissions) {
+        _panelController
+            .close()
+            .then((value) => DialogUtils.getDialog(profileViewContext, [OpenSettingsModal(profileViewContext)], showExitButton: false));
+      }
+      return _contentForPanel;
+    });
+  }
 
-                    _panelController.isPanelOpen ? _panelController.close() : null;
-                  }
-                  if (state is ProfileAvatarLoading) {
-                    _contentForPanel = UploadingModalLoader(UploadFrom.profileImage);
-                  }
-                  if (state is ProfileAvatarSuccess) {
-                    _contentForPanel = UploadingModalSuccess(goToPage: UploadFrom.profileImage, userRequested: _userProfileToDisplay);
-                  }
-                  if (state is ProfileAvatarFailure) {
-                    _panelController.close();
-                  }
-                  if (state is ProfileAvatarRequirePermissions) {
-                    _panelController.close().then((value) =>
-                        DialogUtils.getDialog(profileViewContext, [OpenSettingsModal(profileViewContext)], showExitButton: false));
-                  }
-                  return _contentForPanel;
-                }),
-          body: Container(
-            constraints: const BoxConstraints.expand(),
-            child: ListView(
+  BlocBuilder<ProfileAvatarBloc, ProfileAvatarState> profileAvatarBuilder(BuildContext profileViewContext) {
+    return BlocBuilder<ProfileAvatarBloc, ProfileAvatarState>(builder: (context, state) {
+      Widget _contentForPanel = defaultWidgetNoContent;
+
+      if (state is ProfileAvatarOpenPanel) {
+        _panelController.isPanelClosed ? _panelController.open() : null;
+        _contentForPanel = ModalUploadOptions(contentFrom: UploadFrom.profileImage);
+      }
+      if (state is ProfileAvatarDefault) {
+        _contentForPanel = defaultWidgetNoContent;
+
+        _panelController.isPanelOpen ? _panelController.close() : null;
+      }
+      if (state is ProfileAvatarLoading) {
+        _contentForPanel = UploadingModalLoader(UploadFrom.profileImage);
+      }
+      if (state is ProfileAvatarSuccess) {
+        _contentForPanel = UploadingModalSuccess(goToPage: UploadFrom.profileImage, userRequested: _userProfileToDisplay);
+      }
+      if (state is ProfileAvatarFailure) {
+        _panelController.close();
+      }
+      if (state is ProfileAvatarRequirePermissions) {
+        _panelController
+            .close()
+            .then((value) => DialogUtils.getDialog(profileViewContext, [OpenSettingsModal(profileViewContext)], showExitButton: false));
+      }
+      return _contentForPanel;
+    });
+  }
+
+  Container buildProfileView(UserResponse userRequested) {
+    return Container(
+      color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+      constraints: const BoxConstraints.expand(),
+      child: ListView(
+        clipBehavior: Clip.none,
+        padding: EdgeInsets.zero,
+        shrinkWrap: true,
+        children: [
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height / 2,
+            child: Stack(
               clipBehavior: Clip.none,
-              padding: EdgeInsets.zero,
-              shrinkWrap: true,
               children: [
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height / 2,
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height / 3,
-                        child: _userProfileToDisplay.coverImage == null
-                            ? defaultWidgetNoContent
-                            : Image.network(
-                                _userProfileToDisplay.coverImage,
-                                fit: BoxFit.cover,
-                                colorBlendMode: BlendMode.colorBurn,
-                                height: MediaQuery.of(context).size.height,
-                              ),
-                      ),
-                      Positioned(
-                        top: MediaQuery.of(context).size.height / 4,
-                        child: Container(
-                            width: MediaQuery.of(context).size.width,
-                            height: MediaQuery.of(context).size.height / 3.5,
-                            child: BlocProvider.value(
-                                value: BlocProvider.of<ProfileBloc>(context),
-                                child: BlocBuilder<UserStatisticsBloc, UserStatisticsState>(
-                                  builder: (context, state) {
-                                    if (state is StatisticsSuccess) {
-                                      userStats = state.userStats;
-                                    }
-                                    return UserProfileInformation(
-                                      userToDisplayInformation: _userProfileToDisplay,
-                                      actualRoute: ActualProfileRoute.userProfile,
-                                      currentUser: _currentAuthUser,
-                                      connectStatus: connectStatus,
-                                      userStats: userStats,
-                                    );
-                                  },
-                                ))),
-                      ),
-                      Positioned(
-                        top: MediaQuery.of(context).size.height / 5,
-                        right: 10,
-                        child: Visibility(
-                          visible: _isCurrentUser,
-                          child: Container(
-                            width: 40,
-                            height: 40,
-                            child: TextButton(
-                                onPressed: () {
-                                  setState(() {
-                                    _isNewCoverImage = true;
-                                  });
-                                  BlocProvider.of<ProfileCoverImageBloc>(context).openPanel();
-                                },
-                                child: Image.asset('assets/profile/uploadImage.png')),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Column(
-                  children: [
-                    if (!_isCurrentUser)
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(10, 30, 10, 0),
-                        child: Row(
-                          children: [
-                            if (friendModel != null)
-                              TextButton(
-                                onPressed: () {
-                                  BlocProvider.of<FavoriteFriendBloc>(context).favoriteFriend(context, friendData, friendModel);
-                                  setState(() {
-                                    _isFollow = !_isFollow;
-                                  });
-                                },
-                                child: Icon(_isFollow ? Icons.favorite : Icons.favorite_border, color: OlukoColors.primary),
-                              )
-                            else
-                              defaultWidgetNoContent,
-                            Container(
-                              child: OlukoOutlinedButton(
-                                  onPressed: () {
-                                    AppMessages().showDialogActionMessage(context, '', 2);
-
-                                    switch (connectStatus) {
-                                      case UserConnectStatus.connected:
-                                        BlocProvider.of<FriendBloc>(context)
-                                            .removeFriend(_currentAuthUser.id, friendData, userRequested.id);
-                                        break;
-                                      case UserConnectStatus.notConnected:
-                                        BlocProvider.of<FriendBloc>(context)
-                                            .sendRequestOfConnect(_currentAuthUser.id, friendData, userRequested.id);
-                                        break;
-                                      case UserConnectStatus.requestPending:
-                                        BlocProvider.of<FriendBloc>(context)
-                                            .removeRequestSent(_currentAuthUser.id, friendData, userRequested.id);
-                                        break;
-                                      default:
-                                    }
-                                    BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_currentAuthUser.id);
-                                  },
-                                  title: OlukoLocalizations.get(context, _connectButtonTitle)),
-                            ),
-                          ],
-                        ),
-                      )
-                    else
-                      defaultWidgetNoContent,
-                    BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(builder: (context, state) {
-                      if (state is GetUserTaskSubmissionSuccess) {
-                        _assessmentVideosContent = state.taskSubmissions;
-                      }
-
-                      return _assessmentVideosContent.isNotEmpty
-                          ? _buildCarouselSection(
-                              titleForSection: OlukoLocalizations.get(context, 'assessmentVideos'),
-                              routeForSection: RouteEnum.profileAssessmentVideos,
-                              contentForSection: TransformListOfItemsToWidget.getWidgetListFromContent(
-                                  assessmentVideoData: _assessmentVideosContent, requestedFromRoute: ActualProfileRoute.userProfile))
-                          : defaultWidgetNoContent;
-                    }),
-                    BlocBuilder<TransformationJourneyBloc, TransformationJourneyState>(
-                      builder: (context, state) {
-                        if (state is TransformationJourneySuccess) {
-                          _transformationJourneyContent = state.contentFromUser;
-                        }
-                        return _transformationJourneyContent.isNotEmpty
-                            ? _buildCarouselSection(
-                                titleForSection: OlukoLocalizations.get(context, 'transformationJourney'),
-                                routeForSection: RouteEnum.profileTransformationJourney,
-                                contentForSection: TransformListOfItemsToWidget.getWidgetListFromContent(
-                                    tansformationJourneyData: _transformationJourneyContent,
-                                    requestedFromRoute: ActualProfileRoute.userProfile))
-                            : defaultWidgetNoContent;
-                      },
-                    ),
-                    BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(
-                      builder: (context, state) {
-                        if (state is CourseEnrollmentsByUserSuccess) {
-                          _courseEnrollmentList =
-                              state.courseEnrollments.where((courseEnroll) => courseEnroll.isUnenrolled != true).toList();
-                        }
-                        return BlocBuilder<CourseBloc, CourseState>(
-                          builder: (context, state) {
-                            if (state is UserEnrolledCoursesSuccess) {
-                              _coursesToUse = state.courses;
-                            }
-                            return _coursesToUse.isNotEmpty && _courseEnrollmentList != null
-                                ? buildCourseSection(
-                                    context: context, contentForCourse: returnCoursesWidget(listOfCourses: _courseEnrollmentList))
-                                : defaultWidgetNoContent;
-                          },
-                        );
-                      },
-                    ),
-                    BlocBuilder<ChallengeBloc, ChallengeState>(
-                      builder: (context, state) {
-                        if (state is GetChallengeSuccess) {
-                          if (_activeChallenges.isEmpty) {
-                            _activeChallenges = state.challenges;
-                          }
-                        }
-                        /*if (state is CourseEnrollmentListSuccess) {
-                          _courseEnrollmentList = state.courseEnrollmentList;
-                        }*/
-
-                        return _activeChallenges.isNotEmpty
-                            ? buildChallengeSection(
-                                context: context,
-                                content: TransformListOfItemsToWidget.getWidgetListFromContent(
-                                    upcomingChallenges: _activeChallenges,
-                                    requestedFromRoute: ActualProfileRoute.userProfile,
-                                    requestedUser: widget.userRequested))
-                            : defaultWidgetNoContent;
-                      },
-                    ),
-                  ],
-                ),
+                profileCoverImage(),
+                userInformationPanel(),
+                coverImageWidget(),
               ],
             ),
           ),
+          if (OlukoNeumorphism.isNeumorphismDesign)
+            SizedBox(
+              height: MediaQuery.of(context).size.height / 16,
+            )
+          else
+            SizedBox.shrink(),
+          Column(
+            children: [
+              if (!_isCurrentUser) otherUserInteraction(userRequested) else defaultWidgetNoContent,
+              assessmentVideosSlider(),
+              transformationJourneySlider(),
+              activeCoursesSlider(),
+              activeChallengesSlider(),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  BlocBuilder<ChallengeBloc, ChallengeState> activeChallengesSlider() {
+    return BlocBuilder<ChallengeBloc, ChallengeState>(
+      builder: (context, state) {
+        if (state is GetChallengeSuccess) {
+          if (_activeChallenges.isEmpty) {
+            _activeChallenges = state.challenges;
+          }
+        }
+        /*if (state is CourseEnrollmentListSuccess) {
+                      _courseEnrollmentList = state.courseEnrollmentList;
+                    }*/
+
+        return _activeChallenges.isNotEmpty
+            ? buildChallengeSection(
+                context: context,
+                content: TransformListOfItemsToWidget.getWidgetListFromContent(
+                    upcomingChallenges: _activeChallenges,
+                    requestedFromRoute: ActualProfileRoute.userProfile,
+                    requestedUser: widget.userRequested))
+            : defaultWidgetNoContent;
+      },
+    );
+  }
+
+  BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState> activeCoursesSlider() {
+    return BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(
+      builder: (context, state) {
+        if (state is CourseEnrollmentsByUserSuccess) {
+          _courseEnrollmentList = state.courseEnrollments.where((courseEnroll) => courseEnroll.isUnenrolled != true).toList();
+        }
+        return BlocBuilder<CourseBloc, CourseState>(
+          builder: (context, state) {
+            if (state is UserEnrolledCoursesSuccess) {
+              _coursesToUse = state.courses;
+            }
+            return _coursesToUse.isNotEmpty && _courseEnrollmentList != null
+                ? Padding(
+                    padding: OlukoNeumorphism.isNeumorphismDesign ? EdgeInsets.symmetric(horizontal: 20) : EdgeInsets.symmetric(),
+                    child:
+                        buildCourseSection(context: context, contentForCourse: returnCoursesWidget(listOfCourses: _courseEnrollmentList)))
+                : defaultWidgetNoContent;
+          },
+        );
+      },
+    );
+  }
+
+  BlocBuilder<TransformationJourneyBloc, TransformationJourneyState> transformationJourneySlider() {
+    return BlocBuilder<TransformationJourneyBloc, TransformationJourneyState>(
+      builder: (context, state) {
+        if (state is TransformationJourneySuccess) {
+          _transformationJourneyContent = state.contentFromUser;
+        }
+        return _transformationJourneyContent.isNotEmpty
+            ? _buildCarouselSection(
+                titleForSection: OlukoLocalizations.get(context, 'transformationJourney'),
+                routeForSection: RouteEnum.profileTransformationJourney,
+                contentForSection: TransformListOfItemsToWidget.getWidgetListFromContent(
+                    tansformationJourneyData: _transformationJourneyContent, requestedFromRoute: ActualProfileRoute.userProfile))
+            : defaultWidgetNoContent;
+      },
+    );
+  }
+
+  BlocBuilder<TaskSubmissionBloc, TaskSubmissionState> assessmentVideosSlider() {
+    return BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(builder: (context, state) {
+      if (state is GetUserTaskSubmissionSuccess) {
+        _assessmentVideosContent = state.taskSubmissions;
+      }
+
+      return _assessmentVideosContent.isNotEmpty
+          ? _buildCarouselSection(
+              titleForSection: OlukoLocalizations.get(context, 'assessmentVideos'),
+              routeForSection: RouteEnum.profileAssessmentVideos,
+              contentForSection: TransformListOfItemsToWidget.getWidgetListFromContent(
+                  assessmentVideoData: _assessmentVideosContent, requestedFromRoute: ActualProfileRoute.userProfile))
+          : defaultWidgetNoContent;
+    });
+  }
+
+  Padding otherUserInteraction(UserResponse userRequested) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(10, 30, 10, 0),
+      child: Row(
+        children: [
+          if (friendModel != null)
+            TextButton(
+              onPressed: () {
+                BlocProvider.of<FavoriteFriendBloc>(context).favoriteFriend(context, friendData, friendModel);
+                setState(() {
+                  _isFollow = !_isFollow;
+                });
+              },
+              child: Icon(_isFollow ? Icons.favorite : Icons.favorite_border, color: OlukoColors.primary),
+            )
+          else
+            defaultWidgetNoContent,
+          Container(
+            child: OlukoOutlinedButton(
+                onPressed: () {
+                  AppMessages().showDialogActionMessage(context, '', 2);
+
+                  switch (connectStatus) {
+                    case UserConnectStatus.connected:
+                      BlocProvider.of<FriendBloc>(context).removeFriend(_currentAuthUser.id, friendData, userRequested.id);
+                      break;
+                    case UserConnectStatus.notConnected:
+                      BlocProvider.of<FriendBloc>(context).sendRequestOfConnect(_currentAuthUser.id, friendData, userRequested.id);
+                      break;
+                    case UserConnectStatus.requestPending:
+                      BlocProvider.of<FriendBloc>(context).removeRequestSent(_currentAuthUser.id, friendData, userRequested.id);
+                      break;
+                    default:
+                  }
+                  BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_currentAuthUser.id);
+                },
+                title: OlukoLocalizations.get(context, _connectButtonTitle)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Positioned userInformationPanel() {
+    return Positioned(
+      top: OlukoNeumorphism.isNeumorphismDesign ? MediaQuery.of(context).size.height / 4.5 : MediaQuery.of(context).size.height / 4,
+      child: Container(
+          width: MediaQuery.of(context).size.width,
+          height:
+              OlukoNeumorphism.isNeumorphismDesign ? MediaQuery.of(context).size.height / 2.8 : MediaQuery.of(context).size.height / 3.5,
+          child: BlocProvider.value(
+              value: BlocProvider.of<ProfileBloc>(context),
+              child: BlocBuilder<UserStatisticsBloc, UserStatisticsState>(
+                builder: (context, state) {
+                  if (state is StatisticsSuccess) {
+                    userStats = state.userStats;
+                  }
+                  return UserProfileInformation(
+                    userToDisplayInformation: _userProfileToDisplay,
+                    actualRoute: ActualProfileRoute.userProfile,
+                    currentUser: _currentAuthUser,
+                    connectStatus: connectStatus,
+                    userStats: userStats,
+                  );
+                },
+              ))),
+    );
+  }
+
+  Positioned coverImageWidget() {
+    return Positioned(
+      top: MediaQuery.of(context).size.height / 5,
+      right: 10,
+      child: Visibility(
+        visible: _isCurrentUser,
+        child: Container(
+          width: 40,
+          height: 40,
+          child: TextButton(
+              onPressed: () {
+                setState(() {
+                  _isNewCoverImage = true;
+                });
+                BlocProvider.of<ProfileCoverImageBloc>(context).openPanel();
+              },
+              child: Image.asset('assets/profile/uploadImage.png')),
         ),
       ),
+    );
+  }
+
+  Widget profileCoverImage() {
+    return ShaderMask(
+      shaderCallback: (rect) {
+        return const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+            Colors.transparent,
+          ],
+        ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
+      },
+      blendMode: BlendMode.dstIn,
+      child: Stack(children: [
+        Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height / 3,
+          child: _userProfileToDisplay.coverImage == null
+              ? defaultWidgetNoContent
+              : Image.network(
+                  _userProfileToDisplay.coverImage,
+                  fit: BoxFit.cover,
+                  colorBlendMode: BlendMode.colorBurn,
+                  height: MediaQuery.of(context).size.height,
+                ),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: MediaQuery.of(context).size.height / 10),
+          child: OlukoNeumorphicBackButton(onPressed: () => Navigator.pop(context)),
+        ),
+      ]),
     );
   }
 
@@ -503,7 +572,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   Padding _buildCarouselSection({RouteEnum routeForSection, String titleForSection, List<Widget> contentForSection}) {
     return Padding(
-        padding: const EdgeInsets.only(top: 25),
+        padding: const EdgeInsets.only(top: 0),
         child: CarouselSmallSection(
             routeToGo: routeForSection,
             title: titleForSection,

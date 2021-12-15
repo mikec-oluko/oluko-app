@@ -39,28 +39,39 @@ class _State extends State<ChallengesCard> {
   }
 
   Widget lockedCard(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Container(
-          height: 160,
-          width: 115,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-            color: OlukoColors.challengeLockedFilterColor,
-            image: DecorationImage(
-              fit: BoxFit.cover,
-              colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.4), BlendMode.dstATop),
-              image: widget.challenge.image != null ? new NetworkImage(widget.challenge.image) : defaultImage,
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+            end: Alignment.bottomRight, begin: Alignment.topLeft, colors: [Colors.red, Colors.black, Colors.black, Colors.red]),
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+        color: Colors.black,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(2),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Container(
+              height: 160,
+              width: 115,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+                color: OlukoColors.challengeLockedFilterColor,
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.4), BlendMode.dstATop),
+                  image: widget.challenge.image != null ? new NetworkImage(widget.challenge.image) : defaultImage,
+                ),
+              ),
             ),
-          ),
+            Image.asset(
+              'assets/courses/locked_challenge.png',
+              width: 60,
+              height: 60,
+            )
+          ],
         ),
-        Image.asset(
-          'assets/courses/locked_challenge.png',
-          width: 60,
-          height: 60,
-        )
-      ],
+      ),
     );
   }
 

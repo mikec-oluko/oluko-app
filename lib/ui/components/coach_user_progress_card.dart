@@ -36,7 +36,7 @@ class _CoachUserProgressCardState extends State<CoachUserProgressCard> {
           style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
         ),
         AnimatedContainer(
-          decoration: UserInformationBackground.getContainerGradientDecoration(),
+          decoration: UserInformationBackground.getContainerGradientDecoration(isNeumorphic: OlukoNeumorphism.isNeumorphismDesign),
           width: MediaQuery.of(context).size.width,
           clipBehavior: Clip.none,
           height: _isUserStatisticExpanded ? 180 : 100,
