@@ -36,6 +36,9 @@ class ProfileCoverImageBloc extends Cubit<ProfileCoverImageState> {
     XFile _image;
 
     try {
+
+      if (!await requiredCoverPermissionsEnabled(uploadedFrom)) return;
+      
       final ImagePicker imagePicker = ImagePicker();
       if (uploadedFrom == DeviceContentFrom.gallery) {
         _image = await imagePicker.pickImage(source: ImageSource.gallery);
@@ -54,8 +57,6 @@ class ProfileCoverImageBloc extends Cubit<ProfileCoverImageState> {
         exception,
         stackTrace: stackTrace,
       );
-
-      if (!await requiredCoverPermissionsEnabled(uploadedFrom)) return;
 
       emit(ProfileCoverImageFailure(exception: exception));
       // rethrow;
