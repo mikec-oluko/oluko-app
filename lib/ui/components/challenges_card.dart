@@ -9,8 +9,9 @@ class ChallengesCard extends StatefulWidget {
   final Challenge challenge;
   final String routeToGo;
   final UserResponse userRequested;
+  final bool useAudio;
 
-  ChallengesCard({this.challenge, this.routeToGo, this.userRequested});
+  ChallengesCard({this.challenge, this.routeToGo, this.userRequested, this.useAudio = true});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -23,18 +24,21 @@ class _State extends State<ChallengesCard> {
     return Column(children: [
       SizedBox(height: 10),
       widget.challenge.completedAt != null ? unlockedCard(context) : lockedCard(context),
-      Padding(
-          padding: EdgeInsets.only(top: 13),
-          child: GestureDetector(
-              onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.userChallengeDetail],
-                  arguments: {'challenge': widget.challenge, 'userRequested': widget.userRequested}),
-              child: Stack(alignment: Alignment.center, children: [
-                Image.asset(
-                  'assets/courses/green_circle.png',
-                  scale: 6,
-                ),
-                Icon(Icons.mic, size: 23, color: OlukoColors.black)
-              ])))
+      if (widget.useAudio)
+        Padding(
+            padding: EdgeInsets.only(top: 13),
+            child: GestureDetector(
+                onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.userChallengeDetail],
+                    arguments: {'challenge': widget.challenge, 'userRequested': widget.userRequested}),
+                child: Stack(alignment: Alignment.center, children: [
+                  Image.asset(
+                    'assets/courses/green_circle.png',
+                    scale: 6,
+                  ),
+                  Icon(Icons.mic, size: 23, color: OlukoColors.black)
+                ])))
+      else
+        SizedBox.shrink()
     ]);
   }
 
@@ -59,7 +63,7 @@ class _State extends State<ChallengesCard> {
                 color: OlukoColors.challengeLockedFilterColor,
                 image: DecorationImage(
                   fit: BoxFit.cover,
-                  colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.4), BlendMode.dstATop),
+                  colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.7), BlendMode.dstATop),
                   image: widget.challenge.image != null ? new NetworkImage(widget.challenge.image) : defaultImage,
                 ),
               ),
@@ -76,21 +80,32 @@ class _State extends State<ChallengesCard> {
   }
 
   Widget unlockedCard(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Container(
-          height: 160,
-          width: 115,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-            image: new DecorationImage(
-              fit: BoxFit.cover,
-              image: widget.challenge.image != null ? new NetworkImage(widget.challenge.image) : defaultImage,
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+            end: Alignment.bottomRight, begin: Alignment.topLeft, colors: [Colors.red, Colors.black, Colors.black, Colors.red]),
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+        color: Colors.black,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(2),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Container(
+              height: 160,
+              width: 115,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+                image: new DecorationImage(
+                  fit: BoxFit.cover,
+                  image: widget.challenge.image != null ? new NetworkImage(widget.challenge.image) : defaultImage,
+                ),
+              ),
             ),
-          ),
+          ],
         ),
-      ],
+      ),
     );
   }
 

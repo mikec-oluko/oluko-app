@@ -123,6 +123,7 @@ class OlukoAppBar<T> extends StatelessWidget implements PreferredSizeWidget {
       preferredSize: Size.fromHeight(kToolbarHeight),
       child: SafeArea(
         child: AppBar(
+          // actions: actions,
           automaticallyImplyLeading: false,
           backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
           bottom: PreferredSize(preferredSize: Size.fromHeight(kToolbarHeight), child: neumorphicDivider(context)),

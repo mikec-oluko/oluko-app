@@ -15,14 +15,10 @@ class EnrollmentMovement {
         name: json['name']?.toString(),
         counters: json['counters'] == null
             ? null
-            : List<int>.from((json['counters'] as Iterable)
-                .map((counter) => counter as int)));
+            : json['counters'] is int
+                ? [json['counters'] as int]
+                : List<int>.from((json['counters'] as Iterable).map((counter) => counter as int)));
   }
 
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'reference': reference,
-        'name': name,
-        'counters': counters == null ? null : counters
-      };
+  Map<String, dynamic> toJson() => {'id': id, 'reference': reference, 'name': name, 'counters': counters == null ? null : counters};
 }

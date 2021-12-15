@@ -36,7 +36,7 @@ class _State extends State<CourseCard> {
 
   @override
   Widget build(BuildContext context) {
-    return buildNeumorphicCourseCard();
+    return OlukoNeumorphism.isNeumorphismDesign ? buildNeumorphicCourseCard() : buildCourseCard();
   }
 
   Container buildCourseCard() {
@@ -89,7 +89,7 @@ class _State extends State<CourseCard> {
   Widget buildNeumorphicCourseCard() {
     return Container(
       width: widget.width,
-      child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         if (widget.userRecommendationsAvatarUrls != null)
           Expanded(flex: 2, child: _userRecommendations(widget.userRecommendationsAvatarUrls))
         else
@@ -97,7 +97,7 @@ class _State extends State<CourseCard> {
         Neumorphic(
           style: NeumorphicStyle(
               border: NeumorphicBorder(width: 1.5, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark),
-              depth: 5,
+              depth: 6,
               intensity: 0.8,
               color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
               shape: NeumorphicShape.flat,
@@ -111,19 +111,21 @@ class _State extends State<CourseCard> {
           child: Stack(
             children: [
               widget.imageCover,
-              Positioned(
-                top: 0,
-                right: -15,
-                child: Visibility(
-                  visible: widget.canUnenrollCourse,
-                  child: Align(
-                      alignment: Alignment.topRight,
-                      child: UnenrollCourse(
-                        actualCourse: widget.actualCourse,
-                        unrolledFunction: widget.unrolledFunction,
-                      )),
-                ),
-              )
+              !OlukoNeumorphism.isNeumorphismDesign
+                  ? Positioned(
+                      top: 0,
+                      right: -15,
+                      child: Visibility(
+                        visible: widget.canUnenrollCourse,
+                        child: Align(
+                            alignment: Alignment.topRight,
+                            child: UnenrollCourse(
+                              actualCourse: widget.actualCourse,
+                              unrolledFunction: widget.unrolledFunction,
+                            )),
+                      ),
+                    )
+                  : SizedBox.shrink()
             ],
           ),
         ),

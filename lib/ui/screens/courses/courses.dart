@@ -77,22 +77,22 @@ class _State extends State<Courses> {
     BlocProvider.of<CourseCategoryBloc>(context).getStream();
     return BlocBuilder<CourseBloc, CourseState>(builder: (context, courseState) {
       return BlocBuilder<CourseCategoryBloc, CourseCategoryState>(builder: (context, courseCategoryState) {
-      if (courseState is CourseSubscriptionSuccess && courseCategoryState is CourseCategorySubscriptionSuccess) {
-        _courses = courseState.values;
-        _coursesByCategories = CourseUtils.mapCoursesByCategories(_courses, courseCategoryState.values);
-        return BlocBuilder<TagBloc, TagState>(
-            bloc: BlocProvider.of<TagBloc>(context)..getByCategories(),
-            builder: (context, tagState) {
-              return Scaffold(
-                  backgroundColor: Colors.black,
-                  appBar: _appBar(widget.homeEnrollTocourse ?? false),
-                  body: _courseWidget(context, tagState));
-            });
-      } else {
-        return SizedBox();
-      }
+        if (courseState is CourseSubscriptionSuccess && courseCategoryState is CourseCategorySubscriptionSuccess) {
+          _courses = courseState.values;
+          _coursesByCategories = CourseUtils.mapCoursesByCategories(_courses, courseCategoryState.values);
+          return BlocBuilder<TagBloc, TagState>(
+              bloc: BlocProvider.of<TagBloc>(context)..getByCategories(),
+              builder: (context, tagState) {
+                return Scaffold(
+                    backgroundColor: Colors.black,
+                    appBar: _appBar(widget.homeEnrollTocourse ?? false),
+                    body: _courseWidget(context, tagState));
+              });
+        } else {
+          return SizedBox();
+        }
+      });
     });
-        });
   }
 
   int _cardsToShow() {
@@ -109,6 +109,7 @@ class _State extends State<Courses> {
         onWillPop: () => AppNavigator.onWillPop(context),
         child: OrientationBuilder(builder: (context, orientation) {
           return Container(
+            color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
             height: ScreenUtils.height(context),
             width: ScreenUtils.width(context),
             child: showFilterSelector
@@ -140,6 +141,7 @@ class _State extends State<Courses> {
 
   PreferredSizeWidget _appBar(bool goBack) {
     return OlukoAppBar<Course>(
+      showTitle: true,
       showBackButton: goBack,
       searchKey: searchKey,
       title: OlukoLocalizations.get(context, showFilterSelector ? 'filters' : 'courses'),

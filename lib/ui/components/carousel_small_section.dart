@@ -41,10 +41,7 @@ class _State extends State<CarouselSmallSection> {
                   onPressed: () {
                     goToRoute(widget.routeToGo);
                   },
-                  child: Text(
-                    OlukoLocalizations.get(context, 'viewAll'),
-                    style: TextStyle(color: OlukoColors.primary),
-                  ),
+                  child: Text(OlukoLocalizations.get(context, 'viewAll'), style: TextStyle(color: OlukoColors.primary, fontSize: 18)),
                 ),
               ),
               GestureDetector(

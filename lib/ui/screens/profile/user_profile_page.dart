@@ -326,12 +326,16 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     }*/
 
         return _activeChallenges.isNotEmpty
-            ? buildChallengeSection(
-                context: context,
-                content: TransformListOfItemsToWidget.getWidgetListFromContent(
-                    upcomingChallenges: _activeChallenges,
-                    requestedFromRoute: ActualProfileRoute.userProfile,
-                    requestedUser: widget.userRequested))
+            ? Padding(
+                padding: OlukoNeumorphism.isNeumorphismDesign ? EdgeInsets.symmetric(horizontal: 20) : EdgeInsets.symmetric(),
+                child: buildChallengeSection(
+                    context: context,
+                    content: TransformListOfItemsToWidget.getWidgetListFromContent(
+                        upcomingChallenges: _activeChallenges,
+                        requestedFromRoute: ActualProfileRoute.userProfile,
+                        requestedUser: widget.userRequested,
+                        useAudio: !_isCurrentUser)),
+              )
             : defaultWidgetNoContent;
       },
     );
@@ -438,11 +442,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   Positioned userInformationPanel() {
     return Positioned(
-      top: OlukoNeumorphism.isNeumorphismDesign ? MediaQuery.of(context).size.height / 4.5 : MediaQuery.of(context).size.height / 4,
+      top: OlukoNeumorphism.isNeumorphismDesign ? MediaQuery.of(context).size.height / 4.5 : MediaQuery.of(context).size.height / 3.5,
       child: Container(
           width: MediaQuery.of(context).size.width,
-          height:
-              OlukoNeumorphism.isNeumorphismDesign ? MediaQuery.of(context).size.height / 2.8 : MediaQuery.of(context).size.height / 3.5,
+          height: OlukoNeumorphism.isNeumorphismDesign ? MediaQuery.of(context).size.height / 2.8 : MediaQuery.of(context).size.height / 5,
           child: BlocProvider.value(
               value: BlocProvider.of<ProfileBloc>(context),
               child: BlocBuilder<UserStatisticsBloc, UserStatisticsState>(
@@ -510,10 +513,12 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   height: MediaQuery.of(context).size.height,
                 ),
         ),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: MediaQuery.of(context).size.height / 10),
-          child: OlukoNeumorphicBackButton(onPressed: () => Navigator.pop(context)),
-        ),
+        OlukoNeumorphism.isNeumorphismDesign
+            ? Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: MediaQuery.of(context).size.height / 10),
+                child: OlukoNeumorphicBackButton(onPressed: () => Navigator.pop(context)),
+              )
+            : SizedBox.shrink(),
       ]),
     );
   }
@@ -542,6 +547,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
           height: 250,
           width: MediaQuery.of(context).size.width,
           title: ProfileViewConstants.profileOwnProfileActiveCourses,
+          optionLabel: OlukoLocalizations.get(context, 'viewAll'),
+          onOptionTap: () {
+            //TODO: COURSE NAVIGATION
+          },
           children: contentForCourse != null
               ? contentForCourse
               : [
@@ -560,6 +569,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
           height: 280,
           width: MediaQuery.of(context).size.width,
           title: OlukoLocalizations.get(context, 'upcomingChallenges'),
+          optionLabel: OlukoLocalizations.get(context, 'viewAll'),
+          onOptionTap: () {
+            //TODO: CHALLENGE NAVIGATION
+          },
           children: content.isNotEmpty
               ? content
               : [
