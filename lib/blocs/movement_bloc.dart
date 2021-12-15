@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
@@ -27,6 +30,15 @@ class Failure extends MovementState {
 class MovementBloc extends Cubit<MovementState> {
   MovementBloc() : super(LoadingMovementState());
 
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>> subscription;
+  @override
+  void dispose() {
+    if (subscription != null) {
+      subscription.cancel();
+      subscription = null;
+    }
+  }
+
   void getBySegment(Segment segment) async {
     try {
       List<Movement> movements = await MovementRepository.getBySegment(segment);
@@ -54,5 +66,17 @@ class MovementBloc extends Cubit<MovementState> {
       emit(Failure(exception: exception));
       rethrow;
     }
+  }
+
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>> getStream() {
+    subscription ??= MovementRepository.getMovementsSubscription().listen((snapshot) async {
+      List<Movement> movements = [];
+      snapshot.docs.forEach((doc) {
+        final Map<String, dynamic> content = doc.data();
+        movements.add(Movement.fromJson(content));
+      });
+      emit(GetAllSuccess(movements: movements));
+    });
+    return subscription;
   }
 }

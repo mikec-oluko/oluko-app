@@ -12,17 +12,16 @@ class CoachTimelineTabsException extends CoachTimelineState {
 }
 
 class CoachTimelineTabsUpdate extends CoachTimelineState {
-  CoachTimelineTabsUpdate({this.numberOfTabs, this.timelineContentItems});
-  int numberOfTabs;
+  CoachTimelineTabsUpdate({this.timelineContentItems});
   List<CoachTimelineGroup> timelineContentItems;
 }
 
 class CoachTimelineBloc extends Cubit<CoachTimelineState> {
   CoachTimelineBloc() : super(Loading());
 
-  void emitTimelineTabsUpdate({int numberOfTabsForPanel, List<CoachTimelineGroup> contentForTimelinePanel}) {
+  void emitTimelineTabsUpdate({List<CoachTimelineGroup> contentForTimelinePanel}) {
     try {
-      emit(CoachTimelineTabsUpdate(numberOfTabs: numberOfTabsForPanel, timelineContentItems: contentForTimelinePanel));
+      emit(CoachTimelineTabsUpdate(timelineContentItems: contentForTimelinePanel));
     } catch (exception, stackTrace) {
       Sentry.captureException(
         exception,

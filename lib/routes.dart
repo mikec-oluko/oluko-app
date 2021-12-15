@@ -11,6 +11,7 @@ import 'package:oluko_app/blocs/coach/coach_introduction_video_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
 import 'package:oluko_app/blocs/course/course_home_bloc.dart';
+import 'package:oluko_app/blocs/course_category_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
 import 'package:oluko_app/blocs/done_challenge_users_bloc.dart';
@@ -18,6 +19,7 @@ import 'package:oluko_app/blocs/friends/chat_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/message_bloc.dart';
 import 'package:oluko_app/blocs/gallery_video_bloc.dart';
+import 'package:oluko_app/blocs/inside_class_content_bloc.dart';
 import 'package:oluko_app/blocs/personal_record_bloc.dart';
 import 'package:oluko_app/blocs/segment_detail_content_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
@@ -101,6 +103,7 @@ import 'blocs/coach/coach_assignment_bloc.dart';
 import 'blocs/coach/coach_interaction_timeline_bloc.dart';
 import 'blocs/coach/coach_mentored_videos_bloc.dart';
 import 'blocs/coach/coach_recommendations_bloc.dart';
+import 'blocs/coach/coach_review_pending_bloc.dart';
 import 'blocs/coach/coach_sent_videos_bloc.dart';
 import 'blocs/coach/coach_timeline_bloc.dart';
 import 'blocs/movement_info_bloc.dart';
@@ -289,7 +292,10 @@ class Routes {
   final CoachTimelineBloc _coachTimelineBloc = CoachTimelineBloc();
   final AudioBloc _audioBloc = AudioBloc();
   final CoachIntroductionVideoBloc _coachIntroductionVideo = CoachIntroductionVideoBloc();
+  final CoachReviewPendingBloc _coachReviewPendingBloc = CoachReviewPendingBloc();
   final RecordingAlertBloc _recordingAlertBloc = RecordingAlertBloc();
+  final InsideClassContentBloc _insideClassContentBloc = InsideClassContentBloc();
+  final CourseCategoryBloc _courseCategoryBloc = CourseCategoryBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -334,6 +340,7 @@ class Routes {
           BlocProvider<CoachMentoredVideosBloc>.value(value: _coachMentoredVideosBloc),
           BlocProvider<CoachTimelineItemsBloc>.value(value: _coachTimelineItemsBloc),
           BlocProvider<HiFiveBloc>.value(value: _hiFiveBloc),
+          BlocProvider<CourseCategoryBloc>.value(value: _courseCategoryBloc),
           BlocProvider<AssessmentAssignmentBloc>.value(value: _assessmentAssignmentBloc),
           BlocProvider<TaskSubmissionListBloc>.value(value: _taskSubmissionListBloc),
           BlocProvider<HiFiveSendBloc>.value(
@@ -342,10 +349,15 @@ class Routes {
           BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
           BlocProvider<CoachRecommendationsBloc>.value(value: _coachRecommendationsBloc),
           BlocProvider<CoachIntroductionVideoBloc>.value(value: _coachIntroductionVideo),
+          BlocProvider<CoachReviewPendingBloc>.value(value: _coachReviewPendingBloc),
         ];
 
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
-        newRouteView = MainPage(index: argumentsToAdd == null || argumentsToAdd['index'] == null ? null : argumentsToAdd['index'] as int);
+        newRouteView = MainPage(
+          index: argumentsToAdd == null || argumentsToAdd['index'] == null ? null : argumentsToAdd['index'] as int,
+          classIndex: argumentsToAdd == null || argumentsToAdd['classIndex'] == null ? null : argumentsToAdd['classIndex'] as int,
+          tab: argumentsToAdd == null || argumentsToAdd['tab'] == null ? null : argumentsToAdd['tab'] as int,
+        );
         break;
       case RouteEnum.signUp:
         newRouteView = SignUpPage();
@@ -354,7 +366,9 @@ class Routes {
         providers = [BlocProvider<CourseEnrollmentUpdateBloc>.value(value: _courseEnrollmentUpdateBloc)];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = CompletedClass(
-            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment, classIndex: argumentsToAdd['classIndex'] as int);
+            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
+            classIndex: argumentsToAdd['classIndex'] as int,
+            courseIndex: argumentsToAdd['courseIndex'] as int);
         break;
       case RouteEnum.story:
         providers = [
@@ -449,8 +463,9 @@ class Routes {
             value: _hiFiveSendBloc,
           )
         ];
-        final Map<String, UserResponse> argumentsToAdd = arguments as Map<String, UserResponse>;
-        newRouteView = UserProfilePage(userRequested: argumentsToAdd['userRequested']);
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        newRouteView =
+            UserProfilePage(userRequested: argumentsToAdd['userRequested'] as UserResponse, isFriend: argumentsToAdd['isFriend'] as bool);
         break;
       case RouteEnum.profileChallenges:
         providers = [BlocProvider<ChallengeBloc>.value(value: _challengeBloc)];
@@ -597,7 +612,9 @@ class Routes {
           BlocProvider<MovementBloc>.value(value: _movementBloc),
           BlocProvider<CoachAudioBloc>.value(value: _coachAudioBloc),
           BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
-          BlocProvider<StoryListBloc>.value(value: _storyListBloc)
+          BlocProvider<StoryListBloc>.value(value: _storyListBloc),
+          BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
+          BlocProvider<InsideClassContentBloc>.value(value: _insideClassContentBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = InsideClass(
@@ -613,7 +630,8 @@ class Routes {
           BlocProvider<AudioBloc>.value(value: _audioBloc),
           BlocProvider<DoneChallengeUsersBloc>.value(value: _doneChallengeUsersBloc),
           BlocProvider<SegmentDetailContentBloc>.value(value: _segmentDetailContentBloc),
-          BlocProvider<PersonalRecordBloc>.value(value: _personalRecordBloc)
+          BlocProvider<PersonalRecordBloc>.value(value: _personalRecordBloc),
+          BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = UserChallengeDetail(
@@ -626,6 +644,7 @@ class Routes {
           BlocProvider<AssessmentAssignmentBloc>.value(value: _assessmentAssignmentBloc),
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
           BlocProvider<TaskBloc>.value(value: _taskBloc),
+          BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = AssessmentVideos(
@@ -692,12 +711,12 @@ class Routes {
         providers = [
           BlocProvider<FavoriteBloc>.value(value: _favoriteBloc),
           BlocProvider<CourseBloc>.value(value: _courseBloc),
+          BlocProvider<CourseCategoryBloc>.value(value: _courseCategoryBloc),
           BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
           BlocProvider<TagBloc>.value(value: _tagBloc),
           BlocProvider<RecommendationBloc>.value(value: _recommendationBloc),
           BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
         ];
-
         final Map<String, dynamic> args = arguments as Map<String, dynamic>;
         newRouteView = Courses(homeEnrollTocourse: args['homeEnrollTocourse'] == 'true');
         break;
@@ -734,6 +753,7 @@ class Routes {
       case RouteEnum.coach:
         providers = [
           BlocProvider<CoachIntroductionVideoBloc>.value(value: _coachIntroductionVideo),
+          BlocProvider<CoachReviewPendingBloc>.value(value: _coachReviewPendingBloc),
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
           BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
@@ -755,6 +775,7 @@ class Routes {
       case RouteEnum.coach2:
         providers = [
           BlocProvider<CoachIntroductionVideoBloc>.value(value: _coachIntroductionVideo),
+          BlocProvider<CoachReviewPendingBloc>.value(value: _coachReviewPendingBloc),
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
           BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),

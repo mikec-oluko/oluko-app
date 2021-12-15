@@ -46,7 +46,8 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class UserProfilePage extends StatefulWidget {
   final UserResponse userRequested;
-  const UserProfilePage({this.userRequested});
+  final bool isFriend;
+  const UserProfilePage({this.userRequested, this.isFriend});
   @override
   _UserProfilePageState createState() => _UserProfilePageState();
 }

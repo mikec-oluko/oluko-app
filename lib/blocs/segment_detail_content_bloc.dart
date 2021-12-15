@@ -10,8 +10,8 @@ class SegmentDetailContentDefault extends SegmentDetailContentState {}
 class SegmentDetailContentAudioOpen extends SegmentDetailContentState {}
 
 class SegmentDetailContentPeopleOpen extends SegmentDetailContentState {
-  List<UserSubmodel> users;
-  List<UserSubmodel> favorites;
+  List<dynamic> users;
+  List<dynamic> favorites;
   SegmentDetailContentPeopleOpen({this.users, this.favorites});
 }
 
@@ -35,7 +35,7 @@ class SegmentDetailContentBloc extends Cubit<SegmentDetailContentState> {
     emit(SegmentDetailContentAudioOpen());
   }
 
-  void openPeoplePanel(List<UserSubmodel> users, List<UserSubmodel> favorites) {
+  void openPeoplePanel(List<dynamic> users, List<dynamic> favorites) {
     emit(SegmentDetailContentPeopleOpen(users: users, favorites: favorites));
   }
 

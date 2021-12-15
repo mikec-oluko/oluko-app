@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_category.dart';
@@ -15,6 +18,11 @@ class CourseSuccess extends CourseState {
   final List<Course> values;
   final Map<CourseCategory, List<Course>> coursesByCategories;
   CourseSuccess({this.values, this.coursesByCategories});
+}
+
+class CourseSubscriptionSuccess extends CourseState {
+  final List<Course> values;
+  CourseSubscriptionSuccess({this.values});
 }
 
 class GetCourseSuccess extends CourseState {
@@ -36,28 +44,20 @@ class CourseFailure extends CourseState {
 class CourseBloc extends Cubit<CourseState> {
   CourseBloc() : super(CourseLoading());
 
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>> subscription;
+  @override
+  void dispose() {
+    if (subscription != null) {
+      subscription.cancel();
+      subscription = null;
+    }
+  }
+
   void get() async {
     emit(CourseLoading());
     try {
       List<Course> courses = await CourseRepository().getAll();
       emit(CourseSuccess(values: courses));
-    } catch (exception, stackTrace) {
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
-      );
-      emit(CourseFailure(exception: exception));
-      rethrow;
-    }
-  }
-
-  void getByCategories() async {
-    emit(CourseLoading());
-    try {
-      List<Course> courses = await CourseRepository().getAll();
-      List<CourseCategory> courseCategories = await CourseCategoryRepository().getAll();
-      Map<CourseCategory, List<Course>> mappedCourses = CourseUtils.mapCoursesByCategories(courses, courseCategories);
-      emit(CourseSuccess(values: courses, coursesByCategories: mappedCourses));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
@@ -96,5 +96,34 @@ class CourseBloc extends Cubit<CourseState> {
       emit(CourseFailure(exception: exception));
       rethrow;
     }
+  }
+
+  void getByCategories() async {
+    emit(CourseLoading());
+    try {
+      List<Course> courses = await CourseRepository().getAll();
+      List<CourseCategory> courseCategories = await CourseCategoryRepository().getAll();
+      Map<CourseCategory, List<Course>> mappedCourses = CourseUtils.mapCoursesByCategories(courses, courseCategories);
+      emit(CourseSuccess(values: courses, coursesByCategories: mappedCourses));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(CourseFailure(exception: exception));
+      rethrow;
+    }
+  }
+
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>> getStream() {
+    subscription ??= CourseRepository().getCoursesSubscription().listen((snapshot) async {
+      List<Course> courses = [];
+      snapshot.docs.forEach((doc) {
+        final Map<String, dynamic> content = doc.data();
+        courses.add(Course.fromJson(content));
+      });
+      emit(CourseSubscriptionSuccess(values: courses));
+    });
+    return subscription;
   }
 }

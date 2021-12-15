@@ -99,8 +99,7 @@ class CourseEnrollmentRepository {
       if (classIndex == courseEnrollment.classes.length - 1) {
         courseEnrollment.completion = 1;
       } else {
-        double courseProgress =
-            1 / courseEnrollment.classes.length;
+        double courseProgress = 1 / courseEnrollment.classes.length;
         courseEnrollment.completion += courseProgress;
       }
       classes[classIndex].completedAt = Timestamp.now();
@@ -267,7 +266,7 @@ class CourseEnrollmentRepository {
     reference.update({'classes': List<dynamic>.from(classes.map((c) => c.toJson()))});
   }
 
-  static Future<CourseEnrollment> updateSelfie(CourseEnrollment courseEnrollment, int classIndex, PickedFile file) async {
+  static Future<CourseEnrollment> updateSelfie(CourseEnrollment courseEnrollment, int classIndex, XFile file) async {
     final DocumentReference reference = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
@@ -317,5 +316,17 @@ class CourseEnrollmentRepository {
       );
       rethrow;
     }
+  }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getUserCourseEnrollmentsSubscription(String userId) {
+    Stream<QuerySnapshot<Map<String, dynamic>>> courseEnrollmentsStream = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('courseEnrollments')
+        .where('created_by', isEqualTo: userId)
+        .where('is_unenrolled', isEqualTo: false)
+        .orderBy('created_at', descending: true)
+        .snapshots();
+    return courseEnrollmentsStream;
   }
 }

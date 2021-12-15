@@ -502,7 +502,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                                 title: 'View full profile',
                                 onPressed: () {
                                   Navigator.pushNamed(context, routeLabels[RouteEnum.profileViewOwnProfile],
-                                      arguments: {'userRequested': user});
+                                      arguments: {'userRequested': user, 'isFriend': userIsFriend});
                                 },
                               )
                             : SizedBox()

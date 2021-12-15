@@ -99,4 +99,13 @@ class CourseRepository {
     }
     return courses;
   }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> getCoursesSubscription() {
+    Stream<QuerySnapshot<Map<String, dynamic>>> coursesStream = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('courses')
+        .snapshots();
+    return coursesStream;
+  }
 }

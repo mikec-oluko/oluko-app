@@ -45,7 +45,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
     return BlocBuilder<CoachTimelineBloc, CoachTimelineState>(
       builder: (context, state) {
         if (state is CoachTimelineTabsUpdate) {
-          _tabController = TabController(length: state.numberOfTabs, vsync: this);
+          _tabController = TabController(length: state.timelineContentItems.length, vsync: this);
           _timelineContentItems = state.timelineContentItems;
         }
         return Scaffold(

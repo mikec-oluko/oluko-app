@@ -18,8 +18,9 @@ import 'package:oluko_app/utils/time_converter.dart';
 class CompletedClass extends StatefulWidget {
   final CourseEnrollment courseEnrollment;
   final int classIndex;
+  final int courseIndex;
 
-  CompletedClass({Key key,  this.courseEnrollment, this.classIndex}) : super(key: key);
+  CompletedClass({Key key, this.courseEnrollment, this.classIndex, this.courseIndex}) : super(key: key);
 
   @override
   _CompletedClassState createState() => _CompletedClassState();
@@ -28,7 +29,7 @@ class CompletedClass extends StatefulWidget {
 class _CompletedClassState extends State<CompletedClass> {
   User _user;
 
-  PickedFile _image;
+  XFile _image;
   final imagePicker = ImagePicker();
 
   String _imageUrl;
@@ -77,7 +78,14 @@ class _CompletedClassState extends State<CompletedClass> {
                     OlukoPrimaryButton(
                         title: OlukoLocalizations.get(context, 'done'),
                         onPressed: () {
-                          Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
+                          if (widget.classIndex < widget.courseEnrollment.classes.length - 1) {
+                            Navigator.pushNamed(context, routeLabels[RouteEnum.root], arguments: {
+                              'index': widget.courseIndex,
+                              'classIndex': widget.classIndex + 1,
+                            });
+                          } else {
+                            Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
+                          }
                         })
                   ])),
               SizedBox(height: 20),
@@ -160,7 +168,7 @@ class _CompletedClassState extends State<CompletedClass> {
   }
 
   showCameraAndSaveSelfie() async {
-    _image = await imagePicker.getImage(source: ImageSource.camera, preferredCameraDevice: CameraDevice.front);
+    _image = await imagePicker.pickImage(source: ImageSource.camera, preferredCameraDevice: CameraDevice.front);
     if (_image != null) {
       BlocProvider.of<CourseEnrollmentUpdateBloc>(context).saveSelfie(widget.courseEnrollment, widget.classIndex, _image);
       setState(() {

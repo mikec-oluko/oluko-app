@@ -56,7 +56,7 @@ class Annotation extends Base with EquatableMixin {
         segmentSubmissionReference: json['segment_submission_reference'] as DocumentReference,
         coachId: json['coach_id'].toString(),
         coachReference: json['coach_reference'] as DocumentReference,
-        status: AnnotationStatusEnum.values[json['status'] as int],
+        // status: AnnotationStatusEnum.values[json['status'] as int],
         favorite: json['favorite'] == null ? false : json['favorite'] as bool,
         video: json['video'] == null ? null : Video.fromJson(json['video'] as Map<String, dynamic>),
         videoHLS: json['video_hls'] == null ? null : json['video_hls'].toString(),

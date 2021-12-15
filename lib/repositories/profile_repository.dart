@@ -17,24 +17,20 @@ class ProfileRepository {
     this.firestoreInstance = firestoreInstance;
   }
 
-  Future<UserResponse> updateProfileAvatar(PickedFile image) async {
+  Future<UserResponse> updateProfileAvatar(XFile image) async {
     UserResponse user = await _authRepository.retrieveLoginData();
-    UserResponse userUpdated =
-        await UserRepository().updateUserAvatar(user, image);
+    UserResponse userUpdated = await UserRepository().updateUserAvatar(user, image);
     return userUpdated;
   }
 
-  Future<UserResponse> uploadProfileCoverImage(PickedFile image) async {
+  Future<UserResponse> uploadProfileCoverImage(XFile image) async {
     UserResponse user = await _authRepository.retrieveLoginData();
-    UserResponse userUpdated = await _userRepository.updateUserCoverImage(
-        user: user, coverImage: image);
+    UserResponse userUpdated = await _userRepository.updateUserCoverImage(user: user, coverImage: image);
     return userUpdated;
   }
 
-  Future<UserResponse> updateUserPreferences(
-      UserResponse user, int privacyIndex, bool notificationValue) async {
-    UserResponse userUpdated = await _userRepository
-        .updateUserSettingsPreferences(user, privacyIndex, notificationValue);
+  Future<UserResponse> updateUserPreferences(UserResponse user, int privacyIndex, bool notificationValue) async {
+    UserResponse userUpdated = await _userRepository.updateUserSettingsPreferences(user, privacyIndex, notificationValue);
     return userUpdated;
   }
 

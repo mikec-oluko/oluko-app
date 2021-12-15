@@ -16,7 +16,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 class CoachRepository {
   FirebaseFirestore firestoreInstance;
-
+  final String introductionVideoDefaultId = 'introVideo';
   CoachRepository() {
     firestoreInstance = FirebaseFirestore.instance;
   }
@@ -43,6 +43,28 @@ class CoachRepository {
   Future<CoachAssignment> updateIntroductionStatus(CoachAssignment coachAssignment) async {
     try {
       coachAssignment.introductionCompleted = true;
+      await FirebaseFirestore.instance
+          .collection('projects')
+          .doc(GlobalConfiguration().getValue('projectId'))
+          .collection('coachAssignments')
+          .doc(coachAssignment.userId)
+          .set(coachAssignment.toJson());
+      return coachAssignment;
+    } on Exception catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
+      rethrow;
+    }
+  }
+
+  Future<CoachAssignment> updateIntroductionVideoFavoriteStatus(String userId) async {
+    try {
+      CoachAssignment coachAssignment = await getCoachAssignmentByUserId(userId);
+
+      coachAssignment.isFavorite = !coachAssignment.isFavorite;
+
       await FirebaseFirestore.instance
           .collection('projects')
           .doc(GlobalConfiguration().getValue('projectId'))
@@ -109,14 +131,19 @@ class CoachRepository {
   Future<List<Annotation>> setAnnotationAsFavorite(Annotation coachAnnotation, List<Annotation> actualMentoredVideosContent) async {
     try {
       coachAnnotation.favorite = !coachAnnotation.favorite;
-      await FirebaseFirestore.instance
-          .collection('projects')
-          .doc(GlobalConfiguration().getValue('projectId'))
-          .collection('coachStatistics')
-          .doc(coachAnnotation.coachId)
-          .collection('annotations')
-          .doc(coachAnnotation.id)
-          .set(coachAnnotation.toJson());
+
+      if (coachAnnotation.id == introductionVideoDefaultId) {
+        updateIntroductionVideoFavoriteStatus(coachAnnotation.userId);
+      } else {
+        await FirebaseFirestore.instance
+            .collection('projects')
+            .doc(GlobalConfiguration().getValue('projectId'))
+            .collection('coachStatistics')
+            .doc(coachAnnotation.createdBy)
+            .collection('annotations')
+            .doc(coachAnnotation.id)
+            .set(coachAnnotation.toJson());
+      }
 
       actualMentoredVideosContent.forEach((mentoredVideo) {
         if (mentoredVideo.id == coachAnnotation.id) {

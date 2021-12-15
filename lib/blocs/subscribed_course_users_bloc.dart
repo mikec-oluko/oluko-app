@@ -32,7 +32,6 @@ class SubscribedCourseUsersBloc extends Cubit<SubscribedCourseUsersState> {
       List<CourseEnrollment> courseEnrollmentList = await CourseEnrollmentRepository.getByCourse(courseId, userId);
 
       List<UserResponse> uniqueUserList = [];
-      List<String> uniqueUserIds = [];
       List<UserResponse> favoriteUserList = [];
       List<UserResponse> userListToShow = [];
       if (courseEnrollmentList != null) {
@@ -43,9 +42,8 @@ class SubscribedCourseUsersBloc extends Cubit<SubscribedCourseUsersState> {
         usersSubscribedToCourse.removeWhere((element) => element == null);
 
         usersSubscribedToCourse.forEach((userSubscribed) {
-          if (uniqueUserIds.indexOf(userSubscribed.id) == -1) {
+          if (!uniqueUserList.any((user) => user.id == userSubscribed.id)) {
             uniqueUserList.add(userSubscribed);
-            uniqueUserIds.add(userSubscribed.id);
           }
         });
 
@@ -53,15 +51,17 @@ class SubscribedCourseUsersBloc extends Cubit<SubscribedCourseUsersState> {
         List<FriendModel> friends = friendData.friends;
 
         userListToShow = List.from(uniqueUserList);
-
-        friends.forEach((friend) {
-          if (friend.isFavorite) {
-            int index = userListToShow.map((user) => user.id).toList().indexOf(friend.id);
-            if (index != -1) {
-              favoriteUserList.add(userListToShow[index]);
+        if (friends != null) {
+          friends.forEach((friend) {
+            if (friend.isFavorite) {
+              final int index = userListToShow.indexWhere((user) => user.id == friend.id);
+              if (index != -1) {
+                favoriteUserList.add(userListToShow[index]);
+                userListToShow.removeAt(index);
+              }
             }
-          }
-        });
+          });
+        }
       }
 
       emit(SubscribedCourseUsersSuccess(users: userListToShow, favoriteUsers: favoriteUserList));

@@ -14,9 +14,11 @@ import 'coach/coach_main_page.dart';
 import 'coach/coach_no_assigned_timer_page.dart';
 
 class MainPage extends StatefulWidget {
-  MainPage({this.index, Key key}) : super(key: key);
+  MainPage({this.classIndex, this.index, this.tab, Key key}) : super(key: key);
 
   final int index;
+  final int classIndex;
+  int tab;
 
   @override
   _MainPageState createState() => _MainPageState();
@@ -48,7 +50,17 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   TabController tabController;
 
   List<Widget> getTabs() {
-    return [widget.index == null ? Home() : Home(index: widget.index), CoachMainPage(), FriendsPage(), Courses(), ProfilePage()];
+    return [getHomeTab(), CoachMainPage(), FriendsPage(), Courses(), ProfilePage()];
+  }
+
+  Widget getHomeTab() {
+    if (widget.classIndex != null && widget.index != null) {
+      return Home(index: widget.index, classIndex: widget.classIndex);
+    } else if (widget.index != null) {
+      return Home(index: widget.index);
+    } else {
+      return Home();
+    }
   }
 
   @override
@@ -63,6 +75,11 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
+    if (widget.tab != null) {
+      this.tabController.index = widget.tab;
+      tabController.animateTo(widget.tab);
+      widget.tab = null;
+    }
     return Scaffold(
       body: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
         if (authState is AuthSuccess) {
