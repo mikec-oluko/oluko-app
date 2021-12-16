@@ -9,7 +9,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
-import 'package:oluko_app/blocs/class_bloc.dart';
+import 'package:oluko_app/blocs/class/class_bloc.dart';
+import 'package:oluko_app/blocs/class/class_subscription_bloc.dart';
 import 'package:oluko_app/blocs/course/course_home_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
@@ -74,7 +75,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
               .get(widget.course.id, _userState.user.id);*/
 
           //BlocProvider.of<ClassBloc>(context)..getAll(widget.course);
-          BlocProvider.of<ClassBloc>(context).getStream();
+          BlocProvider.of<ClassSubscriptionBloc>(context).getStream();
 
           //BlocProvider.of<StatisticsBloc>(context)..get(widget.course.statisticsReference);
 
@@ -101,8 +102,8 @@ class _CourseMarketingState extends State<CourseMarketing> {
       if (movementState is GetAllSuccess) {
         _movements = movementState.movements;
         return BlocBuilder<CourseEnrollmentBloc, CourseEnrollmentState>(builder: (context, enrollmentState) {
-          return BlocBuilder<ClassBloc, ClassState>(builder: (context, classState) {
-            if ((enrollmentState is GetEnrollmentSuccess) && classState is GetSuccess) {
+          return BlocBuilder<ClassSubscriptionBloc, ClassSubscriptionState>(builder: (context, classState) {
+            if ((enrollmentState is GetEnrollmentSuccess) && classState is ClassSubscriptionSuccess) {
               _classes = classState.classes;
               return Form(
                   key: _formKey,
