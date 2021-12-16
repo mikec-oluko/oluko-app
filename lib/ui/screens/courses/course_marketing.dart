@@ -24,6 +24,7 @@ import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/course_statistics.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/services/course_service.dart';
 import 'package:oluko_app/ui/components/class_expansion_panel.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/overlay_video_preview.dart';
@@ -72,7 +73,9 @@ class _CourseMarketingState extends State<CourseMarketing> {
           /*BlocProvider.of<SubscribedCourseUsersBloc>(context)
               .get(widget.course.id, _userState.user.id);*/
 
-          BlocProvider.of<ClassBloc>(context)..getAll(widget.course);
+          //BlocProvider.of<ClassBloc>(context)..getAll(widget.course);
+          BlocProvider.of<ClassBloc>(context).getStream();
+
           //BlocProvider.of<StatisticsBloc>(context)..get(widget.course.statisticsReference);
 
           //BlocProvider.of<StatisticsBloc>(context).getStream(widget.course.id, widget.course.statisticsReference);
@@ -100,7 +103,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
         return BlocBuilder<CourseEnrollmentBloc, CourseEnrollmentState>(builder: (context, enrollmentState) {
           return BlocBuilder<ClassBloc, ClassState>(builder: (context, classState) {
             if ((enrollmentState is GetEnrollmentSuccess) && classState is GetSuccess) {
-              _classes = classState.classes; //TODO: this is receiving old classes from another (previously opened) course
+              _classes = classState.classes;
               return Form(
                   key: _formKey,
                   child: Scaffold(
@@ -250,7 +253,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
 
   Widget buildClassExpansionPanels() {
     return ClassExpansionPanel(
-      classes: _classes,
+      classes: CourseService.getCourseClasses(widget.course, _classes),
       movements: _movements,
       onPressedMovement: (BuildContext context, Movement movement) =>
           Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement}),

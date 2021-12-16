@@ -19,6 +19,6 @@ class CourseService {
         courseClasses.add(classObj);
       }
     });
-    return classes;
+    return courseClasses;
   }
 }

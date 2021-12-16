@@ -20,11 +20,6 @@ class CourseSuccess extends CourseState {
   CourseSuccess({this.values, this.coursesByCategories});
 }
 
-class CourseSubscriptionSuccess extends CourseState {
-  final List<Course> values;
-  CourseSubscriptionSuccess({this.values});
-}
-
 class GetCourseSuccess extends CourseState {
   final Course course;
   GetCourseSuccess({this.course});
@@ -113,17 +108,5 @@ class CourseBloc extends Cubit<CourseState> {
       emit(CourseFailure(exception: exception));
       rethrow;
     }
-  }
-
-  StreamSubscription<QuerySnapshot<Map<String, dynamic>>> getStream() {
-    subscription ??= CourseRepository().getCoursesSubscription().listen((snapshot) async {
-      List<Course> courses = [];
-      snapshot.docs.forEach((doc) {
-        final Map<String, dynamic> content = doc.data();
-        courses.add(Course.fromJson(content));
-      });
-      emit(CourseSubscriptionSuccess(values: courses));
-    });
-    return subscription;
   }
 }
