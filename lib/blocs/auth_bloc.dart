@@ -216,7 +216,7 @@ class AuthBloc extends Cubit<AuthState> {
       BlocProvider.of<CourseEnrollmentListBloc>(context).dispose();
       BlocProvider.of<CourseSubscriptionBloc>(context).dispose();
       BlocProvider.of<CourseCategoryBloc>(context).dispose();
-      BlocProvider.of<ClassSubscriptionBloc>(context).dispose();
+
       Navigator.pushNamedAndRemoveUntil(context, '/sign-up', (route) => false);
       emit(AuthGuest());
     }
