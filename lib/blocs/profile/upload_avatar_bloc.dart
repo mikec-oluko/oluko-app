@@ -37,6 +37,9 @@ class ProfileAvatarBloc extends Cubit<ProfileAvatarState> {
   void uploadProfileAvatarImage({DeviceContentFrom uploadedFrom, UploadFrom contentFor}) async {
     XFile _image;
     try {
+
+      if (!await requiredAvatarPermissionsEnabled(uploadedFrom)) return;
+      
       final ImagePicker imagePicker = ImagePicker();
 
       if (uploadedFrom == DeviceContentFrom.gallery) {
@@ -60,8 +63,6 @@ class ProfileAvatarBloc extends Cubit<ProfileAvatarState> {
         exception,
         stackTrace: stackTrace,
       );
-
-      if (!await requiredAvatarPermissionsEnabled(uploadedFrom)) return;
 
       emit(ProfileAvatarFailure(exception: exception));
       // rethrow;

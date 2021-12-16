@@ -665,8 +665,7 @@ class Routes {
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = TaskDetails(
             taskIndex: argumentsToAdd['taskIndex'] as int,
-            isLastTask: argumentsToAdd['isLastTask'] as bool,
-            isPublic: argumentsToAdd['isPublic'] as bool);
+            isLastTask: argumentsToAdd['isLastTask'] as bool);
         break;
       case RouteEnum.selfRecording:
         //TODO: Pass flag for last assessments
