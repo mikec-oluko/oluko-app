@@ -298,7 +298,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                       }
                       Navigator.pop(context);
                       if (widget.taskIndex < _tasks.length - 1) {
-                        Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {
+                        Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {
                           'taskIndex': widget.taskIndex + 1,
                           'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
                         });
