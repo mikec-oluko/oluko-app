@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/course/course_bloc.dart';
+import 'package:oluko_app/blocs/course/course_subscrption_bloc.dart';
 import 'package:oluko_app/blocs/course_category_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/favorite_bloc.dart';
@@ -73,12 +74,12 @@ class _State extends State<Courses> {
   @override
   Widget build(BuildContext context) {
     carouselSectionHeight = ((ScreenUtils.width(context) / _cardsToShow()) / cardsAspectRatio) + 75;
-    BlocProvider.of<CourseBloc>(context).getStream();
+    BlocProvider.of<CourseSubscriptionBloc>(context).getStream();
     BlocProvider.of<CourseCategoryBloc>(context).getStream();
-    return BlocBuilder<CourseBloc, CourseState>(builder: (context, courseState) {
+    return BlocBuilder<CourseSubscriptionBloc, CourseSubscriptionState>(builder: (context, courseSubscriptionState) {
       return BlocBuilder<CourseCategoryBloc, CourseCategoryState>(builder: (context, courseCategoryState) {
-      if (courseState is CourseSubscriptionSuccess && courseCategoryState is CourseCategorySubscriptionSuccess) {
-        _courses = courseState.values;
+      if (courseSubscriptionState is CourseSubscriptionSuccess && courseCategoryState is CourseCategorySubscriptionSuccess) {
+        _courses = courseSubscriptionState.values;
         _coursesByCategories = CourseUtils.mapCoursesByCategories(_courses, courseCategoryState.values);
         return BlocBuilder<TagBloc, TagState>(
             bloc: BlocProvider.of<TagBloc>(context)..getByCategories(),
