@@ -299,7 +299,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                       if (_controller != null) {
                         _controller.pause();
                       }
-                      Navigator.pop(context);
+                      //Navigator.pop(context);
                       if (widget.taskIndex < _tasks.length - 1) {
                         Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {
                           'taskIndex': widget.taskIndex + 1,
