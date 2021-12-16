@@ -27,6 +27,7 @@ import 'coach/coach_request_bloc.dart';
 import 'coach/coach_review_pending_bloc.dart';
 import 'coach/coach_sent_videos_bloc.dart';
 import 'course/course_bloc.dart';
+import 'course/course_subscrption_bloc.dart';
 import 'course_enrollment/course_enrollment_list_bloc.dart';
 
 abstract class AuthState {}
@@ -216,7 +217,7 @@ class AuthBloc extends Cubit<AuthState> {
       BlocProvider.of<CoachSentVideosBloc>(context).dispose();
       BlocProvider.of<CoachReviewPendingBloc>(context).dispose();
       BlocProvider.of<CourseEnrollmentListBloc>(context).dispose();
-      BlocProvider.of<CourseBloc>(context).dispose();
+      BlocProvider.of<CourseSubscriptionBloc>(context).dispose();
       BlocProvider.of<CourseCategoryBloc>(context).dispose();
       Navigator.pushNamedAndRemoveUntil(context, '/sign-up', (route) => false);
       emit(AuthGuest());
