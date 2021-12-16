@@ -60,4 +60,13 @@ class ClassRepository {
     DocumentSnapshot ds = await reference.get();
     return Class.fromJson(ds.data() as Map<String, dynamic>);
   }
+
+    static Stream<QuerySnapshot<Map<String, dynamic>>> getClassesSubscription() {
+    Stream<QuerySnapshot<Map<String, dynamic>>> movementsStream = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('classes')
+        .snapshots();
+    return movementsStream;
+  }
 }

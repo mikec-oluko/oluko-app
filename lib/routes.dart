@@ -6,11 +6,13 @@ import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/challenge_bloc.dart';
+import 'package:oluko_app/blocs/class/class_subscription_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_audio_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_introduction_video_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
 import 'package:oluko_app/blocs/course/course_home_bloc.dart';
+import 'package:oluko_app/blocs/course/course_subscrption_bloc.dart';
 import 'package:oluko_app/blocs/course_category_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
@@ -25,7 +27,7 @@ import 'package:oluko_app/blocs/segment_detail_content_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
-import 'package:oluko_app/blocs/class_bloc.dart';
+import 'package:oluko_app/blocs/class/class_bloc.dart';
 import 'package:oluko_app/blocs/course/course_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/favorite_bloc.dart';
@@ -296,6 +298,8 @@ class Routes {
   final RecordingAlertBloc _recordingAlertBloc = RecordingAlertBloc();
   final InsideClassContentBloc _insideClassContentBloc = InsideClassContentBloc();
   final CourseCategoryBloc _courseCategoryBloc = CourseCategoryBloc();
+  final CourseSubscriptionBloc _courseSubscriptionBloc = CourseSubscriptionBloc();
+  final ClassSubscriptionBloc _classSubscriptionBloc = ClassSubscriptionBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -315,7 +319,7 @@ class Routes {
           BlocProvider<CoachTimelineBloc>.value(value: _coachTimelineBloc),
           BlocProvider<ChallengeBloc>.value(value: _challengeBloc),
           BlocProvider<CourseHomeBloc>.value(value: _courseHomeBloc),
-          BlocProvider<CourseBloc>.value(value: _courseBloc),
+          BlocProvider<CourseSubscriptionBloc>.value(value: _courseSubscriptionBloc),
           BlocProvider<ClassBloc>.value(value: _classBloc),
           BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
           BlocProvider<TagBloc>.value(value: _tagBloc),
@@ -582,7 +586,7 @@ class Routes {
         break;
       case RouteEnum.courseMarketing:
         providers = [
-          BlocProvider<ClassBloc>.value(value: _classBloc),
+          BlocProvider<ClassSubscriptionBloc>.value(value: _classSubscriptionBloc),
           BlocProvider<StatisticsBloc>.value(value: _statisticsBloc),
           BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
           BlocProvider<MovementBloc>.value(value: _movementBloc),
@@ -715,6 +719,7 @@ class Routes {
           BlocProvider<TagBloc>.value(value: _tagBloc),
           BlocProvider<RecommendationBloc>.value(value: _recommendationBloc),
           BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
+          BlocProvider<CourseSubscriptionBloc>.value(value: _courseSubscriptionBloc),
         ];
         final Map<String, dynamic> args = arguments as Map<String, dynamic>;
         newRouteView = Courses(homeEnrollTocourse: args['homeEnrollTocourse'] == 'true');

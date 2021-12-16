@@ -9,7 +9,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
-import 'package:oluko_app/blocs/class_bloc.dart';
+import 'package:oluko_app/blocs/class/class_bloc.dart';
+import 'package:oluko_app/blocs/class/class_subscription_bloc.dart';
 import 'package:oluko_app/blocs/course/course_home_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
@@ -24,6 +25,7 @@ import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/course_statistics.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/services/course_service.dart';
 import 'package:oluko_app/ui/components/class_expansion_panel.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/overlay_video_preview.dart';
@@ -71,9 +73,14 @@ class _CourseMarketingState extends State<CourseMarketing> {
           _userState = authState;
           /*BlocProvider.of<SubscribedCourseUsersBloc>(context)
               .get(widget.course.id, _userState.user.id);*/
-              
-          BlocProvider.of<ClassBloc>(context)..getAll(widget.course);
-          BlocProvider.of<StatisticsBloc>(context)..get(widget.course.statisticsReference);
+
+          //BlocProvider.of<ClassBloc>(context)..getAll(widget.course);
+          BlocProvider.of<ClassSubscriptionBloc>(context).getStream();
+
+          //BlocProvider.of<StatisticsBloc>(context)..get(widget.course.statisticsReference);
+
+          //BlocProvider.of<StatisticsBloc>(context).getStream(widget.course.id, widget.course.statisticsReference);
+
           BlocProvider.of<CourseEnrollmentBloc>(context).get(authState.firebaseUser, widget.course);
 
           //BlocProvider.of<MovementBloc>(context)..getAll();
@@ -95,9 +102,9 @@ class _CourseMarketingState extends State<CourseMarketing> {
       if (movementState is GetAllSuccess) {
         _movements = movementState.movements;
         return BlocBuilder<CourseEnrollmentBloc, CourseEnrollmentState>(builder: (context, enrollmentState) {
-          return BlocBuilder<ClassBloc, ClassState>(builder: (context, classState) {
-            if ((enrollmentState is GetEnrollmentSuccess) && classState is GetSuccess) {
-              _classes = classState.classes; //TODO: this is receiving old classes from another (previously opened) course
+          return BlocBuilder<ClassSubscriptionBloc, ClassSubscriptionState>(builder: (context, classState) {
+            if ((enrollmentState is GetEnrollmentSuccess) && classState is ClassSubscriptionSuccess) {
+              _classes = classState.classes;
               return Form(
                   key: _formKey,
                   child: Scaffold(
@@ -247,7 +254,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
 
   Widget buildClassExpansionPanels() {
     return ClassExpansionPanel(
-      classes: _classes,
+      classes: CourseService.getCourseClasses(widget.course, _classes),
       movements: _movements,
       onPressedMovement: (BuildContext context, Movement movement) =>
           Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement}),
