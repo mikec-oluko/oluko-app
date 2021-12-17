@@ -83,4 +83,25 @@ class CoachRequestRepository {
         .doc(coachRequestId);
     reference.update({'notification_viewed': notificationValue});
   }
+
+  Future<List<CoachRequest>> getByClassAndCoach(String userId, String classId, String courseEnrollmentId, String coachId) async {
+    QuerySnapshot docRef = await FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('coachAssignments')
+        .doc(userId)
+        .collection('coachRequests')
+        .where('class_id', isEqualTo: classId)
+        .where('course_enrollment_id', isEqualTo: courseEnrollmentId)
+        .where('created_by', isEqualTo: coachId)
+        .get();
+
+    return mapQueryToCoachRequest(docRef);
+  }
+
+  static List<CoachRequest> mapQueryToCoachRequest(QuerySnapshot qs) {
+    return qs.docs.map((DocumentSnapshot ds) {
+      return CoachRequest.fromJson(ds.data() as Map<String, dynamic>);
+    }).toList();
+  }
 }

@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:equatable/equatable.dart';
 import 'package:oluko_app/models/base.dart';
 
-class CourseStatistics extends Base {
+class CourseStatistics extends Base with EquatableMixin {
   String courseId;
   DocumentReference courseReference;
   int doing;
@@ -56,4 +57,21 @@ class CourseStatistics extends Base {
     courseStatisticsJson.addEntries(super.toJson().entries);
     return courseStatisticsJson;
   }
+
+  @override
+  List<Object> get props => [
+        courseId,
+        doing,
+        takingUp,
+        completionRate,
+        completed,
+        courseReference,
+        id,
+        createdBy,
+        createdAt,
+        updatedAt,
+        updatedBy,
+        isDeleted,
+        isHidden
+      ];
 }
