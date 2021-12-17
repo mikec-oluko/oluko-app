@@ -2,18 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/constants/theme.dart';
 
-class OlukoNeumorphicBackButton extends StatefulWidget {
-  const OlukoNeumorphicBackButton({
-    @required this.onPressed,
-  });
+class OlukoNeumorphicCircleButton extends StatefulWidget {
+  const OlukoNeumorphicCircleButton({@required this.onPressed, this.customIcon});
 
   final Function() onPressed;
+  final Icon customIcon;
 
   @override
-  State<OlukoNeumorphicBackButton> createState() => _OlukoNeumorphicBackButtonState();
+  State<OlukoNeumorphicCircleButton> createState() => _OlukoNeumorphicCircleButtonState();
 }
 
-class _OlukoNeumorphicBackButtonState extends State<OlukoNeumorphicBackButton> {
+class _OlukoNeumorphicCircleButtonState extends State<OlukoNeumorphicCircleButton> {
   @override
   Widget build(BuildContext context) {
     return Neumorphic(
@@ -30,7 +29,7 @@ class _OlukoNeumorphicBackButtonState extends State<OlukoNeumorphicBackButton> {
           shadowLightColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
           shadowDarkColor: Colors.black),
       child: IconButton(
-          icon: Icon(Icons.arrow_back, size: 24, color: OlukoColors.grayColor),
+          icon: widget.customIcon != null ? widget.customIcon : Icon(Icons.arrow_back, size: 24, color: OlukoColors.grayColor),
           onPressed: () => {
                 if (this.widget.onPressed == null) {Navigator.pop(context)} else {this.widget.onPressed()}
               }),

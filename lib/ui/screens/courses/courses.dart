@@ -25,6 +25,7 @@ import 'package:oluko_app/ui/components/carousel_section.dart';
 import 'package:oluko_app/ui/components/course_card.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/search_bar.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/course_utils.dart';
 import 'package:oluko_app/utils/image_utils.dart';
@@ -136,7 +137,9 @@ class _State extends State<Courses> {
     }
 
     // this return will handle this states: TagLoading TagFailure CourseLoading CourseFailure
-    return OlukoCircularProgressIndicator();
+    return Container(
+        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+        child: OlukoCircularProgressIndicator());
   }
 
   PreferredSizeWidget _appBar(bool goBack) {
@@ -237,11 +240,33 @@ class _State extends State<Courses> {
                   ),
                 ],
               )
-            : Icon(
-                showFilterSelector || selectedTags.isNotEmpty ? Icons.filter_alt : Icons.filter_alt_outlined,
-                color: OlukoColors.appBarIcon,
-                size: 25,
-              ),
+            : OlukoNeumorphism.isNeumorphismDesign
+                ? OlukoNeumorphicCircleButton(
+                    customIcon: Icon(
+                      showFilterSelector || selectedTags.isNotEmpty ? Icons.filter_alt : Icons.filter_alt_outlined,
+                      color: OlukoColors.grayColor,
+                      size: 25,
+                    ),
+                    onPressed: () => this.setState(() {
+                      if (showFilterSelector == true) {
+                        //Clear all filters
+                        CourseUtils.onClearFilters(context).then((value) => value
+                            ? this.setState(() {
+                                selectedTags.clear();
+                                showFilterSelector = false;
+                              })
+                            : null);
+                      } else {
+                        //Toggle filter view
+                        showFilterSelector = !showFilterSelector;
+                      }
+                    }),
+                  )
+                : Icon(
+                    showFilterSelector || selectedTags.isNotEmpty ? Icons.filter_alt : Icons.filter_alt_outlined,
+                    color: OlukoColors.appBarIcon,
+                    size: 25,
+                  ),
       ),
     );
   }

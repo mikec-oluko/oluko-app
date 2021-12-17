@@ -9,6 +9,7 @@ class OlukoNeumorphicSecondaryButton extends StatefulWidget {
   final Color textColor;
   final TextAlign textAlign;
   final Widget icon;
+  final NeumorphicShape buttonShape;
   final bool thinPadding;
   final bool onlyIcon;
   final bool isDisabled;
@@ -23,6 +24,7 @@ class OlukoNeumorphicSecondaryButton extends StatefulWidget {
       this.textColor = Colors.black,
       this.textAlign = TextAlign.center,
       this.icon,
+      this.buttonShape,
       this.isDisabled = false,
       this.onlyIcon = false,
       this.isExpanded = true,
@@ -60,7 +62,7 @@ class _OlukoNeumorphicButtonState extends State<OlukoNeumorphicSecondaryButton> 
       padding: EdgeInsets.all(10),
       style: OlukoNeumorphism.secondaryButtonStyle(
           useBorder: widget.useBorder,
-          buttonShape: NeumorphicShape.flat,
+          buttonShape: widget.buttonShape,
           boxShape: NeumorphicBoxShape.stadium(),
           ligthShadow: true,
           darkShadow: true),
@@ -75,7 +77,7 @@ class _OlukoNeumorphicButtonState extends State<OlukoNeumorphicSecondaryButton> 
       return Text(
         widget.title,
         textAlign: widget.textAlign,
-        style: TextStyle(fontSize: 14, color: widget.textColor),
+        style: TextStyle(fontSize: 18, color: widget.textColor),
       );
     } else {
       return Padding(

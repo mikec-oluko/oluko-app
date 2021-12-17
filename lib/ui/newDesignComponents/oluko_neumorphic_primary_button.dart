@@ -62,7 +62,7 @@ class _OlukoNeumorphicPrimaryButtonState extends State<OlukoNeumorphicPrimaryBut
           useBorder: widget.useBorder,
           buttonShape: NeumorphicShape.convex,
           boxShape: NeumorphicBoxShape.stadium(),
-          ligthShadow: false,
+          ligthShadow: true,
           darkShadow: true),
       child: Center(
         child: widget.onlyIcon ? widget.icon : _textLabel(),
@@ -72,13 +72,11 @@ class _OlukoNeumorphicPrimaryButtonState extends State<OlukoNeumorphicPrimaryBut
 
   Widget _textLabel() {
     if (widget.thinPadding) {
-      return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 15),
-          child: Text(
-            widget.title,
-            textAlign: widget.textAlign,
-            style: TextStyle(fontSize: 18, color: OlukoColors.white),
-          ));
+      return Text(
+        widget.title,
+        textAlign: widget.textAlign,
+        style: TextStyle(fontSize: 18, color: OlukoColors.white),
+      );
     } else {
       return Padding(
           padding: const EdgeInsets.all(15.0),

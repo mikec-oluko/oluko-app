@@ -62,7 +62,7 @@ class _HomeState extends State<Home> {
         }, builder: (context, courseEnrollmentListState) {
           if (courseEnrollmentListState is CourseEnrollmentsByUserSuccess) {
             _courseEnrollments =
-                courseEnrollmentListState.courseEnrollments/*.where((courseEnroll) => courseEnroll.isUnenrolled != true).toList()*/;
+                courseEnrollmentListState.courseEnrollments /*.where((courseEnroll) => courseEnroll.isUnenrolled != true).toList()*/;
             ;
             BlocProvider.of<CourseHomeBloc>(context)..getByCourseEnrollments(_courseEnrollments);
             return form();
@@ -250,8 +250,9 @@ class _HomeState extends State<Home> {
                         ])),
                     Visibility(
                       visible: OlukoNeumorphism.isNeumorphismDesign,
-                      child: OlukoBlurredButton(childContent: Image.asset('assets/courses/play_arrow.png',
-                  height: 20, width: 20, scale: 2, color: OlukoColors.white)),
+                      child: OlukoBlurredButton(
+                          childContent:
+                              Image.asset('assets/courses/play_arrow.png', height: 20, width: 20, scale: 2, color: OlukoColors.white)),
                     ),
                   ])),
             )),

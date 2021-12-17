@@ -327,7 +327,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
         return _activeChallenges.isNotEmpty
             ? Padding(
-                padding: OlukoNeumorphism.isNeumorphismDesign ? EdgeInsets.symmetric(horizontal: 20) : EdgeInsets.symmetric(),
+                padding: OlukoNeumorphism.isNeumorphismDesign ? EdgeInsets.symmetric(horizontal: 20, vertical: 0) : EdgeInsets.symmetric(),
                 child: buildChallengeSection(
                     context: context,
                     content: TransformListOfItemsToWidget.getWidgetListFromContent(
@@ -516,7 +516,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
         OlukoNeumorphism.isNeumorphismDesign
             ? Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: MediaQuery.of(context).size.height / 10),
-                child: OlukoNeumorphicBackButton(onPressed: () => Navigator.pop(context)),
+                child: OlukoNeumorphicCircleButton(onPressed: () => Navigator.pop(context)),
               )
             : SizedBox.shrink(),
       ]),

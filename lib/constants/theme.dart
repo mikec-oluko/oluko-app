@@ -18,16 +18,16 @@ class OlukoNeumorphism {
         border: useBorder
             ? const NeumorphicBorder(width: 1.5, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark)
             : const NeumorphicBorder.none(),
-        depth: 3,
+        depth: 5,
         intensity: 0.5,
         color: OlukoNeumorphismColors.initialGradientColorPrimary,
         shape: buttonShape,
-        lightSource: LightSource.top,
+        lightSource: LightSource.topLeft,
         boxShape: boxShape,
         shadowDarkColorEmboss: OlukoNeumorphismColors.finalGradientColorPrimary,
         shadowLightColorEmboss: OlukoColors.black,
         surfaceIntensity: 1,
-        shadowLightColor: ligthShadow ? Colors.white : Colors.transparent,
+        shadowLightColor: ligthShadow ? Colors.white60 : Colors.transparent,
         shadowDarkColor: darkShadow ? Colors.black : Colors.transparent);
   }
 
@@ -42,16 +42,16 @@ class OlukoNeumorphism {
         border: useBorder
             ? const NeumorphicBorder(width: 1.5, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark)
             : const NeumorphicBorder.none(),
-        depth: 3,
+        depth: 5,
         intensity: 0.5,
         color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
         shape: buttonShape,
-        lightSource: LightSource.top,
+        lightSource: LightSource.topLeft,
         boxShape: boxShape,
-        shadowDarkColorEmboss: OlukoNeumorphismColors.finalGradientColorPrimary,
+        shadowDarkColorEmboss: OlukoColors.black,
         shadowLightColorEmboss: OlukoColors.black,
-        surfaceIntensity: 1,
-        shadowLightColor: ligthShadow ? Colors.white : Colors.transparent,
+        surfaceIntensity: 0.5,
+        shadowLightColor: ligthShadow ? Colors.white60 : Colors.transparent,
         shadowDarkColor: darkShadow ? Colors.black : Colors.transparent);
   }
 
@@ -81,6 +81,8 @@ class OlukoNeumorphismColors {
   static const Color initialGradientColorDark = Color.fromRGBO(47, 53, 58, 1);
   static const Color finalGradientColorDark = Color.fromRGBO(28, 31, 34, 1);
   static const Color olukoNeumorphicGreyBackgroundFlat = Color.fromRGBO(42, 45, 47, 1);
+  static const Color olukoNeumorphicSearchBarFirstColor = Color.fromRGBO(29, 35, 40, 1);
+  static const Color olukoNeumorphicSearchBarSecondColor = Color.fromRGBO(19, 19, 20, 1);
 }
 
 class OlukoColors {
