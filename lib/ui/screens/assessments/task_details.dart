@@ -296,8 +296,10 @@ class _TaskDetailsState extends State<TaskDetails> {
                       if (_controller != null) {
                         _controller.pause();
                       }
-                      Navigator.pop(context);
                       if (widget.taskIndex < _tasks.length - 1) {
+                        if (Navigator.canPop(context)) {
+                          Navigator.pop(context);
+                        }
                         Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {
                           'taskIndex': widget.taskIndex + 1,
                           'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
