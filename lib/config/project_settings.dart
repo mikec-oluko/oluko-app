@@ -1,8 +1,6 @@
 final Map<String, String> projectSettings = {
   'projectId': "WnZEZDQDT9ZRU2nlpa86", // MVT Gim
-
-  "firebaseFunctions": "https://us-central1-oluko-development.cloudfunctions.net", //
-  // "firebaseFunctions": "localhost:3001", // DEVELOPMENT
+  "firebaseFunctions": "https://us-central1-oluko-development.cloudfunctions.net", // DEVELOPMENT
   // "build": "production",
   "build": "local",
   "environment": "development",
