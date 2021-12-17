@@ -23,7 +23,6 @@ import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
-import 'package:oluko_app/utils/app_loader.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -197,11 +196,9 @@ class _TaskDetailsState extends State<TaskDetails> {
       }
       return true;
     }, builder: (context, state) {
-      if (state is GetSuccess && state.taskSubmission != null) {
+      if (state is GetSuccess && state.taskSubmission != null && state.taskSubmission?.task?.id == _task.id) {
         _taskSubmission = state.taskSubmission;
         _makePublic ??= _taskSubmission.isPublic;
-
-        //_makePublic = state.taskSubmission.isPublic;
 
         return ListView(
           children: [
