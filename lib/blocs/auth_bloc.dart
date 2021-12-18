@@ -31,7 +31,7 @@ abstract class AuthState {}
 class AuthSuccess extends AuthState {
   final UserResponse user;
   final User firebaseUser;
-  AuthSuccess({this.user, this.firebaseUser});
+  AuthSuccess({required this.user, required this.firebaseUser});
 }
 
 class AuthFailure extends AuthState {
@@ -88,18 +88,20 @@ class AuthBloc extends Cubit<AuthState> {
       AppMessages.showSnackbarTranslated(context, 'pleaseSubscribeToAPlanBeforeUsingTheApp');
       emit(AuthGuest());
       return;
-    } else if (!firebaseUser.emailVerified) {
+    } else if (firebaseUser?.emailVerified != null ? !firebaseUser!.emailVerified : true) {
       //TODO: trigger to send another email
-      await firebaseUser.updateEmail(user.email);
-      firebaseUser.sendEmailVerification();
+      await firebaseUser?.updateEmail(user.email);
+      firebaseUser?.sendEmailVerification();
       FirebaseAuth.instance.signOut();
       AppMessages.showSnackbarTranslated(context, 'pleaseCheckYourEmail');
       emit(AuthGuest());
     } else {
       AuthRepository().storeLoginData(user);
       AppMessages.showSnackbar(context, '${OlukoLocalizations.get(context, 'welcome')}, ${user.firstName}');
-      emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
-      navigateToNextScreen(context, firebaseUser.uid);
+      if (firebaseUser != null) {
+        emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
+        navigateToNextScreen(context, firebaseUser.uid);
+      }
     }
   }
 
@@ -130,8 +132,8 @@ class AuthBloc extends Cubit<AuthState> {
         emit(AuthGuest());
         return;
       }
-      User firebaseUser = result.user;
-      UserResponse userResponse = await UserRepository().get(firebaseUser.email);
+      User? firebaseUser = result.user;
+      UserResponse userResponse = await UserRepository().get(firebaseUser?.email);
 
       //If there is no associated user for this account
       if (userResponse == null) {
@@ -142,8 +144,10 @@ class AuthBloc extends Cubit<AuthState> {
       }
 
       AuthRepository().storeLoginData(userResponse);
-      emit(AuthSuccess(user: userResponse, firebaseUser: firebaseUser));
-      navigateToNextScreen(context, firebaseUser.uid);
+      if (firebaseUser != null) {
+        emit(AuthSuccess(user: userResponse, firebaseUser: firebaseUser));
+        navigateToNextScreen(context, firebaseUser.uid);
+      }
       // ignore: avoid_catching_errors
     } on NoSuchMethodError catch (e) {
       Navigator.pushNamed(context, '/log-in');

@@ -18,26 +18,28 @@ class UserRepository {
   FirebaseFirestore firestoreInstance;
 
   UserRepository() {
-    firestoreInstance = FirebaseFirestore.instance;
+    this.firestoreInstance = FirebaseFirestore.instance;
   }
 
-  UserRepository.test({FirebaseFirestore firestoreInstance}) {
+  UserRepository.test({required FirebaseFirestore firestoreInstance}) {
     this.firestoreInstance = firestoreInstance;
   }
 
-  Future<UserResponse> get(String email) async {
-    QuerySnapshot docRef = await FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('users')
-        .where('email', isEqualTo: email.toLowerCase())
-        .get();
-    if (docRef.docs == null || docRef.docs.length == 0) {
-      return null;
+  Future<UserResponse?> get(String? email) async {
+    if (email != null) {
+      QuerySnapshot docRef = await FirebaseFirestore.instance
+          .collection('projects')
+          .doc(GlobalConfiguration().getValue('projectId'))
+          .collection('users')
+          .where('email', isEqualTo: email.toLowerCase())
+          .get();
+      if (docRef.docs == null || docRef.docs.length == 0) {
+        return null;
+      }
+      var response = docRef.docs[0].data() as Map<String, dynamic>;
+      var loginResponseBody = UserResponse.fromJson(response as Map<String, dynamic>);
+      return loginResponseBody;
     }
-    var response = docRef.docs[0].data() as Map<String, dynamic>;
-    var loginResponseBody = UserResponse.fromJson(response as Map<String, dynamic>);
-    return loginResponseBody;
   }
 
   Future<UserResponse> getById(String id) async {
