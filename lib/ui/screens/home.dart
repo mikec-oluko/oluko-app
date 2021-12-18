@@ -12,6 +12,7 @@ import 'package:oluko_app/blocs/views_bloc/hi_five_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/enums/status_enum.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/course_section.dart';
@@ -46,7 +47,7 @@ class _HomeState extends State<Home> {
       if (authState is AuthSuccess) {
         _authState ??= authState;
         _user = authState.firebaseUser;
-        BlocProvider.of<CourseEnrollmentListBloc>(context).getCourseEnrollmentsByUser(_user.uid);
+        BlocProvider.of<CourseEnrollmentListBloc>(context).getStream(_user.uid);
         return BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(buildWhen: (previous, current) {
           if (previous is CourseEnrollmentsByUserSuccess && current is CourseEnrollmentsByUserSuccess) {
             if (previous.courseEnrollments.length == current.courseEnrollments.length) {
@@ -57,7 +58,7 @@ class _HomeState extends State<Home> {
         }, builder: (context, courseEnrollmentListState) {
           if (courseEnrollmentListState is CourseEnrollmentsByUserSuccess) {
             _courseEnrollments =
-                courseEnrollmentListState.courseEnrollments.where((courseEnroll) => courseEnroll.isUnenrolled != true).toList();
+                courseEnrollmentListState.courseEnrollments/*.where((courseEnroll) => courseEnroll.isUnenrolled != true).toList()*/;
             ;
             BlocProvider.of<CourseHomeBloc>(context)..getByCourseEnrollments(_courseEnrollments);
             return form();

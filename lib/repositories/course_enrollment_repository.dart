@@ -317,4 +317,17 @@ class CourseEnrollmentRepository {
       rethrow;
     }
   }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getUserCourseEnrollmentsSubscription(String userId) {
+    Stream<QuerySnapshot<Map<String, dynamic>>> courseEnrollmentsStream = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('courseEnrollments')
+        .where('created_by', isEqualTo: userId)
+        //.where('is_unenrolled', isEqualTo: false)
+        //.where('completion', isLessThan: 1)
+        .orderBy('created_at', descending: true)
+        .snapshots();
+    return courseEnrollmentsStream;
+  }
 }

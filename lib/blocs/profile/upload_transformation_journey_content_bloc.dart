@@ -31,6 +31,9 @@ class TransformationJourneyContentBloc extends Cubit<TransformationJourneyConten
   void uploadTransformationJourneyContent({DeviceContentFrom uploadedFrom, int indexForContent}) async {
     XFile _image;
     try {
+
+      if (!await requiredTJourneyPermissionsEnabled(uploadedFrom)) return;
+      
       final ImagePicker imagePicker = ImagePicker();
       if (uploadedFrom == DeviceContentFrom.gallery) {
         _image = await imagePicker.pickImage(source: ImageSource.gallery);
@@ -53,8 +56,6 @@ class TransformationJourneyContentBloc extends Cubit<TransformationJourneyConten
         e,
         stackTrace: stackTrace,
       );
-
-      if (!await requiredTJourneyPermissionsEnabled(uploadedFrom)) return;
 
       emit(TransformationJourneyContentFailure(exception: e));
       rethrow;
