@@ -21,11 +21,11 @@ class UserRepository {
     this.firestoreInstance = FirebaseFirestore.instance;
   }
 
-  UserRepository.test({required FirebaseFirestore firestoreInstance}) {
+  UserRepository.test({FirebaseFirestore firestoreInstance}) {
     this.firestoreInstance = firestoreInstance;
   }
 
-  Future<UserResponse?> get(String? email) async {
+  Future<UserResponse> get(String email) async {
     if (email != null) {
       QuerySnapshot docRef = await FirebaseFirestore.instance
           .collection('projects')

@@ -14,12 +14,12 @@ class Loading extends AudioState {}
 
 class AudioSuccess extends AudioState {
   Audio audio;
-  AudioSuccess({required this.audio});
+  AudioSuccess({this.audio});
 }
 
 class AudioFailure extends AudioState {
   final String exceptionMessage;
-  AudioFailure({required this.exceptionMessage});
+  AudioFailure({this.exceptionMessage});
 }
 
 class AudioBloc extends Cubit<AudioState> {
