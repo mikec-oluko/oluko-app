@@ -21,6 +21,7 @@ class AppNavigator {
     } else if (Platform.isIOS) {
       exit(0);
     }
+    //return showExitPopup(context);
   }
 
   static Future<bool> showExitPopup(BuildContext context) async {
