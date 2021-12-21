@@ -3,6 +3,7 @@ import 'package:oluko_app/helpers/coach_notification_content.dart';
 import 'package:oluko_app/helpers/coach_segment_content.dart';
 import 'package:oluko_app/models/annotation.dart';
 import 'package:oluko_app/models/coach_timeline_item.dart';
+import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/submodels/course_timeline_submodel.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -12,20 +13,23 @@ import 'coach_timeline_content.dart';
 String defaultIdForAllContentTimeline = '0';
 
 class CoachTimelineFunctions {
-  static List<CoachTimelineGroup> buildContentForTimelinePanel(List<CoachTimelineItem> timelineItemsContent) {
+  static List<CoachTimelineGroup> buildContentForTimelinePanel(
+      {List<CoachTimelineItem> timelineItemsContent, List<String> enrolledCourseIdList}) {
     List<String> listOfCourseId = [];
     List<CoachTimelineGroup> timelineTabsAndContent = [];
     List<CoachTimelineItem> contentForItem = [];
     CoachTimelineGroup newTimelineTabItem;
 
     timelineItemsContent.forEach((timelineItem) {
-      !listOfCourseId.contains(timelineItem.course.id) ? listOfCourseId.add(timelineItem.course.id) : null;
+      !listOfCourseId.contains(timelineItem.course.id) && enrolledCourseIdList.contains(timelineItem.course.id)
+          ? listOfCourseId.add(timelineItem.course.id)
+          : null;
     });
     listOfCourseId.forEach((courseId) {
       final repeatedItemsQuery = timelineItemsContent.where((timelineItem) => timelineItem.course.id == courseId).toList();
       String itemId;
       String itemName;
-      if (repeatedItemsQuery.length > 1) {
+      if (repeatedItemsQuery.isNotEmpty) {
         itemId = repeatedItemsQuery.first.course.id;
         itemName = repeatedItemsQuery.first.course.name;
         contentForItem = [];
@@ -51,6 +55,7 @@ class CoachTimelineFunctions {
       List<CoachTimelineItem> mentoredVideos,
       List<SegmentSubmission> segmentSubmittedContent,
       List<CoachTimelineItem> sentVideos,
+      List<CourseEnrollment> courseEnrollmentList,
       BuildContext context}) {
     if (annotationContent != null) {
       annotationContent.forEach((element) {
@@ -81,8 +86,9 @@ class CoachTimelineFunctions {
             contentThumbnail: element.video.thumbUrl,
             contentType: 5,
             sentVideosForNavigation: segmentSubmittedContent,
-            course: CourseTimelineSubmodel(),
-            id: defaultIdForAllContentTimeline,
+            course:
+                CourseTimelineSubmodel(id: getCourseId(courseEnrollmentList, element), name: getCourseName(courseEnrollmentList, element)),
+            id: getCourseId(courseEnrollmentList, element),
             createdAt: element.createdAt);
         if (sentVideos.where((element) => element.contentThumbnail == newItem.contentThumbnail).isEmpty) {
           sentVideos.add(newItem);
@@ -90,6 +96,11 @@ class CoachTimelineFunctions {
       });
     }
   }
+
+  static String getCourseId(List<CourseEnrollment> courseEnrollmentList, SegmentSubmission element) =>
+      courseEnrollmentList.where((courseEnrollment) => courseEnrollment.id == element.courseEnrollmentId).first.course.id;
+  static String getCourseName(List<CourseEnrollment> courseEnrollmentList, SegmentSubmission element) =>
+      courseEnrollmentList.where((courseEnrollment) => courseEnrollment.id == element.courseEnrollmentId).first.course.name;
 
   static CoachTimelineItem createAnCoachTimelineItem({CoachRecommendationDefault recommendationItem}) {
     CoachTimelineItem newItem = CoachTimelineItem(
