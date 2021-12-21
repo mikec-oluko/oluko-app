@@ -32,7 +32,7 @@ abstract class AuthState {}
 class AuthSuccess extends AuthState {
   final UserResponse user;
   final User firebaseUser;
-  AuthSuccess({@required this.user, @required this.firebaseUser});
+  AuthSuccess({this.user, this.firebaseUser});
 }
 
 class AuthFailure extends AuthState {
@@ -89,7 +89,6 @@ class AuthBloc extends Cubit<AuthState> {
       AppMessages.showSnackbarTranslated(context, 'pleaseSubscribeToAPlanBeforeUsingTheApp');
       emit(AuthGuest());
       return;
-      // } else if (firebaseUser?.emailVerified != null ? !firebaseUser!.emailVerified : true) {
     } else if (firebaseUser?.emailVerified != null ? !firebaseUser.emailVerified : true) {
       //TODO: trigger to send another email
       await firebaseUser?.updateEmail(user.email);
@@ -134,7 +133,6 @@ class AuthBloc extends Cubit<AuthState> {
         emit(AuthGuest());
         return;
       }
-      // User? firebaseUser = result.user;
       User firebaseUser = result.user;
       UserResponse userResponse = await UserRepository().get(firebaseUser?.email);
 
