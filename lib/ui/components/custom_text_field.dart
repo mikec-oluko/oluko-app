@@ -86,7 +86,7 @@ class DeleteButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      onPressed: onBackspace,
+      onPressed: (){},
       icon:const Icon(Icons.backspace_rounded),
       color: const Color(0xffacb292),
       iconSize: 40,
