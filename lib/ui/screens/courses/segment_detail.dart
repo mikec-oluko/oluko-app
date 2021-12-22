@@ -1,3 +1,4 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -22,18 +23,13 @@ import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/modal_people_enrolled.dart';
 import 'package:oluko_app/ui/components/modal_personal_record.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
-import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/segment_image_section.dart';
-import 'package:oluko_app/ui/components/stories_item.dart';
 import 'package:oluko_app/ui/components/uploading_modal_loader.dart';
 import 'package:oluko_app/ui/screens/courses/collapsed_movement_videos_section.dart';
 import 'package:oluko_app/ui/screens/courses/movement_videos_section.dart';
-import 'package:oluko_app/ui/screens/courses/segment_clocks.dart';
-import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
-import 'package:oluko_app/utils/timer_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class SegmentDetail extends StatefulWidget {
@@ -58,14 +54,14 @@ class _SegmentDetailState extends State<SegmentDetail> {
   List<Segment> _segments;
   List<Movement> _movements;
   PanelController panelController = PanelController();
-  CoachRequest _coachRequest;
+  List<CoachRequest> _coachRequests;
   UserResponse _coach;
   final PanelController _challengePanelController = PanelController();
   CoachAssignment _coachAssignment;
 
   @override
   void initState() {
-    _coachRequest = null;
+    _coachRequests = [];
     currentSegmentStep = widget.segmentIndex + 1;
     totalSegmentStep = widget.courseEnrollment.classes[widget.classIndex].segments.length;
     super.initState();
@@ -95,14 +91,23 @@ class _SegmentDetailState extends State<SegmentDetail> {
                   if (state is CoachAssignmentResponse) {
                     _coachAssignment = state.coachAssignmentResponse;
                     BlocProvider.of<CoachUserBloc>(context).get(_coachAssignment?.coachId);
+                    BlocProvider.of<CoachRequestBloc>(context).getClassCoachRequest(
+                        userId: _user.id,
+                        coachId: _coachAssignment?.coachId,
+                        courseEnrollmentId: widget.courseEnrollment.id,
+                        classId: widget.courseEnrollment.classes[widget.classIndex].id);
                   }
-                  return BlocListener<CoachUserBloc, CoachUserState>(
-                      listener: (context, coachUserState) {
-                        if (coachUserState is CoachUserSuccess) {
-                          _coach = coachUserState.coach;
-                        }
-                      },
-                      child: form());
+                  return BlocBuilder<CoachUserBloc, CoachUserState>(builder: (context, coachUserState) {
+                    return BlocBuilder<CoachRequestBloc, CoachRequestState>(builder: (context, coachRequestState) {
+                      if (coachUserState is CoachUserSuccess && coachRequestState is ClassCoachRequestsSuccess) {
+                        _coach = coachUserState.coach;
+                        _coachRequests = coachRequestState.coachRequests;
+                        return form();
+                      } else {
+                        return SizedBox();
+                      }
+                    });
+                  });
                 },
               );
             } else {
@@ -117,54 +122,36 @@ class _SegmentDetailState extends State<SegmentDetail> {
   }
 
   Widget form() {
-    BlocProvider.of<CoachRequestBloc>(context).getSegmentCoachRequest(
-        userId: _user.id,
-        segmentId: widget.courseEnrollment.classes[widget.classIndex].segments[widget.segmentIndex].id,
-        coachId: _coachAssignment?.coachId,
-        courseEnrollmentId: widget.courseEnrollment.id,
-        classId: widget.courseEnrollment.classes[widget.classIndex].id);
-    return BlocBuilder<CoachRequestBloc, CoachRequestState>(builder: (context, coachRequestState) {
-      if (coachRequestState is GetCoachRequestSuccess) {
-        if (coachRequestState.coachRequest != null &&
-            widget.courseEnrollment.classes[widget.classIndex].id == coachRequestState.coachRequest.classId &&
-            widget.courseEnrollment.classes[widget.classIndex].segments[widget.segmentIndex].id ==
-                coachRequestState.coachRequest.segmentId) {
-          _coachRequest = coachRequestState.coachRequest;
-        }
-        return Scaffold(
-          backgroundColor: Colors.black,
-          body: SizedBox(
-            width: ScreenUtils.width(context),
-            height: ScreenUtils.height(context),
-            child: Stack(
-              children: [
-                SlidingUpPanel(
-                    controller: panelController,
-                    borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-                    minHeight: 90,
-                    maxHeight: 185,
-                    collapsed: CollapsedMovementVideosSection(action: getAction()),
-                    panel: () {
-                      if (_segments.length - 1 >= widget.segmentIndex) {
-                        return MovementVideosSection(
-                            action: downButton(),
-                            segment: _segments[widget.segmentIndex],
-                            movements: _movements,
-                            onPressedMovement: (BuildContext context, Movement movement) =>
-                                Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement}));
-                      }
-                      return const SizedBox();
-                    }(),
-                    body: _viewBody()),
-                slidingUpPanelComponent(context),
-              ],
-            ),
-          ),
-        );
-      } else {
-        return SizedBox();
-      }
-    });
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: SizedBox(
+        width: ScreenUtils.width(context),
+        height: ScreenUtils.height(context),
+        child: Stack(
+          children: [
+            SlidingUpPanel(
+                controller: panelController,
+                borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                minHeight: 90,
+                maxHeight: 185,
+                collapsed: CollapsedMovementVideosSection(action: getAction()),
+                panel: () {
+                  if (_segments.length - 1 >= widget.segmentIndex) {
+                    return MovementVideosSection(
+                        action: downButton(),
+                        segment: _segments[widget.segmentIndex],
+                        movements: _movements,
+                        onPressedMovement: (BuildContext context, Movement movement) =>
+                            Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement}));
+                  }
+                  return const SizedBox();
+                }(),
+                body: _viewBody()),
+            slidingUpPanelComponent(context),
+          ],
+        ),
+      ),
+    );
   }
 
   BlocListener<SegmentDetailContentBloc, SegmentDetailContentState> slidingUpPanelComponent(BuildContext context) {
@@ -253,53 +240,52 @@ class _SegmentDetailState extends State<SegmentDetail> {
             ])));
   }
 
-  Widget _viewBody() {
-    return Container(
-      child: ListView(children: [
-        () {
-          if (_segments.length - 1 >= widget.segmentIndex) {
-            return SegmentImageSection(
-              onPressed: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
-                'courseEnrollment': widget.courseEnrollment,
-                'classIndex': widget.classIndex,
-                'courseIndex': widget.courseIndex
-              }),
-              segment: _segments[widget.segmentIndex],
-              currentSegmentStep: currentSegmentStep,
-              totalSegmentStep: totalSegmentStep,
-              userId: _user.id,
-              audioAction: _audioAction,
-              peopleAction: _peopleAction,
-              clockAction: _clockAction,
-            );
-          }
-          return const SizedBox();
-        }(),
-        _menuOptions()
-      ]),
+  Widget getCarouselSlider() {
+    return CarouselSlider(
+      items: getSegmentList(),
+      options: CarouselOptions(
+          height: 760,
+          autoPlay: false,
+          enlargeCenterPage: false,
+          disableCenter: true,
+          enableInfiniteScroll: false,
+          initialPage: widget.segmentIndex,
+          viewportFraction: 1),
     );
   }
 
-  Widget _menuOptions() {
+  List<Widget> getSegmentList() {
+    List<Widget> segmentWidgets = [];
+    for (var i = 0; i < _segments.length; i++) {
+      segmentWidgets.add(SegmentImageSection(
+          onPressed: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass],
+              arguments: {'courseEnrollment': widget.courseEnrollment, 'classIndex': widget.classIndex, 'courseIndex': widget.courseIndex}),
+          segment: _segments[i],
+          currentSegmentStep: i + 1,
+          totalSegmentStep: totalSegmentStep,
+          userId: _user.id,
+          audioAction: _audioAction,
+          peopleAction: _peopleAction,
+          clockAction: _clockAction,
+          courseEnrollment: widget.courseEnrollment,
+          courseIndex: widget.courseIndex,
+          segments: _segments,
+          classIndex: widget.classIndex,
+          coachRequests: _coachRequests,
+          coach: _coach));
+    }
+    return segmentWidgets;
+  }
+
+  Widget _viewBody() {
     return Column(
       children: [
-        //Submit button
-        Padding(
-          padding: const EdgeInsets.only(left: 15, right: 15, bottom: 25.0),
-          child: Row(children: [
-            OlukoPrimaryButton(
-                title: OlukoLocalizations.get(context, 'startWorkouts'),
-                color: OlukoColors.primary,
-                onPressed: () {
-                  if (_coachRequest != null && _coach != null) {
-                    BottomDialogUtils.showBottomDialog(context: context, content: dialogContainer(_coach.firstName, _coach.avatar));
-                  } else {
-                    navigateToSegmentWithoutRecording();
-                  }
-                })
-          ]),
-        ),
-        const SizedBox(height: 85)
+        () {
+          if (_segments.length - 1 >= widget.segmentIndex) {
+            return getCarouselSlider();
+          }
+          return const SizedBox();
+        }(),
       ],
     );
   }
@@ -336,82 +322,6 @@ class _SegmentDetailState extends State<SegmentDetail> {
         ),
       )
     ];
-  }
-
-  Widget dialogContainer(String name, String image) {
-    return Container(
-        decoration: const BoxDecoration(
-            image: DecorationImage(
-          image: AssetImage('assets/courses/dialog_background.png'),
-          fit: BoxFit.cover,
-        )),
-        child: Stack(children: [
-          Column(children: [
-            const SizedBox(height: 30),
-            Stack(alignment: Alignment.center, children: [
-              StoriesItem(maxRadius: 65, imageUrl: image /*, bloc: StoryListBloc()*/),
-              Image.asset('assets/courses/photo_ellipse.png', scale: 4)
-            ]),
-            const SizedBox(height: 15),
-            Text('${OlukoLocalizations.get(context, 'coach')} $name',
-                textAlign: TextAlign.center, style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold)),
-            const SizedBox(height: 20),
-            Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 50),
-                child: Text('${OlukoLocalizations.get(context, 'coach')} $name ${OlukoLocalizations.get(context, 'coachRequest')}',
-                    textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont())),
-            const SizedBox(height: 35),
-            Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    OlukoOutlinedButton(
-                      title: OlukoLocalizations.get(context, 'ignore'),
-                      onPressed: () {
-                        navigateToSegmentWithoutRecording();
-                      },
-                    ),
-                    const SizedBox(width: 20),
-                    OlukoPrimaryButton(
-                      title: 'Ok',
-                      onPressed: () {
-                        navigateToSegmentWithRecording();
-                      },
-                    )
-                  ],
-                )),
-          ]),
-          Align(
-              alignment: Alignment.topRight,
-              child: IconButton(icon: const Icon(Icons.close, color: Colors.white), onPressed: () => Navigator.pop(context)))
-        ]));
-  }
-
-  navigateToSegmentWithRecording() {
-    Navigator.pushNamed(context, routeLabels[RouteEnum.segmentCameraPreview], arguments: {
-      'segmentIndex': widget.segmentIndex,
-      'classIndex': widget.classIndex,
-      'courseEnrollment': widget.courseEnrollment,
-      'courseIndex': widget.courseIndex,
-      'segments': _segments,
-    });
-  }
-
-  navigateToSegmentWithoutRecording() {
-    TimerUtils.startCountdown(WorkoutType.segment, context, getArguments(), _segments[widget.segmentIndex].initialTimer,
-        _segments[widget.segmentIndex].rounds, 0);
-  }
-
-  Object getArguments() {
-    return {
-      'segmentIndex': widget.segmentIndex,
-      'classIndex': widget.classIndex,
-      'courseEnrollment': widget.courseEnrollment,
-      'courseIndex': widget.courseIndex,
-      'workoutType': WorkoutType.segment,
-      'segments': _segments,
-    };
   }
 
   _audioAction() {
