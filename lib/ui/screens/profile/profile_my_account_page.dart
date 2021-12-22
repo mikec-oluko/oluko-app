@@ -4,6 +4,7 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/plan_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_helper.dart';
+import 'package:oluko_app/helpers/user_helper.dart';
 import 'package:oluko_app/models/plan.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
@@ -60,16 +61,14 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
   Column buildUserInformationFields() {
     return Column(
       children: [
-        userInformationFields(OlukoLocalizations.get(context, 'userName'), _profileInfo.username),
+        userInformationFields(
+            OlukoLocalizations.get(context, 'userName'), UserHelper.printUsername(_profileInfo.username, _profileInfo.id)),
         userInformationFields(OlukoLocalizations.get(context, 'firstName'), _profileInfo.firstName),
         userInformationFields(OlukoLocalizations.get(context, 'lastName'), _profileInfo.lastName),
         userInformationFields(OlukoLocalizations.get(context, 'email'), _profileInfo.email),
-        userInformationFields(
-            OlukoLocalizations.get(context, 'city'), _profileInfo.city != null ? _profileInfo.city : ""),
-        userInformationFields(
-            OlukoLocalizations.get(context, 'state'), _profileInfo.state != null ? _profileInfo.state : ""),
-        userInformationFields(
-            OlukoLocalizations.get(context, 'country'), _profileInfo.country != null ? _profileInfo.country : ""),
+        userInformationFields(OlukoLocalizations.get(context, 'city'), _profileInfo.city != null ? _profileInfo.city : ""),
+        userInformationFields(OlukoLocalizations.get(context, 'state'), _profileInfo.state != null ? _profileInfo.state : ""),
+        userInformationFields(OlukoLocalizations.get(context, 'country'), _profileInfo.country != null ? _profileInfo.country : ""),
       ],
     );
   }
@@ -105,18 +104,15 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
 
   List<SubscriptionCard> showSubscriptionCard(List<Plan> plans) {
     //TODO: Use plan from userData.
-    final Plan userPlan =
-        plans.firstWhere((element) => element.isCurrentLevel(_profileInfo.currentPlan), orElse: () => null);
+    final Plan userPlan = plans.firstWhere((element) => element.isCurrentLevel(_profileInfo.currentPlan), orElse: () => null);
 
     SubscriptionCard subscriptionCard = SubscriptionCard();
     subscriptionCard.selected = true;
     if (userPlan != null) {
       subscriptionCard.priceLabel = '\$${userPlan.price}/${durationLabel[userPlan.duration].toLowerCase()}';
-      subscriptionCard.priceSubtitle =
-          userPlan.recurrent ? 'Renews every ${durationLabel[userPlan.duration].toLowerCase()}' : '';
+      subscriptionCard.priceSubtitle = userPlan.recurrent ? 'Renews every ${durationLabel[userPlan.duration].toLowerCase()}' : '';
       subscriptionCard.title = userPlan.title;
-      subscriptionCard.subtitles =
-          userPlan.features.map((PlanFeature feature) => EnumHelper.enumToString(feature)).toList();
+      subscriptionCard.subtitles = userPlan.features.map((PlanFeature feature) => EnumHelper.enumToString(feature)).toList();
       subscriptionCard.showHint = false;
       subscriptionCard.backgroundImage = userPlan.backgroundImage;
       subscriptionCard.onHintPressed = userPlan.infoDialog != null ? () {} : null;

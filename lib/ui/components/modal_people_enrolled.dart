@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/user_helper.dart';
 import 'package:oluko_app/models/dto/story_dto.dart';
 import 'package:oluko_app/models/submodels/user_submodel.dart';
 import 'package:oluko_app/routes.dart';
@@ -71,7 +72,13 @@ class _ModalPeopleEnrolledState extends State<ModalPeopleEnrolled> {
                       children: [
                         StoriesItem(
                           itemUserId: user.id?.toString() ?? '',
-                          name: user.username?.toString() ?? user.firstName?.toString() ?? '',
+                          name: (() {
+                            if (user.username != null) {
+                              return UserHelper.printUsername(user.username.toString(), user.id.toString());
+                            } else {
+                              return user.firstName?.toString() ?? '';
+                            }
+                          })(),
                           currentUserId: widget.userId,
                           maxRadius: 35,
                           imageUrl: user.avatarThumbnail?.toString() ?? UserUtils().defaultAvatarImageUrl,
