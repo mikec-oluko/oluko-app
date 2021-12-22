@@ -5,6 +5,7 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/helpers/user_helper.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
@@ -124,7 +125,7 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
                         ),
                       ),
                       Text(
-                        user.username != null && user.username.isNotEmpty ? user.username : '',
+                        user.username != null && user.username.isNotEmpty ? UserHelper.printUsername(user.username, user.id) : '',
                         style: const TextStyle(color: Colors.grey, fontSize: 10),
                         textAlign: TextAlign.center,
                       )
