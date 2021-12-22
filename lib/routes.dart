@@ -595,10 +595,14 @@ class Routes {
           BlocProvider<StoryListBloc>.value(value: _storyListBloc),
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
           BlocProvider<StoryListBloc>.value(value: _storyListBloc),
-          BlocProvider<RecommendationBloc>.value(value: _recommendationBloc)
+          BlocProvider<RecommendationBloc>.value(value: _recommendationBloc),
+          BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
-        newRouteView = CourseMarketing(course: argumentsToAdd['course'] as Course, fromCoach: argumentsToAdd['fromCoach'] as bool);
+        newRouteView = CourseMarketing(
+            course: argumentsToAdd['course'] as Course,
+            fromCoach: argumentsToAdd['fromCoach'] as bool,
+            isCoachRecommendation: argumentsToAdd['isCoachRecommendation'] as bool);
         break;
       case RouteEnum.enrolledClass:
         providers = [
@@ -663,9 +667,7 @@ class Routes {
           BlocProvider<GalleryVideoBloc>.value(value: _galleryVideoBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
-        newRouteView = TaskDetails(
-            taskIndex: argumentsToAdd['taskIndex'] as int,
-            isLastTask: argumentsToAdd['isLastTask'] as bool);
+        newRouteView = TaskDetails(taskIndex: argumentsToAdd['taskIndex'] as int, isLastTask: argumentsToAdd['isLastTask'] as bool);
         break;
       case RouteEnum.selfRecording:
         //TODO: Pass flag for last assessments

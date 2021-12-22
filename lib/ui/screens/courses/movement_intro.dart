@@ -195,9 +195,10 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                 GestureDetector(
                     onTap: () {
                       if (_videoControllers[tabController.index] != null) {
-                         _videoControllers[tabController.index].pause();
+                        _videoControllers[tabController.index].pause();
                       }
-                      Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],arguments: {'course': course, 'fromCoach': false});
+                      Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
+                          arguments: {'course': course, 'fromCoach': false, 'isCoachRecommendation': false});
                     },
                     child: Container(height: 100, child: Image.network(course.image)))
               ],
@@ -310,7 +311,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                           if (_videoControllers[tabController.index] != null) {
                             _videoControllers[tabController.index].pause();
                           }
-                          Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro],arguments: {'movement': movement});
+                          Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement});
                         },
                         content: this._movementInfoSuccess.relatedMovements,
                         width: ScreenUtils.width(context) / 1.2),

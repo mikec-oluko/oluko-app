@@ -43,7 +43,7 @@ class _CoachNotificationPanelContentCardState extends State<CoachNotificationPan
             },
             onOpenCard: () {
               Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
-                  arguments: {'course': content.courseContent, 'fromCoach': true});
+                  arguments: {'course': content.courseContent, 'fromCoach': true, 'isCoachRecommendation': false});
               updateRecommendationViewedProperty(content);
             });
       case TimelineInteractionType.classes:

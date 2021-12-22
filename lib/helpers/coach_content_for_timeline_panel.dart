@@ -86,9 +86,12 @@ class CoachTimelineFunctions {
             contentThumbnail: element.video.thumbUrl,
             contentType: 5,
             sentVideosForNavigation: segmentSubmittedContent,
-            course:
-                CourseTimelineSubmodel(id: getCourseId(courseEnrollmentList, element), name: getCourseName(courseEnrollmentList, element)),
-            id: getCourseId(courseEnrollmentList, element),
+            course: courseEnrollmentList.where((courseEnrolled) => courseEnrolled.id == element.courseEnrollmentId).isNotEmpty
+                ? CourseTimelineSubmodel(id: getCourseId(courseEnrollmentList, element), name: getCourseName(courseEnrollmentList, element))
+                : CourseTimelineSubmodel(),
+            id: courseEnrollmentList.contains(element.courseEnrollmentId)
+                ? getCourseId(courseEnrollmentList, element)
+                : defaultIdForAllContentTimeline,
             createdAt: element.createdAt);
         if (sentVideos.where((element) => element.contentThumbnail == newItem.contentThumbnail).isEmpty) {
           sentVideos.add(newItem);
