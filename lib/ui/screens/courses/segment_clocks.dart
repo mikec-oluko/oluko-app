@@ -28,6 +28,7 @@ import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/timer_entry.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
+import 'package:oluko_app/ui/components/custom_text_field.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/progress_bar.dart';
@@ -436,8 +437,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
         height: 50,
         child: Row(children: [
           const SizedBox(width: 20),
-          Text(OlukoLocalizations.get(context, 'enterScore'),
-              style: TextStyle(fontSize: 18, color: OlukoColors.white, fontWeight: FontWeight.w300)),
+          /*Text(OlukoLocalizations.get(context, 'enterScore'),
+              style: TextStyle(fontSize: 18, color: OlukoColors.white, fontWeight: FontWeight.w300)),*/
+              CustomTextField(),
           const SizedBox(width: 10),
           SizedBox(
               width: isCounterByReps ? 40 : 70,
