@@ -31,8 +31,6 @@ class CourseEnrollmentService {
     for (var i = 0; i < segments.length; i++) {
       if (segments[i].completedAt != null) {
         segmentsCompleted++;
-      } else {
-        break;
       }
     }
     return segmentsCompleted / segments.length;

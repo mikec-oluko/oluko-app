@@ -249,7 +249,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
           enlargeCenterPage: false,
           disableCenter: true,
           enableInfiniteScroll: false,
-          initialPage: 0,
+          initialPage: widget.segmentIndex,
           viewportFraction: 1),
     );
   }
