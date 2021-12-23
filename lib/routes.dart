@@ -301,6 +301,7 @@ class Routes {
   final CourseCategoryBloc _courseCategoryBloc = CourseCategoryBloc();
   final CourseSubscriptionBloc _courseSubscriptionBloc = CourseSubscriptionBloc();
   final ClassSubscriptionBloc _classSubscriptionBloc = ClassSubscriptionBloc();
+  final KeyboardBloc _keyboardBloc = KeyboardBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -560,7 +561,8 @@ class Routes {
           BlocProvider<CourseEnrollmentUpdateBloc>.value(value: _courseEnrollmentUpdateBloc),
           BlocProvider<StoryBloc>.value(value: _storyBloc),
           BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
-          BlocProvider<StoryListBloc>.value(value: _storyListBloc)
+          BlocProvider<StoryListBloc>.value(value: _storyListBloc),
+          BlocProvider<KeyboardBloc>.value(value: _keyboardBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SegmentClocks(

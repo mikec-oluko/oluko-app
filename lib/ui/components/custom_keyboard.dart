@@ -2,15 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/keyboard/keyboard_bloc.dart';
 
-import 'custom_text_field.dart';
-
 class CustomKeyboard extends StatelessWidget {
-  const CustomKeyboard({
-    Key key,
-     this.boxDecoration,
-    
-  })  :super(key: key);
-
+  const CustomKeyboard({Key key, this.boxDecoration}) : super(key: key);
   final BoxDecoration boxDecoration;
 
   @override
@@ -72,7 +65,89 @@ class CustomKeyboard extends StatelessWidget {
             child: DoneButton(onPressed: () => _customKeyboardBloc.add(Submit())),
           )
         ]),
+        SizedBox(
+          height: 80,
+        )
       ]),
+    );
+  }
+}
+
+class DeleteButton extends StatelessWidget {
+  const DeleteButton({
+    Key key,
+    this.onBackspace,
+  }) : super(key: key);
+  final VoidCallback onBackspace;
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      onPressed: onBackspace,
+      icon: const Icon(Icons.backspace_rounded),
+      color: const Color(0xffacb292),
+      iconSize: 40,
+    );
+  }
+}
+
+class DoneButton extends StatelessWidget {
+  const DoneButton({
+    Key key,
+    this.onPressed,
+  }) : super(key: key);
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(color: const Color(0xffacb292), borderRadius: BorderRadius.circular(5)),
+      child: TextButton(
+        child: const Text(
+          'Done',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w300, color: Color(0xff16171b)),
+        ),
+        onPressed: onPressed,
+      ),
+    );
+  }
+}
+
+class Label extends StatelessWidget {
+  final String label;
+  const Label({Key key, this.label}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(label,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+        ));
+  }
+}
+
+class NumberPanel extends StatelessWidget {
+  final String text;
+  final Function onPressed;
+  const NumberPanel({
+    Key key,
+    this.text,
+    this.onPressed,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.all(5),
+        child: TextButton(
+          child: Text(
+            text,
+            style: const TextStyle(fontSize: 30, fontWeight: FontWeight.w300, color: Colors.white),
+          ),
+          onPressed: () => onPressed(),
+        ),
+      ),
     );
   }
 }
