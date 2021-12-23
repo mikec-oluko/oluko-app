@@ -231,6 +231,7 @@
     "storyBeingCreated": "La historia esta siendo creada",
     "coachRequest": "te solicitó grabar este segmento",
     "enterEmail": "Por favor ingrese email.",
+    "wrongEmailFormat": "Por favor ingrese un email válido.",
     "movement": "Movimiento",
     "personalRecord": "Record Personal",
     "noPersonalRecords": "Sin Records Personales",

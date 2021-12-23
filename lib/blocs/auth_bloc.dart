@@ -232,8 +232,12 @@ class AuthBloc extends Cubit<AuthState> {
       return;
     }
 
-    await AuthRepository().sendPasswordResetEmail(loginRequest.email);
-    AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'pleaseCheckYourEmailForInstructions'));
+    try {
+      await AuthRepository().sendPasswordResetEmail(loginRequest.email);
+      AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'pleaseCheckYourEmailForInstructions'));
+    } catch (e) {
+      AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'wrongEmailFormat'));
+    }
   }
 
   // String getRandString(int len) {

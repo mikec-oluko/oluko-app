@@ -94,8 +94,10 @@ class _CompletedClassState extends State<CompletedClass> {
 
   Widget showPhotoFrame() {
     return BlocBuilder<CourseEnrollmentUpdateBloc, CourseEnrollmentUpdateState>(builder: (context, courseEnrollmentUpdateState) {
-      if (newSelfieUploaded && courseEnrollmentUpdateState is SaveSelfieSuccess) {
-        _imageUrl = courseEnrollmentUpdateState.courseEnrollment.classes[widget.classIndex].selfieThumbnailUrl;
+      if (newSelfieUploaded) {
+        if (courseEnrollmentUpdateState is SaveSelfieSuccess) {
+          _imageUrl = courseEnrollmentUpdateState.courseEnrollment.classes[widget.classIndex].selfieThumbnailUrl;
+        }
         _date = DateTime.now();
         return getPhotoFrame();
       } else {
@@ -135,7 +137,7 @@ class _CompletedClassState extends State<CompletedClass> {
                       decoration: BoxDecoration(
                         image: DecorationImage(
                           fit: BoxFit.fill,
-                          image: NetworkImage(_imageUrl),
+                          image: NetworkImage(_imageUrl ?? _image.path),
                         ),
                       ),
                     ))),
