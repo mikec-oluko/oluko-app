@@ -138,9 +138,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
           _user = authState.firebaseUser;
           return BlocBuilder<MovementBloc, MovementState>(builder: (context, movementState) {
             return BlocBuilder<CoachRequestBloc, CoachRequestState>(builder: (context, coachRequestState) {
-              if (movementState is GetAllSuccess && coachRequestState is GetCoachRequestSuccess) {
+              if (movementState is GetAllSuccess && coachRequestState is ClassCoachRequestsSuccess) {
                 _movements = movementState.movements;
-                _coachRequest = coachRequestState.coachRequest;
+                _coachRequest = getSegmentCoachRequest(coachRequestState.coachRequests, widget.segments[widget.segmentIndex].id);
                 return GestureDetector(
                     onTap: () {
                       FocusScope.of(context).unfocus();
@@ -179,6 +179,15 @@ class _SegmentClocksState extends State<SegmentClocks> {
         }
       }),
     );
+  }
+
+  CoachRequest getSegmentCoachRequest(List<CoachRequest> coachRequests, String segmentId) {
+    for (var i = 0; i < coachRequests.length; i++) {
+      if (coachRequests[i].segmentId == segmentId) {
+        return coachRequests[i];
+      }
+    }
+    return null;
   }
 
   Future<void> callBlocToCreateStory(BuildContext context, SegmentSubmission segmentSubmission) async {

@@ -65,22 +65,42 @@ bundle exec fastlane beta
 
 ## Complete Build Scripts
 
-build_scripts.sh contains scripts to build for different environments
+scripts.sh contains scripts to build for different environments
 
 ```unix
-    sh build_scripts.sh dev
+    sh scripts.sh dev
 ```
 
 this will build development environment
 
 ```unix
-    sh build_scripts.sh qa
+    sh scripts.sh qa
 ```
 
 this will build qa environment
 
 ```unix
-    sh build_scripts.sh prod
+    sh scripts.sh prod
 ```
 
 this will build production environment
+
+to deploy:
+
+```unix
+    sh scripts.sh deploy dev
+```
+
+this will deploy to both android and ios for dev env
+
+```unix
+    sh scripts.sh dev ios
+```
+
+this will deploy to both ios for dev env
+
+```unix
+    sh scripts.sh dev android
+```
+
+this will deploy to both android for dev env

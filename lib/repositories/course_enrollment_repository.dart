@@ -94,7 +94,8 @@ class CourseEnrollmentRepository {
     final List<EnrollmentClass> classes = courseEnrollment.classes;
     classes[classIndex].segments[segmentIndex].completedAt = Timestamp.now();
 
-    final bool isClassCompleted = CourseEnrollmentService.getFirstUncompletedSegmentIndex(classes[classIndex]) == -1;
+    //final bool isClassCompleted = CourseEnrollmentService.getFirstUncompletedSegmentIndex(classes[classIndex]) == -1;
+    final bool isClassCompleted = segmentIndex == classes[classIndex].segments.length - 1; 
     if (isClassCompleted) {
       if (classIndex == courseEnrollment.classes.length - 1) {
         courseEnrollment.completion = 1;
