@@ -4,6 +4,7 @@ import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/views_bloc/hi_five_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/user_helper.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
@@ -128,7 +129,7 @@ class _HiFivePageState extends State<HiFivePage> {
                         style: const TextStyle(color: Colors.white, fontSize: 20),
                       ),
                       Text(
-                        targetUser.username,
+                        UserHelper.printUsername(targetUser.username, targetUser.id),
                         style: const TextStyle(color: Colors.white, fontSize: 15),
                       ),
                     ],

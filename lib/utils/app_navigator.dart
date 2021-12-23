@@ -16,6 +16,15 @@ class AppNavigator {
   }
 
   static Future<bool> onWillPop(BuildContext context) async {
+    if (Platform.isAndroid) {
+      SystemNavigator.pop();
+    } else if (Platform.isIOS) {
+      exit(0);
+    }
+    //return showExitPopup(context);
+  }
+
+  static Future<bool> showExitPopup(BuildContext context) async {
     return (await showDialog(
           context: context,
           builder: (context) => AlertDialog(

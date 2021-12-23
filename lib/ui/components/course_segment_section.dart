@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -58,15 +60,21 @@ class _State extends State<CourseSegmentSection> {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            ClipRRect(
-              child: Image.network(
-                widget.segment.challengeImage,
-                height: 140,
-                width: 100,
-                fit: BoxFit.cover,
-              ),
-              borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-            ),
+            (() {
+              if (widget.segment.challengeImage != null) {
+                return ClipRRect(
+                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+                  child: Image.network(
+                    widget.segment.challengeImage,
+                    height: 140,
+                    width: 100,
+                    fit: BoxFit.cover,
+                  ),
+                );
+              } else {
+                return const SizedBox();
+              }
+            }()),
             Image.asset(
               'assets/courses/locked_challenge.png',
               width: 60,

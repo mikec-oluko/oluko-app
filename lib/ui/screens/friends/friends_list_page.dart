@@ -11,6 +11,7 @@ import 'package:oluko_app/blocs/user_list_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/helpers/user_helper.dart';
 import 'package:oluko_app/models/submodels/friend_model.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
@@ -186,7 +187,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                               ),
                             ),
                             Text(
-                              friendUser.username ?? '',
+                              UserHelper.printUsername(friendUser.username, friendUser.id) ?? '',
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(color: Colors.grey, fontSize: 10),
                               textAlign: TextAlign.center,
@@ -257,7 +258,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                         ),
                       ),
                       Text(
-                        user.username ?? '',
+                        UserHelper.printUsername(user.username, user.id) ?? '',
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(color: Colors.grey, fontSize: 10),
                         textAlign: TextAlign.center,
@@ -349,7 +350,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        user.username,
+                                        UserHelper.printUsername(user.username, user.id),
                                         style: TextStyle(color: Colors.grey, fontSize: 15),
                                       ),
                                       Padding(
@@ -576,7 +577,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                         ),
                       ),
                       Text(
-                        user.username,
+                        UserHelper.printUsername(user.username, user.id),
                         style: const TextStyle(color: Colors.grey, fontSize: 10),
                         textAlign: TextAlign.center,
                       )

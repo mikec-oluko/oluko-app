@@ -115,13 +115,13 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
     return BlocBuilder<MovementInfoBloc, MovementInfoState>(builder: (context, movementInfoState) {
       // if (_movementInfoSuccess == null && !(movementInfoState is MovementInfoSuccess)) {
       // }
-      if (movementInfoState is MovementInfoSuccess) {
+      if (movementInfoState is MovementInfoSuccess && widget.movement.id == movementInfoState.movement.id) {
         if (_movementInfoSuccess == null) {
           _movementInfoSuccess = movementInfoState;
           movementInfoState.movementVariants.forEach((element) {
             tabs.add(element.name);
           });
-          tabController = TabController(initialIndex: 0, length: tabs.length, vsync: this);
+          tabController = TabController(length: tabs.length, vsync: this);
         }
         return Container(
           child: ListView(
@@ -206,7 +206,6 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(left: 3.0),
@@ -226,7 +225,6 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Icon(
                             this.coursesBookmarked[course.id] != null && this.coursesBookmarked[course.id] == true
@@ -292,7 +290,6 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                 ),
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   TitleBody(
                     OlukoLocalizations.get(context, 'referenceMovements'),
@@ -303,7 +300,6 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     MovementItemBubbles(
                         onPressed: (context, movement) {
@@ -312,13 +308,12 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                           }
                           Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro],arguments: {'movement': movement});
                         },
-                        content: this._movementInfoSuccess.relatedMovements,
+                        content: _movementInfoSuccess.relatedMovements,
                         width: ScreenUtils.width(context) / 1.2),
                   ],
                 ),
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -329,7 +324,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                   ),
                 ],
               ),
-              Column(children: this._movementInfoSuccess.relatedCourses.map((Course course) => courseRow(course)).toList()),
+              Column(children: _movementInfoSuccess.relatedCourses.map((Course course) => courseRow(course)).toList()),
             ],
           ),
         )
@@ -353,7 +348,6 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                 ),
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   TitleBody(
                     OlukoLocalizations.get(context, 'referenceMovements'),
@@ -364,14 +358,12 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     MovementItemBubbles(content: this.referenceMovements, width: ScreenUtils.width(context) / 1.2),
                   ],
                 ),
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
