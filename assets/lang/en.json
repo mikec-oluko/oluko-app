@@ -235,6 +235,7 @@
     "storyBeingCreated": "The story is being created",
     "coachRequest": "has requested you to record the segment",
     "enterEmail": "Please enter an email.",
+    "wrongEmailFormat": "Please enter a valid email.",
     "movement": "Movement",
     "personalRecord": "Personal Record",
     "noPersonalRecords": "No Personal Records",

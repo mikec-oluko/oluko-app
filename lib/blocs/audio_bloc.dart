@@ -25,8 +25,7 @@ class AudioFailure extends AudioState {
 class AudioBloc extends Cubit<AudioState> {
   AudioBloc() : super(Loading());
 
-  Future<void> saveAudio(
-      File audioFile, String userId, String challengeId) async {
+  Future<void> saveAudio(File audioFile, String userId, String challengeId) async {
     try {
       Audio audio;
       audio = await _processAudio(audioFile, userId);
@@ -63,8 +62,8 @@ class AudioBloc extends Cubit<AudioState> {
     String audioUrl;
     if (audioPath != null) {
       audioUrl = await VideoProcess.uploadFile(audioPath, audio.id);
+      audio.url = audioUrl;
     }
-    audio.url = audioUrl;
     return audio;
   }
 }

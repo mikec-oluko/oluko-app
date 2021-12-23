@@ -8,6 +8,7 @@ import 'package:oluko_app/blocs/profile/upload_avatar_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/privacy_options.dart';
+import 'package:oluko_app/helpers/user_helper.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/user_statistics.dart';
 import 'package:oluko_app/ui/components/user_profile_progress.dart';
@@ -439,34 +440,18 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
               child: Wrap(
                 children: [
                   Text(
-                    widget.userToDisplayInformation.username ?? '',
+                    UserHelper.printUsername(widget.userToDisplayInformation.username, widget.userToDisplayInformation.id) ?? '',
                     overflow: TextOverflow.ellipsis,
                     style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300),
                   ),
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 3),
                   ),
-                  if (_userLocation != null)
-                    OlukoNeumorphism.isNeumorphismDesign && _userLocation.contains(',')
-                        ? Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 5),
-                            child: Row(
-                              children: [
-                                Text(
-                                  location.split(',').first,
-                                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
-                                ),
-                                Text(
-                                  location.split(',').last,
-                                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300),
-                                ),
-                              ],
-                            ),
-                          )
-                        : Text(
-                            location,
-                            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300),
-                          )
+                  if (_userLocation != null && _userLocation != "null, null null")
+                    Text(
+                      location,
+                      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300),
+                    )
                   else
                     const SizedBox.shrink(),
                 ],

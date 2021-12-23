@@ -94,7 +94,8 @@ class CourseEnrollmentRepository {
     final List<EnrollmentClass> classes = courseEnrollment.classes;
     classes[classIndex].segments[segmentIndex].completedAt = Timestamp.now();
 
-    final bool isClassCompleted = CourseEnrollmentService.getFirstUncompletedSegmentIndex(classes[classIndex]) == -1;
+    //final bool isClassCompleted = CourseEnrollmentService.getFirstUncompletedSegmentIndex(classes[classIndex]) == -1;
+    final bool isClassCompleted = segmentIndex == classes[classIndex].segments.length - 1; 
     if (isClassCompleted) {
       if (classIndex == courseEnrollment.classes.length - 1) {
         courseEnrollment.completion = 1;
@@ -324,7 +325,8 @@ class CourseEnrollmentRepository {
         .doc(GlobalConfiguration().getValue('projectId'))
         .collection('courseEnrollments')
         .where('created_by', isEqualTo: userId)
-        .where('is_unenrolled', isEqualTo: false)
+        //.where('is_unenrolled', isEqualTo: false)
+        //.where('completion', isLessThan: 1)
         .orderBy('created_at', descending: true)
         .snapshots();
     return courseEnrollmentsStream;

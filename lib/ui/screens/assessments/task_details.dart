@@ -23,7 +23,6 @@ import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
-import 'package:oluko_app/utils/app_loader.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -31,11 +30,10 @@ import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 
 class TaskDetails extends StatefulWidget {
-  const TaskDetails({this.taskIndex, this.isLastTask = false, this.isPublic, Key key, this.isComingFromCoach = false}) : super(key: key);
+  const TaskDetails({this.taskIndex, this.isLastTask = false, Key key, this.isComingFromCoach = false}) : super(key: key);
 
   final int taskIndex;
   final bool isLastTask;
-  final bool isPublic;
   final bool isComingFromCoach;
 
   @override
@@ -55,7 +53,6 @@ class _TaskDetailsState extends State<TaskDetails> {
 
   @override
   void initState() {
-    _makePublic = widget.isPublic;
     super.initState();
   }
 
@@ -157,7 +154,7 @@ class _TaskDetailsState extends State<TaskDetails> {
               style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold),
             ),
             Switch(
-              value: _makePublic,
+              value: _makePublic ?? false,
               onChanged: (bool value) => setState(() {
                 if (taskSubmission != null) {
                   _makePublic = value;
@@ -199,10 +196,9 @@ class _TaskDetailsState extends State<TaskDetails> {
       }
       return true;
     }, builder: (context, state) {
-      if (state is GetSuccess && state.taskSubmission != null) {
+      if (state is GetSuccess && state.taskSubmission != null && state.taskSubmission?.task?.id == _task.id) {
         _taskSubmission = state.taskSubmission;
-
-        //_makePublic = state.taskSubmission.isPublic;
+        _makePublic ??= _taskSubmission.isPublic;
 
         return ListView(
           children: [
@@ -242,7 +238,7 @@ class _TaskDetailsState extends State<TaskDetails> {
             Navigator.pop(context);
             return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
               'taskIndex': widget.taskIndex,
-              'isPublic': _makePublic,
+              'isPublic': _makePublic ?? false,
               'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
             });
           },
@@ -255,7 +251,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                 Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecordingPreview], arguments: {
                   'taskIndex': widget.taskIndex,
                   'filePath': state.pickedFile.path,
-                  'isPublic': _makePublic,
+                  'isPublic': _makePublic ?? false,
                   'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
                 });
               }
@@ -300,11 +296,12 @@ class _TaskDetailsState extends State<TaskDetails> {
                       if (_controller != null) {
                         _controller.pause();
                       }
-                      Navigator.pop(context);
                       if (widget.taskIndex < _tasks.length - 1) {
+                        if (Navigator.canPop(context)) {
+                          Navigator.pop(context);
+                        }
                         Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {
                           'taskIndex': widget.taskIndex + 1,
-                          'isPublic': widget.isPublic,
                           'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
                         });
                       } else {
@@ -356,7 +353,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                         //Navigator.pop(context);
                         return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
                           'taskIndex': widget.taskIndex,
-                          'isPublic': widget.isPublic,
+                          'isPublic': _makePublic,
                           'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
                         });
                       },

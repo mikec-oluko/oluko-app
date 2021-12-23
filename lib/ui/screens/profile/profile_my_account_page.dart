@@ -4,6 +4,7 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/plan_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_helper.dart';
+import 'package:oluko_app/helpers/user_helper.dart';
 import 'package:oluko_app/models/plan.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
@@ -58,7 +59,8 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
   Column buildUserInformationFields() {
     return Column(
       children: [
-        userInformationFields(OlukoLocalizations.get(context, 'userName'), _profileInfo.username),
+        userInformationFields(
+            OlukoLocalizations.get(context, 'userName'), UserHelper.printUsername(_profileInfo.username, _profileInfo.id)),
         userInformationFields(OlukoLocalizations.get(context, 'firstName'), _profileInfo.firstName),
         userInformationFields(OlukoLocalizations.get(context, 'lastName'), _profileInfo.lastName),
         userInformationFields(OlukoLocalizations.get(context, 'email'), _profileInfo.email),

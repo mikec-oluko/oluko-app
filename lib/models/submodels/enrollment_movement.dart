@@ -13,7 +13,7 @@ class EnrollmentMovement {
         id: json['id']?.toString(),
         reference: json['reference'] as DocumentReference,
         name: json['name']?.toString(),
-        counters: json['counters'] == null
+        counters: json['counters'] == null || json['counters'].runtimeType == int
             ? null
             : json['counters'] is int
                 ? [json['counters'] as int]

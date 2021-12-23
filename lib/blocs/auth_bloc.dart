@@ -1,10 +1,9 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
+import 'package:oluko_app/blocs/class/class_subscription_bloc.dart';
 import 'package:oluko_app/blocs/course_category_bloc.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
@@ -19,14 +18,13 @@ import 'package:oluko_app/utils/app_loader.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
-import 'dart:developer';
 import 'coach/coach_interaction_timeline_bloc.dart';
 import 'coach/coach_mentored_videos_bloc.dart';
 import 'coach/coach_recommendations_bloc.dart';
 import 'coach/coach_request_bloc.dart';
 import 'coach/coach_review_pending_bloc.dart';
 import 'coach/coach_sent_videos_bloc.dart';
-import 'course/course_bloc.dart';
+import 'course/course_subscrption_bloc.dart';
 import 'course_enrollment/course_enrollment_list_bloc.dart';
 
 abstract class AuthState {}
@@ -91,18 +89,20 @@ class AuthBloc extends Cubit<AuthState> {
       AppMessages.showSnackbarTranslated(context, 'pleaseSubscribeToAPlanBeforeUsingTheApp');
       emit(AuthGuest());
       return;
-    } else if (!firebaseUser.emailVerified) {
+    } else if (firebaseUser?.emailVerified != null ? !firebaseUser.emailVerified : true) {
       //TODO: trigger to send another email
-      await firebaseUser.updateEmail(user.email);
-      firebaseUser.sendEmailVerification();
+      await firebaseUser?.updateEmail(user.email);
+      firebaseUser?.sendEmailVerification();
       FirebaseAuth.instance.signOut();
       AppMessages.showSnackbarTranslated(context, 'pleaseCheckYourEmail');
       emit(AuthGuest());
     } else {
       AuthRepository().storeLoginData(user);
       AppMessages.showSnackbar(context, '${OlukoLocalizations.get(context, 'welcome')}, ${user.firstName}');
-      emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
-      navigateToNextScreen(context, firebaseUser.uid);
+      if (firebaseUser != null) {
+        emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
+        navigateToNextScreen(context, firebaseUser.uid);
+      }
     }
   }
 
@@ -134,7 +134,7 @@ class AuthBloc extends Cubit<AuthState> {
         return;
       }
       User firebaseUser = result.user;
-      UserResponse userResponse = await UserRepository().get(firebaseUser.email);
+      UserResponse userResponse = await UserRepository().get(firebaseUser?.email);
 
       //If there is no associated user for this account
       if (userResponse == null) {
@@ -145,8 +145,10 @@ class AuthBloc extends Cubit<AuthState> {
       }
 
       AuthRepository().storeLoginData(userResponse);
-      emit(AuthSuccess(user: userResponse, firebaseUser: firebaseUser));
-      navigateToNextScreen(context, firebaseUser.uid);
+      if (firebaseUser != null) {
+        emit(AuthSuccess(user: userResponse, firebaseUser: firebaseUser));
+        navigateToNextScreen(context, firebaseUser.uid);
+      }
       // ignore: avoid_catching_errors
     } on NoSuchMethodError catch (e) {
       Navigator.pushNamed(context, '/log-in');
@@ -216,8 +218,9 @@ class AuthBloc extends Cubit<AuthState> {
       BlocProvider.of<CoachSentVideosBloc>(context).dispose();
       BlocProvider.of<CoachReviewPendingBloc>(context).dispose();
       BlocProvider.of<CourseEnrollmentListBloc>(context).dispose();
-      BlocProvider.of<CourseBloc>(context).dispose();
+      BlocProvider.of<CourseSubscriptionBloc>(context).dispose();
       BlocProvider.of<CourseCategoryBloc>(context).dispose();
+
       Navigator.pushNamedAndRemoveUntil(context, '/sign-up', (route) => false);
       emit(AuthGuest());
     }
@@ -229,8 +232,12 @@ class AuthBloc extends Cubit<AuthState> {
       return;
     }
 
-    await AuthRepository().sendPasswordResetEmail(loginRequest.email);
-    AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'pleaseCheckYourEmailForInstructions'));
+    try {
+      await AuthRepository().sendPasswordResetEmail(loginRequest.email);
+      AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'pleaseCheckYourEmailForInstructions'));
+    } catch (e) {
+      AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'wrongEmailFormat'));
+    }
   }
 
   // String getRandString(int len) {
