@@ -130,7 +130,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () => onWillPop(context),
+      onWillPop: () {
+        return onWillPop(context, isSegmentWithRecording());
+      },
       child: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
         if (authState is AuthSuccess) {
           _user = authState.firebaseUser;
@@ -1031,13 +1033,16 @@ class _SegmentClocksState extends State<SegmentClocks> {
     });
   }
 
-  static Future<bool> onWillPop(BuildContext context) async {
+  static Future<bool> onWillPop(BuildContext context, bool isRecording) async {
     return (await showDialog(
           context: context,
           builder: (context) => AlertDialog(
             backgroundColor: Colors.black,
             title: TitleBody(OlukoLocalizations.get(context, 'exitConfirmationTitle')),
-            content: Text('Do you want to go back? Your recordings will be lost.',
+            content: Text(
+                isRecording
+                    ? OlukoLocalizations.get(context, 'goBackConfirmationWithRecording')
+                    : OlukoLocalizations.get(context, 'goBackConfirmationWithoutRecording'),
                 // OlukoLocalizations.get(context, 'exitConfirmationBody'),
                 style: OlukoFonts.olukoBigFont()),
             actions: <Widget>[
