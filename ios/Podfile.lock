@@ -353,7 +353,7 @@ PODS:
   - BoringSSL-GRPC/Interface (0.0.7)
   - camera (0.0.1):
     - Flutter
-  - cloud_firestore (2.2.2):
+  - cloud_firestore (2.5.1):
     - Firebase/Firestore (= 8.7.0)
     - firebase_core
     - Flutter
@@ -594,7 +594,7 @@ PODS:
     - Flutter
     - FlutterMacOS
     - Sentry (~> 7.1.3)
-  - shared_preferences_ios (0.0.1):
+  - shared_preferences (0.0.1):
     - Flutter
   - tau_core (8.3.9)
   - video_player (0.0.1):
@@ -625,7 +625,7 @@ DEPENDENCIES:
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
   - permission_handler (from `.symlinks/plugins/permission_handler/ios`)
   - sentry_flutter (from `.symlinks/plugins/sentry_flutter/ios`)
-  - shared_preferences_ios (from `.symlinks/plugins/shared_preferences_ios/ios`)
+  - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
   - video_player (from `.symlinks/plugins/video_player/ios`)
   - wakelock (from `.symlinks/plugins/wakelock/ios`)
   - webview_flutter (from `.symlinks/plugins/webview_flutter/ios`)
@@ -706,8 +706,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/permission_handler/ios"
   sentry_flutter:
     :path: ".symlinks/plugins/sentry_flutter/ios"
-  shared_preferences_ios:
-    :path: ".symlinks/plugins/shared_preferences_ios/ios"
+  shared_preferences:
+    :path: ".symlinks/plugins/shared_preferences/ios"
   video_player:
     :path: ".symlinks/plugins/video_player/ios"
   wakelock:
@@ -721,7 +721,7 @@ SPEC CHECKSUMS:
   audioplayers: 455322b54050b30ea4b1af7cd9e9d105f74efa8c
   BoringSSL-GRPC: 8edf627ee524575e2f8d19d56f068b448eea3879
   camera: a0ca5080336f7af47b88436e5e26da3dee5568f0
-  cloud_firestore: fbefe2f4bf51a0a58613f658517735b28bda5409
+  cloud_firestore: 6ef724c1d02b9b34fa60fe3b52161ef41b478b79
   FBAEMKit: 5de0a7aaa854eec69bb5be20795952a63d38a5f6
   FBSDKCoreKit: bf655f808b040ed66a72b9922911b39d703e64f4
   FBSDKCoreKit_Basics: 73ebe3a27eb688ac5b5aa7e99f68992993042115
@@ -768,7 +768,7 @@ SPEC CHECKSUMS:
   SDWebImageWebPCoder: f93010f3f6c031e2f8fb3081ca4ee6966c539815
   Sentry: 1d3eb1a25f8c5333c88dd5603904a6d461cd9fcf
   sentry_flutter: f20d4f199442900fbdab2b8496f1d2091d8b94d9
-  shared_preferences_ios: aef470a42dc4675a1cdd50e3158b42e3d1232b32
+  shared_preferences: 5033afbb22d372e15aff8ff766df9021b845f273
   tau_core: f7bbd1c6a632f52c2fa7c14feea385ab966b1e45
   video_player: ecd305f42e9044793efd34846e1ce64c31ea6fcb
   wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
@@ -776,4 +776,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 4ce149f4c5152c3f4a0e25c22103c70fb57db3b0
 
-COCOAPODS: 1.11.2
+COCOAPODS: 1.10.2
