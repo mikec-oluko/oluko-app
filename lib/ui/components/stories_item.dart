@@ -232,7 +232,7 @@ class _State extends State<StoriesItem> {
                 ),
                 textAlign: TextAlign.center,
               )
-            : nil,
+            : const SizedBox(),
       );
     }
   }
