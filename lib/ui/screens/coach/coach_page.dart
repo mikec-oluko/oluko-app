@@ -567,7 +567,7 @@ class _CoachPageState extends State<CoachPage> {
         _timelineItemsContent.add(mentoredVideo);
       }
     });
-    _annotationVideosContent.isNotEmpty ? buildAnnotationsForTimeline() : null;
+    buildAnnotationsForTimeline();
   }
 
   void coachRecommendationsTimelineItems() {

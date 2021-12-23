@@ -321,7 +321,10 @@ class _State extends State<Courses> {
                   title: OlukoLocalizations.get(context, 'activeCourses'),
                   height: carouselSectionHeight + 10,
                   children: courseEnrollmentState.courseEnrollments.map((CourseEnrollment courseEnrollment) {
-                    final activeCourseList = _courses.where((enrolledCourse) => enrolledCourse.id == courseEnrollment.course.id).toList();
+                    final activeCourseList = _courses
+                        .where(
+                            (enrolledCourse) => enrolledCourse.id == courseEnrollment.course.id && courseEnrollment.isUnenrolled == false)
+                        .toList();
                     Course course;
                     if (activeCourseList.isNotEmpty) {
                       course = activeCourseList[0];
