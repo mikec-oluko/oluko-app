@@ -7,7 +7,7 @@ class UserInformationBackground {
         ? BoxDecoration(
             color: OlukoNeumorphismColors.olukoNeumorphicGreyBackgroundFlat,
             borderRadius: customBorder
-                ? const BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25))
+                ? const BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))
                 : BorderRadius.all(OlukoNeumorphism.radiusValue))
         : BoxDecoration(
             gradient: const LinearGradient(

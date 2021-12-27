@@ -95,19 +95,7 @@ class _State extends State<CourseCard> {
         else
           SizedBox(),
         Neumorphic(
-          style: NeumorphicStyle(
-              border: NeumorphicBorder(width: 1.5, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark),
-              depth: 6,
-              intensity: 0.8,
-              color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-              shape: NeumorphicShape.flat,
-              lightSource: LightSource.topLeft,
-              boxShape: NeumorphicBoxShape.roundRect(BorderRadius.all(Radius.circular(5))),
-              shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-              shadowLightColorEmboss: OlukoColors.black,
-              surfaceIntensity: 1,
-              shadowLightColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-              shadowDarkColor: Colors.black),
+          style: OlukoNeumorphism.getNeumorphicStyleForCardElement(),
           child: Stack(
             children: [
               widget.imageCover,
