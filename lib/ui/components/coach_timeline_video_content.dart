@@ -19,7 +19,7 @@ class _CoachTimelineVideoContentState extends State<CoachTimelineVideoContent> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: OlukoColors.black,
+      color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
@@ -44,9 +44,7 @@ class _CoachTimelineVideoContentState extends State<CoachTimelineVideoContent> {
                                       decoration: BoxDecoration(
                                           borderRadius: const BorderRadius.all(Radius.circular(5)),
                                           image: DecorationImage(
-                                            image: widget.videoThumbnail != null
-                                                ? NetworkImage(widget.videoThumbnail)
-                                                : defaultImage,
+                                            image: widget.videoThumbnail != null ? NetworkImage(widget.videoThumbnail) : defaultImage,
                                             fit: BoxFit.cover,
                                           )))),
                               Align(
@@ -68,11 +66,9 @@ class _CoachTimelineVideoContentState extends State<CoachTimelineVideoContent> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(CoachHeders.getContentHeader(context: context, fileType: widget.fileType),
-                                  style: OlukoFonts.olukoMediumFont(
-                                      customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
+                                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
                               Text(widget.videoTitle,
-                                  style: OlukoFonts.olukoMediumFont(
-                                      customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
+                                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
                             ],
                           ),
                         )

@@ -4,8 +4,11 @@ import 'package:oluko_app/constants/theme.dart';
 class UserInformationBackground {
   static BoxDecoration getContainerGradientDecoration({bool customBorder = false, bool isNeumorphic = false}) {
     return isNeumorphic
-        ? const BoxDecoration(
-            color: OlukoNeumorphismColors.olukoNeumorphicGreyBackgroundFlat, borderRadius: BorderRadius.all(OlukoNeumorphism.radiusValue))
+        ? BoxDecoration(
+            color: OlukoNeumorphismColors.olukoNeumorphicGreyBackgroundFlat,
+            borderRadius: customBorder
+                ? const BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25))
+                : BorderRadius.all(OlukoNeumorphism.radiusValue))
         : BoxDecoration(
             gradient: const LinearGradient(
                 colors: [OlukoColors.grayColorFadeTop, OlukoColors.grayColorFadeBottom],

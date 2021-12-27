@@ -31,6 +31,22 @@ class OlukoNeumorphism {
         shadowDarkColor: darkShadow ? Colors.black : Colors.transparent);
   }
 
+  static NeumorphicStyle getNeumorphicStyleForCircleElement() {
+    return const NeumorphicStyle(
+        border: NeumorphicBorder(width: 1.5, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark),
+        depth: 3,
+        intensity: 0.5,
+        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+        shape: NeumorphicShape.flat,
+        lightSource: LightSource.topLeft,
+        boxShape: NeumorphicBoxShape.circle(),
+        shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+        shadowLightColorEmboss: OlukoColors.black,
+        surfaceIntensity: 1,
+        shadowLightColor: OlukoColors.grayColor,
+        shadowDarkColor: Colors.black);
+  }
+
   static NeumorphicStyle secondaryButtonStyle(
       {bool useBorder = false,
       bool ligthShadow = true,
