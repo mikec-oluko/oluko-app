@@ -5,7 +5,7 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 class AppMessages {
   static void clearAndShowSnackbar(BuildContext context, String message, {Color backgroundColor, Duration duration, Color textColor}) {
     ScaffoldMessenger.of(context).clearSnackBars();
-    showSnackbar(context, OlukoLocalizations.get(context, message), backgroundColor: backgroundColor, duration: duration, textColor: textColor);
+    showSnackbar(context, message, backgroundColor: backgroundColor, duration: duration, textColor: textColor);
   }
 
   static void clearAndShowSnackbarTranslated(BuildContext context, String translationKey, {Color backgroundColor, Duration duration, Color textColor}) {
