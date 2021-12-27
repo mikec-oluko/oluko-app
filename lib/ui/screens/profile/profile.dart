@@ -132,7 +132,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         break;
                       case ProfileOptionsTitle.logout:
                         BlocProvider.of<AuthBloc>(context).logout(context);
-                        AppMessages.showSnackbarTranslated(context, 'loggedOut');
+                        AppMessages.clearAndShowSnackbarTranslated(context, 'loggedOut');
                         Navigator.popUntil(context, ModalRoute.withName('/'));
                         setState(() {});
                         break;

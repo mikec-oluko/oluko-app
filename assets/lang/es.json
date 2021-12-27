@@ -224,6 +224,7 @@
     "uploadedSuccessfully": "Subido correctamente",
     "total": "Total",
     "invalidUsernameOrPw": "Usuario/email o password inválido.",
+    "passwordSpaceWarning": "Tiene espacios en blanco en la contraseña.",
     "passwordRequired": "Password es requerido.",
     "emailUsernameRequired": "Email/Username es requerido.",
     "today": "Hoy",

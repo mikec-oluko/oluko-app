@@ -262,7 +262,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                             _controller.pause();
                           }
                           if (OlukoPermissions.isAssessmentTaskDisabled(_user, index)) {
-                            AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'yourCurrentPlanDoesntIncludeAssessment'));
+                            AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'yourCurrentPlanDoesntIncludeAssessment'));
                           } else {
                             if (assessmentsTasksList.length - taskSubmissionsCompleted.length == 1) {
                               setState(() {

@@ -192,7 +192,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   Future<void> callBlocToCreateStory(BuildContext context, SegmentSubmission segmentSubmission) async {
     BlocProvider.of<storyBloc.StoryBloc>(context).createStory(segmentSubmission);
-    AppMessages.showSnackbarTranslated(context, 'storyCreated');
+    AppMessages.clearAndShowSnackbarTranslated(context, 'storyCreated');
   }
 
   bool isSegmentWithRecording() {
@@ -678,7 +678,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
       setState(() {
         workoutType = WorkoutType.segment;
       });
-      AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'roundInfo'));
+      AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'roundInfo'));
       /*DialogUtils.getDialog(context, _confirmDialogContent(),
           showExitButton: true);*/
     }
@@ -1023,7 +1023,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
     } else {
       message = OlukoLocalizations.get(context, 'segmentUploadedSuccessfully');
     }
-    AppMessages.showSnackbar(context, message);
+    AppMessages.clearAndShowSnackbar(context, message);
   }
 
   void updateProgress(VideoProcessing state) {

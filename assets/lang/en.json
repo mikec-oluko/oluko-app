@@ -225,6 +225,7 @@
     "errorGettingCurrentPlan": "Error getting current plan",
     "total": "Total",
     "invalidUsernameOrPw": "Invalid username/email or password.",
+    "passwordSpaceWarning": "You have spaces in your password.",
     "passwordRequired": "Password is required.",
     "emailUsernameRequired": "Email/Username is required.",
     "today": "Today",
