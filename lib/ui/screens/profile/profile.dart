@@ -100,7 +100,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Padding buildOptionsList() {
     return Padding(
-      padding: const EdgeInsets.only(top: 170),
+      padding: const EdgeInsets.only(top: 180),
       child: ListView.builder(
           itemCount: ProfileOptions.profileOptions.length, itemBuilder: (_, index) => profileOptions(ProfileOptions.profileOptions[index])),
     );

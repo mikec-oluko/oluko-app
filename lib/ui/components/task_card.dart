@@ -46,9 +46,14 @@ class _State extends State<TaskCard> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(children: [
-                                    Text(
-                                      widget.task.name,
-                                      style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold),
+                                    SizedBox(
+                                      width: 200,
+                                      child: Text(
+                                        widget.task.name,
+                                        style:
+                                            OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
                                     ),
                                     Expanded(child: SizedBox()),
                                     Stack(alignment: Alignment.center, children: [

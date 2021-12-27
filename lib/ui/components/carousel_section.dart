@@ -39,7 +39,7 @@ class _State extends State<CarouselSection> {
                               padding: const EdgeInsets.only(top: 3.0),
                               child: Text(
                                 widget.optionLabel != null ? widget.optionLabel : '',
-                                style: TextStyle(color: OlukoColors.primary, fontSize: 18),
+                                style: TextStyle(color: OlukoColors.primary, fontSize: 16, overflow: TextOverflow.ellipsis),
                               ),
                             )
                           : SizedBox(),

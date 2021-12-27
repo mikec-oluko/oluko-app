@@ -58,7 +58,7 @@ class _HomeState extends State<Home> {
         }, builder: (context, courseEnrollmentListState) {
           if (courseEnrollmentListState is CourseEnrollmentsByUserSuccess) {
             _courseEnrollments =
-                courseEnrollmentListState.courseEnrollments/*.where((courseEnroll) => courseEnroll.isUnenrolled != true).toList()*/;
+                courseEnrollmentListState.courseEnrollments /*.where((courseEnroll) => courseEnroll.isUnenrolled != true).toList()*/;
             ;
             BlocProvider.of<CourseHomeBloc>(context)..getByCourseEnrollments(_courseEnrollments);
             return form();
@@ -116,7 +116,7 @@ class _HomeState extends State<Home> {
       return CarouselSlider(
         items: courseSectionList(),
         options: CarouselOptions(
-            height: 600,
+            height: ScreenUtils.height(context) - 140,
             autoPlay: false,
             enlargeCenterPage: false,
             disableCenter: true,

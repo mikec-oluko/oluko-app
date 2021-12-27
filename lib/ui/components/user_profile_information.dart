@@ -70,7 +70,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
           child: Container(
             decoration: ContainerGradient.getContainerGradientDecoration(),
             width: MediaQuery.of(context).size.width,
-            child: Padding(padding: const EdgeInsets.all(10.0), child: _profileUserInformation(_userLocation, _valuesDemo)),
+            child: Padding(padding: const EdgeInsets.all(5.0), child: _profileUserInformation(_userLocation, _valuesDemo)),
           ),
         );
       }),
