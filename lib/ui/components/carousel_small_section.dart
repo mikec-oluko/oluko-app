@@ -25,46 +25,55 @@ class _State extends State<CarouselSmallSection> {
     return Container(
       width: MediaQuery.of(context).size.width,
       child: Column(children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 10),
-              child: TitleBody(widget.title),
-            ),
-            Spacer(),
-            Padding(
-              padding: const EdgeInsets.only(right: 5),
-              child: TextButton(
-                onPressed: () {
-                  goToRoute(widget.routeToGo);
-                },
-                child: Text(
-                  OlukoLocalizations.get(context, 'viewAll'),
-                  style: TextStyle(color: OlukoColors.primary),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: OlukoNeumorphism.isNeumorphismDesign ? 20 : 0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 10),
+                child: TitleBody(widget.title),
+              ),
+              Spacer(),
+              Padding(
+                padding: const EdgeInsets.only(right: 5),
+                child: TextButton(
+                  onPressed: () {
+                    goToRoute(widget.routeToGo);
+                  },
+                  child: Text(OlukoLocalizations.get(context, 'viewAll'), style: TextStyle(color: OlukoColors.primary, fontSize: 18)),
                 ),
               ),
-            ),
-            GestureDetector(
-              onTap: () => widget.onOptionTap(),
-              child: Text(
-                widget.optionLabel != null ? widget.optionLabel : '',
-                style: TextStyle(color: OlukoColors.primary, fontSize: 20),
-              ),
-            )
-          ],
+              GestureDetector(
+                onTap: () => widget.onOptionTap(),
+                child: Text(
+                  widget.optionLabel != null ? widget.optionLabel : '',
+                  style: TextStyle(color: OlukoColors.primary, fontSize: 20),
+                ),
+              )
+            ],
+          ),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20),
+          padding: const EdgeInsets.symmetric(vertical: 0, horizontal: OlukoNeumorphism.isNeumorphismDesign ? 20 : 0),
           child: Container(
               height: 120,
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: ListView(
-                  shrinkWrap: true,
-                  scrollDirection: Axis.horizontal,
-                  children: widget.children,
-                ),
+                child: OlukoNeumorphism.isNeumorphismDesign
+                    ? ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        shrinkWrap: true,
+                        itemCount: 1,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Row(children: widget.children);
+                        })
+                    : ListView(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        children: widget.children,
+                      ),
+                //   child:,
               )),
         )
       ]),

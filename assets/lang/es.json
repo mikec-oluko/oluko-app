@@ -185,9 +185,12 @@
     "hey": "Hey!",
     "coachText": "Se te asignara un Coach pronto. Te notificaremos cuando el Coach sea asignado.",
     "hours": "Hora(s)",
+    "hoursAlt": "Hora(s)",
     "twoDots": ":",
     "minute": "Minuto(s)",
+    "minuteAlt": "Min",
     "second": "Segundo(s)",
+    "secondAlt": "Seg",
     "yourCurrentPlanDoesntIncludeAssessment": "Tu plan actual no incluye estas pruebas",
     "countYour": "Cuenta tus ",
     "enterScore": "Ingresa el resultado: ",
@@ -231,6 +234,7 @@
     "storyBeingCreated": "La historia esta siendo creada",
     "coachRequest": "te solicitó grabar este segmento",
     "enterEmail": "Por favor ingrese email.",
+    "wrongEmailFormat": "Por favor ingrese un email válido.",
     "movement": "Movimiento",
     "personalRecord": "Record Personal",
     "noPersonalRecords": "Sin Records Personales",
@@ -249,5 +253,6 @@
     "noCoachMessage": "para obtener tu entrenador personal",
     "roundInfo": "Solo la primera ronda se graba. Prepararemos el video para enviarlo a tu coach!",
     "stopProcessConfirmation": "El video aún sé está procesando, si se abandona esta vista el proceso se dará por terminado. ¿Desea salir?",
-    "noVideoUploaded": "Aún no subiste un video"
+    "noVideoUploaded": "Aún no subiste un video",
+    "coachPageAssessmentsText": "Completa las tareas a continuación para que se te asigne un entrenador"
 }

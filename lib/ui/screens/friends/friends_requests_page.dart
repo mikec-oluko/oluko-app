@@ -55,7 +55,7 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
         child: Container(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
-            color: OlukoColors.black,
+            color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
             child: BlocListener<IgnoreFriendRequestBloc, IgnoreFriendRequestState>(
               listener: (context, ignoreFriendState) {
                 if (ignoreFriendState is IgnoreFriendRequestSuccess) {
@@ -149,7 +149,7 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
                               .ignoreFriend(context, friendsRequestState.friendData, friendRequestModel);
                         },
                         onFriendConfirmation: (UserResponse friend) {
-                          if(disabledActions){
+                          if (disabledActions) {
                             return;
                           }
                           disabledActions = true;

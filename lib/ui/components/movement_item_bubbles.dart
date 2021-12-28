@@ -63,7 +63,9 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
       onTap: () => onPressed(context),
       child: SizedBox(
         width: 85,
+        height: 100,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             StoriesItem(maxRadius: 23, imageUrl: imageUrl, bloc: StoryListBloc()),
             Padding(
@@ -71,6 +73,7 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
               child: Text(
                 name,
                 textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
                 style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor),
                 overflow: TextOverflow.ellipsis,
               ),
