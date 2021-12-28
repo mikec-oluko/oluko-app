@@ -25,6 +25,7 @@ import 'package:oluko_app/blocs/inside_class_content_bloc.dart';
 import 'package:oluko_app/blocs/personal_record_bloc.dart';
 import 'package:oluko_app/blocs/segment_detail_content_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
+import 'package:oluko_app/blocs/statistics/statistics_subscription_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
 import 'package:oluko_app/blocs/class/class_bloc.dart';
@@ -38,7 +39,7 @@ import 'package:oluko_app/blocs/plan_bloc.dart';
 import 'package:oluko_app/blocs/profile/profile_bloc.dart';
 import 'package:oluko_app/blocs/recommendation_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
-import 'package:oluko_app/blocs/statistics_bloc.dart';
+import 'package:oluko_app/blocs/statistics/statistics_bloc.dart';
 import 'package:oluko_app/blocs/story_bloc.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
@@ -254,6 +255,7 @@ class Routes {
   final ClassBloc _classBloc = ClassBloc();
   final SubscribedCourseUsersBloc _subscribedCourseUsersBloc = SubscribedCourseUsersBloc();
   final StatisticsBloc _statisticsBloc = StatisticsBloc();
+  final StatisticsSubscriptionBloc _statisticsSubscriptionBloc = StatisticsSubscriptionBloc();
   final MovementBloc _movementBloc = MovementBloc();
   final MovementInfoBloc _movementInfoBloc = MovementInfoBloc();
   final SegmentBloc _segmentBloc = SegmentBloc();
@@ -587,7 +589,7 @@ class Routes {
       case RouteEnum.courseMarketing:
         providers = [
           BlocProvider<ClassSubscriptionBloc>.value(value: _classSubscriptionBloc),
-          BlocProvider<StatisticsBloc>.value(value: _statisticsBloc),
+          BlocProvider<StatisticsSubscriptionBloc>.value(value: _statisticsSubscriptionBloc),
           BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
           BlocProvider<MovementBloc>.value(value: _movementBloc),
           BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
@@ -663,9 +665,7 @@ class Routes {
           BlocProvider<GalleryVideoBloc>.value(value: _galleryVideoBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
-        newRouteView = TaskDetails(
-            taskIndex: argumentsToAdd['taskIndex'] as int,
-            isLastTask: argumentsToAdd['isLastTask'] as bool);
+        newRouteView = TaskDetails(taskIndex: argumentsToAdd['taskIndex'] as int, isLastTask: argumentsToAdd['isLastTask'] as bool);
         break;
       case RouteEnum.selfRecording:
         //TODO: Pass flag for last assessments

@@ -101,7 +101,7 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
                       if (areFriends)
                         StoriesItem(
                           maxRadius: 30,
-                          imageUrl: user.avatarThumbnail ?? UserUtils().defaultAvatarImageUrl,
+                          imageUrl: user.avatarThumbnail,
                           bloc: StoryListBloc(),
                           getStories: true,
                           itemUserId: user.id,
@@ -112,7 +112,8 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
                       else
                         StoriesItem(
                           maxRadius: 30,
-                          imageUrl: user.avatarThumbnail ?? UserUtils().defaultAvatarImageUrl,
+                          imageUrl: user.avatarThumbnail,
+                          name: user.firstName,
                         ),
                       Padding(
                         padding: const EdgeInsets.only(top: 8.0, bottom: 0.0),
