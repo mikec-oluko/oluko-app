@@ -4,6 +4,7 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/utils/app_modal.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -127,10 +128,18 @@ class _State extends State<ImageAndVideoPreviewCard> {
                           ])
                     : SizedBox();
               },
-              child: Image.asset(
-                'assets/assessment/play.png',
-                scale: 5,
-              ))),
+              child: OlukoNeumorphism.isNeumorphismDesign
+                  ? Container(
+                      width: 50,
+                      height: 50,
+                      child: OlukoBlurredButton(
+                        childContent: Icon(Icons.play_arrow),
+                      ),
+                    )
+                  : Image.asset(
+                      'assets/assessment/play.png',
+                      scale: 5,
+                    ))),
       Align(
           alignment: Alignment.bottomCenter,
           child: widget.showTitle
@@ -189,9 +198,7 @@ class _State extends State<ImageAndVideoPreviewCard> {
         videoUrl: videoUrl,
         autoPlay: false,
         whenInitialized: (ChewieController chewieController) => {
-              if (_controller == null && loaderWidgetIndex != null) {
-                widgets.removeAt(loaderWidgetIndex)
-                }
+              if (_controller == null && loaderWidgetIndex != null) {widgets.removeAt(loaderWidgetIndex)}
             }));
 
     return ConstrainedBox(

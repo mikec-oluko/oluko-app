@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -103,7 +104,7 @@ class _State extends State<StoriesItem> {
           }
         },
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+          padding: OlukoNeumorphism.isNeumorphismDesign ? EdgeInsets.fromLTRB(10, 15, 10, 0) : EdgeInsets.fromLTRB(8, 0, 8, 0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -213,28 +214,45 @@ class _State extends State<StoriesItem> {
 
   Widget getCircularAvatar() {
     if (widget.imageUrl != null) {
-      return CircleAvatar(
-        backgroundImage: NetworkImage(widget.imageUrl),
-        maxRadius: widget.maxRadius ?? 30,
-      );
+      return OlukoNeumorphism.isNeumorphismDesign
+          ? Neumorphic(
+              style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
+              child: CircleAvatar(
+                backgroundImage: NetworkImage(widget.imageUrl),
+                maxRadius: widget.maxRadius ?? 30,
+              ),
+            )
+          : CircleAvatar(
+              backgroundImage: NetworkImage(widget.imageUrl),
+              maxRadius: widget.maxRadius ?? 30,
+            );
     } else {
-      return CircleAvatar(
-        maxRadius: widget.maxRadius ?? 30,
-        backgroundColor: widget.name == null || widget.lastname == null
-            ? OlukoColors.userColor(null, null)
-            : OlukoColors.userColor(widget.name, widget.lastname),
-        child: widget.name != null && widget.name.isNotEmpty
-            ? Text(
-                widget.name.characters?.first?.toString()?.toUpperCase() ?? '',
-                style: OlukoFonts.olukoBigFont(
-                  customColor: OlukoColors.white,
-                  custoFontWeight: FontWeight.w500,
-                ),
-                textAlign: TextAlign.center,
-              )
-            : const SizedBox(),
-      );
+      return OlukoNeumorphism.isNeumorphismDesign
+          ? Neumorphic(
+              style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
+              child: avatarImageDefault(),
+            )
+          : avatarImageDefault();
     }
+  }
+
+  CircleAvatar avatarImageDefault() {
+    return CircleAvatar(
+      maxRadius: widget.maxRadius ?? 30,
+      backgroundColor: widget.name == null || widget.lastname == null
+          ? OlukoColors.userColor(null, null)
+          : OlukoColors.userColor(widget.name, widget.lastname),
+      child: widget.name != null && widget.name.isNotEmpty
+          ? Text(
+              widget.name.characters?.first?.toString()?.toUpperCase() ?? '',
+              style: OlukoFonts.olukoBigFont(
+                customColor: OlukoColors.white,
+                custoFontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
+            )
+          : nil,
+    );
   }
 
   double getScale() {

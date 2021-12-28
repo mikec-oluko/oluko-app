@@ -5,8 +5,7 @@ class CoachHorizontalCarousel extends StatefulWidget {
   final bool isForVideoContent;
   final bool isAssessmentContent;
   final List<Widget> contentToDisplay;
-  const CoachHorizontalCarousel(
-      {this.contentToDisplay, this.isForVideoContent = false, this.isAssessmentContent = false});
+  const CoachHorizontalCarousel({this.contentToDisplay, this.isForVideoContent = false, this.isAssessmentContent = false});
 
   @override
   _CoachHorizontalCarouselState createState() => _CoachHorizontalCarouselState();
@@ -18,7 +17,7 @@ class _CoachHorizontalCarouselState extends State<CoachHorizontalCarousel> {
     Widget contentToReturn;
     if (widget.isForVideoContent) {
       contentToReturn = Container(
-        color: OlukoColors.black,
+        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
         width: MediaQuery.of(context).size.width,
         height: 150,
         child: ListView(
@@ -47,7 +46,7 @@ class _CoachHorizontalCarouselState extends State<CoachHorizontalCarousel> {
           ]));
     } else {
       contentToReturn = Container(
-          color: Colors.black,
+          color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
           width: MediaQuery.of(context).size.width,
           height: 120,
           child: ListView(padding: EdgeInsets.zero, shrinkWrap: true, scrollDirection: Axis.horizontal, children: [

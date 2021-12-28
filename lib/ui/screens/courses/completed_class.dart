@@ -59,6 +59,7 @@ class _CompletedClassState extends State<CompletedClass> {
   Widget form() {
     return Scaffold(
         appBar: OlukoAppBar(
+          showBackButton: false,
           showDivider: false,
           title: ' ',
           actions: [],
