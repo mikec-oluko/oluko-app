@@ -1054,8 +1054,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
               ),
               TextButton(
                 onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.pop(context);
+                  Navigator.popUntil(context, ModalRoute.withName('/segment-detail'));
                 },
                 child: Text(
                   OlukoLocalizations.get(context, 'yes'),
