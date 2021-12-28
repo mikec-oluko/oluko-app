@@ -85,11 +85,15 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
         if (authState is AuthSuccess) {
           BlocProvider.of<HiFiveBloc>(context).get(authState.user.id);
         }
-        return TabBarView(
-          controller: this.tabController,
-          children: tabs,
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 75),
+          child: TabBarView(
+            controller: this.tabController,
+            children: tabs,
+          ),
         );
       }),
+      extendBody: true,
       bottomNavigationBar: OlukoBottomNavigationBar(
         selectedIndex: this.tabController.index,
         onPressed: (index) => this.setState(() {

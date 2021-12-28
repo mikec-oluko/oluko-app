@@ -3,6 +3,7 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_introduction_video_bloc.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
@@ -35,7 +36,7 @@ class _CoachCarouselSliderSectionState extends State<CoachCarouselSliderSection>
           }
         }
         return Container(
-          color: Colors.black,
+          color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
           width: MediaQuery.of(context).size.width,
           height: 250,
           child: Stack(

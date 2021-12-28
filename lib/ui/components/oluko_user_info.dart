@@ -18,11 +18,15 @@ class _OlukoUserInfoWidgetState extends State<OlukoUserInfoWidget> {
       mainAxisSize: MainAxisSize.max,
       children: [
         Padding(
-          padding: const EdgeInsets.all(10.0),
+          padding:
+              OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.symmetric(horizontal: 20, vertical: 10) : const EdgeInsets.all(10.0),
           child: Container(
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                border: Border.all(width: 1.0, color: OlukoColors.grayColor)),
+                borderRadius:
+                    OlukoNeumorphism.isNeumorphismDesign ? BorderRadius.all(Radius.circular(15.0)) : BorderRadius.all(Radius.circular(5.0)),
+                border: OlukoNeumorphism.isNeumorphismDesign ? Border.symmetric() : Border.all(width: 1.0, color: OlukoColors.grayColor),
+                color:
+                    OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicGreyBackgroundFlat : Colors.transparent),
             child: Container(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height / 8,
@@ -31,15 +35,15 @@ class _OlukoUserInfoWidgetState extends State<OlukoUserInfoWidget> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(left: 10.0),
+                    padding: const EdgeInsets.only(left: OlukoNeumorphism.isNeumorphismDesign ? 20 : 10),
                     child: Text(
                       widget.title,
                       style: OlukoFonts.olukoMediumFont(
-                          customColor: OlukoColors.primary),
+                          customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.grayColor : OlukoColors.primary),
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 10.0),
+                    padding: const EdgeInsets.only(left: OlukoNeumorphism.isNeumorphismDesign ? 20 : 10),
                     child: Text(
                       widget.value != 'null' ? widget.value : '-',
                       style: OlukoFonts.olukoBigFont(

@@ -4,14 +4,25 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/done_challenge_users_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/coach_request.dart';
+import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/user_submodel.dart';
+import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/audio_section.dart';
+import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
+import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/people_section.dart';
 import 'package:oluko_app/ui/components/segment_step_section.dart';
+import 'package:oluko_app/ui/components/stories_item.dart';
 import 'package:oluko_app/ui/components/vertical_divider.dart' as verticalDivider;
+import 'package:oluko_app/ui/screens/courses/segment_clocks.dart';
+import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/segment_utils.dart';
+import 'package:oluko_app/utils/timer_utils.dart';
 
 class SegmentImageSection extends StatefulWidget {
   final Function() onPressed;
@@ -23,6 +34,12 @@ class SegmentImageSection extends StatefulWidget {
   final Function() audioAction;
   final Function(List<UserSubmodel> users, List<UserSubmodel> favorites) peopleAction;
   final Function() clockAction;
+  final CourseEnrollment courseEnrollment;
+  final int courseIndex;
+  final int classIndex;
+  final List<Segment> segments;
+  final List<CoachRequest> coachRequests;
+  final UserResponse coach;
 
   SegmentImageSection(
       {this.onPressed = null,
@@ -34,6 +51,12 @@ class SegmentImageSection extends StatefulWidget {
       this.audioAction,
       this.clockAction,
       this.peopleAction,
+      this.courseEnrollment,
+      this.courseIndex,
+      this.segments,
+      this.classIndex,
+      this.coachRequests,
+      this.coach,
       Key key})
       : super(key: key);
 
@@ -42,8 +65,11 @@ class SegmentImageSection extends StatefulWidget {
 }
 
 class _SegmentImageSectionState extends State<SegmentImageSection> {
+  CoachRequest _coachRequest;
+
   @override
   void initState() {
+    _coachRequest = getSegmentCoachRequest(widget.segment.id);
     BlocProvider.of<DoneChallengeUsersBloc>(context).get(widget.segment.id, widget.userId);
     super.initState();
   }
@@ -55,34 +81,146 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
 
   Widget imageWithButtons() {
     return Stack(children: [
-      imageSection(),
+      Container(
+          height: ScreenUtils.height(context) - 100,
+          child: ListView(children: [
+            Stack(children: [
+              imageSection(),
+              if (widget.segment.isChallenge) challengeButtons(),
+              segmentContent(),
+            ]),
+            startWorkoutsButton()
+          ])),
       topButtons(),
-      if (widget.segment.isChallenge) challengeButtons(),
-      Padding(
-          padding: const EdgeInsets.only(top: 270, right: 15, left: 15),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                widget.segment.isChallenge
-                    ? (OlukoLocalizations.get(context, 'challengeTitle') + widget.segment.name)
-                    : widget.segment.name,
-                style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                widget.segment.description,
-                style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400),
-              ),
-              SegmentStepSection(currentSegmentStep: widget.currentSegmentStep, totalSegmentStep: widget.totalSegmentStep),
-              Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: SegmentUtils.getSegmentSummary(widget.segment, context, OlukoColors.white))),
-            ],
-          ))
     ]);
+  }
+
+  Widget segmentContent() {
+    return Padding(
+        padding: const EdgeInsets.only(top: 270, right: 15, left: 15),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              widget.segment.isChallenge ? (OlukoLocalizations.get(context, 'challengeTitle') + widget.segment.name) : widget.segment.name,
+              style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              widget.segment.description,
+              style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400),
+            ),
+            SegmentStepSection(currentSegmentStep: widget.currentSegmentStep, totalSegmentStep: widget.totalSegmentStep),
+            Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: SegmentUtils.getSegmentSummary(widget.segment, context, OlukoColors.white))),
+          ],
+        ));
+  }
+
+  Widget startWorkoutsButton() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 15, right: 15, bottom: 25.0),
+      child: Row(children: [
+        OlukoPrimaryButton(
+            title: OlukoLocalizations.get(context, 'startWorkouts'),
+            color: OlukoColors.primary,
+            onPressed: () {
+              //CoachRequest coachRequest = getSegmentCoachRequest(widget.segment.id);
+              if (_coachRequest != null) {
+                BottomDialogUtils.showBottomDialog(context: context, content: dialogContainer(widget.coach.firstName, widget.coach.avatar));
+              } else {
+                navigateToSegmentWithoutRecording();
+              }
+            })
+      ]),
+    );
+  }
+
+  CoachRequest getSegmentCoachRequest(String segmentId) {
+    for (var i = 0; i < widget.coachRequests.length; i++) {
+      if (widget.coachRequests[i].segmentId == segmentId) {
+        return widget.coachRequests[i];
+      }
+    }
+    return null;
+  }
+
+  Widget dialogContainer(String name, String image) {
+    return Container(
+        decoration: const BoxDecoration(
+            image: DecorationImage(
+          image: AssetImage('assets/courses/dialog_background.png'),
+          fit: BoxFit.cover,
+        )),
+        child: Stack(children: [
+          Column(children: [
+            const SizedBox(height: 30),
+            Stack(alignment: Alignment.center, children: [
+              StoriesItem(maxRadius: 65, imageUrl: image /*, bloc: StoryListBloc()*/),
+              Image.asset('assets/courses/photo_ellipse.png', scale: 4)
+            ]),
+            const SizedBox(height: 15),
+            Text('${OlukoLocalizations.get(context, 'coach')} $name',
+                textAlign: TextAlign.center, style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold)),
+            const SizedBox(height: 20),
+            Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 50),
+                child: Text('${OlukoLocalizations.get(context, 'coach')} $name ${OlukoLocalizations.get(context, 'coachRequest')}',
+                    textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont())),
+            const SizedBox(height: 35),
+            Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    OlukoOutlinedButton(
+                      title: OlukoLocalizations.get(context, 'ignore'),
+                      onPressed: () {
+                        navigateToSegmentWithoutRecording();
+                      },
+                    ),
+                    const SizedBox(width: 20),
+                    OlukoPrimaryButton(
+                      title: 'Ok',
+                      onPressed: () {
+                        navigateToSegmentWithRecording();
+                      },
+                    )
+                  ],
+                )),
+          ]),
+          Align(
+              alignment: Alignment.topRight,
+              child: IconButton(icon: const Icon(Icons.close, color: Colors.white), onPressed: () => Navigator.pop(context)))
+        ]));
+  }
+
+  navigateToSegmentWithRecording() {
+    Navigator.pushNamed(context, routeLabels[RouteEnum.segmentCameraPreview], arguments: {
+      'segmentIndex': widget.currentSegmentStep - 1,
+      'classIndex': widget.classIndex,
+      'courseEnrollment': widget.courseEnrollment,
+      'courseIndex': widget.courseIndex,
+      'segments': widget.segments,
+    });
+  }
+
+  navigateToSegmentWithoutRecording() {
+    TimerUtils.startCountdown(WorkoutType.segment, context, getArguments(), widget.segment.initialTimer, widget.segment.rounds, 0);
+  }
+
+  Object getArguments() {
+    return {
+      'segmentIndex': widget.currentSegmentStep - 1,
+      'classIndex': widget.classIndex,
+      'courseEnrollment': widget.courseEnrollment,
+      'courseIndex': widget.courseIndex,
+      'workoutType': WorkoutType.segment,
+      'segments': widget.segments,
+    };
   }
 
   Widget topButtons() {
@@ -102,17 +240,51 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
             else
               const SizedBox(),
             const Expanded(child: SizedBox()),
-            Padding(
-                padding: const EdgeInsets.only(right: 15),
-                child: Stack(alignment: Alignment.center, children: [
+            getCameraIcon()
+          ],
+        ));
+  }
+
+  Widget getCameraIcon() {
+    return Padding(
+        padding: const EdgeInsets.only(right: 15),
+        child: Stack(
+            alignment: Alignment.center,
+            children: getCameraCircles() +
+                [
                   Image.asset(
                     'assets/courses/outlined_camera.png',
                     scale: 3,
                   ),
                   const Padding(padding: EdgeInsets.only(top: 1), child: Icon(Icons.circle_outlined, size: 16, color: OlukoColors.primary))
-                ]))
-          ],
-        ));
+                ]));
+  }
+
+  List<Widget> getCameraCircles() {
+    if (_coachRequest != null) {
+      return [
+        Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: Image.asset(
+              'assets/courses/green_ellipse_1.png',
+              scale: 3,
+            )),
+        Padding(
+            padding: const EdgeInsets.only(top: 1),
+            child: Image.asset(
+              'assets/courses/green_ellipse_2.png',
+              scale: 3,
+            )),
+        Padding(
+            padding: const EdgeInsets.only(bottom: 2),
+            child: Image.asset(
+              'assets/courses/green_ellipse_3.png',
+              scale: 3,
+            ))
+      ];
+    } else {
+      return [];
+    }
   }
 
   Widget imageSection() {

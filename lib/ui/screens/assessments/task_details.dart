@@ -161,7 +161,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                   BlocProvider.of<TaskSubmissionBloc>(context)
                       .updateTaskSubmissionPrivacity(_assessmentAssignment, taskSubmission.id, value);
                 } else {
-                  AppMessages.showSnackbarTranslated(context, 'noVideoUploaded');
+                  AppMessages.clearAndShowSnackbarTranslated(context, 'noVideoUploaded');
                 }
               }),
               trackColor: MaterialStateProperty.all(Colors.grey),
@@ -291,13 +291,16 @@ class _TaskDetailsState extends State<TaskDetails> {
                   title: OlukoLocalizations.get(context, 'next'),
                   onPressed: () {
                     if (OlukoPermissions.isAssessmentTaskDisabled(_user, widget.taskIndex + 1)) {
-                      AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'yourCurrentPlanDoesntIncludeAssessment'));
+                      AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'yourCurrentPlanDoesntIncludeAssessment'));
                     } else {
                       if (_controller != null) {
                         _controller.pause();
                       }
                       if (widget.taskIndex < _tasks.length - 1) {
-                        Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {
+                        if (Navigator.canPop(context)) {
+                          Navigator.pop(context);
+                        }
+                        Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {
                           'taskIndex': widget.taskIndex + 1,
                           'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
                         });

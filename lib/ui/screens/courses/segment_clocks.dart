@@ -130,15 +130,17 @@ class _SegmentClocksState extends State<SegmentClocks> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () => onWillPop(context),
+      onWillPop: () {
+        return onWillPop(context, isSegmentWithRecording());
+      },
       child: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
         if (authState is AuthSuccess) {
           _user = authState.firebaseUser;
           return BlocBuilder<MovementBloc, MovementState>(builder: (context, movementState) {
             return BlocBuilder<CoachRequestBloc, CoachRequestState>(builder: (context, coachRequestState) {
-              if (movementState is GetAllSuccess && coachRequestState is GetCoachRequestSuccess) {
+              if (movementState is GetAllSuccess && coachRequestState is ClassCoachRequestsSuccess) {
                 _movements = movementState.movements;
-                _coachRequest = coachRequestState.coachRequest;
+                _coachRequest = getSegmentCoachRequest(coachRequestState.coachRequests, widget.segments[widget.segmentIndex].id);
                 return GestureDetector(
                     onTap: () {
                       FocusScope.of(context).unfocus();
@@ -179,9 +181,18 @@ class _SegmentClocksState extends State<SegmentClocks> {
     );
   }
 
+  CoachRequest getSegmentCoachRequest(List<CoachRequest> coachRequests, String segmentId) {
+    for (var i = 0; i < coachRequests.length; i++) {
+      if (coachRequests[i].segmentId == segmentId) {
+        return coachRequests[i];
+      }
+    }
+    return null;
+  }
+
   Future<void> callBlocToCreateStory(BuildContext context, SegmentSubmission segmentSubmission) async {
     BlocProvider.of<storyBloc.StoryBloc>(context).createStory(segmentSubmission);
-    AppMessages.showSnackbarTranslated(context, 'storyCreated');
+    AppMessages.clearAndShowSnackbarTranslated(context, 'storyCreated');
   }
 
   bool isSegmentWithRecording() {
@@ -667,7 +678,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
       setState(() {
         workoutType = WorkoutType.segment;
       });
-      AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'roundInfo'));
+      AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'roundInfo'));
       /*DialogUtils.getDialog(context, _confirmDialogContent(),
           showExitButton: true);*/
     }
@@ -1012,7 +1023,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
     } else {
       message = OlukoLocalizations.get(context, 'segmentUploadedSuccessfully');
     }
-    AppMessages.showSnackbar(context, message);
+    AppMessages.clearAndShowSnackbar(context, message);
   }
 
   void updateProgress(VideoProcessing state) {
@@ -1022,13 +1033,16 @@ class _SegmentClocksState extends State<SegmentClocks> {
     });
   }
 
-  static Future<bool> onWillPop(BuildContext context) async {
+  static Future<bool> onWillPop(BuildContext context, bool isRecording) async {
     return (await showDialog(
           context: context,
           builder: (context) => AlertDialog(
             backgroundColor: Colors.black,
             title: TitleBody(OlukoLocalizations.get(context, 'exitConfirmationTitle')),
-            content: Text('Do you want to go back? Your recordings will be lost.',
+            content: Text(
+                isRecording
+                    ? OlukoLocalizations.get(context, 'goBackConfirmationWithRecording')
+                    : OlukoLocalizations.get(context, 'goBackConfirmationWithoutRecording'),
                 // OlukoLocalizations.get(context, 'exitConfirmationBody'),
                 style: OlukoFonts.olukoBigFont()),
             actions: <Widget>[
@@ -1040,8 +1054,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
               ),
               TextButton(
                 onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.pop(context);
+                  Navigator.popUntil(context, ModalRoute.withName('/segment-detail'));
                 },
                 child: Text(
                   OlukoLocalizations.get(context, 'yes'),

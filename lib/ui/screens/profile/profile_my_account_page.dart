@@ -43,13 +43,11 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
   Scaffold buildScaffoldPage(BuildContext context) {
     return Scaffold(
       appBar: OlukoAppBar(
-        title: ProfileViewConstants.profileMyAccountTitle,
-        showSearchBar: false,
-      ),
+          title: ProfileViewConstants.profileMyAccountTitle, showSearchBar: false, showTitle: OlukoNeumorphism.isNeumorphismDesign),
       body: SingleChildScrollView(
         child: Container(
           width: MediaQuery.of(context).size.width,
-          color: OlukoColors.black,
+          color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
           child: Column(
             children: [buildUserInformationFields()],
           ),
