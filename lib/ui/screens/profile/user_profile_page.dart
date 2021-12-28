@@ -392,7 +392,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
               titleForSection: OlukoLocalizations.get(context, 'assessmentVideos'),
               routeForSection: RouteEnum.profileAssessmentVideos,
               contentForSection: TransformListOfItemsToWidget.getWidgetListFromContent(
-                  requestedUser: _userProfileToDisplay,
+                  requestedUser: _currentAuthUser,
                   assessmentVideoData: _assessmentVideosContent,
                   requestedFromRoute: ActualProfileRoute.userProfile))
           : defaultWidgetNoContent;
