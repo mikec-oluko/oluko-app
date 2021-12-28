@@ -109,6 +109,7 @@ class _CoachNotificationPanelContentCardState extends State<CoachNotificationPan
         );
       //   break;
       default:
+        return Container();
     }
   }
 

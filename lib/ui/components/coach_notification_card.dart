@@ -209,5 +209,6 @@ class _CoachNotificationCardState extends State<CoachNotificationCard> {
 
       default:
     }
+    return '';
   }
 }

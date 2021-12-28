@@ -85,6 +85,8 @@ class _CoachTimelineCircleContentState extends State<CoachTimelineCircleContent>
         return OlukoLocalizations.get(context, 'movement');
       case CoachFileTypeEnum.recommendedSegment:
         return OlukoLocalizations.get(context, 'segment');
+      default:
+        return '';
     }
   }
 }

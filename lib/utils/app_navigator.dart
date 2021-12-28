@@ -22,6 +22,7 @@ class AppNavigator {
       exit(0);
     }
     //return showExitPopup(context);
+    return true;
   }
 
   static Future<bool> showExitPopup(BuildContext context) async {

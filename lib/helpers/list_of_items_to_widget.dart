@@ -25,27 +25,27 @@ class TransformListOfItemsToWidget {
       UserResponse requestedUser,
       bool isFriend,
       bool useAudio = true}) {
-    List<Widget> contentForSection = [];
+    final List<Widget> contentForSection = [];
 
     if (tansformationJourneyData != null && (assessmentVideoData == null && upcomingChallenges == null)) {
-      tansformationJourneyData.forEach((contentUploaded) {
+      for (final contentUploaded in tansformationJourneyData) {
         contentForSection.add(getImageAndVideoCard(transformationJourneyContent: contentUploaded, routeForContent: requestedFromRoute));
-      });
+      }
     }
 
     if (assessmentVideoData != null && (tansformationJourneyData == null && upcomingChallenges == null)) {
-      assessmentVideoData.forEach((assessmentVideo) {
+      for (final assessmentVideo in assessmentVideoData) {
         if ((requestedUser.id == assessmentVideo.createdBy) || (assessmentVideo.isPublic && isFriend != false)) {
           contentForSection.add(getImageAndVideoCard(taskSubmissionContent: assessmentVideo, routeForContent: requestedFromRoute));
         }
-      });
+      }
     }
 
     if (upcomingChallenges != null && (tansformationJourneyData == null && assessmentVideoData == null)) {
-      upcomingChallenges.forEach((challenge) {
+      for (final challenge in upcomingChallenges) {
         contentForSection.add(getImageAndVideoCard(
             upcomingChallengesContent: challenge, routeForContent: requestedFromRoute, requestedUser: requestedUser, useAudio: useAudio));
-      });
+      }
     }
     return contentForSection.toList();
   }
@@ -94,13 +94,13 @@ class TransformListOfItemsToWidget {
   }
 
   static List<Widget> coachChallengesAndSegments({List<CoachSegmentContent> segments}) {
-    List<Widget> contentForSection = [];
+    final List<Widget> contentForSection = [];
     if (segments.isNotEmpty) {
-      segments.forEach((segment) {
+      for (final segment in segments) {
         if (segment.completedAt == null) {
           contentForSection.add(returnCardForChallenge(segment));
         }
-      });
+      }
     }
     return contentForSection;
   }
@@ -124,10 +124,10 @@ class TransformListOfItemsToWidget {
   }
 
   static List<Widget> getAssessmentCards({List<Task> tasks, List<TaskSubmission> tasksSubmitted, bool introductionVideoDone}) {
-    List<Widget> contentForSection = [];
-    tasks.forEach((task) {
+    final List<Widget> contentForSection = [];
+    for (final task in tasks) {
       contentForSection.add(returnCardForAssessment(task, tasksSubmitted, introductionVideoDone));
-    });
+    }
     return contentForSection;
   }
 
@@ -142,29 +142,29 @@ class TransformListOfItemsToWidget {
   }
 
   static List<InfoForSegments> segments(List<CourseEnrollment> courseEnrollments) {
-    List<InfoForSegments> listOfSegments = [];
+    final List<InfoForSegments> listOfSegments = [];
     String className;
     String classImage;
 
-    courseEnrollments.forEach((courseEnrollment) {
-      courseEnrollment.classes.forEach((classToCheck) {
+    for (final courseEnrollment in courseEnrollments) {
+      for (final classToCheck in courseEnrollment.classes) {
         className = classToCheck.name;
         classImage = classToCheck.image;
-        InfoForSegments infoForSegmentElement = InfoForSegments(classImage: classImage, className: className, segments: []);
-        classToCheck.segments.forEach((segment) {
+        final InfoForSegments infoForSegmentElement = InfoForSegments(classImage: classImage, className: className, segments: []);
+        for (final segment in classToCheck.segments) {
           infoForSegmentElement.segments.add(segment);
-        });
+        }
         listOfSegments.add(infoForSegmentElement);
-      });
-    });
+      }
+    }
     return listOfSegments;
   }
 
   static List<CoachSegmentContent> createSegmentContentInforamtion(List<InfoForSegments> segments) {
-    List<CoachSegmentContent> coachSegmentContent = [];
+    final List<CoachSegmentContent> coachSegmentContent = [];
 
-    segments.forEach((segment) {
-      segment.segments.forEach((actualSegment) {
+    for (final segment in segments) {
+      for (final actualSegment in segment.segments) {
         coachSegmentContent.add(CoachSegmentContent(
             segmentId: actualSegment.id,
             classImage: segment.classImage,
@@ -173,8 +173,8 @@ class TransformListOfItemsToWidget {
             completedAt: actualSegment.completedAt,
             segmentReference: actualSegment.reference,
             isChallenge: actualSegment.isChallenge));
-      });
-    });
+      }
+    }
     return coachSegmentContent;
   }
 }
