@@ -186,9 +186,12 @@
     "hey": "Hey!",
     "coachText": "Your coach will be assigning soon. We will notify when the coach is assigned.",
     "hours": "Hour(s)",
+    "hoursAlt": "Hour",
     "twoDots": ":",
     "minute": "Minute(s)",
+    "minuteAlt": "Min",
     "second": "Second(s)",
+    "secondAlt": "Sec",
     "yourCurrentPlanDoesntIncludeAssessment": "Your current plan doesn't include these assessment tasks",
     "countYour": "Count your ",
     "enterScore": "Enter score: ",
@@ -254,5 +257,6 @@
     "stopProcessConfirmation": "The video is still being processed, if this view is abandoned the process will be terminated. Do you want to leave?",
     "noVideoUploaded": "You haven't uploaded a video yet",
     "goBackConfirmationWithRecording": "Do you want to go back? Your recordings will be lost.",
-    "goBackConfirmationWithoutRecording": "Do you want to go back? Your progress will be lost."
+    "goBackConfirmationWithoutRecording": "Do you want to go back? Your progress will be lost.",
+    "coachPageAssessmentsText": "Complete the below tasks to get a coach assigned"
 }

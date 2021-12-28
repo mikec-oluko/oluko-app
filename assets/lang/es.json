@@ -185,9 +185,12 @@
     "hey": "Hey!",
     "coachText": "Se te asignara un Coach pronto. Te notificaremos cuando el Coach sea asignado.",
     "hours": "Hora(s)",
+    "hoursAlt": "Hora(s)",
     "twoDots": ":",
     "minute": "Minuto(s)",
+    "minuteAlt": "Min",
     "second": "Segundo(s)",
+    "secondAlt": "Seg",
     "yourCurrentPlanDoesntIncludeAssessment": "Tu plan actual no incluye estas pruebas",
     "countYour": "Cuenta tus ",
     "enterScore": "Ingresa el resultado: ",
@@ -253,5 +256,6 @@
     "stopProcessConfirmation": "El video aún sé está procesando, si se abandona esta vista el proceso se dará por terminado. ¿Desea salir?",
     "noVideoUploaded": "Aún no subiste un video",
     "goBackConfirmationWithRecording": "Esta seguro de que quiere volver? Sus grabaciones se perderán.",
-    "goBackConfirmationWithoutRecording": "Esta seguro de que quiere volver? Su progreso se perderá."
+    "goBackConfirmationWithoutRecording": "Esta seguro de que quiere volver? Su progreso se perderá.",
+    "coachPageAssessmentsText": "Completa las tareas a continuación para que se te asigne un entrenador"
 }

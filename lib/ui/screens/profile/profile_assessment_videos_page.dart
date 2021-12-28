@@ -48,14 +48,17 @@ class _ProfileAssessmentVideosPageState extends State<ProfileAssessmentVideosPag
   Scaffold page(BuildContext context, UserResponse profileInfo) {
     return Scaffold(
         appBar: OlukoAppBar(
-          title: ProfileViewConstants.profileOptionsAssessmentVideos,
-          showSearchBar: false,
-        ),
+            showBackButton: OlukoNeumorphism.isNeumorphismDesign,
+            title: ProfileViewConstants.profileOptionsAssessmentVideos,
+            showSearchBar: false,
+            showTitle: true),
         body: _contentGallery == null
-            ? Container(color: Colors.black, child: OlukoCircularProgressIndicator())
+            ? Container(
+                color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+                child: OlukoCircularProgressIndicator())
             : Container(
                 constraints: BoxConstraints.expand(),
-                color: OlukoColors.black,
+                color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
                 child: SafeArea(
                   child: Stack(children: [
                     Padding(
