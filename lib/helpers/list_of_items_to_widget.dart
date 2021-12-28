@@ -23,7 +23,8 @@ class TransformListOfItemsToWidget {
       List<Challenge> upcomingChallenges,
       ActualProfileRoute requestedFromRoute,
       UserResponse requestedUser,
-      bool isFriend}) {
+      bool isFriend,
+      bool useAudio = true}) {
     List<Widget> contentForSection = [];
 
     if (tansformationJourneyData != null && (assessmentVideoData == null && upcomingChallenges == null)) {
@@ -34,16 +35,16 @@ class TransformListOfItemsToWidget {
 
     if (assessmentVideoData != null && (tansformationJourneyData == null && upcomingChallenges == null)) {
       assessmentVideoData.forEach((assessmentVideo) {
-        if (assessmentVideo.isPublic && isFriend != false) {
-          contentForSection.add(getImageAndVideoCard(taskSubmissionContent: assessmentVideo, routeForContent: requestedFromRoute));
-        }
+        // if (assessmentVideo.isPublic && isFriend != false) {
+        contentForSection.add(getImageAndVideoCard(taskSubmissionContent: assessmentVideo, routeForContent: requestedFromRoute));
+        // }
       });
     }
 
     if (upcomingChallenges != null && (tansformationJourneyData == null && assessmentVideoData == null)) {
       upcomingChallenges.forEach((challenge) {
-        contentForSection.add(
-            getImageAndVideoCard(upcomingChallengesContent: challenge, routeForContent: requestedFromRoute, requestedUser: requestedUser));
+        contentForSection.add(getImageAndVideoCard(
+            upcomingChallengesContent: challenge, routeForContent: requestedFromRoute, requestedUser: requestedUser, useAudio: useAudio));
       });
     }
     return contentForSection.toList();
@@ -55,6 +56,7 @@ class TransformListOfItemsToWidget {
       TaskSubmission taskSubmissionContent,
       Challenge upcomingChallengesContent,
       ActualProfileRoute routeForContent,
+      bool useAudio = false,
       UserResponse requestedUser}) {
     Widget contentForReturn = SizedBox();
 
@@ -85,7 +87,7 @@ class TransformListOfItemsToWidget {
     if (upcomingChallengesContent != null) {
       contentForReturn = Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5),
-        child: ChallengesCard(challenge: upcomingChallengesContent, routeToGo: "/", userRequested: requestedUser),
+        child: ChallengesCard(challenge: upcomingChallengesContent, routeToGo: "/", userRequested: requestedUser, useAudio: useAudio),
       );
     }
     return contentForReturn;
