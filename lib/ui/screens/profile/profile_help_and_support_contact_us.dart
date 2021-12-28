@@ -6,6 +6,7 @@ import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
@@ -24,7 +25,7 @@ class _ProfileContacUsPageState extends State<ProfileContacUsPage> {
       if (state is AuthSuccess) {
         profileInfo = state.user;
         return Scaffold(
-          appBar: OlukoAppBar(title: ProfileViewConstants.profileHelpAndSupportButtonText),
+          appBar: OlukoAppBar(title: ProfileViewConstants.profileHelpAndSupportButtonText, showTitle: true, showBackButton: true),
           body: buildFormContactUs(context),
         );
       } else {
@@ -40,7 +41,7 @@ class _ProfileContacUsPageState extends State<ProfileContacUsPage> {
   SingleChildScrollView buildFormContactUs(BuildContext context) {
     return SingleChildScrollView(
       child: Container(
-        color: OlukoColors.black,
+        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Padding(
@@ -67,17 +68,23 @@ class _ProfileContacUsPageState extends State<ProfileContacUsPage> {
                 ),
                 buildInput(context: context, titleForLabel: OlukoLocalizations.get(context, 'message'), isTextMaxLine: true),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 40, 10, 10),
+                  padding: const EdgeInsets.fromLTRB(10, 60, 10, 10),
                   child: Container(
                     width: MediaQuery.of(context).size.width,
-                    child: Expanded(
-                      child: OlukoPrimaryButton(
-                        title: OlukoLocalizations.get(context, 'submit'),
-                        onPressed: () {
-                          print("SUBMITTED");
-                        },
-                      ),
-                    ),
+                    child: OlukoNeumorphism.isNeumorphismDesign
+                        ? OlukoNeumorphicPrimaryButton(
+                            isExpanded: false,
+                            title: OlukoLocalizations.get(context, 'submit'),
+                            onPressed: () {
+                              print("SUBMITTED");
+                            },
+                          )
+                        : OlukoPrimaryButton(
+                            title: OlukoLocalizations.get(context, 'submit'),
+                            onPressed: () {
+                              print("SUBMITTED");
+                            },
+                          ),
                   ),
                 )
               ],
@@ -90,8 +97,11 @@ class _ProfileContacUsPageState extends State<ProfileContacUsPage> {
 
   Container buildInput({BuildContext context, String titleForLabel, String contentForInput, bool isTextMaxLine = false}) {
     return Container(
-      decoration:
-          BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(5.0)), border: Border.all(width: 1.0, color: OlukoColors.primary)),
+      decoration: BoxDecoration(
+          color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicGreyBackgroundFlat : OlukoColors.black,
+          borderRadius:
+              OlukoNeumorphism.isNeumorphismDesign ? BorderRadius.all(Radius.circular(15.0)) : BorderRadius.all(Radius.circular(5.0)),
+          border: OlukoNeumorphism.isNeumorphismDesign ? Border.symmetric() : Border.all(width: 1.0, color: OlukoColors.primary)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -99,7 +109,8 @@ class _ProfileContacUsPageState extends State<ProfileContacUsPage> {
             padding: const EdgeInsets.fromLTRB(10, 10, 0, 0),
             child: Text(
               titleForLabel,
-              style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary),
+              style: OlukoFonts.olukoMediumFont(
+                  customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.grayColor : OlukoColors.primary),
             ),
           ),
           Padding(

@@ -186,9 +186,12 @@
     "hey": "Hey!",
     "coachText": "Your coach will be assigning soon. We will notify when the coach is assigned.",
     "hours": "Hour(s)",
+    "hoursAlt": "Hour",
     "twoDots": ":",
     "minute": "Minute(s)",
+    "minuteAlt": "Min",
     "second": "Second(s)",
+    "secondAlt": "Sec",
     "yourCurrentPlanDoesntIncludeAssessment": "Your current plan doesn't include these assessment tasks",
     "countYour": "Count your ",
     "enterScore": "Enter score: ",
@@ -251,5 +254,6 @@
     "noCoachMessage": "to get your personal coach",
     "roundInfo": "Only first round is recorded. We will prepare your video to send it to your coach!",
     "stopProcessConfirmation": "The video is still being processed, if this view is abandoned the process will be terminated. Do you want to leave?",
-    "noVideoUploaded": "You haven't uploaded a video yet"
+    "noVideoUploaded": "You haven't uploaded a video yet",
+    "coachPageAssessmentsText": "Complete the below tasks to get a coach assigned"
 }

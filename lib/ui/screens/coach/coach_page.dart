@@ -39,6 +39,7 @@ import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/user_statistics.dart';
+import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/coach_app_bar.dart';
 import 'package:oluko_app/ui/components/coach_carousel_section.dart';
 import 'package:oluko_app/ui/components/coach_content_preview_content.dart';
@@ -142,11 +143,17 @@ class _CoachPageState extends State<CoachPage> {
                 _coachUser = state.coach;
               }
               return Scaffold(
-                appBar: CoachAppBar(
-                  coachUser: _coachUser,
-                  onNavigation: () => !widget.coachAssignment.introductionCompleted
-                      ? BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation()
-                      : () {},
+                // appBar: CoachAppBar(
+                //   coachUser: _coachUser,
+                //   onNavigation: () => !widget.coachAssignment.introductionCompleted
+                //       ? BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation()
+                //       : () {},
+                // ),
+                appBar: OlukoAppBar(
+                  showBackButton: false,
+                  title: 'Coach',
+                  showSearchBar: false,
+                  showTitle: true,
                 ),
                 body: BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(
                   builder: (context, state) {
@@ -331,39 +338,42 @@ class _CoachPageState extends State<CoachPage> {
                   _assessment = state.assessment;
                   BlocProvider.of<TaskBloc>(context).get(_assessment);
                   final carouselNotificationWidgetList = carouselNotificationWidget(context);
-                  return ListView(
-                    children: [
-                      if (carouselNotificationWidgetList.isNotEmpty && widget.coachAssignment.introductionCompleted)
-                        CoachCarouselSliderSection(
-                          contentForCarousel: carouselNotificationWidgetList,
-                          introductionCompleted: widget.coachAssignment.introductionCompleted,
-                          introductionVideo: _assessment.video,
-                          onVideoFinished: () =>
-                              BlocProvider.of<CoachAssignmentBloc>(context).updateIntroductionVideoState(widget.coachAssignment),
+                  return Container(
+                    color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+                    child: ListView(
+                      children: [
+                        if (carouselNotificationWidgetList.isNotEmpty && widget.coachAssignment.introductionCompleted)
+                          CoachCarouselSliderSection(
+                            contentForCarousel: carouselNotificationWidgetList,
+                            introductionCompleted: widget.coachAssignment.introductionCompleted,
+                            introductionVideo: _assessment.video,
+                            onVideoFinished: () =>
+                                BlocProvider.of<CoachAssignmentBloc>(context).updateIntroductionVideoState(widget.coachAssignment),
+                          )
+                        else if (!widget.coachAssignment.introductionCompleted)
+                          CoachCarouselSliderSection(
+                            contentForCarousel: carouselNotificationWidgetList,
+                            introductionCompleted: widget.coachAssignment.introductionCompleted,
+                            introductionVideo: _assessment.video,
+                            onVideoFinished: () =>
+                                BlocProvider.of<CoachAssignmentBloc>(context).updateIntroductionVideoState(widget.coachAssignment),
+                          )
+                        else
+                          const SizedBox.shrink(),
+                        if (widget.coachAssignment.introductionCompleted)
+                          carouselNotificationWidgetList.isNotEmpty && widget.coachAssignment.introductionCompleted
+                              ? userProgressSection(false)
+                              : userProgressSection(carouselNotificationWidgetList.isEmpty && widget.coachAssignment.introductionCompleted)
+                        else
+                          const SizedBox.shrink(),
+                        CoachHorizontalCarousel(contentToDisplay: listOfContentForUser(), isForVideoContent: true),
+                        carouselToDoSection(context),
+                        if (hideAssessmentsTab) const SizedBox.shrink() else assessmentSection(context),
+                        SizedBox(
+                          height: hideAssessmentsTab ? 220 : 200,
                         )
-                      else if (!widget.coachAssignment.introductionCompleted)
-                        CoachCarouselSliderSection(
-                          contentForCarousel: carouselNotificationWidgetList,
-                          introductionCompleted: widget.coachAssignment.introductionCompleted,
-                          introductionVideo: _assessment.video,
-                          onVideoFinished: () =>
-                              BlocProvider.of<CoachAssignmentBloc>(context).updateIntroductionVideoState(widget.coachAssignment),
-                        )
-                      else
-                        const SizedBox.shrink(),
-                      if (widget.coachAssignment.introductionCompleted)
-                        carouselNotificationWidgetList.isNotEmpty && widget.coachAssignment.introductionCompleted
-                            ? userProgressSection(false)
-                            : userProgressSection(carouselNotificationWidgetList.isEmpty && widget.coachAssignment.introductionCompleted)
-                      else
-                        const SizedBox.shrink(),
-                      CoachHorizontalCarousel(contentToDisplay: listOfContentForUser(), isForVideoContent: true),
-                      carouselToDoSection(context),
-                      if (hideAssessmentsTab) const SizedBox.shrink() else assessmentSection(context),
-                      SizedBox(
-                        height: hideAssessmentsTab ? 220 : 200,
-                      )
-                    ],
+                      ],
+                    ),
                   );
                 } else {
                   return const SizedBox();
