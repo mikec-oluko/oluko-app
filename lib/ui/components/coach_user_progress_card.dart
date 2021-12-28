@@ -28,7 +28,7 @@ class _CoachUserProgressCardState extends State<CoachUserProgressCard> {
 
   @override
   Widget build(BuildContext context) {
-    return userNeumorphicStatisticsPanel(context);
+    return OlukoNeumorphism.isNeumorphismDesign ? userNeumorphicStatisticsPanel(context) : userStatisticsPanel(context);
   }
 
   Column userStatisticsPanel(BuildContext context) {
@@ -102,10 +102,10 @@ class _CoachUserProgressCardState extends State<CoachUserProgressCard> {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Wrap(
         children: [
-          // Text(
-          //   OlukoLocalizations.get(context, 'activityStats'),
-          //   style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
-          // ),
+          Text(
+            OlukoLocalizations.get(context, 'activityStats'),
+            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+          ),
           AnimatedContainer(
               onEnd: () {
                 setState(() {
