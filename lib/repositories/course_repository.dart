@@ -109,14 +109,11 @@ class CourseRepository {
     return CourseStatistics.fromJson(docRef.data() as Map<String, dynamic>);
   }
 
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getStatisticsSubscription(String courseId, DocumentReference statisticsReference) {
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getStatisticsSubscription() {
     Stream<QuerySnapshot<Map<String, dynamic>>> statisticsStream = FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('courses')
-        .doc(courseId)
         .collection('courseStatistics')
-        .where('id', isEqualTo: statisticsReference.id)
         .snapshots();
     return statisticsStream;
   }

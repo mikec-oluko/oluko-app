@@ -281,7 +281,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                     child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
                       listener: (context, hiFiveSendState) {
                         if (hiFiveSendState is HiFiveSendSuccess) {
-                          AppMessages.showSnackbarTranslated(context, hiFiveSendState.hiFive ? 'hiFiveSent' : 'hiFiveRemoved');
+                          AppMessages.clearAndShowSnackbarTranslated(context, hiFiveSendState.hiFive ? 'hiFiveSent' : 'hiFiveRemoved');
                         }
                         BlocProvider.of<HiFiveReceivedBloc>(context).get(context, _authState.user.id, widget.userToDisplayInformation.id);
                       },

@@ -74,7 +74,7 @@ class _CoachMainPageState extends State<CoachMainPage> {
                               coachAssignment: _coachAssignment,
                             )
                           : const AssessmentVideos(
-                              isFirstTime: true,
+                              isFirstTime: false,
                               isForCoachPage: true,
                             );
                     }

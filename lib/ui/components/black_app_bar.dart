@@ -84,7 +84,9 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                   ))
               : Align(
                   alignment: Alignment.centerLeft,
-                  child: FittedBox(fit: BoxFit.fitWidth, child: TitleHeader(widget.title, bold: true, isNeumorphic: true))),
+                  child: FittedBox(
+                      fit: BoxFit.fitWidth,
+                      child: TitleHeader(widget.title, bold: true, isNeumorphic: OlukoNeumorphism.isNeumorphismDesign))),
           actions: widget.actions,
           bottom: widget.showSearchBar == true
               ? PreferredSize(

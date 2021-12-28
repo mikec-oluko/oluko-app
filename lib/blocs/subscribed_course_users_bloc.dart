@@ -30,14 +30,15 @@ class SubscribedCourseUsersBloc extends Cubit<SubscribedCourseUsersState> {
     try {
       //Fetch enrollments for this course. And retrieve all users that are already enrolled.
       List<CourseEnrollment> courseEnrollmentList = await CourseEnrollmentRepository.getByCourse(courseId, userId);
-
+      List<CourseEnrollment> enrolledList =
+          courseEnrollmentList.where((element) => element.isUnenrolled != true).where((element) => element.completion < 1).toList();
       List<UserResponse> uniqueUserList = [];
       List<UserResponse> favoriteUserList = [];
       List<UserResponse> userListToShow = [];
       if (courseEnrollmentList != null) {
         //User list for all subscribers of this course.
         List<UserResponse> usersSubscribedToCourse =
-            await Future.wait(courseEnrollmentList.map((e) => UserRepository().getById(e.userReference.id)));
+            await Future.wait(enrolledList.map((e) => UserRepository().getById(e.userReference.id)));
         //Remove enrollments without user
         usersSubscribedToCourse.removeWhere((element) => element == null);
 

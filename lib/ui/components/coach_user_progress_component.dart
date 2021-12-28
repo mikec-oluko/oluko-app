@@ -14,7 +14,7 @@ class CoachUserProgressComponent extends StatefulWidget {
 class _CoachUserProgressComponentState extends State<CoachUserProgressComponent> {
   @override
   Widget build(BuildContext context) {
-    return Container(child: buildUserNeumorphicProgressElement());
+    return Container(child: OlukoNeumorphism.isNeumorphismDesign ? buildUserNeumorphicProgressElement() : buildUserProgressElement());
   }
 
   Row buildUserProgressElement() {

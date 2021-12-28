@@ -307,7 +307,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                           if (_videoControllers[tabController.index] != null) {
                             _videoControllers[tabController.index].pause();
                           }
-                          Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement});
+                          Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement});
                         },
                         content: _movementInfoSuccess.relatedMovements,
                         width: ScreenUtils.width(context) / 1.2),
