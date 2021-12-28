@@ -35,9 +35,9 @@ class TransformListOfItemsToWidget {
 
     if (assessmentVideoData != null && (tansformationJourneyData == null && upcomingChallenges == null)) {
       assessmentVideoData.forEach((assessmentVideo) {
-        // if (assessmentVideo.isPublic && isFriend != false) {
-        contentForSection.add(getImageAndVideoCard(taskSubmissionContent: assessmentVideo, routeForContent: requestedFromRoute));
-        // }
+        if ((requestedUser.id == assessmentVideo.createdBy) || (assessmentVideo.isPublic && isFriend != false)) {
+          contentForSection.add(getImageAndVideoCard(taskSubmissionContent: assessmentVideo, routeForContent: requestedFromRoute));
+        }
       });
     }
 
