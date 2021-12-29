@@ -44,13 +44,10 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
         if (state is CoachMentoredVideosSuccess) {
           state.mentoredVideos.forEach((mentoredVideo) {
             final sameElement = content.where((contentElement) => contentElement.id == mentoredVideo.id).toList();
-            if (sameElement.isNotEmpty) {
-              content[content.indexOf(sameElement.first)] = mentoredVideo;
-            } else {
+            if (sameElement.isEmpty) {
               content.insert(0, mentoredVideo);
             }
           });
-          filteredContent = content;
         }
 
         return Scaffold(

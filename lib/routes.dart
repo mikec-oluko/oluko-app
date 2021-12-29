@@ -25,6 +25,7 @@ import 'package:oluko_app/blocs/inside_class_content_bloc.dart';
 import 'package:oluko_app/blocs/personal_record_bloc.dart';
 import 'package:oluko_app/blocs/segment_detail_content_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
+import 'package:oluko_app/blocs/statistics/statistics_subscription_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_list_bloc.dart';
 import 'package:oluko_app/blocs/class/class_bloc.dart';
@@ -38,7 +39,7 @@ import 'package:oluko_app/blocs/plan_bloc.dart';
 import 'package:oluko_app/blocs/profile/profile_bloc.dart';
 import 'package:oluko_app/blocs/recommendation_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
-import 'package:oluko_app/blocs/statistics_bloc.dart';
+import 'package:oluko_app/blocs/statistics/statistics_bloc.dart';
 import 'package:oluko_app/blocs/story_bloc.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
@@ -109,6 +110,7 @@ import 'blocs/coach/coach_recommendations_bloc.dart';
 import 'blocs/coach/coach_review_pending_bloc.dart';
 import 'blocs/coach/coach_sent_videos_bloc.dart';
 import 'blocs/coach/coach_timeline_bloc.dart';
+import 'blocs/keyboard/keyboard_bloc.dart';
 import 'blocs/movement_info_bloc.dart';
 import 'blocs/friends/hi_five_send_bloc.dart';
 import 'blocs/movement_info_bloc.dart';
@@ -255,6 +257,7 @@ class Routes {
   final ClassBloc _classBloc = ClassBloc();
   final SubscribedCourseUsersBloc _subscribedCourseUsersBloc = SubscribedCourseUsersBloc();
   final StatisticsBloc _statisticsBloc = StatisticsBloc();
+  final StatisticsSubscriptionBloc _statisticsSubscriptionBloc = StatisticsSubscriptionBloc();
   final MovementBloc _movementBloc = MovementBloc();
   final MovementInfoBloc _movementInfoBloc = MovementInfoBloc();
   final SegmentBloc _segmentBloc = SegmentBloc();
@@ -301,6 +304,7 @@ class Routes {
   final CourseCategoryBloc _courseCategoryBloc = CourseCategoryBloc();
   final CourseSubscriptionBloc _courseSubscriptionBloc = CourseSubscriptionBloc();
   final ClassSubscriptionBloc _classSubscriptionBloc = ClassSubscriptionBloc();
+  final KeyboardBloc _keyboardBloc = KeyboardBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -317,6 +321,7 @@ class Routes {
           BlocProvider<HiFiveReceivedBloc>.value(
             value: _hiFiveReceivedBloc,
           ),
+          BlocProvider(create: (_) => KeyboardBloc()),
           BlocProvider<CoachTimelineBloc>.value(value: _coachTimelineBloc),
           BlocProvider<ChallengeBloc>.value(value: _challengeBloc),
           BlocProvider<CourseHomeBloc>.value(value: _courseHomeBloc),
@@ -564,7 +569,8 @@ class Routes {
           BlocProvider<CourseEnrollmentUpdateBloc>.value(value: _courseEnrollmentUpdateBloc),
           BlocProvider<StoryBloc>.value(value: _storyBloc),
           BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
-          BlocProvider<StoryListBloc>.value(value: _storyListBloc)
+          BlocProvider<StoryListBloc>.value(value: _storyListBloc),
+          BlocProvider<KeyboardBloc>.value(value: _keyboardBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SegmentClocks(
@@ -593,7 +599,7 @@ class Routes {
       case RouteEnum.courseMarketing:
         providers = [
           BlocProvider<ClassSubscriptionBloc>.value(value: _classSubscriptionBloc),
-          BlocProvider<StatisticsBloc>.value(value: _statisticsBloc),
+          BlocProvider<StatisticsSubscriptionBloc>.value(value: _statisticsSubscriptionBloc),
           BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
           BlocProvider<MovementBloc>.value(value: _movementBloc),
           BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
@@ -601,10 +607,14 @@ class Routes {
           BlocProvider<StoryListBloc>.value(value: _storyListBloc),
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
           BlocProvider<StoryListBloc>.value(value: _storyListBloc),
-          BlocProvider<RecommendationBloc>.value(value: _recommendationBloc)
+          BlocProvider<RecommendationBloc>.value(value: _recommendationBloc),
+          BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
-        newRouteView = CourseMarketing(course: argumentsToAdd['course'] as Course, fromCoach: argumentsToAdd['fromCoach'] as bool);
+        newRouteView = CourseMarketing(
+            course: argumentsToAdd['course'] as Course,
+            fromCoach: argumentsToAdd['fromCoach'] as bool,
+            isCoachRecommendation: argumentsToAdd['isCoachRecommendation'] as bool);
         break;
       case RouteEnum.enrolledClass:
         providers = [

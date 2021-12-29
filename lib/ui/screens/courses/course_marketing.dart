@@ -9,15 +9,12 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
-import 'package:oluko_app/blocs/class/class_bloc.dart';
 import 'package:oluko_app/blocs/class/class_subscription_bloc.dart';
-import 'package:oluko_app/blocs/course/course_home_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/recommendation_bloc.dart';
-import 'package:oluko_app/blocs/statistics_bloc.dart';
-import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
+import 'package:oluko_app/blocs/statistics/statistics_subscription_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course.dart';
@@ -37,8 +34,9 @@ import 'package:oluko_app/utils/time_converter.dart';
 class CourseMarketing extends StatefulWidget {
   final Course course;
   final bool fromCoach;
+  final bool isCoachRecommendation;
 
-  CourseMarketing({Key key, this.course, this.fromCoach = false}) : super(key: key);
+  CourseMarketing({Key key, this.course, this.fromCoach = false, this.isCoachRecommendation = false}) : super(key: key);
 
   get progress => null;
 
@@ -73,17 +71,9 @@ class _CourseMarketingState extends State<CourseMarketing> {
           _userState = authState;
           /*BlocProvider.of<SubscribedCourseUsersBloc>(context)
               .get(widget.course.id, _userState.user.id);*/
-
-          //BlocProvider.of<ClassBloc>(context)..getAll(widget.course);
           BlocProvider.of<ClassSubscriptionBloc>(context).getStream();
-
-          //BlocProvider.of<StatisticsBloc>(context)..get(widget.course.statisticsReference);
-
-          //BlocProvider.of<StatisticsBloc>(context).getStream(widget.course.id, widget.course.statisticsReference);
-
+          BlocProvider.of<StatisticsSubscriptionBloc>(context).getStream();
           BlocProvider.of<CourseEnrollmentBloc>(context).get(authState.firebaseUser, widget.course);
-
-          //BlocProvider.of<MovementBloc>(context)..getAll();
           BlocProvider.of<MovementBloc>(context).getStream();
         }
 
@@ -205,7 +195,9 @@ class _CourseMarketingState extends State<CourseMarketing> {
                     onPressed: () {
                       if (_disableAction == false) {
                         BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
-                        BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
+                        if (!widget.isCoachRecommendation) {
+                          BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
+                        }
                       }
                       _disableAction = true;
                     },
@@ -218,38 +210,39 @@ class _CourseMarketingState extends State<CourseMarketing> {
   }
 
   Widget buildStatistics() {
-    return BlocBuilder<SubscribedCourseUsersBloc, SubscribedCourseUsersState>(
-        bloc: BlocProvider.of<SubscribedCourseUsersBloc>(context)..get(widget.course.id, _userState.user.id),
-        builder: (context, state) {
-          if (state is SubscribedCourseUsersSuccess) {
-            return Padding(
-                padding: EdgeInsets.symmetric(vertical: 15),
-                child: StatisticChart(
-                  courseStatistics: CourseStatistics(courseId: widget.course.id, takingUp: state.users.length, doing: state.users.length),
-                  course: widget.course,
-                ));
-          }
-          if (state is SubscribedCourseUsersLoading) {
-            return Padding(
-              padding: const EdgeInsets.all(50.0),
-              child: Center(
-                child: Text(OlukoLocalizations.get(context, 'loadingWhithDots'),
-                    style: TextStyle(
-                      color: Colors.white,
-                    )),
-              ),
-            );
-          } else {
-            return Padding(
-                padding: const EdgeInsets.all(50.0),
-                child: Center(
-                  child: Text('error',
-                      style: TextStyle(
-                        color: Colors.white,
-                      )),
-                ));
-          }
-        });
+    return BlocBuilder<StatisticsSubscriptionBloc, StatisticsSubscriptionState>(builder: (context, statisticsState) {
+      if (statisticsState is StatisticsSubscriptionSuccess) {
+        CourseStatistics courseStatistics =
+            statisticsState.courseStatistics.where((element) => element.courseId == widget.course.id).toList()[0];
+        return Padding(
+            padding: EdgeInsets.symmetric(vertical: 15),
+            child: StatisticChart(
+              courseStatistics:
+                  courseStatistics,
+              course: widget.course,
+            ));
+      }
+      if (statisticsState is StatisticsSubscriptionLoading) {
+        return Padding(
+          padding: const EdgeInsets.all(50.0),
+          child: Center(
+            child: Text(OlukoLocalizations.get(context, 'loadingWhithDots'),
+                style: TextStyle(
+                  color: Colors.white,
+                )),
+          ),
+        );
+      } else {
+        return Padding(
+            padding: const EdgeInsets.all(50.0),
+            child: Center(
+              child: Text('error',
+                  style: TextStyle(
+                    color: Colors.white,
+                  )),
+            ));
+      }
+    });
   }
 
   Widget buildClassExpansionPanels() {

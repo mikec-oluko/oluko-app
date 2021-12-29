@@ -125,7 +125,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
     final dateForContent = Padding(
       padding: const EdgeInsets.only(left: 5),
       child: Text(
-          !now.isAfter(content.createdAt.toDate())
+          now.difference(content.createdAt.toDate().toUtc()).inHours <= now.hour
               ? OlukoLocalizations.get(context, 'today')
               : DateFormat.yMMMd().format(content.createdAt.toDate()),
           style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
@@ -139,7 +139,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
               BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation();
             }
             Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
-                arguments: {'course': content.courseForNavigation, 'fromCoach': true});
+                arguments: {'course': content.courseForNavigation, 'fromCoach': true, 'isCoachRecommendation': false});
           },
           child: Container(
             color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,

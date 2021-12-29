@@ -31,12 +31,12 @@ class SignupBloc extends Cubit<UserState> {
 
   Future<void> signUp(BuildContext context, SignUpRequest request) async {
     if (request.password.contains(request.username)) {
-      AppMessages.showSnackbar(context, OlukoLocalizations.of(context).find('passwordShouldNotContainUsername'));
+      AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.of(context).find('passwordShouldNotContainUsername'));
       emit(SignupFailure(exception: Exception(OlukoLocalizations.of(context).find('passwordShouldNotContainUsername'))));
       return;
     }
     if (request.password.contains(request.email)) {
-      AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'passwordShouldNotContainEmail'));
+      AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'passwordShouldNotContainEmail'));
       emit(SignupFailure(exception: Exception(OlukoLocalizations.of(context).find('passwordShouldNotContainEmail'))));
       return;
     }
