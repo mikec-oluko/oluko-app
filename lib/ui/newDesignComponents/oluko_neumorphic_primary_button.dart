@@ -54,9 +54,7 @@ class _OlukoNeumorphicPrimaryButtonState extends State<OlukoNeumorphicPrimaryBut
 
   NeumorphicButton primaryButton() {
     return NeumorphicButton(
-      onPressed: () {
-        widget.onPressed != null ? widget.onPressed() : () {};
-      },
+      onPressed: () => widget.onPressed != null ? widget.onPressed() : () {},
       padding: EdgeInsets.all(10),
       style: OlukoNeumorphism.primaryButtonStyle(
           useBorder: widget.useBorder,

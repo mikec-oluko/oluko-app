@@ -169,7 +169,8 @@ class _InsideClassesState extends State<InsideClass> {
               'segmentIndex': segmentIndex,
               'classIndex': widget.classIndex,
               'courseEnrollment': widget.courseEnrollment,
-              'courseIndex': widget.courseIndex
+              'courseIndex': widget.courseIndex,
+              'fromChallenge': false
             });
           },
         ),
