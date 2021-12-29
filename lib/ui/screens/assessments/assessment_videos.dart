@@ -33,7 +33,8 @@ import 'package:oluko_app/utils/screen_utils.dart';
 class AssessmentVideos extends StatefulWidget {
   const AssessmentVideos({this.isFirstTime, this.isForCoachPage = false, Key key}) : super(key: key);
 
-  final bool isFirstTime, isForCoachPage;
+  final bool isFirstTime;
+  final bool isForCoachPage;
 
   @override
   _AssessmentVideosState createState() => _AssessmentVideosState();
@@ -132,12 +133,13 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                         _controller.pause();
                       }
                     },
+              showTitle: true,
               showBackButton: !widget.isFirstTime,
               title: widget.isForCoachPage ? OlukoLocalizations.get(context, 'coach') : OlukoLocalizations.get(context, 'assessment'),
               actions: [skipButton()],
             ),
             body: Container(
-                color: Colors.black,
+                color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
                 child: ListView(children: [
                   Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -146,17 +148,35 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                           padding: const EdgeInsets.symmetric(vertical: 15),
                           child: OrientationBuilder(
                             builder: (context, orientation) {
-                              return showVideoPlayer(_assessment.video);
+                              return widget.isForCoachPage && OlukoNeumorphism.isNeumorphismDesign
+                                  ? Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                                      child: showVideoPlayer(_assessment.video),
+                                    )
+                                  : showVideoPlayer(_assessment.video);
                             },
                           ),
                         ),
+                        // OlukoLocalizations.get(context, 'coachPageAssessmentsText')
                         Padding(
                             padding: const EdgeInsets.only(bottom: 8),
-                            child: Text(
-                              _assessment.description,
-                              textAlign: TextAlign.justify,
-                              style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white),
-                            )),
+                            child: widget.isForCoachPage && OlukoNeumorphism.isNeumorphismDesign
+                                ? Padding(
+                                    padding: EdgeInsets.only(right: MediaQuery.of(context).size.width / 3, top: 10, bottom: 10),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                                      child: Text(
+                                        OlukoLocalizations.get(context, 'coachPageAssessmentsText'),
+                                        textAlign: TextAlign.justify,
+                                        style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white),
+                                      ),
+                                    ),
+                                  )
+                                : Text(
+                                    _assessment.description,
+                                    textAlign: TextAlign.justify,
+                                    style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white),
+                                  )),
                         BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(builder: (context, assessmentAssignmentState) {
                           if (assessmentAssignmentState is AssessmentAssignmentSuccess) {
                             _assessmentAssignment = assessmentAssignmentState.assessmentAssignment;
@@ -181,7 +201,12 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                                       BlocProvider.of<TaskSubmissionBloc>(context).setIncompleted(_assessmentAssignment.id);
                                       _assessmentAssignment.completedAt = null;
                                     }
-                                    return taskCardsSection(taskSubmissionListState.taskSubmissions);
+                                    return widget.isForCoachPage && OlukoNeumorphism.isNeumorphismDesign
+                                        ? Padding(
+                                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                                            child: taskCardsSection(taskSubmissionListState.taskSubmissions),
+                                          )
+                                        : taskCardsSection(taskSubmissionListState.taskSubmissions);
                                   } else {
                                     return const Padding(padding: EdgeInsets.only(top: 30), child: CircularProgressIndicator());
                                   }
@@ -220,12 +245,22 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
     if (_controller == null) {
       widgets.add(const Center(child: CircularProgressIndicator()));
     }
-    widgets.add(OlukoVideoPlayer(
-        videoUrl: videoUrl,
-        autoPlay: false,
-        whenInitialized: (ChewieController chewieController) => setState(() {
-              _controller = chewieController;
-            })));
+    widgets.add(OlukoNeumorphism.isNeumorphismDesign
+        ? ClipRRect(
+            borderRadius: BorderRadius.circular(15),
+            child: OlukoVideoPlayer(
+                videoUrl: videoUrl,
+                autoPlay: false,
+                whenInitialized: (ChewieController chewieController) => setState(() {
+                      _controller = chewieController;
+                    })),
+          )
+        : OlukoVideoPlayer(
+            videoUrl: videoUrl,
+            autoPlay: false,
+            whenInitialized: (ChewieController chewieController) => setState(() {
+                  _controller = chewieController;
+                })));
 
     return ConstrainedBox(
         constraints: BoxConstraints(
@@ -262,7 +297,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                             _controller.pause();
                           }
                           if (OlukoPermissions.isAssessmentTaskDisabled(_user, index)) {
-                            AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'yourCurrentPlanDoesntIncludeAssessment'));
+                            AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'yourCurrentPlanDoesntIncludeAssessment'));
                           } else {
                             if (assessmentsTasksList.length - taskSubmissionsCompleted.length == 1) {
                               setState(() {

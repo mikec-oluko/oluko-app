@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_mentored_videos_bloc.dart';
@@ -36,14 +37,14 @@ class _CoachNotificationPanelContentCardState extends State<CoachNotificationPan
             cardTitle: content.contentTitle,
             cardSubTitle: content.courseContent.classes.length.toString(),
             cardDescription: content.courseContent.duration,
-            date: content.createdAt != null ? content.createdAt.toDate() : null,
+            date: content.createdAt != null ? content.createdAt.toDate() : Timestamp.now().toDate(),
             fileType: CoachFileTypeEnum.recommendedCourse,
             onCloseCard: () {
               updateRecommendationViewedProperty(content);
             },
             onOpenCard: () {
               Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
-                  arguments: {'course': content.courseContent, 'fromCoach': true});
+                  arguments: {'course': content.courseContent, 'fromCoach': true, 'isCoachRecommendation': false});
               updateRecommendationViewedProperty(content);
             });
       case TimelineInteractionType.classes:
@@ -51,7 +52,7 @@ class _CoachNotificationPanelContentCardState extends State<CoachNotificationPan
           cardImage: content.contentImage,
           cardTitle: content.contentTitle,
           cardSubTitle: content.contentDescription,
-          date: content.createdAt != null ? content.createdAt.toDate() : null,
+          date: content.createdAt != null ? content.createdAt.toDate() : Timestamp.now().toDate(),
           fileType: CoachFileTypeEnum.recommendedClass,
           onCloseCard: () {
             updateRecommendationViewedProperty(content);
@@ -63,7 +64,7 @@ class _CoachNotificationPanelContentCardState extends State<CoachNotificationPan
             cardImage: content.contentImage,
             cardTitle: content.contentTitle,
             cardSubTitle: content.contentSubtitle,
-            date: content.createdAt != null ? content.createdAt.toDate() : null,
+            date: content.createdAt != null ? content.createdAt.toDate() : Timestamp.now().toDate(),
             fileType: CoachFileTypeEnum.recommendedSegment,
             onCloseCard: () {
               BlocProvider.of<CoachRequestBloc>(context)
@@ -75,7 +76,7 @@ class _CoachNotificationPanelContentCardState extends State<CoachNotificationPan
             cardImage: content.contentImage,
             cardTitle: content.contentTitle,
             cardSubTitle: '',
-            date: content.createdAt != null ? content.createdAt.toDate() : null,
+            date: content.createdAt != null ? content.createdAt.toDate() : Timestamp.now().toDate(),
             fileType: CoachFileTypeEnum.recommendedMovement,
             onCloseCard: () {
               updateRecommendationViewedProperty(content);

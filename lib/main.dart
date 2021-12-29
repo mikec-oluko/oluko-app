@@ -58,6 +58,7 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       title: '${OLUKO}',
       theme: ThemeData(
+        canvasColor: Colors.transparent,
         primarySwatch: Colors.grey,
       ),
       initialRoute: widget.initialRoute,

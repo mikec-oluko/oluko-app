@@ -33,7 +33,7 @@ class _ImageAndVideoContainerState extends State<ImageAndVideoContainer> {
     return !widget.isForCarousel
         ? Container(
             height: widget.isCoach ? 150 : 120,
-            width: 100,
+            width: OlukoNeumorphism.isNeumorphismDesign ? 120 : 100,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(10)),
               color: OlukoColors.black,
@@ -42,10 +42,8 @@ class _ImageAndVideoContainerState extends State<ImageAndVideoContainer> {
               backgroundImage: backgroundNetworkImage(),
               videoUrl: widget.videoUrl,
               isContentVideo: widget.isContentVideo,
-              showTitle: widget.displayOnViewNamed ==
-                      ActualProfileRoute.userAssessmentVideos ||
-                  widget.displayOnViewNamed ==
-                      ActualProfileRoute.transformationJourney,
+              showTitle: widget.displayOnViewNamed == ActualProfileRoute.userAssessmentVideos ||
+                  widget.displayOnViewNamed == ActualProfileRoute.transformationJourney,
               originalContent: widget.originalContent,
               isCoach: widget.isCoach,
             ))
@@ -60,10 +58,8 @@ class _ImageAndVideoContainerState extends State<ImageAndVideoContainer> {
               backgroundImage: backgroundNetworkImage(),
               videoUrl: widget.videoUrl,
               isContentVideo: widget.isContentVideo,
-              showTitle: widget.displayOnViewNamed ==
-                      ActualProfileRoute.userAssessmentVideos ||
-                  widget.displayOnViewNamed ==
-                      ActualProfileRoute.transformationJourney,
+              showTitle: widget.displayOnViewNamed == ActualProfileRoute.userAssessmentVideos ||
+                  widget.displayOnViewNamed == ActualProfileRoute.transformationJourney,
               originalContent: widget.originalContent,
               isCoach: widget.isCoach,
             ));
@@ -76,11 +72,8 @@ class _ImageAndVideoContainerState extends State<ImageAndVideoContainer> {
         fit: BoxFit.contain,
         height: 150,
         width: 250,
-        frameBuilder: (BuildContext context, Widget child, int frame,
-                bool wasSynchronouslyLoaded) =>
-            ImageUtils.frameBuilder(
-                context, child, frame, wasSynchronouslyLoaded,
-                height: 150, width: 250),
+        frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
+            ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 150, width: 250),
       );
     }
     return Image.network(
@@ -88,10 +81,8 @@ class _ImageAndVideoContainerState extends State<ImageAndVideoContainer> {
       fit: BoxFit.contain,
       height: widget.isCoach ? 150 : 120,
       width: 120,
-      frameBuilder: (BuildContext context, Widget child, int frame,
-              bool wasSynchronouslyLoaded) =>
-          ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded,
-              height: widget.isCoach ? 150 : 120, width: 120),
+      frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
+          ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: widget.isCoach ? 150 : 120, width: 120),
     );
   }
 }

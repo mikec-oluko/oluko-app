@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class CarouselSection extends StatefulWidget {
   final String title;
@@ -30,7 +31,25 @@ class _State extends State<CarouselSection> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    widget.title != null ? TitleBody(widget.title) : SizedBox(),
+                    widget.title != null
+                        ? Expanded(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                TitleBody(widget.title),
+                                // TextButton(
+                                //   onPressed: () {
+                                //     // goToRoute(widget.routeToGo);
+                                //   },
+                                //   child: Text(
+                                //     OlukoLocalizations.get(context, 'viewAll'),
+                                //     style: TextStyle(color: OlukoColors.primary),
+                                //   ),
+                                // ),
+                              ],
+                            ),
+                          )
+                        : SizedBox(),
                     widget.subtitle != null ? TitleBody(widget.title) : SizedBox(),
                     GestureDetector(
                       onTap: () => widget.onOptionTap(),
@@ -39,7 +58,7 @@ class _State extends State<CarouselSection> {
                               padding: const EdgeInsets.only(top: 3.0),
                               child: Text(
                                 widget.optionLabel != null ? widget.optionLabel : '',
-                                style: TextStyle(color: OlukoColors.primary, fontSize: 18),
+                                style: TextStyle(color: OlukoColors.primary, fontSize: 16, overflow: TextOverflow.ellipsis),
                               ),
                             )
                           : SizedBox(),

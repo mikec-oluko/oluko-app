@@ -283,9 +283,9 @@ class _FriendsListPageState extends State<FriendsListPage> {
   handleFriendFavoriteState(FavoriteFriendState favoriteState) {
     if (favoriteState is FavoriteFriendSuccess) {
       BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_authStateData.user.id);
-      AppMessages.showSnackbar(context, 'Friend updated.');
+      AppMessages.clearAndShowSnackbar(context, 'Friend updated.');
     } else if (favoriteState is FavoriteFriendFailure) {
-      AppMessages.showSnackbar(context, 'Error updating Friend.');
+      AppMessages.clearAndShowSnackbar(context, 'Error updating Friend.');
     }
   }
 
@@ -404,7 +404,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                                                   bloc: BlocProvider.of(context),
                                                   listener: (hiFiveSendContext, hiFiveSendState) {
                                                     if (hiFiveSendState is HiFiveSendSuccess) {
-                                                      AppMessages.showSnackbar(
+                                                      AppMessages.clearAndShowSnackbar(
                                                           userStatisticsContext,
                                                           hiFiveSendState.hiFive
                                                               ? OlukoLocalizations.get(context, 'hiFiveSent')

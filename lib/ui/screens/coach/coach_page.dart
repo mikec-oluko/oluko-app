@@ -39,6 +39,7 @@ import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/user_statistics.dart';
+import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/coach_app_bar.dart';
 import 'package:oluko_app/ui/components/coach_carousel_section.dart';
 import 'package:oluko_app/ui/components/coach_content_preview_content.dart';
@@ -110,9 +111,11 @@ class _CoachPageState extends State<CoachPage> {
               favorite: widget.coachAssignment.isFavorite,
               createdAt: widget.coachAssignment.createdAt ?? Timestamp.now(),
               video: Video(
-                  url: widget.coachAssignment.videoHLS ??
-                      (widget.coachAssignment.video != null ? widget.coachAssignment.video.url : widget.coachAssignment.introductionVideo),
-                  aspectRatio: widget.coachAssignment.video != null ? widget.coachAssignment.video.aspectRatio ?? 0.60 : 0.60),
+                url: widget.coachAssignment.videoHLS ??
+                    (widget.coachAssignment.video != null ? widget.coachAssignment.video.url : widget.coachAssignment.introductionVideo),
+                aspectRatio: widget.coachAssignment.video != null ? widget.coachAssignment.video.aspectRatio ?? 0.60 : 0.60,
+                thumbUrl: widget.coachAssignment.video != null ? widget.coachAssignment.video.thumbUrl ?? null : null,
+              ),
               videoHLS: widget.coachAssignment.videoHLS ??
                   (widget.coachAssignment.video != null ? widget.coachAssignment.video.url : widget.coachAssignment.introductionVideo),
             )
@@ -140,11 +143,17 @@ class _CoachPageState extends State<CoachPage> {
                 _coachUser = state.coach;
               }
               return Scaffold(
-                appBar: CoachAppBar(
-                  coachUser: _coachUser,
-                  onNavigation: () => !widget.coachAssignment.introductionCompleted
-                      ? BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation()
-                      : () {},
+                // appBar: CoachAppBar(
+                //   coachUser: _coachUser,
+                //   onNavigation: () => !widget.coachAssignment.introductionCompleted
+                //       ? BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation()
+                //       : () {},
+                // ),
+                appBar: OlukoAppBar(
+                  showBackButton: false,
+                  title: 'Coach',
+                  showSearchBar: false,
+                  showTitle: true,
                 ),
                 body: BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(
                   builder: (context, state) {
@@ -215,7 +224,7 @@ class _CoachPageState extends State<CoachPage> {
                                   _mentoredVideoTimelineContent.clear();
                                   _coachRecommendationTimelineContent.clear();
                                   _timelinePanelContent.clear();
-                                  _introductionVideo == null ? createWelcomeVideo() : _introductionVideo = null;
+                                  _introductionVideo ?? createWelcomeVideo();
                                 }
                                 if (timelineState is CoachTimelineItemsSuccess) {
                                   _timelineItemsContent = timelineState.timelineItems;
@@ -329,39 +338,42 @@ class _CoachPageState extends State<CoachPage> {
                   _assessment = state.assessment;
                   BlocProvider.of<TaskBloc>(context).get(_assessment);
                   final carouselNotificationWidgetList = carouselNotificationWidget(context);
-                  return ListView(
-                    children: [
-                      if (carouselNotificationWidgetList.isNotEmpty && widget.coachAssignment.introductionCompleted)
-                        CoachCarouselSliderSection(
-                          contentForCarousel: carouselNotificationWidgetList,
-                          introductionCompleted: widget.coachAssignment.introductionCompleted,
-                          introductionVideo: _assessment.video,
-                          onVideoFinished: () =>
-                              BlocProvider.of<CoachAssignmentBloc>(context).updateIntroductionVideoState(widget.coachAssignment),
+                  return Container(
+                    color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+                    child: ListView(
+                      children: [
+                        if (carouselNotificationWidgetList.isNotEmpty && widget.coachAssignment.introductionCompleted)
+                          CoachCarouselSliderSection(
+                            contentForCarousel: carouselNotificationWidgetList,
+                            introductionCompleted: widget.coachAssignment.introductionCompleted,
+                            introductionVideo: _assessment.video,
+                            onVideoFinished: () =>
+                                BlocProvider.of<CoachAssignmentBloc>(context).updateIntroductionVideoState(widget.coachAssignment),
+                          )
+                        else if (!widget.coachAssignment.introductionCompleted)
+                          CoachCarouselSliderSection(
+                            contentForCarousel: carouselNotificationWidgetList,
+                            introductionCompleted: widget.coachAssignment.introductionCompleted,
+                            introductionVideo: _assessment.video,
+                            onVideoFinished: () =>
+                                BlocProvider.of<CoachAssignmentBloc>(context).updateIntroductionVideoState(widget.coachAssignment),
+                          )
+                        else
+                          const SizedBox.shrink(),
+                        if (widget.coachAssignment.introductionCompleted)
+                          carouselNotificationWidgetList.isNotEmpty && widget.coachAssignment.introductionCompleted
+                              ? userProgressSection(false)
+                              : userProgressSection(carouselNotificationWidgetList.isEmpty && widget.coachAssignment.introductionCompleted)
+                        else
+                          const SizedBox.shrink(),
+                        CoachHorizontalCarousel(contentToDisplay: listOfContentForUser(), isForVideoContent: true),
+                        carouselToDoSection(context),
+                        if (hideAssessmentsTab) const SizedBox.shrink() else assessmentSection(context),
+                        SizedBox(
+                          height: hideAssessmentsTab ? 220 : 200,
                         )
-                      else if (!widget.coachAssignment.introductionCompleted)
-                        CoachCarouselSliderSection(
-                          contentForCarousel: carouselNotificationWidgetList,
-                          introductionCompleted: widget.coachAssignment.introductionCompleted,
-                          introductionVideo: _assessment.video,
-                          onVideoFinished: () =>
-                              BlocProvider.of<CoachAssignmentBloc>(context).updateIntroductionVideoState(widget.coachAssignment),
-                        )
-                      else
-                        const SizedBox.shrink(),
-                      if (widget.coachAssignment.introductionCompleted)
-                        carouselNotificationWidgetList.isNotEmpty && widget.coachAssignment.introductionCompleted
-                            ? userProgressSection(false)
-                            : userProgressSection(carouselNotificationWidgetList.isEmpty && widget.coachAssignment.introductionCompleted)
-                      else
-                        const SizedBox.shrink(),
-                      CoachHorizontalCarousel(contentToDisplay: listOfContentForUser(), isForVideoContent: true),
-                      carouselToDoSection(context),
-                      if (hideAssessmentsTab) const SizedBox.shrink() else assessmentSection(context),
-                      SizedBox(
-                        height: hideAssessmentsTab ? 220 : 200,
-                      )
-                    ],
+                      ],
+                    ),
                   );
                 } else {
                   return const SizedBox();
@@ -411,7 +423,7 @@ class _CoachPageState extends State<CoachPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                OlukoLocalizations.get(context, 'toDo'),
+                OlukoLocalizations.get(context, 'upcoming'),
                 style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
               ),
               CoachHorizontalCarousel(contentToDisplay: toDoContent()),
@@ -421,7 +433,7 @@ class _CoachPageState extends State<CoachPage> {
   }
 
   List<Widget> toDoContent() => TransformListOfItemsToWidget.coachChallengesAndSegments(
-      segments: _requiredSegmentList.where((segment) => segment.isChallenge).toList());
+      segments: _allSegmentsForUser.where((segment) => segment.isChallenge && segment.completedAt == null).toList());
 
   Widget assessmentSection(BuildContext context) {
     return BlocBuilder<TaskSubmissionBloc, TaskSubmissionState>(
@@ -473,12 +485,19 @@ class _CoachPageState extends State<CoachPage> {
 
   void buildSentVideosForTimeline() {
     CoachTimelineFunctions.getTimelineVideoContent(
-        segmentSubmittedContent: _sentVideosContent, sentVideos: _sentVideosTimelineContent, context: context);
+        segmentSubmittedContent: _sentVideosContent,
+        sentVideos: _sentVideosTimelineContent,
+        courseEnrollmentList: _courseEnrollmentList,
+        context: context);
   }
 
   void buildAnnotationsForTimeline() {
     CoachTimelineFunctions.getTimelineVideoContent(
-        annotationContent: _annotationVideosContent, mentoredVideos: _mentoredVideoTimelineContent, context: context);
+      annotationContent: _annotationVideosContent,
+      mentoredVideos: _mentoredVideoTimelineContent,
+      courseEnrollmentList: _courseEnrollmentList,
+      context: context,
+    );
     addCoachAssignmentVideo();
   }
 
@@ -491,34 +510,28 @@ class _CoachPageState extends State<CoachPage> {
   }
 
   void timelineContentBuilding(BuildContext context) {
-    buildSentVideosForTimeline();
-    buildAnnotationsForTimeline();
+    coachRecommendationsTimelineItems();
+    mentoredVideosTimeline();
+    sentVideosTimeline();
 
-    _coachRecommendations.forEach((recommendation) =>
-        _coachRecommendationTimelineContent.add(CoachTimelineFunctions.createAnCoachTimelineItem(recommendationItem: recommendation)));
-    _coachRecommendationTimelineContent.forEach((recomendationTimelineItem) {
-      if (_allContent.where((contentElement) => contentElement.contentThumbnail == recomendationTimelineItem.contentThumbnail).isEmpty) {
-        _allContent.add(recomendationTimelineItem);
-      }
-    });
+    _timelinePanelContent = CoachTimelineFunctions.buildContentForTimelinePanel(
+        timelineItemsContent: _timelineItemsContent,
+        enrolledCourseIdList: _courseEnrollmentList.map((enrolledCourse) => enrolledCourse.course.id).toList());
 
-    _timelinePanelContent = CoachTimelineFunctions.buildContentForTimelinePanel(_timelineItemsContent);
     _timelinePanelContent.forEach((timelinePanelElement) {
       timelinePanelElement.timelineElements.forEach((timelineContentItem) {
-        if (_allContent.where((allContentItem) => allContentItem.contentName == timelineContentItem.contentName).isEmpty) {
+        if (_allContent.where((allContentItem) => allContentItem.contentThumbnail == timelineContentItem.contentThumbnail).isEmpty) {
           _allContent.add(timelineContentItem);
         }
       });
     });
-    _mentoredVideoTimelineContent.forEach((mentoredVideo) {
-      if (_allContent.where((allContentItem) => allContentItem.contentThumbnail == mentoredVideo.contentThumbnail).isEmpty) {
-        _allContent.add(mentoredVideo);
-      }
-    });
-
     CoachTimelineGroup allTabContent = CoachTimelineGroup(
         courseId: _defaultIdForAllContentTimeline, courseName: OlukoLocalizations.get(context, 'all'), timelineElements: _allContent);
 
+    timelinePanelUpdateTabsAndContent(allTabContent);
+  }
+
+  void timelinePanelUpdateTabsAndContent(CoachTimelineGroup allTabContent) {
     if (_timelinePanelContent != null && _timelinePanelContent.isNotEmpty) {
       final indexForAllTab = _timelinePanelContent.indexWhere((panelItem) => panelItem.courseId == allTabContent.courseId);
       if (indexForAllTab != -1) {
@@ -541,6 +554,46 @@ class _CoachPageState extends State<CoachPage> {
       allTabContent.timelineElements.sort((a, b) => b.createdAt.toDate().compareTo(a.createdAt.toDate()));
       _timelinePanelContent.insert(0, allTabContent);
     }
+  }
+
+  void sentVideosTimeline() {
+    _sentVideosTimelineContent.forEach((sentVideo) {
+      if (_allContent.where((allContentItem) => allContentItem.contentThumbnail == sentVideo.contentThumbnail).isEmpty) {
+        _allContent.add(sentVideo);
+      }
+      if (_timelineItemsContent.where((timelineItem) => timelineItem.contentThumbnail == sentVideo.contentThumbnail).isEmpty) {
+        _timelineItemsContent.add(sentVideo);
+      }
+    });
+    _sentVideosContent.isNotEmpty ? buildSentVideosForTimeline() : null;
+  }
+
+  void mentoredVideosTimeline() {
+    _mentoredVideoTimelineContent.forEach((mentoredVideo) {
+      if (_allContent.where((allContentItem) => allContentItem.contentThumbnail == mentoredVideo.contentThumbnail).isEmpty) {
+        _allContent.add(mentoredVideo);
+      }
+      if (_timelineItemsContent.where((timelineItem) => timelineItem.contentThumbnail == mentoredVideo.contentThumbnail).isEmpty) {
+        _timelineItemsContent.add(mentoredVideo);
+      }
+    });
+    buildAnnotationsForTimeline();
+  }
+
+  void coachRecommendationsTimelineItems() {
+    _coachRecommendations.isNotEmpty
+        ? _coachRecommendations.forEach((recommendation) =>
+            _coachRecommendationTimelineContent.add(CoachTimelineFunctions.createAnCoachTimelineItem(recommendationItem: recommendation)))
+        : null;
+    _coachRecommendationTimelineContent.isNotEmpty
+        ? _coachRecommendationTimelineContent.forEach((recomendationTimelineItem) {
+            if (_allContent
+                .where((contentElement) => contentElement.contentThumbnail == recomendationTimelineItem.contentThumbnail)
+                .isEmpty) {
+              _allContent.add(recomendationTimelineItem);
+            }
+          })
+        : null;
   }
 
   void addContentToTimeline({CoachTimelineGroup timelineGroup, CoachTimelineItem newContent}) {

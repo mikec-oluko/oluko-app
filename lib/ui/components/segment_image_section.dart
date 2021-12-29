@@ -65,8 +65,11 @@ class SegmentImageSection extends StatefulWidget {
 }
 
 class _SegmentImageSectionState extends State<SegmentImageSection> {
+  CoachRequest _coachRequest;
+
   @override
   void initState() {
+    _coachRequest = getSegmentCoachRequest(widget.segment.id);
     BlocProvider.of<DoneChallengeUsersBloc>(context).get(widget.segment.id, widget.userId);
     super.initState();
   }
@@ -125,8 +128,8 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
             title: OlukoLocalizations.get(context, 'startWorkouts'),
             color: OlukoColors.primary,
             onPressed: () {
-              CoachRequest coachRequest = getSegmentCoachRequest(widget.segment.id);
-              if (coachRequest != null) {
+              //CoachRequest coachRequest = getSegmentCoachRequest(widget.segment.id);
+              if (_coachRequest != null) {
                 BottomDialogUtils.showBottomDialog(context: context, content: dialogContainer(widget.coach.firstName, widget.coach.avatar));
               } else {
                 navigateToSegmentWithoutRecording();
@@ -237,17 +240,51 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
             else
               const SizedBox(),
             const Expanded(child: SizedBox()),
-            Padding(
-                padding: const EdgeInsets.only(right: 15),
-                child: Stack(alignment: Alignment.center, children: [
+            getCameraIcon()
+          ],
+        ));
+  }
+
+  Widget getCameraIcon() {
+    return Padding(
+        padding: const EdgeInsets.only(right: 15),
+        child: Stack(
+            alignment: Alignment.center,
+            children: getCameraCircles() +
+                [
                   Image.asset(
                     'assets/courses/outlined_camera.png',
                     scale: 3,
                   ),
                   const Padding(padding: EdgeInsets.only(top: 1), child: Icon(Icons.circle_outlined, size: 16, color: OlukoColors.primary))
-                ]))
-          ],
-        ));
+                ]));
+  }
+
+  List<Widget> getCameraCircles() {
+    if (_coachRequest != null) {
+      return [
+        Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: Image.asset(
+              'assets/courses/green_ellipse_1.png',
+              scale: 3,
+            )),
+        Padding(
+            padding: const EdgeInsets.only(top: 1),
+            child: Image.asset(
+              'assets/courses/green_ellipse_2.png',
+              scale: 3,
+            )),
+        Padding(
+            padding: const EdgeInsets.only(bottom: 2),
+            child: Image.asset(
+              'assets/courses/green_ellipse_3.png',
+              scale: 3,
+            ))
+      ];
+    } else {
+      return [];
+    }
   }
 
   Widget imageSection() {

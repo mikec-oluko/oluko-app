@@ -42,9 +42,15 @@ class _State extends State<ClassMovementSection> {
         Expanded(child: SizedBox()),
         GestureDetector(
             onTap: () => widget.panelController.open(),
-            child: Text(
-              OlukoLocalizations.get(context, 'viewDetails'),
-              style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.primary),
+            child: SizedBox(
+              width: 85,
+              child: FittedBox(
+                fit: BoxFit.fitWidth,
+                child: Text(
+                  OlukoLocalizations.get(context, 'viewDetails'),
+                  style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.primary),
+                ),
+              ),
             ))
       ]),
       buildMovementBubbles(),

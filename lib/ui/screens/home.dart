@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:badges/badges.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -21,6 +23,8 @@ import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/stories_header.dart';
 import 'package:oluko_app/ui/components/video_overlay.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -58,7 +62,7 @@ class _HomeState extends State<Home> {
         }, builder: (context, courseEnrollmentListState) {
           if (courseEnrollmentListState is CourseEnrollmentsByUserSuccess) {
             _courseEnrollments =
-                courseEnrollmentListState.courseEnrollments/*.where((courseEnroll) => courseEnroll.isUnenrolled != true).toList()*/;
+                courseEnrollmentListState.courseEnrollments /*.where((courseEnroll) => courseEnroll.isUnenrolled != true).toList()*/;
             ;
             BlocProvider.of<CourseHomeBloc>(context)..getByCourseEnrollments(_courseEnrollments);
             return form();
@@ -76,11 +80,12 @@ class _HomeState extends State<Home> {
     return Scaffold(
         backgroundColor: Colors.black,
         appBar: OlukoAppBar(
-          title: OlukoLocalizations.get(context, 'home'),
-          showLogo: true,
-          showBackButton: false,
-          actions: [_handWidget()],
-        ),
+            title: OlukoLocalizations.get(context, 'home'),
+            showLogo: true,
+            showBackButton: false,
+            actions: [_handWidget()],
+            showDivider: false,
+            showTitle: false),
         body: ListView(children: [
           Center(child: StoriesHeader(_user.uid)),
           WillPopScope(
@@ -116,7 +121,7 @@ class _HomeState extends State<Home> {
       return CarouselSlider(
         items: courseSectionList(),
         options: CarouselOptions(
-            height: 600,
+            height: ScreenUtils.height(context) - 140,
             autoPlay: false,
             enlargeCenterPage: false,
             disableCenter: true,
@@ -170,7 +175,9 @@ class _HomeState extends State<Home> {
               width: ScreenUtils.width(context))),
       Image.asset(
         'assets/home/degraded.png',
-        scale: 4,
+        // scale: 5,
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
       ),
       notErolledContent()
     ]);
@@ -178,15 +185,23 @@ class _HomeState extends State<Home> {
 
   Widget enrollButton() {
     return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 40),
+        padding: const EdgeInsets.symmetric(horizontal: 90),
         child: Row(
           children: [
-            OlukoPrimaryButton(
-              title: OlukoLocalizations.get(context, 'enrollToACourse'),
-              onPressed: () {
-                Navigator.pushNamed(context, routeLabels[RouteEnum.courses], arguments: {'homeEnrollTocourse': 'true'});
-              },
-            ),
+            OlukoNeumorphism.isNeumorphismDesign
+                ? OlukoNeumorphicPrimaryButton(
+                    useBorder: true,
+                    title: OlukoLocalizations.get(context, 'enrollToACourse'),
+                    onPressed: () {
+                      Navigator.pushNamed(context, routeLabels[RouteEnum.courses], arguments: {'homeEnrollTocourse': 'true'});
+                    },
+                  )
+                : OlukoPrimaryButton(
+                    title: OlukoLocalizations.get(context, 'enrollToACourse'),
+                    onPressed: () {
+                      Navigator.pushNamed(context, routeLabels[RouteEnum.courses], arguments: {'homeEnrollTocourse': 'true'});
+                    },
+                  ),
           ],
         ));
   }
@@ -217,18 +232,28 @@ class _HomeState extends State<Home> {
               child: Align(
                   alignment: Alignment.center,
                   child: Stack(alignment: Alignment.center, children: [
-                    Image.asset(
-                      'assets/courses/play_ellipse.png',
-                      height: 85,
-                      width: 85,
+                    Visibility(
+                        visible: !OlukoNeumorphism.isNeumorphismDesign,
+                        child: Stack(children: [
+                          Align(alignment: Alignment.center, child: Image.asset('assets/courses/play_ellipse.png', height: 85, width: 85)),
+                          Align(
+                            alignment: Alignment.center,
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 25),
+                              child: Image.asset(
+                                'assets/courses/play_arrow.png',
+                                height: 30,
+                                width: 30,
+                              ),
+                            ),
+                          ),
+                        ])),
+                    Visibility(
+                      visible: OlukoNeumorphism.isNeumorphismDesign,
+                      child: OlukoBlurredButton(
+                          childContent:
+                              Image.asset('assets/courses/play_arrow.png', height: 20, width: 20, scale: 2, color: OlukoColors.white)),
                     ),
-                    Padding(
-                        padding: const EdgeInsets.only(left: 3.5),
-                        child: Image.asset(
-                          'assets/courses/play_arrow.png',
-                          height: 30,
-                          width: 30,
-                        )),
                   ])),
             )),
         SizedBox(height: 110),

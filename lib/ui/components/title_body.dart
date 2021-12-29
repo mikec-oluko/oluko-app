@@ -14,9 +14,7 @@ class TitleBody extends StatelessWidget {
       textAlign: TextAlign.start,
       overflow: TextOverflow.ellipsis,
       style: TextStyle(
-          fontSize: 22,
-          fontWeight: bold ? FontWeight.w700 : FontWeight.w400,
-          color: Colors.white),
+          fontSize: 18, fontWeight: bold ? FontWeight.w700 : FontWeight.w400, color: Colors.white, overflow: TextOverflow.ellipsis),
     );
   }
 }
