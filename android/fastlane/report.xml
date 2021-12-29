@@ -14,11 +14,8 @@
         
       </testcase>
     
-      
       <testcase classname="fastlane.lanes" name="2: cd .. &amp;&amp; cd .. &amp;&amp; bash ./scripts.sh appbundle" time="130.547859">
-        
       </testcase>
-    
       
       <testcase classname="fastlane.lanes" name="3: upload_to_play_store" time="95.680888">
         
