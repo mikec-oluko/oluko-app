@@ -75,7 +75,6 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
                 style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor),
-                overflow: TextOverflow.ellipsis,
               ),
             )
           ],
