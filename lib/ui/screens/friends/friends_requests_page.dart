@@ -55,14 +55,14 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
         child: Container(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
-            color: OlukoColors.black,
+            color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
             child: BlocListener<IgnoreFriendRequestBloc, IgnoreFriendRequestState>(
               listener: (context, ignoreFriendState) {
                 if (ignoreFriendState is IgnoreFriendRequestSuccess) {
                   BlocProvider.of<FriendBloc>(context).getUserFriendsRequestByUserId(_authStateData.user.id);
-                  AppMessages.showSnackbar(context, 'Request ignored.');
+                  AppMessages.clearAndShowSnackbar(context, 'Request ignored.');
                 } else if (ignoreFriendState is IgnoreFriendRequestFailure) {
-                  AppMessages.showSnackbar(context, 'Error ignoring request.');
+                  AppMessages.clearAndShowSnackbar(context, 'Error ignoring request.');
                 }
               },
               child: BlocListener<ConfirmFriendBloc, ConfirmFriendState>(
@@ -71,9 +71,9 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
                   disabledActions = false;
                   if (confirmFriendState is ConfirmFriendSuccess) {
                     BlocProvider.of<FriendBloc>(context).getUserFriendsRequestByUserId(_authStateData.user.id);
-                    AppMessages.showSnackbar(context, 'Friend added.');
+                    AppMessages.clearAndShowSnackbar(context, 'Friend added.');
                   } else if (confirmFriendState is ConfirmFriendFailure) {
-                    AppMessages.showSnackbar(context, 'Error adding friend.');
+                    AppMessages.clearAndShowSnackbar(context, 'Error adding friend.');
                   }
                 },
                 child: Column(
@@ -149,7 +149,7 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
                               .ignoreFriend(context, friendsRequestState.friendData, friendRequestModel);
                         },
                         onFriendConfirmation: (UserResponse friend) {
-                          if(disabledActions){
+                          if (disabledActions) {
                             return;
                           }
                           disabledActions = true;

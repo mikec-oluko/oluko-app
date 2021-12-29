@@ -58,7 +58,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
               if (videoState is VideoSuccess) {
                 return true;
               }
-              AppMessages.showSnackbar(context, OlukoLocalizations.of(context).find('videoIsStillProcessing'));
+              AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.of(context).find('videoIsStillProcessing'));
               return false;
             }(),
         child: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {

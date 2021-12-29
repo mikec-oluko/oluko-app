@@ -3,18 +3,21 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class AppMessages {
-  static void showSnackbar(BuildContext context, String message) {
+  static void clearAndShowSnackbar(BuildContext context, String message, {Color backgroundColor, Duration duration, Color textColor}) {
     ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(message),
-    ));
+    showSnackbar(context, message, backgroundColor: backgroundColor, duration: duration, textColor: textColor);
   }
 
-  static void showSnackbarTranslated(
-      BuildContext context, String translationKey) {
+  static void clearAndShowSnackbarTranslated(BuildContext context, String translationKey, {Color backgroundColor, Duration duration, Color textColor}) {
     ScaffoldMessenger.of(context).clearSnackBars();
+    showSnackbar(context, OlukoLocalizations.get(context, translationKey), backgroundColor: backgroundColor, duration: duration, textColor: textColor);
+  }
+
+  static void showSnackbar(BuildContext context, String message, {Color backgroundColor, Duration duration, Color textColor}) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(OlukoLocalizations.get(context, translationKey)),
+      content: textColor != null ? Text(message, style: TextStyle(color: textColor)) : Text(message),
+      backgroundColor: backgroundColor,
+      duration: duration ?? const Duration(seconds: 4),
     ));
   }
 
@@ -33,10 +36,7 @@ class AppMessages {
                 padding: EdgeInsets.all(10.0),
                 child: Text(
                   'Hi5 Sent!',
-                  style: TextStyle(
-                      fontSize: 23,
-                      color: OlukoColors.primary,
-                      fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 23, color: OlukoColors.primary, fontWeight: FontWeight.bold),
                 ),
               )
             ],
@@ -59,10 +59,7 @@ class AppMessages {
                 padding: const EdgeInsets.all(10.0),
                 child: Text(
                   message,
-                  style: const TextStyle(
-                      fontSize: 23,
-                      color: OlukoColors.primary,
-                      fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 23, color: OlukoColors.primary, fontWeight: FontWeight.bold),
                 ),
               )
             ],

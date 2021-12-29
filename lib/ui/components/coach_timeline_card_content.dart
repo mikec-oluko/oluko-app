@@ -25,7 +25,7 @@ class _CoachTimelineCardContentState extends State<CoachTimelineCardContent> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: OlukoColors.black,
+      color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Wrap(
@@ -63,11 +63,9 @@ class _CoachTimelineCardContentState extends State<CoachTimelineCardContent> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(CoachHeders.getContentHeader(context: context, fileType: widget.fileType),
-                            style: OlukoFonts.olukoMediumFont(
-                                customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
+                            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
                         Text(widget.cardTitle,
-                            style: OlukoFonts.olukoMediumFont(
-                                customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
+                            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
                         const SizedBox(height: 10),
                         Text(
                             widget.fileType == CoachFileTypeEnum.recommendedClass
@@ -75,12 +73,10 @@ class _CoachTimelineCardContentState extends State<CoachTimelineCardContent> {
                                 : widget.fileType == CoachFileTypeEnum.recommendedCourse
                                     ? OlukoLocalizations.of(context).find('classes')
                                     : '',
-                            style: OlukoFonts.olukoMediumFont(
-                                customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
+                            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
                         Text(widget.cardSubTitle,
                             overflow: TextOverflow.ellipsis,
-                            style: OlukoFonts.olukoMediumFont(
-                                customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
+                            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
                       ],
                     ),
                   ),

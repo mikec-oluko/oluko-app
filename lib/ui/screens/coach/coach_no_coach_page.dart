@@ -24,33 +24,38 @@ class _NoCoachPageState extends State<NoCoachPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: OlukoAppBar(
+        showTitle: OlukoNeumorphism.isNeumorphismDesign ? true : false,
         title: OlukoLocalizations.get(context, 'coach'),
-        showBackButton: true,
+        showBackButton: OlukoNeumorphism.isNeumorphismDesign ? false : true,
         onPressed: () => Navigator.pushNamed(context, routeLabels[RouteEnum.root]),
       ),
       body: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
-        color: Colors.black,
+        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
         child: Column(
           children: [
             SizedBox(
               height: 50,
             ),
             Container(
-              color: Colors.black,
+              color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
               width: MediaQuery.of(context).size.width,
               height: 250,
               child: Stack(
                 fit: StackFit.expand,
                 clipBehavior: Clip.none,
                 children: [
-                  Align(child: showVideoPlayer(widget.introductionVideo)),
+                  Align(
+                      child: Padding(
+                    padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.symmetric(horizontal: 20.0) : EdgeInsets.zero,
+                    child: showVideoPlayer(widget.introductionVideo),
+                  )),
                 ],
               ),
             ),
             Container(
-                color: Colors.black,
+                color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
                 width: MediaQuery.of(context).size.width,
                 child: Column(
                   children: [
@@ -60,14 +65,15 @@ class _NoCoachPageState extends State<NoCoachPage> {
                     Text(
                       OlukoLocalizations.get(context, 'tapHere'),
                       textAlign: TextAlign.center,
-                      style: OlukoFonts.olukoSubtitleFont(
-                          customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
+                      style: OlukoFonts.olukoSubtitleFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
+                    ),
+                    const SizedBox(
+                      height: OlukoNeumorphism.isNeumorphismDesign ? 20 : 0,
                     ),
                     Text(
                       OlukoLocalizations.get(context, 'noCoachMessage'),
                       textAlign: TextAlign.center,
-                      style: OlukoFonts.olukoMediumFont(
-                          customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+                      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
                     ),
                   ],
                 )),
@@ -82,14 +88,22 @@ class _NoCoachPageState extends State<NoCoachPage> {
     if (_controller == null) {
       widgets.add(const Center(child: CircularProgressIndicator()));
     }
-
-    widgets.add(OlukoVideoPlayer(
-      videoUrl: videoUrl,
-      autoPlay: false,
-      whenInitialized: (ChewieController chewieController) => setState(() {
-        _controller = chewieController;
-      }),
-    ));
+    widgets.add(OlukoNeumorphism.isNeumorphismDesign
+        ? ClipRRect(
+            borderRadius: BorderRadius.circular(15),
+            child: OlukoVideoPlayer(
+                videoUrl: videoUrl,
+                autoPlay: false,
+                whenInitialized: (ChewieController chewieController) => setState(() {
+                      _controller = chewieController;
+                    })),
+          )
+        : OlukoVideoPlayer(
+            videoUrl: videoUrl,
+            autoPlay: false,
+            whenInitialized: (ChewieController chewieController) => setState(() {
+                  _controller = chewieController;
+                })));
 
     return ConstrainedBox(
         constraints: BoxConstraints(
@@ -99,6 +113,31 @@ class _NoCoachPageState extends State<NoCoachPage> {
             minHeight: MediaQuery.of(context).orientation == Orientation.portrait
                 ? ScreenUtils.height(context) / 4
                 : ScreenUtils.height(context) / 1.5),
-        child: SizedBox(height: 400, child: Stack(children: widgets)));
+        child: Container(height: 400, child: Stack(children: widgets)));
   }
+
+  // Widget showVideoPlayer(String videoUrl) {
+  //   List<Widget> widgets = [];
+  //   if (_controller == null) {
+  //     widgets.add(const Center(child: CircularProgressIndicator()));
+  //   }
+
+  //   widgets.add(OlukoVideoPlayer(
+  //     videoUrl: videoUrl,
+  //     autoPlay: false,
+  //     whenInitialized: (ChewieController chewieController) => setState(() {
+  //       _controller = chewieController;
+  //     }),
+  //   ));
+
+  //   return ConstrainedBox(
+  //       constraints: BoxConstraints(
+  //           maxHeight: MediaQuery.of(context).orientation == Orientation.portrait
+  //               ? ScreenUtils.height(context) / 4
+  //               : ScreenUtils.height(context) / 1.5,
+  //           minHeight: MediaQuery.of(context).orientation == Orientation.portrait
+  //               ? ScreenUtils.height(context) / 4
+  //               : ScreenUtils.height(context) / 1.5),
+  //       child: SizedBox(height: 400, child: Stack(children: widgets)));
+  // }
 }
