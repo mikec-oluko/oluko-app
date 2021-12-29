@@ -109,6 +109,7 @@ import 'blocs/coach/coach_recommendations_bloc.dart';
 import 'blocs/coach/coach_review_pending_bloc.dart';
 import 'blocs/coach/coach_sent_videos_bloc.dart';
 import 'blocs/coach/coach_timeline_bloc.dart';
+import 'blocs/keyboard/keyboard_bloc.dart';
 import 'blocs/movement_info_bloc.dart';
 import 'blocs/friends/hi_five_send_bloc.dart';
 import 'blocs/movement_info_bloc.dart';
@@ -302,6 +303,7 @@ class Routes {
   final CourseCategoryBloc _courseCategoryBloc = CourseCategoryBloc();
   final CourseSubscriptionBloc _courseSubscriptionBloc = CourseSubscriptionBloc();
   final ClassSubscriptionBloc _classSubscriptionBloc = ClassSubscriptionBloc();
+  final KeyboardBloc _keyboardBloc = KeyboardBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -318,6 +320,7 @@ class Routes {
           BlocProvider<HiFiveReceivedBloc>.value(
             value: _hiFiveReceivedBloc,
           ),
+          BlocProvider(create: (_) => KeyboardBloc()),
           BlocProvider<CoachTimelineBloc>.value(value: _coachTimelineBloc),
           BlocProvider<ChallengeBloc>.value(value: _challengeBloc),
           BlocProvider<CourseHomeBloc>.value(value: _courseHomeBloc),
@@ -560,7 +563,8 @@ class Routes {
           BlocProvider<CourseEnrollmentUpdateBloc>.value(value: _courseEnrollmentUpdateBloc),
           BlocProvider<StoryBloc>.value(value: _storyBloc),
           BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
-          BlocProvider<StoryListBloc>.value(value: _storyListBloc)
+          BlocProvider<StoryListBloc>.value(value: _storyListBloc),
+          BlocProvider<KeyboardBloc>.value(value: _keyboardBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SegmentClocks(
