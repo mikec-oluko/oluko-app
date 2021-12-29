@@ -12,6 +12,7 @@ import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/done_challenge_users_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/blocs/segment_detail_content_bloc.dart';
+import 'package:oluko_app/blocs/user_audio_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/challenge.dart';
@@ -38,6 +39,8 @@ import 'package:oluko_app/utils/sound_recorder.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'audio_panel.dart';
+
 enum PanelEnum { audios, classDetail }
 
 class UserChallengeDetail extends StatefulWidget {
@@ -61,6 +64,7 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
   PanelController panelController = PanelController();
   final PanelController _challengePanelController = PanelController();
   UserResponse _user;
+  List<UserResponse> _audioUsers;
 
   Widget panelContent;
   PanelEnum panelState;
@@ -100,6 +104,7 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
                 _class = classState.classObj;
                 _courseEnrollment = enrollmentState.courseEnrollment;
                 _segment = segmentState.segment;
+
                 return form();
               } else {
                 return SizedBox();
@@ -112,7 +117,7 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
       }
     });
   }
-
+  
   Widget form() {
     return Form(
         key: _formKey,
@@ -192,7 +197,8 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
           Icon(Icons.warning_amber_rounded, color: OlukoColors.coral, size: 100),
           SizedBox(height: 5),
           Text(OlukoLocalizations.get(context, 'deleteMessageConfirm'),
-              textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400, customColor: OlukoColors.grayColor)),
+              textAlign: TextAlign.center,
+              style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400, customColor: OlukoColors.grayColor)),
           SizedBox(height: 25),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -302,8 +308,12 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
 
     return ConstrainedBox(
         constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).orientation == Orientation.portrait ? ScreenUtils.height(context) / 4 : ScreenUtils.height(context) / 1.5,
-            minHeight: MediaQuery.of(context).orientation == Orientation.portrait ? ScreenUtils.height(context) / 4 : ScreenUtils.height(context) / 1.5),
+            maxHeight: MediaQuery.of(context).orientation == Orientation.portrait
+                ? ScreenUtils.height(context) / 4
+                : ScreenUtils.height(context) / 1.5,
+            minHeight: MediaQuery.of(context).orientation == Orientation.portrait
+                ? ScreenUtils.height(context) / 4
+                : ScreenUtils.height(context) / 1.5),
         child: Container(height: 400, child: Stack(children: widgets)));
   }
 

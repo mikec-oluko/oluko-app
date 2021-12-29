@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/done_challenge_users_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/segment.dart';
@@ -17,6 +18,7 @@ import 'package:oluko_app/ui/components/people_section.dart';
 import 'package:oluko_app/ui/components/segment_step_section.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
 import 'package:oluko_app/ui/components/vertical_divider.dart' as verticalDivider;
+import 'package:oluko_app/ui/screens/courses/audio_panel.dart';
 import 'package:oluko_app/ui/screens/courses/segment_clocks.dart';
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -40,6 +42,7 @@ class SegmentImageSection extends StatefulWidget {
   final List<Segment> segments;
   final List<CoachRequest> coachRequests;
   final UserResponse coach;
+  final Challenge challenge;
 
   SegmentImageSection(
       {this.onPressed = null,
@@ -47,6 +50,7 @@ class SegmentImageSection extends StatefulWidget {
       this.showBackButton = true,
       this.currentSegmentStep,
       this.totalSegmentStep,
+      this.challenge,
       this.userId,
       this.audioAction,
       this.clockAction,
@@ -307,6 +311,13 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
       ),
     ]);
   }
+
+    /*Widget audioSection(List<UserResponse> coaches) {
+    return AudioPanel(
+      coaches: _audioUsers,
+      audios: widget.challenge.audios,
+    );
+  }*/
 
   Widget challengeButtons() {
     return Padding(

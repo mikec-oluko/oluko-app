@@ -44,7 +44,7 @@ class _State extends State<AudioPanel> {
                   customColor: OlukoColors.white),
             ),
           ),
-          Container(height: 400, child: ListView(children: getAudioWidgets()))
+          Container(height: 370, child: ListView(children: getAudioWidgets()))
         ]));
   }
 

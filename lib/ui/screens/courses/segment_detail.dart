@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/challenge/challenge_segment_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_assignment_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
@@ -12,6 +13,7 @@ import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/blocs/segment_detail_content_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/coach_assignment.dart';
 import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
@@ -58,6 +60,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
   UserResponse _coach;
   final PanelController _challengePanelController = PanelController();
   CoachAssignment _coachAssignment;
+  List<Challenge> _challenges;
 
   @override
   void initState() {
@@ -67,52 +70,66 @@ class _SegmentDetailState extends State<SegmentDetail> {
     super.initState();
   }
 
+  Challenge getSegmentChallenge(String segmentId) {
+    for (var i = 0; i < _challenges.length; i++) {
+      if (_challenges[i].segmentId == segmentId) {
+        return _challenges[i];
+      }
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
         _user = authState.user;
         BlocProvider.of<CoachAssignmentBloc>(context).getCoachAssignmentStatus(_user.id);
+        BlocProvider.of<ChallengeSegmentBloc>(context)
+            .getByClass(widget.courseEnrollment.id, widget.courseEnrollment.classes[widget.classIndex].id);
         return BlocBuilder<SegmentBloc, SegmentState>(builder: (context, segmentState) {
-          return BlocBuilder<MovementBloc, MovementState>(builder: (context, movementState) {
-            if (segmentState is GetSegmentsSuccess && movementState is GetAllSuccess) {
-              _segments = segmentState.segments;
-              _movements = movementState.movements;
-              totalSegments = _segments.length - 1;
-              if (totalSegments < widget.segmentIndex) {
-                widget.segmentIndex = 0; //TODO: restarts if segment wanted doesn't exists
-                currentSegmentStep = 1;
-                totalSegmentStep = totalSegments + 1;
-              } else if (totalSegments < totalSegmentStep - 1) {
-                totalSegmentStep = totalSegments + 1;
-              }
-              return BlocBuilder<CoachAssignmentBloc, CoachAssignmentState>(
-                builder: (context, state) {
-                  if (state is CoachAssignmentResponse) {
-                    _coachAssignment = state.coachAssignmentResponse;
-                    BlocProvider.of<CoachUserBloc>(context).get(_coachAssignment?.coachId);
-                    BlocProvider.of<CoachRequestBloc>(context).getClassCoachRequest(
-                        userId: _user.id,
-                        coachId: _coachAssignment?.coachId,
-                        courseEnrollmentId: widget.courseEnrollment.id,
-                        classId: widget.courseEnrollment.classes[widget.classIndex].id);
-                  }
-                  return BlocBuilder<CoachUserBloc, CoachUserState>(builder: (context, coachUserState) {
-                    return BlocBuilder<CoachRequestBloc, CoachRequestState>(builder: (context, coachRequestState) {
-                      if (coachUserState is CoachUserSuccess && coachRequestState is ClassCoachRequestsSuccess) {
-                        _coach = coachUserState.coach;
-                        _coachRequests = coachRequestState.coachRequests;
-                        return form();
-                      } else {
-                        return SizedBox();
-                      }
+          return BlocBuilder<ChallengeSegmentBloc, ChallengeSegmentState>(builder: (context, challengeSegmentState) {
+            return BlocBuilder<MovementBloc, MovementState>(builder: (context, movementState) {
+              if (segmentState is GetSegmentsSuccess && movementState is GetAllSuccess && challengeSegmentState is ChallengesSuccess) {
+                _segments = segmentState.segments;
+                _movements = movementState.movements;
+                _challenges = challengeSegmentState.challenges;
+                totalSegments = _segments.length - 1;
+                if (totalSegments < widget.segmentIndex) {
+                  widget.segmentIndex = 0; //TODO: restarts if segment wanted doesn't exists
+                  currentSegmentStep = 1;
+                  totalSegmentStep = totalSegments + 1;
+                } else if (totalSegments < totalSegmentStep - 1) {
+                  totalSegmentStep = totalSegments + 1;
+                }
+                return BlocBuilder<CoachAssignmentBloc, CoachAssignmentState>(
+                  builder: (context, state) {
+                    if (state is CoachAssignmentResponse) {
+                      _coachAssignment = state.coachAssignmentResponse;
+                      BlocProvider.of<CoachUserBloc>(context).get(_coachAssignment?.coachId);
+                      BlocProvider.of<CoachRequestBloc>(context).getClassCoachRequest(
+                          userId: _user.id,
+                          coachId: _coachAssignment?.coachId,
+                          courseEnrollmentId: widget.courseEnrollment.id,
+                          classId: widget.courseEnrollment.classes[widget.classIndex].id);
+                    }
+                    return BlocBuilder<CoachUserBloc, CoachUserState>(builder: (context, coachUserState) {
+                      return BlocBuilder<CoachRequestBloc, CoachRequestState>(builder: (context, coachRequestState) {
+                        if (coachUserState is CoachUserSuccess && coachRequestState is ClassCoachRequestsSuccess) {
+                          _coach = coachUserState.coach;
+                          _coachRequests = coachRequestState.coachRequests;
+                          return form();
+                        } else {
+                          return SizedBox();
+                        }
+                      });
                     });
-                  });
-                },
-              );
-            } else {
-              return OlukoCircularProgressIndicator();
-            }
+                  },
+                );
+              } else {
+                return OlukoCircularProgressIndicator();
+              }
+            });
           });
         });
       } else {
@@ -261,6 +278,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
           onPressed: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass],
               arguments: {'courseEnrollment': widget.courseEnrollment, 'classIndex': widget.classIndex, 'courseIndex': widget.courseIndex}),
           segment: _segments[i],
+          challenge: getSegmentChallenge(_segments[i].id),
           currentSegmentStep: i + 1,
           totalSegmentStep: totalSegmentStep,
           userId: _user.id,
