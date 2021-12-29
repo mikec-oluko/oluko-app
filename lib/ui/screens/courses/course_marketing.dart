@@ -34,8 +34,9 @@ import 'package:oluko_app/utils/time_converter.dart';
 class CourseMarketing extends StatefulWidget {
   final Course course;
   final bool fromCoach;
+  final bool isCoachRecommendation;
 
-  CourseMarketing({Key key, this.course, this.fromCoach = false}) : super(key: key);
+  CourseMarketing({Key key, this.course, this.fromCoach = false, this.isCoachRecommendation = false}) : super(key: key);
 
   get progress => null;
 
@@ -194,7 +195,9 @@ class _CourseMarketingState extends State<CourseMarketing> {
                     onPressed: () {
                       if (_disableAction == false) {
                         BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
-                        BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
+                        if (!widget.isCoachRecommendation) {
+                          BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
+                        }
                       }
                       _disableAction = true;
                     },

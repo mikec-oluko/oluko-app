@@ -11,13 +11,7 @@ class CourseInfoSection extends StatefulWidget {
   final Function() onPeoplePressed;
   final Function() clockAction;
 
-  CourseInfoSection(
-      {this.peopleQty,
-      this.audioMessageQty,
-      this.image,
-      this.onPeoplePressed,
-      this.onAudioPressed,
-      this.clockAction});
+  CourseInfoSection({this.peopleQty, this.audioMessageQty, this.image, this.onPeoplePressed, this.onAudioPressed, this.clockAction});
 
   @override
   _State createState() => _State();
@@ -27,18 +21,13 @@ class _State extends State<CourseInfoSection> {
   @override
   Widget build(BuildContext context) {
     return Row(children: [
+      Padding(padding: const EdgeInsets.only(left: 15), child: CoursePoster(image: widget.image)),
       Padding(
-          padding: const EdgeInsets.only(left: 15),
-          child: CoursePoster(image: widget.image)),
-      Padding(
-          padding: const EdgeInsets.only(left: 40),
+          padding: const EdgeInsets.only(left: 30),
           child: Column(children: [
             SizedBox(height: 80),
             Row(children: [
-              widget.peopleQty != null
-                  ? GestureDetector(
-                      onTap: widget.onPeoplePressed, child: peopleSection())
-                  : SizedBox(),
+              widget.peopleQty != null ? GestureDetector(onTap: widget.onPeoplePressed, child: peopleSection()) : SizedBox(),
               verticalDivider(),
               widget.audioMessageQty != null
                   ? GestureDetector(
@@ -68,8 +57,7 @@ class _State extends State<CourseInfoSection> {
         Text(
           OlukoLocalizations.get(context, 'personalRecord'),
           textAlign: TextAlign.center,
-          style: const TextStyle(
-              fontSize: 13, fontWeight: FontWeight.w300, color: Colors.white),
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w300, color: Colors.white),
         )
       ]),
     );
@@ -80,21 +68,18 @@ class _State extends State<CourseInfoSection> {
       Text(
         widget.peopleQty.toString() + "+",
         textAlign: TextAlign.center,
-        style: TextStyle(
-            fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+        style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
       ),
       SizedBox(height: 5),
       Text(
         OlukoLocalizations.get(context, 'inThis'),
         textAlign: TextAlign.center,
-        style: TextStyle(
-            fontSize: 13, fontWeight: FontWeight.w300, color: Colors.white),
+        style: TextStyle(fontSize: 13, fontWeight: FontWeight.w300, color: Colors.white),
       ),
       Text(
         OlukoLocalizations.get(context, 'course').toLowerCase(),
         textAlign: TextAlign.center,
-        style: TextStyle(
-            fontSize: 13, fontWeight: FontWeight.w300, color: Colors.white),
+        style: TextStyle(fontSize: 13, fontWeight: FontWeight.w300, color: Colors.white),
       ),
     ]);
   }
@@ -120,10 +105,7 @@ class _State extends State<CourseInfoSection> {
                   Text(
                     widget.audioMessageQty.toString(),
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w300,
-                        color: Colors.white),
+                    style: TextStyle(fontSize: 10, fontWeight: FontWeight.w300, color: Colors.white),
                   ),
                 ])
               : SizedBox(),

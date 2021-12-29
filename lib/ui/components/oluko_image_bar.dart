@@ -20,12 +20,7 @@ class OlukoImageBar<T> extends StatelessWidget implements PreferredSizeWidget {
   final Function(BuildContext, Movement) onPressedMovement;
 
   OlukoImageBar(
-      {this.title,
-      this.onPressed,
-      this.actions,
-      this.movements,
-      this.toolbarHeight = kToolbarHeight * 1.75,
-      this.onPressedMovement});
+      {this.title, this.onPressed, this.actions, this.movements, this.toolbarHeight = kToolbarHeight * 1.75, this.onPressedMovement});
   @override
   Widget build(BuildContext context) {
     return PreferredSize(
@@ -57,15 +52,14 @@ class OlukoImageBar<T> extends StatelessWidget implements PreferredSizeWidget {
                   ),
                   Container(
                     decoration: BoxDecoration(),
-                    width: ScreenUtils.width(context) / 1.4,
+                    width: ScreenUtils.width(context) / 1.5,
                     child: ShaderMask(
                       shaderCallback: (rect) {
                         return LinearGradient(
                           begin: Alignment.center,
                           end: Alignment.centerRight,
                           colors: [Colors.black, Colors.transparent],
-                        ).createShader(
-                            Rect.fromLTRB(0, 0, rect.width, rect.height));
+                        ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
                       },
                       blendMode: BlendMode.dstIn,
                       child: Stack(
@@ -73,9 +67,7 @@ class OlukoImageBar<T> extends StatelessWidget implements PreferredSizeWidget {
                           SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
                               child: MovementItemBubbles(
-                                  onPressed: onPressedMovement,
-                                  content: movements,
-                                  width: ScreenUtils.width(context) / 1)),
+                                  onPressed: onPressedMovement, content: movements, width: ScreenUtils.width(context) / 1)),
                         ],
                       ),
                     ),
@@ -92,8 +84,7 @@ class OlukoImageBar<T> extends StatelessWidget implements PreferredSizeWidget {
                           color: Colors.black,
                           size: 25,
                         ),
-                        onPressed: () =>
-                            {/* TODO Implement 'More' action functionality */}),
+                        onPressed: () => {/* TODO Implement 'More' action functionality */}),
                   )
                 ],
               )
@@ -102,8 +93,7 @@ class OlukoImageBar<T> extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
-  Widget _imageItem(BuildContext context, String imageUrl, String name,
-      {Function(BuildContext) onPressed}) {
+  Widget _imageItem(BuildContext context, String imageUrl, String name, {Function(BuildContext) onPressed}) {
     return GestureDetector(
       onTap: () => onPressed(context),
       child: Column(

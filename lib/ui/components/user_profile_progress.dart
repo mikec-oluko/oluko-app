@@ -89,7 +89,7 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
   }
 
   Widget profileAccomplishments({String achievementTitleKey, String achievementValue, Color color}) {
-    const double _textContainerWidth = 80;
+    const double _textContainerWidth = 88;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -108,10 +108,8 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
           children: [
             SizedBox(
               width: _textContainerWidth,
-              child: Text(
-                OlukoLocalizations.get(context, achievementTitleKey),
-                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300),
-              ),
+              child: Text(OlukoLocalizations.get(context, achievementTitleKey),
+                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300)),
             ),
           ],
         ),

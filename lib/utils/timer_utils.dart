@@ -50,9 +50,15 @@ class TimerUtils {
     return 1 - (currentTime / totalTime);
   }
 
-  static Widget roundsTimer(int totalRounds, int currentRound) => Container(
-      height: 340,
-      width: 340,
+  static Widget roundsTimer(int totalRounds, int currentRound, [bool keyboardVisibilty=false]) => Container(
+      height: () {
+        if (keyboardVisibilty) return 240.0;
+        return 340.0;
+      }(),
+      width: () {
+        if (keyboardVisibilty) return 240.0;
+        return 340.0;
+      }(),
       child: SegmentedIndeterminateProgressbar(
         max: totalRounds.toDouble() > 0 ? totalRounds.toDouble() : 1,
         progress: currentRound.toDouble() <= totalRounds.toDouble() ? currentRound.toDouble() : 1,
