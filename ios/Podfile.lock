@@ -357,24 +357,15 @@ PODS:
     - Firebase/Firestore (= 8.9.0)
     - firebase_core
     - Flutter
-  - FBAEMKit (11.2.0):
-    - FBAEMKit/AEM (= 11.2.0)
-  - FBAEMKit/AEM (11.2.0):
-    - FBSDKCoreKit_Basics (~> 11.2.0)
-  - FBSDKCoreKit (11.2.0):
-    - FBSDKCoreKit/Core (= 11.2.0)
-  - FBSDKCoreKit/Core (11.2.0):
-    - FBAEMKit (~> 11.2.0)
-    - FBSDKCoreKit_Basics (~> 11.2.0)
-  - FBSDKCoreKit_Basics (11.2.0):
-    - FBSDKCoreKit_Basics/Basics (= 11.2.0)
-  - FBSDKCoreKit_Basics/Basics (11.2.0)
-  - FBSDKLoginKit (11.2.0):
-    - FBSDKLoginKit/Login (= 11.2.0)
-  - FBSDKLoginKit/Login (11.2.0):
-    - FBSDKCoreKit (~> 11.2.0)
-    - FBSDKCoreKit_Basics (~> 11.2.0)
-  - Firebase/Analytics (8.7.0):
+  - FBAEMKit (12.1.0):
+    - FBSDKCoreKit_Basics (= 12.1.0)
+  - FBSDKCoreKit (12.1.0):
+    - FBAEMKit (= 12.1.0)
+    - FBSDKCoreKit_Basics (= 12.1.0)
+  - FBSDKCoreKit_Basics (12.1.0)
+  - FBSDKLoginKit (12.1.0):
+    - FBSDKCoreKit (= 12.1.0)
+  - Firebase/Analytics (8.9.0):
     - Firebase/Core
   - Firebase/Auth (8.9.0):
     - Firebase/CoreOnly
@@ -563,18 +554,18 @@ PODS:
   - in_app_purchase_ios (0.0.1):
     - Flutter
   - leveldb-library (1.22.1)
-  - libwebp (1.2.0):
-    - libwebp/demux (= 1.2.0)
-    - libwebp/mux (= 1.2.0)
-    - libwebp/webp (= 1.2.0)
-  - libwebp/demux (1.2.0):
+  - libwebp (1.2.1):
+    - libwebp/demux (= 1.2.1)
+    - libwebp/mux (= 1.2.1)
+    - libwebp/webp (= 1.2.1)
+  - libwebp/demux (1.2.1):
     - libwebp/webp
-  - libwebp/mux (1.2.0):
+  - libwebp/mux (1.2.1):
     - libwebp/demux
-  - libwebp/webp (1.2.0)
-  - Mantle (2.1.6):
-    - Mantle/extobjc (= 2.1.6)
-  - Mantle/extobjc (2.1.6)
+  - libwebp/webp (1.2.1)
+  - Mantle (2.2.0):
+    - Mantle/extobjc (= 2.2.0)
+  - Mantle/extobjc (2.2.0)
   - mobile-ffmpeg-min-gpl (4.4)
   - nanopb (2.30908.0):
     - nanopb/decode (= 2.30908.0)
@@ -588,9 +579,9 @@ PODS:
   - "permission_handler (5.1.0+2)":
     - Flutter
   - PromisesObjC (2.0.0)
-  - SDWebImage (5.11.1):
-    - SDWebImage/Core (= 5.11.1)
-  - SDWebImage/Core (5.11.1)
+  - SDWebImage (5.12.1):
+    - SDWebImage/Core (= 5.12.1)
+  - SDWebImage/Core (5.12.1)
   - SDWebImageWebPCoder (0.8.4):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.10)
@@ -728,24 +719,24 @@ SPEC CHECKSUMS:
   audioplayers: 455322b54050b30ea4b1af7cd9e9d105f74efa8c
   BoringSSL-GRPC: 8edf627ee524575e2f8d19d56f068b448eea3879
   camera: a0ca5080336f7af47b88436e5e26da3dee5568f0
-  cloud_firestore: 6ef724c1d02b9b34fa60fe3b52161ef41b478b79
-  FBAEMKit: 7abd022abf6ea7789aa95c527bacc23f966a857c
-  FBSDKCoreKit: 28a11d82d74ff44f7af3dc035bffd611bd3d8e7d
-  FBSDKCoreKit_Basics: 69e0acab6b97b7b8cae9d452407050e78795c34d
-  FBSDKLoginKit: f32693d81d5133ddc1c3cf45aaf08bc79a630e26
-  Firebase: bc9325d5ee2041524bac78a5213d0e530c651309
-  firebase_auth: 25f34550b0023cbc3824731240608cd0aa515ca2
-  firebase_core: f5ac1f2726a2bd0468cea0161eddeea3d83d7e3e
-  firebase_database: 64bf4cf9d3ab97fd568cdafdbf9dd505f612b577
-  firebase_storage: d4ced699e5106374a16961d8f2028a0ed34b748d
-  FirebaseAnalytics: 52768800c2add1d84b751420cb4caaf8195f2c41
-  FirebaseAuth: 2e7d029977648c67a5d51a263d4cbab76d34cf12
-  FirebaseCore: f4804c1d3f4bbbefc88904d15653038f2c99ddf7
-  FirebaseCoreDiagnostics: fe77f42da6329d6d83d21fd9d621a6b704413bfc
-  FirebaseDatabase: afc82291f9ed94ff949cec1b9505e8c3b944bc0f
-  FirebaseFirestore: e722ba956610c45d368d9787689e2aa41b809e68
-  FirebaseInstallations: 2563cb18a723ef9c6ef18318a49519b75dce613c
-  FirebaseStorage: 2e6e58fe31fb0061fdce3f156d0ebc964e9de6ba
+  cloud_firestore: 0c744725c0d1544d77db2c8eb35ef919cb19a176
+  FBAEMKit: 56c0bb9b42e3747cd82b67934f0c2b19325382ea
+  FBSDKCoreKit: 75368765d9c2303073145a7925dfaa9d60bcd77b
+  FBSDKCoreKit_Basics: 39865aff97e5f6951a78fb3e89dc4460e35e1895
+  FBSDKLoginKit: e993f97c7cc794c5da4056d8aec3c3d66033a727
+  Firebase: 13d8d96499e2635428d5bf0ec675df21f95d9a95
+  firebase_auth: e875a50b81aefb20f305dfede425647e9675c19e
+  firebase_core: c263d7daf1dc92fcd9895e6abdc04872b0ee07ff
+  firebase_database: 61be02aa72266665cc73b1f267f21d19ba9b939e
+  firebase_storage: 2ed331c6bd5bfa6d64f1a6c57f01151f4f146c16
+  FirebaseAnalytics: 4ab446ce08a3fe52e8a4303dd997cf26276bf968
+  FirebaseAuth: 2b78b2a32c07b3ecfa4970bdf1d3632b8304099b
+  FirebaseCore: 599ee609343eaf4941bd188f85e3aa077ffe325b
+  FirebaseCoreDiagnostics: 56fb7216d87e0e6ec2feddefa9d8a392fe8b2c18
+  FirebaseDatabase: 2236b804cf0cac165b4620669bedf7ee643a2bcc
+  FirebaseFirestore: 15ae9648476436efed698a909e44c4737498f9b4
+  FirebaseInstallations: 830327b45345ffc859eaa9c17bcd5ae893fd5425
+  FirebaseStorage: 452c98c31ccb40b819764bf3039426c4388d9939
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
   flutter_facebook_auth: dfd6b2563406c538098e2127512d385c9ffd70ad
   flutter_ffmpeg: 3ec3912c74649851e6c3b1885511eef78142ac4f
@@ -763,15 +754,15 @@ SPEC CHECKSUMS:
   image_picker: 9aa50e1d8cdacdbed739e925b7eea16d014367e6
   in_app_purchase_ios: 04ed55fdd1012db54095d6801335b5f5de0a475f
   leveldb-library: 50c7b45cbd7bf543c81a468fe557a16ae3db8729
-  libwebp: e90b9c01d99205d03b6bb8f2c8c415e5a4ef66f0
-  Mantle: 4c0ed6ce47c96eccc4dc3bb071deb3def0e2c3be
+  libwebp: 98a37e597e40bfdb4c911fc98f2c53d0b12d05fc
+  Mantle: c5aa8794a29a022dfbbfc9799af95f477a69b62d
   mobile-ffmpeg-min-gpl: 123f47d1bd9ec498688627a5be2621bcd6e88a01
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   package_info_plus: 6c92f08e1f853dc01228d6f553146438dafcd14e
   path_provider_ios: 7d7ce634493af4477d156294792024ec3485acd5
   permission_handler: ccb20a9fad0ee9b1314a52b70b76b473c5f8dab0
   PromisesObjC: 68159ce6952d93e17b2dfe273b8c40907db5ba58
-  SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
+  SDWebImage: 4dc3e42d9ec0c1028b960a33ac6b637bb432207b
   SDWebImageWebPCoder: f93010f3f6c031e2f8fb3081ca4ee6966c539815
   Sentry: 1d3eb1a25f8c5333c88dd5603904a6d461cd9fcf
   sentry_flutter: f20d4f199442900fbdab2b8496f1d2091d8b94d9
