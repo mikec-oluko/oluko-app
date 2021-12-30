@@ -159,7 +159,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
                 panel: () {
                   if (_segments.length - 1 >= widget.segmentIndex) {
                     return MovementVideosSection(
-                        action: downButton(),
+                        action: OlukoNeumorphism.isNeumorphismDesign ? SizedBox.shrink() : downButton(),
                         segment: _segments[widget.segmentIndex],
                         movements: _movements,
                         onPressedMovement: (BuildContext context, Movement movement) =>
@@ -186,7 +186,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
         isDraggable: false,
         header: const SizedBox(),
         padding: EdgeInsets.zero,
-        color: OlukoColors.black,
+        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
         minHeight: 0.0,
         maxHeight: 450, //TODO
         collapsed: const SizedBox(),
@@ -265,7 +265,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
     return CarouselSlider(
       items: getSegmentList(),
       options: CarouselOptions(
-          height: 760,
+          height: 765,
           autoPlay: false,
           enlargeCenterPage: false,
           disableCenter: true,
@@ -280,8 +280,13 @@ class _SegmentDetailState extends State<SegmentDetail> {
     List<Widget> segmentWidgets = [];
     for (var i = 0; i < _segments.length; i++) {
       segmentWidgets.add(SegmentImageSection(
-          onPressed: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass],
-              arguments: {'courseEnrollment': widget.courseEnrollment, 'classIndex': widget.classIndex, 'courseIndex': widget.courseIndex}),
+          onPressed: () => widget.fromChallenge
+              ? Navigator.pop(context)
+              : Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
+                  'courseEnrollment': widget.courseEnrollment,
+                  'classIndex': widget.classIndex,
+                  'courseIndex': widget.courseIndex
+                }),
           segment: _segments[i],
           currentSegmentStep: i + 1,
           totalSegmentStep: totalSegmentStep,
@@ -300,15 +305,18 @@ class _SegmentDetailState extends State<SegmentDetail> {
   }
 
   Widget _viewBody() {
-    return Column(
-      children: [
-        () {
-          if (_segments.length - 1 >= widget.segmentIndex) {
-            return getCarouselSlider();
-          }
-          return const SizedBox();
-        }(),
-      ],
+    return Container(
+      color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+      child: Column(
+        children: [
+          () {
+            if (_segments.length - 1 >= widget.segmentIndex) {
+              return getCarouselSlider();
+            }
+            return const SizedBox();
+          }(),
+        ],
+      ),
     );
   }
 

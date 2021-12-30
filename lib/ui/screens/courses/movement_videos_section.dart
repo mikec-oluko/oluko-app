@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
@@ -32,12 +33,12 @@ class _State extends State<MovementVideosSection> {
   Widget build(BuildContext context) {
     return Container(
         padding: EdgeInsets.only(left: 18),
-        decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/courses/gray_background.png'),
-              fit: BoxFit.cover,
-            ),
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+        //TODO: USE COLORS FOR NEUMORPHIC
+        decoration: OlukoNeumorphism.isNeumorphismDesign
+            ? BoxDecoration(
+                color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)))
+            : decorationImage(),
         child: Column(children: [
           SizedBox(height: 15),
           Row(children: [
@@ -59,6 +60,15 @@ class _State extends State<MovementVideosSection> {
             scale: 2,
           )
         ]));
+  }
+
+  BoxDecoration decorationImage() {
+    return BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/courses/gray_background.png'),
+          fit: BoxFit.cover,
+        ),
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)));
   }
 
   List<Movement> getSegmentMovements() {
