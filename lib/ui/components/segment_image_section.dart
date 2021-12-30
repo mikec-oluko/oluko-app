@@ -312,13 +312,6 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
     ]);
   }
 
-  /*Widget audioSection(List<UserResponse> coaches) {
-    return AudioPanel(
-      coaches: _audioUsers,
-      audios: widget.challenge.audios,
-    );
-  }*/
-
   Widget challengeButtons() {
     return Padding(
       padding: const EdgeInsets.only(left: 20, top: 190),
