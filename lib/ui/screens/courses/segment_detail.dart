@@ -22,6 +22,7 @@ import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/user_submodel.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/ui/components/modal_audio.dart';
 import 'package:oluko_app/ui/components/modal_people_enrolled.dart';
 import 'package:oluko_app/ui/components/modal_personal_record.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
@@ -197,7 +198,14 @@ class _SegmentDetailState extends State<SegmentDetail> {
           }
           if (state is SegmentDetailContentAudioOpen) {
             _challengePanelController.open();
-            _contentForPanel = Container(child: Text('audio'));
+            _contentForPanel = Container(
+                    child: Text('AUDIO',
+                    textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Colors
+                                .white))) /*ModalAudio(
+                users: _coaches, audios: getSegmentChallenge(widget.courseEnrollment.classes[widget.classIndex].segments[widget.segmentIndex].id).audios)*/
+                ;
           }
           if (state is SegmentDetailContentPeopleOpen) {
             _challengePanelController.open();

@@ -312,7 +312,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
     ]);
   }
 
-    /*Widget audioSection(List<UserResponse> coaches) {
+  /*Widget audioSection(List<UserResponse> coaches) {
     return AudioPanel(
       coaches: _audioUsers,
       audios: widget.challenge.audios,
@@ -324,7 +324,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
       padding: const EdgeInsets.only(left: 20, top: 190),
       child: Column(children: [
         Row(children: [
-          GestureDetector(onTap: widget.audioAction, child: const AudioSection(audioMessageQty: 10)),
+          GestureDetector(onTap: widget.audioAction, child: AudioSection(audioMessageQty: widget.challenge.audios != null ? widget.challenge.audios.length : 0)),
           const verticalDivider.VerticalDivider(
             width: 30,
             height: 60,
