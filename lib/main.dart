@@ -18,7 +18,7 @@ Future<void> main() async {
   await Firebase.initializeApp();
   User alreadyLoggedUser = await AuthBloc().checkCurrentUser();
   final MyApp myApp = MyApp(
-    initialRoute: alreadyLoggedUser == null ? '/sign-up' : '/',
+    initialRoute: alreadyLoggedUser == null ? '/intro_video' : '/',
   );
   if (GlobalConfiguration().getValue("build") == "local") {
     runApp(myApp);
