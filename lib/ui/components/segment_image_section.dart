@@ -8,6 +8,7 @@ import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/segment.dart';
+import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/submodels/user_submodel.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
@@ -33,7 +34,7 @@ class SegmentImageSection extends StatefulWidget {
   final int currentSegmentStep;
   final int totalSegmentStep;
   final String userId;
-  final Function() audioAction;
+  final Function(List<Audio> audios) audioAction;
   final Function(List<UserSubmodel> users, List<UserSubmodel> favorites) peopleAction;
   final Function() clockAction;
   final CourseEnrollment courseEnrollment;
@@ -317,7 +318,9 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
       padding: const EdgeInsets.only(left: 20, top: 190),
       child: Column(children: [
         Row(children: [
-          GestureDetector(onTap: widget.audioAction, child: AudioSection(audioMessageQty: widget.challenge.audios != null ? widget.challenge.audios.length : 0)),
+          GestureDetector(
+              onTap: () => widget.audioAction(widget.challenge.audios),
+              child: AudioSection(audioMessageQty: widget.challenge.audios != null ? widget.challenge.audios.length : 0)),
           const verticalDivider.VerticalDivider(
             width: 30,
             height: 60,

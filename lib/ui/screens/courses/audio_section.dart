@@ -87,7 +87,9 @@ class _State extends State<AudioSection> {
                   )
                 : SizedBox(),
             Row(children: [
-              _imageItem(context, widget.coach.avatar, widget.coach.firstName),
+              widget.coach == null
+                  ? _imageItem(context, widget.audio.userAvatarThumbnail, widget.audio.userName)
+                  : _imageItem(context, widget.coach.avatar, widget.coach.firstName),
               playButton(),
               audioSlider(),
               Padding(
@@ -127,8 +129,7 @@ class _State extends State<AudioSection> {
             'assets/courses/green_circle.png',
             scale: 5.5,
           ),
-          Icon(isPlaying ? Icons.pause : Icons.play_arrow,
-              size: 26, color: OlukoColors.black)
+          Icon(isPlaying ? Icons.pause : Icons.play_arrow, size: 26, color: OlukoColors.black)
         ]));
   }
 
@@ -144,8 +145,7 @@ class _State extends State<AudioSection> {
               child: Text(
                 name,
                 textAlign: TextAlign.center,
-                style: OlukoFonts.olukoSmallFont(
-                    customColor: OlukoColors.grayColor),
+                style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor),
               ),
             )
           ],

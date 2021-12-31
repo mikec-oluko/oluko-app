@@ -19,6 +19,7 @@ import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
+import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/submodels/user_submodel.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
@@ -198,13 +199,12 @@ class _SegmentDetailState extends State<SegmentDetail> {
           }
           if (state is SegmentDetailContentAudioOpen) {
             _challengePanelController.open();
-            _contentForPanel = Container(
+            _contentForPanel = /*Container(
                     child: Text('AUDIO',
                     textAlign: TextAlign.center,
                         style: TextStyle(
                             color: Colors
-                                .white))) /*ModalAudio(
-                users: _coaches, audios: getSegmentChallenge(widget.courseEnrollment.classes[widget.classIndex].segments[widget.segmentIndex].id).audios)*/
+                                .white)))*/ ModalAudio(audios: state.audios)
                 ;
           }
           if (state is SegmentDetailContentPeopleOpen) {
@@ -282,11 +282,12 @@ class _SegmentDetailState extends State<SegmentDetail> {
   List<Widget> getSegmentList() {
     List<Widget> segmentWidgets = [];
     for (var i = 0; i < _segments.length; i++) {
+      Challenge challenge = getSegmentChallenge(_segments[i].id);
       segmentWidgets.add(SegmentImageSection(
           onPressed: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass],
               arguments: {'courseEnrollment': widget.courseEnrollment, 'classIndex': widget.classIndex, 'courseIndex': widget.courseIndex}),
           segment: _segments[i],
-          challenge: getSegmentChallenge(_segments[i].id),
+          challenge: challenge,
           currentSegmentStep: i + 1,
           totalSegmentStep: totalSegmentStep,
           userId: _user.id,
@@ -350,8 +351,8 @@ class _SegmentDetailState extends State<SegmentDetail> {
     ];
   }
 
-  _audioAction() {
-    BlocProvider.of<SegmentDetailContentBloc>(context).openAudioPanel();
+  _audioAction(List<Audio> audios) {
+    BlocProvider.of<SegmentDetailContentBloc>(context).openAudioPanel(audios);
   }
 
   _peopleAction(List<UserSubmodel> users, List<UserSubmodel> favorites) {

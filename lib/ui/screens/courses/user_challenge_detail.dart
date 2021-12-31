@@ -250,7 +250,7 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
             OlukoPrimaryButton(
               title: OlukoLocalizations.get(context, 'saveFor') + widget.userRequested.firstName,
               onPressed: () {
-                BlocProvider.of<AudioBloc>(context)..saveAudio(File(recorder.audioUrl), _user.id, widget.challenge.id);
+                BlocProvider.of<AudioBloc>(context)..saveAudio(File(recorder.audioUrl), _user, widget.challenge.id);
                 setState(() {
                   submitted = true;
                 });
