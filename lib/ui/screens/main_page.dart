@@ -88,6 +88,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
         return Padding(
           padding: const EdgeInsets.only(bottom: 75),
           child: TabBarView(
+            physics: const NeverScrollableScrollPhysics(),
             controller: this.tabController,
             children: tabs,
           ),
