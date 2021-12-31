@@ -54,12 +54,15 @@
     "password": "Password",
     "forgotPassword": "Forgot password?",
     "login": "Login",
+    "loginToContinue": "Login to continue",
+    "continue": "Continue",
     "loggedOut": "Logged out.",
     "or": "Or",
+    "orContinueWith": "Or continue with",
     "welcomeBack": "Welcome back",
     "passwordShouldNotContainUsername": "Password should not contain your username",
     "passwordShouldNotContainEmail": "Password should not contain your email",
-    "emailOrUsername": "Email or username",
+    "emailOrUsername": "Username/email",
     "generatingThumbnail": "Generating thumbnail",
     "encodingVideo": "Encoding video",
     "uploadingThumbnail": "Uploading thumbnail to cloud storage",
@@ -251,6 +254,7 @@
     "notificationMovement": "Recommended Movement",
     "notificationSegment": "Record Segment",
     "welcomeTo": "Welcome to",
+    "fitnessWorld": "fitness world!",
     "enrollToACourse": "Enroll to a Course",
     "noCoachMessage": "to get your personal coach",
     "roundInfo": "Only first round is recorded. We will prepare your video to send it to your coach!",
@@ -258,5 +262,7 @@
     "noVideoUploaded": "You haven't uploaded a video yet",
     "goBackConfirmationWithRecording": "Do you want to go back? Your recordings will be lost.",
     "goBackConfirmationWithoutRecording": "Do you want to go back? Your progress will be lost.",
-    "coachPageAssessmentsText": "Complete the below tasks to get a coach assigned"
+    "coachPageAssessmentsText": "Complete the below tasks to get a coach assigned",
+    "bestYouCanDo": "The best you can do for your fitness",
+    "loginSubtitle": "This will help you to track your all the fitness data"
 }

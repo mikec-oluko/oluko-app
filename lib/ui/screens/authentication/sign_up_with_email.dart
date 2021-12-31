@@ -133,7 +133,7 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
                       ]));
                 })),
             InkWell(
-              onTap: () => Navigator.pushNamed(context, '/log-in'),
+              onTap: () => Navigator.pushNamed(context, '/log-in-username'),
               child: Padding(
                 padding: EdgeInsets.only(top: 10),
                 child: Column(

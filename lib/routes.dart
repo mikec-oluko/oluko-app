@@ -22,6 +22,7 @@ import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/message_bloc.dart';
 import 'package:oluko_app/blocs/gallery_video_bloc.dart';
 import 'package:oluko_app/blocs/inside_class_content_bloc.dart';
+import 'package:oluko_app/blocs/introduction_media_bloc.dart';
 import 'package:oluko_app/blocs/personal_record_bloc.dart';
 import 'package:oluko_app/blocs/segment_detail_content_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
@@ -64,7 +65,9 @@ import 'package:oluko_app/ui/screens/assessments/self_recording.dart';
 import 'package:oluko_app/ui/screens/assessments/self_recording_preview.dart';
 import 'package:oluko_app/ui/screens/assessments/task_details.dart';
 import 'package:oluko_app/ui/screens/assessments/task_submission_recorded_video.dart';
-import 'package:oluko_app/ui/screens/authentication/login.dart';
+import 'package:oluko_app/ui/screens/authentication/introduction_video.dart';
+import 'package:oluko_app/ui/screens/authentication/login_password.dart';
+import 'package:oluko_app/ui/screens/authentication/login_username.dart';
 import 'package:oluko_app/ui/screens/authentication/sign_up.dart';
 import 'package:oluko_app/ui/screens/authentication/sign_up_with_email.dart';
 import 'package:oluko_app/ui/screens/choose_plan_payment.dart';
@@ -116,6 +119,7 @@ import 'blocs/movement_info_bloc.dart';
 import 'blocs/recording_alert_bloc.dart';
 import 'blocs/views_bloc/hi_five_bloc.dart';
 import 'models/annotation.dart';
+import 'models/dto/login_request.dart';
 import 'models/segment_submission.dart';
 import 'models/task.dart';
 import 'ui/screens/coach/coach_main_page.dart';
@@ -136,6 +140,7 @@ import 'models/transformation_journey_uploads.dart';
 
 enum RouteEnum {
   root,
+  introVideo,
   signUp,
   signUpWithEmail,
   friends,
@@ -152,7 +157,8 @@ enum RouteEnum {
   transformationJourneyPost,
   transformationJournetContentDetails,
   transformationJourneyPostView,
-  logIn,
+  logInUsername,
+  logInPassword,
   appPlans,
   segmentDetail,
   movementIntro,
@@ -185,6 +191,7 @@ enum RouteEnum {
 
 Map<RouteEnum, String> routeLabels = {
   RouteEnum.root: '/',
+  RouteEnum.introVideo: '/intro_video',
   RouteEnum.signUp: '/sign-up',
   RouteEnum.signUpWithEmail: '/sign-up-with-email',
   RouteEnum.friends: '/friends',
@@ -201,7 +208,8 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.transformationJourneyPost: '/transformation-journey-post',
   RouteEnum.transformationJournetContentDetails: '/transformation-journey-content-details',
   RouteEnum.transformationJourneyPostView: '/transformation-journey-post-view',
-  RouteEnum.logIn: '/log-in',
+  RouteEnum.logInUsername: '/log-in-username',
+  RouteEnum.logInPassword: '/log-in-password',
   RouteEnum.appPlans: '/app-plans',
   RouteEnum.segmentDetail: '/segment-detail',
   RouteEnum.movementIntro: '/movement-intro',
@@ -240,6 +248,7 @@ RouteEnum getEnumFromRouteString(String route) {
 class Routes {
   final OlukoPanelBloc _olukoPanelBloc = OlukoPanelBloc();
   final AuthBloc _authBloc = AuthBloc();
+  final IntroductionMediaBloc _introductionMediaBloc = IntroductionMediaBloc();
   final ProfileBloc _profileBloc = ProfileBloc();
   final CourseBloc _courseBloc = CourseBloc();
   final CourseHomeBloc _courseHomeBloc = CourseHomeBloc();
@@ -367,6 +376,10 @@ class Routes {
           classIndex: argumentsToAdd == null || argumentsToAdd['classIndex'] == null ? null : argumentsToAdd['classIndex'] as int,
           tab: argumentsToAdd == null || argumentsToAdd['tab'] == null ? null : argumentsToAdd['tab'] as int,
         );
+        break;
+      case RouteEnum.introVideo:
+        providers = [BlocProvider<IntroductionMediaBloc>.value(value: _introductionMediaBloc)];
+        newRouteView = IntroductionVideo();
         break;
       case RouteEnum.signUp:
         newRouteView = SignUpPage();
@@ -518,8 +531,12 @@ class Routes {
         final Map<String, TransformationJourneyUpload> argumentsToAdd = arguments as Map<String, TransformationJourneyUpload>;
         newRouteView = TransformationJourneyContentDetail(contentToShow: argumentsToAdd['TransformationJourneyUpload']);
         break;
-      case RouteEnum.logIn:
-        newRouteView = LoginPage();
+      case RouteEnum.logInUsername:
+        newRouteView = LoginUsernamePage();
+        break;
+      case RouteEnum.logInPassword:
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        newRouteView = LoginPasswordPage(requestData: argumentsToAdd['requestData'] as String);
         break;
       case RouteEnum.appPlans:
         newRouteView = AppPlans();

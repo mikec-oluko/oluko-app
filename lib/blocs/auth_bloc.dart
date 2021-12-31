@@ -159,7 +159,7 @@ class AuthBloc extends Cubit<AuthState> {
       }
       // ignore: avoid_catching_errors
     } on NoSuchMethodError catch (e) {
-      Navigator.pushNamed(context, '/log-in');
+      Navigator.pushNamed(context, '/sign-up');
     }
   }
 

@@ -67,7 +67,7 @@ class _OlukoNeumorphicButtonState extends State<OlukoNeumorphicSecondaryButton> 
           ligthShadow: true,
           darkShadow: true),
       child: Center(
-        child: _textLabel(),
+        child: widget.onlyIcon ? widget.icon : _textLabel(),
       ),
     );
   }
