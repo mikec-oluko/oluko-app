@@ -73,9 +73,11 @@ class _SegmentDetailState extends State<SegmentDetail> {
   }
 
   Challenge getSegmentChallenge(String segmentId) {
-    for (var i = 0; i < _challenges.length; i++) {
-      if (_challenges[i].segmentId == segmentId) {
-        return _challenges[i];
+    if (_challenges != null) {
+      for (var i = 0; i < _challenges.length; i++) {
+        if (_challenges[i].segmentId == segmentId) {
+          return _challenges[i];
+        }
       }
     }
     return null;
@@ -204,8 +206,8 @@ class _SegmentDetailState extends State<SegmentDetail> {
                     textAlign: TextAlign.center,
                         style: TextStyle(
                             color: Colors
-                                .white)))*/ ModalAudio(audios: state.audios)
-                ;
+                                .white)))*/
+                ModalAudio(audios: state.audios);
           }
           if (state is SegmentDetailContentPeopleOpen) {
             _challengePanelController.open();
