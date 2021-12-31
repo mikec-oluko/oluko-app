@@ -30,8 +30,7 @@ class ChallengeRepository {
     return null;
   }
 
-  static Future<List<Challenge>> getUserChallengesBySegmentId(
-      String segmentId, String userId) async {
+  static Future<List<Challenge>> getUserChallengesBySegmentId(String segmentId, String userId) async {
     final QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
@@ -49,11 +48,8 @@ class ChallengeRepository {
   }
 
   static Future<void> saveAudio(String id, Audio audio) async {
-    DocumentReference reference = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('challenges')
-        .doc(id);
+    DocumentReference reference =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('challenges').doc(id);
     DocumentSnapshot ds = await reference.get();
     Challenge challenge = Challenge.fromJson(ds.data() as Map<String, dynamic>);
     List<Audio> audios;
@@ -67,5 +63,22 @@ class ChallengeRepository {
     reference.update({
       'audios': List<dynamic>.from(audios.map((a) => a.toJson())),
     });
+  }
+
+  static Future<List<Challenge>> getByClass(String courseEnrollmentId, String classId) async {
+    final QuerySnapshot docRef = await FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('challenges')
+        .where('course_enrollment_id', isEqualTo: courseEnrollmentId)
+        .where('class_id', isEqualTo: classId)
+        .get();
+    if (docRef.docs.isNotEmpty) {
+      return docRef.docs.map((challengeData) {
+        final data = challengeData.data() as Map<String, dynamic>;
+        return Challenge.fromJson(data);
+      }).toList();
+    }
+    return null;
   }
 }

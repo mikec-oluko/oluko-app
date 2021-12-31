@@ -44,7 +44,7 @@ class _State extends State<AudioPanel> {
                   customColor: OlukoColors.white),
             ),
           ),
-          Container(height: 400, child: ListView(children: getAudioWidgets()))
+          Container(height: 370, child: ListView(children: getAudioWidgets()))
         ]));
   }
 
@@ -53,7 +53,7 @@ class _State extends State<AudioPanel> {
     for (int i = 0; i < widget.audios.length; i++) {
       widgets.add(AudioSection(
           showTopDivider: i != 0,
-          coach: widget.coaches[i],
+          coach: widget.coaches == null ? null : widget.coaches[i],
           audio: widget.audios[i]));
     }
     return widgets;

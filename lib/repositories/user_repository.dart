@@ -224,4 +224,5 @@ class UserRepository {
       rethrow;
     }
   }
+
 }

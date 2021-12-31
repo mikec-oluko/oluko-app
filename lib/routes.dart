@@ -5,7 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
-import 'package:oluko_app/blocs/challenge_bloc.dart';
+import 'package:oluko_app/blocs/challenge/challenge_bloc.dart';
+import 'package:oluko_app/blocs/challenge/challenge_segment_bloc.dart';
 import 'package:oluko_app/blocs/class/class_subscription_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_audio_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_introduction_video_bloc.dart';
@@ -47,6 +48,7 @@ import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
+import 'package:oluko_app/blocs/user_audio_bloc.dart';
 import 'package:oluko_app/blocs/user_list_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
 import 'package:oluko_app/models/challenge.dart';
@@ -303,7 +305,10 @@ class Routes {
   final CourseCategoryBloc _courseCategoryBloc = CourseCategoryBloc();
   final CourseSubscriptionBloc _courseSubscriptionBloc = CourseSubscriptionBloc();
   final ClassSubscriptionBloc _classSubscriptionBloc = ClassSubscriptionBloc();
+  final UserAudioBloc _userAudioBloc = UserAudioBloc();
+  final ChallengeSegmentBloc _challengeSegmentBloc = ChallengeSegmentBloc();
   final KeyboardBloc _keyboardBloc = KeyboardBloc();
+
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -530,6 +535,7 @@ class Routes {
           BlocProvider<MovementBloc>.value(value: _movementBloc),
           BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
           BlocProvider<CoachUserBloc>.value(value: _coachUserBloc),
+          BlocProvider<ChallengeSegmentBloc>.value(value: _challengeSegmentBloc),
           BlocProvider<SegmentDetailContentBloc>.value(value: _segmentDetailContentBloc),
           BlocProvider<DoneChallengeUsersBloc>.value(value: _doneChallengeUsersBloc),
           BlocProvider<PersonalRecordBloc>.value(value: _personalRecordBloc),

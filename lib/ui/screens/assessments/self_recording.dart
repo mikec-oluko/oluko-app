@@ -35,6 +35,8 @@ class _State extends State<SelfRecording> {
   bool _recording = false;
   bool isCameraFront = false;
 
+  bool _buttonBlocked = false;
+
   Task _task;
   List<Task> _tasks;
 
@@ -190,23 +192,29 @@ class _State extends State<SelfRecording> {
                 : SizedBox(),
             GestureDetector(
               onTap: () async {
-                if (_recording) {
-                  final XFile videopath = await cameraController.stopVideoRecording();
-                  final String path = videopath.path;
-                  Navigator.pop(context);
-                  //TODO: Send flag to set assesment as last upload
-                  Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecordingPreview], arguments: {
-                    'taskIndex': widget.taskIndex,
-                    'filePath': path,
-                    'isPublic': widget.isPublic,
-                    'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
+                if (!_buttonBlocked) {
+                  setState(() {
+                    _buttonBlocked = true;
                   });
-                } else {
-                  await cameraController.startVideoRecording();
+                  if (_recording) {
+                    final XFile videopath = await cameraController.stopVideoRecording();
+                    final String path = videopath.path;
+                    Navigator.pop(context);
+                    //TODO: Send flag to set assesment as last upload
+                    Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecordingPreview], arguments: {
+                      'taskIndex': widget.taskIndex,
+                      'filePath': path,
+                      'isPublic': widget.isPublic,
+                      'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
+                    });
+                  } else {
+                    await cameraController.startVideoRecording();
+                  }
+                  setState(() {
+                    _recording = !_recording;
+                    _buttonBlocked = false;
+                  });
                 }
-                setState(() {
-                  _recording = !_recording;
-                });
               },
               child: _recording ? recordingIcon() : recordIcon(),
             ),
