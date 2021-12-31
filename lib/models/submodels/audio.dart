@@ -6,26 +6,28 @@ class Audio {
   AudioStateEnum state;
   String userId;
   DocumentReference userReference;
+  String userAvatarThumbnail;
   String id;
+  String userName;
 
-  Audio({this.url, this.state, this.userId, this.userReference, this.id});
+  Audio({this.url, this.userName, this.state, this.userId, this.userReference, this.id, this.userAvatarThumbnail});
 
   factory Audio.fromJson(Map<String, dynamic> json) {
     return Audio(
       url: json['url']?.toString(),
-      state: json['state'] == null
-          ? null
-          : AudioStateEnum.values[json['state'] as int],
+      userName: json['user_name']?.toString(),
+      userAvatarThumbnail: json['user_avatar_thumbnail']?.toString(),
+      state: json['state'] == null ? null : AudioStateEnum.values[json['state'] as int],
       userId: json['user_id']?.toString(),
       id: json['id']?.toString(),
-      userReference: json['user_reference'] != null
-          ? json['user_reference'] as DocumentReference
-          : null,
+      userReference: json['user_reference'] != null ? json['user_reference'] as DocumentReference : null,
     );
   }
 
   Map<String, dynamic> toJson() => {
         'url': url,
+        'user_name': userName,
+        'user_avatar_thumbnail': userAvatarThumbnail,
         'state': state,
         'user_id': userId,
         'id': id,
