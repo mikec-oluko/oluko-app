@@ -81,7 +81,12 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
 
   @override
   Widget build(BuildContext context) {
-    return imageWithButtons();
+    return WillPopScope(
+        onWillPop: () {
+          Navigator.popUntil(context, ModalRoute.withName('/inside-class'));
+          return Future(() => false);
+        },
+        child: imageWithButtons());
   }
 
   Widget imageWithButtons() {
