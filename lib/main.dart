@@ -9,6 +9,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'config/project_settings.dart';
 
 Future<void> main() async {
@@ -16,9 +17,11 @@ Future<void> main() async {
   GlobalConfiguration().loadFromMap(projectSettings);
   GlobalConfiguration().loadFromMap(s3Settings);
   await Firebase.initializeApp();
-  User alreadyLoggedUser = await AuthBloc().checkCurrentUser();
+  final User alreadyLoggedUser = await AuthBloc().checkCurrentUser();
+  final bool firstTime = await isFirstTime();
+  final String route = getInitialRoute(alreadyLoggedUser, firstTime);
   final MyApp myApp = MyApp(
-    initialRoute: alreadyLoggedUser == null ? '/intro_video' : '/',
+    initialRoute: route,
   );
   if (GlobalConfiguration().getValue("build") == "local") {
     runApp(myApp);
@@ -31,6 +34,29 @@ Future<void> main() async {
       },
       appRunner: () => runApp(myApp),
     );
+  }
+}
+
+String getInitialRoute(User alreadyLoggedUser, bool isFirstTime) {
+  if (alreadyLoggedUser == null) {
+    if (isFirstTime != null && isFirstTime) {
+      return '/intro_video';
+    } else {
+      return '/sign_up';
+    }
+  } else {
+    return '/';
+  }
+}
+
+Future<bool> isFirstTime() async {
+  final sharedPref = await SharedPreferences.getInstance();
+  final isFirstTime = sharedPref.getBool('first_time');
+  sharedPref.setBool('first_time', false);
+  if (isFirstTime != null && !isFirstTime) {
+    return false;
+  } else {
+    return true;
   }
 }
 

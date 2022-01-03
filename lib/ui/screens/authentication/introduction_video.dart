@@ -7,13 +7,30 @@ import 'package:oluko_app/routes.dart';
 import 'package:video_player/video_player.dart';
 
 class IntroductionVideo extends StatefulWidget {
-  IntroductionVideo({Key key, this.chewieController, this.videoPlayerController}) : super(key: key);
-
-  VideoPlayerController videoPlayerController;
-  ChewieController chewieController;
+  IntroductionVideo({Key key}) : super(key: key);
 
   @override
   _IntroductionVideoState createState() => _IntroductionVideoState();
+}
+
+Future<ChewieController> getChewieWithVideo(BuildContext context) async {
+  final mediaURL = await IntroductionMediaRepository().getIntroVideoURL();
+  if(mediaURL == null || mediaURL.isEmpty) Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.signUp]);
+  final VideoPlayerController videoPlayerController = VideoPlayerController.network(mediaURL);
+  await videoPlayerController.initialize();
+  final ChewieController chewieController = ChewieController(
+    videoPlayerController: videoPlayerController,
+    autoPlay: true,
+    autoInitialize: true,
+    showControls: false,
+    fullScreenByDefault: true,
+  );
+  videoPlayerController.addListener(() {
+    if (videoPlayerController != null && videoPlayerController.value != null && videoPlayerController.value.position == videoPlayerController.value.duration) {
+      Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.signUp]);
+    }
+  });
+  return chewieController;
 }
 
 class _IntroductionVideoState extends State<IntroductionVideo> {
@@ -26,39 +43,14 @@ class _IntroductionVideoState extends State<IntroductionVideo> {
         BuildContext context,
         AsyncSnapshot<ChewieController> snapshot,
       ) {
-        if (snapshot != null && snapshot.hasData != null) {
+        if (snapshot != null && snapshot.hasData && (snapshot.hasError == null || !snapshot.hasError)) {
           return Chewie(
             controller: snapshot.data,
           );
         } else {
-          widget.videoPlayerController.dispose();
-          widget.chewieController.dispose();
-          Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.signUp]);
           return const SizedBox();
         }
       },
     );
-  }
-
-  Future<ChewieController> getChewieWithVideo(BuildContext context) async {
-    final mediaURL = await IntroductionMediaRepository().getIntroVideoURL();
-    widget.videoPlayerController = VideoPlayerController.network(mediaURL);
-    await widget.videoPlayerController.initialize();
-    widget.chewieController = ChewieController(
-      videoPlayerController: widget.videoPlayerController,
-      autoPlay: true,
-      autoInitialize: true,
-      showControls: false,
-      fullScreenByDefault: true,
-    );
-    widget.videoPlayerController.addListener(() {
-      if (widget.videoPlayerController != null &&
-          widget.videoPlayerController.value.position == widget.videoPlayerController.value.duration) {
-        widget.videoPlayerController.dispose();
-        widget.chewieController.dispose();
-        Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.signUp]);
-      }
-    });
-    return widget.chewieController;
   }
 }
