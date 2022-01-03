@@ -34,7 +34,9 @@ class _ProfileAssessmentVideosPageState extends State<ProfileAssessmentVideosPag
             if (state is GetUserTaskSubmissionSuccess) {
               _assessmentVideoContent = state.taskSubmissions;
               _contentGallery = TransformListOfItemsToWidget.getWidgetListFromContent(
-                  assessmentVideoData: _assessmentVideoContent, requestedFromRoute: ActualProfileRoute.userAssessmentVideos);
+                  assessmentVideoData: _assessmentVideoContent,
+                  requestedFromRoute: ActualProfileRoute.userAssessmentVideos,
+                  requestedUser: _profileInfo);
             }
             return page(context, _profileInfo);
           },
