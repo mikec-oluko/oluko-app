@@ -6,30 +6,17 @@ import 'package:oluko_app/repositories/introduction_media_repository.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:video_player/video_player.dart';
 
-class IntroductionVideo extends StatelessWidget {
-  const IntroductionVideo({Key key}) : super(key: key);
+class IntroductionVideo extends StatefulWidget {
+  IntroductionVideo({Key key, this.chewieController, this.videoPlayerController}) : super(key: key);
 
-  Future<ChewieController> getChewieWithVideo(BuildContext context) async {
-    final mediaURL = await IntroductionMediaRepository().getIntroVideoURL();
-    final VideoPlayerController videoPlayerController = VideoPlayerController.network(mediaURL);
-    await videoPlayerController.initialize();
-    final ChewieController chewieController = ChewieController(
-      videoPlayerController: videoPlayerController,
-      autoPlay: true,
-      autoInitialize: true,
-      showControls: false,
-      fullScreenByDefault: true,
-    );
-    videoPlayerController.addListener(() {
-      if (videoPlayerController != null && videoPlayerController.value.position == videoPlayerController.value.duration) {
-        videoPlayerController.dispose();
-        chewieController.dispose();
-        Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.signUp]);
-      }
-    });
-    return chewieController;
-  }
+  VideoPlayerController videoPlayerController;
+  ChewieController chewieController;
 
+  @override
+  _IntroductionVideoState createState() => _IntroductionVideoState();
+}
+
+class _IntroductionVideoState extends State<IntroductionVideo> {
   @override
   Widget build(BuildContext context) {
     BlocProvider.of<IntroductionMediaBloc>(context).getIntroVideo();
@@ -39,14 +26,39 @@ class IntroductionVideo extends StatelessWidget {
         BuildContext context,
         AsyncSnapshot<ChewieController> snapshot,
       ) {
-        if (snapshot.hasData) {
+        if (snapshot != null && snapshot.hasData != null) {
           return Chewie(
             controller: snapshot.data,
           );
         } else {
+          widget.videoPlayerController.dispose();
+          widget.chewieController.dispose();
+          Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.signUp]);
           return const SizedBox();
         }
       },
     );
+  }
+
+  Future<ChewieController> getChewieWithVideo(BuildContext context) async {
+    final mediaURL = await IntroductionMediaRepository().getIntroVideoURL();
+    widget.videoPlayerController = VideoPlayerController.network(mediaURL);
+    await widget.videoPlayerController.initialize();
+    widget.chewieController = ChewieController(
+      videoPlayerController: widget.videoPlayerController,
+      autoPlay: true,
+      autoInitialize: true,
+      showControls: false,
+      fullScreenByDefault: true,
+    );
+    widget.videoPlayerController.addListener(() {
+      if (widget.videoPlayerController != null &&
+          widget.videoPlayerController.value.position == widget.videoPlayerController.value.duration) {
+        widget.videoPlayerController.dispose();
+        widget.chewieController.dispose();
+        Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.signUp]);
+      }
+    });
+    return widget.chewieController;
   }
 }
