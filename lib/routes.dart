@@ -309,7 +309,6 @@ class Routes {
   final ChallengeSegmentBloc _challengeSegmentBloc = ChallengeSegmentBloc();
   final KeyboardBloc _keyboardBloc = KeyboardBloc();
 
-
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
     Widget newRouteView;
@@ -726,6 +725,7 @@ class Routes {
         break;
       case RouteEnum.courses:
         providers = [
+          BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
           BlocProvider<FavoriteBloc>.value(value: _favoriteBloc),
           BlocProvider<CourseBloc>.value(value: _courseBloc),
           BlocProvider<CourseCategoryBloc>.value(value: _courseCategoryBloc),
