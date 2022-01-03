@@ -333,7 +333,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     content: TransformListOfItemsToWidget.getWidgetListFromContent(
                         upcomingChallenges: _activeChallenges,
                         requestedFromRoute: ActualProfileRoute.userProfile,
-                        requestedUser: widget.userRequested,
+                        requestedUser: _userProfileToDisplay,
                         useAudio: !_isCurrentUser)),
               )
             : defaultWidgetNoContent;
@@ -375,7 +375,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 titleForSection: OlukoLocalizations.get(context, 'transformationJourney'),
                 routeForSection: RouteEnum.profileTransformationJourney,
                 contentForSection: TransformListOfItemsToWidget.getWidgetListFromContent(
-                    tansformationJourneyData: _transformationJourneyContent, requestedFromRoute: ActualProfileRoute.userProfile))
+                    tansformationJourneyData: _transformationJourneyContent,
+                    requestedFromRoute: ActualProfileRoute.userProfile,
+                    requestedUser: _userProfileToDisplay))
             : defaultWidgetNoContent;
       },
     );
@@ -392,7 +394,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
               titleForSection: OlukoLocalizations.get(context, 'assessmentVideos'),
               routeForSection: RouteEnum.profileAssessmentVideos,
               contentForSection: TransformListOfItemsToWidget.getWidgetListFromContent(
-                  requestedUser: _currentAuthUser,
+                  requestedUser: _userProfileToDisplay,
                   assessmentVideoData: _assessmentVideosContent,
                   requestedFromRoute: ActualProfileRoute.userProfile))
           : defaultWidgetNoContent;
