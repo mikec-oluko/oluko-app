@@ -309,7 +309,6 @@ class Routes {
   final ChallengeSegmentBloc _challengeSegmentBloc = ChallengeSegmentBloc();
   final KeyboardBloc _keyboardBloc = KeyboardBloc();
 
-
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
     Widget newRouteView;
@@ -505,7 +504,8 @@ class Routes {
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
           BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
         ];
-        newRouteView = ProfileAssessmentVideosPage();
+        final Map<String, UserResponse> argumentsToAdd = arguments as Map<String, UserResponse>;
+        newRouteView = ProfileAssessmentVideosPage(userRequested: argumentsToAdd['profileInfo']);
         break;
       case RouteEnum.transformationJourneyPost:
         providers = [
