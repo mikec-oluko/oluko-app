@@ -518,7 +518,8 @@ class Routes {
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
           BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
         ];
-        newRouteView = ProfileAssessmentVideosPage();
+        final Map<String, UserResponse> argumentsToAdd = arguments as Map<String, UserResponse>;
+        newRouteView = ProfileAssessmentVideosPage(userRequested: argumentsToAdd['profileInfo']);
         break;
       case RouteEnum.transformationJourneyPost:
         providers = [
@@ -743,6 +744,7 @@ class Routes {
         break;
       case RouteEnum.courses:
         providers = [
+          BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
           BlocProvider<FavoriteBloc>.value(value: _favoriteBloc),
           BlocProvider<CourseBloc>.value(value: _courseBloc),
           BlocProvider<CourseCategoryBloc>.value(value: _courseCategoryBloc),
@@ -755,6 +757,7 @@ class Routes {
         final Map<String, dynamic> args = arguments as Map<String, dynamic>;
         newRouteView = Courses(homeEnrollTocourse: args['homeEnrollTocourse'] == 'true');
         break;
+
       case RouteEnum.viewAll:
         Map<String, dynamic> args = arguments as Map<String, dynamic>;
         List<Course> courses = args['courses'] as List<Course>;
