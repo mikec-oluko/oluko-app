@@ -23,13 +23,13 @@ Future<void> main() async {
   final MyApp myApp = MyApp(
     initialRoute: route,
   );
-  if (GlobalConfiguration().getValue("build") == "local") {
+  if (GlobalConfiguration().getValue('build') == 'local') {
     runApp(myApp);
   } else {
     await SentryFlutter.init(
       (options) {
-        options.dsn = GlobalConfiguration().getValue("sentryDsn");
-        options.environment = GlobalConfiguration().getValue("environment");
+        options.dsn = GlobalConfiguration().getValue('sentryDsn');
+        options.environment = GlobalConfiguration().getValue('environment');
         options.reportSilentFlutterErrors = true;
       },
       appRunner: () => runApp(myApp),
@@ -71,6 +71,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   Routes routes = Routes();
 
+  @override
   Widget build(BuildContext mainContext) {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
