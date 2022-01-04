@@ -9,6 +9,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'config/project_settings.dart';
 
 Future<void> main() async {
@@ -16,22 +17,43 @@ Future<void> main() async {
   GlobalConfiguration().loadFromMap(projectSettings);
   GlobalConfiguration().loadFromMap(s3Settings);
   await Firebase.initializeApp();
-  User alreadyLoggedUser = await AuthBloc().checkCurrentUser();
+  final User alreadyLoggedUser = await AuthBloc().checkCurrentUser();
+  final bool firstTime = await isFirstTime();
+  final String route = getInitialRoute(alreadyLoggedUser, firstTime);
   final MyApp myApp = MyApp(
-    initialRoute: alreadyLoggedUser == null ? '/sign-up' : '/',
+    initialRoute: route,
   );
-  if (GlobalConfiguration().getValue("build") == "local") {
+  if (GlobalConfiguration().getValue('build') == 'local') {
     runApp(myApp);
   } else {
     await SentryFlutter.init(
       (options) {
-        options.dsn = GlobalConfiguration().getValue("sentryDsn");
-        options.environment = GlobalConfiguration().getValue("environment");
+        options.dsn = GlobalConfiguration().getValue('sentryDsn');
+        options.environment = GlobalConfiguration().getValue('environment');
         options.reportSilentFlutterErrors = true;
       },
       appRunner: () => runApp(myApp),
     );
   }
+}
+
+String getInitialRoute(User alreadyLoggedUser, bool isFirstTime) {
+  if (alreadyLoggedUser == null) {
+    if (isFirstTime != null && isFirstTime) {
+      return routeLabels[RouteEnum.introVideo];
+    } else {
+      return routeLabels[RouteEnum.signUp];
+    }
+  } else {
+    return routeLabels[RouteEnum.root];
+  }
+}
+
+Future<bool> isFirstTime() async {
+  final sharedPref = await SharedPreferences.getInstance();
+  final isFirstTime = sharedPref.getBool('first_time');
+  sharedPref.setBool('first_time', false);
+  return !(isFirstTime != null && !isFirstTime);
 }
 
 const OLUKO = 'Oluko';
@@ -49,6 +71,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   Routes routes = Routes();
 
+  @override
   Widget build(BuildContext mainContext) {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,

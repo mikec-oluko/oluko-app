@@ -15,6 +15,7 @@ import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/assessment_assignment_repository.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/repositories/user_repository.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/utils/app_loader.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
@@ -159,7 +160,7 @@ class AuthBloc extends Cubit<AuthState> {
       }
       // ignore: avoid_catching_errors
     } on NoSuchMethodError catch (e) {
-      Navigator.pushNamed(context, '/log-in');
+      Navigator.pushNamed(context, routeLabels[RouteEnum.signUp]);
     }
   }
 
@@ -230,7 +231,7 @@ class AuthBloc extends Cubit<AuthState> {
       BlocProvider.of<CourseSubscriptionBloc>(context).dispose();
       BlocProvider.of<CourseCategoryBloc>(context).dispose();
 
-      Navigator.pushNamedAndRemoveUntil(context, '/sign-up', (route) => false);
+      Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.signUp], (route) => false);
       emit(AuthGuest());
     }
   }
