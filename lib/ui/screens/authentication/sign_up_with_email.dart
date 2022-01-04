@@ -4,6 +4,7 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/sign_up_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/sign_up_request.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/screens/authentication/peek_password.dart';
 import 'package:oluko_app/utils/app_loader.dart';
 import 'package:global_configuration/global_configuration.dart';
@@ -133,7 +134,7 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
                       ]));
                 })),
             InkWell(
-              onTap: () => Navigator.pushNamed(context, '/log-in-username'),
+              onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.logInUsername]),
               child: Padding(
                 padding: EdgeInsets.only(top: 10),
                 child: Column(

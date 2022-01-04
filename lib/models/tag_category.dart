@@ -13,7 +13,8 @@ class TagCategory extends Base {
       Timestamp updatedAt,
       String updatedBy,
       bool isHidden,
-      bool isDeleted})
+      bool isDeleted,
+      bool onlyBackOfficeAccess})
       : super(
             id: id,
             createdBy: createdBy,
@@ -29,6 +30,7 @@ class TagCategory extends Base {
   factory TagCategory.fromJson(Map<String, dynamic> json) {
     TagCategory tagCategory = TagCategory(
       name: json['name']?.toString(),
+      onlyBackOfficeAccess: json['only_back_office_access'] is bool ? json['only_back_office_access'] as bool : false,
       tags: json['tags'] != null
           ? (json['tags'] as Iterable).map<TagCategoryItem>((item) => TagCategoryItem.fromJson(item as Map<String, dynamic>)).toList()
           : [],

@@ -40,12 +40,12 @@ Future<void> main() async {
 String getInitialRoute(User alreadyLoggedUser, bool isFirstTime) {
   if (alreadyLoggedUser == null) {
     if (isFirstTime != null && isFirstTime) {
-      return '/intro_video';
+      return routeLabels[RouteEnum.introVideo];
     } else {
-      return '/sign_up';
+      return routeLabels[RouteEnum.signUp];
     }
   } else {
-    return '/';
+    return routeLabels[RouteEnum.root];
   }
 }
 
@@ -53,11 +53,7 @@ Future<bool> isFirstTime() async {
   final sharedPref = await SharedPreferences.getInstance();
   final isFirstTime = sharedPref.getBool('first_time');
   sharedPref.setBool('first_time', false);
-  if (isFirstTime != null && !isFirstTime) {
-    return false;
-  } else {
-    return true;
-  }
+  return !(isFirstTime != null && !isFirstTime);
 }
 
 const OLUKO = 'Oluko';

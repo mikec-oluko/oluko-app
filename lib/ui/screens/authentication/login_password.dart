@@ -79,15 +79,9 @@ class _LoginPasswordPageState extends State<LoginPasswordPage> {
             fillColor: Colors.white70),
         obscureText: !_peekPassword,
         onChanged: (value) {
-          if (!_isButtonEnabled && value != null && value.isNotEmpty) {
-            setState(() {
-              _isButtonEnabled = true;
-            });
-          } else if (_isButtonEnabled && (value == null || value.isEmpty)) {
-            setState(() {
-              _isButtonEnabled = false;
-            });
-          }
+          setState(() {
+            _isButtonEnabled = !_isButtonEnabled && value != null && value.isNotEmpty;
+          });
         },
         onSaved: (value) {
           if (value != null && value.isNotEmpty) {
