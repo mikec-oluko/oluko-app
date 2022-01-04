@@ -14,7 +14,8 @@ class IntroductionVideo extends StatefulWidget {
 }
 
 Future<ChewieController> getChewieWithVideo(BuildContext context) async {
-  final mediaURL = await IntroductionMediaRepository.getIntroVideoURL();
+  final mediaURL = 
+    await BlocProvider.of<IntroductionMediaBloc>(context).getIntroVideo();
   if(mediaURL == null || mediaURL.isEmpty) {
     Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.signUp]);
   }
@@ -38,7 +39,6 @@ Future<ChewieController> getChewieWithVideo(BuildContext context) async {
 class _IntroductionVideoState extends State<IntroductionVideo> {
   @override
   Widget build(BuildContext context) {
-    BlocProvider.of<IntroductionMediaBloc>(context).getIntroVideo();
     return FutureBuilder<ChewieController>(
       future: getChewieWithVideo(context),
       builder: (
