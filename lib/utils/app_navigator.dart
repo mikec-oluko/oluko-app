@@ -12,7 +12,7 @@ class AppNavigator {
   }
 
   Future<void> goToAssessmentVideos(BuildContext context) async {
-    Navigator.pushNamed(context, routeLabels[RouteEnum.assessmentVideos], arguments: {'isFirstTime': true});
+    Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.assessmentVideos], (route) => false, arguments: {'isFirstTime': true});
   }
 
   static Future<bool> onWillPop(BuildContext context) async {
