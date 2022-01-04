@@ -7,6 +7,7 @@ class CourseService {
   static List<Class> getCourseClasses(Course course, List<Class> classes) {
     List<Class> courseClasses = [];
     List<String> ids = [];
+    List<Class> sortedClasses = [];
 
     if (course.classes == null) {
       return courseClasses;
@@ -19,6 +20,12 @@ class CourseService {
         courseClasses.add(classObj);
       }
     });
-    return courseClasses;
+
+    ids.forEach((id) {
+      Class classToAdd = courseClasses.where((element) => element.id == id).toList()[0];
+      sortedClasses.add(classToAdd);
+    });
+
+    return sortedClasses;
   }
 }
