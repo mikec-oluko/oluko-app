@@ -9,8 +9,9 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 class AudioPanel extends StatefulWidget {
   final List<UserResponse> coaches;
   final List<Audio> audios;
+  final Function(int) onAudioPressed;
 
-  AudioPanel({this.coaches, this.audios});
+  AudioPanel({this.coaches, this.audios, this.onAudioPressed});
 
   @override
   _State createState() => _State();
@@ -26,8 +27,7 @@ class _State extends State<AudioPanel> {
               image: AssetImage('assets/courses/gray_background.png'),
               fit: BoxFit.cover,
             ),
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
         child: Column(children: [
           Padding(
               padding: EdgeInsets.only(top: 20, bottom: 10),
@@ -39,9 +39,7 @@ class _State extends State<AudioPanel> {
             padding: const EdgeInsets.only(top: 15, bottom: 5),
             child: Text(
               OlukoLocalizations.get(context, 'voiceMessages'),
-              style: OlukoFonts.olukoSuperBigFont(
-                  custoFontWeight: FontWeight.w500,
-                  customColor: OlukoColors.white),
+              style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.white),
             ),
           ),
           Container(height: 370, child: ListView(children: getAudioWidgets()))
@@ -52,9 +50,11 @@ class _State extends State<AudioPanel> {
     List<Widget> widgets = [];
     for (int i = 0; i < widget.audios.length; i++) {
       widgets.add(AudioSection(
-          showTopDivider: i != 0,
-          coach: widget.coaches == null ? null : widget.coaches[i],
-          audio: widget.audios[i]));
+        showTopDivider: i != 0,
+        coach: widget.coaches == null ? null : widget.coaches[i],
+        audio: widget.audios[i],
+        onAudioPressed: () => widget.onAudioPressed(i),
+      ));
     }
     return widgets;
   }

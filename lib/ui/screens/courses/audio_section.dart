@@ -12,8 +12,9 @@ class AudioSection extends StatefulWidget {
   final UserResponse coach;
   final Audio audio;
   final bool showTopDivider;
+  final Function() onAudioPressed;
 
-  AudioSection({this.coach, this.audio, this.showTopDivider = true});
+  AudioSection({this.coach, this.audio, this.showTopDivider = true, this.onAudioPressed});
 
   @override
   _State createState() => _State();
@@ -28,9 +29,8 @@ class _State extends State<AudioSection> {
   bool playedOnce = false;
 
   Widget audioSlider() {
-    return Container(width: 150, child: Padding(
-      padding: EdgeInsets.symmetric(horizontal: 10),
-      child: CourseProgressBar(value: _completedPercentage)));
+    return Container(
+        width: 150, child: Padding(padding: EdgeInsets.symmetric(horizontal: 10), child: CourseProgressBar(value: _completedPercentage)));
   }
 
   @override
@@ -62,10 +62,12 @@ class _State extends State<AudioSection> {
                     'assets/courses/audio_horizontal_vector.png',
                     scale: 3.5,
                   )),
-              Image.asset(
-                'assets/courses/bin.png',
-                scale: 16,
-              )
+              GestureDetector(
+                  onTap: () => widget.onAudioPressed(),
+                  child: Image.asset(
+                    'assets/courses/bin.png',
+                    scale: 16,
+                  ))
             ])
           ],
         ),
@@ -83,8 +85,7 @@ class _State extends State<AudioSection> {
             'assets/courses/green_circle.png',
             scale: 5.5,
           ),
-          Icon(_isPlaying ? Icons.pause : Icons.play_arrow,
-              size: 26, color: OlukoColors.black)
+          Icon(_isPlaying ? Icons.pause : Icons.play_arrow, size: 26, color: OlukoColors.black)
         ]));
   }
 
@@ -120,8 +121,7 @@ class _State extends State<AudioSection> {
       audioPlayer.onAudioPositionChanged.listen((duration) {
         setState(() {
           _currentDuration = duration.inMicroseconds;
-          _completedPercentage =
-              _currentDuration.toDouble() / _totalDuration.toDouble();
+          _completedPercentage = _currentDuration.toDouble() / _totalDuration.toDouble();
         });
       });
     } else {

@@ -7,7 +7,9 @@ import 'package:oluko_app/ui/screens/courses/audio_panel.dart';
 class ModalAudio extends StatefulWidget {
   List<UserResponse> users;
   List<Audio> audios;
-  ModalAudio({this.users, this.audios});
+  final Function(int) onAudioPressed;
+
+  ModalAudio({this.users, this.audios, this.onAudioPressed});
 
   @override
   _ModalAudioState createState() => _ModalAudioState();
@@ -30,6 +32,7 @@ class _ModalAudioState extends State<ModalAudio> {
 
   Widget audioSection() {
     return AudioPanel(
+      onAudioPressed: (int index) => widget.onAudioPressed(index),
       coaches: widget.users,
       audios: widget.audios,
     );

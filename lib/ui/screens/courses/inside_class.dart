@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/class/class_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_audio_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_audio_bloc.dart';
 import 'package:oluko_app/blocs/inside_class_content_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
@@ -249,18 +250,14 @@ class _InsideClassesState extends State<InsideClass> {
                   final int normalUsers = subscribedCourseUsersState.users != null ? subscribedCourseUsersState.users.length : 0;
                   final int qty = favorites + normalUsers;
                   return CourseInfoSection(
-                      onAudioPressed: () => _coaches.isNotEmpty
-                          ? _audioAction()
-                          : null,
+                      onAudioPressed: () => _coaches.isNotEmpty ? _audioAction() : null,
                       peopleQty: qty,
                       onPeoplePressed: () => _peopleAction(subscribedCourseUsersState.users, subscribedCourseUsersState.favoriteUsers),
                       audioMessageQty: AudioService.getAudiosLength(_audios),
                       image: widget.courseEnrollment.course.image);
                 } else {
                   return CourseInfoSection(
-                      onAudioPressed: () => _coaches.isNotEmpty
-                          ? _audioAction()
-                          : null,
+                      onAudioPressed: () => _coaches.isNotEmpty ? _audioAction() : null,
                       peopleQty: 0,
                       audioMessageQty: AudioService.getAudiosLength(_audios),
                       image: widget.courseEnrollment.course.image);
@@ -348,8 +345,7 @@ class _InsideClassesState extends State<InsideClass> {
           }
           if (state is InsideClassContentAudioOpen) {
             _buttonController.open();
-            _contentForPanel = ModalAudio(
-                users: _coaches, audios: _audios);
+            _contentForPanel = ModalAudio(users: _coaches, audios: _audios, onAudioPressed: (int index) => _onAudioDeleted(index));
           }
           if (state is InsideClassContentLoading) {
             _contentForPanel = UploadingModalLoader(UploadFrom.segmentDetail);
@@ -360,7 +356,12 @@ class _InsideClassesState extends State<InsideClass> {
     );
   }
 
-  
+  _onAudioDeleted(int audioIndex) {
+    setState(() {
+      _audios[audioIndex].deleted = true;
+    });
+    BlocProvider.of<CourseEnrollmentAudioBloc>(context).markAudioAsDeleted(widget.courseEnrollment, _audios);
+  }
 
   _peopleAction(List<dynamic> users, List<dynamic> favorites) {
     BlocProvider.of<InsideClassContentBloc>(context).openPeoplePanel(users, favorites);
