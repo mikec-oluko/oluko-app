@@ -75,7 +75,7 @@ class _InsideClassesState extends State<InsideClass> {
 
   @override
   void initState() {
-    _audios = widget.courseEnrollment.classes[widget.classIndex].audios;
+    _audios = AudioService.getNotDeletedAudios(widget.courseEnrollment.classes[widget.classIndex].audios);
     super.initState();
   }
 
@@ -253,13 +253,13 @@ class _InsideClassesState extends State<InsideClass> {
                       onAudioPressed: () => _coaches.isNotEmpty ? _audioAction() : null,
                       peopleQty: qty,
                       onPeoplePressed: () => _peopleAction(subscribedCourseUsersState.users, subscribedCourseUsersState.favoriteUsers),
-                      audioMessageQty: AudioService.getAudiosLength(_audios),
+                      audioMessageQty: AudioService.getNotDeletedAudios(_audios).length,
                       image: widget.courseEnrollment.course.image);
                 } else {
                   return CourseInfoSection(
                       onAudioPressed: () => _coaches.isNotEmpty ? _audioAction() : null,
                       peopleQty: 0,
-                      audioMessageQty: AudioService.getAudiosLength(_audios),
+                      audioMessageQty: AudioService.getNotDeletedAudios(_audios).length,
                       image: widget.courseEnrollment.course.image);
                 }
               })
