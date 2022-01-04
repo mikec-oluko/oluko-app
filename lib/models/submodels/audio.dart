@@ -9,11 +9,13 @@ class Audio {
   String userAvatarThumbnail;
   String id;
   String userName;
+  bool deleted;
 
-  Audio({this.url, this.userName, this.state, this.userId, this.userReference, this.id, this.userAvatarThumbnail});
+  Audio({this.deleted, this.url, this.userName, this.state, this.userId, this.userReference, this.id, this.userAvatarThumbnail});
 
   factory Audio.fromJson(Map<String, dynamic> json) {
     return Audio(
+      deleted: json['deleted'] == null ? false : json['deleted'] as bool,
       url: json['url']?.toString(),
       userName: json['user_name']?.toString(),
       userAvatarThumbnail: json['user_avatar_thumbnail']?.toString(),
@@ -26,6 +28,7 @@ class Audio {
 
   Map<String, dynamic> toJson() => {
         'url': url,
+        'deleted': deleted ?? false,
         'user_name': userName,
         'user_avatar_thumbnail': userAvatarThumbnail,
         'state': state,

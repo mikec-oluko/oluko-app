@@ -150,24 +150,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
         height: ScreenUtils.height(context),
         child: Stack(
           children: [
-            SlidingUpPanel(
-                controller: panelController,
-                borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-                minHeight: 90,
-                maxHeight: 185,
-                collapsed: CollapsedMovementVideosSection(action: getAction()),
-                panel: () {
-                  if (_segments.length - 1 >= widget.segmentIndex) {
-                    return MovementVideosSection(
-                        action: downButton(),
-                        segment: _segments[widget.segmentIndex],
-                        movements: _movements,
-                        onPressedMovement: (BuildContext context, Movement movement) =>
-                            Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement}));
-                  }
-                  return const SizedBox();
-                }(),
-                body: _viewBody()),
+            _viewBody(),
             slidingUpPanelComponent(context),
           ],
         ),
@@ -201,13 +184,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
           }
           if (state is SegmentDetailContentAudioOpen) {
             _challengePanelController.open();
-            _contentForPanel = /*Container(
-                    child: Text('AUDIO',
-                    textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: Colors
-                                .white)))*/
-                ModalAudio(audios: state.audios);
+            _contentForPanel = ModalAudio(audios: state.audios);
           }
           if (state is SegmentDetailContentPeopleOpen) {
             _challengePanelController.open();
@@ -271,7 +248,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
     return CarouselSlider(
       items: getSegmentList(),
       options: CarouselOptions(
-          height: 760,
+          height: 660,
           autoPlay: false,
           enlargeCenterPage: false,
           disableCenter: true,
@@ -285,23 +262,43 @@ class _SegmentDetailState extends State<SegmentDetail> {
     List<Widget> segmentWidgets = [];
     for (var i = 0; i < _segments.length; i++) {
       Challenge challenge = getSegmentChallenge(_segments[i].id);
-      segmentWidgets.add(SegmentImageSection(
-          onPressed: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass],
-              arguments: {'courseEnrollment': widget.courseEnrollment, 'classIndex': widget.classIndex, 'courseIndex': widget.courseIndex}),
-          segment: _segments[i],
-          challenge: challenge,
-          currentSegmentStep: i + 1,
-          totalSegmentStep: totalSegmentStep,
-          userId: _user.id,
-          audioAction: _audioAction,
-          peopleAction: _peopleAction,
-          clockAction: _clockAction,
-          courseEnrollment: widget.courseEnrollment,
-          courseIndex: widget.courseIndex,
-          segments: _segments,
-          classIndex: widget.classIndex,
-          coachRequests: _coachRequests,
-          coach: _coach));
+      segmentWidgets.add(SlidingUpPanel(
+          controller: panelController,
+          borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+          minHeight: 90,
+          maxHeight: 185,
+          collapsed: CollapsedMovementVideosSection(action: getAction()),
+          panel: () {
+            if (_segments.length - 1 >= widget.segmentIndex) {
+              return MovementVideosSection(
+                  action: downButton(),
+                  segment: _segments[i],
+                  movements: _movements,
+                  onPressedMovement: (BuildContext context, Movement movement) =>
+                      Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement}));
+            }
+            return const SizedBox();
+          }(),
+          body: SegmentImageSection(
+              onPressed: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
+                    'courseEnrollment': widget.courseEnrollment,
+                    'classIndex': widget.classIndex,
+                    'courseIndex': widget.courseIndex
+                  }),
+              segment: _segments[i],
+              challenge: challenge,
+              currentSegmentStep: i + 1,
+              totalSegmentStep: totalSegmentStep,
+              userId: _user.id,
+              audioAction: _audioAction,
+              peopleAction: _peopleAction,
+              clockAction: _clockAction,
+              courseEnrollment: widget.courseEnrollment,
+              courseIndex: widget.courseIndex,
+              segments: _segments,
+              classIndex: widget.classIndex,
+              coachRequests: _coachRequests,
+              coach: _coach)));
     }
     return segmentWidgets;
   }
