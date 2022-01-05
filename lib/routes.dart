@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/challenge/challenge_audio_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_segment_bloc.dart';
 import 'package:oluko_app/blocs/class/class_subscription_bloc.dart';
@@ -319,7 +320,7 @@ class Routes {
   final ChallengeSegmentBloc _challengeSegmentBloc = ChallengeSegmentBloc();
   final KeyboardBloc _keyboardBloc = KeyboardBloc();
   final CourseEnrollmentAudioBloc _courseEnrollmentAudioBloc = CourseEnrollmentAudioBloc();
-
+  final ChallengeAudioBloc _challengeAudioBloc = ChallengeAudioBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -551,6 +552,7 @@ class Routes {
         break;
       case RouteEnum.segmentDetail:
         providers = [
+          BlocProvider<ChallengeAudioBloc>.value(value: _challengeAudioBloc),
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
           BlocProvider<MovementBloc>.value(value: _movementBloc),
           BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),

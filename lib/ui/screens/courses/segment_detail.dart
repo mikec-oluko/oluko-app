@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/challenge/challenge_audio_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_segment_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_assignment_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
@@ -63,6 +64,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
   final PanelController _challengePanelController = PanelController();
   CoachAssignment _coachAssignment;
   List<Challenge> _challenges;
+  List<Audio> _currentAudios;
 
   @override
   void initState() {
@@ -176,6 +178,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
         controller: _challengePanelController,
         panel: BlocBuilder<SegmentDetailContentBloc, SegmentDetailContentState>(builder: (context, state) {
           Widget _contentForPanel = const SizedBox();
+
           if (state is SegmentDetailContentDefault) {
             if (_challengePanelController.isPanelOpen) {
               _challengePanelController.close();
@@ -183,8 +186,9 @@ class _SegmentDetailState extends State<SegmentDetail> {
             _contentForPanel = const SizedBox();
           }
           if (state is SegmentDetailContentAudioOpen) {
+            _currentAudios = state.audios;
             _challengePanelController.open();
-            _contentForPanel = ModalAudio(audios: state.audios);
+            _contentForPanel = ModalAudio(challenge: state.challenge, audios: _currentAudios, onAudioPressed: (int index, Challenge challenge) => _onAudioDeleted(index, challenge));
           }
           if (state is SegmentDetailContentPeopleOpen) {
             _challengePanelController.open();
@@ -202,6 +206,15 @@ class _SegmentDetailState extends State<SegmentDetail> {
         }),
       ),
     );
+  }
+
+  _onAudioDeleted(int audioIndex, Challenge challenge) {
+    _currentAudios[audioIndex].deleted = true;
+    BlocProvider.of<ChallengeAudioBloc>(context).markAudioAsDeleted(challenge, _currentAudios);
+    setState(() {
+      _currentAudios.removeAt(audioIndex);
+      
+    });
   }
 
   Widget downButton() {
@@ -350,8 +363,8 @@ class _SegmentDetailState extends State<SegmentDetail> {
     ];
   }
 
-  _audioAction(List<Audio> audios) {
-    BlocProvider.of<SegmentDetailContentBloc>(context).openAudioPanel(audios);
+  _audioAction(List<Audio> audios, Challenge challenge) {
+    BlocProvider.of<SegmentDetailContentBloc>(context).openAudioPanel(audios, challenge);
   }
 
   _peopleAction(List<UserSubmodel> users, List<UserSubmodel> favorites) {

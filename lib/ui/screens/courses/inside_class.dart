@@ -13,6 +13,7 @@ import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/movement.dart';
@@ -345,7 +346,7 @@ class _InsideClassesState extends State<InsideClass> {
           }
           if (state is InsideClassContentAudioOpen) {
             _buttonController.open();
-            _contentForPanel = ModalAudio(users: _coaches, audios: _audios, onAudioPressed: (int index) => _onAudioDeleted(index));
+            _contentForPanel = ModalAudio(users: _coaches, audios: _audios, onAudioPressed: (int index, Challenge challenge) => _onAudioDeleted(index, challenge));
           }
           if (state is InsideClassContentLoading) {
             _contentForPanel = UploadingModalLoader(UploadFrom.segmentDetail);
@@ -356,7 +357,7 @@ class _InsideClassesState extends State<InsideClass> {
     );
   }
 
-  _onAudioDeleted(int audioIndex) {
+  _onAudioDeleted(int audioIndex, Challenge challenge) {
     _audios[audioIndex].deleted = true;
     BlocProvider.of<CourseEnrollmentAudioBloc>(context).markAudioAsDeleted(widget.courseEnrollment, _audios);
     setState(() {
