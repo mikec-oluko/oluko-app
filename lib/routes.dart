@@ -574,12 +574,14 @@ class Routes {
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SegmentClocks(
-            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
-            classIndex: argumentsToAdd['classIndex'] as int,
-            courseIndex: argumentsToAdd['courseIndex'] as int,
-            segmentIndex: argumentsToAdd['segmentIndex'] as int,
-            workoutType: argumentsToAdd['workoutType'] as WorkoutType,
-            segments: argumentsToAdd['segments'] as List<Segment>);
+          courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
+          classIndex: argumentsToAdd['classIndex'] as int,
+          courseIndex: argumentsToAdd['courseIndex'] as int,
+          segmentIndex: argumentsToAdd['segmentIndex'] as int,
+          workoutType: argumentsToAdd['workoutType'] as WorkoutType,
+          segments: argumentsToAdd['segments'] as List<Segment>,
+          fromChallenge: argumentsToAdd['fromChallenge'] as bool,
+        );
         break;
       case RouteEnum.segmentCameraPreview:
         providers = [

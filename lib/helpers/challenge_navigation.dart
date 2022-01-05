@@ -6,8 +6,15 @@ class ChallengeNavigation extends Equatable {
   CourseEnrollment enrolledCourse;
   EnrollmentSegment challengeSegment;
   int courseIndex, segmentIndex, classIndex;
-  ChallengeNavigation({this.enrolledCourse, this.challengeSegment, this.segmentIndex, this.classIndex, this.courseIndex});
+  bool previousSegmentFinish;
+  ChallengeNavigation(
+      {this.enrolledCourse,
+      this.challengeSegment,
+      this.segmentIndex,
+      this.classIndex,
+      this.courseIndex,
+      this.previousSegmentFinish = false});
 
   @override
-  List<Object> get props => [enrolledCourse, challengeSegment, segmentIndex, classIndex, courseIndex];
+  List<Object> get props => [enrolledCourse, challengeSegment, segmentIndex, classIndex, courseIndex, previousSegmentFinish];
 }

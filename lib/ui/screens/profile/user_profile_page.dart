@@ -333,12 +333,12 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 segmentIndex = enrolledClass.segments.indexOf(enrolledSegment);
                 if (enrolledSegment.isChallenge == true) {
                   newChallenge = ChallengeNavigation(
-                    enrolledCourse: courseEnrolled,
-                    challengeSegment: enrolledSegment,
-                    segmentIndex: segmentIndex,
-                    classIndex: classIndex,
-                    courseIndex: courseIndex,
-                  );
+                      enrolledCourse: courseEnrolled,
+                      challengeSegment: enrolledSegment,
+                      segmentIndex: segmentIndex,
+                      classIndex: classIndex,
+                      courseIndex: courseIndex,
+                      previousSegmentFinish: courseEnrolled.classes[classIndex].segments[segmentIndex - 1].completedAt != null);
 
                   if (listOfChallenges.isEmpty) {
                     if (newChallenge != null) {

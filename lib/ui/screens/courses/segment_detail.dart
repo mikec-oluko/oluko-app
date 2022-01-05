@@ -299,7 +299,8 @@ class _SegmentDetailState extends State<SegmentDetail> {
           segments: _segments,
           classIndex: widget.classIndex,
           coachRequests: _coachRequests,
-          coach: _coach));
+          coach: _coach,
+          fromChallenge: widget.fromChallenge));
     }
     return segmentWidgets;
   }

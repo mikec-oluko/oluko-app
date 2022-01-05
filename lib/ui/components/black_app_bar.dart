@@ -195,23 +195,27 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                                     opacity: isSearchVisible ? 1 : 0,
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(horizontal: 20),
-                                      child: SearchBar<T>(
-                                        key: widget.searchKey,
-                                        items: widget.searchResultItems,
-                                        whenInitialized: (TextEditingController controller) => widget.whenSearchBarInitialized(controller),
-                                        onSearchSubmit: (SearchResults<dynamic> searchResults) =>
-                                            widget.onSearchSubmit(searchResults as SearchResults<T>),
-                                        onSearchResults: (SearchResults<dynamic> searchResults) =>
-                                            widget.onSearchResults(searchResults as SearchResults<T>),
-                                        searchMethod: (String query, List<dynamic> collection) =>
-                                            widget.searchMethod(query, collection as List<T>),
-                                        suggestionMethod: (String query, List<dynamic> collection) =>
-                                            widget.suggestionMethod(query, collection as List<T>),
-                                        onTapClose: () {
-                                          setState(() {
-                                            isSearchVisible = !isSearchVisible;
-                                          });
-                                        },
+                                      child: IgnorePointer(
+                                        ignoring: !isSearchVisible,
+                                        child: SearchBar<T>(
+                                          key: widget.searchKey,
+                                          items: widget.searchResultItems,
+                                          whenInitialized: (TextEditingController controller) =>
+                                              widget.whenSearchBarInitialized(controller),
+                                          onSearchSubmit: (SearchResults<dynamic> searchResults) =>
+                                              widget.onSearchSubmit(searchResults as SearchResults<T>),
+                                          onSearchResults: (SearchResults<dynamic> searchResults) =>
+                                              widget.onSearchResults(searchResults as SearchResults<T>),
+                                          searchMethod: (String query, List<dynamic> collection) =>
+                                              widget.searchMethod(query, collection as List<T>),
+                                          suggestionMethod: (String query, List<dynamic> collection) =>
+                                              widget.suggestionMethod(query, collection as List<T>),
+                                          onTapClose: () {
+                                            setState(() {
+                                              isSearchVisible = !isSearchVisible;
+                                            });
+                                          },
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -226,6 +230,8 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                                           child: OlukoNeumorphicCircleButton(
                                               onPressed: () {
                                                 if (widget.title == OlukoLocalizations.get(context, 'filters')) {
+                                                  //Close keyboard
+                                                  FocusScope.of(context).unfocus();
                                                   widget.actionButton();
                                                 } else {
                                                   setState(() {

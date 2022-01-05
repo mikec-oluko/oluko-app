@@ -106,6 +106,8 @@ class SearchState<T> extends State<SearchBar> {
             onTap: OlukoNeumorphism.isNeumorphismDesign
                 ? () {
                     _cancelSearch();
+                    //Close keyboard
+                    FocusScope.of(context).unfocus();
                     widget.onTapClose();
                   }
                 : _cancelSearch,

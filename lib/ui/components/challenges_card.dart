@@ -29,7 +29,7 @@ class _State extends State<ChallengesCard> {
     return Column(children: [
       SizedBox(height: 10),
       widget.navigateToSegment
-          ? widget.segmentChallenge.challengeSegment.completedAt != null
+          ? widget.segmentChallenge.previousSegmentFinish
               ? unlockedCard(context)
               : lockedCard(context)
           : widget.challenge.completedAt != null

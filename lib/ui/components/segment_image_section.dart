@@ -43,6 +43,7 @@ class SegmentImageSection extends StatefulWidget {
   final List<Segment> segments;
   final List<CoachRequest> coachRequests;
   final UserResponse coach;
+  final bool fromChallenge;
 
   SegmentImageSection(
       {this.onPressed = null,
@@ -60,6 +61,7 @@ class SegmentImageSection extends StatefulWidget {
       this.classIndex,
       this.coachRequests,
       this.coach,
+      this.fromChallenge,
       Key key})
       : super(key: key);
 
@@ -146,6 +148,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
     );
   }
 
+  // TODO: CHECK IF IS DISABLE/ENABLE BUTTON
   Widget startWorkoutsButton() {
     return OlukoNeumorphism.isNeumorphismDesign
         ? Padding(
@@ -159,6 +162,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                 onPressed: () {
                   //CoachRequest coachRequest = getSegmentCoachRequest(widget.segment.id);
                   if (_coachRequest != null) {
+                    //TODO: CHECK CHALLENGE
                     BottomDialogUtils.showBottomDialog(
                         context: context, content: dialogContainer(widget.coach.firstName, widget.coach.avatar));
                   } else {
@@ -266,6 +270,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
       'courseIndex': widget.courseIndex,
       'workoutType': WorkoutType.segment,
       'segments': widget.segments,
+      'fromChallenge': widget.fromChallenge
     };
   }
 
