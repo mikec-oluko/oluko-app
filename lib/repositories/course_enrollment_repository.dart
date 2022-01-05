@@ -106,8 +106,7 @@ class CourseEnrollmentRepository {
       }
       classes[classIndex].completedAt = Timestamp.now();
     }
-
-    reference.update({'classes': List<dynamic>.from(classes.map((c) => c.toJson())), 'completion': courseEnrollment.completion});
+    reference.update({'classes': List<dynamic>.from(classes.map((c) => c.toJson())), 'completion': courseEnrollment.completion, 'updated_at': FieldValue.serverTimestamp()});
   }
 
   static Future<CourseEnrollment> create(User user, Course course) async {

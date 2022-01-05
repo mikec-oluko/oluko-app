@@ -8,7 +8,7 @@ class IntroductionMediaRepository {
     firestoreInstance = FirebaseFirestore.instance;
   }
 
-  Future<String> getIntroVideoURL() async {
+  static Future<String> getIntroVideoURL() async {
     final QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))

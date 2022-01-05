@@ -23,13 +23,13 @@ Future<void> main() async {
   final MyApp myApp = MyApp(
     initialRoute: route,
   );
-  if (GlobalConfiguration().getValue("build") == "local") {
+  if (GlobalConfiguration().getValue('build') == 'local') {
     runApp(myApp);
   } else {
     await SentryFlutter.init(
       (options) {
-        options.dsn = GlobalConfiguration().getValue("sentryDsn");
-        options.environment = GlobalConfiguration().getValue("environment");
+        options.dsn = GlobalConfiguration().getValue('sentryDsn');
+        options.environment = GlobalConfiguration().getValue('environment');
         options.reportSilentFlutterErrors = true;
       },
       appRunner: () => runApp(myApp),
@@ -40,12 +40,12 @@ Future<void> main() async {
 String getInitialRoute(User alreadyLoggedUser, bool isFirstTime) {
   if (alreadyLoggedUser == null) {
     if (isFirstTime != null && isFirstTime) {
-      return '/intro_video';
+      return routeLabels[RouteEnum.introVideo];
     } else {
-      return '/sign_up';
+      return routeLabels[RouteEnum.signUp];
     }
   } else {
-    return '/';
+    return routeLabels[RouteEnum.root];
   }
 }
 
@@ -53,11 +53,7 @@ Future<bool> isFirstTime() async {
   final sharedPref = await SharedPreferences.getInstance();
   final isFirstTime = sharedPref.getBool('first_time');
   sharedPref.setBool('first_time', false);
-  if (isFirstTime != null && !isFirstTime) {
-    return false;
-  } else {
-    return true;
-  }
+  return !(isFirstTime != null && !isFirstTime);
 }
 
 const OLUKO = 'Oluko';
@@ -75,6 +71,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   Routes routes = Routes();
 
+  @override
   Widget build(BuildContext mainContext) {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,

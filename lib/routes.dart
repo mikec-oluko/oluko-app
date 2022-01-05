@@ -318,6 +318,7 @@ class Routes {
   final ChallengeSegmentBloc _challengeSegmentBloc = ChallengeSegmentBloc();
   final KeyboardBloc _keyboardBloc = KeyboardBloc();
 
+
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
     Widget newRouteView;
@@ -756,6 +757,7 @@ class Routes {
         final Map<String, dynamic> args = arguments as Map<String, dynamic>;
         newRouteView = Courses(homeEnrollTocourse: args['homeEnrollTocourse'] == 'true');
         break;
+
       case RouteEnum.viewAll:
         Map<String, dynamic> args = arguments as Map<String, dynamic>;
         List<Course> courses = args['courses'] as List<Course>;

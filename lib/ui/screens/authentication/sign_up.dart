@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -88,7 +89,7 @@ class MainSignUpPage extends StatelessWidget {
                             useBorder: true,
                             isExpanded: false,
                             thinPadding: true,
-                            onPressed: () => Navigator.pushNamed(context, '/log-in-username'),
+                            onPressed: () => Navigator.pushNamed(context, routeLabels[RouteEnum.logInUsername]),
                             title: OlukoLocalizations.get(context, 'loginToContinue'),
                           ),
                         ),

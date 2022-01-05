@@ -19,10 +19,10 @@ class Success extends IntroductionMediaState {
 class IntroductionMediaBloc extends Cubit<IntroductionMediaState> {
   IntroductionMediaBloc() : super(Loading());
 
-  void getIntroVideo() async {
+  Future<String> getIntroVideo() async {
     try {
-      final String mediaURL = await IntroductionMediaRepository().getIntroVideoURL();
-      emit(Success(mediaURL: mediaURL));
+      final String mediaURL = await IntroductionMediaRepository.getIntroVideoURL();
+      return mediaURL;
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
