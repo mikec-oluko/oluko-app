@@ -5,6 +5,7 @@ import 'package:oluko_app/blocs/coach/coach_sent_videos_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class SentVideosPage extends StatefulWidget {
@@ -47,7 +48,9 @@ class _SentVideosPageState extends State<SentVideosPage> {
           appBar: AppBar(
             title: Text(
               OlukoLocalizations.get(context, 'sentVideos'),
-              style: OlukoFonts.olukoTitleFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+              style: OlukoNeumorphism.isNeumorphismDesign
+                  ? OlukoFonts.olukoTitleFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w400)
+                  : OlukoFonts.olukoTitleFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
             ),
             actions: [
               Row(
@@ -55,23 +58,22 @@ class _SentVideosPageState extends State<SentVideosPage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 5),
                     child: IconButton(
-                        icon: isContentFilteredByDate
+                        icon: OlukoNeumorphism.isNeumorphismDesign
                             ? Image.asset(
-                                'assets/courses/vector.png',
-                                color: Colors.white,
+                                'assets/courses/vector_neumorphism.png',
+                                color: isContentFilteredByDate ? Colors.white : Colors.grey,
                                 height: 20,
                                 width: 20,
                               )
                             : Image.asset(
                                 'assets/courses/vector.png',
-                                color: Colors.grey,
+                                color: isContentFilteredByDate ? Colors.white : Colors.grey,
                                 height: 20,
                                 width: 20,
                               ),
                         onPressed: () {
                           setState(() {
                             isContentFilteredByDate = !isContentFilteredByDate;
-
                             contentSortedByDate();
                           });
                         }),
@@ -129,80 +131,106 @@ class _SentVideosPageState extends State<SentVideosPage> {
   }
 
   Widget returnCardForSegment(SegmentSubmission segmentSubmitted) {
-    Widget contentForReturn = const SizedBox();
-    contentForReturn = Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 5),
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 10),
-        child: Container(
-          decoration: BoxDecoration(
-              color: OlukoColors.listGrayColor,
-              borderRadius: const BorderRadius.all(Radius.circular(6.0)),
-              image: DecorationImage(
-                image: getImage(segmentSubmitted),
-                fit: BoxFit.fitWidth,
-              )),
-          width: MediaQuery.of(context).size.width,
-          height: 200,
-          child: Stack(
-            children: [
-              Align(
-                  child: TextButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, routeLabels[RouteEnum.coachShowVideo], arguments: {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+      child: Container(
+        decoration: BoxDecoration(
+            color: OlukoColors.listGrayColor,
+            borderRadius: const BorderRadius.all(Radius.circular(12)),
+            image: DecorationImage(
+              image: getImage(segmentSubmitted),
+              fit: BoxFit.fitWidth,
+            )),
+        width: MediaQuery.of(context).size.width,
+        height: 200,
+        child: Stack(
+          children: [
+            Align(
+                child: TextButton(
+                    onPressed: () {
+                      Navigator.pushNamed(
+                        context,
+                        routeLabels[RouteEnum.coachShowVideo],
+                        arguments: {
                           'videoUrl': segmentSubmitted.video.url,
                           'titleForContent': OlukoLocalizations.get(context, 'sentVideos')
-                        });
-                      },
-                      child: Image.asset(
-                        'assets/self_recording/play_button.png',
-                        color: Colors.white,
-                        height: 40,
-                        width: 40,
-                      ))),
-              Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                    color: OlukoColors.blackColorSemiTransparent,
-                    width: MediaQuery.of(context).size.width,
-                    height: 60,
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                OlukoLocalizations.get(context, 'date'),
-                                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                        },
+                      );
+                    },
+                    child: OlukoNeumorphism.isNeumorphismDesign
+                        ? SizedBox(
+                            width: 70,
+                            height: 70,
+                            child: OlukoBlurredButton(
+                              childContent: Image.asset(
+                                'assets/self_recording/white_play_arrow.png',
+                                color: Colors.white,
+                                height: 50,
+                                width: 50,
                               ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                DateFormat.yMMMd().format(segmentSubmitted.createdAt.toDate()),
-                                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                            ),
+                          )
+                        : Image.asset(
+                            'assets/self_recording/play_button.png',
+                            color: Colors.white,
+                            height: 40,
+                            width: 40,
+                          ))),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                color: OlukoColors.blackColorSemiTransparent,
+                width: MediaQuery.of(context).size.width,
+                height: 45,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      if (OlukoNeumorphism.isNeumorphismDesign)
+                        Text(
+                          DateFormat.yMMMd().format(segmentSubmitted.createdAt.toDate()),
+                          style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w700),
+                        )
+                      else
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              OlukoLocalizations.get(context, 'date'),
+                              style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              DateFormat.yMMMd().format(segmentSubmitted.createdAt.toDate()),
+                              style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                            )
+                          ],
+                        ),
+                      IconButton(
+                        icon: OlukoNeumorphism.isNeumorphismDesign
+                            ? Icon(
+                                segmentSubmitted.favorite ? Icons.favorite : Icons.favorite_outline,
+                                color: OlukoColors.primary,
+                                size: 30,
                               )
-                            ],
-                          ),
-                          IconButton(
-                              icon: Icon(segmentSubmitted.favorite ? Icons.favorite : Icons.favorite_outline, color: OlukoColors.white),
-                              onPressed: () {
-                                BlocProvider.of<CoachSentVideosBloc>(context).updateSegmentSubmissionFavoriteValue(
-                                    segmentSubmitted: segmentSubmitted, currentSentVideosContent: content);
-                              })
-                        ],
-                      ),
-                    ),
-                  ))
-            ],
-          ),
+                            : Icon(segmentSubmitted.favorite ? Icons.favorite : Icons.favorite_outline, color: OlukoColors.white),
+                        onPressed: () {
+                          BlocProvider.of<CoachSentVideosBloc>(context)
+                              .updateSegmentSubmissionFavoriteValue(segmentSubmitted: segmentSubmitted, currentSentVideosContent: content);
+                        },
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            )
+          ],
         ),
       ),
     );
-    return contentForReturn;
   }
 
   ImageProvider getImage(SegmentSubmission segmentSubmitted) {
