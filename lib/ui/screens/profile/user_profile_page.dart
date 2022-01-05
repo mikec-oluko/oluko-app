@@ -333,13 +333,30 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 segmentIndex = enrolledClass.segments.indexOf(enrolledSegment);
                 if (enrolledSegment.isChallenge == true) {
                   newChallenge = ChallengeNavigation(
-                      enrolledCourse: courseEnrolled,
-                      challengeSegment: enrolledSegment,
-                      segmentIndex: segmentIndex,
-                      classIndex: classIndex,
-                      courseIndex: courseIndex);
+                    enrolledCourse: courseEnrolled,
+                    challengeSegment: enrolledSegment,
+                    segmentIndex: segmentIndex,
+                    classIndex: classIndex,
+                    courseIndex: courseIndex,
+                  );
 
-                  newChallenge != null ? listOfChallenges.add(newChallenge) : null;
+                  if (listOfChallenges.isEmpty) {
+                    if (newChallenge != null) {
+                      listOfChallenges.add(newChallenge);
+                    }
+                  } else {
+                    if (newChallenge != null) {
+                      if (listOfChallenges
+                          .where((element) =>
+                              (element.challengeSegment.id == newChallenge.challengeSegment.id &&
+                                  element.segmentIndex == newChallenge.segmentIndex) &&
+                              (element.courseIndex == newChallenge.courseIndex && element.classIndex == newChallenge.classIndex))
+                          .toList()
+                          .isEmpty) {
+                        listOfChallenges.add(newChallenge);
+                      }
+                    }
+                  }
                 }
               });
             });

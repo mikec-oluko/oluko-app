@@ -12,6 +12,7 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class OlukoAppBar<T> extends StatefulWidget implements PreferredSizeWidget {
   final Function() onPressed;
+  final Function() actionButton;
   final Function(SearchResults<T>) onSearchResults;
   final Function(SearchResults<T>) onSearchSubmit;
   final Function(TextEditingController) whenSearchBarInitialized;
@@ -42,6 +43,7 @@ class OlukoAppBar<T> extends StatefulWidget implements PreferredSizeWidget {
       this.showTitle = false,
       this.onSearchSubmit,
       this.whenSearchBarInitialized,
+      this.actionButton,
       this.searchKey});
 
   @override
@@ -187,7 +189,32 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                       : widget.showSearchBar
                           ? Center(
                               child: Stack(
+                                alignment: Alignment.center,
                                 children: [
+                                  Opacity(
+                                    opacity: isSearchVisible ? 1 : 0,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                                      child: SearchBar<T>(
+                                        key: widget.searchKey,
+                                        items: widget.searchResultItems,
+                                        whenInitialized: (TextEditingController controller) => widget.whenSearchBarInitialized(controller),
+                                        onSearchSubmit: (SearchResults<dynamic> searchResults) =>
+                                            widget.onSearchSubmit(searchResults as SearchResults<T>),
+                                        onSearchResults: (SearchResults<dynamic> searchResults) =>
+                                            widget.onSearchResults(searchResults as SearchResults<T>),
+                                        searchMethod: (String query, List<dynamic> collection) =>
+                                            widget.searchMethod(query, collection as List<T>),
+                                        suggestionMethod: (String query, List<dynamic> collection) =>
+                                            widget.suggestionMethod(query, collection as List<T>),
+                                        onTapClose: () {
+                                          setState(() {
+                                            isSearchVisible = !isSearchVisible;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ),
                                   Align(
                                     alignment: Alignment.centerLeft,
                                     child: Padding(
@@ -199,11 +226,12 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                                           child: OlukoNeumorphicCircleButton(
                                               onPressed: () {
                                                 if (widget.title == OlukoLocalizations.get(context, 'filters')) {
-                                                  //TODO: hide filters
+                                                  widget.actionButton();
+                                                } else {
+                                                  setState(() {
+                                                    isSearchVisible = !isSearchVisible;
+                                                  });
                                                 }
-                                                setState(() {
-                                                  isSearchVisible = !isSearchVisible;
-                                                });
                                               },
                                               customIcon: Icon(
                                                 widget.title == OlukoLocalizations.get(context, 'filters')
@@ -211,33 +239,6 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                                                     : Icons.search,
                                                 color: OlukoColors.grayColor,
                                               )),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Visibility(
-                                    visible: isSearchVisible,
-                                    child: Center(
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                                        child: SearchBar<T>(
-                                          key: widget.searchKey,
-                                          items: widget.searchResultItems,
-                                          whenInitialized: (TextEditingController controller) =>
-                                              widget.whenSearchBarInitialized(controller),
-                                          onSearchSubmit: (SearchResults<dynamic> searchResults) =>
-                                              widget.onSearchSubmit(searchResults as SearchResults<T>),
-                                          onSearchResults: (SearchResults<dynamic> searchResults) =>
-                                              widget.onSearchResults(searchResults as SearchResults<T>),
-                                          searchMethod: (String query, List<dynamic> collection) =>
-                                              widget.searchMethod(query, collection as List<T>),
-                                          suggestionMethod: (String query, List<dynamic> collection) =>
-                                              widget.suggestionMethod(query, collection as List<T>),
-                                          onTapClose: () {
-                                            setState(() {
-                                              isSearchVisible = !isSearchVisible;
-                                            });
-                                          },
                                         ),
                                       ),
                                     ),
@@ -262,7 +263,7 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                                         children: widget.actions,
                                       ),
                                     ),
-                                  )
+                                  ),
                                 ],
                               ),
                             )

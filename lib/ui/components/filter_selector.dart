@@ -164,7 +164,6 @@ class _State<T extends Base> extends State<FilterSelector> {
     List<T> allItems = _getAllValuesFromCategories(widget.itemList.entries.toList() as List<MapEntry<String, Map<T, String>>>)
         .map((item) => item.key)
         .toList();
-
     return selectedEntries.map((entry) => allItems.firstWhere((item) => item.id == entry.key)).toList();
   }
 

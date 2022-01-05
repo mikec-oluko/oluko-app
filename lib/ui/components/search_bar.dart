@@ -105,6 +105,7 @@ class SearchState<T> extends State<SearchBar> {
         ? GestureDetector(
             onTap: OlukoNeumorphism.isNeumorphismDesign
                 ? () {
+                    _cancelSearch();
                     widget.onTapClose();
                   }
                 : _cancelSearch,
@@ -120,7 +121,7 @@ class SearchState<T> extends State<SearchBar> {
   }
 
   void _cancelSearch() {
-    _debounce.cancel();
+    _debounce?.cancel();
     setState(() {
       _searchQueryController.text = '';
       updateSearchQuery(_searchQueryController.text);

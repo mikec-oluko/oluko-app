@@ -281,7 +281,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
     for (var i = 0; i < _segments.length; i++) {
       segmentWidgets.add(SegmentImageSection(
           onPressed: () => widget.fromChallenge
-              ? Navigator.pop(context)
+              ? (() {})
               : Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
                   'courseEnrollment': widget.courseEnrollment,
                   'classIndex': widget.classIndex,
