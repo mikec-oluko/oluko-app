@@ -254,13 +254,13 @@ class _InsideClassesState extends State<InsideClass> {
                       onAudioPressed: () => _coaches.isNotEmpty ? _audioAction() : null,
                       peopleQty: qty,
                       onPeoplePressed: () => _peopleAction(subscribedCourseUsersState.users, subscribedCourseUsersState.favoriteUsers),
-                      audioMessageQty: AudioService.getNotDeletedAudios(_audios).length,
+                      audioMessageQty: _audios == null ? 0 : _audios.length,
                       image: widget.courseEnrollment.course.image);
                 } else {
                   return CourseInfoSection(
                       onAudioPressed: () => _coaches.isNotEmpty ? _audioAction() : null,
                       peopleQty: 0,
-                      audioMessageQty: AudioService.getNotDeletedAudios(_audios).length,
+                      audioMessageQty: _audios == null ? 0 : _audios.length,
                       image: widget.courseEnrollment.course.image);
                 }
               })
@@ -346,7 +346,8 @@ class _InsideClassesState extends State<InsideClass> {
           }
           if (state is InsideClassContentAudioOpen) {
             _buttonController.open();
-            _contentForPanel = ModalAudio(users: _coaches, audios: _audios, onAudioPressed: (int index, Challenge challenge) => _onAudioDeleted(index, challenge));
+            _contentForPanel = ModalAudio(
+                users: _coaches, audios: _audios, onAudioPressed: (int index, Challenge challenge) => _onAudioDeleted(index, challenge));
           }
           if (state is InsideClassContentLoading) {
             _contentForPanel = UploadingModalLoader(UploadFrom.segmentDetail);
