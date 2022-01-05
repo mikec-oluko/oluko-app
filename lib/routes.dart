@@ -632,7 +632,8 @@ class Routes {
         newRouteView = CourseMarketing(
             course: argumentsToAdd['course'] as Course,
             fromCoach: argumentsToAdd['fromCoach'] as bool,
-            isCoachRecommendation: argumentsToAdd['isCoachRecommendation'] as bool);
+            isCoachRecommendation: argumentsToAdd['isCoachRecommendation'] as bool,
+            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment);
         break;
       case RouteEnum.enrolledClass:
         providers = [

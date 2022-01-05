@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/video_overlay.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 
 class OverlayVideoPreview extends StatefulWidget {
   final String video;
@@ -67,27 +68,46 @@ class _OverlayVideoPreviewState extends State<OverlayVideoPreview> {
     return Padding(
         padding: EdgeInsets.only(top: 15),
         child: Row(
-          children: [
+          children: [if(OlukoNeumorphism.isNeumorphismDesign)
             widget.showBackButton
-                ? IconButton(
+                ? Padding(
+                    padding: const EdgeInsets.only(left:10.0),
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.circular(50),
+                        child: GestureDetector(
+                          onTap: () => widget.onBackPressed != null ? widget.onBackPressed() : Navigator.pop(context),
+                          child: Container(
+                              color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker,
+                              width: 45,
+                              height: 45,
+                              child: Image.asset(
+                                'assets/courses/left_back_arrow.png',
+                              )),
+                        )),
+                  )/*IconButton(
+                    icon: Icon(Icons.chevron_left, size: 35, color: Colors.white),
+                    onPressed: () => widget.onBackPressed != null ? widget.onBackPressed() : Navigator.pop(context)) */
+                : SizedBox() else 
+                if(widget.showBackButton)
+                 IconButton(
                     icon: Icon(Icons.chevron_left, size: 35, color: Colors.white),
                     onPressed: () => widget.onBackPressed != null ? widget.onBackPressed() : Navigator.pop(context))
-                : SizedBox(),
-            Expanded(child: SizedBox()),
-            widget.showShareButton
-                ? IconButton(
+                    else SizedBox(),
+            const Expanded(child: SizedBox()),
+            if(widget.showShareButton)
+                 IconButton(
                     icon: Icon(Icons.share, color: OlukoColors.white),
                     onPressed: () {
                       //TODO: Add share action
                     },
                   )
-                : SizedBox(),
-            widget.showHeartButton
-                ? Image.asset(
+                else SizedBox(),
+            if(widget.showHeartButton)
+                 Image.asset(
                     'assets/courses/heart.png',
                     scale: 4,
                   )
-                : SizedBox(),
+                else SizedBox(),
           ],
         ));
   }
@@ -117,7 +137,19 @@ class _OverlayVideoPreviewState extends State<OverlayVideoPreview> {
               ),
               child: Align(
                   alignment: Alignment.center,
-                  child: Stack(alignment: Alignment.center, children: [
+                  child: OlukoNeumorphism.isNeumorphismDesign? Stack(alignment: Alignment.center, children: [
+                    SizedBox(
+                      height: 52,
+                      width: 52,
+                      child: OlukoBlurredButton(
+                        childContent: Image.asset(
+                          'assets/courses/white_play_arrow.png',
+                          height: 16,
+                          width: 16,
+                        ),
+                      ),
+                    ),
+                  ]):Stack(alignment: Alignment.center, children: [
                     Image.asset(
                       'assets/courses/play_ellipse.png',
                       height: 46,

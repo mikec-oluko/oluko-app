@@ -143,7 +143,7 @@ class _HomeState extends State<Home> {
       } else {
         if (_courses[i] != null) {
           widgets.add(CourseSection(
-              classIndex: i == widget.index ? widget.classIndex : 0,
+              classIndex: widget.index == null ? 0 : i == widget.index ? widget.classIndex : 0,
               qtyCourses: _courses.length,
               courseIndex: i,
               course: _courses[i],

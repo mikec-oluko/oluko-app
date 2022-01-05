@@ -92,18 +92,19 @@ class _State extends State<AudioDialogContent> {
             ]),
             SizedBox(height: 15),
             Text(coach.firstName + ' ' + coach.lastName,
-                textAlign: TextAlign.center,
-                style: OlukoFonts.olukoSuperBigFont(
-                    custoFontWeight: FontWeight.bold)),
+                textAlign: TextAlign.center, style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold)),
             SizedBox(height: 15),
             Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 50),
                 child: Text(OlukoLocalizations.get(context, 'hasMessage'),
-                    textAlign: TextAlign.center,
-                    style: OlukoFonts.olukoBigFont(
-                        custoFontWeight: FontWeight.w300))),
+                    textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w300))),
             SizedBox(height: 10),
-            audioSlider(),
+            OlukoNeumorphism.isNeumorphismDesign
+                ? Image.asset(
+                    'assets/courses/audio.png',
+                    scale: 3,
+                  )
+                : audioSlider(),
             SizedBox(height: 5),
             GestureDetector(
                 onTap: () {
@@ -126,20 +127,34 @@ class _State extends State<AudioDialogContent> {
                     });
                   }
                 },
-                child: Stack(alignment: Alignment.center, children: [
-                  Image.asset(
-                    'assets/courses/green_circle.png',
-                    scale: 4.5,
-                  ),
-                  Icon(isPlaying ? Icons.pause : Icons.play_arrow,
-                      size: 32, color: OlukoColors.black)
-                ])),
+                child: OlukoNeumorphism.isNeumorphismDesign
+                    ? Padding(
+                        padding: const EdgeInsets.only(bottom: 10.0),
+                        child: Stack(alignment: Alignment.center, children: [
+                          Image.asset(
+                            'assets/assessment/green_ellipse.png',
+                            scale: 2.5,
+                          ),
+                          isPlaying
+                              ? Image.asset(
+                                  'assets/assessment/pause.png',
+                                )
+                              : Image.asset(
+                                  'assets/assessment/play_triangle.png',
+                                ),
+                        ]),
+                      )
+                    : Stack(alignment: Alignment.center, children: [
+                        Image.asset(
+                          'assets/courses/green_circle.png',
+                          scale: 4.5,
+                        ),
+                        Icon(isPlaying ? Icons.pause : Icons.play_arrow, size: 32, color: OlukoColors.black)
+                      ])),
           ])),
           Align(
               alignment: Alignment.topRight,
-              child: IconButton(
-                  icon: Icon(Icons.close, color: Colors.white),
-                  onPressed: () => Navigator.pop(context)))
+              child: IconButton(icon: Icon(Icons.close, color: Colors.white), onPressed: () => Navigator.pop(context)))
         ]));
   }
 }

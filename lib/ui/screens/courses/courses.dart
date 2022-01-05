@@ -356,7 +356,7 @@ class _State extends State<Courses> {
                         padding: const EdgeInsets.all(8.0),
                         child: GestureDetector(
                           onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
-                              arguments: {'course': course, 'fromCoach': false, 'isCoachRecommendation': false}),
+                              arguments: {'course': course, 'fromCoach': false, 'isCoachRecommendation': false,'courseEnrollment':courseEnrollment}),                           
                           child: _getCourseCard(
                             _generateImageCourse(course.image),
                             progress: courseEnrollment.completion,
