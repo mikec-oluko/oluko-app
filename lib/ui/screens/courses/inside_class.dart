@@ -19,17 +19,20 @@ import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/submodels/segment_submodel.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/services/audio_service.dart';
 import 'package:oluko_app/services/class_service.dart';
 import 'package:oluko_app/services/course_enrollment_service.dart';
 import 'package:oluko_app/ui/components/challenge_section.dart';
 import 'package:oluko_app/ui/components/class_movements_section.dart';
 import 'package:oluko_app/ui/components/course_progress_bar.dart';
+import 'package:oluko_app/ui/components/modal_audio.dart';
 import 'package:oluko_app/ui/components/modal_people_enrolled.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/overlay_video_preview.dart';
 import 'package:oluko_app/ui/components/uploading_modal_loader.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/screens/courses/audio_dialog_content.dart';
 import 'package:oluko_app/ui/screens/courses/class_detail_section.dart';
 import 'package:oluko_app/ui/screens/courses/course_info_section.dart';
@@ -64,12 +67,15 @@ class _InsideClassesState extends State<InsideClass> {
   PanelController panelController = PanelController();
   final PanelController _buttonController = PanelController();
   List<Movement> _classMovements;
+  List<UserResponse> _coaches;
+  List<Audio> _audios = [];
 
   Widget panelContent;
   PanelEnum panelState;
 
   @override
   void initState() {
+    _audios = widget.courseEnrollment.classes[widget.classIndex].audios;
     super.initState();
   }
 
@@ -83,7 +89,7 @@ class _InsideClassesState extends State<InsideClass> {
           if (classState is GetByIdSuccess) {
             _class = classState.classObj;
             BlocProvider.of<SegmentBloc>(context).getAll(_class);
-            BlocProvider.of<CoachAudioBloc>(context).getByAudios(widget.courseEnrollment.classes[widget.classIndex].audios);
+            BlocProvider.of<CoachAudioBloc>(context).getByAudios(_audios);
             BlocProvider.of<SubscribedCourseUsersBloc>(context).get(widget.courseEnrollment.course.id, authState.user.id);
             return form();
           } else {
@@ -104,6 +110,7 @@ class _InsideClassesState extends State<InsideClass> {
             _movements = movementState.movements;
             return BlocBuilder<CoachAudioBloc, CoachAudioState>(builder: (context, coachState) {
               if (coachState is CoachesByAudiosSuccess) {
+                _coaches = coachState.coaches;
                 return Stack(
                   children: [
                     SlidingUpPanel(
@@ -113,9 +120,9 @@ class _InsideClassesState extends State<InsideClass> {
                         collapsed: Container(
                           color: Colors.black,
                         ),
-                        panel: /*audioSection(coachState.coaches)*/ classDetailSection(),
+                        panel: classDetailSection(),
                         body: Container(
-                          color: Colors.black,
+                          color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.grayColorFadeBottom : Colors.black,
                           child: classInfoSection(coachState.coaches),
                         )),
                     slidingUpPanelComponent(context)
@@ -155,26 +162,55 @@ class _InsideClassesState extends State<InsideClass> {
   }
 
   Widget _startButton() {
-    return Row(
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        OlukoPrimaryButton(
-          title: OlukoLocalizations.get(context, 'start'),
-          onPressed: () {
-            int segmentIndex = CourseEnrollmentService.getFirstUncompletedSegmentIndex(widget.courseEnrollment.classes[widget.classIndex]);
-            if (segmentIndex == -1) {
-              segmentIndex = 0;
-            }
-            Navigator.pushNamed(context, routeLabels[RouteEnum.segmentDetail], arguments: {
-              'segmentIndex': segmentIndex,
-              'classIndex': widget.classIndex,
-              'courseEnrollment': widget.courseEnrollment,
-              'courseIndex': widget.courseIndex
-            });
-          },
-        ),
-      ],
-    );
+    return OlukoNeumorphism.isNeumorphismDesign
+        ? Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 300,
+                height: 50,
+                child: OlukoNeumorphicPrimaryButton(
+                  isExpanded: false,
+                  thinPadding: true,
+                  title: OlukoLocalizations.get(context, 'start'),
+                  onPressed: () {
+                    int segmentIndex =
+                        CourseEnrollmentService.getFirstUncompletedSegmentIndex(widget.courseEnrollment.classes[widget.classIndex]);
+                    if (segmentIndex == -1) {
+                      segmentIndex = 0;
+                    }
+                    Navigator.pushNamed(context, routeLabels[RouteEnum.segmentDetail], arguments: {
+                      'segmentIndex': segmentIndex,
+                      'classIndex': widget.classIndex,
+                      'courseEnrollment': widget.courseEnrollment,
+                      'courseIndex': widget.courseIndex
+                    });
+                  },
+                ),
+              )
+            ],
+          )
+        : Row(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              OlukoPrimaryButton(
+                title: OlukoLocalizations.get(context, 'start'),
+                onPressed: () {
+                  int segmentIndex =
+                      CourseEnrollmentService.getFirstUncompletedSegmentIndex(widget.courseEnrollment.classes[widget.classIndex]);
+                  if (segmentIndex == -1) {
+                    segmentIndex = 0;
+                  }
+                  Navigator.pushNamed(context, routeLabels[RouteEnum.segmentDetail], arguments: {
+                    'segmentIndex': segmentIndex,
+                    'classIndex': widget.classIndex,
+                    'courseEnrollment': widget.courseEnrollment,
+                    'courseIndex': widget.courseIndex
+                  });
+                },
+              ),
+            ],
+          );
   }
 
   Widget buildChallengeSection() {
@@ -228,13 +264,6 @@ class _InsideClassesState extends State<InsideClass> {
     });
   }
 
-  Widget audioSection(List<UserResponse> coaches) {
-    return AudioPanel(
-      coaches: coaches,
-      audios: widget.courseEnrollment.classes[widget.classIndex].audios,
-    );
-  }
-
   Widget classInfoSection(List<UserResponse> coaches) {
     return ListView(children: [
       Padding(
@@ -250,24 +279,16 @@ class _InsideClassesState extends State<InsideClass> {
                   final int normalUsers = subscribedCourseUsersState.users != null ? subscribedCourseUsersState.users.length : 0;
                   final int qty = favorites + normalUsers;
                   return CourseInfoSection(
-                      onAudioPressed: () => coaches.isNotEmpty
-                          ? _audioAction(coaches[0], widget.courseEnrollment.classes[widget.classIndex].audios[0])
-                          : null,
+                      onAudioPressed: () => _coaches.isNotEmpty ? _audioAction() : null,
                       peopleQty: qty,
                       onPeoplePressed: () => _peopleAction(subscribedCourseUsersState.users, subscribedCourseUsersState.favoriteUsers),
-                      audioMessageQty: widget.courseEnrollment?.classes[widget.classIndex]?.audios != null
-                          ? widget.courseEnrollment.classes[widget.classIndex].audios.length
-                          : 0,
+                      audioMessageQty: AudioService.getAudiosLength(_audios),
                       image: widget.courseEnrollment.course.image);
                 } else {
                   return CourseInfoSection(
-                      onAudioPressed: () => coaches.isNotEmpty
-                          ? _audioAction(coaches[0], widget.courseEnrollment.classes[widget.classIndex].audios[0])
-                          : null,
+                      onAudioPressed: () => _coaches.isNotEmpty ? _audioAction() : null,
                       peopleQty: 0,
-                      audioMessageQty: widget.courseEnrollment?.classes[widget.classIndex]?.audios != null
-                          ? widget.courseEnrollment.classes[widget.classIndex].audios.length
-                          : 0,
+                      audioMessageQty: AudioService.getAudiosLength(_audios),
                       image: widget.courseEnrollment.course.image);
                 }
               })
@@ -284,41 +305,91 @@ class _InsideClassesState extends State<InsideClass> {
           padding: EdgeInsets.only(right: 15, left: 15, top: 25),
           child: Container(
               width: MediaQuery.of(context).size.width,
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                _startButton(),
-                Padding(
-                    padding: const EdgeInsets.only(top: 15.0),
-                    child: Text(
-                      _class.name,
-                      style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
-                    )),
-                Padding(
-                  padding: const EdgeInsets.only(top: 10.0, right: 10),
-                  child: Text(
-                    TimeConverter.toClassProgress(widget.classIndex, widget.courseEnrollment.classes.length, context),
-                    style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.primary),
-                  ),
-                ),
-                Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
-                    child: CourseProgressBar(value: CourseEnrollmentService.getClassProgress(widget.courseEnrollment, widget.classIndex))),
-                (() {
-                  // your code here
-                  if (_class.description != null) {
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 20.0),
-                      child: Text(
-                        _class.description,
-                        style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+              child: OlukoNeumorphism.isNeumorphismDesign
+                  ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Padding(
+                          padding: const EdgeInsets.only(top: 15.0),
+                          child: Text(
+                            _class.name,
+                            style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
+                          )),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10.0),
+                        child: Text(
+                          widget.courseEnrollment.course.name,
+                          style: OlukoFonts.olukoMediumFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.yellow),
+                        ),
                       ),
-                    );
-                  } else {
-                    return SizedBox();
-                  }
-                }()),
-                buildChallengeSection(),
-                classMovementSection(),
-              ]))),
+                      Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: _startButton(),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10.0, right: 10),
+                        child: Text(
+                          TimeConverter.toClassProgress(widget.classIndex, widget.courseEnrollment.classes.length, context),
+                          style: OlukoFonts.olukoMediumFont(
+                              custoFontWeight: FontWeight.normal,
+                              customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.yellow : OlukoColors.primary),
+                        ),
+                      ),
+                      Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: CourseProgressBar(
+                              value: CourseEnrollmentService.getClassProgress(widget.courseEnrollment, widget.classIndex))),
+                      (() {
+                        // your code here
+                        if (_class.description != null) {
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 20.0),
+                            child: Text(
+                              _class.description,
+                              style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+                            ),
+                          );
+                        } else {
+                          return SizedBox();
+                        }
+                      }()),
+                      buildChallengeSection(),
+                      classMovementSection(),
+                    ])
+                  : Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      _startButton(),
+                      Padding(
+                          padding: const EdgeInsets.only(top: 15.0),
+                          child: Text(
+                            _class.name,
+                            style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
+                          )),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10.0, right: 10),
+                        child: Text(
+                          TimeConverter.toClassProgress(widget.classIndex, widget.courseEnrollment.classes.length, context),
+                          style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.primary),
+                        ),
+                      ),
+                      Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: CourseProgressBar(
+                              value: CourseEnrollmentService.getClassProgress(widget.courseEnrollment, widget.classIndex))),
+                      (() {
+                        // your code here
+                        if (_class.description != null) {
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 20.0),
+                            child: Text(
+                              _class.description,
+                              style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+                            ),
+                          );
+                        } else {
+                          return SizedBox();
+                        }
+                      }()),
+                      buildChallengeSection(),
+                      classMovementSection(),
+                    ]))),
     ]);
   }
 
@@ -353,7 +424,7 @@ class _InsideClassesState extends State<InsideClass> {
           }
           if (state is InsideClassContentAudioOpen) {
             _buttonController.open();
-            _contentForPanel = AudioDialogContent(coach: state.coach, audio: state.audio);
+            _contentForPanel = ModalAudio(users: _coaches, audios: _audios);
           }
           if (state is InsideClassContentLoading) {
             _contentForPanel = UploadingModalLoader(UploadFrom.segmentDetail);
@@ -368,7 +439,7 @@ class _InsideClassesState extends State<InsideClass> {
     BlocProvider.of<InsideClassContentBloc>(context).openPeoplePanel(users, favorites);
   }
 
-  _audioAction(UserResponse coach, Audio audio) {
-    BlocProvider.of<InsideClassContentBloc>(context).openAudioPanel(coach, audio);
+  _audioAction() {
+    BlocProvider.of<InsideClassContentBloc>(context).openAudioPanel();
   }
 }

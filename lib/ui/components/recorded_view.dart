@@ -29,7 +29,6 @@ class _RecordedViewState extends State<RecordedView> {
   int _currentDuration;
   double _completedPercentage = 0.0;
   bool _isPlaying = false;
-  int _selectedIndex = -1;
   AudioPlayer audioPlayer = AudioPlayer();
   bool playedOnce = false;
 

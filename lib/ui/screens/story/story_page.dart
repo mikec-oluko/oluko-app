@@ -142,7 +142,7 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
                                 bloc: BlocProvider.of(context),
                                 listener: (hiFiveSendContext, hiFiveSendState) {
                                   if (hiFiveSendState is HiFiveSendSuccess) {
-                                    AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'hiFiveSent'));
+                                    AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'hiFiveSent'));
                                   }
                                 },
                                 child: SizedBox(width: 80, height: 80, child: Image.asset('assets/profile/hiFive.png')),

@@ -58,7 +58,7 @@ class SegmentSubmission extends Base {
         coachId: json['coach_id']?.toString(),
         coachReference: json['coach_reference'] as DocumentReference,
         courseEnrollmentId: json['course_enrollment_id']?.toString(),
-        status: SegmentSubmissionStatusEnum.values[json['status'] as int],
+        status: json['status'] is int ? SegmentSubmissionStatusEnum.values[json['status'] as int] : null,
         courseEnrollmentReference: json['course_enrollment_reference'] as DocumentReference,
         seenAt: json['seen_at'] as Timestamp,
         favorite: json['favorite'] == null ? false : json['favorite'] as bool,

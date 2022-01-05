@@ -4,9 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/done_challenge_users_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/segment.dart';
+import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/submodels/user_submodel.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
@@ -17,6 +19,7 @@ import 'package:oluko_app/ui/components/people_section.dart';
 import 'package:oluko_app/ui/components/segment_step_section.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
 import 'package:oluko_app/ui/components/vertical_divider.dart' as verticalDivider;
+import 'package:oluko_app/ui/screens/courses/audio_panel.dart';
 import 'package:oluko_app/ui/screens/courses/segment_clocks.dart';
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -31,7 +34,7 @@ class SegmentImageSection extends StatefulWidget {
   final int currentSegmentStep;
   final int totalSegmentStep;
   final String userId;
-  final Function() audioAction;
+  final Function(List<Audio> audios) audioAction;
   final Function(List<UserSubmodel> users, List<UserSubmodel> favorites) peopleAction;
   final Function() clockAction;
   final CourseEnrollment courseEnrollment;
@@ -40,6 +43,7 @@ class SegmentImageSection extends StatefulWidget {
   final List<Segment> segments;
   final List<CoachRequest> coachRequests;
   final UserResponse coach;
+  final Challenge challenge;
 
   SegmentImageSection(
       {this.onPressed = null,
@@ -47,6 +51,7 @@ class SegmentImageSection extends StatefulWidget {
       this.showBackButton = true,
       this.currentSegmentStep,
       this.totalSegmentStep,
+      this.challenge,
       this.userId,
       this.audioAction,
       this.clockAction,
@@ -65,15 +70,23 @@ class SegmentImageSection extends StatefulWidget {
 }
 
 class _SegmentImageSectionState extends State<SegmentImageSection> {
+  CoachRequest _coachRequest;
+
   @override
   void initState() {
+    _coachRequest = getSegmentCoachRequest(widget.segment.id);
     BlocProvider.of<DoneChallengeUsersBloc>(context).get(widget.segment.id, widget.userId);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return imageWithButtons();
+    return WillPopScope(
+        onWillPop: () {
+          Navigator.popUntil(context, ModalRoute.withName('/inside-class'));
+          return Future(() => false);
+        },
+        child: imageWithButtons());
   }
 
   Widget imageWithButtons() {
@@ -125,8 +138,8 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
             title: OlukoLocalizations.get(context, 'startWorkouts'),
             color: OlukoColors.primary,
             onPressed: () {
-              CoachRequest coachRequest = getSegmentCoachRequest(widget.segment.id);
-              if (coachRequest != null) {
+              //CoachRequest coachRequest = getSegmentCoachRequest(widget.segment.id);
+              if (_coachRequest != null) {
                 BottomDialogUtils.showBottomDialog(context: context, content: dialogContainer(widget.coach.firstName, widget.coach.avatar));
               } else {
                 navigateToSegmentWithoutRecording();
@@ -237,17 +250,51 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
             else
               const SizedBox(),
             const Expanded(child: SizedBox()),
-            Padding(
-                padding: const EdgeInsets.only(right: 15),
-                child: Stack(alignment: Alignment.center, children: [
+            getCameraIcon()
+          ],
+        ));
+  }
+
+  Widget getCameraIcon() {
+    return Padding(
+        padding: const EdgeInsets.only(right: 15),
+        child: Stack(
+            alignment: Alignment.center,
+            children: getCameraCircles() +
+                [
                   Image.asset(
                     'assets/courses/outlined_camera.png',
                     scale: 3,
                   ),
                   const Padding(padding: EdgeInsets.only(top: 1), child: Icon(Icons.circle_outlined, size: 16, color: OlukoColors.primary))
-                ]))
-          ],
-        ));
+                ]));
+  }
+
+  List<Widget> getCameraCircles() {
+    if (_coachRequest != null) {
+      return [
+        Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: Image.asset(
+              'assets/courses/green_ellipse_1.png',
+              scale: 3,
+            )),
+        Padding(
+            padding: const EdgeInsets.only(top: 1),
+            child: Image.asset(
+              'assets/courses/green_ellipse_2.png',
+              scale: 3,
+            )),
+        Padding(
+            padding: const EdgeInsets.only(bottom: 2),
+            child: Image.asset(
+              'assets/courses/green_ellipse_3.png',
+              scale: 3,
+            ))
+      ];
+    } else {
+      return [];
+    }
   }
 
   Widget imageSection() {
@@ -276,7 +323,9 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
       padding: const EdgeInsets.only(left: 20, top: 190),
       child: Column(children: [
         Row(children: [
-          GestureDetector(onTap: widget.audioAction, child: const AudioSection(audioMessageQty: 10)),
+          GestureDetector(
+              onTap: () => widget.audioAction(widget.challenge.audios),
+              child: AudioSection(audioMessageQty: widget.challenge.audios != null ? widget.challenge.audios.length : 0)),
           const verticalDivider.VerticalDivider(
             width: 30,
             height: 60,

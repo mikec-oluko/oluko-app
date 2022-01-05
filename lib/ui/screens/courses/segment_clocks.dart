@@ -11,6 +11,7 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
+import 'package:oluko_app/blocs/keyboard/keyboard_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/story_bloc.dart' as storyBloc;
@@ -28,6 +29,7 @@ import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/timer_entry.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
+import 'package:oluko_app/ui/components/custom_keyboard.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/progress_bar.dart';
@@ -130,7 +132,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () => onWillPop(context),
+      onWillPop: () {
+        return onWillPop(context, isSegmentWithRecording());
+      },
       child: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
         if (authState is AuthSuccess) {
           _user = authState.firebaseUser;
@@ -190,7 +194,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   Future<void> callBlocToCreateStory(BuildContext context, SegmentSubmission segmentSubmission) async {
     BlocProvider.of<storyBloc.StoryBloc>(context).createStory(segmentSubmission);
-    AppMessages.showSnackbarTranslated(context, 'storyCreated');
+    AppMessages.clearAndShowSnackbarTranslated(context, 'storyCreated');
   }
 
   bool isSegmentWithRecording() {
@@ -198,6 +202,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   }
 
   Widget form() {
+    bool keyboardVisibilty=false;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: OlukoAppBar(
@@ -208,20 +213,34 @@ class _SegmentClocksState extends State<SegmentClocks> {
       ),
       backgroundColor: Colors.black,
       body: isSegmentWithoutRecording() && workState != WorkState.finished
-          ? SlidingUpPanel(
-              controller: panelController,
-              borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-              minHeight: 90,
-              maxHeight: 185,
-              collapsed: CollapsedMovementVideosSection(action: getAction()),
-              panel: MovementVideosSection(
-                  action: getAction(),
-                  segment: widget.segments[widget.segmentIndex],
-                  movements: _movements,
-                  onPressedMovement: (BuildContext context, Movement movement) =>
-                      Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement})),
-              body: _body())
-          : _body(),
+          ? BlocBuilder<KeyboardBloc, KeyboardState>(
+              builder: (context, state) {
+                keyboardVisibilty = state.setVisible;
+                return SlidingUpPanel(
+                    controller: panelController,
+                    borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                    minHeight: () {
+                      if (!keyboardVisibilty) return 90.0;
+                      return 0.0;
+                    }(),
+                    maxHeight: () {
+                      if (!keyboardVisibilty) return 185.0;
+                      return 0.0;
+                    }(),
+                    collapsed: Visibility(visible: !keyboardVisibilty, child: CollapsedMovementVideosSection(action: getAction())),
+                    panel: Visibility(
+                      visible: !keyboardVisibilty,
+                      child: MovementVideosSection(
+                          action: getAction(),
+                          segment: widget.segments[widget.segmentIndex],
+                          movements: _movements,
+                          onPressedMovement: (BuildContext context, Movement movement) =>
+                              Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement})),
+                    ),
+                    body: _body(keyboardVisibilty));
+              },
+            )
+          : _body(keyboardVisibilty),
     );
   }
 
@@ -262,14 +281,36 @@ class _SegmentClocksState extends State<SegmentClocks> {
         ));
   }
 
-  Widget _body() {
-    return ListView(
-      children: [
-        _timerSection(),
-        _lowerSection(),
-        if (isWorkStateFinished()) showFinishedButtons() else const SizedBox(),
-      ],
-    );
+  Widget _body(bool keyboardVisibilty) {
+    final _controller = ScrollController();
+        if (!keyboardVisibilty) {
+          return ListView(
+            controller: _controller,
+            children: [
+              _timerSection(keyboardVisibilty),
+              _lowerSection(),
+              if (isWorkStateFinished()) showFinishedButtons() else const SizedBox(),
+            ],
+          );
+        }
+        Timer(
+          Duration(milliseconds: 5),
+          () => _controller.animateTo(
+            _controller.position.maxScrollExtent,
+            duration: Duration(seconds: 1),
+            curve: Curves.fastOutSlowIn,
+          ),
+        );
+        return ListView(
+          controller: _controller,
+          children: [
+            _timerSection(keyboardVisibilty),
+            _lowerSection(),
+            if (isWorkStateFinished()) showFinishedButtons() else const SizedBox(),
+          ],
+        );
+      
+    ;
   }
 
   Widget showFinishedButtons() {
@@ -351,15 +392,15 @@ class _SegmentClocksState extends State<SegmentClocks> {
   }
 
   ///Countdown & movements information
-  Widget _timerSection() {
+  Widget _timerSection(bool keyboardVisibilty) {
     return Center(
         child: Column(
       children: [
         getSegmentLabel(),
         Padding(
             padding: const EdgeInsets.only(top: 3, bottom: 8),
-            child: Stack(alignment: Alignment.center, children: [getRoundsTimer(), _countdownSection()])),
-        if (isWorkStateFinished()) const SizedBox() else _tasksSection()
+            child: Stack(alignment: Alignment.center, children: [getRoundsTimer(keyboardVisibilty), _countdownSection()])),
+        if (isWorkStateFinished()) const SizedBox() else _tasksSection(keyboardVisibilty)
       ],
     ));
   }
@@ -386,26 +427,26 @@ class _SegmentClocksState extends State<SegmentClocks> {
     }
   }
 
-  Widget getRoundsTimer() {
+  Widget getRoundsTimer(bool keyboardVisibilty) {
     if (SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) && isWorkStateFinished()) {
-      return TimerUtils.roundsTimer(AMRAPRound, AMRAPRound);
+      return TimerUtils.roundsTimer(AMRAPRound, AMRAPRound,keyboardVisibilty);
     } else if (isWorkStateFinished()) {
-      return TimerUtils.roundsTimer(widget.segments[widget.segmentIndex].rounds, widget.segments[widget.segmentIndex].rounds);
+      return TimerUtils.roundsTimer(widget.segments[widget.segmentIndex].rounds, widget.segments[widget.segmentIndex].rounds,keyboardVisibilty);
     } else if (SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex])) {
-      return TimerUtils.roundsTimer(AMRAPRound, AMRAPRound);
+      return TimerUtils.roundsTimer(AMRAPRound, AMRAPRound,keyboardVisibilty);
     } else {
-      return TimerUtils.roundsTimer(widget.segments[widget.segmentIndex].rounds, timerEntries[timerTaskIndex].round);
+      return TimerUtils.roundsTimer(widget.segments[widget.segmentIndex].rounds, timerEntries[timerTaskIndex].round,keyboardVisibilty);
     }
   }
 
   ///Current and next movement labels
-  Widget _tasksSection() {
+  Widget _tasksSection(bool keyboardVisibilty) {
     return isSegmentWithoutRecording()
-        ? taskSectionWithoutRecording()
-        : Column(children: [SizedBox(height: 10), recordingTaskSection(), counterTextField(), SizedBox(height: 20)]);
+        ? taskSectionWithoutRecording(keyboardVisibilty)
+        : Column(children: [SizedBox(height: 10), recordingTaskSection(keyboardVisibilty), ...counterTextField(keyboardVisibilty), SizedBox(height: 20)]);
   }
 
-  Widget taskSectionWithoutRecording() {
+  Widget taskSectionWithoutRecording(bool keyboardVisibilty) {
     final bool hasMultipleLabels = timerEntries[timerTaskIndex].labels.length > 1;
     if (hasMultipleLabels) {
       return Column(children: SegmentUtils.getJoinedLabel(timerEntries[timerTaskIndex].labels));
@@ -414,27 +455,27 @@ class _SegmentClocksState extends State<SegmentClocks> {
       final String nextTask = timerTaskIndex < timerEntries.length - 1 ? timerEntries[timerTaskIndex + 1].labels[0] : '';
       return Column(
         children: [
-          currentTaskWidget(currentTask),
+          currentTaskWidget(keyboardVisibilty,currentTask),
           const SizedBox(height: 10),
-          nextTaskWidget(nextTask),
+          nextTaskWidget(nextTask,keyboardVisibilty),
           const SizedBox(height: 15),
-          counterTextField()
+          ...counterTextField(keyboardVisibilty),
         ],
       );
     }
   }
 
-  Widget counterTextField() {
+  List<Widget> counterTextField(bool keyboardVisibilty) {
     if (isCurrentMovementRest() &&
         (timerEntries[timerTaskIndex - 1].counter == CounterEnum.reps ||
             timerEntries[timerTaskIndex - 1].counter == CounterEnum.distance)) {
-      return getTextField();
+      return [getTextField(keyboardVisibilty), getKeyboard(keyboardVisibilty)];
     } else {
-      return const SizedBox();
+      return [const SizedBox()];
     }
   }
 
-  Widget getTextField() {
+  Widget getTextField(bool keyboardVisibilty) {
     final bool isCounterByReps = timerEntries[timerTaskIndex - 1].counter == CounterEnum.reps;
     return Container(
         decoration: const BoxDecoration(
@@ -443,29 +484,71 @@ class _SegmentClocksState extends State<SegmentClocks> {
           fit: BoxFit.cover,
         )),
         height: 50,
-        child: Row(children: [
-          const SizedBox(width: 20),
-          Text(OlukoLocalizations.get(context, 'enterScore'),
-              style: TextStyle(fontSize: 18, color: OlukoColors.white, fontWeight: FontWeight.w300)),
-          const SizedBox(width: 10),
-          SizedBox(
-              width: isCounterByReps ? 40 : 70,
-              child: TextField(
-                controller: textController,
-                style: const TextStyle(fontSize: 20, color: OlukoColors.white, fontWeight: FontWeight.bold),
-                keyboardType: TextInputType.number,
-              )),
-          const SizedBox(width: 10),
-          if (isCounterByReps)
-            Text(timerEntries[timerTaskIndex - 1].movement.name,
-                style: TextStyle(fontSize: 18, color: OlukoColors.white, fontWeight: FontWeight.w300))
-          else
-            Text(OlukoLocalizations.get(context, 'meters'),
-                style: TextStyle(fontSize: 18, color: OlukoColors.white, fontWeight: FontWeight.w300)),
-        ]));
+        child: Column(
+          children: [
+            Row(children: [
+              const SizedBox(width: 20),
+              Text(OlukoLocalizations.get(context, 'enterScore'),
+                  style: TextStyle(fontSize: 18, color: OlukoColors.white, fontWeight: FontWeight.w300)),
+              const SizedBox(width: 10),
+              SizedBox(
+                  width: isCounterByReps ? 40 : 70,
+                  child: BlocBuilder<KeyboardBloc, KeyboardState>(
+                    builder: (context, state) {
+                      return Scrollbar(
+                        child: () {
+                          final _customKeyboardBloc = BlocProvider.of<KeyboardBloc>(context);
+                          final ScrollController _scrollController = ScrollController();
+                          TextSelection textSelection = state.textEditingController.selection;
+                          textSelection = state.textEditingController.selection.copyWith(
+                            baseOffset: state.textEditingController.text.length,
+                            extentOffset: state.textEditingController.text.length,
+                          );
+                          textController = state.textEditingController;
+                          textController.selection = textSelection;
+                          return TextField(
+                            scrollController: _scrollController,
+                            controller: textController,
+                            onTap: () => !state.setVisible ? _customKeyboardBloc.add(SetVisible()) : null,
+                            style: const TextStyle(fontSize: 20, color: OlukoColors.white, fontWeight: FontWeight.bold),
+                            focusNode: state.focus,
+                            readOnly: true,
+                            showCursor: true,
+                            decoration: const InputDecoration(border: InputBorder.none),
+                            maxLines: 1,
+                          );
+                        }(),
+                      );
+                    },
+                  )),
+              const SizedBox(width: 10),
+              if (isCounterByReps)
+                Text(timerEntries[timerTaskIndex - 1].movement.name,
+                    style: TextStyle(fontSize: 18, color: OlukoColors.white, fontWeight: FontWeight.w300))
+              else
+                Text(OlukoLocalizations.get(context, 'meters'),
+                    style: TextStyle(fontSize: 18, color: OlukoColors.white, fontWeight: FontWeight.w300)),
+            ]),
+          ],
+        ));
   }
 
-  Widget recordingTaskSection() {
+  Widget getKeyboard(bool keyboardVisibilty) {
+    const boxDecoration = BoxDecoration(
+      gradient: LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [Color(0xff2b2f35), Color(0xff16171b)],
+    ));
+    return Visibility(
+        visible: keyboardVisibilty,
+        child: CustomKeyboard(
+          boxDecoration: boxDecoration,
+        ));
+    ;
+  }
+
+  Widget recordingTaskSection(bool keyboardVisibilty) {
     final bool hasMultipleLabels = timerEntries[timerTaskIndex].labels.length > 1;
     if (hasMultipleLabels) {
       final List<Widget> items = SegmentUtils.getJoinedLabel(timerEntries[timerTaskIndex].labels);
@@ -481,7 +564,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  currentTaskWidget(currentTask, true),
+                  currentTaskWidget(keyboardVisibilty,currentTask, true),
                   Positioned(
                       left: ScreenUtils.width(context) - 70,
                       child: Text(
@@ -549,27 +632,38 @@ class _SegmentClocksState extends State<SegmentClocks> {
     return TimerUtils.timeTimer(circularProgressIndicatorValue, TimeConverter.durationToString(timeLeft), context, counter);
   }
 
-  Widget currentTaskWidget(String currentTask, [bool smaller = false]) {
-    return Text(
-      currentTask,
-      style: TextStyle(fontSize: smaller ? 20 : 25, color: Colors.white, fontWeight: FontWeight.bold),
-    );
+  Widget currentTaskWidget(bool keyboardVisibilty,String currentTask, [bool smaller = false]) {
+        return Visibility(
+          visible: !keyboardVisibilty,
+          child: Text(
+            currentTask,
+            style: TextStyle(fontSize: smaller ? 20 : 25, color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+        );
+      ;
   }
 
-  Widget nextTaskWidget(String nextTask) {
-    return ShaderMask(
-      shaderCallback: (rect) {
-        return const LinearGradient(
-          begin: Alignment.center,
-          end: Alignment.bottomCenter,
-          colors: [Colors.black, Colors.transparent],
-        ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
+  Widget nextTaskWidget(String nextTask,bool keyboardVisibilty) {
+    return BlocBuilder<KeyboardBloc, KeyboardState>(
+      builder: (context, state) {
+        return Visibility(
+          visible: !keyboardVisibilty,
+          child: ShaderMask(
+            shaderCallback: (rect) {
+              return const LinearGradient(
+                begin: Alignment.center,
+                end: Alignment.bottomCenter,
+                colors: [Colors.black, Colors.transparent],
+              ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
+            },
+            blendMode: BlendMode.dstIn,
+            child: Text(
+              nextTask,
+              style: const TextStyle(fontSize: 25, color: Color.fromRGBO(255, 255, 255, 0.25), fontWeight: FontWeight.bold),
+            ),
+          ),
+        );
       },
-      blendMode: BlendMode.dstIn,
-      child: Text(
-        nextTask,
-        style: const TextStyle(fontSize: 25, color: Color.fromRGBO(255, 255, 255, 0.25), fontWeight: FontWeight.bold),
-      ),
     );
   }
 
@@ -676,7 +770,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
       setState(() {
         workoutType = WorkoutType.segment;
       });
-      AppMessages.showSnackbar(context, OlukoLocalizations.get(context, 'roundInfo'));
+      AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'roundInfo'));
       /*DialogUtils.getDialog(context, _confirmDialogContent(),
           showExitButton: true);*/
     }
@@ -1021,7 +1115,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
     } else {
       message = OlukoLocalizations.get(context, 'segmentUploadedSuccessfully');
     }
-    AppMessages.showSnackbar(context, message);
+    AppMessages.clearAndShowSnackbar(context, message);
   }
 
   void updateProgress(VideoProcessing state) {
@@ -1031,13 +1125,16 @@ class _SegmentClocksState extends State<SegmentClocks> {
     });
   }
 
-  static Future<bool> onWillPop(BuildContext context) async {
+  static Future<bool> onWillPop(BuildContext context, bool isRecording) async {
     return (await showDialog(
           context: context,
           builder: (context) => AlertDialog(
             backgroundColor: Colors.black,
             title: TitleBody(OlukoLocalizations.get(context, 'exitConfirmationTitle')),
-            content: Text('Do you want to go back? Your recordings will be lost.',
+            content: Text(
+                isRecording
+                    ? OlukoLocalizations.get(context, 'goBackConfirmationWithRecording')
+                    : OlukoLocalizations.get(context, 'goBackConfirmationWithoutRecording'),
                 // OlukoLocalizations.get(context, 'exitConfirmationBody'),
                 style: OlukoFonts.olukoBigFont()),
             actions: <Widget>[
@@ -1049,8 +1146,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
               ),
               TextButton(
                 onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.pop(context);
+                  Navigator.popUntil(context, ModalRoute.withName('/segment-detail'));
                 },
                 child: Text(
                   OlukoLocalizations.get(context, 'yes'),

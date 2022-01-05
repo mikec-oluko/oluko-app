@@ -51,7 +51,7 @@ if [ "$1" = "increment_build" ]
     then perl -i -pe 's/^(version:\s+\d+\.\d+\.)(\d+)(\+)(\d+)$/$1.($2).$3.($4+1)/e' pubspec.yaml
 fi
 if [[ "$1" != "qa" ]] && [[ "$1" != "dev" ]] && [[ "$1" != "prod" ]] && [[ "$1" != "appbundle" ]] && [[ "$1" != "increment_build" ]] && [[ "$1" != "deploy" ]]
-    then echo "Arguments allowed qa / dev / prod / appbundle / increment_build"
+    then echo "Arguments allowed qa / dev / prod / appbundle / increment_build / deploy"
 fi
 if [ "$1" = "deploy" ]
     then

@@ -34,7 +34,7 @@ class _State extends State<SearchResultsGrid> {
                       child: GestureDetector(
                     //TODO: not generic, depends on T being course only
                     onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
-                        arguments: {'course': e as Course, 'fromCoach': false}),
+                        arguments: {'course': e as Course, 'fromCoach': false, 'isCoachRecommendation': false}),
                     child: _getCourseCard(
                       Image.network(
                         e.image as String,

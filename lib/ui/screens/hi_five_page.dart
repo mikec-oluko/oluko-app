@@ -37,7 +37,7 @@ class _HiFivePageState extends State<HiFivePage> {
             return BlocListener<HiFiveBloc, HiFiveState>(
               listener: (context, hiFiveState) {
                 if (hiFiveState is HiFiveSuccess && hiFiveState.alertMessage != null) {
-                  AppMessages.showSnackbar(context, hiFiveState.alertMessage);
+                  AppMessages.clearAndShowSnackbar(context, hiFiveState.alertMessage);
                 }
               },
               child: BlocBuilder<HiFiveBloc, HiFiveState>(builder: (context, hiFiveState) {
