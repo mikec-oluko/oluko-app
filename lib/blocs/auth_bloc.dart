@@ -7,6 +7,7 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/blocs/class/class_subscription_bloc.dart';
 import 'package:oluko_app/blocs/course_category_bloc.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
+import 'package:oluko_app/helpers/permissions.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/models/dto/api_response.dart';
 import 'package:oluko_app/models/dto/login_request.dart';
@@ -20,6 +21,7 @@ import 'package:oluko_app/utils/app_loader.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'coach/coach_interaction_timeline_bloc.dart';
 import 'coach/coach_mentored_videos_bloc.dart';
 import 'coach/coach_recommendations_bloc.dart';
@@ -110,6 +112,11 @@ class AuthBloc extends Cubit<AuthState> {
       if (firebaseUser != null) {
         emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
         navigateToNextScreen(context, firebaseUser.uid);
+        final sharedPref = await SharedPreferences.getInstance();
+        if (sharedPref.getBool('first_time') == true) {
+          sharedPref.setBool('first_time', false);
+          await Permissions.askForPermissions();
+        }
       }
     }
   }

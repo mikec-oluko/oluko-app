@@ -52,8 +52,12 @@ String getInitialRoute(User alreadyLoggedUser, bool isFirstTime) {
 Future<bool> isFirstTime() async {
   final sharedPref = await SharedPreferences.getInstance();
   final isFirstTime = sharedPref.getBool('first_time');
-  sharedPref.setBool('first_time', false);
-  return !(isFirstTime != null && !isFirstTime);
+  if (isFirstTime != null && !isFirstTime) {
+    return false;
+  } else {
+    sharedPref.setBool('first_time', true);
+    return true;
+  }
 }
 
 const OLUKO = 'Oluko';
