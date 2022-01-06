@@ -11,6 +11,7 @@ class KeyboardBloc extends Bloc<KeyboardEvent, KeyboardState> {
     on<DeleteNumber>((event, emit) => {_backspace()});
     on<Submit>((event, emit) => emit(_submit()));
     on<SetVisible>((event, emit) => emit(_setVisible()));
+    on<HideKeyboard>((event, emit) => emit(_hide()));
   }
   KeyboardState _setVisible() {
     state.focus.requestFocus();
@@ -66,6 +67,7 @@ class KeyboardBloc extends Bloc<KeyboardEvent, KeyboardState> {
     state.focus.requestFocus();
     state.textEditingController = _controller;
     state.inputValue = newText;
+    state.textScrollController.animateTo(1000, duration: Duration(microseconds: 1), curve: Curves.bounceInOut);
   }
 
   void _backspace() {
@@ -107,5 +109,13 @@ class KeyboardBloc extends Bloc<KeyboardEvent, KeyboardState> {
     );
     state.textEditingController = _controller;
     state.inputValue = _controller.text;
+  }
+
+  KeyboardState _hide() {
+    return KeyboardState(valueSubmited: state.inputValue,
+        inputValue: state.inputValue,
+        setVisible: false,
+        focus: state.focus,
+        textEditingController: state.textEditingController);
   }
 }
