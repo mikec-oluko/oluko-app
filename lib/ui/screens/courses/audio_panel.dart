@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -10,8 +11,9 @@ class AudioPanel extends StatefulWidget {
   final List<UserResponse> coaches;
   final List<Audio> audios;
   final Function(int) onAudioPressed;
+  AudioPlayer audioPlayer;
 
-  AudioPanel({this.coaches, this.audios, this.onAudioPressed});
+  AudioPanel({this.coaches, this.audios, this.onAudioPressed, this.audioPlayer});
 
   @override
   _State createState() => _State();
@@ -61,6 +63,7 @@ class _State extends State<AudioPanel> {
           showTopDivider: i != 0,
           coach: widget.coaches == null ? null : widget.coaches[i],
           audio: widget.audios[i],
+          audioPlayer: widget.audioPlayer,
           removeAudioFromList: () => _removeAudioFromList(i),
           onAudioPressed: () => widget.onAudioPressed(i)));
     }
@@ -71,6 +74,5 @@ class _State extends State<AudioPanel> {
     setState(() {
       _audioWidgets.removeAt(index);
     });
-    
   }
 }

@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:oluko_app/models/challenge.dart';
@@ -9,15 +10,17 @@ class ModalAudio extends StatefulWidget {
   List<UserResponse> users;
   List<Audio> audios;
   Challenge challenge;
+  AudioPlayer audioPlayer;
   final Function(int, Challenge) onAudioPressed;
 
-  ModalAudio({this.users, this.audios, this.onAudioPressed, this.challenge});
+  ModalAudio({this.users, this.audios, this.onAudioPressed, this.challenge, this.audioPlayer});
 
   @override
   _ModalAudioState createState() => _ModalAudioState();
 }
 
 class _ModalAudioState extends State<ModalAudio> {
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -37,6 +40,7 @@ class _ModalAudioState extends State<ModalAudio> {
       onAudioPressed: (int index) => widget.onAudioPressed(index, widget.challenge),
       coaches: widget.users,
       audios: widget.audios,
+      audioPlayer: widget.audioPlayer,
     );
   }
 

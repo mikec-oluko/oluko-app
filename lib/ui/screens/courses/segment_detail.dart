@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -65,6 +66,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
   CoachAssignment _coachAssignment;
   List<Challenge> _challenges;
   List<Audio> _currentAudios;
+  AudioPlayer audioPlayer = AudioPlayer();
 
   @override
   void initState() {
@@ -188,7 +190,11 @@ class _SegmentDetailState extends State<SegmentDetail> {
           if (state is SegmentDetailContentAudioOpen) {
             _currentAudios = state.audios;
             _challengePanelController.open();
-            _contentForPanel = ModalAudio(challenge: state.challenge, audios: _currentAudios, onAudioPressed: (int index, Challenge challenge) => _onAudioDeleted(index, challenge));
+            _contentForPanel = ModalAudio(
+                challenge: state.challenge,
+                audioPlayer: audioPlayer,
+                audios: _currentAudios,
+                onAudioPressed: (int index, Challenge challenge) => _onAudioDeleted(index, challenge));
           }
           if (state is SegmentDetailContentPeopleOpen) {
             _challengePanelController.open();
@@ -213,7 +219,6 @@ class _SegmentDetailState extends State<SegmentDetail> {
     BlocProvider.of<ChallengeAudioBloc>(context).markAudioAsDeleted(challenge, _currentAudios);
     setState(() {
       _currentAudios.removeAt(audioIndex);
-      
     });
   }
 

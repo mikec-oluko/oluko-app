@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -34,16 +35,12 @@ import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/overlay_video_preview.dart';
 import 'package:oluko_app/ui/components/uploading_modal_loader.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
-import 'package:oluko_app/ui/screens/courses/audio_dialog_content.dart';
 import 'package:oluko_app/ui/screens/courses/class_detail_section.dart';
 import 'package:oluko_app/ui/screens/courses/course_info_section.dart';
-import 'package:oluko_app/ui/screens/courses/explore_subscribed_users.dart';
-import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'audio_panel.dart';
 
 enum PanelEnum { audios, classDetail }
 
@@ -70,6 +67,7 @@ class _InsideClassesState extends State<InsideClass> {
   List<Movement> _classMovements;
   List<UserResponse> _coaches;
   List<Audio> _audios = [];
+  AudioPlayer audioPlayer = AudioPlayer();
 
   Widget panelContent;
   PanelEnum panelState;
@@ -347,7 +345,10 @@ class _InsideClassesState extends State<InsideClass> {
           if (state is InsideClassContentAudioOpen) {
             _buttonController.open();
             _contentForPanel = ModalAudio(
-                users: _coaches, audios: _audios, onAudioPressed: (int index, Challenge challenge) => _onAudioDeleted(index, challenge));
+                users: _coaches,
+                audios: _audios,
+                onAudioPressed: (int index, Challenge challenge) => _onAudioDeleted(index, challenge),
+                audioPlayer: audioPlayer);
           }
           if (state is InsideClassContentLoading) {
             _contentForPanel = UploadingModalLoader(UploadFrom.segmentDetail);
