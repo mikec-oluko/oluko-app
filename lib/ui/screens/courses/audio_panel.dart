@@ -18,6 +18,14 @@ class AudioPanel extends StatefulWidget {
 }
 
 class _State extends State<AudioPanel> {
+  List<Widget> _audioWidgets = [];
+
+  @override
+  void initState() {
+    _audioWidgets = getAudioWidgets();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -42,7 +50,7 @@ class _State extends State<AudioPanel> {
               style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.white),
             ),
           ),
-          Container(height: 370, child: ListView(children: getAudioWidgets()))
+          Container(height: 370, child: ListView(children: _audioWidgets))
         ]));
   }
 
@@ -50,12 +58,19 @@ class _State extends State<AudioPanel> {
     List<Widget> widgets = [];
     for (int i = 0; i < widget.audios.length; i++) {
       widgets.add(AudioSection(
-        showTopDivider: i != 0,
-        coach: widget.coaches == null ? null : widget.coaches[i],
-        audio: widget.audios[i],
-        onAudioPressed: () => widget.onAudioPressed(i),
-      ));
+          showTopDivider: i != 0,
+          coach: widget.coaches == null ? null : widget.coaches[i],
+          audio: widget.audios[i],
+          removeAudioFromList: () => _removeAudioFromList(i),
+          onAudioPressed: () => widget.onAudioPressed(i)));
     }
     return widgets;
+  }
+
+  _removeAudioFromList(int index) {
+    setState(() {
+      _audioWidgets.removeAt(index);
+    });
+    
   }
 }

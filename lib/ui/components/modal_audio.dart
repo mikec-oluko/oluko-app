@@ -34,9 +34,11 @@ class _ModalAudioState extends State<ModalAudio> {
 
   Widget audioSection() {
     return AudioPanel(
-      onAudioPressed: (int index) => widget.onAudioPressed(index,widget.challenge),
+      onAudioPressed: (int index) => widget.onAudioPressed(index, widget.challenge),
       coaches: widget.users,
       audios: widget.audios,
     );
   }
+
+
 }
