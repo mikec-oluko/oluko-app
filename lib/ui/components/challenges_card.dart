@@ -39,8 +39,10 @@ class _State extends State<ChallengesCard> {
         Padding(
             padding: EdgeInsets.only(top: 13),
             child: GestureDetector(
-                onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.userChallengeDetail],
-                    arguments: {'challenge': widget.challenge, 'userRequested': widget.userRequested}),
+                onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.userChallengeDetail], arguments: {
+                      'challenge': widget.navigateToSegment ? widget.segmentChallenge.challengeForAudio : widget.challenge,
+                      'userRequested': widget.userRequested
+                    }),
                 child: Stack(alignment: Alignment.center, children: [
                   Image.asset(
                     'assets/courses/green_circle.png',
@@ -55,7 +57,7 @@ class _State extends State<ChallengesCard> {
 
   Widget lockedCard(BuildContext context) {
     return GestureDetector(
-      onTap: widget.navigateToSegment
+      onTap: !widget.useAudio && widget.navigateToSegment
           ? () => Navigator.pushNamed(context, routeLabels[RouteEnum.segmentDetail], arguments: {
                 'segmentIndex': widget.segmentChallenge.segmentIndex,
                 'classIndex': widget.segmentChallenge.classIndex,
@@ -109,7 +111,7 @@ class _State extends State<ChallengesCard> {
 
   Widget unlockedCard(BuildContext context) {
     return GestureDetector(
-      onTap: widget.navigateToSegment
+      onTap: !widget.useAudio && widget.navigateToSegment
           ? () => Navigator.pushNamed(context, routeLabels[RouteEnum.segmentDetail], arguments: {
                 'segmentIndex': widget.segmentChallenge.segmentIndex,
                 'classIndex': widget.segmentChallenge.classIndex,

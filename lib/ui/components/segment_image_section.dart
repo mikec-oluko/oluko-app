@@ -20,6 +20,7 @@ import 'package:oluko_app/ui/components/stories_item.dart';
 import 'package:oluko_app/ui/components/vertical_divider.dart' as verticalDivider;
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/ui/screens/courses/segment_clocks.dart';
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -71,11 +72,15 @@ class SegmentImageSection extends StatefulWidget {
 
 class _SegmentImageSectionState extends State<SegmentImageSection> {
   CoachRequest _coachRequest;
+  bool canStartSegment = true;
 
   @override
   void initState() {
     _coachRequest = getSegmentCoachRequest(widget.segment.id);
     BlocProvider.of<DoneChallengeUsersBloc>(context).get(widget.segment.id, widget.userId);
+    setState(() {
+      canStartSegment = widget.courseEnrollment.classes[widget.classIndex].segments[widget.currentSegmentStep - 2].completedAt != null;
+    });
     super.initState();
   }
 
@@ -153,22 +158,30 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
     return OlukoNeumorphism.isNeumorphismDesign
         ? Padding(
             padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 35),
-            child: OlukoNeumorphicPrimaryButton(
-                useBorder: true,
-                thinPadding: true,
-                isExpanded: false,
-                title: OlukoLocalizations.get(context, 'startWorkouts'),
-                // color: OlukoColors.primary,
-                onPressed: () {
-                  //CoachRequest coachRequest = getSegmentCoachRequest(widget.segment.id);
-                  if (_coachRequest != null) {
-                    //TODO: CHECK CHALLENGE
-                    BottomDialogUtils.showBottomDialog(
-                        context: context, content: dialogContainer(widget.coach.firstName, widget.coach.avatar));
-                  } else {
-                    navigateToSegmentWithoutRecording();
-                  }
-                }),
+            child: (widget.segment.isChallenge && canStartSegment) || !widget.segment.isChallenge
+                ? OlukoNeumorphicPrimaryButton(
+                    useBorder: true,
+                    thinPadding: true,
+                    isExpanded: false,
+                    title: OlukoLocalizations.get(context, 'startWorkouts'),
+                    // color: OlukoColors.primary,
+                    onPressed: () {
+                      //CoachRequest coachRequest = getSegmentCoachRequest(widget.segment.id);
+                      if (_coachRequest != null) {
+                        //TODO: CHECK CHALLENGE
+                        BottomDialogUtils.showBottomDialog(
+                            context: context, content: dialogContainer(widget.coach.firstName, widget.coach.avatar));
+                      } else {
+                        navigateToSegmentWithoutRecording();
+                      }
+                    })
+                : OlukoNeumorphicPrimaryButton(
+                    isDisabled: true,
+                    useBorder: true,
+                    thinPadding: true,
+                    isExpanded: false,
+                    title: OlukoLocalizations.get(context, 'locked'),
+                    onPressed: () {}),
           )
         : Padding(
             padding: const EdgeInsets.only(left: 15, right: 15, bottom: 25.0),

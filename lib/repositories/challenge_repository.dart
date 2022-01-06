@@ -30,8 +30,7 @@ class ChallengeRepository {
     return null;
   }
 
-  static Future<List<Challenge>> getUserChallengesBySegmentId(
-      String segmentId, String userId) async {
+  static Future<List<Challenge>> getUserChallengesBySegmentId(String segmentId, String userId) async {
     final QuerySnapshot docRef = await FirebaseFirestore.instance
         .collection('projects')
         .doc(GlobalConfiguration().getValue('projectId'))
@@ -49,11 +48,8 @@ class ChallengeRepository {
   }
 
   static Future<void> saveAudio(String id, Audio audio) async {
-    DocumentReference reference = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('challenges')
-        .doc(id);
+    DocumentReference reference =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('challenges').doc(id);
     DocumentSnapshot ds = await reference.get();
     Challenge challenge = Challenge.fromJson(ds.data() as Map<String, dynamic>);
     List<Audio> audios;

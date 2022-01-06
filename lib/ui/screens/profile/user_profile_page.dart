@@ -336,7 +336,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
                       enrolledCourse: courseEnrolled,
                       challengeSegment: enrolledSegment,
                       segmentIndex: segmentIndex,
+                      segmentId: enrolledSegment.id,
                       classIndex: classIndex,
+                      classId: enrolledClass.id,
                       courseIndex: courseIndex,
                       previousSegmentFinish: courseEnrolled.classes[classIndex].segments[segmentIndex - 1].completedAt != null);
 
@@ -346,13 +348,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     }
                   } else {
                     if (newChallenge != null) {
-                      if (listOfChallenges
-                          .where((element) =>
-                              (element.challengeSegment.id == newChallenge.challengeSegment.id &&
-                                  element.segmentIndex == newChallenge.segmentIndex) &&
-                              (element.courseIndex == newChallenge.courseIndex && element.classIndex == newChallenge.classIndex))
-                          .toList()
-                          .isEmpty) {
+                      if (!listOfChallenges.contains(newChallenge)) {
                         listOfChallenges.add(newChallenge);
                       }
                     }
@@ -369,15 +365,29 @@ class _UserProfilePageState extends State<UserProfilePage> {
         return listOfChallenges.isNotEmpty
             ? Padding(
                 padding: OlukoNeumorphism.isNeumorphismDesign ? EdgeInsets.symmetric(horizontal: 20, vertical: 0) : EdgeInsets.symmetric(),
-                child: buildChallengeSection(
-                    listOfChallenges: listOfChallenges,
-                    context: context,
-                    content: TransformListOfItemsToWidget.getWidgetListFromContent(
-                        // upcomingChallenges: _activeChallenges,
-                        challengeSegments: listOfChallenges,
-                        requestedFromRoute: ActualProfileRoute.userProfile,
-                        requestedUser: widget.userRequested,
-                        useAudio: false)),
+                child: BlocBuilder<ChallengeBloc, ChallengeState>(
+                  builder: (context, state) {
+                    if (state is GetChallengeSuccess) {
+                      _activeChallenges = state.challenges;
+                      listOfChallenges.forEach((challengeElement) {
+                        _activeChallenges.forEach((activeChallenge) {
+                          if (challengeElement.classId == activeChallenge.classId &&
+                              challengeElement.segmentId == activeChallenge.segmentId) {
+                            challengeElement.challengeForAudio = activeChallenge;
+                          }
+                        });
+                      });
+                    }
+                    return buildChallengeSection(
+                        listOfChallenges: listOfChallenges,
+                        context: context,
+                        content: TransformListOfItemsToWidget.getWidgetListFromContent(
+                            challengeSegments: listOfChallenges,
+                            requestedFromRoute: ActualProfileRoute.userProfile,
+                            requestedUser: widget.userRequested,
+                            useAudio: !_isCurrentUser));
+                  },
+                ),
               )
             : defaultWidgetNoContent;
       },

@@ -51,7 +51,7 @@ class TransformListOfItemsToWidget {
     if ((challengeSegments != null && upcomingChallenges == null) && (tansformationJourneyData == null && assessmentVideoData == null)) {
       challengeSegments.forEach((challengeSegment) {
         contentForSection.add(getImageAndVideoCard(
-            challengeSegment: challengeSegment, routeForContent: requestedFromRoute, requestedUser: requestedUser, useAudio: false));
+            challengeSegment: challengeSegment, routeForContent: requestedFromRoute, requestedUser: requestedUser, useAudio: useAudio));
       });
     }
     return contentForSection.toList();
@@ -104,7 +104,7 @@ class TransformListOfItemsToWidget {
         child: ChallengesCard(
           segmentChallenge: challengeSegment,
           userRequested: requestedUser,
-          useAudio: false,
+          useAudio: useAudio,
           navigateToSegment: true,
         ),
       );

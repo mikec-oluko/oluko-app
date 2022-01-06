@@ -94,8 +94,7 @@ class CourseEnrollmentRepository {
     final List<EnrollmentClass> classes = courseEnrollment.classes;
     classes[classIndex].segments[segmentIndex].completedAt = Timestamp.now();
 
-    //final bool isClassCompleted = CourseEnrollmentService.getFirstUncompletedSegmentIndex(classes[classIndex]) == -1;
-    final bool isClassCompleted = segmentIndex == classes[classIndex].segments.length - 1; 
+    final bool isClassCompleted = segmentIndex == classes[classIndex].segments.length - 1;
     if (isClassCompleted) {
       if (classIndex == courseEnrollment.classes.length - 1) {
         courseEnrollment.completion = 1;
@@ -238,7 +237,10 @@ class CourseEnrollmentRepository {
         .get();
     for (var challengeDoc in query.docs) {
       final Map<String, dynamic> challenge = challengeDoc.data() as Map<String, dynamic>;
-      challenges.add(Challenge.fromJson(challenge));
+      Challenge newChallenge = Challenge.fromJson(challenge);
+      if (challenges.where((challenge) => challenge.classId == newChallenge.classId).isEmpty) {
+        challenges.add(newChallenge);
+      }
     }
   }
 

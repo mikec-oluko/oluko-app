@@ -257,5 +257,6 @@
     "noVideoUploaded": "Aún no subiste un video",
     "goBackConfirmationWithRecording": "Esta seguro de que quiere volver? Sus grabaciones se perderán.",
     "goBackConfirmationWithoutRecording": "Esta seguro de que quiere volver? Su progreso se perderá.",
-    "coachPageAssessmentsText": "Completa las tareas a continuación para que se te asigne un entrenador"
+    "coachPageAssessmentsText": "Completa las tareas a continuación para que se te asigne un entrenador",
+    "locked": "Bloqueado"
 }
