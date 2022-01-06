@@ -189,12 +189,14 @@ class _SegmentDetailState extends State<SegmentDetail> {
           }
           if (state is SegmentDetailContentAudioOpen) {
             _currentAudios = state.audios;
-            _challengePanelController.open();
-            _contentForPanel = ModalAudio(
-                challenge: state.challenge,
-                audioPlayer: audioPlayer,
-                audios: _currentAudios,
-                onAudioPressed: (int index, Challenge challenge) => _onAudioDeleted(index, challenge));
+            if (_currentAudios != null && _currentAudios.length > 0) {
+              _challengePanelController.open();
+              _contentForPanel = ModalAudio(
+                  challenge: state.challenge,
+                  audioPlayer: audioPlayer,
+                  audios: _currentAudios,
+                  onAudioPressed: (int index, Challenge challenge) => _onAudioDeleted(index, challenge));
+            }
           }
           if (state is SegmentDetailContentPeopleOpen) {
             _challengePanelController.open();

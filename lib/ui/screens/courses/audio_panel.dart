@@ -58,6 +58,9 @@ class _State extends State<AudioPanel> {
 
   List<Widget> getAudioWidgets() {
     List<Widget> widgets = [];
+    if (widget.audios == null) {
+      return widgets;
+    }
     for (int i = 0; i < widget.audios.length; i++) {
       widgets.add(AudioSection(
           showTopDivider: i != 0,
