@@ -187,28 +187,7 @@ class _SentVideosPageState extends State<SentVideosPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      if (OlukoNeumorphism.isNeumorphismDesign)
-                        Text(
-                          DateFormat.yMMMd().format(segmentSubmitted.createdAt.toDate()),
-                          style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w700),
-                        )
-                      else
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              OlukoLocalizations.get(context, 'date'),
-                              style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
-                            ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              DateFormat.yMMMd().format(segmentSubmitted.createdAt.toDate()),
-                              style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
-                            )
-                          ],
-                        ),
+                      _getDateWidget(segmentSubmitted),
                       IconButton(
                         icon: OlukoNeumorphism.isNeumorphismDesign
                             ? Icon(
@@ -237,5 +216,31 @@ class _SentVideosPageState extends State<SentVideosPage> {
     return segmentSubmitted.video.thumbUrl != null
         ? NetworkImage(segmentSubmitted.video.thumbUrl)
         : const AssetImage('assets/home/mvt.png') as ImageProvider;
+  }
+
+  Widget _getDateWidget(SegmentSubmission segmentSubmitted) {
+    if (OlukoNeumorphism.isNeumorphismDesign) {
+      return Text(
+        DateFormat.yMMMd().format(segmentSubmitted.createdAt.toDate()),
+        style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w700),
+      );
+    } else {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            OlukoLocalizations.get(context, 'date'),
+            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+          ),
+          const SizedBox(
+            height: 5,
+          ),
+          Text(
+            DateFormat.yMMMd().format(segmentSubmitted.createdAt.toDate()),
+            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+          )
+        ],
+      );
+    }
   }
 }
