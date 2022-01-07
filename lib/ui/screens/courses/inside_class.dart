@@ -8,6 +8,7 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/class/class_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_audio_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_audio_bloc.dart';
+import 'package:oluko_app/blocs/enrollment_audio_bloc.dart';
 import 'package:oluko_app/blocs/inside_class_content_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
@@ -74,7 +75,6 @@ class _InsideClassesState extends State<InsideClass> {
 
   @override
   void initState() {
-    _audios = AudioService.getNotDeletedAudios(widget.courseEnrollment.classes[widget.classIndex].audios);
     super.initState();
   }
 
@@ -84,16 +84,22 @@ class _InsideClassesState extends State<InsideClass> {
       if (authState is AuthSuccess) {
         BlocProvider.of<ClassBloc>(context).get(widget.courseEnrollment.classes[widget.classIndex].id);
         BlocProvider.of<MovementBloc>(context).getAll();
-        return BlocBuilder<ClassBloc, ClassState>(builder: (context, classState) {
-          if (classState is GetByIdSuccess) {
-            _class = classState.classObj;
-            BlocProvider.of<SegmentBloc>(context).getAll(_class);
-            BlocProvider.of<CoachAudioBloc>(context).getByAudios(_audios);
-            BlocProvider.of<SubscribedCourseUsersBloc>(context).get(widget.courseEnrollment.course.id, authState.user.id);
-            return form();
-          } else {
-            return const SizedBox();
-          }
+        BlocProvider.of<EnrollmentAudioBloc>(context).get(widget.courseEnrollment.id);
+        return BlocBuilder<EnrollmentAudioBloc, EnrollmentAudioState>(builder: (context, enrollmentAudioState) {
+          return BlocBuilder<ClassBloc, ClassState>(builder: (context, classState) {
+            if (classState is GetByIdSuccess && enrollmentAudioState is GetEnrollmentAudioSuccess) {
+              _class = classState.classObj;
+              List<Audio> classAudios =
+                  AudioService.getClassAudios(enrollmentAudioState.enrollmentAudio, widget.courseEnrollment.classes[widget.classIndex].id);
+              _audios = AudioService.getNotDeletedAudios(classAudios);
+              BlocProvider.of<SegmentBloc>(context).getAll(_class);
+              BlocProvider.of<CoachAudioBloc>(context).getByAudios(_audios);
+              BlocProvider.of<SubscribedCourseUsersBloc>(context).get(widget.courseEnrollment.course.id, authState.user.id);
+              return form();
+            } else {
+              return const SizedBox();
+            }
+          });
         });
       } else {
         return const SizedBox();
