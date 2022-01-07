@@ -93,6 +93,8 @@ class _TaskDetailsState extends State<TaskDetails> {
         key: _formKey,
         child: Scaffold(
             appBar: OlukoAppBar(
+                showTitle: true,
+                showBackButton: true,
                 title: _task.name,
                 actions: [SizedBox(width: 30)],
                 onPressed: () {

@@ -110,6 +110,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
         key: _formKey,
         child: Scaffold(
             appBar: OlukoAppBar(
+              showActions: widget.isFirstTime,
               onPressed: widget.isForCoachPage
                   ? () {
                       if (_controller != null) {
@@ -297,7 +298,8 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                             _controller.pause();
                           }
                           if (OlukoPermissions.isAssessmentTaskDisabled(_user, index)) {
-                            AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'yourCurrentPlanDoesntIncludeAssessment'));
+                            AppMessages.clearAndShowSnackbar(
+                                context, OlukoLocalizations.get(context, 'yourCurrentPlanDoesntIncludeAssessment'));
                           } else {
                             if (assessmentsTasksList.length - taskSubmissionsCompleted.length == 1) {
                               setState(() {

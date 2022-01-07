@@ -27,6 +27,7 @@ class OlukoAppBar<T> extends StatefulWidget implements PreferredSizeWidget {
   final GlobalKey<SearchState> searchKey;
   final bool showDivider;
   final bool showTitle;
+  final bool showActions;
 
   OlukoAppBar(
       {this.title,
@@ -44,7 +45,8 @@ class OlukoAppBar<T> extends StatefulWidget implements PreferredSizeWidget {
       this.onSearchSubmit,
       this.whenSearchBarInitialized,
       this.actionButton,
-      this.searchKey});
+      this.searchKey,
+      this.showActions = false});
 
   @override
   State<OlukoAppBar<T>> createState() => _OlukoAppBarState<T>();
@@ -274,10 +276,27 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                               ),
                             )
                           : Center(
-                              child: TitleHeader(
-                                widget.title,
-                                bold: false,
-                                isNeumorphic: true,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  TitleHeader(
+                                    widget.title,
+                                    bold: false,
+                                    isNeumorphic: true,
+                                  ),
+                                  SizedBox(
+                                    width: MediaQuery.of(context).size.width / 4,
+                                  ),
+                                  widget.showActions
+                                      ? Padding(
+                                          padding: EdgeInsets.only(right: 10),
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.end,
+                                            children: widget.actions,
+                                          ),
+                                        )
+                                      : SizedBox.shrink(),
+                                ],
                               ),
                             )
                   ////TODO: NO SEARCH BAR

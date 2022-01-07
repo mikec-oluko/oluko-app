@@ -79,11 +79,12 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
     _coachRequest = getSegmentCoachRequest(widget.segment.id);
     BlocProvider.of<DoneChallengeUsersBloc>(context).get(widget.segment.id, widget.userId);
     setState(() {
-      canStartSegment = widget.courseEnrollment.classes[widget.classIndex].segments[widget.currentSegmentStep - 2].completedAt != null;
+      canStartSegment = widget.courseEnrollment.classes[widget.classIndex].segments[getPreviousIndex()].completedAt != null;
     });
     super.initState();
   }
 
+  int getPreviousIndex() => widget.currentSegmentStep <= 1 ? widget.currentSegmentStep : widget.currentSegmentStep - 2;
   @override
   Widget build(BuildContext context) {
     return imageWithButtons();
