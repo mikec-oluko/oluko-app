@@ -109,7 +109,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                   }
                 }),
             body: Container(
-                color: Colors.black,
+                color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
                 child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15),
                     child: Container(
