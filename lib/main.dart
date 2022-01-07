@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/config/s3_settings.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:global_configuration/global_configuration.dart';
@@ -39,10 +40,14 @@ Future<void> main() async {
 
 String getInitialRoute(User alreadyLoggedUser, bool isFirstTime) {
   if (alreadyLoggedUser == null) {
-    if (isFirstTime != null && isFirstTime) {
+    if (isFirstTime != null && isFirstTime && OlukoNeumorphism.isNeumorphismDesign) {
       return routeLabels[RouteEnum.introVideo];
     } else {
-      return routeLabels[RouteEnum.signUp];
+      if (OlukoNeumorphism.isNeumorphismDesign) {
+        return routeLabels[RouteEnum.signUpNeumorphic];
+      } else {
+        return routeLabels[RouteEnum.signUp];
+      }
     }
   } else {
     return routeLabels[RouteEnum.root];
@@ -52,8 +57,12 @@ String getInitialRoute(User alreadyLoggedUser, bool isFirstTime) {
 Future<bool> isFirstTime() async {
   final sharedPref = await SharedPreferences.getInstance();
   final isFirstTime = sharedPref.getBool('first_time');
-  sharedPref.setBool('first_time', false);
-  return !(isFirstTime != null && !isFirstTime);
+  if (isFirstTime != null && !isFirstTime) {
+    return false;
+  } else {
+    sharedPref.setBool('first_time', true);
+    return true;
+  }
 }
 
 const OLUKO = 'Oluko';
