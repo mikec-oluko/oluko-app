@@ -6,7 +6,6 @@ import 'package:oluko_app/helpers/form_helper.dart';
 import 'package:oluko_app/models/dto/login_request.dart';
 import 'package:oluko_app/ui/screens/authentication/peek_password.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
-import 'package:oluko_app/utils/app_loader.dart';
 import 'package:global_configuration/global_configuration.dart';
 
 class LoginPage extends StatefulWidget {
@@ -18,7 +17,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  LoginRequest _requestData = LoginRequest();
+  final LoginRequest _requestData = LoginRequest();
   bool _peekPassword = false;
 
   @override
@@ -37,8 +36,13 @@ class _LoginPageState extends State<LoginPage> {
                       padding: EdgeInsets.symmetric(horizontal: 15),
                       child: Container(
                           width: MediaQuery.of(context).size.width,
-                          child: Column(
-                              children: [SizedBox(height: 20), SizedBox(height: 20), titleSection(), SizedBox(height: 50), formSection()])))
+                          child: Column(children: [
+                            SizedBox(height: 20),
+                            SizedBox(height: 20),
+                            titleSection(),
+                            SizedBox(height: 50),
+                            formSection()
+                          ])))
                 ]))));
   }
 
@@ -46,7 +50,8 @@ class _LoginPageState extends State<LoginPage> {
     return Container(
         width: MediaQuery.of(context).size.width,
         height: 400,
-        child: Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+        child:
+            Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
           Column(children: formFields()),
         ]));
   }
@@ -58,7 +63,8 @@ class _LoginPageState extends State<LoginPage> {
           Text(
             OlukoLocalizations.get(context, 'welcomeBack'),
             textAlign: TextAlign.start,
-            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
+            style: TextStyle(
+                fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
           ),
           SizedBox(
             height: 10,
@@ -96,10 +102,6 @@ class _LoginPageState extends State<LoginPage> {
         onSaved: (value) {
           this._requestData.email = null;
           this._requestData.userName = null;
-          if (value != null && value.isNotEmpty) {
-            value = value.
-            trim();
-          }
           if (FormHelper.isEmail(value)) {
             this._requestData.email = value;
           } else {
@@ -136,9 +138,6 @@ class _LoginPageState extends State<LoginPage> {
             fillColor: Colors.white70),
         obscureText: !_peekPassword,
         onSaved: (value) {
-          if (value != null && value.isNotEmpty) {
-            value = value.trim();
-          }
           this._requestData.password = null;
           this._requestData.password = value;
         },
@@ -186,17 +185,19 @@ class _LoginPageState extends State<LoginPage> {
                     _formKey.currentState.save();
                     FocusScope.of(context).unfocus();
                     BlocProvider.of<AuthBloc>(context)
-                      .login(
+                      ..login(
                           context,
                           LoginRequest(
                               email: _requestData.email,
                               password: _requestData.password,
                               userName: _requestData.userName,
-                              projectId: GlobalConfiguration().getValue('projectId')));
+                              projectId:
+                                  GlobalConfiguration().getValue('projectId')));
                   },
                   child: Stack(children: [
                     Align(
-                      child: Text(OlukoLocalizations.get(context, 'login').toUpperCase()),
+                      child: Text(OlukoLocalizations.get(context, 'login')
+                          .toUpperCase()),
                     )
                   ])))),
       Padding(
@@ -214,13 +215,17 @@ class _LoginPageState extends State<LoginPage> {
                 width: MediaQuery.of(context).size.width / 2.2,
                 child: OutlinedButton(
                     onPressed: () {
-                      BlocProvider.of<AuthBloc>(context)..loginWithGoogle(context);
+                      BlocProvider.of<AuthBloc>(context)
+                        ..loginWithGoogle(context);
                     },
-                    style: OutlinedButton.styleFrom(backgroundColor: Colors.transparent, side: BorderSide(color: Colors.grey)),
+                    style: OutlinedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        side: BorderSide(color: Colors.grey)),
                     child: Stack(children: [
                       Align(
                         alignment: Alignment.center,
-                        child: Image.asset('assets/login/google-logo.png', width: 30),
+                        child: Image.asset('assets/login/google-logo.png',
+                            width: 25, color: Colors.white,),
                       ),
                     ])))),
         Padding(
@@ -230,9 +235,12 @@ class _LoginPageState extends State<LoginPage> {
                 width: MediaQuery.of(context).size.width / 2.2,
                 child: OutlinedButton(
                     onPressed: () {
-                      BlocProvider.of<AuthBloc>(context)..loginWithFacebook(context);
+                      BlocProvider.of<AuthBloc>(context)
+                        ..loginWithFacebook(context);
                     },
-                    style: OutlinedButton.styleFrom(backgroundColor: Colors.transparent, side: BorderSide(color: Colors.grey)),
+                    style: OutlinedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        side: BorderSide(color: Colors.grey)),
                     child: Stack(children: [
                       Align(
                           alignment: Alignment.center,
@@ -242,24 +250,6 @@ class _LoginPageState extends State<LoginPage> {
                           )),
                     ])))),
       ]),
-      // TODO: Signup
-      // InkWell(
-      //   onTap: () => Navigator.pushNamed(context, '/sign-up-with-email'),
-      //   child: Padding(
-      //     padding: EdgeInsets.only(top: 10),
-      //     child: Column(
-      //       children: [
-      //         Text(
-      //           'Tap here to create an account',
-      //           style: TextStyle(color: Colors.white),
-      //         ),
-      //         Text('Sign Up',
-      //             style: TextStyle(
-      //                 color: Colors.white, fontWeight: FontWeight.bold))
-      //       ],
-      //     ),
-      //   ),
-      // )
     ];
   }
 }

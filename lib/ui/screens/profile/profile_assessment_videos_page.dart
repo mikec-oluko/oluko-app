@@ -13,7 +13,8 @@ import 'package:oluko_app/ui/components/oluko_error_message_view.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 
 class ProfileAssessmentVideosPage extends StatefulWidget {
-  const ProfileAssessmentVideosPage();
+  final UserResponse userRequested;
+  const ProfileAssessmentVideosPage({this.userRequested});
 
   @override
   _ProfileAssessmentVideosPageState createState() => _ProfileAssessmentVideosPageState();
@@ -34,7 +35,9 @@ class _ProfileAssessmentVideosPageState extends State<ProfileAssessmentVideosPag
             if (state is GetUserTaskSubmissionSuccess) {
               _assessmentVideoContent = state.taskSubmissions;
               _contentGallery = TransformListOfItemsToWidget.getWidgetListFromContent(
-                  assessmentVideoData: _assessmentVideoContent, requestedFromRoute: ActualProfileRoute.userAssessmentVideos);
+                  assessmentVideoData: _assessmentVideoContent,
+                  requestedFromRoute: ActualProfileRoute.userAssessmentVideos,
+                  requestedUser: widget.userRequested);
             }
             return page(context, _profileInfo);
           },

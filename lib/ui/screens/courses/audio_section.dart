@@ -5,6 +5,7 @@ import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/ui/components/course_progress_bar.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
 
 class AudioSection extends StatefulWidget {
@@ -19,54 +20,17 @@ class AudioSection extends StatefulWidget {
 }
 
 class _State extends State<AudioSection> {
-  AudioPlayer audioPlayer;
-  Duration _duration = new Duration();
-  Duration _position = new Duration();
-  bool isPlaying = false;
-
-  @override
-  void initState() {
-    super.initState();
-    initPlayer();
-  }
-
-  void seekToSeconds(int second) {
-    Duration newDuration = Duration(seconds: second);
-    audioPlayer.seek(newDuration);
-  }
-
-  void initPlayer() {
-    audioPlayer = new AudioPlayer();
-    audioPlayer.setUrl(widget.audio.url);
-    audioPlayer.onDurationChanged.listen((Duration d) {
-      setState(() => _duration = d);
-    });
-    audioPlayer.onAudioPositionChanged.listen((Duration p) {
-      setState(() => _position = p);
-    });
-  }
+  int _totalDuration;
+  int _currentDuration;
+  double _completedPercentage = 0.0;
+  bool _isPlaying = false;
+  AudioPlayer audioPlayer = AudioPlayer();
+  bool playedOnce = false;
 
   Widget audioSlider() {
-    return Container(
-      width: 150,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Slider(
-            activeColor: OlukoColors.primary,
-            inactiveColor: Colors.grey,
-            value: _position.inSeconds.toDouble(),
-            max: _duration.inSeconds.toDouble(),
-            onChanged: (double value) {
-              setState(() {
-                seekToSeconds(value.toInt());
-                value = value;
-              });
-            },
-          ),
-        ],
-      ),
-    );
+    return Container(width: 150, child: Padding(
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      child: CourseProgressBar(value: _completedPercentage)));
   }
 
   @override
@@ -87,7 +51,9 @@ class _State extends State<AudioSection> {
                   )
                 : SizedBox(),
             Row(children: [
-              _imageItem(context, widget.coach.avatar, widget.coach.firstName),
+              widget.coach == null
+                  ? _imageItem(context, widget.audio.userAvatarThumbnail, widget.audio.userName)
+                  : _imageItem(context, widget.coach.avatar, widget.coach.firstName),
               playButton(),
               audioSlider(),
               Padding(
@@ -109,27 +75,61 @@ class _State extends State<AudioSection> {
 
   Widget playButton() {
     return GestureDetector(
-        onTap: () {
-          if (isPlaying == false) {
-            audioPlayer.resume();
-            setState(() {
-              isPlaying = true;
-            });
-          } else {
-            audioPlayer.pause();
-            setState(() {
-              isPlaying = false;
-            });
-          }
+        onTap: () async {
+          _onPlay(url: widget.audio.url);
         },
         child: Stack(alignment: Alignment.center, children: [
           Image.asset(
             'assets/courses/green_circle.png',
             scale: 5.5,
           ),
-          Icon(isPlaying ? Icons.pause : Icons.play_arrow,
+          Icon(_isPlaying ? Icons.pause : Icons.play_arrow,
               size: 26, color: OlukoColors.black)
         ]));
+  }
+
+  Future<void> _onPlay({String url}) async {
+    if (!_isPlaying) {
+      if (playedOnce) {
+        await audioPlayer.resume();
+      } else {
+        await audioPlayer.play(url, isLocal: false);
+        setState(() {
+          playedOnce = true;
+        });
+      }
+
+      setState(() {
+        _completedPercentage = 0.0;
+        _isPlaying = true;
+      });
+
+      audioPlayer.onPlayerCompletion.listen((_) {
+        setState(() {
+          _isPlaying = false;
+          _completedPercentage = 0.0;
+          playedOnce = false;
+        });
+      });
+      audioPlayer.onDurationChanged.listen((duration) {
+        setState(() {
+          _totalDuration = duration.inMicroseconds;
+        });
+      });
+
+      audioPlayer.onAudioPositionChanged.listen((duration) {
+        setState(() {
+          _currentDuration = duration.inMicroseconds;
+          _completedPercentage =
+              _currentDuration.toDouble() / _totalDuration.toDouble();
+        });
+      });
+    } else {
+      await audioPlayer.pause();
+      setState(() {
+        _isPlaying = false;
+      });
+    }
   }
 
   Widget _imageItem(BuildContext context, String imageUrl, String name) {
@@ -144,8 +144,7 @@ class _State extends State<AudioSection> {
               child: Text(
                 name,
                 textAlign: TextAlign.center,
-                style: OlukoFonts.olukoSmallFont(
-                    customColor: OlukoColors.grayColor),
+                style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor),
               ),
             )
           ],

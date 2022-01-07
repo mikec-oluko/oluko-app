@@ -19,11 +19,13 @@ import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/submodels/segment_submodel.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/services/audio_service.dart';
 import 'package:oluko_app/services/class_service.dart';
 import 'package:oluko_app/services/course_enrollment_service.dart';
 import 'package:oluko_app/ui/components/challenge_section.dart';
 import 'package:oluko_app/ui/components/class_movements_section.dart';
 import 'package:oluko_app/ui/components/course_progress_bar.dart';
+import 'package:oluko_app/ui/components/modal_audio.dart';
 import 'package:oluko_app/ui/components/modal_people_enrolled.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
@@ -64,12 +66,15 @@ class _InsideClassesState extends State<InsideClass> {
   PanelController panelController = PanelController();
   final PanelController _buttonController = PanelController();
   List<Movement> _classMovements;
+  List<UserResponse> _coaches;
+  List<Audio> _audios = [];
 
   Widget panelContent;
   PanelEnum panelState;
 
   @override
   void initState() {
+    _audios = widget.courseEnrollment.classes[widget.classIndex].audios;
     super.initState();
   }
 
@@ -83,7 +88,7 @@ class _InsideClassesState extends State<InsideClass> {
           if (classState is GetByIdSuccess) {
             _class = classState.classObj;
             BlocProvider.of<SegmentBloc>(context).getAll(_class);
-            BlocProvider.of<CoachAudioBloc>(context).getByAudios(widget.courseEnrollment.classes[widget.classIndex].audios);
+            BlocProvider.of<CoachAudioBloc>(context).getByAudios(_audios);
             BlocProvider.of<SubscribedCourseUsersBloc>(context).get(widget.courseEnrollment.course.id, authState.user.id);
             return form();
           } else {
@@ -104,6 +109,7 @@ class _InsideClassesState extends State<InsideClass> {
             _movements = movementState.movements;
             return BlocBuilder<CoachAudioBloc, CoachAudioState>(builder: (context, coachState) {
               if (coachState is CoachesByAudiosSuccess) {
+                _coaches = coachState.coaches;
                 return Stack(
                   children: [
                     SlidingUpPanel(
@@ -113,7 +119,7 @@ class _InsideClassesState extends State<InsideClass> {
                         collapsed: Container(
                           color: Colors.black,
                         ),
-                        panel: /*audioSection(coachState.coaches)*/ classDetailSection(),
+                        panel: classDetailSection(),
                         body: Container(
                           color: Colors.black,
                           child: classInfoSection(coachState.coaches),
@@ -228,13 +234,6 @@ class _InsideClassesState extends State<InsideClass> {
     });
   }
 
-  Widget audioSection(List<UserResponse> coaches) {
-    return AudioPanel(
-      coaches: coaches,
-      audios: widget.courseEnrollment.classes[widget.classIndex].audios,
-    );
-  }
-
   Widget classInfoSection(List<UserResponse> coaches) {
     return ListView(children: [
       Padding(
@@ -250,24 +249,20 @@ class _InsideClassesState extends State<InsideClass> {
                   final int normalUsers = subscribedCourseUsersState.users != null ? subscribedCourseUsersState.users.length : 0;
                   final int qty = favorites + normalUsers;
                   return CourseInfoSection(
-                      onAudioPressed: () => coaches.isNotEmpty
-                          ? _audioAction(coaches[0], widget.courseEnrollment.classes[widget.classIndex].audios[0])
+                      onAudioPressed: () => _coaches.isNotEmpty
+                          ? _audioAction()
                           : null,
                       peopleQty: qty,
                       onPeoplePressed: () => _peopleAction(subscribedCourseUsersState.users, subscribedCourseUsersState.favoriteUsers),
-                      audioMessageQty: widget.courseEnrollment?.classes[widget.classIndex]?.audios != null
-                          ? widget.courseEnrollment.classes[widget.classIndex].audios.length
-                          : 0,
+                      audioMessageQty: AudioService.getAudiosLength(_audios),
                       image: widget.courseEnrollment.course.image);
                 } else {
                   return CourseInfoSection(
-                      onAudioPressed: () => coaches.isNotEmpty
-                          ? _audioAction(coaches[0], widget.courseEnrollment.classes[widget.classIndex].audios[0])
+                      onAudioPressed: () => _coaches.isNotEmpty
+                          ? _audioAction()
                           : null,
                       peopleQty: 0,
-                      audioMessageQty: widget.courseEnrollment?.classes[widget.classIndex]?.audios != null
-                          ? widget.courseEnrollment.classes[widget.classIndex].audios.length
-                          : 0,
+                      audioMessageQty: AudioService.getAudiosLength(_audios),
                       image: widget.courseEnrollment.course.image);
                 }
               })
@@ -353,7 +348,8 @@ class _InsideClassesState extends State<InsideClass> {
           }
           if (state is InsideClassContentAudioOpen) {
             _buttonController.open();
-            _contentForPanel = AudioDialogContent(coach: state.coach, audio: state.audio);
+            _contentForPanel = ModalAudio(
+                users: _coaches, audios: _audios);
           }
           if (state is InsideClassContentLoading) {
             _contentForPanel = UploadingModalLoader(UploadFrom.segmentDetail);
@@ -364,11 +360,13 @@ class _InsideClassesState extends State<InsideClass> {
     );
   }
 
+  
+
   _peopleAction(List<dynamic> users, List<dynamic> favorites) {
     BlocProvider.of<InsideClassContentBloc>(context).openPeoplePanel(users, favorites);
   }
 
-  _audioAction(UserResponse coach, Audio audio) {
-    BlocProvider.of<InsideClassContentBloc>(context).openAudioPanel(coach, audio);
+  _audioAction() {
+    BlocProvider.of<InsideClassContentBloc>(context).openAudioPanel();
   }
 }

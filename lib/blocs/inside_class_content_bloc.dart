@@ -1,6 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:oluko_app/models/submodels/audio.dart';
-import 'package:oluko_app/models/user_response.dart';
 
 abstract class InsideClassContentState {}
 
@@ -8,11 +6,7 @@ class InsideClassContentLoading extends InsideClassContentState {}
 
 class InsideClassContentDefault extends InsideClassContentState {}
 
-class InsideClassContentAudioOpen extends InsideClassContentState {
-  UserResponse coach;
-  Audio audio;
-  InsideClassContentAudioOpen({this.coach, this.audio});
-}
+class InsideClassContentAudioOpen extends InsideClassContentState {}
 
 class InsideClassContentPeopleOpen extends InsideClassContentState {
   List<dynamic> users;
@@ -36,8 +30,8 @@ class InsideClassContentBloc extends Cubit<InsideClassContentState> {
     emit(InsideClassContentDefault());
   }
 
-  void openAudioPanel(UserResponse coach, Audio audio) {
-    emit(InsideClassContentAudioOpen(coach: coach, audio: audio));
+  void openAudioPanel() {
+    emit(InsideClassContentAudioOpen());
   }
 
   void openPeoplePanel(List<dynamic> users, List<dynamic> favorites) {

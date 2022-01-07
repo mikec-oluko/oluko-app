@@ -88,6 +88,8 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
         return Padding(
           padding: const EdgeInsets.only(bottom: 75),
           child: TabBarView(
+            //physics this is setup to stop swiping from tab to tab
+            physics: const NeverScrollableScrollPhysics(),
             controller: this.tabController,
             children: tabs,
           ),

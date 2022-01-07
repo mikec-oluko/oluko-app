@@ -287,7 +287,7 @@ class _State extends State<Courses> {
           bloc: BlocProvider.of<CoachAssignmentBloc>(context)..getCoachAssignmentStatus(authSuccess.user.id),
           listener: (BuildContext context, coachAssignmentState) {
             if (coachAssignmentState is CoachAssignmentResponse) {
-              coachId = coachAssignmentState.coachAssignmentResponse.coachId;
+              coachId = coachAssignmentState.coachAssignmentResponse != null ? coachAssignmentState.coachAssignmentResponse.coachId : null;
             }
           },
           child: BlocBuilder<RecommendationBloc, RecommendationState>(
@@ -314,7 +314,7 @@ class _State extends State<Courses> {
                                 onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing], arguments: {
                                   'course': course,
                                   'fromCoach': false,
-                                  'isCoachRecommendation': courseEntry.value.first.id == coachId
+                                  'isCoachRecommendation': coachId != null ? courseEntry.value.first.id == coachId : false
                                 }),
                                 child: _getCourseCard(_generateImageCourse(course.image),
                                     width: ScreenUtils.width(context) / (0.2 + _cardsToShow()),
