@@ -30,6 +30,8 @@
 		<string>Need access to camera</string>
 		<key>NSMicrophoneUsageDescription</key>
 		<string>Need access to mic</string>
+		<key>NSContactsUsageDescription</key>
+		<string>Need access to contacts</string>
 		<key>NSPhotoLibraryUsageDescription</key>
 		<string>This app requires access to the photo library.</string>
 		<key>UILaunchStoryboardName</key>
