@@ -104,7 +104,7 @@ class _State extends State<ClassCard> {
         padding: EdgeInsets.all(5),
         child: GestureDetector(
             onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass],
-                arguments: {'courseEnrollment': widget.courseEnrollment, 'classIndex': widget.classIndex}),
+                arguments: {'courseEnrollment': widget.courseEnrollment, 'classIndex': widget.classIndex,'classImage':widget.courseEnrollment.classes[widget.classIndex].image}),
             child: Stack(alignment: Alignment.center, children: [
               Image.asset(
                 'assets/home/ellipse_button.png',
