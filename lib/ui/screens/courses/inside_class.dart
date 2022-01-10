@@ -284,13 +284,13 @@ class _InsideClassesState extends State<InsideClass> {
                       peopleQty: qty,
                       onPeoplePressed: () => _peopleAction(subscribedCourseUsersState.users, subscribedCourseUsersState.favoriteUsers),
                       audioMessageQty: AudioService.getAudiosLength(_audios),
-                      image: OlukoNeumorphism.isNeumorphismDesign?widget.classImage: widget.courseEnrollment.course.image);
+                      image: OlukoNeumorphism.isNeumorphismDesign ? widget.classImage : widget.courseEnrollment.course.image);
                 } else {
                   return CourseInfoSection(
                       onAudioPressed: () => _coaches.isNotEmpty ? _audioAction() : null,
                       peopleQty: 0,
                       audioMessageQty: AudioService.getAudiosLength(_audios),
-                      image: OlukoNeumorphism.isNeumorphismDesign?widget.classImage: widget.courseEnrollment.course.image);
+                      image: OlukoNeumorphism.isNeumorphismDesign ? widget.classImage : widget.courseEnrollment.course.image);
                 }
               })
             ],

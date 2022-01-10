@@ -277,14 +277,6 @@ class _SegmentClocksState extends State<SegmentClocks> {
   Widget _body(bool keyboardVisibilty) {
     final _controller = ScrollController();
     if (!keyboardVisibilty) {
-      Timer(
-        Duration(milliseconds: 5),
-        () => _controller.animateTo(
-          _controller.position.maxScrollExtent,
-          duration: Duration(seconds: 1),
-          curve: Curves.fastOutSlowIn,
-        ),
-      );
       return ListView(
         controller: _controller,
         children: [
@@ -299,14 +291,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
         ],
       );
     }
-    Timer(
-      Duration(milliseconds: 5),
-      () => _controller.animateTo(
-        _controller.position.maxScrollExtent,
-        duration: Duration(seconds: 1),
-        curve: Curves.fastOutSlowIn,
-      ),
-    );
+   
     return ListView(
       controller: _controller,
       children: [
@@ -394,7 +379,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   void goToClassAction() {
     Navigator.popUntil(context, ModalRoute.withName('/inside-class'));
     Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.insideClass],
-        arguments: {'courseEnrollment': widget.courseEnrollment, 'classIndex': widget.classIndex, 'courseIndex': widget.courseIndex,});
+        arguments: {'courseEnrollment': widget.courseEnrollment, 'classIndex': widget.classIndex, 'courseIndex': widget.courseIndex,'classImage':widget.courseEnrollment.classes[widget.classIndex].image});
   }
 
   ///Countdown & movements information

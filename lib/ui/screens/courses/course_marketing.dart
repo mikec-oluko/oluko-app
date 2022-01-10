@@ -162,7 +162,9 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                             ),
                                           ),
                                           //TODO: si no hay courseEnrollment se muestra la vista vieja
-                                          OlukoNeumorphism.isNeumorphismDesign && widget.courseEnrollment!=null? buildClassEnrolledCards() : buildClassExpansionPanels()
+                                          OlukoNeumorphism.isNeumorphismDesign && widget.courseEnrollment != null
+                                              ? buildClassEnrolledCards()
+                                              : buildClassExpansionPanels()
                                         ]))),
                                 SizedBox(
                                   height: 150,
@@ -312,7 +314,9 @@ class _CourseMarketingState extends State<CourseMarketing> {
                       ),
                     ),
                   )
-            : Container(
+            : SizedBox()),
+        ..._classItems.map((item) => widget.courseEnrollment.classes[_classItems.indexOf(item)].completedAt != null
+            ? Container(
                 child: GestureDetector(
                   onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
                     'courseEnrollment': widget.courseEnrollment,
@@ -330,7 +334,8 @@ class _CourseMarketingState extends State<CourseMarketing> {
                     ),
                   ),
                 ),
-              )),
+              )
+            : SizedBox())
       ],
     );
   }

@@ -24,8 +24,8 @@ class _State extends State<AudioDialogContent> {
   Duration _position = new Duration();
   bool isPlaying = false;
 
-   @override
-  void initState() {
+  @override
+   void initState() {
     super.initState();
     initPlayer();
   }
@@ -88,11 +88,10 @@ class _State extends State<AudioDialogContent> {
             Center(
                 child: Column(children: [
               SizedBox(height: 30),
-              Stack(alignment: Alignment.center, children: [
+              Stack(alignment: Alignment.bottomCenter, children: [
                 StoriesItem(
                     maxRadius: 65,
-                    imageUrl:
-                        coach.avatar,
+                    imageUrl:coach.avatar,
                     bloc: StoryListBloc()),
                 Image.asset('assets/courses/photo_ellipse.png', scale: 4)
               ]),
