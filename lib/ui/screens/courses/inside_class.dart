@@ -47,11 +47,12 @@ import 'audio_panel.dart';
 enum PanelEnum { audios, classDetail }
 
 class InsideClass extends StatefulWidget {
-  InsideClass({this.courseEnrollment, this.classIndex, this.courseIndex, Key key}) : super(key: key);
+  InsideClass({this.courseEnrollment, this.classIndex, this.courseIndex, Key key, this.classImage}) : super(key: key);
 
   final CourseEnrollment courseEnrollment;
   final int classIndex;
   final int courseIndex;
+  final String classImage;
 
   @override
   _InsideClassesState createState() => _InsideClassesState();
@@ -283,13 +284,13 @@ class _InsideClassesState extends State<InsideClass> {
                       peopleQty: qty,
                       onPeoplePressed: () => _peopleAction(subscribedCourseUsersState.users, subscribedCourseUsersState.favoriteUsers),
                       audioMessageQty: AudioService.getAudiosLength(_audios),
-                      image: widget.courseEnrollment.course.image);
+                      image: OlukoNeumorphism.isNeumorphismDesign?widget.classImage: widget.courseEnrollment.course.image);
                 } else {
                   return CourseInfoSection(
                       onAudioPressed: () => _coaches.isNotEmpty ? _audioAction() : null,
                       peopleQty: 0,
                       audioMessageQty: AudioService.getAudiosLength(_audios),
-                      image: widget.courseEnrollment.course.image);
+                      image: OlukoNeumorphism.isNeumorphismDesign?widget.classImage: widget.courseEnrollment.course.image);
                 }
               })
             ],

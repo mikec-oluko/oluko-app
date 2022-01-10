@@ -318,7 +318,6 @@ class Routes {
   final ChallengeSegmentBloc _challengeSegmentBloc = ChallengeSegmentBloc();
   final KeyboardBloc _keyboardBloc = KeyboardBloc();
 
-
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
     Widget newRouteView;
@@ -659,7 +658,8 @@ class Routes {
         newRouteView = InsideClass(
             courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
             classIndex: argumentsToAdd['classIndex'] as int,
-            courseIndex: argumentsToAdd['courseIndex'] as int);
+            courseIndex: argumentsToAdd['courseIndex'] as int,
+            classImage: argumentsToAdd['classImage'] as String,);
         break;
       case RouteEnum.userChallengeDetail:
         providers = [

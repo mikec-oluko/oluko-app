@@ -44,7 +44,7 @@ class SegmentUtils {
       return Text(
         segment.totalTime.toString() + " " + OlukoLocalizations.get(context, 'seconds').toLowerCase() + " " + "AMRAP",
         style: OlukoNeumorphism.isNeumorphismDesign
-            ? OlukoFonts.olukoSmallFont(customColor: color, custoFontWeight: FontWeight.bold)
+            ? OlukoFonts.olukoSmallFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold)
             : OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
       );
     } else {
@@ -105,21 +105,25 @@ class SegmentUtils {
             }
           if (restTime)
             workouts.add(getTextWidget(getLabel(movement), color));
-          else if (movement.name != "Rest time") {
-            workouts.add(Row(
-              children: [
-                MovementItemBubblesNeumorphic(
-                  viewDetailsScreen: true,
-                  movement: movementWithImage, //movementWithImage=null? overflow error
-                  width: ScreenUtils.width(context) / 4,
-                  bubbleName: false,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 8),
-                  child: getTextWidget(getLabel(movement), color),
-                ),
-              ],
-            ));
+          else if (movement.name != "Rest") {
+            if (movementWithImage != null) {
+              workouts.add(Row(
+                children: [
+                  MovementItemBubblesNeumorphic(
+                    viewDetailsScreen: true,
+                    movement: movementWithImage, //movementWithImage=null? overflow error
+                    width: ScreenUtils.width(context) / 4,
+                    bubbleName: false,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8),
+                    child: getTextWidget(getLabel(movement), color),
+                  ),
+                ],
+              ));
+            } else {
+               workouts.add(getTextWidget(getLabel(movement), color));
+            }
           }
           ;
         }

@@ -75,7 +75,7 @@ class _OverlayVideoPreviewState extends State<OverlayVideoPreview> {
                     child: ClipRRect(
                         borderRadius: BorderRadius.circular(50),
                         child: GestureDetector(
-                          onTap: () => widget.onBackPressed != null ? widget.onBackPressed() : Navigator.pop(context),
+                          onTap: () => Navigator.pop(context),
                           child: Container(
                               color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker,
                               width: 45,
