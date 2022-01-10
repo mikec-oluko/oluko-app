@@ -161,7 +161,8 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                               style: OlukoFonts.olukoSubtitleFont(custoFontWeight: FontWeight.bold),
                                             ),
                                           ),
-                                          OlukoNeumorphism.isNeumorphismDesign ? buildClassEnrolledCards() : buildClassExpansionPanels()
+                                          //TODO: si no hay courseEnrollment se muestra la vista vieja
+                                          OlukoNeumorphism.isNeumorphismDesign && widget.courseEnrollment!=null? buildClassEnrolledCards() : buildClassExpansionPanels()
                                         ]))),
                                 SizedBox(
                                   height: 150,
