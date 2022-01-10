@@ -18,6 +18,7 @@ import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/enrollment_audio.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/submodels/segment_submodel.dart';
@@ -69,6 +70,7 @@ class _InsideClassesState extends State<InsideClass> {
   List<UserResponse> _coaches;
   List<Audio> _audios = [];
   AudioPlayer audioPlayer = AudioPlayer();
+  EnrollmentAudio _enrollmentAudio;
 
   Widget panelContent;
   PanelEnum panelState;
@@ -88,6 +90,7 @@ class _InsideClassesState extends State<InsideClass> {
         return BlocBuilder<EnrollmentAudioBloc, EnrollmentAudioState>(builder: (context, enrollmentAudioState) {
           return BlocBuilder<ClassBloc, ClassState>(builder: (context, classState) {
             if (classState is GetByIdSuccess && enrollmentAudioState is GetEnrollmentAudioSuccess) {
+              _enrollmentAudio = enrollmentAudioState.enrollmentAudio;
               _class = classState.classObj;
               List<Audio> classAudios =
                   AudioService.getClassAudios(enrollmentAudioState.enrollmentAudio, widget.courseEnrollment.classes[widget.classIndex].id);
@@ -367,7 +370,8 @@ class _InsideClassesState extends State<InsideClass> {
 
   _onAudioDeleted(int audioIndex, Challenge challenge) {
     _audios[audioIndex].deleted = true;
-    BlocProvider.of<CourseEnrollmentAudioBloc>(context).markAudioAsDeleted(widget.courseEnrollment, _audios);
+    BlocProvider.of<CourseEnrollmentAudioBloc>(context)
+        .markAudioAsDeleted(_enrollmentAudio, _audios, widget.courseEnrollment.classes[widget.classIndex].id);
     _audios.removeAt(audioIndex);
   }
 
