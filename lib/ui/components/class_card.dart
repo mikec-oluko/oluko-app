@@ -43,6 +43,7 @@ class _State extends State<ClassCard> {
                       'courseEnrollment': widget.courseEnrollment,
                       'classIndex': widget.classIndex,
                       'courseIndex': widget.courseIndex,
+                      'classImage':widget.courseEnrollment.classes[widget.classIndex].image
                     }),
                 child: classContainer(150.0, 110.0))
           ]));
