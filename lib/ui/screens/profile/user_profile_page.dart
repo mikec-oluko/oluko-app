@@ -689,7 +689,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                       : null
                   : null),
           canUnenrollCourse: _isCurrentUser,
-          unrolledFunction: () => _requestContentForUser(context: context, userRequested: _userProfileToDisplay)),
+          unrolledFunction: () => _requestContentForUser(context: context, userRequested: widget.userRequested)),
     );
   }
 

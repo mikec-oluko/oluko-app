@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
@@ -23,7 +24,9 @@ import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_switch.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
@@ -33,12 +36,13 @@ import 'package:oluko_app/utils/time_converter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class TaskDetails extends StatefulWidget {
-  const TaskDetails({this.taskIndex, this.isLastTask = false, Key key, this.isComingFromCoach = false}) : super(key: key);
+  const TaskDetails({this.taskIndex, this.isLastTask = false, Key key, this.isComingFromCoach = false, this.taskCompleted = false})
+      : super(key: key);
 
   final int taskIndex;
   final bool isLastTask;
   final bool isComingFromCoach;
-
+  final bool taskCompleted;
   @override
   _TaskDetailsState createState() => _TaskDetailsState();
 }
@@ -53,7 +57,7 @@ class _TaskDetailsState extends State<TaskDetails> {
   List<Task> _tasks;
   UserResponse _user;
   bool isFirstTime = true;
-
+  bool isAssessmentDone = false;
   @override
   void initState() {
     super.initState();
@@ -111,29 +115,38 @@ class _TaskDetailsState extends State<TaskDetails> {
                     });
                   }
                 }),
-            body: SlidingUpPanel(
-              borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-              color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-              maxHeight: 100,
-              panel: Container(
-                height: 60,
-                width: MediaQuery.of(context).size.width,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [Container(height: 60, width: MediaQuery.of(context).size.width / 1.2, child: startRecordingButton())]),
-                ),
-              ),
-              body: Container(
-                  color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
+            body: BlocListener<TaskSubmissionBloc, TaskSubmissionState>(
+              listener: (context, state) {
+                if (state is GetSuccess && state.taskSubmission != null) {
+                  isAssessmentDone = true;
+                }
+              },
+              child: SlidingUpPanel(
+                borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                maxHeight: 100,
+                panel: Container(
+                  height: 60,
+                  width: MediaQuery.of(context).size.width,
                   child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height - kToolbarHeight,
-                        child: _content(),
-                      ))),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: isAssessmentDone || widget.taskCompleted
+                        ? recordAgainButtons(_taskSubmission)
+                        : Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                            Container(height: 60, width: MediaQuery.of(context).size.width / 1.2, child: startRecordingButton())
+                          ]),
+                  ),
+                ),
+                body: Container(
+                    color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
+                    child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height - kToolbarHeight,
+                          child: _content(),
+                        ))),
+              ),
             )));
   }
 
@@ -263,13 +276,14 @@ class _TaskDetailsState extends State<TaskDetails> {
       if (state is GetSuccess && state.taskSubmission != null && state.taskSubmission?.task?.id == _task.id) {
         _taskSubmission = state.taskSubmission;
         _makePublic ??= _taskSubmission.isPublic;
+        isAssessmentDone = true;
 
         return ListView(
           children: [
             const SizedBox(height: 20),
             showVideoPlayer(_task.video),
             formSection(state.taskSubmission),
-            recordAgainButtons(state.taskSubmission)
+            OlukoNeumorphism.isNeumorphismDesign ? SizedBox.shrink() : recordAgainButtons(state.taskSubmission)
           ],
         );
       } else {
@@ -352,55 +366,78 @@ class _TaskDetailsState extends State<TaskDetails> {
 
   Widget recordAgainButtons(TaskSubmission taskSubmission) {
     return Padding(
-        padding: const EdgeInsets.only(top: 20.0),
+        padding: OlukoNeumorphism.isNeumorphismDesign ? EdgeInsets.only(top: 20.0).copyWith(bottom: 20) : EdgeInsets.only(top: 20.0),
         child: Row(
           children: [
-            OlukoOutlinedButton(
-              thinPadding: true,
-              title: OlukoLocalizations.get(context, 'recordAgain'),
-              onPressed: () {
-                DialogUtils.getDialog(context, _confirmDialogContent(taskSubmission), showExitButton: false);
-              },
-            ),
+            OlukoNeumorphism.isNeumorphismDesign
+                ? OlukoNeumorphicSecondaryButton(
+                    buttonShape: NeumorphicShape.flat,
+                    useBorder: true,
+                    thinPadding: true,
+                    textColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                    onPressed: () {
+                      DialogUtils.getDialog(context, _confirmDialogContent(taskSubmission), showExitButton: false);
+                    },
+                    title: OlukoLocalizations.get(context, 'recordAgain'),
+                  )
+                : OlukoOutlinedButton(
+                    thinPadding: true,
+                    title: OlukoLocalizations.get(context, 'recordAgain'),
+                    onPressed: () {
+                      DialogUtils.getDialog(context, _confirmDialogContent(taskSubmission), showExitButton: false);
+                    },
+                  ),
             const SizedBox(width: 20),
             BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
               if (authState is AuthSuccess) {
                 _user = authState.user;
-                return OlukoPrimaryButton(
-                  isDisabled: OlukoPermissions.isAssessmentTaskDisabled(_user, widget.taskIndex + 1),
-                  title: OlukoLocalizations.get(context, 'next'),
-                  onPressed: () {
-                    if (OlukoPermissions.isAssessmentTaskDisabled(_user, widget.taskIndex + 1)) {
-                      AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'yourCurrentPlanDoesntIncludeAssessment'));
-                    } else {
-                      if (_controller != null) {
-                        _controller.pause();
-                      }
-                      if (widget.taskIndex < _tasks.length - 1) {
-                        if (Navigator.canPop(context)) {
-                          Navigator.pop(context);
-                        }
-                        Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {
-                          'taskIndex': widget.taskIndex + 1,
-                          'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
-                        });
-                      } else {
-                        if (Navigator.canPop(context)) {
-                          Navigator.pop(context);
-                        } else {
-                          Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.assessmentVideos],
-                              arguments: {'isFirstTime': false});
-                        }
-                      }
-                    }
-                  },
-                );
+                return OlukoNeumorphism.isNeumorphismDesign
+                    ? OlukoNeumorphicPrimaryButton(
+                        title: OlukoLocalizations.get(context, 'next'),
+                        onPressed: () {
+                          nextAssessmentButtonOnPress(context);
+                        },
+                      )
+                    : OlukoPrimaryButton(
+                        isDisabled: OlukoPermissions.isAssessmentTaskDisabled(_user, widget.taskIndex + 1),
+                        title: OlukoLocalizations.get(context, 'next'),
+                        onPressed: () {
+                          nextAssessmentButtonOnPress(context);
+                        },
+                      );
               } else {
                 return null;
               }
             })
           ],
         ));
+  }
+
+  void nextAssessmentButtonOnPress(BuildContext context) {
+    if (OlukoPermissions.isAssessmentTaskDisabled(_user, widget.taskIndex + 1)) {
+      //TODO: Check plan enable skip
+      AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'yourCurrentPlanDoesntIncludeAssessment'));
+    } else {
+      if (_controller != null) {
+        _controller.pause();
+      }
+      if (widget.taskIndex < _tasks.length - 1) {
+        if (Navigator.canPop(context)) {
+          Navigator.pop(context);
+        }
+        Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {
+          'taskIndex': widget.taskIndex + 1,
+          'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
+          'taskCompleted': false /**TODO: */
+        });
+      } else {
+        if (Navigator.canPop(context)) {
+          Navigator.pop(context);
+        } else {
+          Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.assessmentVideos], arguments: {'isFirstTime': false});
+        }
+      }
+    }
   }
 
   List<Widget> _confirmDialogContent(TaskSubmission taskSubmission) {
@@ -500,13 +537,32 @@ class _TaskDetailsState extends State<TaskDetails> {
               if (thumbnail == null) const Icon(Icons.no_photography) else Image.network(thumbnail),
               Align(
                   alignment: Alignment.center,
-                  child: Image.asset(
-                    'assets/assessment/play.png',
-                    height: 40,
-                    width: 60,
-                  )),
+                  child: OlukoNeumorphism.isNeumorphismDesign
+                      ? Container(
+                          width: 50,
+                          height: 50,
+                          child: OlukoBlurredButton(
+                            childContent: Icon(
+                              Icons.play_arrow,
+                              color: OlukoColors.white,
+                            ),
+                          ),
+                        )
+                      : Image.asset(
+                          'assets/assessment/play.png',
+                          scale: 5,
+                          height: 40,
+                          width: 60,
+                        )),
+
+              //  Image.asset(
+              //   'assets/assessment/play.png',
+              //   height: 40,
+              //   width: 60,
+              // )),
               Positioned(
-                  bottom: 10,
+                  top: OlukoNeumorphism.isNeumorphismDesign ? 10 : null,
+                  bottom: !OlukoNeumorphism.isNeumorphismDesign ? 10 : null,
                   left: 10,
                   child: Container(
                     decoration: BoxDecoration(

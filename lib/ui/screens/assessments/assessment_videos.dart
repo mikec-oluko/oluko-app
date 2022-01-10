@@ -308,7 +308,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                             }
                             BlocProvider.of<TaskSubmissionBloc>(context).setLoaderTaskSubmissionOfTask();
                             return Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails],
-                                    arguments: {'taskIndex': index, 'isLastTask': isLastTask})
+                                    arguments: {'taskIndex': index, 'isLastTask': isLastTask, 'taskCompleted': taskSubmission != null})
                                 .then((value) => BlocProvider.of<AssessmentBloc>(context).getById('emnsmBgZ13UBRqTS26Qd'));
                           }
                         },

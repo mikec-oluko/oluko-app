@@ -680,7 +680,10 @@ class Routes {
           BlocProvider<GalleryVideoBloc>.value(value: _galleryVideoBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
-        newRouteView = TaskDetails(taskIndex: argumentsToAdd['taskIndex'] as int, isLastTask: argumentsToAdd['isLastTask'] as bool);
+        newRouteView = TaskDetails(
+            taskIndex: argumentsToAdd['taskIndex'] as int,
+            isLastTask: argumentsToAdd['isLastTask'] as bool,
+            taskCompleted: argumentsToAdd['taskCompleted'] as bool);
         break;
       case RouteEnum.selfRecording:
         //TODO: Pass flag for last assessments

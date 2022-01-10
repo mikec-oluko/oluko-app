@@ -70,9 +70,9 @@ class OlukoNeumorphism {
         intensity: 0.5,
         color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
         shape: buttonShape,
-        lightSource: LightSource.topLeft,
+        lightSource: LightSource.top,
         boxShape: boxShape,
-        shadowDarkColorEmboss: OlukoColors.black,
+        shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
         shadowLightColorEmboss: OlukoColors.black,
         surfaceIntensity: 0.5,
         shadowLightColor: ligthShadow ? Colors.white60 : Colors.transparent,
@@ -139,6 +139,7 @@ class OlukoNeumorphismColors {
   static const Color olukoNeumorphicGreyBackgroundFlat = Color.fromRGBO(42, 45, 47, 1);
   static const Color olukoNeumorphicSearchBarFirstColor = Color.fromRGBO(29, 35, 40, 1);
   static const Color olukoNeumorphicSearchBarSecondColor = Color.fromRGBO(19, 19, 20, 1);
+  static const Color olukoNeumorphicBlueBackgroundColor = Color(0XFF1976D2);
 }
 
 class OlukoColors {

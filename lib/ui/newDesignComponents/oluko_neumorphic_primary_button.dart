@@ -55,7 +55,7 @@ class _OlukoNeumorphicPrimaryButtonState extends State<OlukoNeumorphicPrimaryBut
   NeumorphicButton primaryButton() {
     return NeumorphicButton(
       onPressed: () => widget.onPressed != null ? widget.onPressed() : () {},
-      padding: EdgeInsets.all(10),
+      padding: EdgeInsets.all(2),
       style: !widget.isDisabled
           ? OlukoNeumorphism.primaryButtonStyle(
               useBorder: widget.useBorder,
@@ -69,8 +69,15 @@ class _OlukoNeumorphicPrimaryButtonState extends State<OlukoNeumorphicPrimaryBut
               boxShape: NeumorphicBoxShape.stadium(),
               ligthShadow: true,
               darkShadow: true),
-      child: Center(
-        child: widget.onlyIcon ? widget.icon : _textLabel(),
+      child: Neumorphic(
+        style: !widget.isDisabled
+            ? OlukoNeumorphism.primaryButtonStyle(
+                buttonShape: NeumorphicShape.flat, boxShape: NeumorphicBoxShape.stadium(), ligthShadow: true, darkShadow: true)
+            : OlukoNeumorphism.primaryButtonStyleDisable(
+                buttonShape: NeumorphicShape.convex, boxShape: NeumorphicBoxShape.stadium(), ligthShadow: true, darkShadow: true),
+        child: Center(
+          child: widget.onlyIcon ? widget.icon : _textLabel(),
+        ),
       ),
     );
   }
