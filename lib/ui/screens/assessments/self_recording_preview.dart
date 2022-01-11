@@ -19,7 +19,9 @@ import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/progress_bar.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/time_converter.dart';
 
 import '../../../utils/app_messages.dart';
 
@@ -121,19 +123,92 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
           if (state is VideoProcessing) {
             return progressScaffold(state);
           } else {
-            return contentScaffold();
+            return OlukoNeumorphism.isNeumorphismDesign ? neumorphicContentScaffold() : contentScaffold();
           }
         }));
   }
 
   Widget contentScaffold() {
+    // TODO: UPDATED FOR NEUMORPHIC
     return Scaffold(
-        appBar: OlukoAppBar(title: _task.name, actions: [retakeButton()]),
+        appBar: OlukoAppBar(
+          title: _task.name,
+          actions: [retakeButton()],
+          showTitle: true,
+        ),
         body: Container(
           color: Colors.black,
           child: ListView(
             children: [
               content(),
+            ],
+          ),
+        ));
+  }
+
+  Widget neumorphicContentScaffold() {
+    // TODO: UPDATED FOR NEUMORPHIC
+    return Scaffold(
+        extendBody: true,
+        // appBar: OlukoAppBar(
+        //   title: _task.name,
+        //   actions: [retakeButton()],
+        //   showTitle: true,
+        // ),
+        body: Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          child: Stack(
+            children: [
+              Container(height: MediaQuery.of(context).size.height, child: neumorphicContent()),
+              Positioned(top: 80, right: 20, child: retakeButton()),
+              Positioned(
+                bottom: 0,
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 100,
+                    color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth : Colors.black,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 20),
+                          child: Text('${TimeConverter.durationToString(_controller.videoPlayerController.value.duration)} min',
+                              style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.normal)),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 20),
+                          child: Container(
+                            width: MediaQuery.of(context).size.width / 3,
+                            height: 60,
+                            child: OlukoNeumorphicPrimaryButton(
+                              isExpanded: false,
+                              title: OlukoLocalizations.get(context, 'done'),
+                              onPressed: () async {
+                                _controller.pause();
+                                if (_taskSubmission == null) {
+                                  BlocProvider.of<TaskSubmissionBloc>(context)
+                                      .createTaskSubmission(_assessmentAssignment, _task, widget.isPublic, widget.isLastTask);
+                                } else {
+                                  BlocProvider.of<VideoBloc>(context)
+                                      .createVideo(context, File(widget.filePath), 3.0 / 4.0, _taskSubmission.id);
+                                }
+                                /*Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails],
+                    arguments: {
+                      'taskIndex': widget.taskIndex,
+                      'isLastTask': widget.isLastTask
+                    });*/
+                              },
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              )
             ],
           ),
         ));
@@ -208,6 +283,34 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
               },
             )
           ]))
+    ]);
+  }
+
+  Widget neumorphicContent() {
+    return Column(children: [
+      ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height - 100), child: Stack(children: showVideoPlayer())),
+      // Padding(
+      //     padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+      //     child: Row(children: [
+      //       OlukoPrimaryButton(
+      //         title: OlukoLocalizations.get(context, 'done'),
+      //         onPressed: () async {
+      //           _controller.pause();
+      //           if (_taskSubmission == null) {
+      //             BlocProvider.of<TaskSubmissionBloc>(context)
+      //                 .createTaskSubmission(_assessmentAssignment, _task, widget.isPublic, widget.isLastTask);
+      //           } else {
+      //             BlocProvider.of<VideoBloc>(context).createVideo(context, File(widget.filePath), 3.0 / 4.0, _taskSubmission.id);
+      //           }
+      //           /*Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails],
+      //               arguments: {
+      //                 'taskIndex': widget.taskIndex,
+      //                 'isLastTask': widget.isLastTask
+      //               });*/
+      //         },
+      //       )
+      //     ]))
     ]);
   }
 }

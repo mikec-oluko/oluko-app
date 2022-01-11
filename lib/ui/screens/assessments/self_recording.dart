@@ -99,6 +99,7 @@ class _State extends State<SelfRecording> {
         child: Container(
           width: MediaQuery.of(context).size.width,
           child: ListView(
+            shrinkWrap: true,
             children: [
               ConstrainedBox(
                   constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height),
@@ -145,7 +146,7 @@ class _State extends State<SelfRecording> {
                       : Stack(alignment: Alignment.topRight, children: [
                           Container(
                               width: MediaQuery.of(context).size.width,
-                              height: MediaQuery.of(context).size.height,
+                              height: MediaQuery.of(context).size.height / 1.1,
                               child: CameraPreview(cameraController)),
                           Padding(
                               padding: const EdgeInsets.all(10),
@@ -299,15 +300,10 @@ class _State extends State<SelfRecording> {
               GestureDetector(
                 onTap: () async {
                   if (!_buttonBlocked) {
-                    setState(() {
-                      _buttonBlocked = true;
-                    });
-
                     if (_recording) {
                       final XFile videopath = await cameraController.stopVideoRecording();
                       final String path = videopath.path;
                       Navigator.pop(context);
-                      //TODO: Send flag to set assesment as last upload
                       Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecordingPreview], arguments: {
                         'taskIndex': widget.taskIndex,
                         'filePath': path,
@@ -319,14 +315,10 @@ class _State extends State<SelfRecording> {
                     }
                     setState(() {
                       _recording = !_recording;
-                      _buttonBlocked = false;
                     });
                   } else {
                     await cameraController.startVideoRecording();
                   }
-                  setState(() {
-                    _recording = !_recording;
-                  });
                 },
                 child: _recording ? recordingIcon() : recordIcon(),
               ),
