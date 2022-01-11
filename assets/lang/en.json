@@ -264,5 +264,6 @@
     "goBackConfirmationWithoutRecording": "Do you want to go back? Your progress will be lost.",
     "coachPageAssessmentsText": "Complete the below tasks to get a coach assigned",
     "bestYouCanDo": "The best you can do for your fitness",
-    "loginSubtitle": "This will help you to track your all the fitness data"
+    "loginSubtitle": "This will help you to track your all the fitness data",
+    "locked": "Locked"
 }

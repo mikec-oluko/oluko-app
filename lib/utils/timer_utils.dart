@@ -50,7 +50,7 @@ class TimerUtils {
     return 1 - (currentTime / totalTime);
   }
 
-  static Widget roundsTimer(int totalRounds, int currentRound, [bool keyboardVisibilty=false]) => Container(
+  static Widget roundsTimer(int totalRounds, int currentRound, [bool keyboardVisibilty = false]) => Container(
       height: () {
         if (keyboardVisibilty) return 240.0;
         return 340.0;

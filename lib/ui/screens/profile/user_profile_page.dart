@@ -13,6 +13,7 @@ import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/list_of_items_to_widget.dart';
 import 'package:oluko_app/helpers/privacy_options.dart';
@@ -61,6 +62,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   Friend friendData;
   FriendModel friendModel;
   List<UserResponse> friendUsers = [];
+  List<ChallengeNavigation> listOfChallenges = [];
   String _connectButtonTitle = '';
   List<TransformationJourneyUpload> _transformationJourneyContent = [];
   List<TaskSubmission> _assessmentVideosContent = [];
@@ -313,28 +315,79 @@ class _UserProfilePageState extends State<UserProfilePage> {
     );
   }
 
-  BlocBuilder<ChallengeBloc, ChallengeState> activeChallengesSlider() {
-    return BlocBuilder<ChallengeBloc, ChallengeState>(
+  BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState> activeChallengesSlider() {
+    return BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(
       builder: (context, state) {
-        if (state is GetChallengeSuccess) {
-          if (_activeChallenges.isEmpty) {
-            _activeChallenges = state.challenges;
-          }
+        if (state is CourseEnrollmentsByUserSuccess) {
+          ChallengeNavigation newChallenge;
+          int classIndex;
+          int segmentIndex;
+          int courseIndex;
+
+          _courseEnrollmentList = state.courseEnrollments.where((courseEnroll) => courseEnroll.isUnenrolled != true).toList();
+          _courseEnrollmentList.forEach((courseEnrolled) {
+            courseIndex = _courseEnrollmentList.indexOf(courseEnrolled);
+            courseEnrolled.classes.forEach((enrolledClass) {
+              classIndex = courseEnrolled.classes.indexOf(enrolledClass);
+              enrolledClass.segments.forEach((enrolledSegment) {
+                segmentIndex = enrolledClass.segments.indexOf(enrolledSegment);
+                if (enrolledSegment.isChallenge == true) {
+                  newChallenge = ChallengeNavigation(
+                      enrolledCourse: courseEnrolled,
+                      challengeSegment: enrolledSegment,
+                      segmentIndex: segmentIndex,
+                      segmentId: enrolledSegment.id,
+                      classIndex: classIndex,
+                      classId: enrolledClass.id,
+                      courseIndex: courseIndex,
+                      previousSegmentFinish: courseEnrolled.classes[classIndex].segments[segmentIndex - 1].completedAt != null);
+
+                  if (listOfChallenges.isEmpty) {
+                    if (newChallenge != null) {
+                      listOfChallenges.add(newChallenge);
+                    }
+                  } else {
+                    if (newChallenge != null) {
+                      if (!listOfChallenges.contains(newChallenge)) {
+                        listOfChallenges.add(newChallenge);
+                      }
+                    }
+                  }
+                }
+              });
+            });
+          });
         }
         /*if (state is CourseEnrollmentListSuccess) {
                       _courseEnrollmentList = state.courseEnrollmentList;
                     }*/
 
-        return _activeChallenges.isNotEmpty
+        return listOfChallenges.isNotEmpty
             ? Padding(
                 padding: OlukoNeumorphism.isNeumorphismDesign ? EdgeInsets.symmetric(horizontal: 20, vertical: 0) : EdgeInsets.symmetric(),
-                child: buildChallengeSection(
-                    context: context,
-                    content: TransformListOfItemsToWidget.getWidgetListFromContent(
-                        upcomingChallenges: _activeChallenges,
-                        requestedFromRoute: ActualProfileRoute.userProfile,
-                        requestedUser: _userProfileToDisplay,
-                        useAudio: !_isCurrentUser)),
+                child: BlocBuilder<ChallengeBloc, ChallengeState>(
+                  builder: (context, state) {
+                    if (state is GetChallengeSuccess) {
+                      _activeChallenges = state.challenges;
+                      listOfChallenges.forEach((challengeElement) {
+                        _activeChallenges.forEach((activeChallenge) {
+                          if (challengeElement.classId == activeChallenge.classId &&
+                              challengeElement.segmentId == activeChallenge.segmentId) {
+                            challengeElement.challengeForAudio = activeChallenge;
+                          }
+                        });
+                      });
+                    }
+                    return buildChallengeSection(
+                        listOfChallenges: listOfChallenges,
+                        context: context,
+                        content: TransformListOfItemsToWidget.getWidgetListFromContent(
+                            challengeSegments: listOfChallenges,
+                            requestedFromRoute: ActualProfileRoute.userProfile,
+                            requestedUser: widget.userRequested,
+                            useAudio: !_isCurrentUser));
+                  },
+                ),
               )
             : defaultWidgetNoContent;
       },
@@ -566,7 +619,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
     );
   }
 
-  Padding buildChallengeSection({BuildContext context, List<Widget> content}) {
+  Padding buildChallengeSection({BuildContext context, List<Widget> content, List<ChallengeNavigation> listOfChallenges}) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(10, 15, 10, 0),
       child: CarouselSection(
@@ -575,7 +628,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
           title: OlukoLocalizations.get(context, 'upcomingChallenges'),
           optionLabel: OlukoLocalizations.get(context, 'viewAll'),
           onOptionTap: () {
-            //TODO: CHALLENGE NAVIGATION
+            Navigator.pushNamed(context, routeLabels[RouteEnum.profileChallenges], arguments: {'challengeSegments': listOfChallenges});
           },
           children: content.isNotEmpty
               ? content
@@ -638,7 +691,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                       : null
                   : null),
           canUnenrollCourse: _isCurrentUser,
-          unrolledFunction: () => _requestContentForUser(context: context, userRequested: _userProfileToDisplay)),
+          unrolledFunction: () => _requestContentForUser(context: context, userRequested: widget.userRequested)),
     );
   }
 

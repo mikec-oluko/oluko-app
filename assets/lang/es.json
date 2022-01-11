@@ -263,5 +263,6 @@
     "goBackConfirmationWithoutRecording": "Esta seguro de que quiere volver? Su progreso se perderá.",
     "coachPageAssessmentsText": "Completa las tareas a continuación para que se te asigne un entrenador",
     "bestYouCanDo": "Lo mejor que puede hacer por su estado físico",
-    "loginSubtitle": "Esto le ayudará a realizar un seguimiento de los datos de su estado fisico."
+    "loginSubtitle": "Esto le ayudará a realizar un seguimiento de los datos de su estado fisico.",
+    "locked": "Bloqueado"
 }

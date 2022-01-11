@@ -17,16 +17,13 @@ class GetChallengeSuccess extends ChallengeState {
   GetChallengeSuccess({this.challenges});
 }
 
-
 class ChallengeBloc extends Cubit<ChallengeState> {
   ChallengeBloc() : super(Loading());
 
   void get(String userId) async {
     try {
-      List<Challenge> challenges =
-          await CourseEnrollmentRepository().getUserChallengesByUserId(userId);
-      emit(GetChallengeSuccess(
-          challenges: challenges));
+      List<Challenge> challenges = await CourseEnrollmentRepository().getUserChallengesByUserId(userId);
+      emit(GetChallengeSuccess(challenges: challenges));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

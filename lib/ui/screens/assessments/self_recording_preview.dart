@@ -113,7 +113,8 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
             Navigator.popUntil(context, ModalRoute.withName(route));
             Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {
               'taskIndex': widget.taskIndex,
-              'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
+              'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
+              'taskCompleted': true /**TODO: */
             });
           }
         }, builder: (context, state) {

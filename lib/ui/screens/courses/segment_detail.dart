@@ -37,12 +37,14 @@ import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class SegmentDetail extends StatefulWidget {
-  SegmentDetail({this.courseIndex, this.courseEnrollment, this.segmentIndex, this.classIndex, Key key}) : super(key: key);
+  SegmentDetail({this.courseIndex, this.courseEnrollment, this.segmentIndex, this.classIndex, this.fromChallenge = false, Key key})
+      : super(key: key);
 
   final CourseEnrollment courseEnrollment;
   int segmentIndex;
   final int classIndex;
   final int courseIndex;
+  final bool fromChallenge;
 
   @override
   _SegmentDetailState createState() => _SegmentDetailState();
@@ -142,6 +144,51 @@ class _SegmentDetailState extends State<SegmentDetail> {
     });
   }
 
+  BlocBuilder<SegmentBloc, SegmentState> segmentDetailView() {
+    return BlocBuilder<SegmentBloc, SegmentState>(builder: (context, segmentState) {
+      return BlocBuilder<MovementBloc, MovementState>(builder: (context, movementState) {
+        if (segmentState is GetSegmentsSuccess && movementState is GetAllSuccess) {
+          _segments = segmentState.segments;
+          _movements = movementState.movements;
+          totalSegments = _segments.length - 1;
+          if (totalSegments < widget.segmentIndex) {
+            widget.segmentIndex = 0; //TODO: restarts if segment wanted doesn't exists
+            currentSegmentStep = 1;
+            totalSegmentStep = totalSegments + 1;
+          } else if (totalSegments < totalSegmentStep - 1) {
+            totalSegmentStep = totalSegments + 1;
+          }
+          return BlocBuilder<CoachAssignmentBloc, CoachAssignmentState>(
+            builder: (context, state) {
+              if (state is CoachAssignmentResponse) {
+                _coachAssignment = state.coachAssignmentResponse;
+                BlocProvider.of<CoachUserBloc>(context).get(_coachAssignment?.coachId);
+                BlocProvider.of<CoachRequestBloc>(context).getClassCoachRequest(
+                    userId: _user.id,
+                    coachId: _coachAssignment?.coachId,
+                    courseEnrollmentId: widget.courseEnrollment.id,
+                    classId: widget.courseEnrollment.classes[widget.classIndex].id);
+              }
+              return BlocBuilder<CoachUserBloc, CoachUserState>(builder: (context, coachUserState) {
+                return BlocBuilder<CoachRequestBloc, CoachRequestState>(builder: (context, coachRequestState) {
+                  if (coachUserState is CoachUserSuccess && coachRequestState is ClassCoachRequestsSuccess) {
+                    _coach = coachUserState.coach;
+                    _coachRequests = coachRequestState.coachRequests;
+                    return form();
+                  } else {
+                    return SizedBox();
+                  }
+                });
+              });
+            },
+          );
+        } else {
+          return OlukoCircularProgressIndicator();
+        }
+      });
+    });
+  }
+
   Widget form() {
     return Scaffold(
       backgroundColor: Colors.black,
@@ -169,7 +216,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
         isDraggable: false,
         header: const SizedBox(),
         padding: EdgeInsets.zero,
-        color: OlukoColors.black,
+        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
         minHeight: 0.0,
         maxHeight: 450, //TODO
         collapsed: const SizedBox(),
@@ -258,6 +305,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
     );
   }
 
+  //TODO: CONTENT PARA IR AL SEGMENT/CHALLENGE
   List<Widget> getSegmentList() {
     List<Widget> segmentWidgets = [];
     for (var i = 0; i < _segments.length; i++) {
@@ -298,21 +346,25 @@ class _SegmentDetailState extends State<SegmentDetail> {
               segments: _segments,
               classIndex: widget.classIndex,
               coachRequests: _coachRequests,
-              coach: _coach)));
+              coach: _coach,
+              fromChallenge: widget.fromChallenge)));
     }
     return segmentWidgets;
   }
 
   Widget _viewBody() {
-    return Column(
-      children: [
-        () {
-          if (_segments.length - 1 >= widget.segmentIndex) {
-            return getCarouselSlider();
-          }
-          return const SizedBox();
-        }(),
-      ],
+    return Container(
+      color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+      child: Column(
+        children: [
+          () {
+            if (_segments.length - 1 >= widget.segmentIndex) {
+              return getCarouselSlider();
+            }
+            return const SizedBox();
+          }(),
+        ],
+      ),
     );
   }
 

@@ -58,8 +58,17 @@ class SegmentClocks extends StatefulWidget {
   final int segmentIndex;
   final List<Segment> segments;
   final int courseIndex;
+  final bool fromChallenge;
 
-  SegmentClocks({Key key, this.courseIndex, this.workoutType, this.classIndex, this.segmentIndex, this.courseEnrollment, this.segments})
+  SegmentClocks(
+      {Key key,
+      this.courseIndex,
+      this.workoutType,
+      this.classIndex,
+      this.segmentIndex,
+      this.courseEnrollment,
+      this.segments,
+      this.fromChallenge})
       : super(key: key);
 
   @override
@@ -202,7 +211,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   }
 
   Widget form() {
-    bool keyboardVisibilty=false;
+    bool keyboardVisibilty = false;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: OlukoAppBar(
@@ -283,33 +292,33 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   Widget _body(bool keyboardVisibilty) {
     final _controller = ScrollController();
-        if (!keyboardVisibilty) {
-          return ListView(
-            controller: _controller,
-            children: [
-              _timerSection(keyboardVisibilty),
-              _lowerSection(),
-              if (isWorkStateFinished()) showFinishedButtons() else const SizedBox(),
-            ],
-          );
-        }
-        Timer(
-          Duration(milliseconds: 5),
-          () => _controller.animateTo(
-            _controller.position.maxScrollExtent,
-            duration: Duration(seconds: 1),
-            curve: Curves.fastOutSlowIn,
-          ),
-        );
-        return ListView(
-          controller: _controller,
-          children: [
-            _timerSection(keyboardVisibilty),
-            _lowerSection(),
-            if (isWorkStateFinished()) showFinishedButtons() else const SizedBox(),
-          ],
-        );
-      
+    if (!keyboardVisibilty) {
+      return ListView(
+        controller: _controller,
+        children: [
+          _timerSection(keyboardVisibilty),
+          _lowerSection(),
+          if (isWorkStateFinished()) showFinishedButtons() else const SizedBox(),
+        ],
+      );
+    }
+    Timer(
+      Duration(milliseconds: 5),
+      () => _controller.animateTo(
+        _controller.position.maxScrollExtent,
+        duration: Duration(seconds: 1),
+        curve: Curves.fastOutSlowIn,
+      ),
+    );
+    return ListView(
+      controller: _controller,
+      children: [
+        _timerSection(keyboardVisibilty),
+        _lowerSection(),
+        if (isWorkStateFinished()) showFinishedButtons() else const SizedBox(),
+      ],
+    );
+
     ;
   }
 
@@ -377,6 +386,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
             'classIndex': widget.classIndex,
             'courseEnrollment': widget.courseEnrollment,
             'courseIndex': widget.courseIndex,
+            'fromChallenge': widget.fromChallenge
           })
         : Navigator.popAndPushNamed(context, routeLabels[RouteEnum.completedClass], arguments: {
             'classIndex': widget.classIndex,
@@ -386,7 +396,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
   }
 
   void goToClassAction() {
-    Navigator.popUntil(context, ModalRoute.withName('/inside-class'));
+    widget.fromChallenge ? null : Navigator.popUntil(context, ModalRoute.withName('/inside-class'));
+
     Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.insideClass],
         arguments: {'courseEnrollment': widget.courseEnrollment, 'classIndex': widget.classIndex, 'courseIndex': widget.courseIndex});
   }
@@ -429,13 +440,14 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   Widget getRoundsTimer(bool keyboardVisibilty) {
     if (SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) && isWorkStateFinished()) {
-      return TimerUtils.roundsTimer(AMRAPRound, AMRAPRound,keyboardVisibilty);
+      return TimerUtils.roundsTimer(AMRAPRound, AMRAPRound, keyboardVisibilty);
     } else if (isWorkStateFinished()) {
-      return TimerUtils.roundsTimer(widget.segments[widget.segmentIndex].rounds, widget.segments[widget.segmentIndex].rounds,keyboardVisibilty);
+      return TimerUtils.roundsTimer(
+          widget.segments[widget.segmentIndex].rounds, widget.segments[widget.segmentIndex].rounds, keyboardVisibilty);
     } else if (SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex])) {
-      return TimerUtils.roundsTimer(AMRAPRound, AMRAPRound,keyboardVisibilty);
+      return TimerUtils.roundsTimer(AMRAPRound, AMRAPRound, keyboardVisibilty);
     } else {
-      return TimerUtils.roundsTimer(widget.segments[widget.segmentIndex].rounds, timerEntries[timerTaskIndex].round,keyboardVisibilty);
+      return TimerUtils.roundsTimer(widget.segments[widget.segmentIndex].rounds, timerEntries[timerTaskIndex].round, keyboardVisibilty);
     }
   }
 
@@ -443,7 +455,12 @@ class _SegmentClocksState extends State<SegmentClocks> {
   Widget _tasksSection(bool keyboardVisibilty) {
     return isSegmentWithoutRecording()
         ? taskSectionWithoutRecording(keyboardVisibilty)
-        : Column(children: [SizedBox(height: 10), recordingTaskSection(keyboardVisibilty), ...counterTextField(keyboardVisibilty), SizedBox(height: 20)]);
+        : Column(children: [
+            SizedBox(height: 10),
+            recordingTaskSection(keyboardVisibilty),
+            ...counterTextField(keyboardVisibilty),
+            SizedBox(height: 20)
+          ]);
   }
 
   Widget taskSectionWithoutRecording(bool keyboardVisibilty) {
@@ -455,9 +472,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
       final String nextTask = timerTaskIndex < timerEntries.length - 1 ? timerEntries[timerTaskIndex + 1].labels[0] : '';
       return Column(
         children: [
-          currentTaskWidget(keyboardVisibilty,currentTask),
+          currentTaskWidget(keyboardVisibilty, currentTask),
           const SizedBox(height: 10),
-          nextTaskWidget(nextTask,keyboardVisibilty),
+          nextTaskWidget(nextTask, keyboardVisibilty),
           const SizedBox(height: 15),
           ...counterTextField(keyboardVisibilty),
         ],
@@ -535,7 +552,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   Widget getKeyboard(bool keyboardVisibilty) {
     const boxDecoration = BoxDecoration(
-      gradient: LinearGradient(
+        gradient: LinearGradient(
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
       colors: [Color(0xff2b2f35), Color(0xff16171b)],
@@ -564,7 +581,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  currentTaskWidget(keyboardVisibilty,currentTask, true),
+                  currentTaskWidget(keyboardVisibilty, currentTask, true),
                   Positioned(
                       left: ScreenUtils.width(context) - 70,
                       child: Text(
@@ -632,18 +649,18 @@ class _SegmentClocksState extends State<SegmentClocks> {
     return TimerUtils.timeTimer(circularProgressIndicatorValue, TimeConverter.durationToString(timeLeft), context, counter);
   }
 
-  Widget currentTaskWidget(bool keyboardVisibilty,String currentTask, [bool smaller = false]) {
-        return Visibility(
-          visible: !keyboardVisibilty,
-          child: Text(
-            currentTask,
-            style: TextStyle(fontSize: smaller ? 20 : 25, color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-        );
-      ;
+  Widget currentTaskWidget(bool keyboardVisibilty, String currentTask, [bool smaller = false]) {
+    return Visibility(
+      visible: !keyboardVisibilty,
+      child: Text(
+        currentTask,
+        style: TextStyle(fontSize: smaller ? 20 : 25, color: Colors.white, fontWeight: FontWeight.bold),
+      ),
+    );
+    ;
   }
 
-  Widget nextTaskWidget(String nextTask,bool keyboardVisibilty) {
+  Widget nextTaskWidget(String nextTask, bool keyboardVisibilty) {
     return BlocBuilder<KeyboardBloc, KeyboardState>(
       builder: (context, state) {
         return Visibility(

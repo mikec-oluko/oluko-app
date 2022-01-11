@@ -12,7 +12,9 @@ import 'oluko_localizations.dart';
 class SegmentUtils {
   static List<Widget> getSegmentSummary(Segment segment, BuildContext context, Color color) {
     List<Widget> workoutWidgets = getWorkouts(segment, color);
-    return [getRoundTitle(segment, context, color), SizedBox(height: 12.0)] + workoutWidgets;
+    return OlukoNeumorphism.isNeumorphismDesign
+        ? [getRoundTitle(segment, context, color), SizedBox(height: 12.0)]
+        : [getRoundTitle(segment, context, color), SizedBox(height: 12.0)] + workoutWidgets;
   }
 
   static bool isEMOM(Segment segment) {

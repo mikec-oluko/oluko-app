@@ -12,6 +12,7 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class OlukoAppBar<T> extends StatefulWidget implements PreferredSizeWidget {
   final Function() onPressed;
+  final Function() actionButton;
   final Function(SearchResults<T>) onSearchResults;
   final Function(SearchResults<T>) onSearchSubmit;
   final Function(TextEditingController) whenSearchBarInitialized;
@@ -26,6 +27,7 @@ class OlukoAppBar<T> extends StatefulWidget implements PreferredSizeWidget {
   final GlobalKey<SearchState> searchKey;
   final bool showDivider;
   final bool showTitle;
+  final bool showActions;
 
   OlukoAppBar(
       {this.title,
@@ -42,7 +44,9 @@ class OlukoAppBar<T> extends StatefulWidget implements PreferredSizeWidget {
       this.showTitle = false,
       this.onSearchSubmit,
       this.whenSearchBarInitialized,
-      this.searchKey});
+      this.actionButton,
+      this.searchKey,
+      this.showActions = false});
 
   @override
   State<OlukoAppBar<T>> createState() => _OlukoAppBarState<T>();
@@ -187,39 +191,14 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                       : widget.showSearchBar
                           ? Center(
                               child: Stack(
+                                alignment: Alignment.center,
                                 children: [
-                                  Align(
-                                    alignment: Alignment.centerLeft,
+                                  Opacity(
+                                    opacity: isSearchVisible ? 1 : 0,
                                     child: Padding(
-                                      padding: const EdgeInsets.only(left: 20.0),
-                                      child: Visibility(
-                                        visible: !isSearchVisible,
-                                        child: GestureDetector(
-                                          // onTap: ,
-                                          child: OlukoNeumorphicCircleButton(
-                                              onPressed: () {
-                                                if (widget.title == OlukoLocalizations.get(context, 'filters')) {
-                                                  //TODO: hide filters
-                                                }
-                                                setState(() {
-                                                  isSearchVisible = !isSearchVisible;
-                                                });
-                                              },
-                                              customIcon: Icon(
-                                                widget.title == OlukoLocalizations.get(context, 'filters')
-                                                    ? Icons.arrow_back
-                                                    : Icons.search,
-                                                color: OlukoColors.grayColor,
-                                              )),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Visibility(
-                                    visible: isSearchVisible,
-                                    child: Center(
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                                      child: IgnorePointer(
+                                        ignoring: !isSearchVisible,
                                         child: SearchBar<T>(
                                           key: widget.searchKey,
                                           items: widget.searchResultItems,
@@ -238,6 +217,36 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                                               isSearchVisible = !isSearchVisible;
                                             });
                                           },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 20.0),
+                                      child: Visibility(
+                                        visible: !isSearchVisible,
+                                        child: GestureDetector(
+                                          // onTap: ,
+                                          child: OlukoNeumorphicCircleButton(
+                                              onPressed: () {
+                                                if (widget.title == OlukoLocalizations.get(context, 'filters')) {
+                                                  //Close keyboard
+                                                  FocusScope.of(context).unfocus();
+                                                  widget.actionButton();
+                                                } else {
+                                                  setState(() {
+                                                    isSearchVisible = !isSearchVisible;
+                                                  });
+                                                }
+                                              },
+                                              customIcon: Icon(
+                                                widget.title == OlukoLocalizations.get(context, 'filters')
+                                                    ? Icons.arrow_back
+                                                    : Icons.search,
+                                                color: OlukoColors.grayColor,
+                                              )),
                                         ),
                                       ),
                                     ),
@@ -262,15 +271,32 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                                         children: widget.actions,
                                       ),
                                     ),
-                                  )
+                                  ),
                                 ],
                               ),
                             )
                           : Center(
-                              child: TitleHeader(
-                                widget.title,
-                                bold: false,
-                                isNeumorphic: true,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  TitleHeader(
+                                    widget.title,
+                                    bold: false,
+                                    isNeumorphic: true,
+                                  ),
+                                  SizedBox(
+                                    width: MediaQuery.of(context).size.width / 4,
+                                  ),
+                                  widget.showActions
+                                      ? Padding(
+                                          padding: EdgeInsets.only(right: 10),
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.end,
+                                            children: widget.actions,
+                                          ),
+                                        )
+                                      : SizedBox.shrink(),
+                                ],
                               ),
                             )
                   ////TODO: NO SEARCH BAR

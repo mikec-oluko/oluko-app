@@ -110,6 +110,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
         key: _formKey,
         child: Scaffold(
             appBar: OlukoAppBar(
+              showActions: widget.isFirstTime,
               onPressed: widget.isForCoachPage
                   ? () {
                       if (_controller != null) {
@@ -297,7 +298,8 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                             _controller.pause();
                           }
                           if (OlukoPermissions.isAssessmentTaskDisabled(_user, index)) {
-                            AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'yourCurrentPlanDoesntIncludeAssessment'));
+                            AppMessages.clearAndShowSnackbar(
+                                context, OlukoLocalizations.get(context, 'yourCurrentPlanDoesntIncludeAssessment'));
                           } else {
                             if (assessmentsTasksList.length - taskSubmissionsCompleted.length == 1) {
                               setState(() {
@@ -306,7 +308,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                             }
                             BlocProvider.of<TaskSubmissionBloc>(context).setLoaderTaskSubmissionOfTask();
                             return Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails],
-                                    arguments: {'taskIndex': index, 'isLastTask': isLastTask})
+                                    arguments: {'taskIndex': index, 'isLastTask': isLastTask, 'taskCompleted': taskSubmission != null})
                                 .then((value) => BlocProvider.of<AssessmentBloc>(context).getById('emnsmBgZ13UBRqTS26Qd'));
                           }
                         },

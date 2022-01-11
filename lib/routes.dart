@@ -52,6 +52,7 @@ import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/blocs/user_audio_bloc.dart';
 import 'package:oluko_app/blocs/user_list_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
+import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
@@ -507,7 +508,10 @@ class Routes {
         break;
       case RouteEnum.profileChallenges:
         providers = [BlocProvider<ChallengeBloc>.value(value: _challengeBloc)];
-        newRouteView = ProfileChallengesPage();
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        newRouteView = ProfileChallengesPage(
+          challengeSegments: argumentsToAdd['challengeSegments'] as List<ChallengeNavigation>,
+        );
         break;
       case RouteEnum.profileTransformationJourney:
         providers = [
@@ -560,6 +564,7 @@ class Routes {
         break;
       case RouteEnum.segmentDetail:
         providers = [
+          BlocProvider<ClassBloc>.value(value: _classBloc),
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
           BlocProvider<MovementBloc>.value(value: _movementBloc),
           BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
@@ -576,7 +581,8 @@ class Routes {
             courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
             classIndex: argumentsToAdd['classIndex'] as int,
             segmentIndex: argumentsToAdd['segmentIndex'] as int,
-            courseIndex: argumentsToAdd['courseIndex'] as int);
+            courseIndex: argumentsToAdd['courseIndex'] as int,
+            fromChallenge: argumentsToAdd['fromChallenge'] as bool);
         break;
       case RouteEnum.movementIntro:
         providers = [
@@ -603,12 +609,14 @@ class Routes {
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SegmentClocks(
-            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
-            classIndex: argumentsToAdd['classIndex'] as int,
-            courseIndex: argumentsToAdd['courseIndex'] as int,
-            segmentIndex: argumentsToAdd['segmentIndex'] as int,
-            workoutType: argumentsToAdd['workoutType'] as WorkoutType,
-            segments: argumentsToAdd['segments'] as List<Segment>);
+          courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
+          classIndex: argumentsToAdd['classIndex'] as int,
+          courseIndex: argumentsToAdd['courseIndex'] as int,
+          segmentIndex: argumentsToAdd['segmentIndex'] as int,
+          workoutType: argumentsToAdd['workoutType'] as WorkoutType,
+          segments: argumentsToAdd['segments'] as List<Segment>,
+          fromChallenge: argumentsToAdd['fromChallenge'] as bool,
+        );
         break;
       case RouteEnum.segmentCameraPreview:
         providers = [
@@ -700,7 +708,6 @@ class Routes {
             isFirstTime: argumentsToAdd == null || argumentsToAdd['isFirstTime'] == null ? false : argumentsToAdd['isFirstTime'] as bool);
         break;
       case RouteEnum.taskDetails:
-        //TODO: Pass flag for last assessments
         providers = [
           BlocProvider<AssessmentAssignmentBloc>.value(value: _assessmentAssignmentBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
@@ -708,7 +715,10 @@ class Routes {
           BlocProvider<GalleryVideoBloc>.value(value: _galleryVideoBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
-        newRouteView = TaskDetails(taskIndex: argumentsToAdd['taskIndex'] as int, isLastTask: argumentsToAdd['isLastTask'] as bool);
+        newRouteView = TaskDetails(
+            taskIndex: argumentsToAdd['taskIndex'] as int,
+            isLastTask: argumentsToAdd['isLastTask'] as bool,
+            taskCompleted: argumentsToAdd['taskCompleted'] as bool);
         break;
       case RouteEnum.selfRecording:
         //TODO: Pass flag for last assessments
