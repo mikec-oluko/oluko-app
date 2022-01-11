@@ -35,7 +35,7 @@ class _State extends State<ClassSection> {
                         ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker
                         : Colors.white
                     : Colors.black,
-                borderRadius: const BorderRadius.all(Radius.circular(25)),
+                borderRadius: const BorderRadius.all(Radius.circular(18)),
               )
             : BoxDecoration(
                 borderRadius: const BorderRadius.all(Radius.circular(10)),

@@ -90,7 +90,7 @@ class OlukoNeumorphism {
   static NeumorphicStyle getNeumorphicStyleForCardClasses(bool isStarted) {
     return NeumorphicStyle(
         border:
-            isStarted ? NeumorphicBorder.none() : NeumorphicBorder(width: 20, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark),
+            isStarted ? NeumorphicBorder.none() : NeumorphicBorder(width: 15, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark),
         depth: -5,
         intensity: 0.8,
         color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
