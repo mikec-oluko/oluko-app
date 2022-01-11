@@ -350,13 +350,19 @@ class _State extends State<Courses> {
                   children: courseEnrollmentState.courseEnrollments.map((CourseEnrollment courseEnrollment) {
                     final activeCourseList = _courses.where((enrolledCourse) => enrolledCourse.id == courseEnrollment.course.id).toList();
                     Course course;
+                    int courseIndex=courseEnrollmentState.courseEnrollments.indexOf(courseEnrollment);
                     if (activeCourseList.isNotEmpty) {
                       course = activeCourseList[0];
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: GestureDetector(
-                          onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
-                              arguments: {'course': course, 'fromCoach': false, 'isCoachRecommendation': false,'courseEnrollment':courseEnrollment}),                           
+                          onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing], arguments: {
+                            'course': course,
+                            'fromCoach': false,
+                            'isCoachRecommendation': false,
+                            'courseEnrollment': courseEnrollment,
+                            'courseIndex':courseIndex
+                          }),
                           child: _getCourseCard(
                             _generateImageCourse(course.image),
                             progress: courseEnrollment.completion,
