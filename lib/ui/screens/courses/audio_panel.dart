@@ -76,15 +76,8 @@ class _State extends State<AudioPanel> {
           coach: widget.coaches == null ? null : widget.coaches[i],
           audio: audios[i],
           audioPlayer: widget.audioPlayer,
-          removeAudioFromList: () => _removeAudioFromList(i),
           onAudioPressed: () => widget.onAudioPressed(i)));
     }
     return widgets;
-  }
-
-  _removeAudioFromList(int index) {
-    /*setState(() {
-      _audioWidgets.removeAt(index);
-    });*/
   }
 }

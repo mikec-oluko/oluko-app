@@ -13,10 +13,9 @@ class AudioSection extends StatefulWidget {
   final Audio audio;
   final bool showTopDivider;
   final Function() onAudioPressed;
-  final Function() removeAudioFromList;
   AudioPlayer audioPlayer;
 
-  AudioSection({this.removeAudioFromList, this.coach, this.audio, this.showTopDivider = true, this.onAudioPressed, this.audioPlayer});
+  AudioSection({this.coach, this.audio, this.showTopDivider = true, this.onAudioPressed, this.audioPlayer});
 
   @override
   _State createState() => _State();
@@ -45,7 +44,7 @@ class _State extends State<AudioSection> {
   void dispose() {
     widget.audioPlayer.stop();
     widget.audioPlayer.dispose();
-        super.dispose();
+    super.dispose();
   }
 
   @override
@@ -79,7 +78,6 @@ class _State extends State<AudioSection> {
                   )),
               GestureDetector(
                   onTap: () {
-                    widget.removeAudioFromList();
                     widget.onAudioPressed();
                   },
                   child: Image.asset(

@@ -71,6 +71,7 @@ class _InsideClassesState extends State<InsideClass> {
   List<Audio> _audios = [];
   AudioPlayer audioPlayer = AudioPlayer();
   EnrollmentAudio _enrollmentAudio;
+  int _audioQty = 0;
 
   Widget panelContent;
   PanelEnum panelState;
@@ -95,6 +96,7 @@ class _InsideClassesState extends State<InsideClass> {
               List<Audio> classAudios =
                   AudioService.getClassAudios(enrollmentAudioState.enrollmentAudio, widget.courseEnrollment.classes[widget.classIndex].id);
               _audios = AudioService.getNotDeletedAudios(classAudios);
+              _audioQty = _audios == null ? 0 : _audios.length;
               BlocProvider.of<SegmentBloc>(context).getAll(_class);
               BlocProvider.of<CoachAudioBloc>(context).getByAudios(_audios);
               BlocProvider.of<SubscribedCourseUsersBloc>(context).get(widget.courseEnrollment.course.id, authState.user.id);
@@ -261,13 +263,13 @@ class _InsideClassesState extends State<InsideClass> {
                       onAudioPressed: () => _coaches.isNotEmpty ? _audioAction() : null,
                       peopleQty: qty,
                       onPeoplePressed: () => _peopleAction(subscribedCourseUsersState.users, subscribedCourseUsersState.favoriteUsers),
-                      audioMessageQty: _audios == null ? 0 : _audios.length,
+                      audioMessageQty: _audioQty,
                       image: widget.courseEnrollment.course.image);
                 } else {
                   return CourseInfoSection(
                       onAudioPressed: () => _coaches.isNotEmpty ? _audioAction() : null,
                       peopleQty: 0,
-                      audioMessageQty: _audios == null ? 0 : _audios.length,
+                      audioMessageQty: _audioQty,
                       image: widget.courseEnrollment.course.image);
                 }
               })
