@@ -1,6 +1,8 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_audio_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -21,16 +23,21 @@ class AudioPanel extends StatefulWidget {
 
 class _State extends State<AudioPanel> {
   List<Widget> _audioWidgets = [];
+  List<Audio> _audios = [];
 
   @override
   void initState() {
-    _audioWidgets = getAudioWidgets();
+    _audios = widget.audios;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return BlocBuilder<CourseEnrollmentAudioBloc, CourseEnrollmentAudioState>(builder: (context, state) {
+      if (state is ClassAudioDeleteSuccess) {
+        _audios = state.audios;
+      }
+      return Container(
         padding: EdgeInsets.symmetric(horizontal: 25),
         decoration: BoxDecoration(
             image: DecorationImage(
@@ -52,20 +59,22 @@ class _State extends State<AudioPanel> {
               style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.white),
             ),
           ),
-          Container(height: 370, child: ListView(children: _audioWidgets))
-        ]));
+          Container(height: 370, child: ListView(
+            key: ValueKey(_audios.length),
+            children: getAudioWidgets(_audios)))
+        ]));});
   }
 
-  List<Widget> getAudioWidgets() {
+  List<Widget> getAudioWidgets(List<Audio> audios) {
     List<Widget> widgets = [];
-    if (widget.audios == null) {
+    if (audios == null) {
       return widgets;
     }
-    for (int i = 0; i < widget.audios.length; i++) {
+    for (int i = 0; i < audios.length; i++) {
       widgets.add(AudioSection(
           showTopDivider: i != 0,
           coach: widget.coaches == null ? null : widget.coaches[i],
-          audio: widget.audios[i],
+          audio: audios[i],
           audioPlayer: widget.audioPlayer,
           removeAudioFromList: () => _removeAudioFromList(i),
           onAudioPressed: () => widget.onAudioPressed(i)));
@@ -74,8 +83,8 @@ class _State extends State<AudioPanel> {
   }
 
   _removeAudioFromList(int index) {
-    setState(() {
+    /*setState(() {
       _audioWidgets.removeAt(index);
-    });
+    });*/
   }
 }

@@ -370,9 +370,10 @@ class _InsideClassesState extends State<InsideClass> {
 
   _onAudioDeleted(int audioIndex, Challenge challenge) {
     _audios[audioIndex].deleted = true;
-    BlocProvider.of<CourseEnrollmentAudioBloc>(context)
-        .markAudioAsDeleted(_enrollmentAudio, _audios, widget.courseEnrollment.classes[widget.classIndex].id);
+    List<Audio> audiosUpdated = _audios.toList();
     _audios.removeAt(audioIndex);
+    BlocProvider.of<CourseEnrollmentAudioBloc>(context)
+        .markAudioAsDeleted(_enrollmentAudio, audiosUpdated, widget.courseEnrollment.classes[widget.classIndex].id, _audios);
   }
 
   _peopleAction(List<dynamic> users, List<dynamic> favorites) {

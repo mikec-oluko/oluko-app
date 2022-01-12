@@ -1,6 +1,8 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_audio_bloc.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -20,29 +22,34 @@ class ModalAudio extends StatefulWidget {
 }
 
 class _ModalAudioState extends State<ModalAudio> {
+  List<Audio> _audios = [];
+
+  @override
+  void initState() {
+    _audios = widget.audios;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-        decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/courses/gray_background.png'),
-              fit: BoxFit.cover,
-            ),
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
-        width: MediaQuery.of(context).size.width,
-        height: 150,
-        child: audioSection());
+          decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/courses/gray_background.png'),
+                fit: BoxFit.cover,
+              ),
+              borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+          width: MediaQuery.of(context).size.width,
+          height: 150,
+          child: audioSection());
   }
 
   Widget audioSection() {
     return AudioPanel(
       onAudioPressed: (int index) => widget.onAudioPressed(index, widget.challenge),
       coaches: widget.users,
-      audios: widget.audios,
+      audios: _audios,
       audioPlayer: widget.audioPlayer,
     );
   }
-
-
 }
