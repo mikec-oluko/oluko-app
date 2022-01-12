@@ -103,7 +103,6 @@ class _HomeState extends State<Home> {
         if (courseState is GetByCourseEnrollmentsSuccess) {
           _courses = courseState.courses;
           if (_courses != null && _courses.length > 0 && _courses.any((element) => element != null)) {
-           // _onLongPress();
             return enrolled();
           } else {
             return notEnrolled();
