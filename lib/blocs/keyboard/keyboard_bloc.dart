@@ -35,7 +35,7 @@ class KeyboardBloc extends Bloc<KeyboardEvent, KeyboardState> {
 
   void _insertText(String myText) {
     TextEditingController _controller = state.textEditingController;
-    final text = state.textEditingController.text;
+    String text = state.textEditingController.text;
     final textSelection = state.textEditingController.selection;
     String newText;
     if (textSelection.start >= 0 && textSelection.end >= 0) {
@@ -107,5 +107,14 @@ class KeyboardBloc extends Bloc<KeyboardEvent, KeyboardState> {
     );
     state.textEditingController = _controller;
     state.inputValue = _controller.text;
+  }
+
+  KeyboardState _hide() {
+    return KeyboardState(
+        valueSubmited: state.inputValue,
+        inputValue: state.inputValue,
+        setVisible: false,
+        focus: state.focus,
+        textEditingController: state.textEditingController);
   }
 }
