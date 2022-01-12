@@ -225,7 +225,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                                     child: GestureDetector(
                                       onTap: () => Navigator.pop(context),
                                       child: OlukoBlurredButton(
-                                        childContent: Image.asset('assets/courses/left_back_arrow.png'),
+                                        childContent: Image.asset('assets/courses/left_arrow_back.png'),
                                       ),
                                     ),
                                   ),
@@ -415,7 +415,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
   Widget _firstTab(Movement movement) {
     return Container(
       child: Column(children: [
-        getVideoWidget(movement.video),
+        //getVideoWidget(movement.video),
         Padding(
           padding: const EdgeInsets.all(20.0),
           child: OlukoNeumorphism.isNeumorphismDesign
