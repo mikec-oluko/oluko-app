@@ -8,6 +8,7 @@ import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/user_helper.dart';
+import 'package:oluko_app/models/friend.dart';
 import 'package:oluko_app/models/submodels/friend_model.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
@@ -16,6 +17,7 @@ import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/utils/app_messages.dart';
+import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
@@ -221,28 +223,43 @@ class _FriendModalContentState extends State<FriendModalContent> {
                         ),
                       ),
                       if (connectionRequested)
-                        OlukoNeumorphicPrimaryButton(
+                        Container(
+                          width: 150,
+                          alignment: Alignment.topRight,
+                          child: OlukoNeumorphicPrimaryButton(
+                            thinPadding: true,
+                            title: OlukoLocalizations.of(context).find('cancel'),
+                            onPressed: () {
+                              if (friendState is GetFriendsSuccess) {
+                                widget.blocFriends.removeRequestSent(widget.currentUserId, friendState.friendData, widget.user.id);
+                              }
+                            },
+                          ),
+                        )
+                      else if (userIsFriend)
+                        OlukoNeumorphicSecondaryButton(
                           thinPadding: true,
-                          title: 'Cancel',
+                          textColor: Colors.grey,
+                          title: OlukoLocalizations.of(context).find('remove'),
                           onPressed: () {
                             if (friendState is GetFriendsSuccess) {
-                              widget.blocFriends.removeRequestSent(widget.currentUserId, friendState.friendData, widget.user.id);
+                              _showRemoveConfirmationPopup(friendState.friendData);
                             }
                           },
                         )
                       else
-                        OlukoNeumorphicSecondaryButton(
-                          thinPadding: true,
-                          textColor: Colors.grey,
-                          title:
-                              userIsFriend ? OlukoLocalizations.of(context).find('remove') : OlukoLocalizations.of(context).find('connect'),
-                          onPressed: () {
-                            if (friendState is GetFriendsSuccess) {
-                              userIsFriend
-                                  ? widget.blocFriends.removeFriend(widget.currentUserId, friendState.friendData, widget.user.id)
-                                  : widget.blocFriends.sendRequestOfConnect(widget.currentUserId, friendState.friendData, widget.user.id);
-                            }
-                          },
+                        Container(
+                          width: 150,
+                          alignment: Alignment.topRight,
+                          child: OlukoNeumorphicPrimaryButton(
+                            thinPadding: true,
+                            title: OlukoLocalizations.of(context).find('connect'),
+                            onPressed: () {
+                              if (friendState is GetFriendsSuccess) {
+                                widget.blocFriends.sendRequestOfConnect(widget.currentUserId, friendState.friendData, widget.user.id);
+                              }
+                            },
+                          ),
                         ),
                       if (widget.user.privacy == 0)
                         const SizedBox(
@@ -306,17 +323,9 @@ class _FriendModalContentState extends State<FriendModalContent> {
     } else {
       return Padding(
         padding: const EdgeInsets.only(top: 10),
-        child: Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: SizedBox(height: 20, width: 20, child: Image.asset('assets/profile/lockedProfile.png')),
-            ),
-            Text(
-              OlukoLocalizations.get(context, 'privateProfile'),
-              style: const TextStyle(color: Colors.grey),
-            ),
-          ],
+        child: Text(
+          OlukoLocalizations.get(context, 'private').toLowerCase(),
+          style: const TextStyle(color: Colors.grey),
         ),
       );
     }
@@ -361,5 +370,79 @@ class _FriendModalContentState extends State<FriendModalContent> {
     } else if (favoriteState is FavoriteFriendFailure) {
       AppMessages.clearAndShowSnackbar(context, 'Error updating Friend.');
     }
+  }
+
+  void _showRemoveConfirmationPopup(Friend friend) {
+    BottomDialogUtils.showBottomDialog(
+      content: Container(
+        height: ScreenUtils.height(context) * 0.3,
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20)),
+          image: DecorationImage(
+            image: AssetImage('assets/courses/dialog_background.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 32),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  OlukoLocalizations.get(context, 'removeThisPerson'),
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.white),
+                ),
+              ),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  OlukoLocalizations.get(context, 'removeThisPersonBody1') +
+                      widget.user.username +
+                      OlukoLocalizations.get(context, 'removeThisPersonBody2'),
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w300, color: Colors.grey),
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    SizedBox(
+                      width: 80,
+                      child: OlukoNeumorphicSecondaryButton(
+                        isExpanded: false,
+                        thinPadding: true,
+                        textColor: Colors.grey,
+                        onPressed: () => Navigator.pop(context),
+                        title: OlukoLocalizations.get(context, 'no'),
+                      ),
+                    ),
+                    const SizedBox(width: 25),
+                    SizedBox(
+                      width: 80,
+                      child: OlukoNeumorphicPrimaryButton(
+                        isExpanded: false,
+                        thinPadding: true,
+                        onPressed: () {
+                          widget.blocFriends.removeFriend(widget.currentUserId, friend, widget.user.id);
+                          Navigator.pop(context);
+                        },
+                        title: OlukoLocalizations.get(context, 'yes'),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+      context: context,
+    );
   }
 }

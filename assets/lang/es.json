@@ -266,5 +266,9 @@
     "bestYouCanDo": "Lo mejor que puede hacer por su estado físico",
     "loginSubtitle": "Esto le ayudará a realizar un seguimiento de los datos de su estado fisico.",
     "enrolledCourses": "Cursos inscritos",
-    "activeNow": "Activos ahora"
+    "activeNow": "Activos ahora",
+    "removeThisPerson": "¿Quitar a esta persona?",
+    "removeThisPersonBody1": "¿Estás seguro de que quieres eliminar a ",
+    "removeThisPersonBody2": " de tu lista?",
+    "cancel": "Cancelar"
 }

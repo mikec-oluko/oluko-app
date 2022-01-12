@@ -267,5 +267,9 @@
     "bestYouCanDo": "The best you can do for your fitness",
     "loginSubtitle": "This will help you to track your all the fitness data",
     "enrolledCourses": "Enrolled Courses",
-    "activeNow": "Active now"
+    "activeNow": "Active now",
+    "removeThisPerson": "Remove this person?",
+    "removeThisPersonBody1": "Are you sure you want to remove ",
+    "removeThisPersonBody2": " from your list?",
+    "cancel": "Cancel"
 }
