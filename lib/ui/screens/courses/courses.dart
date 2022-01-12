@@ -8,6 +8,7 @@ import 'package:oluko_app/blocs/coach/coach_assignment_bloc.dart';
 import 'package:oluko_app/blocs/course/course_bloc.dart';
 import 'package:oluko_app/blocs/course/course_subscrption_bloc.dart';
 import 'package:oluko_app/blocs/course_category_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/favorite_bloc.dart';
 import 'package:oluko_app/blocs/recommendation_bloc.dart';
@@ -395,8 +396,11 @@ class _State extends State<Courses> {
                             return Padding(
                                 padding: const EdgeInsets.only(right: 8.0),
                                 child: GestureDetector(
-                                  onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
-                                      arguments: {'course': favoriteCourse, 'fromCoach': false, 'isCoachRecommendation': false}),
+                                  onTap: () async {
+                                     CourseEnrollment ce = await BlocProvider.of<CourseEnrollmentBloc>(context).get(null, null);
+                                    Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
+                                        arguments: {'course': favoriteCourse, 'fromCoach': false, 'isCoachRecommendation': false});
+                                  },
                                   child: _getCourseCard(
                                     _generateImageCourse(favoriteCourse.image),
                                     width: ScreenUtils.width(context) / (0.2 + _cardsToShow()),
