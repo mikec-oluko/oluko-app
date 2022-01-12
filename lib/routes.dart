@@ -71,9 +71,11 @@ import 'package:oluko_app/ui/screens/assessments/self_recording_preview.dart';
 import 'package:oluko_app/ui/screens/assessments/task_details.dart';
 import 'package:oluko_app/ui/screens/assessments/task_submission_recorded_video.dart';
 import 'package:oluko_app/ui/screens/authentication/introduction_video.dart';
+import 'package:oluko_app/ui/screens/authentication/login.dart';
 import 'package:oluko_app/ui/screens/authentication/login_password.dart';
 import 'package:oluko_app/ui/screens/authentication/login_username.dart';
 import 'package:oluko_app/ui/screens/authentication/sign_up.dart';
+import 'package:oluko_app/ui/screens/authentication/sign_up_neumorphic.dart';
 import 'package:oluko_app/ui/screens/authentication/sign_up_with_email.dart';
 import 'package:oluko_app/ui/screens/choose_plan_payment.dart';
 import 'package:oluko_app/ui/screens/coach/coach_no_assigned_timer_page.dart';
@@ -147,7 +149,9 @@ enum RouteEnum {
   root,
   introVideo,
   signUp,
+  signUpNeumorphic,
   signUpWithEmail,
+  login,
   friends,
   profile,
   profileSettings,
@@ -198,7 +202,9 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.root: '/',
   RouteEnum.introVideo: '/intro_video',
   RouteEnum.signUp: '/sign-up',
+  RouteEnum.signUpNeumorphic: '/sign-up-neumorphic',
   RouteEnum.signUpWithEmail: '/sign-up-with-email',
+  RouteEnum.login: '/login',
   RouteEnum.friends: '/friends',
   RouteEnum.profile: '/profile',
   RouteEnum.profileSettings: '/profile-settings',
@@ -394,6 +400,9 @@ class Routes {
       case RouteEnum.signUp:
         newRouteView = SignUpPage();
         break;
+      case RouteEnum.signUpNeumorphic:
+        newRouteView = SignUpNeumorphicPage();
+        break;
       case RouteEnum.completedClass:
         providers = [BlocProvider<CourseEnrollmentUpdateBloc>.value(value: _courseEnrollmentUpdateBloc)];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
@@ -418,6 +427,9 @@ class Routes {
         break;
       case RouteEnum.signUpWithEmail:
         newRouteView = SignUpWithMailPage();
+        break;
+      case RouteEnum.login:
+        newRouteView = LoginPage();
         break;
       case RouteEnum.friends:
         providers = [

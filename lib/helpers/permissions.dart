@@ -10,8 +10,6 @@ class Permissions {
     }
     if (uploadedFrom == DeviceContentFrom.camera) {
       await Permission.camera.request();
-      var aux = await Permission.camera.status.isDenied;
-      var aux2 = await Permission.camera.status.isPermanentlyDenied;
       if (await Permission.camera.status.isDenied ||
           await Permission.camera.status.isPermanentlyDenied ||
           checkMicrophone && (await Permission.microphone.status.isDenied || await Permission.microphone.status.isPermanentlyDenied)) {
@@ -31,5 +29,24 @@ class Permissions {
       }
     }
     return true;
+  }
+
+  static Future<void> askForPermissions({bool checkCamera = true, bool checkPhotos = true, bool checkMicrophone = true, bool checkContacts = true}) async {
+    if(checkCamera){
+      await Permission.camera.request();
+    }
+    if(checkPhotos){
+      if (Platform.isAndroid) {
+        await Permission.storage.request();
+      } else {
+        await Permission.photos.request();
+      }
+    }
+    if(checkMicrophone){
+      await Permission.microphone.request();
+    }
+    if(checkContacts){
+      await Permission.contacts.request();
+    }
   }
 }

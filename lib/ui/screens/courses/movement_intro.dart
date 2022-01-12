@@ -278,7 +278,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
   Widget _firstTab(Movement movement) {
     return Container(
       child: Column(children: [
-        Container(height: 200, child: Stack(children: _videoPlayer(movement.video, tabController.index))),
+        getVideoWidget(movement.video),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -409,5 +409,13 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
       tabItems.add(_tabItem(tabs[i], i));
     }
     return tabItems;
+  }
+
+  Widget getVideoWidget(String video) {
+    if (video != null) {
+      return SizedBox(height: 200, child: Stack(children: _videoPlayer(video, tabController.index)));
+    } else {
+      return const SizedBox();
+    }
   }
 }
