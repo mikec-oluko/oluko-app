@@ -505,7 +505,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
                         controller: state.textScrollController,
                         child: () {
                           final _customKeyboardBloc = BlocProvider.of<KeyboardBloc>(context);
-                          final ScrollController _scrollController = ScrollController();
+                          
+                          
                           TextSelection textSelection = state.textEditingController.selection;
                           textSelection = state.textEditingController.selection.copyWith(
                             baseOffset: state.textEditingController.text.length,
@@ -515,7 +516,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                           textController.selection = textSelection;
                           
                           return TextField(
-                            scrollController: _scrollController,
+                            scrollController: state.textScrollController,
                             controller: textController,
                             onTap: () => !state.setVisible ? _customKeyboardBloc.add(SetVisible()) : null,
                             style: const TextStyle(fontSize: 20, color: OlukoColors.white, fontWeight: FontWeight.bold),

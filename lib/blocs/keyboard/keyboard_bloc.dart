@@ -66,6 +66,7 @@ class KeyboardBloc extends Bloc<KeyboardEvent, KeyboardState> {
     state.focus.requestFocus();
     state.textEditingController = _controller;
     state.inputValue = newText;
+    state.textScrollController.animateTo(1000, duration: Duration(milliseconds: 1), curve: Curves.bounceIn);
   }
 
   void _backspace() {
