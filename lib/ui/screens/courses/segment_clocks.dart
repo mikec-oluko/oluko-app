@@ -598,11 +598,16 @@ class _SegmentClocksState extends State<SegmentClocks> {
     }
 
     if (!isWorkStatePaused() && (isCurrentTaskByReps() || isCurrentTaskByDistance())) {
-      return TimerUtils.repsTimer(
-          () => setState(() {
-                _goToNextStep();
-              }),
-          context);
+      return BlocBuilder<KeyboardBloc, KeyboardState>(
+        builder: (context, state) {
+          BlocProvider.of<KeyboardBloc>(context).add(HideKeyboard());
+          return TimerUtils.repsTimer(
+              () => setState(() {
+                    _goToNextStep();
+                  }),
+              context);
+        },
+      );
     }
 
     if (isWorkStatePaused() && (isCurrentTaskByReps() || isCurrentTaskByDistance())) {
@@ -659,26 +664,22 @@ class _SegmentClocksState extends State<SegmentClocks> {
   }
 
   Widget nextTaskWidget(String nextTask, bool keyboardVisibilty) {
-    return BlocBuilder<KeyboardBloc, KeyboardState>(
-      builder: (context, state) {
-        return Visibility(
-          visible: !keyboardVisibilty,
-          child: ShaderMask(
-            shaderCallback: (rect) {
-              return const LinearGradient(
-                begin: Alignment.center,
-                end: Alignment.bottomCenter,
-                colors: [Colors.black, Colors.transparent],
-              ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
-            },
-            blendMode: BlendMode.dstIn,
-            child: Text(
-              nextTask,
-              style: const TextStyle(fontSize: 25, color: Color.fromRGBO(255, 255, 255, 0.25), fontWeight: FontWeight.bold),
-            ),
-          ),
-        );
-      },
+    return Visibility(
+      visible: !keyboardVisibilty,
+      child: ShaderMask(
+        shaderCallback: (rect) {
+          return const LinearGradient(
+            begin: Alignment.center,
+            end: Alignment.bottomCenter,
+            colors: [Colors.black, Colors.transparent],
+          ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
+        },
+        blendMode: BlendMode.dstIn,
+        child: Text(
+          nextTask,
+          style: const TextStyle(fontSize: 25, color: Color.fromRGBO(255, 255, 255, 0.25), fontWeight: FontWeight.bold),
+        ),
+      ),
     );
   }
 
