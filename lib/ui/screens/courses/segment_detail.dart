@@ -192,6 +192,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
             if (_currentAudios != null && _currentAudios.length > 0) {
               _challengePanelController.open();
               _contentForPanel = ModalAudio(
+                  comesFromSegmentDetail: true,
                   challenge: state.challenge,
                   audioPlayer: audioPlayer,
                   audios: _currentAudios,
@@ -218,10 +219,9 @@ class _SegmentDetailState extends State<SegmentDetail> {
 
   _onAudioDeleted(int audioIndex, Challenge challenge) {
     _currentAudios[audioIndex].deleted = true;
-    BlocProvider.of<ChallengeAudioBloc>(context).markAudioAsDeleted(challenge, _currentAudios);
-    setState(() {
-      _currentAudios.removeAt(audioIndex);
-    });
+    List<Audio> audiosUpdated = _currentAudios.toList();
+    _currentAudios.removeAt(audioIndex);
+    BlocProvider.of<ChallengeAudioBloc>(context).markAudioAsDeleted(challenge, audiosUpdated, _currentAudios);
   }
 
   Widget downButton() {

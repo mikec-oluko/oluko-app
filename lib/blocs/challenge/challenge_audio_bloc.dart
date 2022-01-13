@@ -13,15 +13,18 @@ class Failure extends ChallengeAudioState {
   Failure({this.exception});
 }
 
-class DeleteChallengeAudioSuccess extends ChallengeAudioState {}
+class DeleteChallengeAudioSuccess extends ChallengeAudioState {
+  final List<Audio> audios;
+  DeleteChallengeAudioSuccess({this.audios});
+}
 
 class ChallengeAudioBloc extends Cubit<ChallengeAudioState> {
   ChallengeAudioBloc() : super(Loading());
 
-  void markAudioAsDeleted(Challenge challenge, List<Audio> audios) async {
+  void markAudioAsDeleted(Challenge challenge, List<Audio> audiosUpdated, List<Audio> audios) async {
     try {
-      await ChallengeRepository.markAudioAsDeleted(challenge, audios);
-      emit(DeleteChallengeAudioSuccess());
+      await ChallengeRepository.markAudioAsDeleted(challenge, audiosUpdated);
+      emit(DeleteChallengeAudioSuccess(audios: audios));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

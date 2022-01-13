@@ -2,6 +2,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/challenge/challenge_audio_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_audio_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
@@ -13,9 +14,10 @@ class AudioPanel extends StatefulWidget {
   final List<UserResponse> coaches;
   final List<Audio> audios;
   final Function(int) onAudioPressed;
+  final bool comesFromSegmentDetail;
   AudioPlayer audioPlayer;
 
-  AudioPanel({this.coaches, this.audios, this.onAudioPressed, this.audioPlayer});
+  AudioPanel({this.comesFromSegmentDetail, this.coaches, this.audios, this.onAudioPressed, this.audioPlayer});
 
   @override
   _State createState() => _State();
@@ -33,11 +35,25 @@ class _State extends State<AudioPanel> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CourseEnrollmentAudioBloc, CourseEnrollmentAudioState>(builder: (context, state) {
-      if (state is ClassAudioDeleteSuccess) {
-        _audios = state.audios;
-      }
-      return Container(
+    if (widget.comesFromSegmentDetail != null && widget.comesFromSegmentDetail == true) {
+      return BlocBuilder<ChallengeAudioBloc, ChallengeAudioState>(builder: (context, state) {
+        if (state is DeleteChallengeAudioSuccess) {
+          _audios = state.audios;
+        }
+        return getBody();
+      });
+    } else {
+      return BlocBuilder<CourseEnrollmentAudioBloc, CourseEnrollmentAudioState>(builder: (context, state) {
+        if (state is ClassAudioDeleteSuccess) {
+          _audios = state.audios;
+        }
+        return getBody();
+      });
+    }
+  }
+
+  Widget getBody() {
+    return Container(
         padding: EdgeInsets.symmetric(horizontal: 25),
         decoration: BoxDecoration(
             image: DecorationImage(
@@ -59,10 +75,8 @@ class _State extends State<AudioPanel> {
               style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.white),
             ),
           ),
-          Container(height: 370, child: ListView(
-            key: ValueKey(_audios.length),
-            children: getAudioWidgets(_audios)))
-        ]));});
+          Container(height: 370, child: ListView(key: ValueKey(_audios.length), children: getAudioWidgets(_audios)))
+        ]));
   }
 
   List<Widget> getAudioWidgets(List<Audio> audios) {

@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nil/nil.dart';
+import 'package:oluko_app/blocs/challenge/challenge_audio_bloc.dart';
 import 'package:oluko_app/blocs/done_challenge_users_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/challenge.dart';
@@ -73,12 +74,14 @@ class SegmentImageSection extends StatefulWidget {
 class _SegmentImageSectionState extends State<SegmentImageSection> {
   CoachRequest _coachRequest;
   List<Audio> _challengeAudios;
+  int _audioQty;
 
   @override
   void initState() {
     _challengeAudios = widget.challenge == null ? null : AudioService.getNotDeletedAudios(widget.challenge.audios);
     _coachRequest = getSegmentCoachRequest(widget.segment.id);
     BlocProvider.of<DoneChallengeUsersBloc>(context).get(widget.segment.id, widget.userId);
+    _audioQty = _challengeAudios != null ? _challengeAudios.length : 0;
     super.initState();
   }
 
@@ -326,9 +329,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
       padding: const EdgeInsets.only(left: 20, top: 190),
       child: Column(children: [
         Row(children: [
-          GestureDetector(
-              onTap: () => widget.audioAction(_challengeAudios, widget.challenge),
-              child: AudioSection(audioMessageQty: _challengeAudios != null ? _challengeAudios.length : 0)),
+          getAudioButton(),
           const verticalDivider.VerticalDivider(
             width: 30,
             height: 60,
@@ -353,6 +354,16 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
         ])
       ]),
     );
+  }
+
+  Widget getAudioButton() {
+    return BlocBuilder<ChallengeAudioBloc, ChallengeAudioState>(builder: (context, state) {
+      if (state is DeleteChallengeAudioSuccess) {
+        _audioQty = state.audios.length;
+      }
+      return GestureDetector(
+          onTap: () => widget.audioAction(_challengeAudios, widget.challenge), child: AudioSection(audioMessageQty: _audioQty));
+    });
   }
 
   Widget clockSection() {
