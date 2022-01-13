@@ -470,7 +470,15 @@ class _SegmentClocksState extends State<SegmentClocks> {
     if (isCurrentMovementRest() &&
         (timerEntries[timerTaskIndex - 1].counter == CounterEnum.reps ||
             timerEntries[timerTaskIndex - 1].counter == CounterEnum.distance)) {
-      return [getTextField(keyboardVisibilty), getKeyboard(keyboardVisibilty), SizedBox()];
+      return [
+        getTextField(keyboardVisibilty),
+        getKeyboard(keyboardVisibilty),
+        !keyboardVisibilty && !isSegmentWithRecording()
+            ? SizedBox(
+                height: ScreenUtils.height(context) / 4,
+              )
+            : SizedBox()
+      ];
     } else {
       return [const SizedBox()];
     }
