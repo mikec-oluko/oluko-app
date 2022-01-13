@@ -65,6 +65,7 @@ class _FriendModalContentState extends State<FriendModalContent> {
   Widget _buildContent() {
     return Container(
       height: ScreenUtils.height(context) * 0.47,
+      width: ScreenUtils.width(context),
       decoration: const BoxDecoration(
         borderRadius: BorderRadiusDirectional.vertical(top: Radius.circular(20)),
         image: DecorationImage(
@@ -222,65 +223,11 @@ class _FriendModalContentState extends State<FriendModalContent> {
                           ),
                         ),
                       ),
-                      if (connectionRequested)
-                        Container(
-                          width: 150,
-                          alignment: Alignment.topRight,
-                          child: OlukoNeumorphicPrimaryButton(
-                            thinPadding: true,
-                            title: OlukoLocalizations.of(context).find('cancel'),
-                            onPressed: () {
-                              if (friendState is GetFriendsSuccess) {
-                                widget.blocFriends.removeRequestSent(widget.currentUserId, friendState.friendData, widget.user.id);
-                              }
-                            },
-                          ),
-                        )
-                      else if (userIsFriend)
-                        OlukoNeumorphicSecondaryButton(
-                          thinPadding: true,
-                          textColor: Colors.grey,
-                          title: OlukoLocalizations.of(context).find('remove'),
-                          onPressed: () {
-                            if (friendState is GetFriendsSuccess) {
-                              _showRemoveConfirmationPopup(friendState.friendData);
-                            }
-                          },
-                        )
-                      else
-                        Container(
-                          width: 150,
-                          alignment: Alignment.topRight,
-                          child: OlukoNeumorphicPrimaryButton(
-                            thinPadding: true,
-                            title: OlukoLocalizations.of(context).find('connect'),
-                            onPressed: () {
-                              if (friendState is GetFriendsSuccess) {
-                                widget.blocFriends.sendRequestOfConnect(widget.currentUserId, friendState.friendData, widget.user.id);
-                              }
-                            },
-                          ),
-                        ),
-                      if (widget.user.privacy == 0)
-                        const SizedBox(
-                          width: 10,
-                        )
-                      else
-                        const SizedBox(),
-                      if (widget.user.privacy == 0)
-                        OlukoNeumorphicPrimaryButton(
-                          thinPadding: true,
-                          title: OlukoLocalizations.of(context).find('viewProfile'),
-                          onPressed: () {
-                            Navigator.pushNamed(
-                              context,
-                              routeLabels[RouteEnum.profileViewOwnProfile],
-                              arguments: {'userRequested': widget.user, 'isFriend': userIsFriend},
-                            );
-                          },
-                        )
-                      else
-                        const SizedBox()
+                      _getButtons(connectionRequested, friendState, userIsFriend),
+                      SizedBox(
+                        width: widget.user.privacy == 0 ? 10 : 0,
+                      ),
+                      _getViewProfileButton(userIsFriend),
                     ],
                   ),
                 );
@@ -444,5 +391,66 @@ class _FriendModalContentState extends State<FriendModalContent> {
       ),
       context: context,
     );
+  }
+
+  Widget _getButtons(bool connectionRequested, FriendState friendState, bool userIsFriend) {
+    if (connectionRequested) {
+      return Container(
+        width: 150,
+        alignment: Alignment.topRight,
+        child: OlukoNeumorphicPrimaryButton(
+          thinPadding: true,
+          title: OlukoLocalizations.of(context).find('cancel'),
+          onPressed: () {
+            if (friendState is GetFriendsSuccess) {
+              widget.blocFriends.removeRequestSent(widget.currentUserId, friendState.friendData, widget.user.id);
+            }
+          },
+        ),
+      );
+    } else if (userIsFriend) {
+      return OlukoNeumorphicSecondaryButton(
+        thinPadding: true,
+        textColor: Colors.grey,
+        title: OlukoLocalizations.of(context).find('remove'),
+        onPressed: () {
+          if (friendState is GetFriendsSuccess) {
+            _showRemoveConfirmationPopup(friendState.friendData);
+          }
+        },
+      );
+    } else {
+      return Container(
+        width: 150,
+        alignment: Alignment.topRight,
+        child: OlukoNeumorphicPrimaryButton(
+          thinPadding: true,
+          title: OlukoLocalizations.of(context).find('connect'),
+          onPressed: () {
+            if (friendState is GetFriendsSuccess) {
+              widget.blocFriends.sendRequestOfConnect(widget.currentUserId, friendState.friendData, widget.user.id);
+            }
+          },
+        ),
+      );
+    }
+  }
+
+  Widget _getViewProfileButton(bool userIsFriend) {
+    if (widget.user.privacy == 0) {
+      return OlukoNeumorphicPrimaryButton(
+        thinPadding: true,
+        title: OlukoLocalizations.of(context).find('viewProfile'),
+        onPressed: () {
+          Navigator.pushNamed(
+            context,
+            routeLabels[RouteEnum.profileViewOwnProfile],
+            arguments: {'userRequested': widget.user, 'isFriend': userIsFriend},
+          );
+        },
+      );
+    } else {
+      return const SizedBox();
+    }
   }
 }
