@@ -71,6 +71,19 @@ class OlukoNeumorphism {
         shadowDarkColor: Colors.black);
   }
 
+  static NeumorphicStyle getNeumorphicStyleForCircleElementNegativeDepth() {
+    return const NeumorphicStyle(
+        border: NeumorphicBorder(width: 3, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark),
+        depth: -2,
+        intensity: 0.5,
+        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+        lightSource: LightSource.topLeft,
+        boxShape: NeumorphicBoxShape.circle(),
+        surfaceIntensity: 1,
+        shadowLightColor: OlukoColors.grayColor,
+        shadowDarkColor: Colors.black);
+  }
+
   static NeumorphicStyle getNeumorphicStyleForCardElement() {
     return NeumorphicStyle(
         border: NeumorphicBorder(width: 1.5, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark),
