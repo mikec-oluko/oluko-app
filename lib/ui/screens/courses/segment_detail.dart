@@ -268,7 +268,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
     return CarouselSlider(
       items: getSegmentList(),
       options: CarouselOptions(
-          height: 660,
+          height: ScreenUtils.height(context),
           autoPlay: false,
           enlargeCenterPage: false,
           disableCenter: true,
