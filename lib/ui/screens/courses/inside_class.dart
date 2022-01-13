@@ -167,27 +167,22 @@ class _InsideClassesState extends State<InsideClass> {
         ? Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(
-                width: 300,
-                height: 50,
-                child: OlukoNeumorphicPrimaryButton(
-                  isExpanded: false,
-                  thinPadding: true,
-                  title: OlukoLocalizations.get(context, 'start'),
-                  onPressed: () {
-                    int segmentIndex =
-                        CourseEnrollmentService.getFirstUncompletedSegmentIndex(widget.courseEnrollment.classes[widget.classIndex]);
-                    if (segmentIndex == -1) {
-                      segmentIndex = 0;
-                    }
-                    Navigator.pushNamed(context, routeLabels[RouteEnum.segmentDetail], arguments: {
-                      'segmentIndex': segmentIndex,
-                      'classIndex': widget.classIndex,
-                      'courseEnrollment': widget.courseEnrollment,
-                      'courseIndex': widget.courseIndex
-                    });
-                  },
-                ),
+              OlukoNeumorphicPrimaryButton(
+                thinPadding: true,
+                title: OlukoLocalizations.get(context, 'start'),
+                onPressed: () {
+                  int segmentIndex =
+                      CourseEnrollmentService.getFirstUncompletedSegmentIndex(widget.courseEnrollment.classes[widget.classIndex]);
+                  if (segmentIndex == -1) {
+                    segmentIndex = 0;
+                  }
+                  Navigator.pushNamed(context, routeLabels[RouteEnum.segmentDetail], arguments: {
+                    'segmentIndex': segmentIndex,
+                    'classIndex': widget.classIndex,
+                    'courseEnrollment': widget.courseEnrollment,
+                    'courseIndex': widget.courseIndex
+                  });
+                },
               )
             ],
           )

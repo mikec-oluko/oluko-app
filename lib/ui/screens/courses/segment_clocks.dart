@@ -212,11 +212,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
         actions: [topBarIcon, audioIcon()],
       ),
       backgroundColor: Colors.black,
-      body: isSegmentWithoutRecording() && workState != WorkState.finished
+      body: workState != WorkState.finished
           ? BlocBuilder<KeyboardBloc, KeyboardState>(
               builder: (context, state) {
                 keyboardVisibilty = state.setVisible;
-                return !keyboardVisibilty
+                return !keyboardVisibilty && isSegmentWithoutRecording()
                     ? SlidingUpPanel(
                         controller: panelController,
                         borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
@@ -291,7 +291,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
         ],
       );
     }
-   
+
     return ListView(
       controller: _controller,
       children: [
@@ -378,8 +378,12 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   void goToClassAction() {
     Navigator.popUntil(context, ModalRoute.withName('/inside-class'));
-    Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.insideClass],
-        arguments: {'courseEnrollment': widget.courseEnrollment, 'classIndex': widget.classIndex, 'courseIndex': widget.courseIndex,'classImage':widget.courseEnrollment.classes[widget.classIndex].image});
+    Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
+      'courseEnrollment': widget.courseEnrollment,
+      'classIndex': widget.classIndex,
+      'courseIndex': widget.courseIndex,
+      'classImage': widget.courseEnrollment.classes[widget.classIndex].image
+    });
   }
 
   ///Countdown & movements information
@@ -466,13 +470,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
     if (isCurrentMovementRest() &&
         (timerEntries[timerTaskIndex - 1].counter == CounterEnum.reps ||
             timerEntries[timerTaskIndex - 1].counter == CounterEnum.distance)) {
-      return [
-        getTextField(keyboardVisibilty),
-        getKeyboard(keyboardVisibilty),
-        !keyboardVisibilty? SizedBox(
-          height: ScreenUtils.height(context) / 4,
-        ):SizedBox()
-      ];
+      return [getTextField(keyboardVisibilty), getKeyboard(keyboardVisibilty), SizedBox()];
     } else {
       return [const SizedBox()];
     }
@@ -511,7 +509,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
                           return TextField(
                             scrollController: state.textScrollController,
                             controller: textController,
-                            onTap: () => !state.setVisible ? _customKeyboardBloc.add(SetVisible()) : null,
+                            onTap: () {
+                              !state.setVisible ? _customKeyboardBloc.add(SetVisible()) : null;
+                            },
                             style: const TextStyle(
                               fontSize: 20,
                               color: OlukoColors.white,
