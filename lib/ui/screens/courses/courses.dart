@@ -397,7 +397,6 @@ class _State extends State<Courses> {
                                 padding: const EdgeInsets.only(right: 8.0),
                                 child: GestureDetector(
                                   onTap: () async {
-                                     CourseEnrollment ce = await BlocProvider.of<CourseEnrollmentBloc>(context).get(null, null);
                                     Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
                                         arguments: {'course': favoriteCourse, 'fromCoach': false, 'isCoachRecommendation': false});
                                   },
