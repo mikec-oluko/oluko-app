@@ -118,16 +118,35 @@ class _HomeState extends State<Home> {
 
   Widget enrolled() {
     if (_courseEnrollments.length == _courses.length) {
-      return CarouselSlider(
-        items: courseSectionList(),
-        options: CarouselOptions(
-            height: ScreenUtils.height(context) - 140,
-            autoPlay: false,
-            enlargeCenterPage: false,
-            disableCenter: true,
-            enableInfiniteScroll: false,
-            initialPage: widget.index == null ? 0 : widget.index,
-            viewportFraction: 1),
+      return Column(
+        children: [
+          GestureDetector(
+            onTap: () => _onLongPress(),
+            //TODO ELIMINAR ESTOOO
+            child: Container(
+              width: 150,
+              height: 150,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  fit: BoxFit.fill,
+                  image: Image.asset('assets/home/mati.jpeg').image,
+                ),
+                borderRadius: const BorderRadius.all(Radius.circular(100)),
+              ),
+            ),
+          ),
+          CarouselSlider(
+            items: courseSectionList(),
+            options: CarouselOptions(
+                height: ScreenUtils.height(context) - 140,
+                autoPlay: false,
+                enlargeCenterPage: false,
+                disableCenter: true,
+                enableInfiniteScroll: false,
+                initialPage: widget.index == null ? 0 : widget.index,
+                viewportFraction: 1),
+          ),
+        ],
       );
     } else {
       return OlukoCircularProgressIndicator();
