@@ -596,7 +596,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
           () => setState(() {
                 _goToNextStep();
               }),
-          context);
+          context,
+          timerEntries[timerTaskIndex].movement.isBothSide);
     }
 
     if (isWorkStatePaused() && (isCurrentTaskByReps() || isCurrentTaskByDistance())) {
@@ -638,7 +639,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
       });
     }
     final String counter = timerEntries[timerTaskIndex].counter == CounterEnum.reps ? timerEntries[timerTaskIndex].movement.name : null;
-    return TimerUtils.timeTimer(circularProgressIndicatorValue, TimeConverter.durationToString(timeLeft), context, counter);
+    return TimerUtils.timeTimer(circularProgressIndicatorValue, TimeConverter.durationToString(timeLeft), context, counter, timerEntries[timerTaskIndex].movement.isBothSide);
   }
 
   Widget currentTaskWidget(bool keyboardVisibilty,String currentTask, [bool smaller = false]) {
