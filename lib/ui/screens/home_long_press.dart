@@ -9,19 +9,19 @@ import 'package:oluko_app/ui/components/user_item_bubbles.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class HomeLongPress extends StatefulWidget {
-  const HomeLongPress({Key key, this.courseEnrollments, this.index}) : super(key: key);
+  HomeLongPress({Key key, this.courseEnrollments, this.index}) : super(key: key);
 
   final List<CourseEnrollment> courseEnrollments;
-  final int index;
+  int index;
 
   @override
   _HomeLongPressState createState() => _HomeLongPressState();
 }
 
 class _HomeLongPressState extends State<HomeLongPress> {
+
   @override
-  void initState() {
-    super.initState();
+  Widget build(BuildContext context) {
     if (widget.index != null &&
         widget.index is int &&
         widget.courseEnrollments != null &&
@@ -30,10 +30,7 @@ class _HomeLongPressState extends State<HomeLongPress> {
       BlocProvider.of<SubscribedCourseUsersBloc>(context)
           .getEnrolled(widget.courseEnrollments[widget.index].course.id, widget.courseEnrollments[widget.index].createdBy);
     }
-  }
 
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
       appBar: OlukoAppBar(showLogo: true, showBackButton: false, showDivider: false, showTitle: false),
@@ -54,8 +51,14 @@ class _HomeLongPressState extends State<HomeLongPress> {
           const SizedBox(
             height: 20,
           ),
-          Container(width: 180, height: 280, decoration: BoxDecoration(border: Border.all(color: Colors.blueAccent))),
-          //CourseCarouselGallery(courseEnrollments: widget.courseEnrollments, courseIndex: widget.index,),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: CourseCarouselGallery(
+                courseEnrollments: widget.courseEnrollments,
+                courseIndex: widget.index,
+                onCourseChange: (index) => _onCourseChange(index),
+                onCourseDeleted: (index) => _onCourseDeleted(index)),
+          ),
           const SizedBox(
             height: 25,
           ),
@@ -65,14 +68,22 @@ class _HomeLongPressState extends State<HomeLongPress> {
           ),
           BlocBuilder<SubscribedCourseUsersBloc, SubscribedCourseUsersState>(
             builder: (context, state) {
-              if (state is SubscribedCourseUsersSuccess && state.users.isNotEmpty) {
+              if (state is SubscribedCourseUsersLoading) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('${OlukoLocalizations.get(context, 'activeNow')} (0)', style: OlukoFonts.olukoBigFont()),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Center(child: Text(OlukoLocalizations.get(context, 'loadingWhithDots'), style: OlukoFonts.olukoMediumFont())),
+                    ),
+                  ],
+                );
+              } else if (state is SubscribedCourseUsersSuccess && state.users.isNotEmpty) {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('${OlukoLocalizations.get(context, 'activeNow')} (${state.users.length})', style: OlukoFonts.olukoBigFont()),
-                    const SizedBox(
-                      height: 10,
-                    ),
                     UserItemBubbles(
                       content: state.users,
                       currentUserId: widget.courseEnrollments[0].createdBy,
@@ -87,5 +98,28 @@ class _HomeLongPressState extends State<HomeLongPress> {
         ],
       ),
     );
+  }
+
+  _onCourseChange(int index) {
+    setState(() {
+      widget.index = index;
+    });
+  }
+
+  _onCourseDeleted(int index) {
+    if (widget.courseEnrollments.length <= 1) {
+      Navigator.pop(context);
+    } else {
+      int newPosition;
+      if (index > 0) {
+        newPosition = index - 1;
+      } else {
+        newPosition = index + 1;
+      }
+      setState(() {
+        widget.index = newPosition;
+        widget.courseEnrollments.removeAt(index);
+      });
+    }
   }
 }
