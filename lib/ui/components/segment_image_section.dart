@@ -97,7 +97,34 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
           Navigator.popUntil(context, ModalRoute.withName('/inside-class'));
           return Future(() => false);
         },
-        child: imageWithButtons());
+        child: OlukoNeumorphism.isNeumorphismDesign ? neumorphicImageWithButtons() : imageWithButtons());
+  }
+
+  Widget neumorphicImageWithButtons() {
+    return Stack(children: [
+      ListView(padding: OlukoNeumorphism.isNeumorphismDesign ? EdgeInsets.zero : null, children: [
+        Stack(children: [
+          imageSection(),
+          Positioned(
+            bottom: 0,
+            child: Column(
+              children: [
+                challengeButtons(),
+                OlukoNeumorphism.isNeumorphismDesign ? segmentContent() : segmentContent(),
+                SizedBox(
+                  height: 10,
+                ),
+                //TODO: START WORKOUT
+              ],
+            ),
+          ),
+          //TODO: SEGMENT INFO
+        ]),
+        Container(height: MediaQuery.of(context).size.height / 10, child: startWorkoutsButton())
+      ]),
+      //TODO: Navigation buttons
+      topButtons(),
+    ]);
   }
 
   Widget imageWithButtons() {
@@ -491,5 +518,3 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
     );
   }
 }
-
-
