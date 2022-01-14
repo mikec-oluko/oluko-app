@@ -300,19 +300,17 @@ class _SegmentClocksState extends State<SegmentClocks> {
           children: [
             _timerSection(keyboardVisibilty),
             _lowerSection(),
-            if (isWorkStateFinished()) showFinishedButtons() else const SizedBox(),
+            if (isWorkStateFinished())
+              showFinishedButtons()
+            else
+              const SizedBox(
+                height: 90,
+              ),
           ],
         ),
       );
     }
-    Timer(
-      Duration(milliseconds: 5),
-      () => _controller.animateTo(
-        _controller.position.maxScrollExtent,
-        duration: Duration(seconds: 1),
-        curve: Curves.fastOutSlowIn,
-      ),
-    );
+
     return ListView(
       controller: _controller,
       children: [
@@ -489,7 +487,15 @@ class _SegmentClocksState extends State<SegmentClocks> {
     if (isCurrentMovementRest() &&
         (timerEntries[timerTaskIndex - 1].counter == CounterEnum.reps ||
             timerEntries[timerTaskIndex - 1].counter == CounterEnum.distance)) {
-      return [getTextField(keyboardVisibilty), getKeyboard(keyboardVisibilty)];
+      return [
+        getTextField(keyboardVisibilty),
+        getKeyboard(keyboardVisibilty),
+        !keyboardVisibilty
+            ? SizedBox(
+                height: ScreenUtils.height(context) / 4,
+              )
+            : SizedBox()
+      ];
     } else {
       return [const SizedBox()];
     }
@@ -516,9 +522,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
                   child: BlocBuilder<KeyboardBloc, KeyboardState>(
                     builder: (context, state) {
                       return Scrollbar(
+                        controller: state.textScrollController,
                         child: () {
                           final _customKeyboardBloc = BlocProvider.of<KeyboardBloc>(context);
-                          final ScrollController _scrollController = ScrollController();
+
                           TextSelection textSelection = state.textEditingController.selection;
                           textSelection = state.textEditingController.selection.copyWith(
                             baseOffset: state.textEditingController.text.length,
@@ -526,8 +533,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
                           );
                           textController = state.textEditingController;
                           textController.selection = textSelection;
+
                           return TextField(
-                            scrollController: _scrollController,
+                            scrollController: state.textScrollController,
                             controller: textController,
                             onTap: () => !state.setVisible ? _customKeyboardBloc.add(SetVisible()) : null,
                             style: const TextStyle(fontSize: 20, color: OlukoColors.white, fontWeight: FontWeight.bold),

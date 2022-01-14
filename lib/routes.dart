@@ -94,6 +94,7 @@ import 'package:oluko_app/ui/screens/courses/segment_detail.dart';
 import 'package:oluko_app/ui/screens/courses/user_challenge_detail.dart';
 import 'package:oluko_app/ui/screens/friends/friends_page.dart';
 import 'package:oluko_app/ui/screens/hi_five_page.dart';
+import 'package:oluko_app/ui/screens/home_long_press.dart';
 import 'package:oluko_app/ui/screens/main_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile.dart';
 import 'package:oluko_app/ui/screens/profile/profile_assessment_videos_page.dart';
@@ -193,7 +194,8 @@ enum RouteEnum {
   completedClass,
   story,
   hiFivePage,
-  userChallengeDetail
+  userChallengeDetail,
+  homeLongPress
 }
 
 Map<RouteEnum, String> routeLabels = {
@@ -246,7 +248,8 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.completedClass: '/completed-class',
   RouteEnum.story: '/story',
   RouteEnum.hiFivePage: '/hi-five-page',
-  RouteEnum.userChallengeDetail: '/user-challenge-detail'
+  RouteEnum.userChallengeDetail: '/user-challenge-detail',
+  RouteEnum.homeLongPress: 'home_long_press'
 };
 
 RouteEnum getEnumFromRouteString(String route) {
@@ -888,6 +891,14 @@ class Routes {
         ];
         final Map<String, UserResponse> argumentsToAdd = arguments as Map<String, UserResponse>;
         newRouteView = const HiFivePage();
+        break;
+      case RouteEnum.homeLongPress:
+        providers = [BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc)];
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        newRouteView = HomeLongPress(
+          courseEnrollments: argumentsToAdd['courseEnrollments'] as List<CourseEnrollment>,
+          index: argumentsToAdd['index'] != null ? argumentsToAdd['index'] as int : 0,
+        );
         break;
       default:
         newRouteView = MainPage();

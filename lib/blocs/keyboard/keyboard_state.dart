@@ -5,12 +5,14 @@ class KeyboardState {
   TextEditingController textEditingController;
   String valueSubmited;
   bool setVisible;
-  FocusNode focus ;
+  FocusNode focus;
+  ScrollController textScrollController;
   KeyboardState(
       {this.inputValue = '',
       this.valueSubmited = '',
       this.setVisible = false,
-      this.textEditingController ,
-      this.focus});
+      this.textEditingController,
+      this.focus,
+      this.textScrollController,});
 }
 
