@@ -293,13 +293,16 @@ class _SegmentClocksState extends State<SegmentClocks> {
   Widget _body(bool keyboardVisibilty) {
     final _controller = ScrollController();
     if (!keyboardVisibilty) {
-      return ListView(
-        controller: _controller,
-        children: [
-          _timerSection(keyboardVisibilty),
-          _lowerSection(),
-          if (isWorkStateFinished()) showFinishedButtons() else const SizedBox(),
-        ],
+      return Container(
+        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+        child: ListView(
+          controller: _controller,
+          children: [
+            _timerSection(keyboardVisibilty),
+            _lowerSection(),
+            if (isWorkStateFinished()) showFinishedButtons() else const SizedBox(),
+          ],
+        ),
       );
     }
     Timer(
@@ -409,7 +412,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
       children: [
         getSegmentLabel(),
         Padding(
-            padding: const EdgeInsets.only(top: 3, bottom: 8),
+            padding: const EdgeInsets.only(top: OlukoNeumorphism.isNeumorphismDesign ? 20 : 3, bottom: 8),
             child: Stack(alignment: Alignment.center, children: [getRoundsTimer(keyboardVisibilty), _countdownSection()])),
         if (isWorkStateFinished()) const SizedBox() else _tasksSection(keyboardVisibilty)
       ],

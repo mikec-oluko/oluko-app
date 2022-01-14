@@ -95,6 +95,34 @@ class OlukoNeumorphism {
         shadowDarkColor: Colors.black);
   }
 
+  static NeumorphicStyle getNeumorphicStyleForInnerCircleWatch() {
+    return const NeumorphicStyle(
+        depth: -12,
+        intensity: 0.95,
+        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+        shape: NeumorphicShape.concave,
+        boxShape: NeumorphicBoxShape.circle(),
+        shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicSearchBarFirstColor,
+        shadowLightColorEmboss: OlukoNeumorphismColors.olukoNeumorphicSearchBarSecondColor,
+        surfaceIntensity: 1,
+        shadowLightColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+        shadowDarkColor: OlukoNeumorphismColors.olukoNeumorphicSearchBarSecondColor,
+        oppositeShadowLightSource: true);
+  }
+
+  static NeumorphicStyle getNeumorphicStyleForCircleWatchWithShadows() {
+    return NeumorphicStyle(
+        depth: 15,
+        intensity: 1,
+        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+        boxShape: const NeumorphicBoxShape.circle(),
+        shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+        shadowLightColorEmboss: OlukoNeumorphismColors.olukoNeumorphicSearchBarSecondColor.withOpacity(0.5),
+        surfaceIntensity: 0.4,
+        shadowLightColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+        shadowDarkColor: OlukoNeumorphismColors.olukoNeumorphicSearchBarSecondColor.withOpacity(0.9));
+  }
+
   static NeumorphicStyle getNeumorphicStyleForCardElement() {
     return NeumorphicStyle(
         border: NeumorphicBorder(width: 1.5, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark),

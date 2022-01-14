@@ -17,7 +17,10 @@ class TimerUtils {
         child: AspectRatio(
             aspectRatio: 1,
             child: CircularProgressIndicator(
-                value: getProgress(totalTime, countDown), color: OlukoColors.coral, backgroundColor: OlukoColors.grayColorSemiTransparent)),
+                strokeWidth: OlukoNeumorphism.isNeumorphismDesign ? 2 : 4,
+                value: getProgress(totalTime, countDown),
+                color: OlukoColors.coral,
+                backgroundColor: OlukoColors.grayColorSemiTransparent)),
       ),
       Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Text(countDown.toString(),
@@ -67,13 +70,16 @@ class TimerUtils {
   static Widget timeTimer(double progressValue, String duration, BuildContext context, [String counter]) {
     return Container(
         child: SizedBox(
-            height: 180,
-            width: 180,
+            height: OlukoNeumorphism.isNeumorphismDesign ? 245 : 180,
+            width: OlukoNeumorphism.isNeumorphismDesign ? 245 : 180,
             child: Stack(alignment: Alignment.center, children: [
               AspectRatio(
                   aspectRatio: 1,
                   child: CircularProgressIndicator(
-                      value: progressValue, color: OlukoColors.coral, backgroundColor: OlukoColors.grayColorSemiTransparent)),
+                      strokeWidth: OlukoNeumorphism.isNeumorphismDesign ? 2 : 4,
+                      value: progressValue,
+                      color: OlukoColors.coral,
+                      backgroundColor: OlukoColors.grayColorSemiTransparent)),
               Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Text(duration,
                     textAlign: TextAlign.center, style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Colors.white)),
@@ -127,7 +133,10 @@ class TimerUtils {
               AspectRatio(
                   aspectRatio: 1,
                   child: CircularProgressIndicator(
-                      value: 0, color: OlukoColors.skyblue, backgroundColor: OlukoColors.grayColorSemiTransparent)),
+                      strokeWidth: OlukoNeumorphism.isNeumorphismDesign ? 2 : 4,
+                      value: 0,
+                      color: OlukoColors.skyblue,
+                      backgroundColor: OlukoColors.grayColorSemiTransparent)),
               Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Text(OlukoLocalizations.get(context, 'paused').toUpperCase(),
                     textAlign: TextAlign.center, style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: OlukoColors.skyblue)),
@@ -162,7 +171,10 @@ class TimerUtils {
               AspectRatio(
                   aspectRatio: 1,
                   child: CircularProgressIndicator(
-                      value: progressValue, color: OlukoColors.skyblue, backgroundColor: OlukoColors.grayColorSemiTransparent)),
+                      strokeWidth: OlukoNeumorphism.isNeumorphismDesign ? 2 : 4,
+                      value: progressValue,
+                      color: OlukoColors.skyblue,
+                      backgroundColor: OlukoColors.grayColorSemiTransparent)),
               Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Text(OlukoLocalizations.get(context, 'rest').toUpperCase(),
                     textAlign: TextAlign.center, style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: OlukoColors.skyblue)),
@@ -176,15 +188,18 @@ class TimerUtils {
   static Widget repsTimer(Function() onTap, BuildContext context) {
     return Container(
         child: SizedBox(
-            height: 180,
-            width: 180,
+            height: OlukoNeumorphism.isNeumorphismDesign ? 245 : 180,
+            width: OlukoNeumorphism.isNeumorphismDesign ? 245 : 180,
             child: GestureDetector(
                 onTap: onTap,
                 child: Stack(alignment: Alignment.center, children: [
                   AspectRatio(
                       aspectRatio: 1,
                       child: CircularProgressIndicator(
-                          value: 0, color: OlukoColors.skyblue, backgroundColor: OlukoColors.grayColorSemiTransparent)),
+                          strokeWidth: OlukoNeumorphism.isNeumorphismDesign ? 2 : 4,
+                          value: 0,
+                          color: OlukoColors.skyblue,
+                          backgroundColor: OlukoColors.grayColorSemiTransparent)),
                   Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                     Text(OlukoLocalizations.get(context, 'tapHere'),
                         textAlign: TextAlign.center,
@@ -225,7 +240,10 @@ class TimerUtils {
                   AspectRatio(
                       aspectRatio: 1,
                       child: CircularProgressIndicator(
-                          value: progressValue, color: OlukoColors.coral, backgroundColor: OlukoColors.grayColorSemiTransparent)),
+                          strokeWidth: OlukoNeumorphism.isNeumorphismDesign ? 2 : 4,
+                          value: progressValue,
+                          color: OlukoColors.coral,
+                          backgroundColor: OlukoColors.grayColorSemiTransparent)),
                   Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                     Text(duration,
                         textAlign: TextAlign.center, style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Colors.white)),
