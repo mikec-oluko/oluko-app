@@ -22,10 +22,14 @@ class _HomeLongPressState extends State<HomeLongPress> {
   @override
   void initState() {
     super.initState();
-    try {
+    if (widget.index != null &&
+        widget.index is int &&
+        widget.courseEnrollments != null &&
+        widget.courseEnrollments[widget.index] != null &&
+        widget.courseEnrollments[widget.index].course != null) {
       BlocProvider.of<SubscribedCourseUsersBloc>(context)
           .getEnrolled(widget.courseEnrollments[widget.index].course.id, widget.courseEnrollments[widget.index].createdBy);
-    } catch (e) {}
+    }
   }
 
   @override
