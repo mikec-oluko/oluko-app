@@ -155,7 +155,6 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                               style: OlukoFonts.olukoSubtitleFont(custoFontWeight: FontWeight.bold),
                                             ),
                                           ),
-                                          //TODO: si no hay courseEnrollment se muestra la vista vieja
                                           OlukoNeumorphism.isNeumorphismDesign && widget.courseEnrollment != null
                                               ? buildClassEnrolledCards()
                                               : buildClassExpansionPanels()
@@ -276,7 +275,6 @@ class _CourseMarketingState extends State<CourseMarketing> {
                       onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
                         'courseEnrollment': widget.courseEnrollment,
                         'classIndex': _classItems.indexOf(item),
-                        'classImage': item.classObj.image,
                         'courseIndex':widget.courseIndex
                         
                       }),
@@ -296,7 +294,6 @@ class _CourseMarketingState extends State<CourseMarketing> {
                       onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
                         'courseEnrollment': widget.courseEnrollment,
                         'classIndex': _classItems.indexOf(item),
-                        'classImage': item.classObj.image,
                         'courseIndex':widget.courseIndex
                       }),
                       child: Padding(
@@ -318,7 +315,6 @@ class _CourseMarketingState extends State<CourseMarketing> {
                   onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
                     'courseEnrollment': widget.courseEnrollment,
                     'classIndex': _classItems.indexOf(item),
-                    'classImage': item.classObj.image,
                     'courseIndex':widget.courseIndex
                   }),
                   child: Padding(

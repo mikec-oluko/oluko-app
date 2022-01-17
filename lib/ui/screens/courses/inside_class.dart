@@ -47,12 +47,10 @@ import 'audio_panel.dart';
 enum PanelEnum { audios, classDetail }
 
 class InsideClass extends StatefulWidget {
-  InsideClass({this.courseEnrollment, this.classIndex, this.courseIndex, Key key, this.classImage}) : super(key: key);
-
+  InsideClass({this.courseEnrollment, this.classIndex, this.courseIndex, Key key}) : super(key: key);
   final CourseEnrollment courseEnrollment;
   final int classIndex;
   final int courseIndex;
-  final String classImage;
 
   @override
   _InsideClassesState createState() => _InsideClassesState();
@@ -261,6 +259,7 @@ class _InsideClassesState extends State<InsideClass> {
   }
 
   Widget classInfoSection(List<UserResponse> coaches) {
+    final String _classImage = widget.courseEnrollment.classes[widget.classIndex].image;
     return ListView(children: [
       Padding(
           padding: const EdgeInsets.only(bottom: 3),
@@ -279,13 +278,13 @@ class _InsideClassesState extends State<InsideClass> {
                       peopleQty: qty,
                       onPeoplePressed: () => _peopleAction(subscribedCourseUsersState.users, subscribedCourseUsersState.favoriteUsers),
                       audioMessageQty: AudioService.getAudiosLength(_audios),
-                      image: OlukoNeumorphism.isNeumorphismDesign ? widget.classImage : widget.courseEnrollment.course.image);
+                      image: OlukoNeumorphism.isNeumorphismDesign ? _classImage : widget.courseEnrollment.course.image);
                 } else {
                   return CourseInfoSection(
                       onAudioPressed: () => _coaches.isNotEmpty ? _audioAction() : null,
                       peopleQty: 0,
                       audioMessageQty: AudioService.getAudiosLength(_audios),
-                      image: OlukoNeumorphism.isNeumorphismDesign ? widget.classImage : widget.courseEnrollment.course.image);
+                      image: OlukoNeumorphism.isNeumorphismDesign ? _classImage : widget.courseEnrollment.course.image);
                 }
               })
             ],

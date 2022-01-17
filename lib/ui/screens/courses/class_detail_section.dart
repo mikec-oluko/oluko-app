@@ -52,7 +52,7 @@ class _State extends State<ClassDetailSection> {
           showTopDivider: i != 0,
           segment: widget.segments.length - 1 >= i ? widget.segments[i] : null,
           movements: ClassService.getClassSegmentMovements(widget.classObj.segments[i].sections, movements),
-          onPressedMovement: widget.onPressedMovement));//Viene null
+          onPressedMovement: widget.onPressedMovement));//TODO:check null value
     }
     return widgets;
   }

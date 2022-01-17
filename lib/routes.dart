@@ -674,8 +674,7 @@ class Routes {
         newRouteView = InsideClass(
             courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
             classIndex: argumentsToAdd['classIndex'] as int,
-            courseIndex: argumentsToAdd['courseIndex'] as int,
-            classImage: argumentsToAdd['classImage'] as String,);
+            courseIndex: argumentsToAdd['courseIndex'] as int,);
         break;
       case RouteEnum.userChallengeDetail:
         providers = [

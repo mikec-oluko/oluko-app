@@ -382,7 +382,6 @@ class _SegmentClocksState extends State<SegmentClocks> {
       'courseEnrollment': widget.courseEnrollment,
       'classIndex': widget.classIndex,
       'courseIndex': widget.courseIndex,
-      'classImage': widget.courseEnrollment.classes[widget.classIndex].image
     });
   }
 
@@ -1167,7 +1166,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                 builder: (context, state) {
                   return TextButton(
                     onPressed: () {
-                      Navigator.popUntil(context, ModalRoute.withName('/segment-detail'));
+                      Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.segmentDetail]));
                       BlocProvider.of<KeyboardBloc>(contextWBloc).add(HideKeyboard());
                     },
                     child: Text(

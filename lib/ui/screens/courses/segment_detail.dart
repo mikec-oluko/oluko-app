@@ -284,7 +284,6 @@ class _SegmentDetailState extends State<SegmentDetail> {
                     'courseEnrollment': widget.courseEnrollment,
                     'classIndex': widget.classIndex,
                     'courseIndex': widget.courseIndex,
-                    'classImage':  widget.courseEnrollment.classes[widget.classIndex].image,
                   }),
               segment: _segments[i],
               challenge: challenge,
