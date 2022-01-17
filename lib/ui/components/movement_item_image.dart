@@ -5,20 +5,19 @@ import 'package:oluko_app/constants/theme.dart';
 class MovementItem extends StatelessWidget {
   final double maxRadius;
   String imageUrl;
-  MovementItem({Key key, this.maxRadius, this.imageUrl}) : super(key: key);
+  bool referenceMovementsSection ;
+  MovementItem({Key key, this.maxRadius, this.imageUrl,this.referenceMovementsSection=false}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     if (imageUrl != null) {
       return Neumorphic(
-              style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
-              child: CircleAvatar(
-                backgroundImage: NetworkImage(imageUrl),
-                maxRadius: maxRadius ?? 30,
-              ),
-            );
-          
-    } 
+        style:referenceMovementsSection?OlukoNeumorphism.getNeumorphicStyleForCircleElementNegativeDepth(): OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
+        child: CircleAvatar(
+          backgroundImage: NetworkImage(imageUrl),
+          maxRadius: maxRadius ?? 30,
+        ),
+      );
     }
+  }
 }
-

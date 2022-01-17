@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 
 class UnenrollCourse extends StatefulWidget {
@@ -25,7 +24,9 @@ class _UnenrollCourseState extends State<UnenrollCourse> {
           PopupMenuItem(
             onTap: () {
               BlocProvider.of<CourseEnrollmentListBloc>(context).unenrollCourseForUser(widget.actualCourse, true);
-              widget.unrolledFunction();
+              if (widget.unrolledFunction != null) {
+                widget.unrolledFunction();
+              }
             },
             value: Unenroll.unenroll,
             child: Center(child: Text('Unenroll', style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white))),

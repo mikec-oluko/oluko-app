@@ -373,3 +373,5 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
     );
   }
 }
+
+

@@ -7,7 +7,6 @@ import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/timer_entry.dart';
-import 'package:oluko_app/ui/components/movement_item_bubbles.dart';
 import 'package:oluko_app/ui/newDesignComponents/movement_items_bubbles_neumorphic.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
@@ -105,25 +104,22 @@ class SegmentUtils {
             }
           if (restTime)
             workouts.add(getTextWidget(getLabel(movement), color));
-          else if (movement.name != "Rest") {
-            if (movementWithImage != null) {
-              workouts.add(Row(
-                children: [
-                  MovementItemBubblesNeumorphic(
-                    viewDetailsScreen: true,
-                    movement: movementWithImage, //movementWithImage=null? overflow error
-                    width: ScreenUtils.width(context) / 4,
-                    bubbleName: false,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8),
-                    child: getTextWidget(getLabel(movement), color),
-                  ),
-                ],
-              ));
-            } else {
-               workouts.add(getTextWidget(getLabel(movement), color));
-            }
+          else if (movement.name != "Rest time" && movement.name != "Rest" ) {
+            workouts.add(Row(
+              children: [
+                MovementItemBubblesNeumorphic(
+                  content: movements,
+                  viewDetailsScreen: true,
+                  movement: movementWithImage, //movementWithImage=null? overflow error
+                  width: ScreenUtils.width(context) / 4,
+                  bubbleName: false,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8),
+                  child: getTextWidget(getLabel(movement), color),
+                ),
+              ],
+            ));
           }
           ;
         }

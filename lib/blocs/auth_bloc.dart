@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:oluko_app/blocs/class/class_subscription_bloc.dart';
 import 'package:oluko_app/blocs/course_category_bloc.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
+import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/permissions.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
 import 'package:oluko_app/models/dto/api_response.dart';
 import 'package:oluko_app/models/dto/login_request.dart';
@@ -20,6 +20,7 @@ import 'package:oluko_app/utils/app_loader.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'coach/coach_interaction_timeline_bloc.dart';
 import 'coach/coach_mentored_videos_bloc.dart';
 import 'coach/coach_recommendations_bloc.dart';
@@ -110,6 +111,11 @@ class AuthBloc extends Cubit<AuthState> {
       if (firebaseUser != null) {
         emit(AuthSuccess(user: user, firebaseUser: firebaseUser));
         navigateToNextScreen(context, firebaseUser.uid);
+        final sharedPref = await SharedPreferences.getInstance();
+        if (sharedPref.getBool('first_time') == true) {
+          sharedPref.setBool('first_time', false);
+          await Permissions.askForPermissions();
+        }
       }
     }
   }
@@ -160,7 +166,11 @@ class AuthBloc extends Cubit<AuthState> {
       }
       // ignore: avoid_catching_errors
     } on NoSuchMethodError catch (e) {
-      Navigator.pushNamed(context, routeLabels[RouteEnum.signUp]);
+      if (OlukoNeumorphism.isNeumorphismDesign) {
+        Navigator.pushNamed(context, routeLabels[RouteEnum.signUpNeumorphic]);
+      } else {
+        Navigator.pushNamed(context, routeLabels[RouteEnum.signUp]);
+      }
     }
   }
 
@@ -230,8 +240,11 @@ class AuthBloc extends Cubit<AuthState> {
       BlocProvider.of<CourseEnrollmentListBloc>(context).dispose();
       BlocProvider.of<CourseSubscriptionBloc>(context).dispose();
       BlocProvider.of<CourseCategoryBloc>(context).dispose();
-
-      Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.signUp], (route) => false);
+      if (OlukoNeumorphism.isNeumorphismDesign) {
+        Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.signUpNeumorphic], (route) => false);
+      } else {
+        Navigator.pushNamedAndRemoveUntil(context, routeLabels[RouteEnum.signUp], (route) => false);
+      }
       emit(AuthGuest());
     }
   }

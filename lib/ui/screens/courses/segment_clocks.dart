@@ -505,6 +505,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                   child: BlocBuilder<KeyboardBloc, KeyboardState>(
                     builder: (context, state) {
                       return Scrollbar(
+                        controller: state.textScrollController,
                         child: () {
                           final _customKeyboardBloc = BlocProvider.of<KeyboardBloc>(context);
                           TextSelection textSelection = state.textEditingController.selection;
@@ -514,6 +515,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                           );
                           textController = state.textEditingController;
                           textController.selection = textSelection;
+                          
                           return TextField(
                             scrollController: state.textScrollController,
                             controller: textController,

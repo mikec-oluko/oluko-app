@@ -20,8 +20,8 @@ class SegmentSubmissionRepository {
     this.firestoreInstance = firestoreInstance;
   }
 
-  static Future<SegmentSubmission> create(User user, CourseEnrollment courseEnrollment, Segment segment, String videoPath,
-      CoachRequest coachRequest) async {
+  static Future<SegmentSubmission> create(
+      User user, CourseEnrollment courseEnrollment, Segment segment, String videoPath, CoachRequest coachRequest) async {
     DocumentReference projectReference = FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue("projectId"));
 
     DocumentReference courseEnrollmentReference = projectReference.collection('courseEnrollments').doc(courseEnrollment.id);
@@ -31,6 +31,9 @@ class SegmentSubmissionRepository {
     CollectionReference segmentSubmissionReference = projectReference.collection("segmentSubmissions");
 
     DocumentReference segmentReference = projectReference.collection("segments").doc(segment.id);
+
+    DocumentReference coachRequestDocRef =
+        projectReference.collection('coachAssignments').doc(user.uid).collection('coachRequests').doc(coachRequest.id);
 
     final DocumentReference docRef = segmentSubmissionReference.doc();
 
@@ -48,7 +51,10 @@ class SegmentSubmissionRepository {
         videoState: VideoState(state: SubmissionStateEnum.recorded, stateInfo: videoPath));
 
     segmentSubmission.id = docRef.id;
-    docRef.set(segmentSubmission.toJson());
+    await docRef.set(segmentSubmission.toJson());
+
+    await coachRequestDocRef.update({'segment_submission_id': segmentSubmission.id, 'segment_submission_reference': docRef});
+
     return segmentSubmission;
   }
 

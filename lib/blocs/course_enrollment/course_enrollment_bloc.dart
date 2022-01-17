@@ -50,8 +50,7 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
 
   void create(User user, Course course) async {
     try {
-      CourseEnrollment courseEnrollment =
-          await CourseEnrollmentRepository.create(user, course);
+      CourseEnrollment courseEnrollment = await CourseEnrollmentRepository.create(user, course);
       emit(CreateEnrollmentSuccess(courseEnrollment: courseEnrollment));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -63,11 +62,11 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
     }
   }
 
-  void get(User user, Course course) async {
+  Future<CourseEnrollment> get(User user, Course course) async {
     try {
-      CourseEnrollment courseEnrollment =
-          await CourseEnrollmentRepository.get(course, user);
+      CourseEnrollment courseEnrollment = await CourseEnrollmentRepository.get(course, user);
       emit(GetEnrollmentSuccess(courseEnrollment: courseEnrollment));
+      return courseEnrollment;
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
@@ -80,8 +79,7 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
 
   void getById(String id) async {
     try {
-      CourseEnrollment courseEnrollment =
-          await CourseEnrollmentRepository.getById(id);
+      CourseEnrollment courseEnrollment = await CourseEnrollmentRepository.getById(id);
       emit(GetEnrollmentByIdSuccess(courseEnrollment: courseEnrollment));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -93,11 +91,9 @@ class CourseEnrollmentBloc extends Cubit<CourseEnrollmentState> {
     }
   }
 
-  void markSegmentAsCompleted(CourseEnrollment courseEnrollment,
-      int segmentIndex, int classIndex) async {
+  void markSegmentAsCompleted(CourseEnrollment courseEnrollment, int segmentIndex, int classIndex) async {
     try {
-      await CourseEnrollmentRepository.markSegmentAsCompleted(
-          courseEnrollment, segmentIndex, classIndex);
+      await CourseEnrollmentRepository.markSegmentAsCompleted(courseEnrollment, segmentIndex, classIndex);
       emit(MarkSegmentSuccess());
     } catch (exception, stackTrace) {
       await Sentry.captureException(
