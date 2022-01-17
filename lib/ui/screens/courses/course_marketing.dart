@@ -117,6 +117,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                     showBackButton: true,
                                     showHeartButton: true,
                                     showShareButton: true,
+                                    onBackPressed: () => Navigator.pop(context)
                                   ),
                                 ),
                                 showEnrollButton(enrollmentState.courseEnrollment, context),
