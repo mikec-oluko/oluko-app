@@ -221,32 +221,25 @@ class _SegmentClocksState extends State<SegmentClocks> {
         actions: [topBarIcon, audioIcon()],
       ),
       backgroundColor: Colors.black,
-      body: isSegmentWithoutRecording() && workState != WorkState.finished
+      body: workState != WorkState.finished
           ? BlocBuilder<KeyboardBloc, KeyboardState>(
               builder: (context, state) {
                 keyboardVisibilty = state.setVisible;
-                return SlidingUpPanel(
-                    controller: panelController,
-                    borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-                    minHeight: () {
-                      if (!keyboardVisibilty) return 90.0;
-                      return 0.0;
-                    }(),
-                    maxHeight: () {
-                      if (!keyboardVisibilty) return 185.0;
-                      return 0.0;
-                    }(),
-                    collapsed: Visibility(visible: !keyboardVisibilty, child: CollapsedMovementVideosSection(action: getAction())),
-                    panel: Visibility(
-                      visible: !keyboardVisibilty,
-                      child: MovementVideosSection(
-                          action: getAction(),
-                          segment: widget.segments[widget.segmentIndex],
-                          movements: _movements,
-                          onPressedMovement: (BuildContext context, Movement movement) =>
-                              Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement})),
-                    ),
-                    body: _body(keyboardVisibilty));
+                return !keyboardVisibilty && isSegmentWithoutRecording()
+                    ? SlidingUpPanel(
+                        controller: panelController,
+                        borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                        minHeight: 90.0,
+                        maxHeight: 185.0,
+                        collapsed: CollapsedMovementVideosSection(action: getAction()),
+                        panel: MovementVideosSection(
+                            action: getAction(),
+                            segment: widget.segments[widget.segmentIndex],
+                            movements: _movements,
+                            onPressedMovement: (BuildContext context, Movement movement) =>
+                                Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement})),
+                        body: _body(keyboardVisibilty))
+                    : _body(keyboardVisibilty);
               },
             )
           : _body(keyboardVisibilty),
@@ -490,7 +483,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
       return [
         getTextField(keyboardVisibilty),
         getKeyboard(keyboardVisibilty),
-        !keyboardVisibilty
+        !keyboardVisibilty && !isSegmentWithRecording()
             ? SizedBox(
                 height: ScreenUtils.height(context) / 4,
               )
@@ -525,7 +518,6 @@ class _SegmentClocksState extends State<SegmentClocks> {
                         controller: state.textScrollController,
                         child: () {
                           final _customKeyboardBloc = BlocProvider.of<KeyboardBloc>(context);
-
                           TextSelection textSelection = state.textEditingController.selection;
                           textSelection = state.textEditingController.selection.copyWith(
                             baseOffset: state.textEditingController.text.length,
@@ -537,19 +529,26 @@ class _SegmentClocksState extends State<SegmentClocks> {
                           return TextField(
                             scrollController: state.textScrollController,
                             controller: textController,
-                            onTap: () => !state.setVisible ? _customKeyboardBloc.add(SetVisible()) : null,
-                            style: const TextStyle(fontSize: 20, color: OlukoColors.white, fontWeight: FontWeight.bold),
+                            onTap: () {
+                              !state.setVisible ? _customKeyboardBloc.add(SetVisible()) : null;
+                            },
+                            style: const TextStyle(
+                              fontSize: 20,
+                              color: OlukoColors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
                             focusNode: state.focus,
                             readOnly: true,
                             showCursor: true,
-                            decoration: const InputDecoration(border: InputBorder.none),
-                            maxLines: 1,
+                            decoration: const InputDecoration(
+                              border: InputBorder.none,
+                            ),
                           );
                         }(),
                       );
                     },
                   )),
-              const SizedBox(width: 10),
+              const SizedBox(width: 25),
               if (isCounterByReps)
                 Text(timerEntries[timerTaskIndex - 1].movement.name,
                     style: TextStyle(fontSize: 18, color: OlukoColors.white, fontWeight: FontWeight.w300))
@@ -611,11 +610,16 @@ class _SegmentClocksState extends State<SegmentClocks> {
     }
 
     if (!isWorkStatePaused() && (isCurrentTaskByReps() || isCurrentTaskByDistance())) {
-      return TimerUtils.repsTimer(
-          () => setState(() {
-                _goToNextStep();
-              }),
-          context);
+      return BlocBuilder<KeyboardBloc, KeyboardState>(
+        builder: (context, state) {
+          BlocProvider.of<KeyboardBloc>(context).add(HideKeyboard());
+          return TimerUtils.repsTimer(
+              () => setState(() {
+                    _goToNextStep();
+                  }),
+              context);
+        },
+      );
     }
 
     if (isWorkStatePaused() && (isCurrentTaskByReps() || isCurrentTaskByDistance())) {
@@ -672,26 +676,22 @@ class _SegmentClocksState extends State<SegmentClocks> {
   }
 
   Widget nextTaskWidget(String nextTask, bool keyboardVisibilty) {
-    return BlocBuilder<KeyboardBloc, KeyboardState>(
-      builder: (context, state) {
-        return Visibility(
-          visible: !keyboardVisibilty,
-          child: ShaderMask(
-            shaderCallback: (rect) {
-              return const LinearGradient(
-                begin: Alignment.center,
-                end: Alignment.bottomCenter,
-                colors: [Colors.black, Colors.transparent],
-              ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
-            },
-            blendMode: BlendMode.dstIn,
-            child: Text(
-              nextTask,
-              style: const TextStyle(fontSize: 25, color: Color.fromRGBO(255, 255, 255, 0.25), fontWeight: FontWeight.bold),
-            ),
-          ),
-        );
-      },
+    return Visibility(
+      visible: !keyboardVisibilty,
+      child: ShaderMask(
+        shaderCallback: (rect) {
+          return const LinearGradient(
+            begin: Alignment.center,
+            end: Alignment.bottomCenter,
+            colors: [Colors.black, Colors.transparent],
+          ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
+        },
+        blendMode: BlendMode.dstIn,
+        child: Text(
+          nextTask,
+          style: const TextStyle(fontSize: 25, color: Color.fromRGBO(255, 255, 255, 0.25), fontWeight: FontWeight.bold),
+        ),
+      ),
     );
   }
 
@@ -1153,9 +1153,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
     });
   }
 
-  static Future<bool> onWillPop(BuildContext context, bool isRecording) async {
+  static Future<bool> onWillPop(BuildContext contextWBloc, bool isRecording) async {
     return (await showDialog(
-          context: context,
+          context: contextWBloc,
           builder: (context) => AlertDialog(
             backgroundColor: Colors.black,
             title: TitleBody(OlukoLocalizations.get(context, 'exitConfirmationTitle')),
@@ -1172,13 +1172,19 @@ class _SegmentClocksState extends State<SegmentClocks> {
                   OlukoLocalizations.get(context, 'no'),
                 ),
               ),
-              TextButton(
-                onPressed: () {
-                  Navigator.popUntil(context, ModalRoute.withName('/segment-detail'));
+              BlocBuilder<KeyboardBloc, KeyboardState>(
+                bloc: BlocProvider.of<KeyboardBloc>(contextWBloc),
+                builder: (context, state) {
+                  return TextButton(
+                    onPressed: () {
+                      Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.segmentDetail]));
+                      BlocProvider.of<KeyboardBloc>(contextWBloc).add(HideKeyboard());
+                    },
+                    child: Text(
+                      OlukoLocalizations.get(context, 'yes'),
+                    ),
+                  );
                 },
-                child: Text(
-                  OlukoLocalizations.get(context, 'yes'),
-                ),
               ),
             ],
           ),

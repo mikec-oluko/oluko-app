@@ -654,7 +654,9 @@ class Routes {
         newRouteView = CourseMarketing(
             course: argumentsToAdd['course'] as Course,
             fromCoach: argumentsToAdd['fromCoach'] as bool,
-            isCoachRecommendation: argumentsToAdd['isCoachRecommendation'] as bool);
+            isCoachRecommendation: argumentsToAdd['isCoachRecommendation'] as bool,
+            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
+            courseIndex: argumentsToAdd['courseIndex'] as int,);
         break;
       case RouteEnum.enrolledClass:
         providers = [
@@ -680,7 +682,7 @@ class Routes {
         newRouteView = InsideClass(
             courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
             classIndex: argumentsToAdd['classIndex'] as int,
-            courseIndex: argumentsToAdd['courseIndex'] as int);
+            courseIndex: argumentsToAdd['courseIndex'] as int,);
         break;
       case RouteEnum.userChallengeDetail:
         providers = [
@@ -892,7 +894,6 @@ class Routes {
           BlocProvider<HiFiveBloc>.value(value: _hiFiveBloc),
           BlocProvider<StoryListBloc>.value(value: _storyListBloc),
         ];
-        final Map<String, UserResponse> argumentsToAdd = arguments as Map<String, UserResponse>;
         newRouteView = const HiFivePage();
         break;
       case RouteEnum.homeLongPress:

@@ -20,6 +20,16 @@ class SegmentUtils {
         : [getRoundTitle(segment, context, color), SizedBox(height: 12.0)] + workoutWidgets;
   }
 
+  static List<Widget> getSegmentSummaryforNeumorphic(Segment segment, BuildContext context, Color color,
+      {bool roundTitle = true, bool restTime = true, List<Movement> movements = const [], bool viewDetailsScreen = false}) {
+    List<Widget> workoutWidgets = getWorkoutsforNeumorphic(segment, color,
+        restTime: restTime, movements: movements, context: context, viewDetailsScreen: viewDetailsScreen);
+    if (roundTitle)
+      return [getRoundTitle(segment, context, color), SizedBox(height: 12.0)] + workoutWidgets;
+    else
+      return workoutWidgets;
+  }
+
   static bool isEMOM(Segment segment) {
     return segment.sections.length == 1 && segment.type == SegmentTypeEnum.RoundsAndDuration;
   }
@@ -34,13 +44,17 @@ class SegmentUtils {
     } else if (isAMRAP(segment)) {
       return Text(
         segment.totalTime.toString() + " " + OlukoLocalizations.get(context, 'seconds').toLowerCase() + " " + "AMRAP",
-        style: OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
+        style: OlukoNeumorphism.isNeumorphismDesign
+            ? OlukoFonts.olukoSmallFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold)
+            : OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
       );
     } else {
       return segment.rounds > 1
           ? Text(
               segment.rounds.toString() + " " + OlukoLocalizations.get(context, 'rounds'),
-              style: OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
+              style: OlukoNeumorphism.isNeumorphismDesign
+                  ? OlukoFonts.olukoSmallFont(customColor: color, custoFontWeight: FontWeight.bold)
+                  : OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
             )
           : SizedBox();
     }
@@ -58,7 +72,9 @@ class SegmentUtils {
           (segment.totalTime).toString() +
           " " +
           OlukoLocalizations.get(context, 'seconds'),
-      style: OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
+      style: OlukoNeumorphism.isNeumorphismDesign
+          ? OlukoFonts.olukoSmallFont(customColor: color, custoFontWeight: FontWeight.bold)
+          : OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
     );
   }
 
@@ -90,7 +106,7 @@ class SegmentUtils {
             }
           if (restTime)
             workouts.add(getTextWidget(getLabel(movement), color));
-          else if (movement.name != "Rest time") {
+          else if (movement.name != "Rest time" && movement.name != "Rest" ) {
             workouts.add(Row(
               children: [
                 MovementItemBubblesNeumorphic(
@@ -120,7 +136,9 @@ class SegmentUtils {
         padding: EdgeInsets.only(bottom: 12.0),
         child: Text(
           text,
-          style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400, customColor: color),
+          style: OlukoNeumorphism.isNeumorphismDesign
+              ? OlukoFonts.olukoSmallFont(custoFontWeight: FontWeight.w400, customColor: color)
+              : OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400, customColor: color),
         ));
   }
 

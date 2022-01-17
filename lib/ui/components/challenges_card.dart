@@ -155,14 +155,4 @@ class _State extends State<ChallengesCard> {
       ),
     );
   }
-
-  Widget getTopText() {
-    String _defaultChallengeTitle = "In 2 weeks";
-    return Align(
-        alignment: Alignment.topRight,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(15, 5, 2, 0),
-          child: Text(_defaultChallengeTitle, style: OlukoFonts.olukoSmallFont()),
-        ));
-  }
 }
