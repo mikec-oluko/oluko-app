@@ -399,6 +399,7 @@ class _FriendModalContentState extends State<FriendModalContent> {
         width: 150,
         alignment: Alignment.topRight,
         child: OlukoNeumorphicPrimaryButton(
+          isExpanded: false,
           thinPadding: true,
           title: OlukoLocalizations.of(context).find('cancel'),
           onPressed: () {
@@ -424,6 +425,7 @@ class _FriendModalContentState extends State<FriendModalContent> {
         width: 150,
         alignment: Alignment.topRight,
         child: OlukoNeumorphicPrimaryButton(
+          isExpanded: false,
           thinPadding: true,
           title: OlukoLocalizations.of(context).find('connect'),
           onPressed: () {
@@ -438,16 +440,20 @@ class _FriendModalContentState extends State<FriendModalContent> {
 
   Widget _getViewProfileButton(bool userIsFriend) {
     if (widget.user.privacy == 0) {
-      return OlukoNeumorphicPrimaryButton(
-        thinPadding: true,
-        title: OlukoLocalizations.of(context).find('viewProfile'),
-        onPressed: () {
-          Navigator.pushNamed(
-            context,
-            routeLabels[RouteEnum.profileViewOwnProfile],
-            arguments: {'userRequested': widget.user, 'isFriend': userIsFriend},
-          );
-        },
+      return SizedBox(
+        width: 150,
+        child: OlukoNeumorphicPrimaryButton(
+          isExpanded: false,
+          thinPadding: true,
+          title: OlukoLocalizations.of(context).find('viewProfile'),
+          onPressed: () {
+            Navigator.pushNamed(
+              context,
+              routeLabels[RouteEnum.profileViewOwnProfile],
+              arguments: {'userRequested': widget.user, 'isFriend': userIsFriend},
+            );
+          },
+        ),
       );
     } else {
       return const SizedBox();
