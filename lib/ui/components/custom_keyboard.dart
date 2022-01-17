@@ -66,7 +66,7 @@ class CustomKeyboard extends StatelessWidget {
           )
         ]),
         SizedBox(
-          height: 80,
+          height: 15,
         )
       ]),
     );

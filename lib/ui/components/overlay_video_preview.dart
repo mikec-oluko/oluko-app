@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/video_overlay.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 
 class OverlayVideoPreview extends StatefulWidget {
   final String video;
@@ -68,26 +69,49 @@ class _OverlayVideoPreviewState extends State<OverlayVideoPreview> {
         padding: EdgeInsets.only(top: 15),
         child: Row(
           children: [
-            widget.showBackButton
-                ? IconButton(
+            if (OlukoNeumorphism.isNeumorphismDesign)
+              widget.showBackButton
+                  ? Padding(
+                      padding: const EdgeInsets.only(left: 10.0),
+                      child: ClipRRect(
+                          borderRadius: BorderRadius.circular(50),
+                          child: GestureDetector(
+                            onTap: () => widget.onBackPressed != null ? widget.onBackPressed() : Navigator.pop(context),
+                            child: Container(
+                                color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker,
+                                width: 45,
+                                height: 45,
+                                child: Image.asset(
+                                  'assets/courses/left_back_arrow.png',
+                                )),
+                          )),
+                    ) /*IconButton(
                     icon: Icon(Icons.chevron_left, size: 35, color: Colors.white),
-                    onPressed: () => widget.onBackPressed != null ? widget.onBackPressed() : Navigator.pop(context))
-                : SizedBox(),
-            Expanded(child: SizedBox()),
-            widget.showShareButton
-                ? IconButton(
-                    icon: Icon(Icons.share, color: OlukoColors.white),
-                    onPressed: () {
-                      //TODO: Add share action
-                    },
-                  )
-                : SizedBox(),
-            widget.showHeartButton
-                ? Image.asset(
-                    'assets/courses/heart.png',
-                    scale: 4,
-                  )
-                : SizedBox(),
+                    onPressed: () => widget.onBackPressed != null ? widget.onBackPressed() : Navigator.pop(context)) */
+                  : SizedBox()
+            else if (widget.showBackButton)
+              IconButton(
+                  icon: Icon(Icons.chevron_left, size: 35, color: Colors.white),
+                  onPressed: () => widget.onBackPressed != null ? widget.onBackPressed() : Navigator.pop(context))
+            else
+              SizedBox(),
+            const Expanded(child: SizedBox()),
+            if (widget.showShareButton)
+              IconButton(
+                icon: Icon(Icons.share, color: OlukoColors.white),
+                onPressed: () {
+                  //TODO: Add share action
+                },
+              )
+            else
+              SizedBox(),
+            if (widget.showHeartButton)
+              Image.asset(
+                'assets/courses/heart.png',
+                scale: 4,
+              )
+            else
+              SizedBox(),
           ],
         ));
   }
@@ -117,20 +141,34 @@ class _OverlayVideoPreviewState extends State<OverlayVideoPreview> {
               ),
               child: Align(
                   alignment: Alignment.center,
-                  child: Stack(alignment: Alignment.center, children: [
-                    Image.asset(
-                      'assets/courses/play_ellipse.png',
-                      height: 46,
-                      width: 46,
-                    ),
-                    Padding(
-                        padding: const EdgeInsets.only(left: 3.5),
-                        child: Image.asset(
-                          'assets/courses/play_arrow.png',
-                          height: 16,
-                          width: 16,
-                        )),
-                  ])),
+                  child: OlukoNeumorphism.isNeumorphismDesign
+                      ? Stack(alignment: Alignment.center, children: [
+                          SizedBox(
+                            height: 52,
+                            width: 52,
+                            child: OlukoBlurredButton(
+                              childContent: Image.asset(
+                                'assets/courses/white_play_arrow.png',
+                                height: 16,
+                                width: 16,
+                              ),
+                            ),
+                          ),
+                        ])
+                      : Stack(alignment: Alignment.center, children: [
+                          Image.asset(
+                            'assets/courses/play_ellipse.png',
+                            height: 46,
+                            width: 46,
+                          ),
+                          Padding(
+                              padding: const EdgeInsets.only(left: 3.5),
+                              child: Image.asset(
+                                'assets/courses/play_arrow.png',
+                                height: 16,
+                                width: 16,
+                              )),
+                        ])),
             ))
     ]);
   }

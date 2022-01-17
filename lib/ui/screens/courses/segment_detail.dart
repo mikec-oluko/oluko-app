@@ -283,7 +283,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
               onPressed: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
                     'courseEnrollment': widget.courseEnrollment,
                     'classIndex': widget.classIndex,
-                    'courseIndex': widget.courseIndex
+                    'courseIndex': widget.courseIndex,
                   }),
               segment: _segments[i],
               challenge: challenge,

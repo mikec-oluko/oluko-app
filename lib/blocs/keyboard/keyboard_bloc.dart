@@ -11,6 +11,7 @@ class KeyboardBloc extends Bloc<KeyboardEvent, KeyboardState> {
     on<DeleteNumber>((event, emit) => {_backspace()});
     on<Submit>((event, emit) => emit(_submit()));
     on<SetVisible>((event, emit) => emit(_setVisible()));
+    on<HideKeyboard>((event, emit) => emit(_hide()));
   }
   KeyboardState _setVisible() {
     state.focus.requestFocus();
