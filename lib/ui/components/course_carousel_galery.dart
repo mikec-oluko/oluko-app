@@ -7,12 +7,11 @@ import 'package:oluko_app/utils/screen_utils.dart';
 class CourseCarouselGallery extends StatefulWidget {
   final List<CourseEnrollment> courseEnrollments;
   final int courseIndex;
+  final Function(int) onCourseChange;
+  final Function(int) onCourseDeleted;
 
-  const CourseCarouselGallery({
-    Key key,
-    @required this.courseEnrollments,
-    this.courseIndex,
-  }) : super(key: key);
+  const CourseCarouselGallery({Key key, @required this.courseEnrollments, this.courseIndex, @required this.onCourseChange, @required this.onCourseDeleted})
+      : super(key: key);
 
   @override
   _CourseCarouselGalleryState createState() => _CourseCarouselGalleryState();
@@ -22,26 +21,20 @@ class _CourseCarouselGalleryState extends State<CourseCarouselGallery> {
   List<Widget> items = [];
 
   @override
-  void initState() {
-    items = buildCourseCards(widget.courseIndex ?? 0);
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    items = buildCourseCards(widget.courseIndex ?? 0);
     return CarouselSlider(
       items: items,
       options: CarouselOptions(
-          enlargeCenterPage: true,
-          disableCenter: true,
-          height: 185,
-          enableInfiniteScroll: false,
-          initialPage: widget.courseIndex ?? 0,
-          onPageChanged: (index, reason) {
-            setState(() {
-              items = buildCourseCards(index);
-            });
-          }),
+        height: ScreenUtils.height(context) * 0.42,
+        enlargeCenterPage: true,
+        enableInfiniteScroll: false,
+        viewportFraction: 0.65,
+        initialPage: widget.courseIndex ?? 0,
+        onPageChanged: (index, reason) {
+          widget.onCourseChange(index);
+        },
+      ),
     );
   }
 
@@ -49,29 +42,33 @@ class _CourseCarouselGalleryState extends State<CourseCarouselGallery> {
     List<Widget> classCards = [];
     for (var i = 0; i < widget.courseEnrollments.length; i++) {
       classCards.add(SizedBox(
-        height: getCourseCardHeight(selected, i),
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            Image.network(widget.courseEnrollments[i].course.image),
-            Positioned(
-              top: 5,
-              right: 3,
-              child: UnenrollCourse(
-                actualCourse: widget.courseEnrollments[selected],
+        child: Padding(
+          padding: const EdgeInsets.only(right: 15),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    fit: BoxFit.fill,
+                    image: NetworkImage(widget.courseEnrollments[i].course.image),
+                  ),
+                  borderRadius: const BorderRadius.all(Radius.circular(8)),
+                ),
               ),
-            )
-          ],
+              Positioned(
+                top: 0,
+                right: 0,
+                child: UnenrollCourse(
+                  actualCourse: widget.courseEnrollments[selected],
+                  unrolledFunction: () => widget.onCourseDeleted(i),
+                ),
+              )
+            ],
+          ),
         ),
       ));
     }
-  }
-
-  double getCourseCardHeight(int selected, int i) {
-    if (i == selected) {
-      return ScreenUtils.height(context) / 2;
-    } else {
-      return ScreenUtils.height(context) * 0.4;
-    }
+    return classCards;
   }
 }
