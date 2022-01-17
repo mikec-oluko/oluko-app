@@ -24,6 +24,7 @@ import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/task_card.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
@@ -31,10 +32,11 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class AssessmentVideos extends StatefulWidget {
-  const AssessmentVideos({this.isFirstTime, this.isForCoachPage = false, Key key}) : super(key: key);
+  const AssessmentVideos({this.isFirstTime, this.isForCoachPage = false, this.isFromProfile = false, Key key}) : super(key: key);
 
   final bool isFirstTime;
   final bool isForCoachPage;
+  final bool isFromProfile;
 
   @override
   _AssessmentVideosState createState() => _AssessmentVideosState();
@@ -141,7 +143,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
             ),
             body: Container(
                 color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
-                child: ListView(children: [
+                child: ListView(shrinkWrap: true, children: [
                   Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15),
                       child: Column(children: [
@@ -215,7 +217,8 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                                 const SizedBox(
                                   height: 10,
                                 ),
-                                if (assessmentAssignmentState.assessmentAssignment.completedAt != null)
+                                if (assessmentAssignmentState.assessmentAssignment.completedAt != null &&
+                                    !OlukoNeumorphism.isNeumorphismDesign)
                                   Row(children: [
                                     OlukoPrimaryButton(
                                       title: OlukoLocalizations.get(context, 'done'),
@@ -225,7 +228,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                                     )
                                   ])
                                 else
-                                  const SizedBox()
+                                  const SizedBox.shrink()
                               ],
                             );
                           }
@@ -234,11 +237,48 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                         const SizedBox(
                           height: 10,
                         ),
-                        const SizedBox(
-                          height: 50,
-                        ),
+                        OlukoNeumorphism.isNeumorphismDesign
+                            ? SizedBox.shrink()
+                            : const SizedBox(
+                                height: 50,
+                              ),
                       ])),
+                  !widget.isFromProfile && OlukoNeumorphism.isNeumorphismDesign
+                      ? BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(
+                          builder: (context, state) {
+                            if (state is AssessmentAssignmentSuccess && state.assessmentAssignment.completedAt != null) {
+                              return assessmentDoneBottomPanel(context);
+                            }
+                          },
+                        )
+                      : SizedBox.shrink(),
                 ]))));
+  }
+
+  Container assessmentDoneBottomPanel(BuildContext context) {
+    return Container(
+      height: 100,
+      width: MediaQuery.of(context).size.width,
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.only(right: 20),
+        child: Align(
+          alignment: Alignment.centerRight,
+          child: Container(
+            width: 100,
+            height: 60,
+            child: OlukoNeumorphicPrimaryButton(
+              title: OlukoLocalizations.get(context, 'done'),
+              onPressed: () {},
+              isExpanded: false,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   Widget showVideoPlayer(String videoUrl) {

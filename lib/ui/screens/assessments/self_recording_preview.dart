@@ -19,6 +19,7 @@ import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/progress_bar.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/time_converter.dart';
@@ -150,11 +151,6 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
     // TODO: UPDATED FOR NEUMORPHIC
     return Scaffold(
         extendBody: true,
-        // appBar: OlukoAppBar(
-        //   title: _task.name,
-        //   actions: [retakeButton()],
-        //   showTitle: true,
-        // ),
         body: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
@@ -162,6 +158,13 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
             children: [
               Container(height: MediaQuery.of(context).size.height, child: neumorphicContent()),
               Positioned(top: 80, right: 20, child: retakeButton()),
+              Positioned(
+                  top: 70,
+                  left: 20,
+                  child: IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: Icon(Icons.arrow_back, size: 24, color: OlukoColors.white),
+                  )),
               Positioned(
                 bottom: 0,
                 child: ClipRRect(
@@ -173,11 +176,14 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 20),
-                          child: Text('${TimeConverter.durationToString(_controller.videoPlayerController.value.duration)} min',
-                              style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.normal)),
-                        ),
+                        _controller != null
+                            ? Padding(
+                                padding: const EdgeInsets.only(left: 20),
+                                child: Text('${TimeConverter.durationToString(_controller.videoPlayerController.value.duration)} min',
+                                    style:
+                                        OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.normal)),
+                              )
+                            : SizedBox.shrink(),
                         Padding(
                           padding: const EdgeInsets.only(right: 20),
                           child: Container(
@@ -254,7 +260,8 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                 padding: const EdgeInsets.only(left: 20, right: 8),
                 child: Text(
                   OlukoLocalizations.get(context, 'retake'),
-                  style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary),
+                  style:
+                      OlukoFonts.olukoBigFont(customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary),
                 ))));
   }
 

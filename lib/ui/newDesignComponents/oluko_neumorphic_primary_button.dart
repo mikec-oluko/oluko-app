@@ -16,8 +16,8 @@ class OlukoNeumorphicPrimaryButton extends StatefulWidget {
   final bool useBorder;
   final bool isExpanded;
   const OlukoNeumorphicPrimaryButton(
-      {this.title,
-      this.onPressed,
+      {@required this.title,
+      @required this.onPressed,
       // this.color,
       this.textColor = Colors.black,
       this.textAlign = TextAlign.center,

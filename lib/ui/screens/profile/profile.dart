@@ -144,35 +144,36 @@ class _ProfilePageState extends State<ProfilePage> {
           onTap: option.enable
               ? () {
                   switch (option.option) {
-                      case ProfileOptionsTitle.settings:
-                        Navigator.pushNamed(context, routeLabels[RouteEnum.profileSettings], arguments: {'profileInfo': profileInfo})
-                            .then((value) => onGoBack());
-                        break;
-                      case ProfileOptionsTitle.transformationJourney:
-                        Navigator.pushNamed(context, routeLabels[RouteEnum.profileTransformationJourney],
-                            arguments: {'profileInfo': profileInfo});
-                        break;
-                      case ProfileOptionsTitle.logout:
-                        BlocProvider.of<AuthBloc>(context).logout(context);
-                        AppMessages.clearAndShowSnackbarTranslated(context, 'loggedOut');
-                        Navigator.popUntil(context, ModalRoute.withName('/'));
-                        setState(() {});
-                        break;
-                      default:
-                        Navigator.pushNamed(context, ProfileRoutes.returnRouteName(option.option));
-                    }
+                    case ProfileOptionsTitle.settings:
+                      Navigator.pushNamed(context, routeLabels[RouteEnum.profileSettings], arguments: {'profileInfo': profileInfo})
+                          .then((value) => onGoBack());
+                      break;
+                    case ProfileOptionsTitle.transformationJourney:
+                      Navigator.pushNamed(context, routeLabels[RouteEnum.profileTransformationJourney],
+                          arguments: {'profileInfo': profileInfo});
+                      break;
+                    case ProfileOptionsTitle.logout:
+                      BlocProvider.of<AuthBloc>(context).logout(context);
+                      AppMessages.clearAndShowSnackbarTranslated(context, 'loggedOut');
+                      Navigator.popUntil(context, ModalRoute.withName('/'));
+                      setState(() {});
+                      break;
+                    default:
+                      Navigator.pushNamed(context, ProfileRoutes.returnRouteName(option.option),
+                          arguments: {'isFromProfile': true, 'isFirstTime': false});
+                  }
                 }
               : () {},
           child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: Text(OlukoLocalizations.get(context, returnOptionString(option.option)),
-                      style: option.enable ? OlukoFonts.olukoMediumFont() : OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor)),
-                ),
-                IconButton(icon: Icon(Icons.arrow_forward_ios, color: OlukoColors.grayColor), onPressed: null)
-              ],
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 10),
+                child: Text(OlukoLocalizations.get(context, returnOptionString(option.option)),
+                    style: option.enable ? OlukoFonts.olukoMediumFont() : OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor)),
+              ),
+              IconButton(icon: Icon(Icons.arrow_forward_ios, color: OlukoColors.grayColor), onPressed: null)
+            ],
           ),
         ),
       ],

@@ -708,7 +708,10 @@ class Routes {
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = AssessmentVideos(
-            isFirstTime: argumentsToAdd == null || argumentsToAdd['isFirstTime'] == null ? false : argumentsToAdd['isFirstTime'] as bool);
+          isFirstTime: argumentsToAdd == null || argumentsToAdd['isFirstTime'] == null ? false : argumentsToAdd['isFirstTime'] as bool,
+          isFromProfile:
+              argumentsToAdd == null || argumentsToAdd['isFromProfile'] == null ? false : argumentsToAdd['isFromProfile'] as bool,
+        );
         break;
       case RouteEnum.taskDetails:
         providers = [
