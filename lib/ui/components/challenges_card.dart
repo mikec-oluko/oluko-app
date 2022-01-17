@@ -23,7 +23,9 @@ class _State extends State<ChallengesCard> {
   Widget build(BuildContext context) {
     return Column(children: [
       SizedBox(height: 10),
-      widget.challenge.completedAt != null ? unlockedCard(context) : lockedCard(context),
+      widget.challenge.completedAt != null
+          ? unlockedCard(context)
+          : lockedCardChallenge(widget: widget, defaultImage: defaultImage, context: context),
       if (widget.useAudio)
         Padding(
             padding: EdgeInsets.only(top: 13),
@@ -40,43 +42,6 @@ class _State extends State<ChallengesCard> {
       else
         SizedBox.shrink()
     ]);
-  }
-
-  Widget lockedCard(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-            end: Alignment.bottomRight, begin: Alignment.topLeft, colors: [Colors.red, Colors.black, Colors.black, Colors.red]),
-        borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-        color: Colors.black,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(2),
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Container(
-              height: 160,
-              width: 115,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-                color: OlukoColors.challengeLockedFilterColor,
-                image: DecorationImage(
-                  fit: BoxFit.cover,
-                  colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.7), BlendMode.dstATop),
-                  image: widget.challenge.image != null ? new NetworkImage(widget.challenge.image) : defaultImage,
-                ),
-              ),
-            ),
-            Image.asset(
-              'assets/courses/locked_challenge.png',
-              width: 60,
-              height: 60,
-            )
-          ],
-        ),
-      ),
-    );
   }
 
   Widget unlockedCard(BuildContext context) {
@@ -117,5 +82,58 @@ class _State extends State<ChallengesCard> {
           padding: const EdgeInsets.fromLTRB(15, 5, 2, 0),
           child: Text(_defaultChallengeTitle, style: OlukoFonts.olukoSmallFont()),
         ));
+  }
+}
+
+class lockedCardChallenge extends StatelessWidget {
+  const lockedCardChallenge({
+    Key key,
+    this.widget,
+    this.defaultImage,
+    this.context, 
+    this.image,
+  }) : super(key: key);
+
+  final ChallengesCard widget;
+  final ImageProvider<Object> defaultImage;
+  final BuildContext context;
+  final String image;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+            end: Alignment.bottomRight, begin: Alignment.topLeft, colors: [Colors.red, Colors.black, Colors.black, Colors.red]),
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+        color: Colors.black,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(2),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Container(
+              height: 160,
+              width: 115,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+                color: OlukoColors.challengeLockedFilterColor,
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.7), BlendMode.dstATop),
+                  image: image!=null?new NetworkImage(image): widget.challenge.image != null ? new NetworkImage(widget.challenge.image) : defaultImage,
+                ),
+              ),
+            ),
+            Image.asset(
+              'assets/courses/locked_challenge.png',
+              width: 60,
+              height: 60,
+            )
+          ],
+        ),
+      ),
+    );
   }
 }

@@ -25,7 +25,7 @@ class _State extends State<AudioDialogContent> {
   bool isPlaying = false;
 
   @override
-  void initState() {
+   void initState() {
     super.initState();
     initPlayer();
   }
@@ -76,70 +76,91 @@ class _State extends State<AudioDialogContent> {
   }
 
   Widget audioDialogContent(BuildContext context, UserResponse coach) {
-    return Container(
-        decoration: BoxDecoration(
-            image: DecorationImage(
-          image: AssetImage("assets/courses/dialog_background.png"),
-          fit: BoxFit.cover,
-        )),
-        child: Stack(children: [
-          Center(
-              child: Column(children: [
-            SizedBox(height: 30),
-            Stack(alignment: Alignment.center, children: [
-              StoriesItem(maxRadius: 65, imageUrl: coach.avatar, bloc: StoryListBloc()),
-              Image.asset('assets/courses/photo_ellipse.png', scale: 4)
-            ]),
-            SizedBox(height: 15),
-            Text(coach.firstName + ' ' + coach.lastName,
-                textAlign: TextAlign.center,
-                style: OlukoFonts.olukoSuperBigFont(
-                    custoFontWeight: FontWeight.bold)),
-            SizedBox(height: 15),
-            Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 50),
-                child: Text(OlukoLocalizations.get(context, 'hasMessage'),
-                    textAlign: TextAlign.center,
-                    style: OlukoFonts.olukoBigFont(
-                        custoFontWeight: FontWeight.w300))),
-            SizedBox(height: 10),
-            audioSlider(),
-            SizedBox(height: 5),
-            GestureDetector(
-                onTap: () {
-                  if (isPlaying == false) {
-                    audioPlayer.resume();
-                    setState(() {
-                      isPlaying = true;
-                    });
-                    audioPlayer.onPlayerCompletion.listen((_) {
+    return ClipRRect(
+      borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+      child: Container(
+          decoration: BoxDecoration(
+              image: DecorationImage(
+            image: AssetImage("assets/courses/dialog_background.png"),
+            fit: BoxFit.cover,
+          )),
+          child: Stack(children: [
+            Center(
+                child: Column(children: [
+              SizedBox(height: 30),
+              Stack(alignment: Alignment.bottomCenter, children: [
+                StoriesItem(
+                    maxRadius: 65,
+                    imageUrl:coach.avatar,
+                    bloc: StoryListBloc()),
+                Image.asset('assets/courses/photo_ellipse.png', scale: 4)
+              ]),
+              SizedBox(height: 15),
+              Text(coach.firstName + ' ' + coach.lastName,
+                  textAlign: TextAlign.center, style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold)),
+              SizedBox(height: 15),
+              Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 50),
+                  child: Text(OlukoLocalizations.get(context, 'hasMessage'),
+                      textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w300))),
+              SizedBox(height: 10),
+              OlukoNeumorphism.isNeumorphismDesign
+                  ? Image.asset(
+                      'assets/courses/audio.png',
+                      scale: 3,
+                    )
+                  : audioSlider(),
+              SizedBox(height: 5),
+              GestureDetector(
+                  onTap: () {
+                    if (isPlaying == false) {
+                      audioPlayer.resume();
+                      setState(() {
+                        isPlaying = true;
+                      });
+                      audioPlayer.onPlayerCompletion.listen((_) {
+                        setState(() {
+                          isPlaying = false;
+                          _position = Duration.zero;
+                          audioPlayer.stop();
+                        });
+                      });
+                    } else {
+                      audioPlayer.pause();
                       setState(() {
                         isPlaying = false;
-                        _position = Duration.zero;
-                        audioPlayer.stop();
                       });
-                    });
-                  } else {
-                    audioPlayer.pause();
-                    setState(() {
-                      isPlaying = false;
-                    });
-                  }
-                },
-                child: Stack(alignment: Alignment.center, children: [
-                  Image.asset(
-                    'assets/courses/green_circle.png',
-                    scale: 4.5,
-                  ),
-                  Icon(isPlaying ? Icons.pause : Icons.play_arrow,
-                      size: 32, color: OlukoColors.black)
-                ])),
+                    }
+                  },
+                  child: OlukoNeumorphism.isNeumorphismDesign
+                      ? Padding(
+                          padding: const EdgeInsets.only(bottom: 10.0),
+                          child: Stack(alignment: Alignment.center, children: [
+                            Image.asset(
+                              'assets/assessment/green_ellipse.png',
+                              scale: 2.5,
+                            ),
+                            isPlaying
+                                ? Image.asset(
+                                    'assets/assessment/pause.png',
+                                  )
+                                : Image.asset(
+                                    'assets/assessment/play_triangle.png',
+                                  ),
+                          ]),
+                        )
+                      : Stack(alignment: Alignment.center, children: [
+                          Image.asset(
+                            'assets/courses/green_circle.png',
+                            scale: 4.5,
+                          ),
+                          Icon(isPlaying ? Icons.pause : Icons.play_arrow, size: 32, color: OlukoColors.black)
+                        ])),
+            ])),
+            Align(
+                alignment: Alignment.topRight,
+                child: IconButton(icon: Icon(Icons.close, color: Colors.white), onPressed: () => Navigator.pop(context)))
           ])),
-          Align(
-              alignment: Alignment.topRight,
-              child: IconButton(
-                  icon: Icon(Icons.close, color: Colors.white),
-                  onPressed: () => Navigator.pop(context)))
-        ]));
+    );
   }
 }

@@ -100,6 +100,23 @@ class OlukoNeumorphism {
         shadowDarkColor: Colors.black);
   }
 
+  static NeumorphicStyle getNeumorphicStyleForCardClasses(bool isStarted) {
+    return NeumorphicStyle(
+        border:
+            isStarted ? NeumorphicBorder.none() : NeumorphicBorder(width: 15, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark),
+        depth: -5,
+        intensity: 0.8,
+        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+        shape: NeumorphicShape.flat,
+        lightSource: LightSource.bottomRight,
+        boxShape: NeumorphicBoxShape.roundRect(BorderRadius.all(Radius.circular(10))),
+        shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+        shadowLightColorEmboss: OlukoColors.black,
+        surfaceIntensity: 1,
+        shadowLightColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+        shadowDarkColor: Colors.black);
+  }
+
   static LinearGradient OlukoNeumorphicGradientPrimary() {
     return const LinearGradient(
         colors: [OlukoNeumorphismColors.initialGradientColorPrimary, OlukoNeumorphismColors.finalGradientColorPrimary],
@@ -196,6 +213,8 @@ class OlukoColors {
   static const Color purple = Color.fromRGBO(171, 147, 233, 1);
 
   static const Color orange = Color.fromRGBO(251, 147, 133, 1);
+
+  static const Color yellow = Color.fromRGBO(254, 192, 0, 1);
 
   static const Color challengeLockedFilterColor = Color.fromRGBO(218, 5, 5, 0.2);
 

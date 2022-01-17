@@ -1,7 +1,11 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/submodels/segment_submodel.dart';
+import 'package:oluko_app/ui/components/challenges_card.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ChallengeSection extends StatefulWidget {
@@ -23,17 +27,27 @@ class _State extends State<ChallengeSection> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Divider(
-            color: OlukoColors.grayColor,
-            height: 50,
-          ),
+          if (OlukoNeumorphism.isNeumorphismDesign)
+            const Padding(
+                padding: EdgeInsets.all(20.0),
+                child: OlukoNeumorphicDivider(
+                  isFadeOut: true,
+                ))
+          else
+            const Divider(
+              color: OlukoColors.grayColor,
+              height: 50,
+            ),
           widget.addTitle
-              ? Text(
+              ? OlukoNeumorphism.isNeumorphismDesign? Text(
+                  buildTitle(),
+                  style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.white),
+                ):Text(
                   buildTitle(),
                   style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
                 )
               : SizedBox(),
-          widget.addName!= null && widget.addName
+          widget.addName != null && widget.addName
               ? Text(
                   widget.challenges[0].name,
                   style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
@@ -62,8 +76,17 @@ class _State extends State<ChallengeSection> {
   }
 
   List<Widget> getChallengesCards() {
-    List<Widget> challengeCards = [];
-    widget.challenges.forEach((challenge) {
+   List<Widget> challengeCards = [];
+    OlukoNeumorphism.isNeumorphismDesign? widget.challenges.forEach((challenge) {
+      challengeCards.add(
+        lockedCardChallenge(
+          image: challenge.challengeImage,
+    ),
+      );
+      challengeCards.add(SizedBox(width: 15));
+    })
+
+    :widget.challenges.forEach((challenge) {
       challengeCards.add(
         Stack(
           alignment: Alignment.center,

@@ -654,7 +654,9 @@ class Routes {
         newRouteView = CourseMarketing(
             course: argumentsToAdd['course'] as Course,
             fromCoach: argumentsToAdd['fromCoach'] as bool,
-            isCoachRecommendation: argumentsToAdd['isCoachRecommendation'] as bool);
+            isCoachRecommendation: argumentsToAdd['isCoachRecommendation'] as bool,
+            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
+            courseIndex: argumentsToAdd['courseIndex'] as int,);
         break;
       case RouteEnum.enrolledClass:
         providers = [
@@ -683,7 +685,7 @@ class Routes {
         newRouteView = InsideClass(
             courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
             classIndex: argumentsToAdd['classIndex'] as int,
-            courseIndex: argumentsToAdd['courseIndex'] as int);
+            courseIndex: argumentsToAdd['courseIndex'] as int,);
         break;
       case RouteEnum.userChallengeDetail:
         providers = [
