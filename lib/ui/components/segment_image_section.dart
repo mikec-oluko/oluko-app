@@ -467,7 +467,8 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
       Row(children: [
         GestureDetector(
             onTap: () => widget.audioAction(widget.challenge.audios),
-            child: AudioSection(audioMessageQty: widget.challenge.audios != null ? widget.challenge.audios.length : 0)),
+            child: AudioSection(
+                audioMessageQty: widget.challenge != null && widget.challenge.audios != null ? widget.challenge.audios.length : 0)),
         verticalDividerComponent,
         BlocBuilder<DoneChallengeUsersBloc, DoneChallengeUsersState>(builder: (context, doneChallengeUsersState) {
           if (doneChallengeUsersState is DoneChallengeUsersSuccess) {

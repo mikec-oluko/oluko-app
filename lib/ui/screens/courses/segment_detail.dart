@@ -209,7 +209,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
           }
           if (state is SegmentDetailContentAudioOpen) {
             _challengePanelController.open();
-            _contentForPanel = ModalAudio(audios: state.audios);
+            _contentForPanel = ModalAudio(audios: state.audios ?? []);
           }
           if (state is SegmentDetailContentPeopleOpen) {
             _challengePanelController.open();
@@ -383,7 +383,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
   }
 
   _audioAction(List<Audio> audios) {
-    BlocProvider.of<SegmentDetailContentBloc>(context).openAudioPanel(audios);
+    BlocProvider.of<SegmentDetailContentBloc>(context).openAudioPanel(audios ?? []);
   }
 
   _peopleAction(List<UserSubmodel> users, List<UserSubmodel> favorites) {
