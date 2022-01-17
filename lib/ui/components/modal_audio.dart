@@ -4,7 +4,9 @@ import 'package:flutter/widgets.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/ui/screens/courses/audio_dialog_content.dart';
 import 'package:oluko_app/ui/screens/courses/audio_panel.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class ModalAudio extends StatefulWidget {
   List<UserResponse> users;
@@ -13,8 +15,10 @@ class ModalAudio extends StatefulWidget {
   AudioPlayer audioPlayer;
   final bool comesFromSegmentDetail;
   final Function(int, Challenge) onAudioPressed;
+  PanelController panelController;
 
-  ModalAudio({this.comesFromSegmentDetail, this.users, this.audios, this.onAudioPressed, this.challenge, this.audioPlayer});
+  ModalAudio(
+      {this.panelController, this.comesFromSegmentDetail, this.users, this.audios, this.onAudioPressed, this.challenge, this.audioPlayer});
 
   @override
   _ModalAudioState createState() => _ModalAudioState();
@@ -44,12 +48,17 @@ class _ModalAudioState extends State<ModalAudio> {
   }
 
   Widget audioSection() {
-    return AudioPanel(
-      onAudioPressed: (int index) => widget.onAudioPressed(index, widget.challenge),
-      coaches: widget.users,
-      audios: _audios,
-      audioPlayer: widget.audioPlayer,
-      comesFromSegmentDetail: widget.comesFromSegmentDetail,
-    );
+    if (_audios.length == 1) {
+      return AudioDialogContent(
+          coach: widget.users != null ? widget.users[0] : null, audio: _audios[0], panelController: widget.panelController);
+    } else {
+      return AudioPanel(
+        onAudioPressed: (int index) => widget.onAudioPressed(index, widget.challenge),
+        coaches: widget.users,
+        audios: _audios,
+        audioPlayer: widget.audioPlayer,
+        comesFromSegmentDetail: widget.comesFromSegmentDetail,
+      );
+    }
   }
 }

@@ -433,6 +433,7 @@ class _InsideClassesState extends State<InsideClass> {
             _buttonController.open();
 
             _contentForPanel = ModalAudio(
+              panelController: _buttonController,
                 users: _coaches,
                 audios: _audios,
                 onAudioPressed: (int index, Challenge challenge) => _onAudioDeleted(index, challenge),
