@@ -78,6 +78,7 @@ class SubscribedCourseUsersBloc extends Cubit<SubscribedCourseUsersState> {
 
   void getEnrolled(String courseId, String userId) async {
     try {
+      emit(SubscribedCourseUsersLoading());
       List<UserResponse> returnList = [];
       final List<CourseEnrollment> courseEnrollmentList = await CourseEnrollmentRepository.getByCourse(courseId, userId);
       if (courseEnrollmentList != null) {

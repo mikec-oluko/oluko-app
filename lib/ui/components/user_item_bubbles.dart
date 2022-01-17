@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
+import 'package:oluko_app/blocs/friends/friend_bloc.dart';
+import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
+import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
+import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/user_response.dart';
+import 'package:oluko_app/ui/components/friend_modal_content.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
+import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 
 class UserItemBubbles extends StatefulWidget {
   final List<UserResponse> content;
   final double width;
-  final Function(BuildContext, UserResponse) onPressed;
   final String currentUserId;
-  UserItemBubbles({this.content, this.width, this.onPressed, this.currentUserId});
+  UserItemBubbles({this.content, this.width, this.currentUserId});
   @override
   _UserItemBubblesState createState() => _UserItemBubblesState();
 }
@@ -38,10 +44,9 @@ class _UserItemBubblesState extends State<UserItemBubbles> {
     );
   }
 
-  List<Widget> buildMovementItems() {
-    List<Widget> users = widget.content
-        .map((user) => _imageItem(context, user.avatarThumbnail, user.username,
-            onPressed: (context) => widget.onPressed(context, user), itemUser: user, currentUserId: widget.currentUserId))
+  List<Widget> buildUserItems() {
+    final List<Widget> users = widget.content
+        .map((user) => _imageItem(context, user.avatarThumbnail, user.username, itemUser: user, currentUserId: widget.currentUserId))
         .toList();
     return users;
   }
@@ -49,7 +54,7 @@ class _UserItemBubblesState extends State<UserItemBubbles> {
   Widget buildBubbles() {
     return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: buildMovementItems()
+        children: buildUserItems()
           //Prevent the last item to be overlayed by the carousel gradient
           ..add(const SizedBox(
             width: 180,
@@ -57,45 +62,48 @@ class _UserItemBubblesState extends State<UserItemBubbles> {
   }
 
   Widget buildBubbleGrid() {
-    return GridView.count(crossAxisCount: 6, children: buildMovementItems());
+    return GridView.count(crossAxisCount: 6, children: buildUserItems());
   }
 
-  Widget _imageItem(BuildContext context, String imageUrl, String username,
-      {Function(BuildContext) onPressed, String currentUserId, UserResponse itemUser}) {
-    return GestureDetector(
-      onTap: () => onPressed(context),
-      child: SizedBox(
-        width: 85,
-        height: 100,
-        child: GestureDetector(
-          onLongPress: () => _openUserModal(itemUser),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              StoriesItem(
-                from: StoriesItemFrom.longPressHome,
-                maxRadius: 25,
-                imageUrl: imageUrl,
-                bloc: StoryListBloc(),
-                getStories: true,
-                currentUserId: currentUserId,
-                itemUserId: itemUser.id,
-                name: itemUser.firstName,
-              ),
-              Text(
-                username,
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
-                style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor),
-              )
-            ],
+  Widget _imageItem(BuildContext context, String imageUrl, String username, {String currentUserId, UserResponse itemUser}) {
+    return SizedBox(
+      width: 85,
+      height: 100,
+      child: GestureDetector(
+        onLongPress: () => BottomDialogUtils.showBottomDialog(
+          content: FriendModalContent(
+            itemUser,
+            currentUserId,
+            FriendBloc(),
+            HiFiveSendBloc(),
+            HiFiveReceivedBloc(),
+            UserStatisticsBloc(),
+            FavoriteFriendBloc(),
           ),
+          context: context,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            StoriesItem(
+              from: StoriesItemFrom.longPressHome,
+              maxRadius: 25,
+              imageUrl: imageUrl,
+              bloc: StoryListBloc(),
+              getStories: true,
+              currentUserId: currentUserId,
+              itemUserId: itemUser.id,
+              name: itemUser.firstName,
+            ),
+            Text(
+              username,
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
+              style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor),
+            )
+          ],
         ),
       ),
     );
-  }
-
-  void _openUserModal(UserResponse itemUser) {
-    
   }
 }

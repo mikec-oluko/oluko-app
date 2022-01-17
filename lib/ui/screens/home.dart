@@ -284,9 +284,4 @@ class _HomeState extends State<Home> {
           : SizedBox();
     });
   }
-
-  _onLongPress() {
-    Navigator.pushNamed(context, routeLabels[RouteEnum.homeLongPress],
-        arguments: {'courseEnrollments': _courseEnrollments, 'index': widget.index});
-  }
 }
