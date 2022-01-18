@@ -7,12 +7,14 @@ import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class AudioDialogContent extends StatefulWidget {
   final UserResponse coach;
   final Audio audio;
+    PanelController panelController;
 
-  AudioDialogContent({this.coach, this.audio});
+  AudioDialogContent({this.coach, this.audio, this.panelController});
 
   @override
   _State createState() => _State();
@@ -25,7 +27,7 @@ class _State extends State<AudioDialogContent> {
   bool isPlaying = false;
 
   @override
-   void initState() {
+  void initState() {
     super.initState();
     initPlayer();
   }
@@ -90,13 +92,11 @@ class _State extends State<AudioDialogContent> {
               SizedBox(height: 30),
               Stack(alignment: Alignment.bottomCenter, children: [
                 StoriesItem(
-                    maxRadius: 65,
-                    imageUrl:coach.avatar,
-                    bloc: StoryListBloc()),
+                    maxRadius: 65, imageUrl: coach == null ? widget.audio.userAvatarThumbnail : coach.avatar, bloc: StoryListBloc()),
                 Image.asset('assets/courses/photo_ellipse.png', scale: 4)
               ]),
               SizedBox(height: 15),
-              Text(coach.firstName + ' ' + coach.lastName,
+              Text(coach == null ? widget.audio.userName : coach.firstName + ' ' + coach.lastName,
                   textAlign: TextAlign.center, style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold)),
               SizedBox(height: 15),
               Padding(
@@ -104,12 +104,12 @@ class _State extends State<AudioDialogContent> {
                   child: Text(OlukoLocalizations.get(context, 'hasMessage'),
                       textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w300))),
               SizedBox(height: 10),
-              OlukoNeumorphism.isNeumorphismDesign
+              /*OlukoNeumorphism.isNeumorphismDesign
                   ? Image.asset(
                       'assets/courses/audio.png',
                       scale: 3,
                     )
-                  : audioSlider(),
+                  :*/ audioSlider(),
               SizedBox(height: 5),
               GestureDetector(
                   onTap: () {
@@ -159,7 +159,7 @@ class _State extends State<AudioDialogContent> {
             ])),
             Align(
                 alignment: Alignment.topRight,
-                child: IconButton(icon: Icon(Icons.close, color: Colors.white), onPressed: () => Navigator.pop(context)))
+                child: IconButton(icon: Icon(Icons.close, color: Colors.white), onPressed: () => widget.panelController.close()))
           ])),
     );
   }

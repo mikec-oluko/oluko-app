@@ -272,5 +272,7 @@
     "removeThisPerson": "Remove this person?",
     "removeThisPersonBody1": "Are you sure you want to remove ",
     "removeThisPersonBody2": " from your list?",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "rememberTo": "Remember to",
+    "switchSide": "switch side"
 }

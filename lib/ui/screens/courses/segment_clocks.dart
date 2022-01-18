@@ -12,6 +12,7 @@ import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
 import 'package:oluko_app/blocs/keyboard/keyboard_bloc.dart';
+
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/story_bloc.dart' as storyBloc;
@@ -610,6 +611,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
     }
 
     if (!isWorkStatePaused() && (isCurrentTaskByReps() || isCurrentTaskByDistance())) {
+
       return BlocBuilder<KeyboardBloc, KeyboardState>(
         builder: (context, state) {
           BlocProvider.of<KeyboardBloc>(context).add(HideKeyboard());
@@ -617,9 +619,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
               () => setState(() {
                     _goToNextStep();
                   }),
-              context);
+              context,
+              timerEntries[timerTaskIndex].movement.isBothSide);
         },
       );
+
     }
 
     if (isWorkStatePaused() && (isCurrentTaskByReps() || isCurrentTaskByDistance())) {
@@ -661,7 +665,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
       });
     }
     final String counter = timerEntries[timerTaskIndex].counter == CounterEnum.reps ? timerEntries[timerTaskIndex].movement.name : null;
-    return TimerUtils.timeTimer(circularProgressIndicatorValue, TimeConverter.durationToString(timeLeft), context, counter);
+    return TimerUtils.timeTimer(circularProgressIndicatorValue, TimeConverter.durationToString(timeLeft), context, counter, timerEntries[timerTaskIndex].movement.isBothSide);
   }
 
   Widget currentTaskWidget(bool keyboardVisibilty, String currentTask, [bool smaller = false]) {

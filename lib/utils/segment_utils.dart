@@ -194,21 +194,28 @@ class SegmentUtils {
         }
       }
     }
+    if (entries[entries.length - 1].movement.isRestTime && entries[entries.length - 1].movement.counter != CounterEnum.none) {
+      entries.removeAt(entries.length - 1);
+    }
     return entries;
   }
 
   static String getLabel(MovementSubmodel movement) {
     String label = movement.value == null ? "5" : movement.value.toString();
+    String parameter;
     if (movement.parameter != null) {
       switch (movement.parameter) {
         case ParameterEnum.duration:
           label += "s";
+          parameter = "s";
           break;
         case ParameterEnum.reps:
           label += "x";
+          parameter = "x";
           break;
         case ParameterEnum.distance:
           label += "m";
+          parameter = "m";
           break;
       }
     } else {
@@ -216,6 +223,11 @@ class SegmentUtils {
     }
 
     label += " " + movement.name;
+    if (movement.isBothSide) {
+      int qty = (movement.value / 2).toInt();
+      String text = qty.toString() + parameter + " " + movement.name;
+      label += " (" + text + " / " + text + ")";
+    }
     return label;
   }
 

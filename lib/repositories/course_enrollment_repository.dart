@@ -335,13 +335,4 @@ class CourseEnrollmentRepository {
         .snapshots();
     return courseEnrollmentsStream;
   }
-
-  static Future<void> markAudioAsDeleted(CourseEnrollment courseEnrollment, List<Audio> audios) async {
-    final DocumentReference reference = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('courseEnrollments')
-        .doc(courseEnrollment.id);
-    await reference.update({'audios': List<dynamic>.from(audios.map((audio) => audio.toJson()))});
-  }
 }
