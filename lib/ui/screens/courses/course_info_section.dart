@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_audio_bloc.dart';
 import 'package:oluko_app/ui/components/course_poster.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
@@ -19,6 +20,14 @@ class CourseInfoSection extends StatefulWidget {
 }
 
 class _State extends State<CourseInfoSection> {
+  int _audioQty = 0;
+
+  @override
+  void initState() {
+    _audioQty = widget.audioMessageQty;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(children: [
@@ -71,7 +80,7 @@ class _State extends State<CourseInfoSection> {
 
   Widget audioSection(BuildContext context) {
     return GestureDetector(
-      onTap: widget.audioMessageQty != null && widget.audioMessageQty > 0 ? widget.onAudioPressed : null,
+      onTap: _audioQty > 0 ? widget.onAudioPressed : null,
       child: Stack(
         alignment: Alignment.topRight,
         children: [
@@ -82,24 +91,30 @@ class _State extends State<CourseInfoSection> {
                 height: 50,
                 width: 50,
               )),
-          if (widget.audioMessageQty != null && widget.audioMessageQty > 0)
-            Stack(alignment: Alignment.center, children: [
+          getAudioNotification(),
+        ]));
+  }
+
+  Widget getAudioNotification() {
+    return BlocBuilder<CourseEnrollmentAudioBloc, CourseEnrollmentAudioState>(builder: (context, state) {
+      if (state is ClassAudioDeleteSuccess) {
+        _audioQty = state.audios.length;
+      }
+      return _audioQty > 0
+          ? Stack(alignment: Alignment.center, children: [
               Image.asset(
                 'assets/courses/audio_notification.png',
                 height: 22,
                 width: 22,
               ),
               Text(
-                widget.audioMessageQty.toString(),
+                _audioQty.toString(),
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w300, color: Colors.white),
+                style: TextStyle(fontSize: 10, fontWeight: FontWeight.w300, color: Colors.white),
               ),
             ])
-          else
-            const SizedBox(),
-        ],
-      ),
-    );
+          : SizedBox();
+    });
   }
 
   Widget verticalDivider() {
@@ -123,7 +138,7 @@ class _State extends State<CourseInfoSection> {
               children: [
                 if (widget.peopleQty != null) GestureDetector(onTap: widget.onPeoplePressed, child: peopleSection()) else const SizedBox(),
                 verticalDivider(),
-                if (widget.audioMessageQty != null)
+                if (widget.onAudioPressed != null)
                   GestureDetector(onTap: widget.onAudioPressed, child: audioSection(context))
                 else
                   const SizedBox(),

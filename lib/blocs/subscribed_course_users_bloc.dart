@@ -49,7 +49,7 @@ class SubscribedCourseUsersBloc extends Cubit<SubscribedCourseUsersState> {
         });
 
         Friend friendData = await FriendRepository.getUserFriendsByUserId(userId);
-        List<FriendModel> friends = friendData.friends;
+        List<FriendModel> friends = friendData == null ? null : friendData.friends;
 
         userListToShow = List.from(uniqueUserList);
         if (friends != null) {

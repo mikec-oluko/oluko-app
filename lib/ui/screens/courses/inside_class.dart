@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -6,14 +7,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/class/class_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_audio_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_audio_bloc.dart';
+import 'package:oluko_app/blocs/enrollment_audio_bloc.dart';
 import 'package:oluko_app/blocs/inside_class_content_bloc.dart';
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
+import 'package:oluko_app/models/enrollment_audio.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/submodels/segment_submodel.dart';
@@ -37,13 +42,10 @@ import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button
 import 'package:oluko_app/ui/screens/courses/audio_dialog_content.dart';
 import 'package:oluko_app/ui/screens/courses/class_detail_section.dart';
 import 'package:oluko_app/ui/screens/courses/course_info_section.dart';
-import 'package:oluko_app/ui/screens/courses/explore_subscribed_users.dart';
-import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'audio_panel.dart';
 
 enum PanelEnum { audios, classDetail }
 
@@ -69,41 +71,47 @@ class _InsideClassesState extends State<InsideClass> {
   List<Movement> _classMovements;
   List<UserResponse> _coaches;
   List<Audio> _audios = [];
+  AudioPlayer audioPlayer = AudioPlayer();
+  EnrollmentAudio _enrollmentAudio;
+  int _audioQty = 0;
 
   Widget panelContent;
   PanelEnum panelState;
 
   @override
   void initState() {
-    _audios = widget.courseEnrollment.classes[widget.classIndex].audios;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(
-      builder: (context, authState) {
-        if (authState is AuthSuccess) {
-          BlocProvider.of<ClassBloc>(context).get(widget.courseEnrollment.classes[widget.classIndex].id);
-          BlocProvider.of<MovementBloc>(context).getAll();
-          return BlocBuilder<ClassBloc, ClassState>(
-            builder: (context, classState) {
-              if (classState is GetByIdSuccess) {
-                _class = classState.classObj;
-                BlocProvider.of<SegmentBloc>(context).getAll(_class);
-                BlocProvider.of<CoachAudioBloc>(context).getByAudios(_audios);
-                BlocProvider.of<SubscribedCourseUsersBloc>(context).get(widget.courseEnrollment.course.id, authState.user.id);
-                return form();
-              } else {
-                return const SizedBox();
-              }
-            },
-          );
-        } else {
-          return const SizedBox();
-        }
-      },
-    );
+    return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
+      if (authState is AuthSuccess) {
+        BlocProvider.of<ClassBloc>(context).get(widget.courseEnrollment.classes[widget.classIndex].id);
+        BlocProvider.of<MovementBloc>(context).getAll();
+        BlocProvider.of<EnrollmentAudioBloc>(context).get(widget.courseEnrollment.id);
+        return BlocBuilder<EnrollmentAudioBloc, EnrollmentAudioState>(builder: (context, enrollmentAudioState) {
+          return BlocBuilder<ClassBloc, ClassState>(builder: (context, classState) {
+            if (classState is GetByIdSuccess && enrollmentAudioState is GetEnrollmentAudioSuccess) {
+              _enrollmentAudio = enrollmentAudioState.enrollmentAudio;
+              _class = classState.classObj;
+              List<Audio> classAudios =
+                  AudioService.getClassAudios(enrollmentAudioState.enrollmentAudio, widget.courseEnrollment.classes[widget.classIndex].id);
+              _audios = AudioService.getNotDeletedAudios(classAudios);
+              _audioQty = _audios == null ? 0 : _audios.length;
+              BlocProvider.of<SegmentBloc>(context).getAll(_class);
+              BlocProvider.of<CoachAudioBloc>(context).getByAudios(_audios);
+              BlocProvider.of<SubscribedCourseUsersBloc>(context).get(widget.courseEnrollment.course.id, authState.user.id);
+              return form();
+            } else {
+              return const SizedBox();
+            }
+          });
+        });
+      } else {
+        return const SizedBox();
+      }
+    });
   }
 
   Widget form() {
@@ -483,23 +491,36 @@ class _InsideClassesState extends State<InsideClass> {
               }
               _contentForPanel = const SizedBox();
             }
-            if (state is InsideClassContentPeopleOpen) {
-              _buttonController.open();
-              _contentForPanel =
-                  ModalPeopleEnrolled(userId: widget.courseEnrollment.createdBy, users: state.users, favorites: state.favorites);
-            }
-            if (state is InsideClassContentAudioOpen) {
-              _buttonController.open();
-              _contentForPanel = ModalAudio(users: _coaches, audios: _audios);
-            }
-            if (state is InsideClassContentLoading) {
-              _contentForPanel = UploadingModalLoader(UploadFrom.segmentDetail);
-            }
-            return _contentForPanel;
-          },
-        ),
+          if (state is InsideClassContentPeopleOpen) {
+            _buttonController.open();
+            _contentForPanel =
+                ModalPeopleEnrolled(userId: widget.courseEnrollment.createdBy, users: state.users, favorites: state.favorites);
+          }
+          if (state is InsideClassContentAudioOpen) {
+            _buttonController.open();
+
+            _contentForPanel = ModalAudio(
+              panelController: _buttonController,
+                users: _coaches,
+                audios: _audios,
+                onAudioPressed: (int index, Challenge challenge) => _onAudioDeleted(index, challenge),
+                audioPlayer: audioPlayer);
+          }
+          if (state is InsideClassContentLoading) {
+            _contentForPanel = UploadingModalLoader(UploadFrom.segmentDetail);
+          }
+          return _contentForPanel;
+        }),
       ),
     );
+  }
+
+  _onAudioDeleted(int audioIndex, Challenge challenge) {
+    _audios[audioIndex].deleted = true;
+    List<Audio> audiosUpdated = _audios.toList();
+    _audios.removeAt(audioIndex);
+    BlocProvider.of<CourseEnrollmentAudioBloc>(context)
+        .markAudioAsDeleted(_enrollmentAudio, audiosUpdated, widget.courseEnrollment.classes[widget.classIndex].id, _audios);
   }
 
   _peopleAction(List<dynamic> users, List<dynamic> favorites) {
@@ -526,14 +547,14 @@ class _InsideClassesState extends State<InsideClass> {
             onAudioPressed: () => _coaches.isNotEmpty ? _audioAction() : null,
             peopleQty: qty,
             onPeoplePressed: () => _peopleAction(subscribedCourseUsersState.users, subscribedCourseUsersState.favoriteUsers),
-            audioMessageQty: AudioService.getAudiosLength(_audios),
+            audioMessageQty: _audioQty,
             image: OlukoNeumorphism.isNeumorphismDesign ? classImage : widget.courseEnrollment.course.image,
           );
         } else {
           return CourseInfoSection(
             onAudioPressed: () => _coaches.isNotEmpty ? _audioAction() : null,
             peopleQty: 0,
-            audioMessageQty: AudioService.getAudiosLength(_audios),
+            audioMessageQty: _audioQty,
             image: OlukoNeumorphism.isNeumorphismDesign ? classImage : widget.courseEnrollment.course.image,
           );
         }
@@ -542,13 +563,12 @@ class _InsideClassesState extends State<InsideClass> {
   }
 
   Widget _getAudioWidget() {
-    final int audiosLength = AudioService.getAudiosLength(_audios);
     return SizedBox(
       height: 52,
       width: 52,
       child: OlukoBlurredButton(
         childContent: GestureDetector(
-          onTap: () => AudioService.getAudiosLength(_audios) > 0 ? _audioAction() : null,
+          onTap: () => _audioQty > 0 ? _audioAction() : null,
           child: Stack(
             alignment: Alignment.center,
             children: [
@@ -557,7 +577,7 @@ class _InsideClassesState extends State<InsideClass> {
                 height: 30,
                 width: 30,
               ),
-              if (audiosLength > 0)
+              if (_audioQty > 0)
                 Stack(
                   alignment: Alignment.center,
                   children: [
@@ -567,7 +587,7 @@ class _InsideClassesState extends State<InsideClass> {
                       width: 22,
                     ),
                     Text(
-                      audiosLength.toString(),
+                      _audioQty.toString(),
                       textAlign: TextAlign.center,
                       style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w300, color: Colors.white),
                     ),
