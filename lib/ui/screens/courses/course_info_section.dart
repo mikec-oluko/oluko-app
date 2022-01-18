@@ -39,7 +39,7 @@ class _State extends State<CourseInfoSection> {
             Row(children: [
               widget.peopleQty != null ? GestureDetector(onTap: widget.onPeoplePressed, child: peopleSection()) : SizedBox(),
               verticalDivider(),
-              GestureDetector(onTap: widget.onAudioPressed, child: audioSection(context)),
+              widget.onAudioPressed != null ? GestureDetector(onTap: widget.onAudioPressed, child: audioSection(context)) : SizedBox(),
               widget.clockAction != null ? GestureDetector(onTap: widget.clockAction, child: clockSection()) : SizedBox(),
             ])
           ])),
