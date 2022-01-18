@@ -16,6 +16,7 @@ class OverlayVideoPreview extends StatefulWidget {
   //final Function() onSharePressed;
   //final Function() onHeartPressed;
   final List<Widget> bottomWidgets;
+  final Widget audioWidget;
 
   OverlayVideoPreview(
       {this.video,
@@ -25,6 +26,7 @@ class OverlayVideoPreview extends StatefulWidget {
       this.showShareButton = false,
       this.bottomWidgets,
       this.onBackPressed,
+      this.audioWidget,
       Key key})
       : super(key: key);
 
@@ -51,7 +53,7 @@ class _OverlayVideoPreviewState extends State<OverlayVideoPreview> {
     return Stack(children: [
       ShaderMask(
         shaderCallback: (rect) {
-          return LinearGradient(
+          return const LinearGradient(
             begin: Alignment.center,
             end: Alignment.bottomCenter,
             colors: [Colors.black, Colors.transparent],
@@ -66,52 +68,50 @@ class _OverlayVideoPreviewState extends State<OverlayVideoPreview> {
 
   Widget topButtons() {
     return Padding(
-        padding: EdgeInsets.only(top: 15),
+        padding: const EdgeInsets.only(top: 25, left: 15, right: 15),
         child: Row(
           children: [
             if (OlukoNeumorphism.isNeumorphismDesign)
               widget.showBackButton
-                  ? Padding(
-                      padding: const EdgeInsets.only(left: 10.0),
-                      child: ClipRRect(
-                          borderRadius: BorderRadius.circular(50),
-                          child: GestureDetector(
-                            onTap: () => widget.onBackPressed != null ? widget.onBackPressed() : Navigator.pop(context),
-                            child: Container(
-                                color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker,
-                                width: 45,
-                                height: 45,
-                                child: Image.asset(
-                                  'assets/courses/left_back_arrow.png',
-                                )),
-                          )),
-                    ) /*IconButton(
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(50),
+                      child: GestureDetector(
+                        onTap: () => widget.onBackPressed != null ? widget.onBackPressed() : Navigator.pop(context),
+                        child: Container(
+                            color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker,
+                            width: 52,
+                            height: 52,
+                            child: Image.asset(
+                              'assets/courses/left_back_arrow.png',
+                            )),
+                      )) /*IconButton(
                     icon: Icon(Icons.chevron_left, size: 35, color: Colors.white),
                     onPressed: () => widget.onBackPressed != null ? widget.onBackPressed() : Navigator.pop(context)) */
-                  : SizedBox()
+                  : const SizedBox()
             else if (widget.showBackButton)
               IconButton(
-                  icon: Icon(Icons.chevron_left, size: 35, color: Colors.white),
-                  onPressed: () => widget.onBackPressed != null ? widget.onBackPressed() : Navigator.pop(context))
+                  icon: const Icon(Icons.chevron_left, size: 35, color: Colors.white),
+                  onPressed: () => widget.onBackPressed != null ? widget.onBackPressed() : Navigator.pop(context),)
             else
-              SizedBox(),
+              const SizedBox(),
             const Expanded(child: SizedBox()),
+            if (widget.audioWidget != null) widget.audioWidget,
             if (widget.showShareButton)
               IconButton(
-                icon: Icon(Icons.share, color: OlukoColors.white),
+                icon: const Icon(Icons.share, color: OlukoColors.white),
                 onPressed: () {
                   //TODO: Add share action
                 },
               )
             else
-              SizedBox(),
+              const SizedBox(),
             if (widget.showHeartButton)
               Image.asset(
                 'assets/courses/heart.png',
                 scale: 4,
               )
             else
-              SizedBox(),
+              const SizedBox(),
           ],
         ));
   }
