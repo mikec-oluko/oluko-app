@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nil/nil.dart';
+import 'package:oluko_app/blocs/challenge/challenge_audio_bloc.dart';
 import 'package:oluko_app/blocs/done_challenge_users_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/challenge.dart';
@@ -12,6 +13,7 @@ import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/submodels/user_submodel.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/services/audio_service.dart';
 import 'package:oluko_app/ui/components/audio_section.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
@@ -34,7 +36,7 @@ class SegmentImageSection extends StatefulWidget {
   final int currentSegmentStep;
   final int totalSegmentStep;
   final String userId;
-  final Function(List<Audio> audios) audioAction;
+  final Function(List<Audio> audios, Challenge challenge) audioAction;
   final Function(List<UserSubmodel> users, List<UserSubmodel> favorites) peopleAction;
   final Function() clockAction;
   final CourseEnrollment courseEnrollment;
@@ -71,11 +73,15 @@ class SegmentImageSection extends StatefulWidget {
 
 class _SegmentImageSectionState extends State<SegmentImageSection> {
   CoachRequest _coachRequest;
+  List<Audio> _challengeAudios;
+  int _audioQty;
 
   @override
   void initState() {
+    _challengeAudios = widget.challenge == null ? null : AudioService.getNotDeletedAudios(widget.challenge.audios);
     _coachRequest = getSegmentCoachRequest(widget.segment.id);
     BlocProvider.of<DoneChallengeUsersBloc>(context).get(widget.segment.id, widget.userId);
+    _audioQty = _challengeAudios != null ? _challengeAudios.length : 0;
     super.initState();
   }
 
@@ -323,9 +329,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
       padding: const EdgeInsets.only(left: 20, top: 190),
       child: Column(children: [
         Row(children: [
-          GestureDetector(
-              onTap: () => widget.audioAction(widget.challenge.audios),
-              child: AudioSection(audioMessageQty: widget.challenge.audios != null ? widget.challenge.audios.length : 0)),
+          getAudioButton(),
           const verticalDivider.VerticalDivider(
             width: 30,
             height: 60,
@@ -350,6 +354,16 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
         ])
       ]),
     );
+  }
+
+  Widget getAudioButton() {
+    return BlocBuilder<ChallengeAudioBloc, ChallengeAudioState>(builder: (context, state) {
+      if (state is DeleteChallengeAudioSuccess) {
+        _audioQty = state.audios.length;
+      }
+      return GestureDetector(
+          onTap: () => widget.audioAction(_challengeAudios, widget.challenge), child: AudioSection(audioMessageQty: _audioQty));
+    });
   }
 
   Widget clockSection() {

@@ -81,4 +81,14 @@ class ChallengeRepository {
     }
     return null;
   }
+
+
+  static Future<void> markAudioAsDeleted(Challenge challenge, List<Audio> audios) async {
+    final DocumentReference reference = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('challenges')
+        .doc(challenge.id);
+    await reference.update({'audios': List<dynamic>.from(audios.map((audio) => audio.toJson()))});
+  }
 }

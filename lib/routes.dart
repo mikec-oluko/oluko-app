@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/challenge/challenge_audio_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_segment_bloc.dart';
 import 'package:oluko_app/blocs/class/class_subscription_bloc.dart';
@@ -15,9 +16,11 @@ import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
 import 'package:oluko_app/blocs/course/course_home_bloc.dart';
 import 'package:oluko_app/blocs/course/course_subscrption_bloc.dart';
 import 'package:oluko_app/blocs/course_category_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_audio_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
 import 'package:oluko_app/blocs/done_challenge_users_bloc.dart';
+import 'package:oluko_app/blocs/enrollment_audio_bloc.dart';
 import 'package:oluko_app/blocs/friends/chat_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/message_bloc.dart';
@@ -326,6 +329,9 @@ class Routes {
   final UserAudioBloc _userAudioBloc = UserAudioBloc();
   final ChallengeSegmentBloc _challengeSegmentBloc = ChallengeSegmentBloc();
   final KeyboardBloc _keyboardBloc = KeyboardBloc();
+  final CourseEnrollmentAudioBloc _courseEnrollmentAudioBloc = CourseEnrollmentAudioBloc();
+  final ChallengeAudioBloc _challengeAudioBloc = ChallengeAudioBloc();
+  final EnrollmentAudioBloc _enrollmentAudioBloc = EnrollmentAudioBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -563,6 +569,8 @@ class Routes {
         break;
       case RouteEnum.segmentDetail:
         providers = [
+          BlocProvider<CourseEnrollmentAudioBloc>.value(value: _courseEnrollmentAudioBloc),
+          BlocProvider<ChallengeAudioBloc>.value(value: _challengeAudioBloc),
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
           BlocProvider<MovementBloc>.value(value: _movementBloc),
           BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
@@ -661,6 +669,9 @@ class Routes {
         break;
       case RouteEnum.insideClass:
         providers = [
+          BlocProvider<ChallengeAudioBloc>.value(value: _challengeAudioBloc),
+          BlocProvider<CourseEnrollmentAudioBloc>.value(value: _courseEnrollmentAudioBloc),
+          BlocProvider<EnrollmentAudioBloc>.value(value: _enrollmentAudioBloc),
           BlocProvider<ClassBloc>.value(value: _classBloc),
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
           BlocProvider<MovementBloc>.value(value: _movementBloc),

@@ -35,7 +35,9 @@ class DoneChallengeUsersBloc extends Cubit<DoneChallengeUsersState> {
       List<UserSubmodel> favoriteUserList = [];
       if (challengesList != null) {
         challengesList.forEach((challenge) {
-          if (challenge.user != null && challenge.completedAt != null && !uniqueUserList.any((element) => element.id == challenge.user.id)) {
+          if (challenge.user != null &&
+              challenge.completedAt != null &&
+              !uniqueUserList.any((element) => element.id == challenge.user.id)) {
             uniqueUserList.add(challenge.user);
           }
         });
@@ -43,16 +45,19 @@ class DoneChallengeUsersBloc extends Cubit<DoneChallengeUsersState> {
         final Friend friendData = await FriendRepository.getUserFriendsByUserId(userId);
         final List<FriendModel> friends = friendData?.friends;
 
-        for (final friend in friends) {
-          if (friend.isFavorite) {
-            final index = uniqueUserList.map((user) => user.id).toList().indexOf(friend.id);
-            if (index != -1) {
-              final user = uniqueUserList[index];
-              final stories = await StoryRepository.getByUserId(user.id);
-              final UserStories userStories = UserStories(avatar: user.avatar, avatar_thumbnail: user.avatarThumbnail, id: user.id, name: user.firstName, stories: stories);
-              user.stories = userStories;
-              uniqueUserList.removeAt(index);
-              favoriteUserList.add(user);
+        if (friends != null) {
+          for (final friend in friends) {
+            if (friend.isFavorite) {
+              final index = uniqueUserList.map((user) => user.id).toList().indexOf(friend.id);
+              if (index != -1) {
+                final user = uniqueUserList[index];
+                final stories = await StoryRepository.getByUserId(user.id);
+                final UserStories userStories = UserStories(
+                    avatar: user.avatar, avatar_thumbnail: user.avatarThumbnail, id: user.id, name: user.firstName, stories: stories);
+                user.stories = userStories;
+                uniqueUserList.removeAt(index);
+                favoriteUserList.add(user);
+              }
             }
           }
         }
