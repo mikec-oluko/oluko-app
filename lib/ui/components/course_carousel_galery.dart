@@ -10,7 +10,8 @@ class CourseCarouselGallery extends StatefulWidget {
   final Function(int) onCourseChange;
   final Function(int) onCourseDeleted;
 
-  const CourseCarouselGallery({Key key, @required this.courseEnrollments, this.courseIndex, @required this.onCourseChange, @required this.onCourseDeleted})
+  const CourseCarouselGallery(
+      {Key key, @required this.courseEnrollments, this.courseIndex, @required this.onCourseChange, @required this.onCourseDeleted})
       : super(key: key);
 
   @override
@@ -47,15 +48,17 @@ class _CourseCarouselGalleryState extends State<CourseCarouselGallery> {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    fit: BoxFit.fill,
-                    image: NetworkImage(widget.courseEnrollments[i].course.image),
-                  ),
-                  borderRadius: const BorderRadius.all(Radius.circular(8)),
-                ),
-              ),
+              widget.courseEnrollments[i].course.image != null
+                  ? Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          fit: BoxFit.fill,
+                          image: NetworkImage(widget.courseEnrollments[i].course.image),
+                        ),
+                        borderRadius: const BorderRadius.all(Radius.circular(8)),
+                      ),
+                    )
+                  : SizedBox(),
               Positioned(
                 top: 0,
                 right: 0,
