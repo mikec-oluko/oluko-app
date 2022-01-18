@@ -32,11 +32,10 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class AssessmentVideos extends StatefulWidget {
-  const AssessmentVideos({this.isFirstTime, this.isForCoachPage = false, this.isFromProfile = false, Key key}) : super(key: key);
-
+  const AssessmentVideos({this.isFirstTime, this.isForCoachPage = false, this.assessmentsDone = false, Key key}) : super(key: key);
   final bool isFirstTime;
   final bool isForCoachPage;
-  final bool isFromProfile;
+  final bool assessmentsDone;
 
   @override
   _AssessmentVideosState createState() => _AssessmentVideosState();
@@ -190,7 +189,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                                     taskSubmissionsCompleted = taskSubmissionListState.taskSubmissions;
                                     final completedTask = taskSubmissionListState.taskSubmissions.length;
                                     var enabledTask = 0;
-                                    for (var i = 0; i < _assessment.tasks.length; i++) {
+                                    for (var i = 0; i < assessmentsTasksList.length; i++) {
                                       if (!OlukoPermissions.isAssessmentTaskDisabled(_user, i)) {
                                         enabledTask++;
                                       }
@@ -243,7 +242,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                                 height: 50,
                               ),
                       ])),
-                  !widget.isFromProfile && OlukoNeumorphism.isNeumorphismDesign
+                  widget.assessmentsDone && OlukoNeumorphism.isNeumorphismDesign
                       ? BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(
                           builder: (context, state) {
                             Widget contentToShow = SizedBox.shrink();

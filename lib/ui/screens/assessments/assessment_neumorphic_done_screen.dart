@@ -101,7 +101,7 @@ class AssessmentNeumorphicDoneScreen extends StatelessWidget {
                           Navigator.pop(context);
                           // TODO: UPDATE THE ROUTE
                           Navigator.popAndPushNamed(context, routeLabels[RouteEnum.assessmentVideos],
-                              arguments: {'isFirstTime': false, 'isForCoachPage': false, 'isFromProfile': true});
+                              arguments: {'isFirstTime': false, 'isForCoachPage': false});
                         },
                         child: Text(
                           'Go back to assessments',

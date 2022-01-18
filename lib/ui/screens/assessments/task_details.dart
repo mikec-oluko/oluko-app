@@ -462,7 +462,8 @@ class _TaskDetailsState extends State<TaskDetails> {
         if (Navigator.canPop(context)) {
           Navigator.pop(context);
         } else {
-          Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.assessmentVideos], arguments: {'isFirstTime': false});
+          Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.assessmentVideos],
+              arguments: {'isFirstTime': false, 'assessmentsDone': _tasks.length - widget.taskIndex == 1 ? true : false});
         }
       }
     }

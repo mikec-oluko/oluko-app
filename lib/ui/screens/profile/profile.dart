@@ -159,8 +159,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       setState(() {});
                       break;
                     default:
-                      Navigator.pushNamed(context, ProfileRoutes.returnRouteName(option.option),
-                          arguments: {'isFromProfile': true, 'isFirstTime': false});
+                      Navigator.pushNamed(context, ProfileRoutes.returnRouteName(option.option), arguments: {'isFirstTime': false});
                   }
                 }
               : () {},
