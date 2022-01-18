@@ -165,23 +165,28 @@ class _InsideClassesState extends State<InsideClass> {
         ? Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              OlukoNeumorphicPrimaryButton(
-                thinPadding: true,
-                title: OlukoLocalizations.get(context, 'start'),
-                onPressed: () {
-                  int segmentIndex =
-                      CourseEnrollmentService.getFirstUncompletedSegmentIndex(widget.courseEnrollment.classes[widget.classIndex]);
-                  if (segmentIndex == -1) {
-                    segmentIndex = 0;
-                  }
-                  Navigator.pushNamed(context, routeLabels[RouteEnum.segmentDetail], arguments: {
-                    'segmentIndex': segmentIndex,
-                    'classIndex': widget.classIndex,
-                    'courseEnrollment': widget.courseEnrollment,
-                    'courseIndex': widget.courseIndex,
-                    'fromChallenge': false
-                  });
-                },
+              Container(
+                height: 50,
+                width: ScreenUtils.width(context) - 40,
+                child: OlukoNeumorphicPrimaryButton(
+                  isExpanded: false,
+                  thinPadding: true,
+                  title: OlukoLocalizations.get(context, 'start'),
+                  onPressed: () {
+                    int segmentIndex =
+                        CourseEnrollmentService.getFirstUncompletedSegmentIndex(widget.courseEnrollment.classes[widget.classIndex]);
+                    if (segmentIndex == -1) {
+                      segmentIndex = 0;
+                    }
+                    Navigator.pushNamed(context, routeLabels[RouteEnum.segmentDetail], arguments: {
+                      'segmentIndex': segmentIndex,
+                      'classIndex': widget.classIndex,
+                      'courseEnrollment': widget.courseEnrollment,
+                      'courseIndex': widget.courseIndex,
+                      'fromChallenge': false
+                    });
+                  },
+                ),
               )
             ],
           )

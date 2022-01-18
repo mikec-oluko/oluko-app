@@ -165,7 +165,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                             padding: const EdgeInsets.only(bottom: 8),
                             child: widget.isForCoachPage && OlukoNeumorphism.isNeumorphismDesign
                                 ? Padding(
-                                    padding: EdgeInsets.only(right: MediaQuery.of(context).size.width / 3, top: 10, bottom: 10),
+                                    padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(horizontal: 10),
                                       child: Text(
@@ -246,9 +246,12 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                   !widget.isFromProfile && OlukoNeumorphism.isNeumorphismDesign
                       ? BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(
                           builder: (context, state) {
-                            if (state is AssessmentAssignmentSuccess && state.assessmentAssignment.completedAt != null) {
-                              return assessmentDoneBottomPanel(context);
+                            Widget contentToShow = SizedBox.shrink();
+                            if (state is AssessmentAssignmentSuccess &&
+                                (state.assessmentAssignment != null && state.assessmentAssignment.completedAt != null)) {
+                              contentToShow = assessmentDoneBottomPanel(context);
                             }
+                            return contentToShow;
                           },
                         )
                       : SizedBox.shrink(),
@@ -272,7 +275,15 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
             height: 60,
             child: OlukoNeumorphicPrimaryButton(
               title: OlukoLocalizations.get(context, 'done'),
-              onPressed: () {},
+              onPressed: () {
+                if (_controller != null) {
+                  _controller.pause();
+                }
+                Navigator.pushNamed(
+                  context,
+                  routeLabels[RouteEnum.assessmentNeumorphicDone],
+                );
+              },
               isExpanded: false,
             ),
           ),
@@ -355,7 +366,14 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                       ));
                 });
           } else {
-            return Padding(padding: const EdgeInsets.all(50.0), child: OlukoCircularProgressIndicator());
+            return Padding(
+                padding: const EdgeInsets.all(50.0),
+                child: OlukoNeumorphism.isNeumorphismDesign
+                    ? Container(
+                        color:
+                            OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
+                        child: OlukoCircularProgressIndicator())
+                    : OlukoCircularProgressIndicator());
           }
         }),
       ],

@@ -63,6 +63,7 @@ import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
 import 'package:oluko_app/ui/screens/app_plans.dart';
+import 'package:oluko_app/ui/screens/assessments/assessment_neumorphic_done_screen.dart';
 import 'package:oluko_app/ui/screens/assessments/assessment_videos.dart';
 import 'package:oluko_app/ui/screens/assessments/self_recording.dart';
 import 'package:oluko_app/ui/screens/assessments/self_recording_preview.dart';
@@ -195,7 +196,8 @@ enum RouteEnum {
   story,
   hiFivePage,
   userChallengeDetail,
-  homeLongPress
+  homeLongPress,
+  assessmentNeumorphicDone
 }
 
 Map<RouteEnum, String> routeLabels = {
@@ -249,7 +251,8 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.story: '/story',
   RouteEnum.hiFivePage: '/hi-five-page',
   RouteEnum.userChallengeDetail: '/user-challenge-detail',
-  RouteEnum.homeLongPress: 'home_long_press'
+  RouteEnum.homeLongPress: 'home_long_press',
+  RouteEnum.assessmentNeumorphicDone: 'assessment_neumorphic_done'
 };
 
 RouteEnum getEnumFromRouteString(String route) {
@@ -652,11 +655,12 @@ class Routes {
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = CourseMarketing(
-            course: argumentsToAdd['course'] as Course,
-            fromCoach: argumentsToAdd['fromCoach'] as bool,
-            isCoachRecommendation: argumentsToAdd['isCoachRecommendation'] as bool,
-            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
-            courseIndex: argumentsToAdd['courseIndex'] as int,);
+          course: argumentsToAdd['course'] as Course,
+          fromCoach: argumentsToAdd['fromCoach'] as bool,
+          isCoachRecommendation: argumentsToAdd['isCoachRecommendation'] as bool,
+          courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
+          courseIndex: argumentsToAdd['courseIndex'] as int,
+        );
         break;
       case RouteEnum.enrolledClass:
         providers = [
@@ -680,9 +684,10 @@ class Routes {
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = InsideClass(
-            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
-            classIndex: argumentsToAdd['classIndex'] as int,
-            courseIndex: argumentsToAdd['courseIndex'] as int,);
+          courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
+          classIndex: argumentsToAdd['classIndex'] as int,
+          courseIndex: argumentsToAdd['courseIndex'] as int,
+        );
         break;
       case RouteEnum.userChallengeDetail:
         providers = [
@@ -903,6 +908,9 @@ class Routes {
           courseEnrollments: argumentsToAdd['courseEnrollments'] as List<CourseEnrollment>,
           index: argumentsToAdd['index'] != null ? argumentsToAdd['index'] as int : 0,
         );
+        break;
+      case RouteEnum.assessmentNeumorphicDone:
+        newRouteView = AssessmentNeumorphicDoneScreen();
         break;
       default:
         newRouteView = MainPage();
