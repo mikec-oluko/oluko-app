@@ -78,7 +78,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
             height: OlukoNeumorphism.isNeumorphismDesign
                 ? MediaQuery.of(context).size.height < 700
                     ? MediaQuery.of(context).size.height / 2.7
-                    : MediaQuery.of(context).size.height / 3.3
+                    : MediaQuery.of(context).size.height / 3.5
                 : null,
             child: Padding(
                 padding: const EdgeInsets.all(OlukoNeumorphism.isNeumorphismDesign ? 20 : 10),
@@ -151,58 +151,56 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                   ]),
                 // ),
                 Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 5),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        //PROFILE NAME AND LASTNAME
-                        if (_isOwner) userInfoUnlocked(location) else canShowDetails ? userInfoUnlocked(location) : userInfoLocked(),
-                      ],
-                    ),
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 5),
+                        child: _isOwner
+                            ? userInfoUnlocked(location)
+                            : canShowDetails
+                                ? userInfoUnlocked(location)
+                                : userInfoLocked(),
+                      ),
+                      if (!_isOwner && widget.actualRoute == ActualProfileRoute.userProfile)
+                        Expanded(
+                          child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
+                            listener: (context, hiFiveSendState) {
+                              if (hiFiveSendState is HiFiveSendSuccess) {
+                                AppMessages.clearAndShowSnackbarTranslated(
+                                    context, hiFiveSendState.hiFive ? 'hiFiveSent' : 'hiFiveRemoved');
+                              }
+                              BlocProvider.of<HiFiveReceivedBloc>(context)
+                                  .get(context, _authState.user.id, widget.userToDisplayInformation.id);
+                            },
+                            child: BlocBuilder<HiFiveReceivedBloc, HiFiveReceivedState>(builder: (context, HiFiveReceivedState) {
+                              return HiFiveReceivedState is HiFiveReceivedSuccess
+                                  ? TextButton(
+                                      style: TextButton.styleFrom(
+                                        padding: EdgeInsets.zero,
+                                      ),
+                                      onPressed: () {
+                                        BlocProvider.of<HiFiveSendBloc>(context).set(
+                                          context,
+                                          _authState.user.id,
+                                          widget.userToDisplayInformation.id,
+                                        );
+                                      },
+                                      child: Image.asset(
+                                        HiFiveReceivedState.hiFive ? 'assets/profile/hiFive_selected.png' : 'assets/profile/hiFive.png',
+                                        colorBlendMode: BlendMode.lighten,
+                                        scale: 4,
+                                      ),
+                                    )
+                                  : const SizedBox.shrink();
+                            }),
+                          ),
+                        )
+                      else
+                        const SizedBox.shrink(),
+                    ],
                   ),
                 ),
                 //HIFIVE BUTTON
-                if (!_isOwner && widget.actualRoute == ActualProfileRoute.userProfile)
-                  Expanded(
-                    child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
-                      listener: (context, hiFiveSendState) {
-                        if (hiFiveSendState is HiFiveSendSuccess) {
-                          AppMessages.clearAndShowSnackbarTranslated(context, hiFiveSendState.hiFive ? 'hiFiveSent' : 'hiFiveRemoved');
-                        }
-                        BlocProvider.of<HiFiveReceivedBloc>(context).get(context, _authState.user.id, widget.userToDisplayInformation.id);
-                      },
-                      child: BlocBuilder<HiFiveReceivedBloc, HiFiveReceivedState>(builder: (context, HiFiveReceivedState) {
-                        return HiFiveReceivedState is HiFiveReceivedSuccess
-                            ? Container(
-                                height: 50,
-                                width: 50,
-                                child: TextButton(
-                                    style: TextButton.styleFrom(
-                                      padding: EdgeInsets.zero,
-                                    ),
-                                    onPressed: () {
-                                      BlocProvider.of<HiFiveSendBloc>(context).set(
-                                        context,
-                                        _authState.user.id,
-                                        widget.userToDisplayInformation.id,
-                                      );
-                                    },
-                                    child: Image.asset(
-                                      HiFiveReceivedState.hiFive ? 'assets/profile/hiFive_selected.png' : 'assets/profile/hiFive.png',
-                                      fit: BoxFit.cover,
-                                      colorBlendMode: BlendMode.lighten,
-                                      height: 60,
-                                      width: 60,
-                                    )),
-                              )
-                            : const SizedBox.shrink();
-                      }),
-                    ),
-                  )
-                else
-                  const SizedBox.shrink(),
               ],
             ),
           ],
@@ -415,12 +413,15 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
       child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.start, children: [
         Padding(
           padding: const EdgeInsets.only(top: 5),
-          child: Text(
-            '${widget.userToDisplayInformation.firstName} ${widget.userToDisplayInformation.lastName}',
-            style: OlukoFonts.olukoBigFont(
-                customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary,
-                custoFontWeight: FontWeight.w500),
-            overflow: TextOverflow.ellipsis,
+          child: Padding(
+            padding: OlukoNeumorphism.isNeumorphismDesign ? EdgeInsets.only(left: 10.0) : EdgeInsets.zero,
+            child: Text(
+              '${widget.userToDisplayInformation.firstName} ${widget.userToDisplayInformation.lastName}',
+              style: OlukoFonts.olukoBigFont(
+                  customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary,
+                  custoFontWeight: FontWeight.w500),
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         ),
         const SizedBox(

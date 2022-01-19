@@ -107,7 +107,12 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Padding buildOptionsList() {
     return Padding(
-      padding: EdgeInsets.only(top: OlukoNeumorphism.isNeumorphismDesign ? ScreenUtils.height(context) / 2.7 : 170),
+      padding: EdgeInsets.only(
+          top: OlukoNeumorphism.isNeumorphismDesign
+              ? ScreenUtils.height(context) < 700
+                  ? ScreenUtils.height(context) / 2.65
+                  : ScreenUtils.height(context) / 3
+              : 170),
       child: ListView.builder(
           padding: EdgeInsets.zero,
           shrinkWrap: true,
