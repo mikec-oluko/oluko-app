@@ -40,11 +40,10 @@ class _RecordedViewState extends State<RecordedView> {
       padding: const EdgeInsets.all(10),
       child: Row(
         children: [
+          SizedBox(width: 5),
           playButton(),
           SizedBox(width: 15),
-          Container(
-              width: 220,
-              child: CourseProgressBar(value: _completedPercentage)),
+          Container(width: 200, child: CourseProgressBar(value: _completedPercentage)),
           Expanded(child: SizedBox()),
           Padding(
               padding: EdgeInsets.only(right: 15),
@@ -63,10 +62,15 @@ class _RecordedViewState extends State<RecordedView> {
                   onTap: () => widget.panelController.open(),
                   child: Padding(
                       padding: EdgeInsets.only(right: 10),
-                      child: Image.asset(
-                        'assets/courses/bin.png',
-                        scale: 16,
-                      ))),
+                      child: !OlukoNeumorphism.isNeumorphismDesign
+                          ? Image.asset(
+                              'assets/courses/bin.png',
+                              scale: 16,
+                            )
+                          : Image.asset(
+                              'assets/neumorphic/bin.png',
+                              scale: 4,
+                            ))),
         ],
       ),
     );
@@ -82,8 +86,7 @@ class _RecordedViewState extends State<RecordedView> {
             'assets/courses/green_circle.png',
             scale: 5.5,
           ),
-          Icon(_isPlaying ? Icons.pause : Icons.play_arrow,
-              size: 26, color: OlukoColors.black)
+          Icon(_isPlaying ? Icons.pause : Icons.play_arrow, size: 22, color: OlukoColors.black)
         ]));
   }
 
@@ -119,8 +122,7 @@ class _RecordedViewState extends State<RecordedView> {
       audioPlayer.onAudioPositionChanged.listen((duration) {
         setState(() {
           _currentDuration = duration.inMicroseconds;
-          _completedPercentage =
-              _currentDuration.toDouble() / _totalDuration.toDouble();
+          _completedPercentage = _currentDuration.toDouble() / _totalDuration.toDouble();
         });
       });
     } else {
