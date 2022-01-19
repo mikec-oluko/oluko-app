@@ -27,7 +27,6 @@ class _State extends State<ProgressBar> {
           ),
         ),
         LinearProgressIndicator(
-          // color: OlukoColors.primary,
           value: widget.progress,
         )
       ]),

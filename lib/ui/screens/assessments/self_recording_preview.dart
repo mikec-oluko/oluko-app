@@ -297,27 +297,6 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
     return Column(children: [
       ConstrainedBox(
           constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height - 100), child: Stack(children: showVideoPlayer())),
-      // Padding(
-      //     padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-      //     child: Row(children: [
-      //       OlukoPrimaryButton(
-      //         title: OlukoLocalizations.get(context, 'done'),
-      //         onPressed: () async {
-      //           _controller.pause();
-      //           if (_taskSubmission == null) {
-      //             BlocProvider.of<TaskSubmissionBloc>(context)
-      //                 .createTaskSubmission(_assessmentAssignment, _task, widget.isPublic, widget.isLastTask);
-      //           } else {
-      //             BlocProvider.of<VideoBloc>(context).createVideo(context, File(widget.filePath), 3.0 / 4.0, _taskSubmission.id);
-      //           }
-      //           /*Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails],
-      //               arguments: {
-      //                 'taskIndex': widget.taskIndex,
-      //                 'isLastTask': widget.isLastTask
-      //               });*/
-      //         },
-      //       )
-      //     ]))
     ]);
   }
 }

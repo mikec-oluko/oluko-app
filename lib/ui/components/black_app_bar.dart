@@ -143,7 +143,6 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
       preferredSize: Size.fromHeight(kToolbarHeight),
       child: SafeArea(
         child: AppBar(
-          // actions: actions,
           automaticallyImplyLeading: false,
           backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
           bottom: PreferredSize(preferredSize: Size.fromHeight(kToolbarHeight), child: neumorphicDivider(context)),
@@ -169,9 +168,6 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                                 alignment: Alignment.centerLeft,
                                 child: OlukoNeumorphicCircleButton(onPressed: widget.onPressed),
                               ),
-                              // Expanded(
-                              //   child: SizedBox(),
-                              // ),
                               Expanded(
                                 child: Align(
                                   alignment: Alignment.center,
@@ -183,9 +179,6 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                                   ),
                                 ),
                               ),
-                              // Expanded(
-                              //   child: SizedBox(),
-                              // ),
                             ],
                           ),
                         )
