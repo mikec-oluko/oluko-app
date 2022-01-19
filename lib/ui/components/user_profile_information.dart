@@ -145,15 +145,17 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                       getVisibility(widget, context, _isOwner),
                     ]),
                   ),
-                Padding(
-                  padding: const EdgeInsets.only(left: OlukoNeumorphism.isNeumorphismDesign ? 20 : 10),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      //PROFILE NAME AND LASTNAME
-                      if (_isOwner) userInfoUnlocked(location) else canShowDetails ? userInfoUnlocked(location) : userInfoLocked(),
-                    ],
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 5),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        //PROFILE NAME AND LASTNAME
+                        if (_isOwner) userInfoUnlocked(location) else canShowDetails ? userInfoUnlocked(location) : userInfoLocked(),
+                      ],
+                    ),
                   ),
                 ),
                 //HIFIVE BUTTON
@@ -202,7 +204,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
         ),
         if (OlukoNeumorphism.isNeumorphismDesign)
           const Padding(
-            padding: EdgeInsets.symmetric(vertical: 20),
+            padding: EdgeInsets.symmetric(vertical: 10),
             child: OlukoNeumorphicDivider(
               isFadeOut: true,
             ),
@@ -267,7 +269,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                     ]),
                   ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 10.0),
+                  padding: const EdgeInsets.only(left: 5.0),
                   child: Row(
                     children: [
                       //PROFILE NAME AND LASTNAME
@@ -407,7 +409,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
       constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width / 2),
       child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.start, children: [
         Padding(
-          padding: const EdgeInsets.only(left: 10.0).copyWith(top: 5),
+          padding: const EdgeInsets.only(top: 5),
           child: Text(
             '${widget.userToDisplayInformation.firstName} ${widget.userToDisplayInformation.lastName}',
             style: OlukoFonts.olukoBigFont(

@@ -106,9 +106,12 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Padding buildOptionsList() {
     return Padding(
-      padding: EdgeInsets.only(top: OlukoNeumorphism.isNeumorphismDesign ? MediaQuery.of(context).size.height / 3 : 170),
+      padding: EdgeInsets.only(top: OlukoNeumorphism.isNeumorphismDesign ? MediaQuery.of(context).size.height / 2.8 : 170),
       child: ListView.builder(
-          itemCount: ProfileOptions.profileOptions.length, itemBuilder: (_, index) => profileOptions(ProfileOptions.profileOptions[index])),
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          itemCount: ProfileOptions.profileOptions.length,
+          itemBuilder: (_, index) => profileOptions(ProfileOptions.profileOptions[index])),
     );
   }
 

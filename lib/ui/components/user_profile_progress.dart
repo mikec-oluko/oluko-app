@@ -25,28 +25,38 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
   IntrinsicHeight buildUserNeumorphicStatistics() {
     return IntrinsicHeight(
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              profileNeumorphicAccomplishments(
-                  achievementTitleKey: 'challengesCompleted', achievementValue: widget.challengesCompleted, color: OlukoColors.white),
-              profileNeumorphicAccomplishments(
-                  achievementTitleKey: 'classesCompleted', achievementValue: widget.classesCompleted, color: OlukoColors.white),
-            ],
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  profileNeumorphicAccomplishments(
+                      achievementTitleKey: 'challengesCompleted', achievementValue: widget.challengesCompleted, color: OlukoColors.white),
+                  profileNeumorphicAccomplishments(
+                      achievementTitleKey: 'classesCompleted', achievementValue: widget.classesCompleted, color: OlukoColors.white),
+                ],
+              ),
+            ),
           ),
-          profileVerticalDivider(isNeumorphic: true),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              profileNeumorphicAccomplishments(
-                  achievementTitleKey: 'coursesCompleted', achievementValue: widget.coursesCompleted, color: OlukoColors.white),
-              const SizedBox(
-                height: 40,
-              )
-            ],
+          Align(child: profileVerticalDivider(isNeumorphic: true)),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 20).copyWith(top: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  profileNeumorphicAccomplishments(
+                      achievementTitleKey: 'coursesCompleted', achievementValue: widget.coursesCompleted, color: OlukoColors.white),
+                  const SizedBox(
+                    height: 40,
+                  )
+                ],
+              ),
+            ),
           )
         ],
       ),
@@ -82,7 +92,7 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
     return VerticalDivider(
       color: isNeumorphic ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.white,
       thickness: 1,
-      indent: isNeumorphic ? 10 : 20,
+      indent: isNeumorphic ? 5 : 20,
       endIndent: 6,
       width: 1,
     );
@@ -130,7 +140,7 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
             width: 5,
           ),
           SizedBox(
-            width: 80,
+            width: 60,
             child: Text(
               OlukoLocalizations.get(context, achievementTitleKey),
               style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w400),
