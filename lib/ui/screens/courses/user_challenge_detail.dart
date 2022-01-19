@@ -7,6 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/audio_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/challenge/panel_audio_bloc.dart';
 import 'package:oluko_app/blocs/class/class_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/done_challenge_users_bloc.dart';
@@ -65,14 +66,12 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
 
   //audio
   bool audioRecorded;
-  bool submitted;
   final SoundRecorder recorder = SoundRecorder();
 
   @override
   void initState() {
     super.initState();
     audioRecorded = false;
-    submitted = false;
     recorder.init();
     BlocProvider.of<DoneChallengeUsersBloc>(context).get(widget.challenge.segmentId, widget.userRequested.id);
   }
@@ -207,9 +206,7 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
               OlukoPrimaryButton(
                 title: OlukoLocalizations.get(context, 'yes'),
                 onPressed: () {
-                  setState(() {
-                    audioRecorded = false;
-                  });
+                  BlocProvider.of<PanelAudioBloc>(context).deleteAudio();
                   panelController.close();
                 },
               )
@@ -269,29 +266,14 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
             ]),
             ChallengeDetailSection(segment: _segment),
             ChallengeAudioSection(
-              audioRecorded: audioRecorded,
-              submitted: submitted,
+              user: _user,
+              challengeId: widget.challenge.id,
               recorder: recorder,
               userName: widget.userRequested.firstName,
-              onSaveAudioPressed: _saveAudio,
               panelController: panelController,
-              onRecordCompleted: _onRecordCompleted,
             )
           ])),
     ]);
-  }
-
-  _saveAudio() {
-    BlocProvider.of<AudioBloc>(context)..saveAudio(File(recorder.audioUrl), _user, widget.challenge.id);
-    setState(() {
-      submitted = true;
-    });
-  }
-
-  _onRecordCompleted() {
-    setState(() {
-      audioRecorded = true;
-    });
   }
 
   _peopleAction(List<UserSubmodel> users, List<UserSubmodel> favorites) {

@@ -8,6 +8,7 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_audio_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_segment_bloc.dart';
+import 'package:oluko_app/blocs/challenge/panel_audio_bloc.dart';
 import 'package:oluko_app/blocs/class/class_subscription_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_audio_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_introduction_video_bloc.dart';
@@ -332,6 +333,7 @@ class Routes {
   final CourseEnrollmentAudioBloc _courseEnrollmentAudioBloc = CourseEnrollmentAudioBloc();
   final ChallengeAudioBloc _challengeAudioBloc = ChallengeAudioBloc();
   final EnrollmentAudioBloc _enrollmentAudioBloc = EnrollmentAudioBloc();
+  final PanelAudioBloc _panelAudioBloc = PanelAudioBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -652,11 +654,12 @@ class Routes {
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = CourseMarketing(
-            course: argumentsToAdd['course'] as Course,
-            fromCoach: argumentsToAdd['fromCoach'] as bool,
-            isCoachRecommendation: argumentsToAdd['isCoachRecommendation'] as bool,
-            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
-            courseIndex: argumentsToAdd['courseIndex'] as int,);
+          course: argumentsToAdd['course'] as Course,
+          fromCoach: argumentsToAdd['fromCoach'] as bool,
+          isCoachRecommendation: argumentsToAdd['isCoachRecommendation'] as bool,
+          courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
+          courseIndex: argumentsToAdd['courseIndex'] as int,
+        );
         break;
       case RouteEnum.enrolledClass:
         providers = [
@@ -683,12 +686,14 @@ class Routes {
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = InsideClass(
-            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
-            classIndex: argumentsToAdd['classIndex'] as int,
-            courseIndex: argumentsToAdd['courseIndex'] as int,);
+          courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
+          classIndex: argumentsToAdd['classIndex'] as int,
+          courseIndex: argumentsToAdd['courseIndex'] as int,
+        );
         break;
       case RouteEnum.userChallengeDetail:
         providers = [
+          BlocProvider<PanelAudioBloc>.value(value: _panelAudioBloc),
           BlocProvider<ClassBloc>.value(value: _classBloc),
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
           BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
