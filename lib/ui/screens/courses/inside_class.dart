@@ -37,6 +37,7 @@ import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/overlay_video_preview.dart';
 import 'package:oluko_app/ui/components/uploading_modal_loader.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/screens/courses/audio_dialog_content.dart';
 import 'package:oluko_app/ui/screens/courses/class_detail_section.dart';
@@ -115,61 +116,74 @@ class _InsideClassesState extends State<InsideClass> {
 
   Widget form() {
     return Form(
-        key: _formKey,
-        child: Scaffold(body: BlocBuilder<MovementBloc, MovementState>(builder: (context, movementState) {
-          if (movementState is GetAllSuccess) {
-            _movements = movementState.movements;
-            return BlocBuilder<CoachAudioBloc, CoachAudioState>(builder: (context, coachState) {
-              if (coachState is CoachesByAudiosSuccess) {
-                _coaches = coachState.coaches;
-                return Stack(
-                  children: [
-                    SlidingUpPanel(
-                        controller: panelController,
-                        borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-                        minHeight: 5,
-                        collapsed: Container(
-                          color: Colors.black,
+      key: _formKey,
+      child: Scaffold(
+        body: BlocBuilder<MovementBloc, MovementState>(
+          builder: (context, movementState) {
+            if (movementState is GetAllSuccess) {
+              _movements = movementState.movements;
+              return BlocBuilder<CoachAudioBloc, CoachAudioState>(
+                builder: (context, coachState) {
+                  if (coachState is CoachesByAudiosSuccess) {
+                    _coaches = coachState.coaches;
+                    return Stack(
+                      children: [
+                        SlidingUpPanel(
+                          controller: panelController,
+                          borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                          minHeight: 5,
+                          collapsed: Container(
+                            color: Colors.black,
+                          ),
+                          panel: classDetailSection(),
+                          body: Container(
+                            color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.grayColorFadeBottom : Colors.black,
+                            child: classInfoSection(coachState.coaches),
+                          ),
                         ),
-                        panel: classDetailSection(),
-                        body: Container(
-                          color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.grayColorFadeBottom : Colors.black,
-                          child: classInfoSection(coachState.coaches),
-                        )),
-                    slidingUpPanelComponent(context)
-                  ],
-                );
-              } else {
-                return SizedBox();
-              }
-            });
-          } else {
-            return SizedBox();
-          }
-        })));
+                        slidingUpPanelComponent(context)
+                      ],
+                    );
+                  } else {
+                    return const SizedBox();
+                  }
+                },
+              );
+            } else {
+              return const SizedBox();
+            }
+          },
+        ),
+      ),
+    );
   }
 
   Widget showVideoPlayer(String videoUrl) {
     List<Widget> widgets = [];
     if (_controller == null) {
-      widgets.add(Center(child: CircularProgressIndicator()));
+      widgets.add(const Center(child: CircularProgressIndicator()));
     }
-    widgets.add(OlukoVideoPlayer(
+    widgets.add(
+      OlukoVideoPlayer(
         videoUrl: videoUrl,
         autoPlay: false,
         whenInitialized: (ChewieController chewieController) => this.setState(() {
-              _controller = chewieController;
-            })));
+          _controller = chewieController;
+        }),
+      ),
+    );
 
     return ConstrainedBox(
-        constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).orientation == Orientation.portrait
-                ? ScreenUtils.height(context) / 4
-                : ScreenUtils.height(context) / 1.5,
-            minHeight: MediaQuery.of(context).orientation == Orientation.portrait
-                ? ScreenUtils.height(context) / 4
-                : ScreenUtils.height(context) / 1.5),
-        child: Container(height: 400, child: Stack(children: widgets)));
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).orientation == Orientation.portrait
+            ? ScreenUtils.height(context) / 4
+            : ScreenUtils.height(context) / 1.5,
+        minHeight: MediaQuery.of(context).orientation == Orientation.portrait
+            ? ScreenUtils.height(context) / 4
+            : ScreenUtils.height(context) / 1.5,
+      ),
+      child: SizedBox(height: 400, child: Stack(children: widgets)),
+    );
   }
 
   Widget _startButton() {
@@ -203,7 +217,6 @@ class _InsideClassesState extends State<InsideClass> {
             ],
           )
         : Row(
-            mainAxisSize: MainAxisSize.max,
             children: [
               OlukoPrimaryButton(
                 title: OlukoLocalizations.get(context, 'start'),
@@ -227,14 +240,14 @@ class _InsideClassesState extends State<InsideClass> {
   }
 
   Widget buildChallengeSection() {
-    List<SegmentSubmodel> challenges = getChallenges();
-    if (challenges.length > 0) {
+    final List<SegmentSubmodel> challenges = getChallenges();
+    if (challenges.isNotEmpty) {
       return ChallengeSection(
         addTitle: true,
         challenges: challenges,
       );
     } else {
-      return SizedBox();
+      return const SizedBox();
     }
   }
 
@@ -260,79 +273,111 @@ class _InsideClassesState extends State<InsideClass> {
   }
 
   Widget classDetailSection() {
-    return BlocBuilder<SegmentBloc, SegmentState>(builder: (context, segmentState) {
-      if (segmentState is GetSegmentsSuccess) {
-        return ClassDetailSection(classObj: _class, movements: _movements, segments: segmentState.segments);
-      } else {
-        return Container(
+    return BlocBuilder<SegmentBloc, SegmentState>(
+      builder: (context, segmentState) {
+        if (segmentState is GetSegmentsSuccess) {
+          return ClassDetailSection(classObj: _class, movements: _movements, segments: segmentState.segments);
+        } else {
+          return Container(
             padding: const EdgeInsets.symmetric(horizontal: 25),
             decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/courses/gray_background.png'),
-                  fit: BoxFit.cover,
-                ),
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
-            child: segmentState is LoadingSegment ? OlukoCircularProgressIndicator() : const SizedBox());
-      }
-    });
+              image: DecorationImage(
+                image: AssetImage('assets/courses/gray_background.png'),
+                fit: BoxFit.cover,
+              ),
+              borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+            ),
+            child: segmentState is LoadingSegment ? OlukoCircularProgressIndicator() : const SizedBox(),
+          );
+        }
+      },
+    );
   }
 
   Widget classInfoSection(List<UserResponse> coaches) {
     final String _classImage = widget.courseEnrollment.classes[widget.classIndex].image;
-    return ListView(children: [
-      Padding(
+    return ListView(
+      children: [
+        Padding(
           padding: const EdgeInsets.only(bottom: 3),
           child: OverlayVideoPreview(
             video: _class.video,
             showBackButton: true,
-            bottomWidgets: [
-              BlocBuilder<SubscribedCourseUsersBloc, SubscribedCourseUsersState>(builder: (context, subscribedCourseUsersState) {
-                if (subscribedCourseUsersState is SubscribedCourseUsersSuccess) {
-                  final int favorites =
-                      subscribedCourseUsersState.favoriteUsers != null ? subscribedCourseUsersState.favoriteUsers.length : 0;
-                  final int normalUsers = subscribedCourseUsersState.users != null ? subscribedCourseUsersState.users.length : 0;
-                  final int qty = favorites + normalUsers;
-                  return CourseInfoSection(
-                      onAudioPressed: () => _coaches.isNotEmpty ? _audioAction() : null,
-                      peopleQty: qty,
-                      onPeoplePressed: () => _peopleAction(subscribedCourseUsersState.users, subscribedCourseUsersState.favoriteUsers),
-                      audioMessageQty: _audioQty,
-                      image: OlukoNeumorphism.isNeumorphismDesign ? _classImage : widget.courseEnrollment.course.image);
-                } else {
-                  return CourseInfoSection(
-                      onAudioPressed: () => _coaches.isNotEmpty ? _audioAction() : null,
-                      peopleQty: 0,
-                      audioMessageQty: _audioQty,
-                      image: OlukoNeumorphism.isNeumorphismDesign ? _classImage : widget.courseEnrollment.course.image);
-                }
-              })
-            ],
+            audioWidget: OlukoNeumorphism.isNeumorphismDesign ? _getAudioWidget() : null,
+            bottomWidgets: [_getCourseInfoSection(_classImage)],
             onBackPressed: () {
               Navigator.pop(context);
-              Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.root], arguments: {
-                'index': widget.courseIndex,
-                'classIndex': widget.classIndex,
-              });
+              Navigator.pushReplacementNamed(
+                context,
+                routeLabels[RouteEnum.root],
+                arguments: {
+                  'index': widget.courseIndex,
+                  'classIndex': widget.classIndex,
+                },
+              );
             },
-          )),
-      Padding(
-          padding: EdgeInsets.only(right: 15, left: 15, top: 25),
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              child: OlukoNeumorphism.isNeumorphismDesign
-                  ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(right: 15, left: 15, top: 25),
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: OlukoNeumorphism.isNeumorphismDesign
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                       Padding(
-                          padding: const EdgeInsets.only(top: 15.0),
-                          child: Text(
-                            _class.name,
-                            style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
-                          )),
+                        padding: const EdgeInsets.only(top: 15.0),
+                        child: Text(
+                          _class.name,
+                          style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
+                        ),
+                      ),
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 10.0),
                         child: Text(
                           widget.courseEnrollment.course.name,
                           style: OlukoFonts.olukoMediumFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.yellow),
                         ),
+                      ),
+                      Row(
+                        children: [
+                          BlocBuilder<SubscribedCourseUsersBloc, SubscribedCourseUsersState>(
+                            builder: (context, subscribedCourseUsersState) {
+                              if (subscribedCourseUsersState is SubscribedCourseUsersSuccess) {
+                                final int favorites =
+                                    subscribedCourseUsersState.favoriteUsers != null ? subscribedCourseUsersState.favoriteUsers.length : 0;
+                                final int normalUsers =
+                                    subscribedCourseUsersState.users != null ? subscribedCourseUsersState.users.length : 0;
+                                final int qty = favorites + normalUsers;
+                                return GestureDetector(
+                                  onTap: () => _peopleAction(subscribedCourseUsersState.users, subscribedCourseUsersState.favoriteUsers),
+                                  child: Text(
+                                    '$qty+',
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+                                  ),
+                                );
+                              } else {
+                                return const Text(
+                                  '0+',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+                                );
+                              }
+                            },
+                          ),
+                          const SizedBox(
+                            width: 8,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10.0),
+                            child: Text(
+                              widget.courseEnrollment.course.name,
+                              style: OlukoFonts.olukoMediumFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+                            ),
+                          ),
+                        ],
                       ),
                       Padding(
                         padding: const EdgeInsets.all(5.0),
@@ -343,14 +388,17 @@ class _InsideClassesState extends State<InsideClass> {
                         child: Text(
                           TimeConverter.toClassProgress(widget.classIndex, widget.courseEnrollment.classes.length, context),
                           style: OlukoFonts.olukoMediumFont(
-                              custoFontWeight: FontWeight.normal,
-                              customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.yellow : OlukoColors.primary),
+                            custoFontWeight: FontWeight.normal,
+                            customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.yellow : OlukoColors.primary,
+                          ),
                         ),
                       ),
                       Padding(
-                          padding: const EdgeInsets.only(top: 10.0),
-                          child: CourseProgressBar(
-                              value: CourseEnrollmentService.getClassProgress(widget.courseEnrollment, widget.classIndex))),
+                        padding: const EdgeInsets.only(top: 10.0),
+                        child: CourseProgressBar(
+                          value: CourseEnrollmentService.getClassProgress(widget.courseEnrollment, widget.classIndex),
+                        ),
+                      ),
                       (() {
                         // your code here
                         if (_class.description != null) {
@@ -362,20 +410,24 @@ class _InsideClassesState extends State<InsideClass> {
                             ),
                           );
                         } else {
-                          return SizedBox();
+                          return const SizedBox();
                         }
                       }()),
                       buildChallengeSection(),
                       classMovementSection(),
-                    ])
-                  : Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    ],
+                  )
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                       _startButton(),
                       Padding(
-                          padding: const EdgeInsets.only(top: 15.0),
-                          child: Text(
-                            _class.name,
-                            style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
-                          )),
+                        padding: const EdgeInsets.only(top: 15.0),
+                        child: Text(
+                          _class.name,
+                          style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
+                        ),
+                      ),
                       Padding(
                         padding: const EdgeInsets.only(top: 10.0, right: 10),
                         child: Text(
@@ -384,9 +436,11 @@ class _InsideClassesState extends State<InsideClass> {
                         ),
                       ),
                       Padding(
-                          padding: const EdgeInsets.only(top: 10.0),
-                          child: CourseProgressBar(
-                              value: CourseEnrollmentService.getClassProgress(widget.courseEnrollment, widget.classIndex))),
+                        padding: const EdgeInsets.only(top: 10.0),
+                        child: CourseProgressBar(
+                          value: CourseEnrollmentService.getClassProgress(widget.courseEnrollment, widget.classIndex),
+                        ),
+                      ),
                       (() {
                         // your code here
                         if (_class.description != null) {
@@ -398,13 +452,17 @@ class _InsideClassesState extends State<InsideClass> {
                             ),
                           );
                         } else {
-                          return SizedBox();
+                          return const SizedBox();
                         }
                       }()),
                       buildChallengeSection(),
                       classMovementSection(),
-                    ]))),
-    ]);
+                    ],
+                  ),
+          ),
+        ),
+      ],
+    );
   }
 
   BlocListener<InsideClassContentBloc, InsideClassContentState> slidingUpPanelComponent(BuildContext context) {
@@ -440,7 +498,7 @@ class _InsideClassesState extends State<InsideClass> {
             _buttonController.open();
 
             _contentForPanel = ModalAudio(
-              panelController: _buttonController,
+                panelController: _buttonController,
                 users: _coaches,
                 audios: _audios,
                 onAudioPressed: (int index, Challenge challenge) => _onAudioDeleted(index, challenge),
@@ -469,5 +527,76 @@ class _InsideClassesState extends State<InsideClass> {
 
   _audioAction() {
     BlocProvider.of<InsideClassContentBloc>(context).openAudioPanel();
+  }
+
+  Widget _getCourseInfoSection(String classImage) {
+    if (OlukoNeumorphism.isNeumorphismDesign) {
+      return CourseInfoSection(
+        image: OlukoNeumorphism.isNeumorphismDesign ? classImage : widget.courseEnrollment.course.image,
+      );
+    }
+    return BlocBuilder<SubscribedCourseUsersBloc, SubscribedCourseUsersState>(
+      builder: (context, subscribedCourseUsersState) {
+        if (subscribedCourseUsersState is SubscribedCourseUsersSuccess) {
+          final int favorites = subscribedCourseUsersState.favoriteUsers != null ? subscribedCourseUsersState.favoriteUsers.length : 0;
+          final int normalUsers = subscribedCourseUsersState.users != null ? subscribedCourseUsersState.users.length : 0;
+          final int qty = favorites + normalUsers;
+          return CourseInfoSection(
+            onAudioPressed: () => _coaches.isNotEmpty ? _audioAction() : null,
+            peopleQty: qty,
+            onPeoplePressed: () => _peopleAction(subscribedCourseUsersState.users, subscribedCourseUsersState.favoriteUsers),
+            audioMessageQty: _audioQty,
+            image: OlukoNeumorphism.isNeumorphismDesign ? classImage : widget.courseEnrollment.course.image,
+          );
+        } else {
+          return CourseInfoSection(
+            onAudioPressed: () => _coaches.isNotEmpty ? _audioAction() : null,
+            peopleQty: 0,
+            audioMessageQty: _audioQty,
+            image: OlukoNeumorphism.isNeumorphismDesign ? classImage : widget.courseEnrollment.course.image,
+          );
+        }
+      },
+    );
+  }
+
+  Widget _getAudioWidget() {
+    return SizedBox(
+      height: 52,
+      width: 52,
+      child: OlukoBlurredButton(
+        childContent: GestureDetector(
+          onTap: () => _audioQty > 0 ? _audioAction() : null,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Image.asset(
+                'assets/courses/audioNeumorphism.png',
+                height: 30,
+                width: 30,
+              ),
+              if (_audioQty > 0)
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Image.asset(
+                      'assets/courses/audio_notification.png',
+                      height: 22,
+                      width: 22,
+                    ),
+                    Text(
+                      _audioQty.toString(),
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w300, color: Colors.white),
+                    ),
+                  ],
+                )
+              else
+                const SizedBox(),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
