@@ -502,7 +502,11 @@ class _UserProfilePageState extends State<UserProfilePage> {
       top: OlukoNeumorphism.isNeumorphismDesign ? MediaQuery.of(context).size.height / 4.5 : MediaQuery.of(context).size.height / 3.5,
       child: Container(
           width: MediaQuery.of(context).size.width,
-          height: OlukoNeumorphism.isNeumorphismDesign ? MediaQuery.of(context).size.height / 2.8 : MediaQuery.of(context).size.height / 5,
+          height: OlukoNeumorphism.isNeumorphismDesign
+              ? MediaQuery.of(context).size.height < 700
+                  ? MediaQuery.of(context).size.height / 2.75
+                  : MediaQuery.of(context).size.height / 3.3
+              : MediaQuery.of(context).size.height / 5,
           child: BlocProvider.value(
               value: BlocProvider.of<ProfileBloc>(context),
               child: BlocBuilder<UserStatisticsBloc, UserStatisticsState>(

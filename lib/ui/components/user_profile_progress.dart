@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 class UserProfileProgress extends StatefulWidget {
   final String challengesCompleted;
@@ -139,13 +140,20 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
           const SizedBox(
             width: 5,
           ),
-          SizedBox(
-            width: 60,
-            child: Text(
+          if (ScreenUtils.height(context) < 700)
+            Expanded(
+                child: Text(
               OlukoLocalizations.get(context, achievementTitleKey),
               style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w400),
-            ),
-          ),
+            ))
+          else
+            Container(
+              width: 60,
+              child: Text(
+                OlukoLocalizations.get(context, achievementTitleKey),
+                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w400),
+              ),
+            )
         ],
       ),
     );

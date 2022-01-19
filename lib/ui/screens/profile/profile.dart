@@ -17,6 +17,7 @@ import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 import '../../../constants/theme.dart';
 import '../../../routes.dart';
 
@@ -106,10 +107,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Padding buildOptionsList() {
     return Padding(
-      padding: EdgeInsets.only(top: OlukoNeumorphism.isNeumorphismDesign ? MediaQuery.of(context).size.height / 2.8 : 170),
+      padding: EdgeInsets.only(top: OlukoNeumorphism.isNeumorphismDesign ? ScreenUtils.height(context) / 2.8 : 170),
       child: ListView.builder(
+          padding: EdgeInsets.zero,
           shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
+          physics: MediaQuery.of(context).size.height < 1000 ? null : NeverScrollableScrollPhysics(),
           itemCount: ProfileOptions.profileOptions.length,
           itemBuilder: (_, index) => profileOptions(ProfileOptions.profileOptions[index])),
     );

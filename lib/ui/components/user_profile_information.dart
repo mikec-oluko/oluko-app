@@ -70,12 +70,16 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
         }
         return Padding(
           padding: const EdgeInsets.symmetric(
-              horizontal: OlukoNeumorphism.isNeumorphismDesign ? 20 : 10, vertical: OlukoNeumorphism.isNeumorphismDesign ? 20 : 5),
+              horizontal: OlukoNeumorphism.isNeumorphismDesign ? 20 : 10, vertical: OlukoNeumorphism.isNeumorphismDesign ? 10 : 5),
           //TODO: Check if need neumorphic outside
           child: Container(
             decoration: UserInformationBackground.getContainerGradientDecoration(isNeumorphic: OlukoNeumorphism.isNeumorphismDesign),
             width: MediaQuery.of(context).size.width,
-            height: OlukoNeumorphism.isNeumorphismDesign ? MediaQuery.of(context).size.height / 3.3 : null,
+            height: OlukoNeumorphism.isNeumorphismDesign
+                ? MediaQuery.of(context).size.height < 700
+                    ? MediaQuery.of(context).size.height / 3
+                    : MediaQuery.of(context).size.height / 3.3
+                : null,
             child: Padding(
                 padding: const EdgeInsets.all(OlukoNeumorphism.isNeumorphismDesign ? 20 : 10),
                 child: OlukoNeumorphism.isNeumorphismDesign
@@ -124,27 +128,28 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                             height: 45,
                             width: 45,
                           ).image,
-                          radius: 45.0,
+                          radius: 40.0,
                         ),
                       ),
                       getVisibility(widget, context, _isOwner),
                     ]),
                   )
                 else
-                  Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: Stack(children: [
-                      CircleAvatar(
-                        backgroundColor: widget.userToDisplayInformation != null
-                            ? OlukoColors.userColor(widget.userToDisplayInformation.firstName, widget.userToDisplayInformation.lastName)
-                            : OlukoColors.black,
-                        radius: 45.0,
-                        child: Text(widget.userToDisplayInformation != null ? profileDefaultProfilePicContent : '',
-                            style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500)),
-                      ),
-                      getVisibility(widget, context, _isOwner),
-                    ]),
-                  ),
+                  // Padding(
+                  //   padding: const EdgeInsets.all(5.0),
+                  // child:
+                  Stack(children: [
+                    CircleAvatar(
+                      backgroundColor: widget.userToDisplayInformation != null
+                          ? OlukoColors.userColor(widget.userToDisplayInformation.firstName, widget.userToDisplayInformation.lastName)
+                          : OlukoColors.black,
+                      radius: 40.0,
+                      child: Text(widget.userToDisplayInformation != null ? profileDefaultProfilePicContent : '',
+                          style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500)),
+                    ),
+                    getVisibility(widget, context, _isOwner),
+                  ]),
+                // ),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.only(left: 5),
@@ -346,7 +351,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
     return Visibility(
       visible: userProfileWidget.actualRoute == ActualProfileRoute.userProfile && isOwner,
       child: Positioned(
-        top: 45,
+        top: OlukoNeumorphism.isNeumorphismDesign ? 45 : 30,
         right: -12,
         child: Container(
           width: 40,
