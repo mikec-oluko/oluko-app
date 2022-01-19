@@ -111,7 +111,7 @@ class _ProfilePageState extends State<ProfilePage> {
       child: ListView.builder(
           padding: EdgeInsets.zero,
           shrinkWrap: true,
-          physics: MediaQuery.of(context).size.height < 1000 ? null : NeverScrollableScrollPhysics(),
+          physics: ScreenUtils.height(context) < 1000 ? null : NeverScrollableScrollPhysics(),
           itemCount: ProfileOptions.profileOptions.length,
           itemBuilder: (_, index) => profileOptions(ProfileOptions.profileOptions[index])),
     );

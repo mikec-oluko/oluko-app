@@ -500,14 +500,14 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   Positioned userInformationPanel() {
     return Positioned(
-      top: OlukoNeumorphism.isNeumorphismDesign ? ScreenUtils.width(context) / 4.5 : ScreenUtils.width(context) / 3.5,
+      top: OlukoNeumorphism.isNeumorphismDesign ? ScreenUtils.height(context) / 4.5 : ScreenUtils.height(context) / 3.5,
       child: Container(
-          width: ScreenUtils.width(context),
+          width: ScreenUtils.height(context),
           height: OlukoNeumorphism.isNeumorphismDesign
-              ? ScreenUtils.width(context) < 700
-                  ? ScreenUtils.width(context) / 2.75
-                  : ScreenUtils.width(context) / 3.3
-              : ScreenUtils.width(context) / 5,
+              ? ScreenUtils.height(context) < 700
+                  ? ScreenUtils.height(context) / 2.75
+                  : ScreenUtils.height(context) / 3.3
+              : ScreenUtils.height(context) / 5,
           child: BlocProvider.value(
               value: BlocProvider.of<ProfileBloc>(context),
               child: BlocBuilder<UserStatisticsBloc, UserStatisticsState>(
