@@ -9,6 +9,7 @@ import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 class CoachAssignedCountDown extends StatefulWidget {
   const CoachAssignedCountDown({this.currentUser, this.coachAssignment});
@@ -134,7 +135,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
     return Padding(
       padding: const EdgeInsets.all(40.0),
       child: SizedBox(
-        width: MediaQuery.of(context).size.width / 1.2,
+        width: ScreenUtils.width(context) / 1.25,
         height: 300,
         child: Column(
           children: [
@@ -145,7 +146,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                     shape: NeumorphicShape.flat,
                     boxShape: NeumorphicBoxShape.roundRect(const BorderRadius.all(Radius.circular(10))),
                     depth: 2,
-                    intensity: 2,
+                    intensity: 1,
                     color: Colors.black,
                     lightSource: LightSource.bottomRight,
                     shadowDarkColorEmboss: Colors.black,
@@ -176,7 +177,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                           child: Column(
                             children: [
                               Container(
-                                width: 70,
+                                width: ScreenUtils.width(context) * 0.15,
                                 color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
                                 // color: Colors.blue,
                                 child: buildWatchField(valueToUse: _hourValue, maxValue: _hourMaxValue),
@@ -193,7 +194,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                           child: Column(
                             children: [
                               Container(
-                                  width: 70,
+                                  width: ScreenUtils.width(context) * 0.15,
                                   color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
                                   child: buildWatchField(valueToUse: _minutesValue, maxValue: _minutesSecondsMaxValue)),
                             ],
@@ -208,7 +209,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                           child: Column(
                             children: [
                               Container(
-                                width: 70,
+                                width: ScreenUtils.width(context) * 0.15,
                                 color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
                                 child: buildWatchField(valueToUse: _secondsValue, maxValue: _minutesSecondsMaxValue),
                               ),
