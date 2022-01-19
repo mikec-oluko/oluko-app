@@ -43,6 +43,7 @@ import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class UserProfilePage extends StatefulWidget {
@@ -499,14 +500,14 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   Positioned userInformationPanel() {
     return Positioned(
-      top: OlukoNeumorphism.isNeumorphismDesign ? MediaQuery.of(context).size.height / 4.5 : MediaQuery.of(context).size.height / 3.5,
+      top: OlukoNeumorphism.isNeumorphismDesign ? ScreenUtils.width(context) / 4.5 : ScreenUtils.width(context) / 3.5,
       child: Container(
-          width: MediaQuery.of(context).size.width,
+          width: ScreenUtils.width(context),
           height: OlukoNeumorphism.isNeumorphismDesign
-              ? MediaQuery.of(context).size.height < 700
-                  ? MediaQuery.of(context).size.height / 2.75
-                  : MediaQuery.of(context).size.height / 3.3
-              : MediaQuery.of(context).size.height / 5,
+              ? ScreenUtils.width(context) < 700
+                  ? ScreenUtils.width(context) / 2.75
+                  : ScreenUtils.width(context) / 3.3
+              : ScreenUtils.width(context) / 5,
           child: BlocProvider.value(
               value: BlocProvider.of<ProfileBloc>(context),
               child: BlocBuilder<UserStatisticsBloc, UserStatisticsState>(
