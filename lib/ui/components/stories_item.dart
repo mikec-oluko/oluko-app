@@ -175,7 +175,6 @@ class _State extends State<StoriesItem> {
       }
     }
   }
-
   Widget getCircularAvatar() {
     if (widget.imageUrl != null) {
       return OlukoNeumorphism.isNeumorphismDesign

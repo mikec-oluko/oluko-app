@@ -13,5 +13,6 @@ class DeleteNumber extends KeyboardEvent {}
 class Submit extends KeyboardEvent {}
 
 class SetVisible extends KeyboardEvent {
-
+}
+class HideKeyboard extends KeyboardEvent {
 }
