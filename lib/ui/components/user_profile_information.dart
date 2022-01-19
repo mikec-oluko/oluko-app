@@ -346,7 +346,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
     return Visibility(
       visible: userProfileWidget.actualRoute == ActualProfileRoute.userProfile && isOwner,
       child: Positioned(
-        top: 25,
+        top: 45,
         right: -12,
         child: Container(
           width: 40,
