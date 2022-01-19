@@ -44,25 +44,48 @@ class _State extends State<SegmentStepSection> {
   }
 
   List<Widget> getStepCircles() {
-    List<Widget> circles = [];
+    final List<Widget> circles = [];
     for (var i = 1; i <= widget.totalSegmentStep; i++) {
-      circles.add(Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 10), child: createCircleIcon(i == widget.currentSegmentStep)));
+      circles.add(
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 10),
+          child: Center(child: createCircleIcon(i == widget.currentSegmentStep)),
+        ),
+      );
     }
     return circles;
   }
 
   Widget createCircleIcon(bool selected) {
-    if (selected) {
-      return Image.asset(
-        'assets/courses/selected.png',
-        scale: 2.5,
-      );
+    if (OlukoNeumorphism.isNeumorphismDesign) {
+      if (selected) {
+        return const Icon(
+          Icons.radio_button_checked,
+          color: OlukoColors.primary,
+          size: 15,
+        );
+      } else {
+        return const Padding(
+          padding: EdgeInsets.only(top: 1),
+          child: Icon(
+            Icons.circle,
+            color: OlukoColors.primary,
+            size: 10,
+          ),
+        );
+      }
     } else {
-      return Image.asset(
-        'assets/courses/unselected.png',
-        scale: 2.5,
-      );
+      if (selected) {
+        return Image.asset(
+          'assets/courses/selected.png',
+          scale: 2.5,
+        );
+      } else {
+        return Image.asset(
+          'assets/courses/unselected.png',
+          scale: 2.5,
+        );
+      }
     }
   }
 }

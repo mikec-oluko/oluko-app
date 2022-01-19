@@ -21,6 +21,7 @@ import 'package:oluko_app/ui/components/people_section.dart';
 import 'package:oluko_app/ui/components/segment_step_section.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
 import 'package:oluko_app/ui/components/vertical_divider.dart' as verticalDivider;
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/screens/courses/audio_panel.dart';
 import 'package:oluko_app/ui/screens/courses/segment_clocks.dart';
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
@@ -139,19 +140,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   Widget startWorkoutsButton() {
     return Padding(
       padding: const EdgeInsets.only(left: 15, right: 15, bottom: 25.0),
-      child: Row(children: [
-        OlukoPrimaryButton(
-            title: OlukoLocalizations.get(context, 'startWorkouts'),
-            color: OlukoColors.primary,
-            onPressed: () {
-              //CoachRequest coachRequest = getSegmentCoachRequest(widget.segment.id);
-              if (_coachRequest != null) {
-                BottomDialogUtils.showBottomDialog(context: context, content: dialogContainer(widget.coach.firstName, widget.coach.avatar));
-              } else {
-                navigateToSegmentWithoutRecording();
-              }
-            })
-      ]),
+      child: Row(children: [_getStartButton()]),
     );
   }
 
@@ -328,30 +317,37 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
     return Padding(
       padding: const EdgeInsets.only(left: 20, top: 190),
       child: Column(children: [
-        Row(children: [
-          getAudioButton(),
-          const verticalDivider.VerticalDivider(
-            width: 30,
-            height: 60,
-          ),
-          BlocBuilder<DoneChallengeUsersBloc, DoneChallengeUsersState>(builder: (context, doneChallengeUsersState) {
-            if (doneChallengeUsersState is DoneChallengeUsersSuccess) {
-              final int favorites = doneChallengeUsersState.favoriteUsers != null ? doneChallengeUsersState.favoriteUsers.length : 0;
-              final int normalUsers = doneChallengeUsersState.users != null ? doneChallengeUsersState.users.length : 0;
-              final int qty = favorites + normalUsers;
-              return GestureDetector(
-                  onTap: () => widget.peopleAction(doneChallengeUsersState.users, doneChallengeUsersState.favoriteUsers),
-                  child: PeopleSection(peopleQty: qty, isChallenge: widget.segment.isChallenge));
-            } else {
-              return PeopleSection(peopleQty: 0, isChallenge: widget.segment.isChallenge);
-            }
-          }),
-          const verticalDivider.VerticalDivider(
-            width: 30,
-            height: 60,
-          ),
-          GestureDetector(onTap: widget.clockAction, child: clockSection()),
-        ])
+        Row(
+          children: [
+            getAudioButton(),
+            const verticalDivider.VerticalDivider(
+              width: 30,
+              height: OlukoNeumorphism.isNeumorphismDesign ? 80 : 60,
+            ),
+            BlocBuilder<DoneChallengeUsersBloc, DoneChallengeUsersState>(
+              builder: (context, doneChallengeUsersState) {
+                if (doneChallengeUsersState is DoneChallengeUsersSuccess) {
+                  final int favorites = doneChallengeUsersState.favoriteUsers != null ? doneChallengeUsersState.favoriteUsers.length : 0;
+                  final int normalUsers = doneChallengeUsersState.users != null ? doneChallengeUsersState.users.length : 0;
+                  final int qty = favorites + normalUsers;
+                  return Buttons(
+                    widget: widget,
+                    qty: qty,
+                    state: doneChallengeUsersState,
+                  );
+                } else {
+                  return Buttons(widget: widget);
+                }
+              },
+            ),
+            if (OlukoNeumorphism.isNeumorphismDesign)
+              const verticalDivider.VerticalDivider(
+                width: 30,
+                height: 60,
+              ),
+            GestureDetector(onTap: widget.clockAction, child: clockSection()),
+          ],
+        )
       ]),
     );
   }
@@ -386,6 +382,84 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
       ]),
     );
   }
+
+  Widget _getStartButton() {
+    if (OlukoNeumorphism.isNeumorphismDesign) {
+      return OlukoNeumorphicPrimaryButton(
+        title: OlukoLocalizations.get(context, 'start'),
+        thinPadding: true,
+        onPressed: () => _onStartPressed(),
+      );
+    } else {
+      return OlukoPrimaryButton(
+        title: OlukoLocalizations.get(context, 'startWorkouts'),
+        color: OlukoColors.primary,
+        onPressed: () => _onStartPressed(),
+      );
+    }
+  }
+
+  _onStartPressed() {
+    //CoachRequest coachRequest = getSegmentCoachRequest(widget.segment.id);
+    if (_coachRequest != null) {
+      BottomDialogUtils.showBottomDialog(context: context, content: dialogContainer(widget.coach.firstName, widget.coach.avatar));
+    } else {
+      navigateToSegmentWithoutRecording();
+    }
+  }
 }
 
+class Buttons extends StatelessWidget {
+  const Buttons({
+    Key key,
+    @required this.widget,
+    this.state,
+    this.qty,
+  }) : super(key: key);
 
+  final SegmentImageSection widget;
+  final DoneChallengeUsersSuccess state;
+  final int qty;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        if (state != null)
+          GestureDetector(
+            onTap: () => widget.peopleAction(state.users, state.favoriteUsers),
+            child: PeopleSection(peopleQty: qty, isChallenge: widget.segment.isChallenge),
+          )
+        else
+          PeopleSection(peopleQty: 0, isChallenge: widget.segment.isChallenge),
+        const verticalDivider.VerticalDivider(
+          width: 30,
+          height: OlukoNeumorphism.isNeumorphismDesign ? 80 : 60,
+        ),
+        if (OlukoNeumorphism.isNeumorphismDesign)
+          Column(
+            children: [
+              Text(
+                OlukoLocalizations.get(context, 'includedIn'),
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w300, color: Colors.white),
+              ),
+              Text(
+                state != null && state.occurrencesInClasses != null ? state.occurrencesInClasses.toString() : '0',
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 35, fontWeight: FontWeight.bold, color: OlukoColors.primary),
+              ),
+              const SizedBox(height: 5),
+              Text(
+                OlukoLocalizations.get(context, 'classes').toLowerCase(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w300, color: Colors.white),
+              ),
+            ],
+          )
+        else
+          const SizedBox(),
+      ],
+    );
+  }
+}
