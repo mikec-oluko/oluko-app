@@ -286,7 +286,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
         children: [
           Container(
             width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height / 2,
+            height: MediaQuery.of(context).size.height / 1.8,
             child: Stack(
               clipBehavior: Clip.none,
               children: [
@@ -502,10 +502,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
     return Positioned(
       top: OlukoNeumorphism.isNeumorphismDesign ? ScreenUtils.height(context) / 4.5 : ScreenUtils.height(context) / 3.5,
       child: Container(
-          width: ScreenUtils.height(context),
+          width: ScreenUtils.width(context),
           height: OlukoNeumorphism.isNeumorphismDesign
               ? ScreenUtils.height(context) < 700
-                  ? ScreenUtils.height(context) / 2.75
+                  ? ScreenUtils.height(context) / 2.5
                   : ScreenUtils.height(context) / 3.3
               : ScreenUtils.height(context) / 5,
           child: BlocProvider.value(

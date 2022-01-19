@@ -77,7 +77,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
             width: MediaQuery.of(context).size.width,
             height: OlukoNeumorphism.isNeumorphismDesign
                 ? MediaQuery.of(context).size.height < 700
-                    ? MediaQuery.of(context).size.height / 3
+                    ? MediaQuery.of(context).size.height / 2.7
                     : MediaQuery.of(context).size.height / 3.3
                 : null,
             child: Padding(

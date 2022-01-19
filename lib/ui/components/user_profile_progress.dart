@@ -131,11 +131,12 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
   Widget profileNeumorphicAccomplishments({String achievementTitleKey, String achievementValue, Color color}) {
     return Expanded(
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             achievementValue,
-            style: OlukoFonts.olukoSubtitleFont(customColor: color, custoFontWeight: FontWeight.w500),
+            style: OlukoFonts.olukoSuperBigFont(customColor: color, custoFontWeight: FontWeight.w500),
           ),
           const SizedBox(
             width: 5,
