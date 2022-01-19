@@ -4,7 +4,10 @@ abstract class PanelAudioState {}
 
 class PanelAudioDefault extends PanelAudioState {}
 
-class PanelAudioSuccess extends PanelAudioState {}
+class PanelAudioSuccess extends PanelAudioState {
+  bool audioRecorded;
+  PanelAudioSuccess({this.audioRecorded});
+}
 
 class PanelAudioFailure extends PanelAudioState {
   dynamic exception;
@@ -14,7 +17,7 @@ class PanelAudioFailure extends PanelAudioState {
 class PanelAudioBloc extends Cubit<PanelAudioState> {
   PanelAudioBloc() : super(PanelAudioDefault());
 
-  void deleteAudio() {
-    emit(PanelAudioSuccess());
+  void deleteAudio(bool audioRecorded) {
+    emit(PanelAudioSuccess(audioRecorded: audioRecorded));
   }
 }

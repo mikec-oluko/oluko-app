@@ -206,7 +206,7 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
               OlukoPrimaryButton(
                 title: OlukoLocalizations.get(context, 'yes'),
                 onPressed: () {
-                  BlocProvider.of<PanelAudioBloc>(context).deleteAudio();
+                  BlocProvider.of<PanelAudioBloc>(context).deleteAudio(false);
                   panelController.close();
                 },
               )

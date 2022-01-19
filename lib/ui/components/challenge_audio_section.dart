@@ -41,7 +41,7 @@ class _State extends State<ChallengeAudioSection> {
   Widget build(BuildContext context) {
     return BlocBuilder<PanelAudioBloc, PanelAudioState>(builder: (context, state) {
       if (state is PanelAudioSuccess) {
-        audioRecorded = false;
+        audioRecorded = state.audioRecorded;
       }
       return audioRecorded ? audioRecordedSection() : audioRecorderSection();
     });
@@ -116,9 +116,7 @@ class _State extends State<ChallengeAudioSection> {
   }
 
   _onRecordCompleted() {
-    setState(() {
-      audioRecorded = true;
-    });
+    BlocProvider.of<PanelAudioBloc>(context).deleteAudio(true);
   }
 
   Widget _saveButton() {
@@ -185,7 +183,7 @@ class _State extends State<ChallengeAudioSection> {
             Expanded(child: SizedBox()),
             RecorderView(
               recorder: widget.recorder,
-              onSaved: _onRecordCompleted,
+              onSaved: () => _onRecordCompleted(),
             )
           ]))
     ]);
