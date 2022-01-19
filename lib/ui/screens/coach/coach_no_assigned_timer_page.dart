@@ -60,7 +60,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
         height: MediaQuery.of(context).size.height,
         color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
         child: Padding(
-          padding: const EdgeInsets.only(top: 100),
+          padding: const EdgeInsets.only(top: 80),
           child: Wrap(
             children: [
               Container(
@@ -76,7 +76,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                     else
                       const SizedBox.shrink(),
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
+                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
                       child: Text(
                         OlukoLocalizations.get(context, 'hey'),
                         style: OlukoNeumorphism.isNeumorphismDesign

@@ -163,28 +163,29 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                       ? Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Align(
                                 alignment: Alignment.centerLeft,
                                 child: OlukoNeumorphicCircleButton(onPressed: widget.onPressed),
                               ),
+                              // Expanded(
+                              //   child: SizedBox(),
+                              // ),
                               Expanded(
-                                child: SizedBox(),
+                                child: Align(
+                                  alignment: Alignment.center,
+                                  child: TitleHeader(
+                                    widget.title,
+                                    reduceFontSize: true,
+                                    bold: false,
+                                    isNeumorphic: true,
+                                  ),
+                                ),
                               ),
-                              Align(
-                                alignment: Alignment.center,
-                                child: FittedBox(
-                                    fit: BoxFit.fitWidth,
-                                    child: TitleHeader(
-                                      widget.title,
-                                      bold: false,
-                                      isNeumorphic: true,
-                                    )),
-                              ),
-                              Expanded(
-                                child: SizedBox(),
-                              ),
+                              // Expanded(
+                              //   child: SizedBox(),
+                              // ),
                             ],
                           ),
                         )
@@ -279,11 +280,15 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  TitleHeader(
-                                    widget.title,
-                                    bold: false,
-                                    isNeumorphic: true,
-                                    reduceFontSize: true,
+                                  Expanded(
+                                    child: Align(
+                                      child: TitleHeader(
+                                        widget.title,
+                                        bold: false,
+                                        isNeumorphic: true,
+                                        reduceFontSize: true,
+                                      ),
+                                    ),
                                   ),
                                   widget.showActions
                                       ? Padding(

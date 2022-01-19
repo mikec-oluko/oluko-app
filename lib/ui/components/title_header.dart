@@ -14,7 +14,7 @@ class TitleHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       title,
-      overflow: TextOverflow.fade,
+      overflow: TextOverflow.ellipsis,
       textAlign: TextAlign.start,
       style: TextStyle(
           fontSize: reduceFontSize
