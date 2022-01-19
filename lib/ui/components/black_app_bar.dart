@@ -277,19 +277,17 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
                             )
                           : Center(
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   TitleHeader(
                                     widget.title,
                                     bold: false,
                                     isNeumorphic: true,
-                                  ),
-                                  SizedBox(
-                                    width: MediaQuery.of(context).size.width / 4,
+                                    reduceFontSize: true,
                                   ),
                                   widget.showActions
                                       ? Padding(
-                                          padding: EdgeInsets.only(right: 10),
+                                          padding: EdgeInsets.only(right: 10, left: 20),
                                           child: Row(
                                             mainAxisAlignment: MainAxisAlignment.end,
                                             children: widget.actions,
