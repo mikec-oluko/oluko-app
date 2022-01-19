@@ -65,13 +65,12 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
   PanelEnum panelState;
 
   //audio
-  bool audioRecorded;
   final SoundRecorder recorder = SoundRecorder();
 
   @override
   void initState() {
     super.initState();
-    audioRecorded = false;
+    BlocProvider.of<PanelAudioBloc>(context).deleteAudio(false);
     recorder.init();
     BlocProvider.of<DoneChallengeUsersBloc>(context).get(widget.challenge.segmentId, widget.userRequested.id);
   }
