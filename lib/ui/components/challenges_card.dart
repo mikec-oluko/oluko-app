@@ -28,13 +28,10 @@ class _State extends State<ChallengesCard> {
   Widget build(BuildContext context) {
     return Column(children: [
       SizedBox(height: 10),
-      widget.navigateToSegment
-          ? widget.segmentChallenge.previousSegmentFinish
-              ? unlockedCard(context)
-              : lockedCard(context)
-          : widget.challenge.completedAt != null
-              ? unlockedCard(context)
-              : lockedCard(context),
+      if (widget.navigateToSegment)
+        widget.segmentChallenge.previousSegmentFinish ? unlockedCard(context) : lockedCard(context)
+      else
+        widget.challenge.completedAt != null ? unlockedCard(context) : lockedCard(context),
       if (widget.useAudio)
         Padding(
             padding: EdgeInsets.only(top: 13),

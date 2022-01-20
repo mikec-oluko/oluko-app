@@ -111,7 +111,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
                   BlocProvider.of<MovementBloc>(context).getAll();
                   return segmentDetailView();
                 } else {
-                  return const SizedBox();
+                  return const SizedBox.shrink();
                 }
               })
             : segmentDetailView();

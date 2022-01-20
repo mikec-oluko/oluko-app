@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_bloc.dart';
-import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/models/challenge.dart';
@@ -88,20 +87,11 @@ class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
                                 itemCount: buildListOfChallenges(widget.challengeSegments).length,
                                 itemBuilder: (context, index) => ChallengesCard(
                                   segmentChallenge: widget.challengeSegments[index],
-                                  // userRequested: requestedUser,
                                   useAudio: false,
                                   navigateToSegment: true,
                                 ),
                               ),
                             ),
-                            // GridView.count(
-                            //   childAspectRatio: 0.5,
-                            //   shrinkWrap: true,
-                            //   // primary: false,
-                            //   padding: const EdgeInsets.all(0),
-                            //   crossAxisCount: 4,
-                            //   children: buildListOfChallenges(challenges),
-                            // ),
                           ],
                         ),
                       ),
@@ -122,9 +112,7 @@ class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
       contentToReturn.add(Padding(
         padding: const EdgeInsets.all(5.0),
         child: ChallengesCard(
-          //  challenge: challenge,
           segmentChallenge: challenge,
-          // userRequested: requestedUser,
           useAudio: false,
           navigateToSegment: true,
         ),
