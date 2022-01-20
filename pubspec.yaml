@@ -80,6 +80,7 @@ dependencies:
   wakelock: ^0.5.6
   flutter_neumorphic: ^3.2.0
   numberpicker: ^2.1.1
+  step_progress_indicator: ^1.0.2
 
 dev_dependencies:
   flutter_launcher_icons: "^0.9.0"

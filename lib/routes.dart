@@ -56,6 +56,7 @@ import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/blocs/user_audio_bloc.dart';
 import 'package:oluko_app/blocs/user_list_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
+import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
@@ -66,6 +67,7 @@ import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
 import 'package:oluko_app/ui/screens/app_plans.dart';
+import 'package:oluko_app/ui/screens/assessments/assessment_neumorphic_done_screen.dart';
 import 'package:oluko_app/ui/screens/assessments/assessment_videos.dart';
 import 'package:oluko_app/ui/screens/assessments/self_recording.dart';
 import 'package:oluko_app/ui/screens/assessments/self_recording_preview.dart';
@@ -198,7 +200,8 @@ enum RouteEnum {
   story,
   hiFivePage,
   userChallengeDetail,
-  homeLongPress
+  homeLongPress,
+  assessmentNeumorphicDone
 }
 
 Map<RouteEnum, String> routeLabels = {
@@ -252,7 +255,8 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.story: '/story',
   RouteEnum.hiFivePage: '/hi-five-page',
   RouteEnum.userChallengeDetail: '/user-challenge-detail',
-  RouteEnum.homeLongPress: 'home_long_press'
+  RouteEnum.homeLongPress: 'home_long_press',
+  RouteEnum.assessmentNeumorphicDone: 'assessment_neumorphic_done'
 };
 
 RouteEnum getEnumFromRouteString(String route) {
@@ -518,7 +522,10 @@ class Routes {
         break;
       case RouteEnum.profileChallenges:
         providers = [BlocProvider<ChallengeBloc>.value(value: _challengeBloc)];
-        newRouteView = ProfileChallengesPage();
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        newRouteView = ProfileChallengesPage(
+          challengeSegments: argumentsToAdd['challengeSegments'] as List<ChallengeNavigation>,
+        );
         break;
       case RouteEnum.profileTransformationJourney:
         providers = [
@@ -571,6 +578,7 @@ class Routes {
         break;
       case RouteEnum.segmentDetail:
         providers = [
+          BlocProvider<ClassBloc>.value(value: _classBloc),
           BlocProvider<CourseEnrollmentAudioBloc>.value(value: _courseEnrollmentAudioBloc),
           BlocProvider<ChallengeAudioBloc>.value(value: _challengeAudioBloc),
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
@@ -589,7 +597,8 @@ class Routes {
             courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
             classIndex: argumentsToAdd['classIndex'] as int,
             segmentIndex: argumentsToAdd['segmentIndex'] as int,
-            courseIndex: argumentsToAdd['courseIndex'] as int);
+            courseIndex: argumentsToAdd['courseIndex'] as int,
+            fromChallenge: argumentsToAdd['fromChallenge'] as bool);
         break;
       case RouteEnum.movementIntro:
         providers = [
@@ -616,12 +625,14 @@ class Routes {
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SegmentClocks(
-            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
-            classIndex: argumentsToAdd['classIndex'] as int,
-            courseIndex: argumentsToAdd['courseIndex'] as int,
-            segmentIndex: argumentsToAdd['segmentIndex'] as int,
-            workoutType: argumentsToAdd['workoutType'] as WorkoutType,
-            segments: argumentsToAdd['segments'] as List<Segment>);
+          courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
+          classIndex: argumentsToAdd['classIndex'] as int,
+          courseIndex: argumentsToAdd['courseIndex'] as int,
+          segmentIndex: argumentsToAdd['segmentIndex'] as int,
+          workoutType: argumentsToAdd['workoutType'] as WorkoutType,
+          segments: argumentsToAdd['segments'] as List<Segment>,
+          fromChallenge: argumentsToAdd['fromChallenge'] as bool,
+        );
         break;
       case RouteEnum.segmentCameraPreview:
         providers = [
@@ -718,10 +729,12 @@ class Routes {
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = AssessmentVideos(
-            isFirstTime: argumentsToAdd == null || argumentsToAdd['isFirstTime'] == null ? false : argumentsToAdd['isFirstTime'] as bool);
+          isFirstTime: argumentsToAdd == null || argumentsToAdd['isFirstTime'] == null ? false : argumentsToAdd['isFirstTime'] as bool,
+          assessmentsDone:
+              argumentsToAdd == null || argumentsToAdd['assessmentsDone'] == null ? false : argumentsToAdd['assessmentsDone'] as bool,
+        );
         break;
       case RouteEnum.taskDetails:
-        //TODO: Pass flag for last assessments
         providers = [
           BlocProvider<AssessmentAssignmentBloc>.value(value: _assessmentAssignmentBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
@@ -729,7 +742,10 @@ class Routes {
           BlocProvider<GalleryVideoBloc>.value(value: _galleryVideoBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
-        newRouteView = TaskDetails(taskIndex: argumentsToAdd['taskIndex'] as int, isLastTask: argumentsToAdd['isLastTask'] as bool);
+        newRouteView = TaskDetails(
+            taskIndex: argumentsToAdd['taskIndex'] as int,
+            isLastTask: argumentsToAdd['isLastTask'] as bool,
+            taskCompleted: argumentsToAdd['taskCompleted'] as bool);
         break;
       case RouteEnum.selfRecording:
         //TODO: Pass flag for last assessments
@@ -906,6 +922,9 @@ class Routes {
           courseEnrollments: argumentsToAdd['courseEnrollments'] as List<CourseEnrollment>,
           index: argumentsToAdd['index'] != null ? argumentsToAdd['index'] as int : 0,
         );
+        break;
+      case RouteEnum.assessmentNeumorphicDone:
+        newRouteView = AssessmentNeumorphicDoneScreen();
         break;
       default:
         newRouteView = MainPage();

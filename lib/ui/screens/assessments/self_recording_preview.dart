@@ -19,7 +19,10 @@ import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/progress_bar.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/time_converter.dart';
 
 import '../../../utils/app_messages.dart';
 
@@ -113,26 +116,105 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
             Navigator.popUntil(context, ModalRoute.withName(route));
             Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {
               'taskIndex': widget.taskIndex,
-              'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
+              'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
+              'taskCompleted': true /**TODO: */
             });
           }
         }, builder: (context, state) {
           if (state is VideoProcessing) {
             return progressScaffold(state);
           } else {
-            return contentScaffold();
+            return OlukoNeumorphism.isNeumorphismDesign ? neumorphicContentScaffold() : contentScaffold();
           }
         }));
   }
 
   Widget contentScaffold() {
+    // TODO: UPDATED FOR NEUMORPHIC
     return Scaffold(
-        appBar: OlukoAppBar(title: _task.name, actions: [retakeButton()]),
+        appBar: OlukoAppBar(
+          title: _task.name,
+          actions: [retakeButton()],
+          showTitle: true,
+        ),
         body: Container(
           color: Colors.black,
           child: ListView(
             children: [
               content(),
+            ],
+          ),
+        ));
+  }
+
+  Widget neumorphicContentScaffold() {
+    // TODO: UPDATED FOR NEUMORPHIC
+    return Scaffold(
+        extendBody: true,
+        body: Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          child: Stack(
+            children: [
+              Container(height: MediaQuery.of(context).size.height, child: neumorphicContent()),
+              Positioned(top: 80, right: 20, child: retakeButton()),
+              Positioned(
+                  top: 70,
+                  left: 20,
+                  child: IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: Icon(Icons.arrow_back, size: 24, color: OlukoColors.white),
+                  )),
+              Positioned(
+                bottom: 0,
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 100,
+                    color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth : Colors.black,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _controller != null
+                            ? Padding(
+                                padding: const EdgeInsets.only(left: 20),
+                                child: Text('${TimeConverter.durationToString(_controller.videoPlayerController.value.duration)} min',
+                                    style:
+                                        OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.normal)),
+                              )
+                            : SizedBox.shrink(),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 20),
+                          child: Container(
+                            width: MediaQuery.of(context).size.width / 3,
+                            height: 60,
+                            child: OlukoNeumorphicPrimaryButton(
+                              isExpanded: false,
+                              title: OlukoLocalizations.get(context, 'done'),
+                              onPressed: () async {
+                                _controller.pause();
+                                if (_taskSubmission == null) {
+                                  BlocProvider.of<TaskSubmissionBloc>(context)
+                                      .createTaskSubmission(_assessmentAssignment, _task, widget.isPublic, widget.isLastTask);
+                                } else {
+                                  BlocProvider.of<VideoBloc>(context)
+                                      .createVideo(context, File(widget.filePath), 3.0 / 4.0, _taskSubmission.id);
+                                }
+                                /*Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails],
+                    arguments: {
+                      'taskIndex': widget.taskIndex,
+                      'isLastTask': widget.isLastTask
+                    });*/
+                              },
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              )
             ],
           ),
         ));
@@ -178,7 +260,8 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                 padding: const EdgeInsets.only(left: 20, right: 8),
                 child: Text(
                   OlukoLocalizations.get(context, 'retake'),
-                  style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary),
+                  style:
+                      OlukoFonts.olukoBigFont(customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary),
                 ))));
   }
 
@@ -207,6 +290,13 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
               },
             )
           ]))
+    ]);
+  }
+
+  Widget neumorphicContent() {
+    return Column(children: [
+      ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height - 100), child: Stack(children: showVideoPlayer())),
     ]);
   }
 }
