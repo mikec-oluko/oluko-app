@@ -191,26 +191,28 @@ class _InsideClassesState extends State<InsideClass> {
         ? Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              OlukoNeumorphicPrimaryButton(
-                thinPadding: true,
-                title: OlukoLocalizations.get(context, 'start'),
-                onPressed: () {
-                  int segmentIndex =
-                      CourseEnrollmentService.getFirstUncompletedSegmentIndex(widget.courseEnrollment.classes[widget.classIndex]);
-                  if (segmentIndex == -1) {
-                    segmentIndex = 0;
-                  }
-                  Navigator.pushNamed(
-                    context,
-                    routeLabels[RouteEnum.segmentDetail],
-                    arguments: {
+              Container(
+                height: 50,
+                width: ScreenUtils.width(context) - 40,
+                child: OlukoNeumorphicPrimaryButton(
+                  isExpanded: false,
+                  thinPadding: true,
+                  title: OlukoLocalizations.get(context, 'start'),
+                  onPressed: () {
+                    int segmentIndex =
+                        CourseEnrollmentService.getFirstUncompletedSegmentIndex(widget.courseEnrollment.classes[widget.classIndex]);
+                    if (segmentIndex == -1) {
+                      segmentIndex = 0;
+                    }
+                    Navigator.pushNamed(context, routeLabels[RouteEnum.segmentDetail], arguments: {
                       'segmentIndex': segmentIndex,
                       'classIndex': widget.classIndex,
                       'courseEnrollment': widget.courseEnrollment,
-                      'courseIndex': widget.courseIndex
-                    },
-                  );
-                },
+                      'courseIndex': widget.courseIndex,
+                      'fromChallenge': false
+                    });
+                  },
+                ),
               )
             ],
           )
@@ -224,16 +226,13 @@ class _InsideClassesState extends State<InsideClass> {
                   if (segmentIndex == -1) {
                     segmentIndex = 0;
                   }
-                  Navigator.pushNamed(
-                    context,
-                    routeLabels[RouteEnum.segmentDetail],
-                    arguments: {
-                      'segmentIndex': segmentIndex,
-                      'classIndex': widget.classIndex,
-                      'courseEnrollment': widget.courseEnrollment,
-                      'courseIndex': widget.courseIndex
-                    },
-                  );
+                  Navigator.pushNamed(context, routeLabels[RouteEnum.segmentDetail], arguments: {
+                    'segmentIndex': segmentIndex,
+                    'classIndex': widget.classIndex,
+                    'courseEnrollment': widget.courseEnrollment,
+                    'courseIndex': widget.courseIndex,
+                    'fromChallenge': false
+                  });
                 },
               ),
             ],
@@ -482,15 +481,14 @@ class _InsideClassesState extends State<InsideClass> {
         maxHeight: 450, //TODO
         collapsed: const SizedBox(),
         controller: _buttonController,
-        panel: BlocBuilder<InsideClassContentBloc, InsideClassContentState>(
-          builder: (context, state) {
-            Widget _contentForPanel = const SizedBox();
-            if (state is InsideClassContentDefault) {
-              if (_buttonController.isPanelOpen) {
-                _buttonController.close();
-              }
-              _contentForPanel = const SizedBox();
+        panel: BlocBuilder<InsideClassContentBloc, InsideClassContentState>(builder: (context, state) {
+          Widget _contentForPanel = const SizedBox();
+          if (state is InsideClassContentDefault) {
+            if (_buttonController.isPanelOpen) {
+              _buttonController.close();
             }
+            _contentForPanel = const SizedBox();
+          }
           if (state is InsideClassContentPeopleOpen) {
             _buttonController.open();
             _contentForPanel =
@@ -500,7 +498,7 @@ class _InsideClassesState extends State<InsideClass> {
             _buttonController.open();
 
             _contentForPanel = ModalAudio(
-              panelController: _buttonController,
+                panelController: _buttonController,
                 users: _coaches,
                 audios: _audios,
                 onAudioPressed: (int index, Challenge challenge) => _onAudioDeleted(index, challenge),

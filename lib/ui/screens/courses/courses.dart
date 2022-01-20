@@ -120,7 +120,7 @@ class _State extends State<Courses> {
             child: showFilterSelector
                 ? CourseUtils.filterSelector(
                     tagState,
-                    onSubmit: (List<Base> selectedItems) => this.setState(() {
+                    onSubmit: (List<Base> selectedItems) => setState(() {
                       selectedTags = selectedItems as List<Tag>;
                       showFilterSelector = false;
                       searchKey.currentState.updateSearchResults('');
@@ -149,8 +149,8 @@ class _State extends State<Courses> {
   PreferredSizeWidget _appBar(bool goBack) {
     return OlukoAppBar<Course>(
       showTitle: true,
-      showBackButton: goBack,
       searchKey: searchKey,
+      showBackButton: goBack,
       title: OlukoLocalizations.get(context, showFilterSelector ? 'filters' : 'courses'),
       actions: [_filterWidget()],
       onPressed: () => Navigator.pushNamed(context, routeLabels[RouteEnum.root]),
@@ -167,6 +167,9 @@ class _State extends State<Courses> {
       searchResultItems: _courses,
       showSearchBar: true,
       whenSearchBarInitialized: (TextEditingController controller) => searchBarController = controller,
+      actionButton: () => this.setState(() {
+        showFilterSelector = false;
+      }),
     );
   }
 
@@ -310,7 +313,9 @@ class _State extends State<Courses> {
                                 courseEntry.value.map((user) => user.avatar ?? defaultAvatar).toList();
 
                             return Padding(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: OlukoNeumorphism.isNeumorphismDesign
+                                  ? const EdgeInsets.symmetric(vertical: 10, horizontal: 5)
+                                  : const EdgeInsets.all(8.0),
                               child: GestureDetector(
                                 onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing], arguments: {
                                   'course': course,

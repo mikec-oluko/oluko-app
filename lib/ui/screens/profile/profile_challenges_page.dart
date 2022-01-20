@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_bloc.dart';
-import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/challenges_card.dart';
@@ -10,7 +10,8 @@ import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ProfileChallengesPage extends StatefulWidget {
-  ProfileChallengesPage();
+  ProfileChallengesPage({this.challengeSegments});
+  final List<ChallengeNavigation> challengeSegments;
   @override
   _ProfileChallengesPageState createState() => _ProfileChallengesPageState();
 }
@@ -27,63 +28,72 @@ class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
         }
         return Scaffold(
           appBar: OlukoAppBar(
+            showBackButton: true,
+            showTitle: true,
             title: ProfileViewConstants.profileChallengesPageTitle,
             showSearchBar: false,
           ),
           body: Container(
-            color: OlukoColors.black,
+            color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
             child: Container(
               child: Stack(
                 children: [
                   Align(
                     alignment: Alignment.topCenter,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Text(
-                            OlukoLocalizations.of(context).find('upcomingChallenges'),
-                            style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
-                          ),
-                        ),
-                        Row(children: [
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            height: 150,
-                            child: ListView(
-                              padding: const EdgeInsets.all(0),
-                              scrollDirection: Axis.horizontal,
-                              children: buildListOfChallenges(challenges),
-                            ),
-                          )
-                        ]),
-                      ],
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height / 2,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Text(
-                            OlukoLocalizations.get(context, 'all'),
-                            style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                          Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Text(
+                              OlukoLocalizations.of(context).find('upcomingChallenges'),
+                              style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                            ),
                           ),
-                          GridView.count(
-                            childAspectRatio: 0.5,
-                            shrinkWrap: true,
-                            primary: false,
-                            padding: const EdgeInsets.all(0),
-                            crossAxisCount: 4,
-                            children: buildListOfChallenges(challenges),
+                          Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.height / 4,
+                            child: ListView(
+                              padding: const EdgeInsets.all(0),
+                              scrollDirection: Axis.horizontal,
+                              children: buildListOfChallenges(widget.challengeSegments).take(3).toList(),
+                            ),
                           ),
                         ],
+                      ),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height / 2,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Text(
+                              OlukoLocalizations.get(context, 'all'),
+                              style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                            ),
+                            Expanded(
+                              child: GridView.builder(
+                                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, childAspectRatio: 0.7),
+                                itemCount: buildListOfChallenges(widget.challengeSegments).length,
+                                itemBuilder: (context, index) => ChallengesCard(
+                                  segmentChallenge: widget.challengeSegments[index],
+                                  useAudio: false,
+                                  navigateToSegment: true,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -96,13 +106,15 @@ class _ProfileChallengesPageState extends State<ProfileChallengesPage> {
     );
   }
 
-  List<Widget> buildListOfChallenges(List<Challenge> challenges) {
+  List<Widget> buildListOfChallenges(List<ChallengeNavigation> listOfChallenges) {
     List<Widget> contentToReturn = [];
-    challenges.forEach((challenge) {
+    listOfChallenges.forEach((challenge) {
       contentToReturn.add(Padding(
         padding: const EdgeInsets.all(5.0),
         child: ChallengesCard(
-          challenge: challenge,
+          segmentChallenge: challenge,
+          useAudio: false,
+          navigateToSegment: true,
         ),
       ));
     });

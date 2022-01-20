@@ -1,5 +1,6 @@
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
@@ -33,13 +34,15 @@ class _TaskSubmissionRecordedVideoState extends State<TaskSubmissionRecordedVide
         key: _formKey,
         child: Scaffold(
             appBar: OlukoAppBar(
+              showTitle: true,
+              showBackButton: true,
               title: widget.task.name,
               actions: [SizedBox(width: 30)],
             ),
             body: Container(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
-                color: Colors.black,
+                color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
                 child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 30, horizontal: 15),
                     child: Container(

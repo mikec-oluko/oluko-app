@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
@@ -23,19 +24,25 @@ import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_switch.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class TaskDetails extends StatefulWidget {
-  const TaskDetails({this.taskIndex, this.isLastTask = false, Key key, this.isComingFromCoach = false}) : super(key: key);
+  const TaskDetails({this.taskIndex, this.isLastTask = false, Key key, this.isComingFromCoach = false, this.taskCompleted = false})
+      : super(key: key);
 
   final int taskIndex;
   final bool isLastTask;
   final bool isComingFromCoach;
-
+  final bool taskCompleted;
   @override
   _TaskDetailsState createState() => _TaskDetailsState();
 }
@@ -50,6 +57,10 @@ class _TaskDetailsState extends State<TaskDetails> {
   List<Task> _tasks;
   UserResponse _user;
   bool isFirstTime = true;
+  bool isAssessmentDone = false;
+  bool recordAgainRequested = false;
+  double panelSize = 100;
+  final PanelController _panelController = PanelController();
 
   @override
   void initState() {
@@ -75,7 +86,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                 _tasks = taskState.values;
                 _task = _tasks[widget.taskIndex];
                 BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionOfTask(_assessmentAssignment, _task);
-                return form();
+                return OlukoNeumorphism.isNeumorphismDesign ? neumorphicForm() : form();
               } else {
                 return nil;
               }
@@ -88,11 +99,84 @@ class _TaskDetailsState extends State<TaskDetails> {
     }));
   }
 
+  Widget neumorphicForm() {
+    return Form(
+        key: _formKey,
+        child: Scaffold(
+            appBar: OlukoAppBar(
+                showTitle: true,
+                showBackButton: true,
+                title: _task.name,
+                actions: [SizedBox(width: 30)],
+                onPressed: () {
+                  if (_controller != null) {
+                    _controller.pause();
+                  }
+                  Navigator.pop(context);
+                  if (!Navigator.canPop(context)) {
+                    Navigator.pushNamed(context, routeLabels[RouteEnum.root], arguments: {
+                      'tab': 1,
+                    });
+                  }
+                }),
+            body: BlocListener<TaskSubmissionBloc, TaskSubmissionState>(
+              listener: (context, state) {
+                if (state is GetSuccess && state.taskSubmission != null) {
+                  isAssessmentDone = true;
+                }
+              },
+              child: recordAgainRequested
+                  ? SlidingUpPanel(
+                      controller: _panelController,
+                      borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                      color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                      maxHeight: panelSize,
+                      panel: recordAgainDialogContent(),
+                      body: viewContent(),
+                    )
+                  : SlidingUpPanel(
+                      controller: _panelController,
+                      borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                      color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                      maxHeight: recordAgainRequested ? panelSize : 100,
+                      panel: recordAgainRequested
+                          ? recordAgainDialogContent()
+                          : Container(
+                              height: 60,
+                              width: MediaQuery.of(context).size.width,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 20),
+                                child: isAssessmentDone || widget.taskCompleted
+                                    ? recordAgainButtons(_taskSubmission)
+                                    : Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                                        Container(height: 60, width: MediaQuery.of(context).size.width / 1.2, child: startRecordingButton())
+                                      ]),
+                              ),
+                            ),
+                      body: viewContent(),
+                    ),
+            )));
+  }
+
+  Container viewContent() {
+    return Container(
+        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
+        child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height - kToolbarHeight,
+              child: _content(),
+            )));
+  }
+
   Widget form() {
     return Form(
         key: _formKey,
         child: Scaffold(
             appBar: OlukoAppBar(
+                showTitle: true,
+                showBackButton: true,
                 title: _task.name,
                 actions: [SizedBox(width: 30)],
                 onPressed: () {
@@ -107,7 +191,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                   }
                 }),
             body: Container(
-                color: Colors.black,
+                color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
                 child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15),
                     child: Container(
@@ -153,20 +237,33 @@ class _TaskDetailsState extends State<TaskDetails> {
               OlukoLocalizations.get(context, 'makeThisPublic'),
               style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold),
             ),
-            Switch(
-              value: _makePublic ?? false,
-              onChanged: (bool value) => setState(() {
-                if (taskSubmission != null) {
-                  _makePublic = value;
-                  BlocProvider.of<TaskSubmissionBloc>(context)
-                      .updateTaskSubmissionPrivacity(_assessmentAssignment, taskSubmission.id, value);
-                } else {
-                  AppMessages.clearAndShowSnackbarTranslated(context, 'noVideoUploaded');
-                }
-              }),
-              trackColor: MaterialStateProperty.all(Colors.grey),
-              activeColor: OlukoColors.primary,
-            )
+            OlukoNeumorphism.isNeumorphismDesign
+                ? OlukoNeumorphicSwitch(
+                    value: _makePublic ?? false,
+                    onSwitchChange: (bool value) => setState(() {
+                      if (taskSubmission != null) {
+                        _makePublic = value;
+                        BlocProvider.of<TaskSubmissionBloc>(context)
+                            .updateTaskSubmissionPrivacity(_assessmentAssignment, taskSubmission.id, value);
+                      } else {
+                        AppMessages.clearAndShowSnackbarTranslated(context, 'noVideoUploaded');
+                      }
+                    }),
+                  )
+                : Switch(
+                    value: _makePublic ?? false,
+                    onChanged: (bool value) => setState(() {
+                      if (taskSubmission != null) {
+                        _makePublic = value;
+                        BlocProvider.of<TaskSubmissionBloc>(context)
+                            .updateTaskSubmissionPrivacity(_assessmentAssignment, taskSubmission.id, value);
+                      } else {
+                        AppMessages.clearAndShowSnackbarTranslated(context, 'noVideoUploaded');
+                      }
+                    }),
+                    trackColor: MaterialStateProperty.all(Colors.grey),
+                    activeColor: OlukoColors.primary,
+                  )
           ],
         ),
       ),
@@ -199,13 +296,14 @@ class _TaskDetailsState extends State<TaskDetails> {
       if (state is GetSuccess && state.taskSubmission != null && state.taskSubmission?.task?.id == _task.id) {
         _taskSubmission = state.taskSubmission;
         _makePublic ??= _taskSubmission.isPublic;
+        isAssessmentDone = true;
 
         return ListView(
           children: [
             const SizedBox(height: 20),
             showVideoPlayer(_task.video),
             formSection(state.taskSubmission),
-            recordAgainButtons(state.taskSubmission)
+            OlukoNeumorphism.isNeumorphismDesign ? SizedBox.shrink() : recordAgainButtons(state.taskSubmission)
           ],
         );
       } else {
@@ -229,20 +327,36 @@ class _TaskDetailsState extends State<TaskDetails> {
   Widget startRecordingButton() {
     return Row(
       children: [
-        OlukoPrimaryButton(
-          title: OlukoLocalizations.get(context, 'startRecording'),
-          onPressed: () {
-            if (_controller != null) {
-              _controller.pause();
-            }
-            Navigator.pop(context);
-            return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
-              'taskIndex': widget.taskIndex,
-              'isPublic': _makePublic ?? false,
-              'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
-            });
-          },
-        ),
+        OlukoNeumorphism.isNeumorphismDesign
+            ? OlukoNeumorphicPrimaryButton(
+                thinPadding: true,
+                title: OlukoLocalizations.get(context, 'startRecording'),
+                onPressed: () {
+                  if (_controller != null) {
+                    _controller.pause();
+                  }
+                  Navigator.pop(context);
+                  return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
+                    'taskIndex': widget.taskIndex,
+                    'isPublic': _makePublic ?? false,
+                    'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
+                  });
+                },
+              )
+            : OlukoPrimaryButton(
+                title: OlukoLocalizations.get(context, 'startRecording'),
+                onPressed: () {
+                  if (_controller != null) {
+                    _controller.pause();
+                  }
+                  Navigator.pop(context);
+                  return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
+                    'taskIndex': widget.taskIndex,
+                    'isPublic': _makePublic ?? false,
+                    'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
+                  });
+                },
+              ),
         const SizedBox(width: 15),
         BlocListener<GalleryVideoBloc, GalleryVideoState>(
             listener: (context, state) {
@@ -272,49 +386,53 @@ class _TaskDetailsState extends State<TaskDetails> {
 
   Widget recordAgainButtons(TaskSubmission taskSubmission) {
     return Padding(
-        padding: const EdgeInsets.only(top: 20.0),
+        padding: OlukoNeumorphism.isNeumorphismDesign ? EdgeInsets.only(top: 20.0).copyWith(bottom: 20) : EdgeInsets.only(top: 20.0),
         child: Row(
           children: [
-            OlukoOutlinedButton(
-              thinPadding: true,
-              title: OlukoLocalizations.get(context, 'recordAgain'),
-              onPressed: () {
-                DialogUtils.getDialog(context, _confirmDialogContent(taskSubmission), showExitButton: false);
-              },
-            ),
+            OlukoNeumorphism.isNeumorphismDesign
+                ? OlukoNeumorphicSecondaryButton(
+                    buttonShape: NeumorphicShape.flat,
+                    useBorder: true,
+                    thinPadding: true,
+                    textColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                    onPressed: () {
+                      if (OlukoNeumorphism.isNeumorphismDesign) {
+                        _panelController.animatePanelToPosition(1.0);
+                        setState(() {
+                          recordAgainRequested = !recordAgainRequested;
+                          panelSize = 250;
+                        });
+                      } else {
+                        DialogUtils.getDialog(context, _confirmDialogContent(taskSubmission), showExitButton: false);
+                      }
+                    },
+                    title: OlukoLocalizations.get(context, 'recordAgain'),
+                  )
+                : OlukoOutlinedButton(
+                    thinPadding: true,
+                    title: OlukoLocalizations.get(context, 'recordAgain'),
+                    onPressed: () {
+                      DialogUtils.getDialog(context, _confirmDialogContent(taskSubmission), showExitButton: false);
+                    },
+                  ),
             const SizedBox(width: 20),
             BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
               if (authState is AuthSuccess) {
                 _user = authState.user;
-                return OlukoPrimaryButton(
-                  isDisabled: OlukoPermissions.isAssessmentTaskDisabled(_user, widget.taskIndex + 1),
-                  title: OlukoLocalizations.get(context, 'next'),
-                  onPressed: () {
-                    if (OlukoPermissions.isAssessmentTaskDisabled(_user, widget.taskIndex + 1)) {
-                      AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'yourCurrentPlanDoesntIncludeAssessment'));
-                    } else {
-                      if (_controller != null) {
-                        _controller.pause();
-                      }
-                      if (widget.taskIndex < _tasks.length - 1) {
-                        if (Navigator.canPop(context)) {
-                          Navigator.pop(context);
-                        }
-                        Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {
-                          'taskIndex': widget.taskIndex + 1,
-                          'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
-                        });
-                      } else {
-                        if (Navigator.canPop(context)) {
-                          Navigator.pop(context);
-                        } else {
-                          Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.assessmentVideos],
-                              arguments: {'isFirstTime': false});
-                        }
-                      }
-                    }
-                  },
-                );
+                return OlukoNeumorphism.isNeumorphismDesign
+                    ? OlukoNeumorphicPrimaryButton(
+                        title: OlukoLocalizations.get(context, 'next'),
+                        onPressed: () {
+                          nextAssessmentButtonOnPress(context);
+                        },
+                      )
+                    : OlukoPrimaryButton(
+                        isDisabled: OlukoPermissions.isAssessmentTaskDisabled(_user, widget.taskIndex + 1),
+                        title: OlukoLocalizations.get(context, 'next'),
+                        onPressed: () {
+                          nextAssessmentButtonOnPress(context);
+                        },
+                      );
               } else {
                 return null;
               }
@@ -323,45 +441,116 @@ class _TaskDetailsState extends State<TaskDetails> {
         ));
   }
 
+  void nextAssessmentButtonOnPress(BuildContext context) {
+    if (OlukoPermissions.isAssessmentTaskDisabled(_user, widget.taskIndex + 1)) {
+      //TODO: Check plan enable skip
+      AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'yourCurrentPlanDoesntIncludeAssessment'));
+    } else {
+      if (_controller != null) {
+        _controller.pause();
+      }
+      if (widget.taskIndex < _tasks.length - 1) {
+        if (Navigator.canPop(context)) {
+          Navigator.pop(context);
+        }
+        Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {
+          'taskIndex': widget.taskIndex + 1,
+          'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
+          'taskCompleted': false /**TODO: */
+        });
+      } else {
+        if (Navigator.canPop(context)) {
+          Navigator.pop(context);
+        } else {
+          Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.assessmentVideos],
+              arguments: {'isFirstTime': false, 'assessmentsDone': _tasks.length - widget.taskIndex == 1 ? true : false});
+        }
+      }
+    }
+  }
+
   List<Widget> _confirmDialogContent(TaskSubmission taskSubmission) {
-    return [
-      Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(children: [
-            Padding(
-                padding: const EdgeInsets.only(bottom: 15.0),
-                child: TitleBody(OlukoLocalizations.get(context, 'recordAgainQuestion'), bold: true)),
-            Text(OlukoLocalizations.get(context, 'recordAgainWarning'), textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont()),
-            Padding(
-                padding: const EdgeInsets.only(top: 25.0),
-                child: Row(
-                  children: [
-                    OlukoPrimaryButton(
-                      title: OlukoLocalizations.get(context, 'no'),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                    const SizedBox(width: 20),
-                    OlukoOutlinedButton(
-                      title: OlukoLocalizations.get(context, 'yes'),
-                      onPressed: () {
-                        if (_controller != null) {
-                          _controller.pause();
-                        }
-                        Navigator.pop(context);
-                        //Navigator.pop(context);
-                        return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
-                          'taskIndex': widget.taskIndex,
-                          'isPublic': _makePublic,
-                          'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
-                        });
-                      },
-                    ),
-                  ],
-                ))
-          ]))
-    ];
+    //TODO: USE THE CONTENT
+    return [recordAgainDialogContent()];
+  }
+
+  Padding recordAgainDialogContent() {
+    return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(children: [
+          Padding(
+              padding: const EdgeInsets.only(bottom: 15.0),
+              child: TitleBody(OlukoLocalizations.get(context, 'recordAgainQuestion'), bold: true)),
+          Text(OlukoLocalizations.get(context, 'recordAgainWarning'), textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont()),
+          Padding(
+              padding: const EdgeInsets.only(top: OlukoNeumorphism.isNeumorphismDesign ? 80 : 25.0),
+              child: Row(
+                mainAxisAlignment: OlukoNeumorphism.isNeumorphismDesign ? MainAxisAlignment.end : MainAxisAlignment.center,
+                children: [
+                  OlukoNeumorphism.isNeumorphismDesign
+                      ? TextButton(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Text(OlukoLocalizations.get(context, 'yes')),
+                          ),
+                          onPressed: () {
+                            if (_controller != null) {
+                              _controller.pause();
+                            }
+                            Navigator.pop(context);
+                            //Navigator.pop(context);
+                            return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
+                              'taskIndex': widget.taskIndex,
+                              'isPublic': _makePublic,
+                              'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
+                            });
+                          },
+                        )
+                      : OlukoPrimaryButton(
+                          title: OlukoLocalizations.get(context, 'no'),
+                          onPressed: () {
+                            OlukoNeumorphism.isNeumorphismDesign
+                                ? setState(() {
+                                    recordAgainRequested = !recordAgainRequested;
+                                  })
+                                : Navigator.pop(context);
+                          },
+                        ),
+                  const SizedBox(width: 20),
+                  OlukoNeumorphism.isNeumorphismDesign
+                      ? Container(
+                          width: 80,
+                          height: 50,
+                          child: OlukoNeumorphicPrimaryButton(
+                            isExpanded: false,
+                            title: OlukoLocalizations.get(context, 'no'),
+                            onPressed: () {
+                              OlukoNeumorphism.isNeumorphismDesign
+                                  ? setState(() {
+                                      recordAgainRequested = !recordAgainRequested;
+                                    })
+                                  : Navigator.pop(context);
+                            },
+                          ),
+                        )
+                      : OlukoOutlinedButton(
+                          title: OlukoLocalizations.get(context, 'yes'),
+                          onPressed: () {
+                            if (_controller != null) {
+                              _controller.pause();
+                            }
+                            Navigator.pop(context);
+                            //Navigator.pop(context);
+                            return Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecording], arguments: {
+                              'taskIndex': widget.taskIndex,
+                              'isPublic': _makePublic,
+                              'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
+                            });
+                          },
+                        ),
+                ],
+              ))
+        ]));
   }
 
   Widget recordedVideos(TaskSubmission taskSubmission) {
@@ -420,13 +609,32 @@ class _TaskDetailsState extends State<TaskDetails> {
               if (thumbnail == null) const Icon(Icons.no_photography) else Image.network(thumbnail),
               Align(
                   alignment: Alignment.center,
-                  child: Image.asset(
-                    'assets/assessment/play.png',
-                    height: 40,
-                    width: 60,
-                  )),
+                  child: OlukoNeumorphism.isNeumorphismDesign
+                      ? Container(
+                          width: 50,
+                          height: 50,
+                          child: OlukoBlurredButton(
+                            childContent: Icon(
+                              Icons.play_arrow,
+                              color: OlukoColors.white,
+                            ),
+                          ),
+                        )
+                      : Image.asset(
+                          'assets/assessment/play.png',
+                          scale: 5,
+                          height: 40,
+                          width: 60,
+                        )),
+
+              //  Image.asset(
+              //   'assets/assessment/play.png',
+              //   height: 40,
+              //   width: 60,
+              // )),
               Positioned(
-                  bottom: 10,
+                  top: OlukoNeumorphism.isNeumorphismDesign ? 10 : null,
+                  bottom: !OlukoNeumorphism.isNeumorphismDesign ? 10 : null,
                   left: 10,
                   child: Container(
                     decoration: BoxDecoration(
