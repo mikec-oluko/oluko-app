@@ -53,7 +53,7 @@ class _OlukoNeumorphicButtonState extends State<OlukoNeumorphicSecondaryButton> 
         ? Expanded(
             child: secondaryButton(),
           )
-        : Container(height: widget.customHeight, child: secondaryButton());
+        : Center(child: Container(height: widget.customHeight, child: secondaryButton()));
   }
 
   NeumorphicButton secondaryButton() {

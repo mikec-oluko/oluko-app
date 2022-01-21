@@ -51,10 +51,10 @@ class _OlukoNeumorphicPrimaryButtonState extends State<OlukoNeumorphicPrimaryBut
         ? Expanded(
             child: primaryButton(),
           )
-        : Container(height: widget.customHeight, child: primaryButton());
+        : Center(child: Container(height: widget.customHeight, child: primaryButton()));
   }
 
-  NeumorphicButton primaryButton() {
+  Widget primaryButton() {
     return NeumorphicButton(
       onPressed: () => widget.onPressed != null ? widget.onPressed() : () {},
       padding: EdgeInsets.all(2),
