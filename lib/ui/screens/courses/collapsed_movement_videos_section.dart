@@ -32,9 +32,9 @@ class _State extends State<CollapsedMovementVideosSection> {
           !OlukoNeumorphism.isNeumorphismDesign ? SizedBox.shrink() : SizedBox(height: 5),
           !OlukoNeumorphism.isNeumorphismDesign
               ? SizedBox.shrink()
-              : Image.asset(
-                  'assets/courses/horizontal_vector.png',
-                  scale: 2,
+              : Container(
+                  width: 50,
+                  child: Image.asset('assets/courses/horizontal_vector.png', scale: 2, color: OlukoColors.grayColor),
                 ),
           SizedBox(height: 15),
           Row(children: [

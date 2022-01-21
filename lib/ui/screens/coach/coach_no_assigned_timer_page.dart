@@ -132,98 +132,101 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
     int _hourValue = difference.inHours.remainder(60).toInt();
     int _minutesValue = difference.inMinutes.remainder(60).toInt();
     int _secondsValue = difference.inSeconds.remainder(60).toInt();
-    return Padding(
-      padding: const EdgeInsets.all(40.0),
-      child: SizedBox(
-        width: ScreenUtils.width(context) / 1.25,
-        height: 300,
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Neumorphic(
-                style: NeumorphicStyle(
-                    shape: NeumorphicShape.flat,
-                    boxShape: NeumorphicBoxShape.roundRect(const BorderRadius.all(Radius.circular(10))),
-                    depth: 2,
-                    intensity: 1,
-                    color: Colors.black,
-                    lightSource: LightSource.bottomRight,
-                    shadowDarkColorEmboss: Colors.black,
-                    shadowLightColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-                    surfaceIntensity: 1,
-                    shadowLightColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-                    shadowDarkColor: Colors.black), // color: Colors.black,
-                child: IntrinsicHeight(
-                  child: ShaderMask(
-                    shaderCallback: (rect) {
-                      return const LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.transparent,
-                          Colors.black,
-                          Colors.transparent,
-                        ],
-                      ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
-                    },
-                    blendMode: BlendMode.dstIn,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Column(
-                            children: [
-                              Container(
-                                width: ScreenUtils.width(context) * 0.15,
-                                color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-                                // color: Colors.blue,
-                                child: buildWatchField(valueToUse: _hourValue, maxValue: _hourMaxValue),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 60),
-                          child: addPointsDivider(context),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Column(
-                            children: [
-                              Container(
+    return IgnorePointer(
+      ignoring: true,
+      child: Padding(
+        padding: const EdgeInsets.all(40.0),
+        child: SizedBox(
+          width: ScreenUtils.width(context) / 1.25,
+          height: 300,
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Neumorphic(
+                  style: NeumorphicStyle(
+                      shape: NeumorphicShape.flat,
+                      boxShape: NeumorphicBoxShape.roundRect(const BorderRadius.all(Radius.circular(10))),
+                      depth: 2,
+                      intensity: 1,
+                      color: Colors.black,
+                      lightSource: LightSource.bottomRight,
+                      shadowDarkColorEmboss: Colors.black,
+                      shadowLightColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                      surfaceIntensity: 1,
+                      shadowLightColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                      shadowDarkColor: Colors.black), // color: Colors.black,
+                  child: IntrinsicHeight(
+                    child: ShaderMask(
+                      shaderCallback: (rect) {
+                        return const LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            Colors.black,
+                            Colors.transparent,
+                          ],
+                        ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
+                      },
+                      blendMode: BlendMode.dstIn,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Column(
+                              children: [
+                                Container(
                                   width: ScreenUtils.width(context) * 0.15,
                                   color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-                                  child: buildWatchField(valueToUse: _minutesValue, maxValue: _minutesSecondsMaxValue)),
-                            ],
+                                  // color: Colors.blue,
+                                  child: buildWatchField(valueToUse: _hourValue, maxValue: _hourMaxValue),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 60),
-                          child: addPointsDivider(context),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Column(
-                            children: [
-                              Container(
-                                width: ScreenUtils.width(context) * 0.15,
-                                color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-                                child: buildWatchField(valueToUse: _secondsValue, maxValue: _minutesSecondsMaxValue),
-                              ),
-                            ],
+                          Padding(
+                            padding: const EdgeInsets.only(top: 60),
+                            child: addPointsDivider(context),
                           ),
-                        ),
-                      ],
+                          Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Column(
+                              children: [
+                                Container(
+                                    width: ScreenUtils.width(context) * 0.15,
+                                    color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+                                    child: buildWatchField(valueToUse: _minutesValue, maxValue: _minutesSecondsMaxValue)),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 60),
+                            child: addPointsDivider(context),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Column(
+                              children: [
+                                Container(
+                                  width: ScreenUtils.width(context) * 0.15,
+                                  color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+                                  child: buildWatchField(valueToUse: _secondsValue, maxValue: _minutesSecondsMaxValue),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            neumorphicWatchLabel(context)
-          ],
+              neumorphicWatchLabel(context)
+            ],
+          ),
         ),
       ),
     );

@@ -115,7 +115,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
             bottom: 0,
             child: Column(
               children: [
-                challengeButtons(),
+                widget.segment.isChallenge ? challengeButtons() : SizedBox.shrink(),
                 OlukoNeumorphism.isNeumorphismDesign ? segmentContent() : segmentContent(),
                 SizedBox(
                   height: 10,
@@ -416,10 +416,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
               ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
             },
             blendMode: BlendMode.dstIn,
-            child: Neumorphic(
-              style: OlukoNeumorphism.getNeumorphicStyleForCardElement(),
-              child: imageContainer(),
-            ),
+            child: imageContainer(),
           )
         : imageContainer();
   }
@@ -472,10 +469,6 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
     return Column(children: [
       Row(children: [
         getAudioButton(),
-        GestureDetector(
-            onTap: () => widget.audioAction(widget.challenge.audios, widget.challenge),
-            child: AudioSection(
-                audioMessageQty: widget.challenge != null && widget.challenge.audios != null ? widget.challenge.audios.length : 0)),
         verticalDividerComponent,
         BlocBuilder<DoneChallengeUsersBloc, DoneChallengeUsersState>(builder: (context, doneChallengeUsersState) {
           if (doneChallengeUsersState is DoneChallengeUsersSuccess) {
