@@ -188,9 +188,9 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                           padding: const EdgeInsets.only(right: 20),
                           child: Container(
                             width: MediaQuery.of(context).size.width / 3,
-                            height: 60,
                             child: OlukoNeumorphicPrimaryButton(
                               isExpanded: false,
+                              customHeight: 60,
                               title: OlukoLocalizations.get(context, 'done'),
                               onPressed: () async {
                                 _controller.pause();

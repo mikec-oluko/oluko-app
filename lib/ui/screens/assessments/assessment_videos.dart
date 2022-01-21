@@ -271,7 +271,6 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
           alignment: Alignment.centerRight,
           child: Container(
             width: 100,
-            height: 60,
             child: OlukoNeumorphicPrimaryButton(
               title: OlukoLocalizations.get(context, 'done'),
               onPressed: () {
@@ -284,6 +283,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                 );
               },
               isExpanded: false,
+              customHeight: 60,
             ),
           ),
         ),

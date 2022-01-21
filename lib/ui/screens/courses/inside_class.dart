@@ -192,7 +192,6 @@ class _InsideClassesState extends State<InsideClass> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                height: 50,
                 width: ScreenUtils.width(context) - 40,
                 child: OlukoNeumorphicPrimaryButton(
                   isExpanded: false,
