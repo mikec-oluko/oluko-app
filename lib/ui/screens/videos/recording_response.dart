@@ -251,8 +251,7 @@ class _RecordingResponseState extends State<RecordingResponse> {
                                           setState(() {
                                             this.videoEvents.add(Event(
                                                 eventType: eventType,
-                                                recordingPosition:
-                                                    milliseconds));
+                                                recordingPosition: milliseconds));
                                           });
                                         })
                                     : Text(""),

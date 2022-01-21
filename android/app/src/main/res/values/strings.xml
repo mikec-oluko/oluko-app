@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MVT Fitness</string>
+    <string name="app_name">Oluko</string>
     <string name="facebook_app_id">181124640443683</string>
     <string name="fb_login_protocol_scheme">fb181124640443683</string>
 </resources>

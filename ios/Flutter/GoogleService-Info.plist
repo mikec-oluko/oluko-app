@@ -3,23 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>14784345427-s7rnnaa7m58gs6eji38v0ckgasgi3erl.apps.googleusercontent.com</string>
+	<string>320403124104-ppl0rb8eq0e12rpean64ulsoe9c0dqfc.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.14784345427-s7rnnaa7m58gs6eji38v0ckgasgi3erl</string>
-	<key>ANDROID_CLIENT_ID</key>
-	<string>14784345427-8tnb0dg58eedg5dradl8ikp1f0do3hur.apps.googleusercontent.com</string>
+	<string>com.googleusercontent.apps.320403124104-ppl0rb8eq0e12rpean64ulsoe9c0dqfc</string>
 	<key>API_KEY</key>
-	<string>AIzaSyALC7wOaW79bnTNrxwSCn1v9MHn1Pi-Vto</string>
+	<string>AIzaSyDLESt6XtohOCH_y7HrfrJKCVypluzswL4</string>
 	<key>GCM_SENDER_ID</key>
-	<string>14784345427</string>
+	<string>320403124104</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.app.oluko.mvt</string>
+	<string>com.app.olukoApp</string>
 	<key>PROJECT_ID</key>
-	<string>oluko-2671e</string>
+	<string>oluko-development</string>
 	<key>STORAGE_BUCKET</key>
-	<string>oluko-2671e.appspot.com</string>
+	<string>oluko-development.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -31,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:14784345427:ios:010a8ef95163ba30131da6</string>
+	<string>1:320403124104:ios:bdae3deb3332ea3f68943d</string>
 </dict>
 </plist>

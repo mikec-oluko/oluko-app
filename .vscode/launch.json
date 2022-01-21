@@ -5,19 +5,19 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "mvt_fitness debug",
+            "name": "oluko-app debug",
             "request": "launch",
             "type": "dart",
             "flutterMode": "debug",
         },
         {
-            "name": "mvt_fitness release",
+            "name": "oluko-app release",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release",
         },
         {
-            "name": "mvt_fitness profile",
+            "name": "oluko-app profile",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile",

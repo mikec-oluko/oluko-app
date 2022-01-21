@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>14784345427-s7rnnaa7m58gs6eji38v0ckgasgi3erl.apps.googleusercontent.com</string>
+	<string>14784345427-18l9mjbgebs3ts9n8tkj27vk7ks2bns7.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.14784345427-s7rnnaa7m58gs6eji38v0ckgasgi3erl</string>
+	<string>com.googleusercontent.apps.14784345427-18l9mjbgebs3ts9n8tkj27vk7ks2bns7</string>
 	<key>ANDROID_CLIENT_ID</key>
 	<string>14784345427-8tnb0dg58eedg5dradl8ikp1f0do3hur.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
@@ -15,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.app.oluko.mvt</string>
+	<string>com.app.olukoApp</string>
 	<key>PROJECT_ID</key>
 	<string>oluko-2671e</string>
 	<key>STORAGE_BUCKET</key>
@@ -31,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:14784345427:ios:010a8ef95163ba30131da6</string>
+	<string>1:14784345427:ios:e3aa4c755c3d4138131da6</string>
 </dict>
 </plist>

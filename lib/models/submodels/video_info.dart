@@ -1,6 +1,7 @@
 import 'package:oluko_app/models/submodels/draw_point.dart';
 import 'package:oluko_app/models/submodels/event.dart';
 import 'package:oluko_app/models/submodels/video.dart';
+
 import '../base.dart';
 
 class VideoInfo extends Base {
