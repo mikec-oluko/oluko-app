@@ -15,9 +15,10 @@ class OlukoNeumorphicPrimaryButton extends StatefulWidget {
   final bool isPrimary;
   final bool useBorder;
   final bool isExpanded;
+  final double customHeight;
   const OlukoNeumorphicPrimaryButton(
-      {this.title,
-      this.onPressed,
+      {@required this.title,
+      @required this.onPressed,
       // this.color,
       this.textColor = Colors.black,
       this.textAlign = TextAlign.center,
@@ -25,6 +26,7 @@ class OlukoNeumorphicPrimaryButton extends StatefulWidget {
       this.thinPadding = false,
       this.onlyIcon = false,
       this.isExpanded = true,
+      this.customHeight = 50,
       this.isDisabled = false,
       this.useBorder = false,
       this.isPrimary = true})
@@ -49,23 +51,35 @@ class _OlukoNeumorphicPrimaryButtonState extends State<OlukoNeumorphicPrimaryBut
         ? Expanded(
             child: primaryButton(),
           )
-        : primaryButton();
+        : Container(height: widget.customHeight, child: primaryButton());
   }
 
   NeumorphicButton primaryButton() {
     return NeumorphicButton(
-      onPressed: () {
-        widget.onPressed != null ? widget.onPressed() : () {};
-      },
-      padding: EdgeInsets.all(10),
-      style: OlukoNeumorphism.primaryButtonStyle(
-          useBorder: widget.useBorder,
-          buttonShape: NeumorphicShape.convex,
-          boxShape: NeumorphicBoxShape.stadium(),
-          ligthShadow: true,
-          darkShadow: true),
-      child: Center(
-        child: widget.onlyIcon ? widget.icon : _textLabel(),
+      onPressed: () => widget.onPressed != null ? widget.onPressed() : () {},
+      padding: EdgeInsets.all(2),
+      style: !widget.isDisabled
+          ? OlukoNeumorphism.primaryButtonStyle(
+              useBorder: widget.useBorder,
+              buttonShape: NeumorphicShape.convex,
+              boxShape: NeumorphicBoxShape.stadium(),
+              ligthShadow: true,
+              darkShadow: true)
+          : OlukoNeumorphism.primaryButtonStyleDisable(
+              useBorder: widget.useBorder,
+              buttonShape: NeumorphicShape.convex,
+              boxShape: NeumorphicBoxShape.stadium(),
+              ligthShadow: true,
+              darkShadow: true),
+      child: Neumorphic(
+        style: !widget.isDisabled
+            ? OlukoNeumorphism.primaryButtonStyle(
+                buttonShape: NeumorphicShape.flat, boxShape: NeumorphicBoxShape.stadium(), ligthShadow: true, darkShadow: true)
+            : OlukoNeumorphism.primaryButtonStyleDisable(
+                buttonShape: NeumorphicShape.convex, boxShape: NeumorphicBoxShape.stadium(), ligthShadow: true, darkShadow: true),
+        child: Center(
+          child: widget.onlyIcon ? widget.icon : _textLabel(),
+        ),
       ),
     );
   }

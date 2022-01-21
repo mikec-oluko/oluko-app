@@ -15,7 +15,9 @@ import 'oluko_localizations.dart';
 class SegmentUtils {
   static List<Widget> getSegmentSummary(Segment segment, BuildContext context, Color color) {
     List<Widget> workoutWidgets = getWorkouts(segment, color);
-    return [getRoundTitle(segment, context, color), SizedBox(height: 12.0)] + workoutWidgets;
+    return OlukoNeumorphism.isNeumorphismDesign
+        ? [getRoundTitle(segment, context, color), SizedBox(height: 12.0)] + workoutWidgets
+        : [getRoundTitle(segment, context, color), SizedBox(height: 12.0)] + workoutWidgets;
   }
 
   static List<Widget> getSegmentSummaryforNeumorphic(Segment segment, BuildContext context, Color color,
@@ -50,9 +52,7 @@ class SegmentUtils {
       return segment.rounds > 1
           ? Text(
               segment.rounds.toString() + " " + OlukoLocalizations.get(context, 'rounds'),
-              style: OlukoNeumorphism.isNeumorphismDesign
-                  ? OlukoFonts.olukoSmallFont(customColor: color, custoFontWeight: FontWeight.bold)
-                  : OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
+              style: OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
             )
           : SizedBox();
     }
@@ -104,7 +104,7 @@ class SegmentUtils {
             }
           if (restTime)
             workouts.add(getTextWidget(getLabel(movement), color));
-          else if (movement.name != "Rest time" && movement.name != "Rest" ) {
+          else if (movement.name != "Rest time" && movement.name != "Rest") {
             workouts.add(Row(
               children: [
                 MovementItemBubblesNeumorphic(
@@ -135,7 +135,7 @@ class SegmentUtils {
         child: Text(
           text,
           style: OlukoNeumorphism.isNeumorphismDesign
-              ? OlukoFonts.olukoSmallFont(custoFontWeight: FontWeight.w400, customColor: color)
+              ? OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400, customColor: color)
               : OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400, customColor: color),
         ));
   }

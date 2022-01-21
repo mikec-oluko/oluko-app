@@ -23,14 +23,18 @@ class _State extends State<SegmentStepSection> {
       child: Padding(
         padding: const EdgeInsets.only(top: 15.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text(
-                  '${OlukoLocalizations.get(context, 'segment')} $currentSegmentStep/$totalSegmentStep',
-                  style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400),
-                )
+                if (OlukoNeumorphism.isNeumorphismDesign)
+                  SizedBox.shrink()
+                else
+                  Text(
+                    '${OlukoLocalizations.get(context, 'segment')} $currentSegmentStep/$totalSegmentStep',
+                    style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400),
+                  )
               ],
             ),
             Row(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/enums/file_type_enum.dart';
@@ -21,6 +22,7 @@ class TransformListOfItemsToWidget {
       {List<TransformationJourneyUpload> tansformationJourneyData,
       List<TaskSubmission> assessmentVideoData,
       List<Challenge> upcomingChallenges,
+      List<ChallengeNavigation> challengeSegments,
       ActualProfileRoute requestedFromRoute,
       UserResponse requestedUser,
       bool isFriend,
@@ -40,11 +42,16 @@ class TransformListOfItemsToWidget {
         }
       });
     }
-
     if (upcomingChallenges != null && (tansformationJourneyData == null && assessmentVideoData == null)) {
       upcomingChallenges.forEach((challenge) {
         contentForSection.add(getImageAndVideoCard(
             upcomingChallengesContent: challenge, routeForContent: requestedFromRoute, requestedUser: requestedUser, useAudio: useAudio));
+      });
+    }
+    if ((challengeSegments != null && upcomingChallenges == null) && (tansformationJourneyData == null && assessmentVideoData == null)) {
+      challengeSegments.forEach((challengeSegment) {
+        contentForSection.add(getImageAndVideoCard(
+            challengeSegment: challengeSegment, routeForContent: requestedFromRoute, requestedUser: requestedUser, useAudio: useAudio));
       });
     }
     return contentForSection.toList();
@@ -55,6 +62,7 @@ class TransformListOfItemsToWidget {
       {TransformationJourneyUpload transformationJourneyContent,
       TaskSubmission taskSubmissionContent,
       Challenge upcomingChallengesContent,
+      ChallengeNavigation challengeSegment,
       ActualProfileRoute routeForContent,
       bool useAudio = false,
       UserResponse requestedUser}) {
@@ -88,6 +96,17 @@ class TransformListOfItemsToWidget {
       contentForReturn = Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5),
         child: ChallengesCard(challenge: upcomingChallengesContent, routeToGo: "/", userRequested: requestedUser, useAudio: useAudio),
+      );
+    }
+    if (challengeSegment != null) {
+      contentForReturn = Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 5),
+        child: ChallengesCard(
+          segmentChallenge: challengeSegment,
+          userRequested: requestedUser,
+          useAudio: useAudio,
+          navigateToSegment: true,
+        ),
       );
     }
     return contentForReturn;
