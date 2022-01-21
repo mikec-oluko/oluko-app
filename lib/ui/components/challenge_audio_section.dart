@@ -122,26 +122,28 @@ class _State extends State<ChallengeAudioSection> {
   Widget _saveButton() {
     return Padding(
         padding: EdgeInsets.symmetric(horizontal: 15),
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            !OlukoNeumorphism.isNeumorphismDesign
-                ? OlukoPrimaryButton(
-                    title: OlukoLocalizations.get(context, 'saveFor') + widget.userName,
-                    onPressed: () {
-                      _saveAudio();
-                    },
-                  )
-                : OlukoNeumorphicPrimaryButton(
-                    isExpanded: true,
-                    thinPadding: true,
-                    title: OlukoLocalizations.of(context).find('saveFor') + widget.userName,
-                    onPressed: () {
-                      _saveAudio();
-                    },
-                  )
-          ],
-        ));
+        child: Container(
+            height: 50,
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                !OlukoNeumorphism.isNeumorphismDesign
+                    ? OlukoPrimaryButton(
+                        title: OlukoLocalizations.get(context, 'saveFor') + widget.userName,
+                        onPressed: () {
+                          _saveAudio();
+                        },
+                      )
+                    : OlukoNeumorphicPrimaryButton(
+                        isExpanded: true,
+                        thinPadding: true,
+                        title: OlukoLocalizations.of(context).find('saveFor') + widget.userName,
+                        onPressed: () {
+                          _saveAudio();
+                        },
+                      )
+              ],
+            )));
   }
 
   Widget audioRecorderSection() {
@@ -175,12 +177,12 @@ class _State extends State<ChallengeAudioSection> {
               ? EdgeInsets.only(right: 0, left: 15, top: 0, bottom: 15)
               : EdgeInsets.only(right: 15, left: 15, top: 15, bottom: 15),
           child: Row(children: [
+            Expanded(child: SizedBox()),
             Text(
               OlukoLocalizations.get(context, 'recordAMessage') + widget.userName,
               textAlign: TextAlign.left,
-              style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal),
+              style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
             ),
-            Expanded(child: SizedBox()),
             RecorderView(
               recorder: widget.recorder,
               onSaved: () => _onRecordCompleted(),
