@@ -59,11 +59,20 @@ class _TaskSubmissionRecordedVideoState extends State<TaskSubmissionRecordedVide
 
   List<Widget> showVideoPlayer() {
     List<Widget> widgets = [];
-    widgets.add(OlukoVideoPlayer(
-        videoUrl: widget.videoUrl,
-        whenInitialized: (ChewieController chewieController) => this.setState(() {
-              _controller = chewieController;
-            })));
+    widgets.add(OlukoNeumorphism.isNeumorphismDesign
+        ? ClipRRect(
+            borderRadius: BorderRadius.circular(15),
+            child: OlukoVideoPlayer(
+                videoUrl: widget.videoUrl,
+                whenInitialized: (ChewieController chewieController) => setState(() {
+                      _controller = chewieController;
+                    })),
+          )
+        : OlukoVideoPlayer(
+            videoUrl: widget.videoUrl,
+            whenInitialized: (ChewieController chewieController) => this.setState(() {
+                  _controller = chewieController;
+                })));
     if (_controller == null) {
       widgets.add(Center(child: CircularProgressIndicator()));
     }

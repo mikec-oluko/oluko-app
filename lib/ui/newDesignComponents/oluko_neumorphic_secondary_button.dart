@@ -16,6 +16,7 @@ class OlukoNeumorphicSecondaryButton extends StatefulWidget {
   final bool isPrimary;
   final bool useBorder;
   final bool isExpanded;
+  final double customHeight;
   const OlukoNeumorphicSecondaryButton(
       {@required this.title,
       @required this.onPressed,
@@ -28,6 +29,7 @@ class OlukoNeumorphicSecondaryButton extends StatefulWidget {
       this.isDisabled = false,
       this.onlyIcon = false,
       this.isExpanded = true,
+      this.customHeight = 50,
       this.useBorder = false,
       this.isPrimary = true})
       : super();
@@ -51,7 +53,7 @@ class _OlukoNeumorphicButtonState extends State<OlukoNeumorphicSecondaryButton> 
         ? Expanded(
             child: secondaryButton(),
           )
-        : secondaryButton();
+        : Container(height: widget.customHeight, child: secondaryButton());
   }
 
   NeumorphicButton secondaryButton() {

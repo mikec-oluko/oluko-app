@@ -60,6 +60,7 @@ class _ProfileHelpAndSupportPageState extends State<ProfileHelpAndSupportPage> {
                                 : const EdgeInsets.fromLTRB(15, 0, 15, 15),
                             child: OlukoNeumorphism.isNeumorphismDesign
                                 ? OlukoNeumorphicPrimaryButton(
+                                    isExpanded: false,
                                     title: ProfileViewConstants.profileHelpAndSupportButtonText,
                                     onPressed: () {
                                       Navigator.pushNamed(
