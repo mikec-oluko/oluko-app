@@ -56,9 +56,11 @@ class AuthRepository {
     await firebaseAuthInstance.signOut();
   }
 
-  Future<ApiResponse> verifyToken(VerifyTokenRequest verifyTokenRequest) async {
+  Future<ApiResponse> externalAuth(VerifyTokenRequest verifyTokenRequest) async {
     Map<String, dynamic> body = verifyTokenRequest.toJson();
-    Response response = await http.post(Uri.parse("$url/token/verify"), body: body);
+    body['projectId'] = GlobalConfiguration().getValue("projectId");
+    body['signup'] = false;
+    Response response = await http.post(Uri.parse("$url/externalAuth"), body: body);
     var responseBody = jsonDecode(response.body);
     if (responseBody['message'] != null && responseBody['message'].length == null) {
       List<String> messageList = [responseBody['message'].toString()];

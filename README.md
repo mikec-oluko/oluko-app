@@ -1,8 +1,10 @@
-# oluko_app
-
-A Flutter project for Android and iOS app Oluko
+# MVT Fitness App - Branch
 
 [![style: lint](https://img.shields.io/badge/style-lint-4BC0F5.svg)](https://pub.dev/packages/lint)
+
+## oluko_app
+
+A Flutter project for Android and iOS app Oluko
 
 ## Getting Started
 

@@ -1,4 +1,4 @@
-package com.app.oluko_app
+package com.app.oluko.mvt
 
 import io.flutter.embedding.android.FlutterActivity
 

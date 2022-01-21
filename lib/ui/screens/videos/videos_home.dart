@@ -85,13 +85,8 @@ class _VideosHomeState extends State<VideosHome> {
                                   parentVideoReference: widget.parentVideoReference,
                                   parentVideoInfo: widget.parentVideoInfo,
                                   onCamera: () => _videoInfoBloc
-                                    ..takeVideo(
-                                        user,
-                                        ImageSource.camera,
-                                        widget.parentVideoReference
-                                            .doc(widget.parentVideoInfo.id)
-                                            .collection('videosInfo'),
-                                        true),
+                                    ..takeVideo(user, ImageSource.camera,
+                                        widget.parentVideoReference.doc(widget.parentVideoInfo.id).collection('videosInfo'), true),
                                 )),
                           ),
                         );
@@ -179,9 +174,8 @@ class _VideosHomeState extends State<VideosHome> {
                                         onPressed: () => Navigator.pushNamed(context, '/videos', arguments: {
                                               'title': 'Responses',
                                               'parentVideoInfo': videoInfo,
-                                              'parentVideoReference': widget.parentVideoReference
-                                                  .doc(videoInfo.id)
-                                                  .collection('videosInfo'),
+                                              'parentVideoReference':
+                                                  widget.parentVideoReference.doc(videoInfo.id).collection('videosInfo'),
                                             }),
                                         child: Text("View responses"))
                                   ],
@@ -203,8 +197,7 @@ class _VideosHomeState extends State<VideosHome> {
       return PlayerSingle(
           videoInfo: videoInfo,
           onCamera: () => _videoInfoBloc
-            ..takeVideo(user, ImageSource.camera,
-                widget.parentVideoReference.doc(videoInfo.id).collection('videosInfo'), false));
+            ..takeVideo(user, ImageSource.camera, widget.parentVideoReference.doc(videoInfo.id).collection('videosInfo'), false));
     } else {
       return BlocProvider.value(
           value: _videoInfoBloc,
@@ -213,8 +206,7 @@ class _VideosHomeState extends State<VideosHome> {
             parentVideoInfo: widget.parentVideoInfo,
             videoInfo: videoInfo,
             onCamera: () => _videoInfoBloc
-              ..takeVideo(user, ImageSource.camera,
-                  widget.parentVideoReference.doc(videoInfo.id).collection('videosInfo'), false),
+              ..takeVideo(user, ImageSource.camera, widget.parentVideoReference.doc(videoInfo.id).collection('videosInfo'), false),
           ));
     }
   }
