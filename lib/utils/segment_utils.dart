@@ -45,7 +45,7 @@ class SegmentUtils {
       return Text(
         segment.totalTime.toString() + " " + OlukoLocalizations.get(context, 'seconds').toLowerCase() + " " + "AMRAP",
         style: OlukoNeumorphism.isNeumorphismDesign
-            ? OlukoFonts.olukoSmallFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold)
+            ? OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold)
             : OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
       );
     } else {

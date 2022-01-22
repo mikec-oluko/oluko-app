@@ -1024,10 +1024,19 @@ class _SegmentClocksState extends State<SegmentClocks> {
             ),
           ),
           const SizedBox(height: 5),
-          if (counter)
-            Column(crossAxisAlignment: CrossAxisAlignment.center, children: getScoresByRound())
-          else
-            Column(children: SegmentUtils.getWorkouts(widget.segments[widget.segmentIndex], OlukoColors.grayColor)),
+          counter
+              ? Column(crossAxisAlignment: CrossAxisAlignment.center, children: getScoresByRound())
+              : OlukoNeumorphism.isNeumorphismDesign
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Container(
+                        width: ScreenUtils.width(context),
+                        child: Column(
+                            crossAxisAlignment: OlukoNeumorphism.isNeumorphismDesign ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+                            children: SegmentUtils.getWorkouts(widget.segments[widget.segmentIndex], OlukoColors.grayColor)),
+                      ),
+                    )
+                  : Column(children: SegmentUtils.getWorkouts(widget.segments[widget.segmentIndex], OlukoColors.grayColor)),
           SizedBox(height: 10),
           Padding(
               padding: const EdgeInsets.symmetric(vertical: 20.0),
