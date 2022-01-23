@@ -200,15 +200,14 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   // TODO: CHECK IF IS DISABLE/ENABLE BUTTON
   Widget startWorkoutsButton() {
     return OlukoNeumorphism.isNeumorphismDesign
-        ? Padding(
-            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 35),
-            child: (widget.segment.isChallenge && canStartSegment) || !widget.segment.isChallenge
-                ? OlukoNeumorphicPrimaryButton(
+        ? (widget.segment.isChallenge && canStartSegment) || !widget.segment.isChallenge
+            ? Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: OlukoNeumorphicPrimaryButton(
                     useBorder: true,
                     thinPadding: true,
                     isExpanded: false,
                     title: OlukoLocalizations.get(context, 'startWorkouts'),
-                    // color: OlukoColors.primary,
                     onPressed: () {
                       //CoachRequest coachRequest = getSegmentCoachRequest(widget.segment.id);
                       if (_coachRequest != null) {
@@ -218,15 +217,18 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                       } else {
                         navigateToSegmentWithoutRecording();
                       }
-                    })
-                : OlukoNeumorphicPrimaryButton(
+                    }),
+              )
+            : Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: OlukoNeumorphicPrimaryButton(
                     isDisabled: true,
                     useBorder: true,
                     thinPadding: true,
                     isExpanded: false,
                     title: OlukoLocalizations.get(context, 'locked'),
                     onPressed: () {}),
-          )
+              )
         : Padding(
             padding: const EdgeInsets.only(left: 15, right: 15, bottom: 25.0),
             child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [

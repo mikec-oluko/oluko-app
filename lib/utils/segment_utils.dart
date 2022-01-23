@@ -52,7 +52,7 @@ class SegmentUtils {
       return segment.rounds > 1
           ? Text(
               segment.rounds.toString() + " " + OlukoLocalizations.get(context, 'rounds'),
-              style: OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
+              style: OlukoFonts.olukoSuperBigFont(customColor: color, custoFontWeight: FontWeight.bold),
             )
           : SizedBox();
     }

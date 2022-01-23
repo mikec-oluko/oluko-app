@@ -274,5 +274,8 @@
     "removeThisPersonBody2": " from your list?",
     "cancel": "Cancel",
     "rememberTo": "Remember to",
-    "switchSide": "switch side"
+    "switchSide": "switch side",
+    "cancelVoiceMessage": "Cancel voice message?",
+    "allow": "Allow",
+    "deny": "Deny"
 }
