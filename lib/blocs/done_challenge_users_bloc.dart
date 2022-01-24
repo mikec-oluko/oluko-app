@@ -16,7 +16,8 @@ class DoneChallengeUsersLoading extends DoneChallengeUsersState {}
 class DoneChallengeUsersSuccess extends DoneChallengeUsersState {
   final List<UserSubmodel> users;
   final List<UserSubmodel> favoriteUsers;
-  DoneChallengeUsersSuccess({this.users, this.favoriteUsers});
+  final int occurrencesInClasses;
+  DoneChallengeUsersSuccess({this.users, this.favoriteUsers, this.occurrencesInClasses});
 }
 
 class DoneChallengeUsersFailure extends DoneChallengeUsersState {
@@ -32,6 +33,7 @@ class DoneChallengeUsersBloc extends Cubit<DoneChallengeUsersState> {
       final List<Challenge> challengesList = await ChallengeRepository.getBySegmentId(segmentId);
 
       List<UserSubmodel> uniqueUserList = [];
+      List<String> uniqueChallengeList = [];
       List<UserSubmodel> favoriteUserList = [];
       if (challengesList != null) {
         challengesList.forEach((challenge) {
@@ -39,6 +41,9 @@ class DoneChallengeUsersBloc extends Cubit<DoneChallengeUsersState> {
               challenge.completedAt != null &&
               !uniqueUserList.any((element) => element.id == challenge.user.id)) {
             uniqueUserList.add(challenge.user);
+          }
+          if (!uniqueChallengeList.any((element) => element == challenge.classId)) {
+            uniqueChallengeList.add(challenge.classId);
           }
         });
 
@@ -62,7 +67,8 @@ class DoneChallengeUsersBloc extends Cubit<DoneChallengeUsersState> {
           }
         }
       }
-      emit(DoneChallengeUsersSuccess(users: uniqueUserList, favoriteUsers: favoriteUserList));
+      emit(DoneChallengeUsersSuccess(
+          users: uniqueUserList, favoriteUsers: favoriteUserList, occurrencesInClasses: uniqueChallengeList.length));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

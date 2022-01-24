@@ -84,6 +84,7 @@
     "uploadingWithDots": "Subiendo...",
     "errorOcurred": "Ocurrio un error.",
     "errorOcurredOn": "Ocurrio un error en: ",
+    "includedIn": "Incluido en",
     "classes": "Clases",
     "course": "Curso",
     "enroll": "Inscribirse",
@@ -273,5 +274,8 @@
     "removeThisPersonBody2": " de tu lista?",
     "cancel": "Cancelar",
     "rememberTo": "Recuerda cambiar",
-    "switchSide": "de lado"
+    "switchSide": "de lado",
+    "cancelVoiceMessage": "¿Cancelar mensaje de voz?",
+    "allow": "Allow",
+    "deny": "Deny"
 }

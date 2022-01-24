@@ -221,6 +221,7 @@ class _SegmentDetailState extends State<SegmentDetail> {
                   challenge: state.challenge,
                   audioPlayer: audioPlayer,
                   audios: _currentAudios,
+                  panelController: _challengePanelController,
                   onAudioPressed: (int index, Challenge challenge) => _onAudioDeleted(index, challenge));
             }
           }
