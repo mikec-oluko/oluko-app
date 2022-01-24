@@ -31,7 +31,12 @@ class TimerUtils {
       Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Text(countDown.toString(),
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 80, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic, color: OlukoColors.coral)),
+            style: TextStyle(
+              fontSize: 80,
+              fontWeight: FontWeight.bold,
+              fontStyle: FontStyle.italic,
+              color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor : OlukoColors.coral,
+            )),
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           Text(OlukoLocalizations.get(context, 'round') + "  ",
               textAlign: TextAlign.center, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white)),
@@ -42,7 +47,11 @@ class TimerUtils {
         Padding(
             padding: const EdgeInsets.only(bottom: 5),
             child: Text(getRepsTimerText(type, context),
-                textAlign: TextAlign.center, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)))
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.primary : OlukoColors.white)))
       ])
     ]);
   }
@@ -89,22 +98,61 @@ class TimerUtils {
                       backgroundColor: OlukoNeumorphism.isNeumorphismDesign
                           ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark
                           : OlukoColors.grayColorSemiTransparent)),
+              //TODO: COUNT YOUR AIR SQUADS
               Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                if (OlukoNeumorphism.isNeumorphismDesign) const Expanded(child: SizedBox()) else const SizedBox.shrink(),
                 Text(duration,
                     textAlign: TextAlign.center, style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Colors.white)),
-                counter != null ? getTextLabel(OlukoLocalizations.get(context, 'countYour') + counter, context, true) : SizedBox(),
+                if (counter != null)
+                  OlukoNeumorphism.isNeumorphismDesign
+                      ? neumorphicContentWithPadding(
+                          context, getTextLabel(OlukoLocalizations.get(context, 'countYour') + counter, context, true))
+                      : getTextLabel(OlukoLocalizations.get(context, 'countYour') + counter, context, true)
+                else
+                  const SizedBox.shrink(),
                 SizedBox(height: 5),
-                bothSide ? getTextLabel(OlukoLocalizations.get(context, 'rememberTo'), context, true) : SizedBox(),
-                bothSide ? getTextLabel(OlukoLocalizations.get(context, 'switchSide'), context, false) : SizedBox()
+                if (bothSide)
+                  OlukoNeumorphism.isNeumorphismDesign
+                      ? neumorphicContentWithPadding(context, getTextLabel(OlukoLocalizations.get(context, 'rememberTo'), context, true))
+                      : getTextLabel(OlukoLocalizations.get(context, 'rememberTo'), context, true)
+                else
+                  const SizedBox.shrink(),
+                if (bothSide)
+                  OlukoNeumorphism.isNeumorphismDesign
+                      ? neumorphicContentWithPadding(context, getTextLabel(OlukoLocalizations.get(context, 'switchSide'), context, false))
+                      : getTextLabel(OlukoLocalizations.get(context, 'switchSide'), context, false)
+                else
+                  SizedBox(),
+                if (OlukoNeumorphism.isNeumorphismDesign && counter != null)
+                  const SizedBox(
+                    height: 40,
+                  )
+                else
+                  const Expanded(child: SizedBox()),
               ])
             ])));
+  }
+
+  static Column neumorphicContentWithPadding(BuildContext context, Widget childrenContent) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 40),
+          child: childrenContent,
+        ),
+      ],
+    );
   }
 
   static Widget getTextLabel(String text, BuildContext context, bool padding) {
     return Padding(
         padding: padding ? EdgeInsets.only(top: 5) : EdgeInsets.only(top: 0),
-        child:
-            Text(text, textAlign: TextAlign.center, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300, color: OlukoColors.coral)));
+        child: Text(text,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w300,
+                color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.primary : OlukoColors.coral)));
   }
 
   static Widget getRoundLabel(int round) {
@@ -263,12 +311,12 @@ class TimerUtils {
                     Text(OlukoLocalizations.get(context, 'tapHere'),
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            fontSize: 32,
+                            fontSize: OlukoNeumorphism.isNeumorphismDesign ? 42 : 32,
                             fontWeight: FontWeight.bold,
                             color: OlukoNeumorphism.isNeumorphismDesign
                                 ? OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor
                                 : OlukoColors.primary)),
-                    SizedBox(height: 5),
+                    SizedBox(height: OlukoNeumorphism.isNeumorphismDesign ? 20 : 5),
                     Text(OlukoLocalizations.get(context, 'whenDone'),
                         textAlign: TextAlign.center,
                         style: TextStyle(

@@ -88,7 +88,7 @@ class OlukoNeumorphism {
         shape: NeumorphicShape.flat,
         lightSource: LightSource.topLeft,
         boxShape: NeumorphicBoxShape.circle(),
-        shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+        shadowDarkColorEmboss: OlukoNeumorphismColors.initialGradientColorPrimary,
         shadowLightColorEmboss: OlukoColors.black,
         surfaceIntensity: 1,
         shadowLightColor: OlukoColors.grayColor,
