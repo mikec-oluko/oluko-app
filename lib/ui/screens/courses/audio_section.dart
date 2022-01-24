@@ -8,6 +8,7 @@ import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/course_progress_bar.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
+import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 
 class AudioSection extends StatefulWidget {
@@ -157,6 +158,7 @@ class _State extends State<AudioSection> {
         GestureDetector(
             onTap: () {
               widget.onAudioPressed();
+              AppMessages.clearAndShowSnackbar(context, "Audio deleted.");
             },
             child: !OlukoNeumorphism.isNeumorphismDesign
                 ? Image.asset(
