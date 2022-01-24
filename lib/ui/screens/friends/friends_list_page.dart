@@ -15,6 +15,7 @@ import 'package:oluko_app/helpers/user_helper.dart';
 import 'package:oluko_app/models/submodels/friend_model.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/ui/components/friend_modal_content.dart';
 import 'package:oluko_app/ui/components/friends_card.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
@@ -59,76 +60,72 @@ class _FriendsListPageState extends State<FriendsListPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
-      if (authState is AuthSuccess && _authStateData == null) {
-        _authStateData = authState;
-        BlocProvider.of<FriendBloc>(context).getFriendsByUserId(authState.user.id);
-      }
-      return BlocListener<FavoriteFriendBloc, FavoriteFriendState>(
-        listener: (favoriteFriendContext, favoriteState) {
-          handleFriendFavoriteState(favoriteState);
-        },
-        child: Container(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // BlocListener<FriendBloc, FriendState>(
-                //   listener: (context, state) {
-                //     if (state is GetFriendsSuccess) {
-                //       friends = state.friendUsers;
-                //     }
-                //   },
-                //   child: Column(
-                //       children: friends
-                //           .map((friend) => FriendCard(
-                //                 userData: friend,
-                //               ))
-                //           .toList()),
-                // ),
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, authState) {
+        if (authState is AuthSuccess && _authStateData == null) {
+          _authStateData = authState;
+          BlocProvider.of<FriendBloc>(context).getFriendsByUserId(authState.user.id);
+        }
+        if (OlukoNeumorphism.isNeumorphismDesign) {
+          return _getContent();
+        } else {
+          return BlocListener<FavoriteFriendBloc, FavoriteFriendState>(
+            listener: (favoriteFriendContext, favoriteState) {
+              handleFriendFavoriteState(favoriteState);
+            },
+            child: _getContent(),
+          );
+        }
+      },
+    );
+  }
 
-                BlocBuilder<FriendBloc, FriendState>(builder: (context, friendState) {
-                  return BlocBuilder<UserListBloc, UserListState>(builder: (userListContext, userListState) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10),
-                          child: Text('My Friends', style: OlukoFonts.olukoBigFont()),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 16.0),
-                          child: Column(
-                            children: generateFriendList(friendState),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10),
-                          child: Text('Other users', style: OlukoFonts.olukoBigFont()),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 16.0),
-                          child: GridView.count(
-                            childAspectRatio: 0.7,
-                            crossAxisCount: 4,
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            children: generateUsersList(friendState, userListState),
-                          ),
-                        )
-                      ],
-                    );
-                  });
-                }),
-              ],
-            ),
-          ),
+  Widget _getContent() {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height,
+      width: MediaQuery.of(context).size.width,
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            BlocBuilder<FriendBloc, FriendState>(builder: (context, friendState) {
+              return BlocBuilder<UserListBloc, UserListState>(builder: (userListContext, userListState) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Text('My Friends', style: OlukoFonts.olukoBigFont()),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      child: Column(
+                        children: generateFriendList(friendState),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Text('Other users', style: OlukoFonts.olukoBigFont()),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      child: GridView.count(
+                        childAspectRatio: 0.7,
+                        crossAxisCount: 4,
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        children: generateUsersList(friendState, userListState),
+                      ),
+                    )
+                  ],
+                );
+              });
+            }),
+          ],
         ),
-      );
-    });
+      ),
+    );
   }
 
   ///Manage friends retrieval state
@@ -153,6 +150,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
               ]
             : [
                 GridView.count(
+                    padding: EdgeInsets.zero,
                     childAspectRatio: 0.7,
                     crossAxisCount: 4,
                     physics: const NeverScrollableScrollPhysics(),
@@ -162,7 +160,11 @@ class _FriendsListPageState extends State<FriendsListPage> {
                       return GestureDetector(
                         onTap: () {
                           BottomDialogUtils.showBottomDialog(
-                              content: dialogContainer(context: context, user: friendUser, friendState: friendState), context: context);
+                              content: OlukoNeumorphism.isNeumorphismDesign
+                                  ? FriendModalContent(friendUser, _authStateData.user.id, FriendBloc(), HiFiveSendBloc(),
+                                      HiFiveReceivedBloc(), UserStatisticsBloc(), FavoriteFriendBloc())
+                                  : dialogContainer(context: context, user: friendUser, friendState: friendState),
+                              context: context);
                         },
                         child: Column(
                           children: [
@@ -243,7 +245,11 @@ class _FriendsListPageState extends State<FriendsListPage> {
                 return GestureDetector(
                   onTap: () {
                     BottomDialogUtils.showBottomDialog(
-                        content: dialogContainer(context: context, user: user, friendState: friendState), context: context);
+                        content: OlukoNeumorphism.isNeumorphismDesign
+                            ? FriendModalContent(user, _authStateData.user.id, FriendBloc(), HiFiveSendBloc(), HiFiveReceivedBloc(),
+                                UserStatisticsBloc(), FavoriteFriendBloc())
+                            : dialogContainer(context: context, user: user, friendState: friendState),
+                        context: context);
                   },
                   child: Column(
                     children: [
@@ -277,6 +283,80 @@ class _FriendsListPageState extends State<FriendsListPage> {
           child: OlukoCircularProgressIndicator(),
         )
       ];
+    }
+  }
+
+  Widget profileAccomplishments({String achievementTitle, String achievementValue}) {
+    final double _textContainerWidth = 80;
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        //VALUE
+        Column(
+          children: [
+            Text(
+              achievementValue,
+              style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
+            ),
+          ],
+        ),
+        SizedBox(
+          height: 5,
+        ),
+        //SUBTITLE
+        Column(
+          children: [
+            Container(
+              width: _textContainerWidth,
+              child: Text(
+                achievementTitle,
+                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget usersGrid(List<UserResponse> users) {
+    if (users.isNotEmpty) {
+      return GridView.count(
+          childAspectRatio: 0.7,
+          crossAxisCount: 4,
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          children: users
+              .map((user) => Column(
+                    children: [
+                      StoriesItem(
+                        maxRadius: 30,
+                        imageUrl: user.avatar,
+                        name: user.firstName,
+                        lastname: user.lastName,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0, bottom: 0.0),
+                        child: Text(
+                          '${user.firstName} ${user.lastName}',
+                          style: const TextStyle(color: Colors.white, fontSize: 13),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Text(
+                        UserHelper.printUsername(user.username, user.id),
+                        style: const TextStyle(color: Colors.grey, fontSize: 10),
+                        textAlign: TextAlign.center,
+                      )
+                    ],
+                  ))
+              .toList());
+    } else {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 20, top: 10),
+        child: TitleBody(OlukoLocalizations.get(context, 'noUsers')),
+      );
     }
   }
 
@@ -516,79 +596,5 @@ class _FriendsListPageState extends State<FriendsListPage> {
                     child: IconButton(icon: Icon(Icons.close, color: Colors.white), onPressed: () => Navigator.pop(context)))
               ]));
         });
-  }
-
-  Widget profileAccomplishments({String achievementTitle, String achievementValue}) {
-    final double _textContainerWidth = 80;
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        //VALUE
-        Column(
-          children: [
-            Text(
-              achievementValue,
-              style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
-            ),
-          ],
-        ),
-        SizedBox(
-          height: 5,
-        ),
-        //SUBTITLE
-        Column(
-          children: [
-            Container(
-              width: _textContainerWidth,
-              child: Text(
-                achievementTitle,
-                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300),
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget usersGrid(List<UserResponse> users) {
-    if (users.isNotEmpty) {
-      return GridView.count(
-          childAspectRatio: 0.7,
-          crossAxisCount: 4,
-          physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          children: users
-              .map((user) => Column(
-                    children: [
-                      StoriesItem(
-                        maxRadius: 30,
-                        imageUrl: user.avatar,
-                        name: user.firstName,
-                        lastname: user.lastName,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0, bottom: 0.0),
-                        child: Text(
-                          '${user.firstName} ${user.lastName}',
-                          style: const TextStyle(color: Colors.white, fontSize: 13),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      Text(
-                        UserHelper.printUsername(user.username, user.id),
-                        style: const TextStyle(color: Colors.grey, fontSize: 10),
-                        textAlign: TextAlign.center,
-                      )
-                    ],
-                  ))
-              .toList());
-    } else {
-      return Padding(
-        padding: const EdgeInsets.only(bottom: 20, top: 10),
-        child: TitleBody(OlukoLocalizations.get(context, 'noUsers')),
-      );
-    }
   }
 }

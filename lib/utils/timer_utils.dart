@@ -17,7 +17,10 @@ class TimerUtils {
         child: AspectRatio(
             aspectRatio: 1,
             child: CircularProgressIndicator(
-                value: getProgress(totalTime, countDown), color: OlukoColors.coral, backgroundColor: OlukoColors.grayColorSemiTransparent)),
+                strokeWidth: OlukoNeumorphism.isNeumorphismDesign ? 2 : 4,
+                value: getProgress(totalTime, countDown),
+                color: OlukoColors.coral,
+                backgroundColor: OlukoColors.grayColorSemiTransparent)),
       ),
       Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Text(countDown.toString(),
@@ -50,36 +53,49 @@ class TimerUtils {
     return 1 - (currentTime / totalTime);
   }
 
-  static Widget roundsTimer(int totalRounds, int currentRound) => Container(
-      height: 340,
-      width: 340,
+  static Widget roundsTimer(int totalRounds, int currentRound, [bool keyboardVisibilty = false]) => Container(
+      height: () {
+        if (keyboardVisibilty) return 240.0;
+        return 340.0;
+      }(),
+      width: () {
+        if (keyboardVisibilty) return 240.0;
+        return 340.0;
+      }(),
       child: SegmentedIndeterminateProgressbar(
         max: totalRounds.toDouble() > 0 ? totalRounds.toDouble() : 1,
         progress: currentRound.toDouble() <= totalRounds.toDouble() ? currentRound.toDouble() : 1,
       ));
 
-  static Widget timeTimer(double progressValue, String duration, BuildContext context, [String counter]) {
+  static Widget timeTimer(double progressValue, String duration, BuildContext context, [String counter, bool bothSide]) {
     return Container(
         child: SizedBox(
-            height: 180,
-            width: 180,
+            height: OlukoNeumorphism.isNeumorphismDesign ? 245 : 180,
+            width: OlukoNeumorphism.isNeumorphismDesign ? 245 : 180,
             child: Stack(alignment: Alignment.center, children: [
               AspectRatio(
                   aspectRatio: 1,
                   child: CircularProgressIndicator(
-                      value: progressValue, color: OlukoColors.coral, backgroundColor: OlukoColors.grayColorSemiTransparent)),
+                      strokeWidth: OlukoNeumorphism.isNeumorphismDesign ? 2 : 4,
+                      value: progressValue,
+                      color: OlukoColors.coral,
+                      backgroundColor: OlukoColors.grayColorSemiTransparent)),
               Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Text(duration,
                     textAlign: TextAlign.center, style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Colors.white)),
-                counter != null
-                    ? Padding(
-                        padding: EdgeInsets.only(top: 5),
-                        child: Text(OlukoLocalizations.get(context, 'countYour') + counter,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300, color: OlukoColors.coral)))
-                    : SizedBox()
+                counter != null ? getTextLabel(OlukoLocalizations.get(context, 'countYour') + counter, context, true) : SizedBox(),
+                SizedBox(height: 5),
+                bothSide ? getTextLabel(OlukoLocalizations.get(context, 'rememberTo'), context, true) : SizedBox(),
+                bothSide ? getTextLabel(OlukoLocalizations.get(context, 'switchSide'), context, false) : SizedBox()
               ])
             ])));
+  }
+
+  static Widget getTextLabel(String text, BuildContext context, bool padding) {
+    return Padding(
+        padding: padding ? EdgeInsets.only(top: 5) : EdgeInsets.only(top: 0),
+        child:
+            Text(text, textAlign: TextAlign.center, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300, color: OlukoColors.coral)));
   }
 
   static Widget getRoundLabel(int round) {
@@ -121,7 +137,10 @@ class TimerUtils {
               AspectRatio(
                   aspectRatio: 1,
                   child: CircularProgressIndicator(
-                      value: 0, color: OlukoColors.skyblue, backgroundColor: OlukoColors.grayColorSemiTransparent)),
+                      strokeWidth: OlukoNeumorphism.isNeumorphismDesign ? 2 : 4,
+                      value: 0,
+                      color: OlukoColors.skyblue,
+                      backgroundColor: OlukoColors.grayColorSemiTransparent)),
               Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Text(OlukoLocalizations.get(context, 'paused').toUpperCase(),
                     textAlign: TextAlign.center, style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: OlukoColors.skyblue)),
@@ -156,7 +175,10 @@ class TimerUtils {
               AspectRatio(
                   aspectRatio: 1,
                   child: CircularProgressIndicator(
-                      value: progressValue, color: OlukoColors.skyblue, backgroundColor: OlukoColors.grayColorSemiTransparent)),
+                      strokeWidth: OlukoNeumorphism.isNeumorphismDesign ? 2 : 4,
+                      value: progressValue,
+                      color: OlukoColors.skyblue,
+                      backgroundColor: OlukoColors.grayColorSemiTransparent)),
               Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Text(OlukoLocalizations.get(context, 'rest').toUpperCase(),
                     textAlign: TextAlign.center, style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: OlukoColors.skyblue)),
@@ -167,18 +189,21 @@ class TimerUtils {
             ])));
   }
 
-  static Widget repsTimer(Function() onTap, BuildContext context) {
+  static Widget repsTimer(Function() onTap, BuildContext context, [bool bothSide]) {
     return Container(
         child: SizedBox(
-            height: 180,
-            width: 180,
+            height: OlukoNeumorphism.isNeumorphismDesign ? 245 : 180,
+            width: OlukoNeumorphism.isNeumorphismDesign ? 245 : 180,
             child: GestureDetector(
                 onTap: onTap,
                 child: Stack(alignment: Alignment.center, children: [
                   AspectRatio(
                       aspectRatio: 1,
                       child: CircularProgressIndicator(
-                          value: 0, color: OlukoColors.skyblue, backgroundColor: OlukoColors.grayColorSemiTransparent)),
+                          strokeWidth: OlukoNeumorphism.isNeumorphismDesign ? 2 : 4,
+                          value: 0,
+                          color: OlukoColors.skyblue,
+                          backgroundColor: OlukoColors.grayColorSemiTransparent)),
                   Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                     Text(OlukoLocalizations.get(context, 'tapHere'),
                         textAlign: TextAlign.center,
@@ -186,7 +211,10 @@ class TimerUtils {
                     SizedBox(height: 5),
                     Text(OlukoLocalizations.get(context, 'whenDone'),
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400, color: OlukoColors.primary))
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400, color: OlukoColors.primary)),
+                    SizedBox(height: 5),
+                    bothSide ? getTextLabel(OlukoLocalizations.get(context, 'rememberTo'), context, true) : SizedBox(),
+                    bothSide ? getTextLabel(OlukoLocalizations.get(context, 'switchSide'), context, false) : SizedBox()
                   ])
                 ]))));
   }
@@ -219,7 +247,10 @@ class TimerUtils {
                   AspectRatio(
                       aspectRatio: 1,
                       child: CircularProgressIndicator(
-                          value: progressValue, color: OlukoColors.coral, backgroundColor: OlukoColors.grayColorSemiTransparent)),
+                          strokeWidth: OlukoNeumorphism.isNeumorphismDesign ? 2 : 4,
+                          value: progressValue,
+                          color: OlukoColors.coral,
+                          backgroundColor: OlukoColors.grayColorSemiTransparent)),
                   Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                     Text(duration,
                         textAlign: TextAlign.center, style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Colors.white)),

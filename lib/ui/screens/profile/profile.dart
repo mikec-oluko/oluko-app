@@ -17,6 +17,7 @@ import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 import '../../../constants/theme.dart';
 import '../../../routes.dart';
 
@@ -106,9 +107,18 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Padding buildOptionsList() {
     return Padding(
-      padding: EdgeInsets.only(top: OlukoNeumorphism.isNeumorphismDesign ? MediaQuery.of(context).size.height / 3 : 170),
+      padding: EdgeInsets.only(
+          top: OlukoNeumorphism.isNeumorphismDesign
+              ? ScreenUtils.height(context) < 700
+                  ? ScreenUtils.height(context) / 2.65
+                  : ScreenUtils.height(context) / 3
+              : 170),
       child: ListView.builder(
-          itemCount: ProfileOptions.profileOptions.length, itemBuilder: (_, index) => profileOptions(ProfileOptions.profileOptions[index])),
+          padding: EdgeInsets.zero,
+          shrinkWrap: true,
+          physics: ScreenUtils.height(context) < 1000 ? null : NeverScrollableScrollPhysics(),
+          itemCount: ProfileOptions.profileOptions.length,
+          itemBuilder: (_, index) => profileOptions(ProfileOptions.profileOptions[index])),
     );
   }
 
@@ -144,35 +154,35 @@ class _ProfilePageState extends State<ProfilePage> {
           onTap: option.enable
               ? () {
                   switch (option.option) {
-                      case ProfileOptionsTitle.settings:
-                        Navigator.pushNamed(context, routeLabels[RouteEnum.profileSettings], arguments: {'profileInfo': profileInfo})
-                            .then((value) => onGoBack());
-                        break;
-                      case ProfileOptionsTitle.transformationJourney:
-                        Navigator.pushNamed(context, routeLabels[RouteEnum.profileTransformationJourney],
-                            arguments: {'profileInfo': profileInfo});
-                        break;
-                      case ProfileOptionsTitle.logout:
-                        BlocProvider.of<AuthBloc>(context).logout(context);
-                        AppMessages.clearAndShowSnackbarTranslated(context, 'loggedOut');
-                        Navigator.popUntil(context, ModalRoute.withName('/'));
-                        setState(() {});
-                        break;
-                      default:
-                        Navigator.pushNamed(context, ProfileRoutes.returnRouteName(option.option));
-                    }
+                    case ProfileOptionsTitle.settings:
+                      Navigator.pushNamed(context, routeLabels[RouteEnum.profileSettings], arguments: {'profileInfo': profileInfo})
+                          .then((value) => onGoBack());
+                      break;
+                    case ProfileOptionsTitle.transformationJourney:
+                      Navigator.pushNamed(context, routeLabels[RouteEnum.profileTransformationJourney],
+                          arguments: {'profileInfo': profileInfo});
+                      break;
+                    case ProfileOptionsTitle.logout:
+                      BlocProvider.of<AuthBloc>(context).logout(context);
+                      AppMessages.clearAndShowSnackbarTranslated(context, 'loggedOut');
+                      Navigator.popUntil(context, ModalRoute.withName('/'));
+                      setState(() {});
+                      break;
+                    default:
+                      Navigator.pushNamed(context, ProfileRoutes.returnRouteName(option.option), arguments: {'isFirstTime': false});
+                  }
                 }
               : () {},
           child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: Text(OlukoLocalizations.get(context, returnOptionString(option.option)),
-                      style: option.enable ? OlukoFonts.olukoMediumFont() : OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor)),
-                ),
-                IconButton(icon: Icon(Icons.arrow_forward_ios, color: OlukoColors.grayColor), onPressed: null)
-              ],
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 10),
+                child: Text(OlukoLocalizations.get(context, returnOptionString(option.option)),
+                    style: option.enable ? OlukoFonts.olukoMediumFont() : OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor)),
+              ),
+              IconButton(icon: Icon(Icons.arrow_forward_ios, color: OlukoColors.grayColor), onPressed: null)
+            ],
           ),
         ),
       ],

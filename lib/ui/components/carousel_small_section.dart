@@ -86,7 +86,7 @@ class _State extends State<CarouselSmallSection> {
         Navigator.pushNamed(context, routeLabels[RouteEnum.profileTransformationJourney], arguments: {'profileInfo': widget.userToGetData});
         break;
       case RouteEnum.profileAssessmentVideos:
-        Navigator.pushNamed(context, routeLabels[RouteEnum.profileAssessmentVideos]);
+        Navigator.pushNamed(context, routeLabels[RouteEnum.profileAssessmentVideos], arguments: {'profileInfo': widget.userToGetData});
         break;
       case RouteEnum.profileChallenges:
         Navigator.pushNamed(context, routeLabels[RouteEnum.profileChallenges]);

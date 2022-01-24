@@ -40,7 +40,8 @@ enum CoachFileTypeEnum {
 enum StoriesItemFrom {
   friends,
   friendsModal,
-  home
+  home,
+  longPressHome
 }
 
 enum CoachAssignmentStatusEnum { requested, approved, rejected }

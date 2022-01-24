@@ -58,7 +58,7 @@ class _State extends State<CarouselSection> {
                               padding: const EdgeInsets.only(top: 3.0),
                               child: Text(
                                 widget.optionLabel != null ? widget.optionLabel : '',
-                                style: TextStyle(color: OlukoColors.primary, fontSize: 18),
+                                style: TextStyle(color: OlukoColors.primary, fontSize: 16, overflow: TextOverflow.ellipsis),
                               ),
                             )
                           : SizedBox(),
@@ -69,7 +69,7 @@ class _State extends State<CarouselSection> {
               Flexible(
                 flex: 9,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  padding: const EdgeInsets.symmetric(vertical: OlukoNeumorphism.isNeumorphismDesign ? 5 : 10 ),
                   child: Container(
                       child: Align(
                     alignment: Alignment.centerLeft,

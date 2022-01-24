@@ -81,18 +81,8 @@ class _State extends State<StoriesItem> {
   Widget build(BuildContext context) {
     return BlocListener<StoryListBloc, StoryListState>(
         bloc: widget.bloc ?? StoryListBloc(),
-        listener: (BuildContext context, StoryListState state) {
-          if (state is StoryListUpdate && state?.event?.snapshot?.exists == true) {
-            if (state?.event?.snapshot?.key == widget?.itemUserId) {
-              final unchangedStories = widget.stories;
-              updateData(state.event.snapshot);
-              if (unchangedStories != widget.stories) {
-                setState(() {
-                  widget.checkForUnseenStories();
-                });
-              }
-            }
-          } else if (state is GetStoriesSuccess) {
+        listener: (context, state) {
+          if (state is GetStoriesSuccess && state.stories != null && state.stories.isNotEmpty) {
             setState(() {
               widget.stories = state.stories;
               widget.checkForUnseenStories();
@@ -156,32 +146,6 @@ class _State extends State<StoriesItem> {
         ));
   }
 
-  void updateData(DataSnapshot snapshot) {
-    if (snapshot.value == null) {
-      return;
-    }
-    updateField(snapshot.value, 'avatar_thumbnail');
-    updateField(snapshot.value, 'lastname');
-    updateField(snapshot.value, 'name');
-
-    final List<Story> updatedStories = [];
-    if (snapshot.value['stories'] != null) {
-      final Map<String, dynamic> storiesAsMap = Map<String, dynamic>.from(snapshot.value['stories'] as Map);
-      if (storiesAsMap == null || storiesAsMap.isEmpty) {
-        return;
-      }
-
-      storiesAsMap.forEach((key, story) {
-        updatedStories.add(Story.fromJson(Map<String, dynamic>.from(story as Map)));
-      });
-
-      sortStories(updatedStories);
-      if (updatedStories != null && widget.stories != updatedStories) {
-        widget.stories = updatedStories;
-      }
-    }
-  }
-
   void sortStories(List<Story> updatedStories) {
     updatedStories.sort((a, b) {
       if (a.seen && !b.seen) return 1;
@@ -211,7 +175,6 @@ class _State extends State<StoriesItem> {
       }
     }
   }
-
   Widget getCircularAvatar() {
     if (widget.imageUrl != null) {
       return OlukoNeumorphism.isNeumorphismDesign
@@ -265,6 +228,9 @@ class _State extends State<StoriesItem> {
         break;
       case StoriesItemFrom.friends:
         return 7.3;
+        break;
+      case StoriesItemFrom.longPressHome:
+        return 10;
         break;
       default:
         return 7;

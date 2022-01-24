@@ -1,4 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/models/challenge.dart';
+import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/submodels/user_submodel.dart';
 
 abstract class SegmentDetailContentState {}
@@ -7,7 +9,11 @@ class SegmentDetailContentLoading extends SegmentDetailContentState {}
 
 class SegmentDetailContentDefault extends SegmentDetailContentState {}
 
-class SegmentDetailContentAudioOpen extends SegmentDetailContentState {}
+class SegmentDetailContentAudioOpen extends SegmentDetailContentState {
+  List<Audio> audios;
+  Challenge challenge;
+  SegmentDetailContentAudioOpen({this.audios, this.challenge});
+}
 
 class SegmentDetailContentPeopleOpen extends SegmentDetailContentState {
   List<dynamic> users;
@@ -31,8 +37,8 @@ class SegmentDetailContentBloc extends Cubit<SegmentDetailContentState> {
     emit(SegmentDetailContentDefault());
   }
 
-  void openAudioPanel() {
-    emit(SegmentDetailContentAudioOpen());
+  void openAudioPanel(List<Audio> audios, Challenge challenge) {
+    emit(SegmentDetailContentAudioOpen(audios: audios, challenge: challenge));
   }
 
   void openPeoplePanel(List<dynamic> users, List<dynamic> favorites) {

@@ -39,11 +39,15 @@ class _ModalPersonalRecordState extends State<ModalPersonalRecord> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(left: 15, top: 35),
-                    child: Text(OlukoLocalizations.get(context, 'personalRecord'), style: const TextStyle(color: OlukoColors.grayColor, fontSize: 15, fontWeight: FontWeight.w600)),
+                    child: Text(OlukoLocalizations.get(context, 'personalRecord'),
+                        style: const TextStyle(color: OlukoColors.grayColor, fontSize: 15, fontWeight: FontWeight.w600)),
                   ),
                 ],
               ),
-              if (personalRecordState is PersonalRecordSuccess) personalRecordGrid(personalRecordState.personalRecords) else const SizedBox()
+              if (personalRecordState is PersonalRecordSuccess)
+                personalRecordGrid(personalRecordState.personalRecords)
+              else
+                const SizedBox()
             ],
           ),
         );
@@ -67,14 +71,20 @@ class _ModalPersonalRecordState extends State<ModalPersonalRecord> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(record.title, style: const TextStyle(color: OlukoColors.white, fontSize: 17, fontWeight: FontWeight.w400)),
-                              Text(record.date, style: const TextStyle(color: OlukoColors.grayColor, fontSize: 12, fontWeight: FontWeight.w400))
+                              Text(record.title,
+                                  style: const TextStyle(color: OlukoColors.white, fontSize: 17, fontWeight: FontWeight.w400)),
+                              Text(record.date,
+                                  style: const TextStyle(color: OlukoColors.grayColor, fontSize: 12, fontWeight: FontWeight.w400))
                             ],
                           ),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(15),
-                          child: ClipRRect(borderRadius: BorderRadius.circular(4), child: Image.network(record.image, fit: BoxFit.cover, width: 65, height: 90)),
+                          child: ClipRRect(
+                              borderRadius: BorderRadius.circular(4),
+                              child: record.image != null
+                                  ? Image.network(record.image, fit: BoxFit.cover, width: 65, height: 90)
+                                  : SizedBox.shrink()),
                         ),
                       ])
                     ],

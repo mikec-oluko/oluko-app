@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -16,12 +16,6 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(body: MainSignUpPage());
   }
 }
@@ -84,7 +78,7 @@ class MainSignUpPage extends StatelessWidget {
                                                               .primary),
                                                   onPressed: () =>
                                                       Navigator.pushNamed(
-                                                          context, '/log-in'),
+                                                          context, routeLabels[RouteEnum.login]),
                                                   child: Stack(children: [
                                                     Align(
                                                         alignment: Alignment
@@ -95,25 +89,6 @@ class MainSignUpPage extends StatelessWidget {
                                                       child: Text('LOGIN'),
                                                     )
                                                   ]))),
-                                          // TODO Enable Signup
-                                          // SizedBox(
-                                          //     width: double.infinity,
-                                          //     height: 50,
-                                          //     child: ElevatedButton(
-                                          //         style: ElevatedButton.styleFrom(
-                                          //             primary: OlukoColors.primary),
-                                          //         onPressed: () => Navigator.pushNamed(
-                                          //             context, '/sign-up-with-email'),
-                                          //         child: Stack(children: [
-                                          //           Align(
-                                          //               alignment:
-                                          //                   Alignment.centerRight,
-                                          //               child:
-                                          //                   Icon(Icons.navigate_next)),
-                                          //           Align(
-                                          //             child: Text('SIGN UP'),
-                                          //           )
-                                          //         ]))),
                                           SizedBox(height: 10),
                                         ],
                                       )))

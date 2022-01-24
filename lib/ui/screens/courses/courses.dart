@@ -4,9 +4,11 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_assignment_bloc.dart';
 import 'package:oluko_app/blocs/course/course_bloc.dart';
 import 'package:oluko_app/blocs/course/course_subscrption_bloc.dart';
 import 'package:oluko_app/blocs/course_category_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/favorite_bloc.dart';
 import 'package:oluko_app/blocs/recommendation_bloc.dart';
@@ -45,6 +47,7 @@ class Courses extends StatefulWidget {
 class _State extends State<Courses> {
   SearchResults<Course> searchResults = SearchResults(query: '', suggestedItems: []);
   double carouselSectionHeight;
+  String coachId;
   TextEditingController searchBarController;
   List<Tag> selectedTags = [];
   //Used to trigger AppBar Search Functions
@@ -117,7 +120,7 @@ class _State extends State<Courses> {
             child: showFilterSelector
                 ? CourseUtils.filterSelector(
                     tagState,
-                    onSubmit: (List<Base> selectedItems) => this.setState(() {
+                    onSubmit: (List<Base> selectedItems) => setState(() {
                       selectedTags = selectedItems as List<Tag>;
                       showFilterSelector = false;
                       searchKey.currentState.updateSearchResults('');
@@ -146,8 +149,8 @@ class _State extends State<Courses> {
   PreferredSizeWidget _appBar(bool goBack) {
     return OlukoAppBar<Course>(
       showTitle: true,
-      showBackButton: goBack,
       searchKey: searchKey,
+      showBackButton: goBack,
       title: OlukoLocalizations.get(context, showFilterSelector ? 'filters' : 'courses'),
       actions: [_filterWidget()],
       onPressed: () => Navigator.pushNamed(context, routeLabels[RouteEnum.root]),
@@ -164,6 +167,9 @@ class _State extends State<Courses> {
       searchResultItems: _courses,
       showSearchBar: true,
       whenSearchBarInitialized: (TextEditingController controller) => searchBarController = controller,
+      actionButton: () => this.setState(() {
+        showFilterSelector = false;
+      }),
     );
   }
 
@@ -197,7 +203,7 @@ class _State extends State<Courses> {
                         padding: const EdgeInsets.only(right: 8.0),
                         child: GestureDetector(
                           onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
-                              arguments: {'course': course, 'fromCoach': false}),
+                              arguments: {'course': course, 'fromCoach': false, 'isCoachRecommendation': false}),
                           child: _getCourseCard(_generateImageCourse(course.image),
                               width: ScreenUtils.width(context) / (0.2 + _cardsToShow())),
                         ),
@@ -272,44 +278,63 @@ class _State extends State<Courses> {
     );
   }
 
+//TODO: CHECK COACH ON ENROLL
   Widget _friendsRecommendedSection() {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
         AuthSuccess authSuccess = authState;
-        return BlocBuilder<RecommendationBloc, RecommendationState>(
-            bloc: BlocProvider.of<RecommendationBloc>(context)..getRecommendedCoursesByUser(authSuccess.user.id),
-            builder: (context, recommendationState) {
-              return recommendationState is RecommendationSuccess &&
-                      recommendationState.recommendations.isNotEmpty &&
-                      recommendationState.recommendationsByUsers.entries.isNotEmpty
-                  ? CarouselSection(
-                      title: OlukoLocalizations.get(context, 'recommended'),
-                      height: carouselSectionHeight + 10,
-                      children: recommendationState.recommendationsByUsers.entries.map((MapEntry<String, List<UserResponse>> courseEntry) {
-                        var courseList = _courses.where((element) => element.id == courseEntry.key).toList();
-                        if (courseList.isNotEmpty) {
-                          final course = courseList[0];
 
-                          final List<String> userRecommendationAvatars =
-                              courseEntry.value.map((user) => user.avatar ?? defaultAvatar).toList();
+        return BlocListener<CoachAssignmentBloc, CoachAssignmentState>(
+          listenWhen: (CoachAssignmentState previous, CoachAssignmentState current) {
+            return current is CoachAssignmentResponse;
+          },
+          bloc: BlocProvider.of<CoachAssignmentBloc>(context)..getCoachAssignmentStatus(authSuccess.user.id),
+          listener: (BuildContext context, coachAssignmentState) {
+            if (coachAssignmentState is CoachAssignmentResponse) {
+              coachId = coachAssignmentState.coachAssignmentResponse != null ? coachAssignmentState.coachAssignmentResponse.coachId : null;
+            }
+          },
+          child: BlocBuilder<RecommendationBloc, RecommendationState>(
+              bloc: BlocProvider.of<RecommendationBloc>(context)..getRecommendedCoursesByUser(authSuccess.user.id),
+              builder: (context, recommendationState) {
+                return recommendationState is RecommendationSuccess &&
+                        recommendationState.recommendations.isNotEmpty &&
+                        recommendationState.recommendationsByUsers.entries.isNotEmpty
+                    ? CarouselSection(
+                        title: OlukoLocalizations.get(context, 'recommended'),
+                        height: carouselSectionHeight + 10,
+                        children:
+                            recommendationState.recommendationsByUsers.entries.map((MapEntry<String, List<UserResponse>> courseEntry) {
+                          var courseList = _courses.where((element) => element.id == courseEntry.key).toList();
+                          if (courseList.isNotEmpty) {
+                            final course = courseList[0];
 
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: GestureDetector(
-                              onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
-                                  arguments: {'course': course, 'fromCoach': false}),
-                              child: _getCourseCard(_generateImageCourse(course.image),
-                                  width: ScreenUtils.width(context) / (0.2 + _cardsToShow()),
-                                  userRecommendationsAvatarUrls: userRecommendationAvatars),
-                            ),
-                          );
-                        } else {
-                          return const SizedBox();
-                        }
-                      }).toList(),
-                    )
-                  : SizedBox();
-            });
+                            final List<String> userRecommendationAvatars =
+                                courseEntry.value.map((user) => user.avatar ?? defaultAvatar).toList();
+
+                            return Padding(
+                              padding: OlukoNeumorphism.isNeumorphismDesign
+                                  ? const EdgeInsets.symmetric(vertical: 10, horizontal: 5)
+                                  : const EdgeInsets.all(8.0),
+                              child: GestureDetector(
+                                onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing], arguments: {
+                                  'course': course,
+                                  'fromCoach': false,
+                                  'isCoachRecommendation': coachId != null ? courseEntry.value.first.id == coachId : false
+                                }),
+                                child: _getCourseCard(_generateImageCourse(course.image),
+                                    width: ScreenUtils.width(context) / (0.2 + _cardsToShow()),
+                                    userRecommendationsAvatarUrls: userRecommendationAvatars),
+                              ),
+                            );
+                          } else {
+                            return const SizedBox();
+                          }
+                        }).toList(),
+                      )
+                    : SizedBox();
+              }),
+        );
       } else {
         return SizedBox();
       }
@@ -331,13 +356,19 @@ class _State extends State<Courses> {
                   children: courseEnrollmentState.courseEnrollments.map((CourseEnrollment courseEnrollment) {
                     final activeCourseList = _courses.where((enrolledCourse) => enrolledCourse.id == courseEnrollment.course.id).toList();
                     Course course;
+                    int courseIndex=courseEnrollmentState.courseEnrollments.indexOf(courseEnrollment);
                     if (activeCourseList.isNotEmpty) {
                       course = activeCourseList[0];
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: GestureDetector(
-                          onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
-                              arguments: {'course': course, 'fromCoach': false}),
+                          onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing], arguments: {
+                            'course': course,
+                            'fromCoach': false,
+                            'isCoachRecommendation': false,
+                            'courseEnrollment': courseEnrollment,
+                            'courseIndex':courseIndex
+                          }),
                           child: _getCourseCard(
                             _generateImageCourse(course.image),
                             progress: courseEnrollment.completion,
@@ -376,8 +407,10 @@ class _State extends State<Courses> {
                             return Padding(
                                 padding: const EdgeInsets.only(right: 8.0),
                                 child: GestureDetector(
-                                  onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
-                                      arguments: {'course': favoriteCourse, 'fromCoach': false}),
+                                  onTap: () async {
+                                    Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
+                                        arguments: {'course': favoriteCourse, 'fromCoach': false, 'isCoachRecommendation': false});
+                                  },
                                   child: _getCourseCard(
                                     _generateImageCourse(favoriteCourse.image),
                                     width: ScreenUtils.width(context) / (0.2 + _cardsToShow()),

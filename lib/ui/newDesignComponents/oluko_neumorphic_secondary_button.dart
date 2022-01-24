@@ -16,9 +16,10 @@ class OlukoNeumorphicSecondaryButton extends StatefulWidget {
   final bool isPrimary;
   final bool useBorder;
   final bool isExpanded;
+  final double customHeight;
   const OlukoNeumorphicSecondaryButton(
-      {this.title,
-      this.onPressed,
+      {@required this.title,
+      @required this.onPressed,
       this.thinPadding = false,
       // this.color,
       this.textColor = Colors.black,
@@ -28,6 +29,7 @@ class OlukoNeumorphicSecondaryButton extends StatefulWidget {
       this.isDisabled = false,
       this.onlyIcon = false,
       this.isExpanded = true,
+      this.customHeight = 50,
       this.useBorder = false,
       this.isPrimary = true})
       : super();
@@ -51,7 +53,7 @@ class _OlukoNeumorphicButtonState extends State<OlukoNeumorphicSecondaryButton> 
         ? Expanded(
             child: secondaryButton(),
           )
-        : secondaryButton();
+        : Center(child: Container(height: widget.customHeight, child: secondaryButton()));
   }
 
   NeumorphicButton secondaryButton() {
@@ -59,15 +61,19 @@ class _OlukoNeumorphicButtonState extends State<OlukoNeumorphicSecondaryButton> 
       onPressed: () {
         widget.onPressed != null ? widget.onPressed() : () {};
       },
-      padding: EdgeInsets.all(10),
+      padding: EdgeInsets.all(2),
       style: OlukoNeumorphism.secondaryButtonStyle(
           useBorder: widget.useBorder,
           buttonShape: widget.buttonShape,
           boxShape: NeumorphicBoxShape.stadium(),
           ligthShadow: true,
           darkShadow: true),
-      child: Center(
-        child: _textLabel(),
+      child: Neumorphic(
+        style: OlukoNeumorphism.secondaryButtonStyle(
+            buttonShape: widget.buttonShape, boxShape: NeumorphicBoxShape.stadium(), ligthShadow: true, darkShadow: true),
+        child: Center(
+          child: widget.onlyIcon ? widget.icon : _textLabel(),
+        ),
       ),
     );
   }

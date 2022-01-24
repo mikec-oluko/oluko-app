@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/models/segment.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_audio_bloc.dart';
 import 'package:oluko_app/ui/components/course_poster.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
-import 'package:oluko_app/utils/segment_utils.dart';
 
 class CourseInfoSection extends StatefulWidget {
   final int peopleQty;
@@ -14,44 +13,26 @@ class CourseInfoSection extends StatefulWidget {
   final Function() onPeoplePressed;
   final Function() clockAction;
 
-  CourseInfoSection(
-      {this.peopleQty,
-      this.audioMessageQty,
-      this.image,
-      this.onPeoplePressed,
-      this.onAudioPressed,
-      this.clockAction});
+  CourseInfoSection({this.peopleQty, this.audioMessageQty, this.image, this.onPeoplePressed, this.onAudioPressed, this.clockAction});
 
   @override
   _State createState() => _State();
 }
 
 class _State extends State<CourseInfoSection> {
+  int _audioQty = 0;
+
+  @override
+  void initState() {
+    _audioQty = widget.audioMessageQty;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(children: [
-      Padding(
-          padding: const EdgeInsets.only(left: 15),
-          child: CoursePoster(image: widget.image)),
-      Padding(
-          padding: const EdgeInsets.only(left: 40),
-          child: Column(children: [
-            SizedBox(height: 80),
-            Row(children: [
-              widget.peopleQty != null
-                  ? GestureDetector(
-                      onTap: widget.onPeoplePressed, child: peopleSection())
-                  : SizedBox(),
-              verticalDivider(),
-              widget.audioMessageQty != null
-                  ? audioSection(context)
-                  : SizedBox(),
-              widget.clockAction != null
-                  ? GestureDetector(
-                      onTap: widget.clockAction, child: clockSection())
-                  : SizedBox(),
-            ])
-          ])),
+      Padding(padding: const EdgeInsets.only(left: 15), child: CoursePoster(image: widget.image)),
+      _getButtons(),
     ]);
   }
 
@@ -70,8 +51,7 @@ class _State extends State<CourseInfoSection> {
         Text(
           OlukoLocalizations.get(context, 'personalRecord'),
           textAlign: TextAlign.center,
-          style: const TextStyle(
-              fontSize: 13, fontWeight: FontWeight.w300, color: Colors.white),
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w300, color: Colors.white),
         )
       ]),
     );
@@ -82,29 +62,28 @@ class _State extends State<CourseInfoSection> {
       Text(
         widget.peopleQty.toString() + "+",
         textAlign: TextAlign.center,
-        style: TextStyle(
-            fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
       ),
-      SizedBox(height: 5),
+      const SizedBox(height: 5),
       Text(
         OlukoLocalizations.get(context, 'inThis'),
         textAlign: TextAlign.center,
-        style: TextStyle(
-            fontSize: 13, fontWeight: FontWeight.w300, color: Colors.white),
+        style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w300, color: Colors.white),
       ),
       Text(
         OlukoLocalizations.get(context, 'course').toLowerCase(),
         textAlign: TextAlign.center,
-        style: TextStyle(
-            fontSize: 13, fontWeight: FontWeight.w300, color: Colors.white),
+        style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w300, color: Colors.white),
       ),
     ]);
   }
 
   Widget audioSection(BuildContext context) {
     return GestureDetector(
-        onTap: widget.audioMessageQty != null && widget.audioMessageQty > 0 ? widget.onAudioPressed : null,
-        child: Stack(alignment: Alignment.topRight, children: [
+      onTap: _audioQty > 0 ? widget.onAudioPressed : null,
+      child: Stack(
+        alignment: Alignment.topRight,
+        children: [
           Padding(
               padding: const EdgeInsets.only(top: 7),
               child: Image.asset(
@@ -112,24 +91,30 @@ class _State extends State<CourseInfoSection> {
                 height: 50,
                 width: 50,
               )),
-          widget.audioMessageQty != null && widget.audioMessageQty > 0
-              ? Stack(alignment: Alignment.center, children: [
-                  Image.asset(
-                    'assets/courses/audio_notification.png',
-                    height: 22,
-                    width: 22,
-                  ),
-                  Text(
-                    widget.audioMessageQty.toString(),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w300,
-                        color: Colors.white),
-                  ),
-                ])
-              : SizedBox(),
+          getAudioNotification(),
         ]));
+  }
+
+  Widget getAudioNotification() {
+    return BlocBuilder<CourseEnrollmentAudioBloc, CourseEnrollmentAudioState>(builder: (context, state) {
+      if (state is ClassAudioDeleteSuccess) {
+        _audioQty = state.audios.length;
+      }
+      return _audioQty > 0
+          ? Stack(alignment: Alignment.center, children: [
+              Image.asset(
+                'assets/courses/audio_notification.png',
+                height: 22,
+                width: 22,
+              ),
+              Text(
+                _audioQty.toString(),
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 10, fontWeight: FontWeight.w300, color: Colors.white),
+              ),
+            ])
+          : SizedBox();
+    });
   }
 
   Widget verticalDivider() {
@@ -138,5 +123,31 @@ class _State extends State<CourseInfoSection> {
       height: 48,
       width: 48,
     );
+  }
+
+  Widget _getButtons() {
+    if (OlukoNeumorphism.isNeumorphismDesign) {
+      return const SizedBox();
+    } else {
+      return Padding(
+        padding: const EdgeInsets.only(left: 30),
+        child: Column(
+          children: [
+            const SizedBox(height: 80),
+            Row(
+              children: [
+                if (widget.peopleQty != null) GestureDetector(onTap: widget.onPeoplePressed, child: peopleSection()) else const SizedBox(),
+                verticalDivider(),
+                if (widget.onAudioPressed != null)
+                  GestureDetector(onTap: widget.onAudioPressed, child: audioSection(context))
+                else
+                  const SizedBox(),
+                if (widget.clockAction != null) GestureDetector(onTap: widget.clockAction, child: clockSection()) else const SizedBox(),
+              ],
+            )
+          ],
+        ),
+      );
+    }
   }
 }

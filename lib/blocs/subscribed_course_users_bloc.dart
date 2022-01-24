@@ -49,7 +49,7 @@ class SubscribedCourseUsersBloc extends Cubit<SubscribedCourseUsersState> {
         });
 
         Friend friendData = await FriendRepository.getUserFriendsByUserId(userId);
-        List<FriendModel> friends = friendData.friends;
+        List<FriendModel> friends = friendData == null ? null : friendData.friends;
 
         userListToShow = List.from(uniqueUserList);
         if (friends != null) {
@@ -66,6 +66,36 @@ class SubscribedCourseUsersBloc extends Cubit<SubscribedCourseUsersState> {
       }
 
       emit(SubscribedCourseUsersSuccess(users: userListToShow, favoriteUsers: favoriteUserList));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(SubscribedCourseUsersFailure(exception: exception));
+      rethrow;
+    }
+  }
+
+  void getEnrolled(String courseId, String userId) async {
+    try {
+      emit(SubscribedCourseUsersLoading());
+      List<UserResponse> returnList = [];
+      final List<CourseEnrollment> courseEnrollmentList = await CourseEnrollmentRepository.getByCourse(courseId, userId);
+      if (courseEnrollmentList != null) {
+        List<String> enrolledUserId = courseEnrollmentList
+            .where((element) => element.isUnenrolled != true)
+            .where((element) => element.completion < 1)
+            .map((e) => e.createdBy)
+            .toList();
+        //delete duplicates
+        enrolledUserId = enrolledUserId.toSet().toList();
+
+        for (final user in enrolledUserId) {
+          final UserResponse userToAdd = await UserRepository().getById(user);
+          returnList.add(userToAdd);
+        }
+      }
+      emit(SubscribedCourseUsersSuccess(users: returnList));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

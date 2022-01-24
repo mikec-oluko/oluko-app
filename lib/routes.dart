@@ -5,7 +5,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_assignment_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
-import 'package:oluko_app/blocs/challenge_bloc.dart';
+import 'package:oluko_app/blocs/challenge/challenge_audio_bloc.dart';
+import 'package:oluko_app/blocs/challenge/challenge_bloc.dart';
+import 'package:oluko_app/blocs/challenge/challenge_segment_bloc.dart';
+import 'package:oluko_app/blocs/challenge/panel_audio_bloc.dart';
 import 'package:oluko_app/blocs/class/class_subscription_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_audio_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_introduction_video_bloc.dart';
@@ -14,14 +17,17 @@ import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
 import 'package:oluko_app/blocs/course/course_home_bloc.dart';
 import 'package:oluko_app/blocs/course/course_subscrption_bloc.dart';
 import 'package:oluko_app/blocs/course_category_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_audio_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
 import 'package:oluko_app/blocs/done_challenge_users_bloc.dart';
+import 'package:oluko_app/blocs/enrollment_audio_bloc.dart';
 import 'package:oluko_app/blocs/friends/chat_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/message_bloc.dart';
 import 'package:oluko_app/blocs/gallery_video_bloc.dart';
 import 'package:oluko_app/blocs/inside_class_content_bloc.dart';
+import 'package:oluko_app/blocs/introduction_media_bloc.dart';
 import 'package:oluko_app/blocs/personal_record_bloc.dart';
 import 'package:oluko_app/blocs/segment_detail_content_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
@@ -47,8 +53,10 @@ import 'package:oluko_app/blocs/tag_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
+import 'package:oluko_app/blocs/user_audio_bloc.dart';
 import 'package:oluko_app/blocs/user_list_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
+import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
@@ -59,13 +67,18 @@ import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
 import 'package:oluko_app/ui/screens/app_plans.dart';
+import 'package:oluko_app/ui/screens/assessments/assessment_neumorphic_done_screen.dart';
 import 'package:oluko_app/ui/screens/assessments/assessment_videos.dart';
 import 'package:oluko_app/ui/screens/assessments/self_recording.dart';
 import 'package:oluko_app/ui/screens/assessments/self_recording_preview.dart';
 import 'package:oluko_app/ui/screens/assessments/task_details.dart';
 import 'package:oluko_app/ui/screens/assessments/task_submission_recorded_video.dart';
+import 'package:oluko_app/ui/screens/authentication/introduction_video.dart';
 import 'package:oluko_app/ui/screens/authentication/login.dart';
+import 'package:oluko_app/ui/screens/authentication/login_password.dart';
+import 'package:oluko_app/ui/screens/authentication/login_username.dart';
 import 'package:oluko_app/ui/screens/authentication/sign_up.dart';
+import 'package:oluko_app/ui/screens/authentication/sign_up_neumorphic.dart';
 import 'package:oluko_app/ui/screens/authentication/sign_up_with_email.dart';
 import 'package:oluko_app/ui/screens/choose_plan_payment.dart';
 import 'package:oluko_app/ui/screens/coach/coach_no_assigned_timer_page.dart';
@@ -86,6 +99,7 @@ import 'package:oluko_app/ui/screens/courses/segment_detail.dart';
 import 'package:oluko_app/ui/screens/courses/user_challenge_detail.dart';
 import 'package:oluko_app/ui/screens/friends/friends_page.dart';
 import 'package:oluko_app/ui/screens/hi_five_page.dart';
+import 'package:oluko_app/ui/screens/home_long_press.dart';
 import 'package:oluko_app/ui/screens/main_page.dart';
 import 'package:oluko_app/ui/screens/profile/profile.dart';
 import 'package:oluko_app/ui/screens/profile/profile_assessment_videos_page.dart';
@@ -109,12 +123,14 @@ import 'blocs/coach/coach_recommendations_bloc.dart';
 import 'blocs/coach/coach_review_pending_bloc.dart';
 import 'blocs/coach/coach_sent_videos_bloc.dart';
 import 'blocs/coach/coach_timeline_bloc.dart';
+import 'blocs/keyboard/keyboard_bloc.dart';
 import 'blocs/movement_info_bloc.dart';
 import 'blocs/friends/hi_five_send_bloc.dart';
 import 'blocs/movement_info_bloc.dart';
 import 'blocs/recording_alert_bloc.dart';
 import 'blocs/views_bloc/hi_five_bloc.dart';
 import 'models/annotation.dart';
+import 'models/dto/login_request.dart';
 import 'models/segment_submission.dart';
 import 'models/task.dart';
 import 'ui/screens/coach/coach_main_page.dart';
@@ -135,8 +151,11 @@ import 'models/transformation_journey_uploads.dart';
 
 enum RouteEnum {
   root,
+  introVideo,
   signUp,
+  signUpNeumorphic,
   signUpWithEmail,
+  login,
   friends,
   profile,
   profileSettings,
@@ -151,7 +170,8 @@ enum RouteEnum {
   transformationJourneyPost,
   transformationJournetContentDetails,
   transformationJourneyPostView,
-  logIn,
+  logInUsername,
+  logInPassword,
   appPlans,
   segmentDetail,
   movementIntro,
@@ -179,13 +199,18 @@ enum RouteEnum {
   completedClass,
   story,
   hiFivePage,
-  userChallengeDetail
+  userChallengeDetail,
+  homeLongPress,
+  assessmentNeumorphicDone
 }
 
 Map<RouteEnum, String> routeLabels = {
   RouteEnum.root: '/',
+  RouteEnum.introVideo: '/intro_video',
   RouteEnum.signUp: '/sign-up',
+  RouteEnum.signUpNeumorphic: '/sign-up-neumorphic',
   RouteEnum.signUpWithEmail: '/sign-up-with-email',
+  RouteEnum.login: '/login',
   RouteEnum.friends: '/friends',
   RouteEnum.profile: '/profile',
   RouteEnum.profileSettings: '/profile-settings',
@@ -200,7 +225,8 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.transformationJourneyPost: '/transformation-journey-post',
   RouteEnum.transformationJournetContentDetails: '/transformation-journey-content-details',
   RouteEnum.transformationJourneyPostView: '/transformation-journey-post-view',
-  RouteEnum.logIn: '/log-in',
+  RouteEnum.logInUsername: '/log-in-username',
+  RouteEnum.logInPassword: '/log-in-password',
   RouteEnum.appPlans: '/app-plans',
   RouteEnum.segmentDetail: '/segment-detail',
   RouteEnum.movementIntro: '/movement-intro',
@@ -228,7 +254,9 @@ Map<RouteEnum, String> routeLabels = {
   RouteEnum.completedClass: '/completed-class',
   RouteEnum.story: '/story',
   RouteEnum.hiFivePage: '/hi-five-page',
-  RouteEnum.userChallengeDetail: '/user-challenge-detail'
+  RouteEnum.userChallengeDetail: '/user-challenge-detail',
+  RouteEnum.homeLongPress: 'home_long_press',
+  RouteEnum.assessmentNeumorphicDone: 'assessment_neumorphic_done'
 };
 
 RouteEnum getEnumFromRouteString(String route) {
@@ -239,6 +267,7 @@ RouteEnum getEnumFromRouteString(String route) {
 class Routes {
   final OlukoPanelBloc _olukoPanelBloc = OlukoPanelBloc();
   final AuthBloc _authBloc = AuthBloc();
+  final IntroductionMediaBloc _introductionMediaBloc = IntroductionMediaBloc();
   final ProfileBloc _profileBloc = ProfileBloc();
   final CourseBloc _courseBloc = CourseBloc();
   final CourseHomeBloc _courseHomeBloc = CourseHomeBloc();
@@ -302,6 +331,13 @@ class Routes {
   final CourseCategoryBloc _courseCategoryBloc = CourseCategoryBloc();
   final CourseSubscriptionBloc _courseSubscriptionBloc = CourseSubscriptionBloc();
   final ClassSubscriptionBloc _classSubscriptionBloc = ClassSubscriptionBloc();
+  final UserAudioBloc _userAudioBloc = UserAudioBloc();
+  final ChallengeSegmentBloc _challengeSegmentBloc = ChallengeSegmentBloc();
+  final KeyboardBloc _keyboardBloc = KeyboardBloc();
+  final CourseEnrollmentAudioBloc _courseEnrollmentAudioBloc = CourseEnrollmentAudioBloc();
+  final ChallengeAudioBloc _challengeAudioBloc = ChallengeAudioBloc();
+  final EnrollmentAudioBloc _enrollmentAudioBloc = EnrollmentAudioBloc();
+  final PanelAudioBloc _panelAudioBloc = PanelAudioBloc();
 
   Route<dynamic> getRouteView(String route, Object arguments) {
     //View for the new route.
@@ -318,6 +354,7 @@ class Routes {
           BlocProvider<HiFiveReceivedBloc>.value(
             value: _hiFiveReceivedBloc,
           ),
+          BlocProvider(create: (_) => KeyboardBloc()),
           BlocProvider<CoachTimelineBloc>.value(value: _coachTimelineBloc),
           BlocProvider<ChallengeBloc>.value(value: _challengeBloc),
           BlocProvider<CourseHomeBloc>.value(value: _courseHomeBloc),
@@ -365,8 +402,15 @@ class Routes {
           tab: argumentsToAdd == null || argumentsToAdd['tab'] == null ? null : argumentsToAdd['tab'] as int,
         );
         break;
+      case RouteEnum.introVideo:
+        providers = [BlocProvider<IntroductionMediaBloc>.value(value: _introductionMediaBloc)];
+        newRouteView = IntroductionVideo();
+        break;
       case RouteEnum.signUp:
         newRouteView = SignUpPage();
+        break;
+      case RouteEnum.signUpNeumorphic:
+        newRouteView = SignUpNeumorphicPage();
         break;
       case RouteEnum.completedClass:
         providers = [BlocProvider<CourseEnrollmentUpdateBloc>.value(value: _courseEnrollmentUpdateBloc)];
@@ -392,6 +436,9 @@ class Routes {
         break;
       case RouteEnum.signUpWithEmail:
         newRouteView = SignUpWithMailPage();
+        break;
+      case RouteEnum.login:
+        newRouteView = LoginPage();
         break;
       case RouteEnum.friends:
         providers = [
@@ -475,7 +522,10 @@ class Routes {
         break;
       case RouteEnum.profileChallenges:
         providers = [BlocProvider<ChallengeBloc>.value(value: _challengeBloc)];
-        newRouteView = ProfileChallengesPage();
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        newRouteView = ProfileChallengesPage(
+          challengeSegments: argumentsToAdd['challengeSegments'] as List<ChallengeNavigation>,
+        );
         break;
       case RouteEnum.profileTransformationJourney:
         providers = [
@@ -497,7 +547,8 @@ class Routes {
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
           BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
         ];
-        newRouteView = ProfileAssessmentVideosPage();
+        final Map<String, UserResponse> argumentsToAdd = arguments as Map<String, UserResponse>;
+        newRouteView = ProfileAssessmentVideosPage(userRequested: argumentsToAdd['profileInfo']);
         break;
       case RouteEnum.transformationJourneyPost:
         providers = [
@@ -515,18 +566,26 @@ class Routes {
         final Map<String, TransformationJourneyUpload> argumentsToAdd = arguments as Map<String, TransformationJourneyUpload>;
         newRouteView = TransformationJourneyContentDetail(contentToShow: argumentsToAdd['TransformationJourneyUpload']);
         break;
-      case RouteEnum.logIn:
-        newRouteView = LoginPage();
+      case RouteEnum.logInUsername:
+        newRouteView = LoginUsernamePage();
+        break;
+      case RouteEnum.logInPassword:
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        newRouteView = LoginPasswordPage(requestData: argumentsToAdd['requestData'] as String);
         break;
       case RouteEnum.appPlans:
         newRouteView = AppPlans();
         break;
       case RouteEnum.segmentDetail:
         providers = [
+          BlocProvider<ClassBloc>.value(value: _classBloc),
+          BlocProvider<CourseEnrollmentAudioBloc>.value(value: _courseEnrollmentAudioBloc),
+          BlocProvider<ChallengeAudioBloc>.value(value: _challengeAudioBloc),
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
           BlocProvider<MovementBloc>.value(value: _movementBloc),
           BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
           BlocProvider<CoachUserBloc>.value(value: _coachUserBloc),
+          BlocProvider<ChallengeSegmentBloc>.value(value: _challengeSegmentBloc),
           BlocProvider<SegmentDetailContentBloc>.value(value: _segmentDetailContentBloc),
           BlocProvider<DoneChallengeUsersBloc>.value(value: _doneChallengeUsersBloc),
           BlocProvider<PersonalRecordBloc>.value(value: _personalRecordBloc),
@@ -538,7 +597,8 @@ class Routes {
             courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
             classIndex: argumentsToAdd['classIndex'] as int,
             segmentIndex: argumentsToAdd['segmentIndex'] as int,
-            courseIndex: argumentsToAdd['courseIndex'] as int);
+            courseIndex: argumentsToAdd['courseIndex'] as int,
+            fromChallenge: argumentsToAdd['fromChallenge'] as bool);
         break;
       case RouteEnum.movementIntro:
         providers = [
@@ -560,16 +620,19 @@ class Routes {
           BlocProvider<CourseEnrollmentUpdateBloc>.value(value: _courseEnrollmentUpdateBloc),
           BlocProvider<StoryBloc>.value(value: _storyBloc),
           BlocProvider<CoachRequestBloc>.value(value: _coachRequestBloc),
-          BlocProvider<StoryListBloc>.value(value: _storyListBloc)
+          BlocProvider<StoryListBloc>.value(value: _storyListBloc),
+          BlocProvider<KeyboardBloc>.value(value: _keyboardBloc)
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = SegmentClocks(
-            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
-            classIndex: argumentsToAdd['classIndex'] as int,
-            courseIndex: argumentsToAdd['courseIndex'] as int,
-            segmentIndex: argumentsToAdd['segmentIndex'] as int,
-            workoutType: argumentsToAdd['workoutType'] as WorkoutType,
-            segments: argumentsToAdd['segments'] as List<Segment>);
+          courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
+          classIndex: argumentsToAdd['classIndex'] as int,
+          courseIndex: argumentsToAdd['courseIndex'] as int,
+          segmentIndex: argumentsToAdd['segmentIndex'] as int,
+          workoutType: argumentsToAdd['workoutType'] as WorkoutType,
+          segments: argumentsToAdd['segments'] as List<Segment>,
+          fromChallenge: argumentsToAdd['fromChallenge'] as bool,
+        );
         break;
       case RouteEnum.segmentCameraPreview:
         providers = [
@@ -597,10 +660,17 @@ class Routes {
           BlocProvider<StoryListBloc>.value(value: _storyListBloc),
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
           BlocProvider<StoryListBloc>.value(value: _storyListBloc),
-          BlocProvider<RecommendationBloc>.value(value: _recommendationBloc)
+          BlocProvider<RecommendationBloc>.value(value: _recommendationBloc),
+          BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
-        newRouteView = CourseMarketing(course: argumentsToAdd['course'] as Course, fromCoach: argumentsToAdd['fromCoach'] as bool);
+        newRouteView = CourseMarketing(
+          course: argumentsToAdd['course'] as Course,
+          fromCoach: argumentsToAdd['fromCoach'] as bool,
+          isCoachRecommendation: argumentsToAdd['isCoachRecommendation'] as bool,
+          courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
+          courseIndex: argumentsToAdd['courseIndex'] as int,
+        );
         break;
       case RouteEnum.enrolledClass:
         providers = [
@@ -613,6 +683,9 @@ class Routes {
         break;
       case RouteEnum.insideClass:
         providers = [
+          BlocProvider<ChallengeAudioBloc>.value(value: _challengeAudioBloc),
+          BlocProvider<CourseEnrollmentAudioBloc>.value(value: _courseEnrollmentAudioBloc),
+          BlocProvider<EnrollmentAudioBloc>.value(value: _enrollmentAudioBloc),
           BlocProvider<ClassBloc>.value(value: _classBloc),
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
           BlocProvider<MovementBloc>.value(value: _movementBloc),
@@ -624,12 +697,14 @@ class Routes {
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = InsideClass(
-            courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
-            classIndex: argumentsToAdd['classIndex'] as int,
-            courseIndex: argumentsToAdd['courseIndex'] as int);
+          courseEnrollment: argumentsToAdd['courseEnrollment'] as CourseEnrollment,
+          classIndex: argumentsToAdd['classIndex'] as int,
+          courseIndex: argumentsToAdd['courseIndex'] as int,
+        );
         break;
       case RouteEnum.userChallengeDetail:
         providers = [
+          BlocProvider<PanelAudioBloc>.value(value: _panelAudioBloc),
           BlocProvider<ClassBloc>.value(value: _classBloc),
           BlocProvider<SegmentBloc>.value(value: _segmentBloc),
           BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
@@ -654,10 +729,12 @@ class Routes {
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = AssessmentVideos(
-            isFirstTime: argumentsToAdd == null || argumentsToAdd['isFirstTime'] == null ? false : argumentsToAdd['isFirstTime'] as bool);
+          isFirstTime: argumentsToAdd == null || argumentsToAdd['isFirstTime'] == null ? false : argumentsToAdd['isFirstTime'] as bool,
+          assessmentsDone:
+              argumentsToAdd == null || argumentsToAdd['assessmentsDone'] == null ? false : argumentsToAdd['assessmentsDone'] as bool,
+        );
         break;
       case RouteEnum.taskDetails:
-        //TODO: Pass flag for last assessments
         providers = [
           BlocProvider<AssessmentAssignmentBloc>.value(value: _assessmentAssignmentBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
@@ -665,7 +742,10 @@ class Routes {
           BlocProvider<GalleryVideoBloc>.value(value: _galleryVideoBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
-        newRouteView = TaskDetails(taskIndex: argumentsToAdd['taskIndex'] as int, isLastTask: argumentsToAdd['isLastTask'] as bool);
+        newRouteView = TaskDetails(
+            taskIndex: argumentsToAdd['taskIndex'] as int,
+            isLastTask: argumentsToAdd['isLastTask'] as bool,
+            taskCompleted: argumentsToAdd['taskCompleted'] as bool);
         break;
       case RouteEnum.selfRecording:
         //TODO: Pass flag for last assessments
@@ -712,6 +792,7 @@ class Routes {
         break;
       case RouteEnum.courses:
         providers = [
+          BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
           BlocProvider<FavoriteBloc>.value(value: _favoriteBloc),
           BlocProvider<CourseBloc>.value(value: _courseBloc),
           BlocProvider<CourseCategoryBloc>.value(value: _courseCategoryBloc),
@@ -724,6 +805,7 @@ class Routes {
         final Map<String, dynamic> args = arguments as Map<String, dynamic>;
         newRouteView = Courses(homeEnrollTocourse: args['homeEnrollTocourse'] == 'true');
         break;
+
       case RouteEnum.viewAll:
         Map<String, dynamic> args = arguments as Map<String, dynamic>;
         List<Course> courses = args['courses'] as List<Course>;
@@ -831,8 +913,18 @@ class Routes {
           BlocProvider<HiFiveBloc>.value(value: _hiFiveBloc),
           BlocProvider<StoryListBloc>.value(value: _storyListBloc),
         ];
-        final Map<String, UserResponse> argumentsToAdd = arguments as Map<String, UserResponse>;
         newRouteView = const HiFivePage();
+        break;
+      case RouteEnum.homeLongPress:
+        providers = [BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc)];
+        final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
+        newRouteView = HomeLongPress(
+          courseEnrollments: argumentsToAdd['courseEnrollments'] as List<CourseEnrollment>,
+          index: argumentsToAdd['index'] != null ? argumentsToAdd['index'] as int : 0,
+        );
+        break;
+      case RouteEnum.assessmentNeumorphicDone:
+        newRouteView = AssessmentNeumorphicDoneScreen();
         break;
       default:
         newRouteView = MainPage();
