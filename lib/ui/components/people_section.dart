@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class PeopleSection extends StatelessWidget {
@@ -13,7 +14,9 @@ class PeopleSection extends StatelessWidget {
       Text(
         peopleQty != 0 ? '$peopleQty+' : '0',
         textAlign: TextAlign.center,
-        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+        style: OlukoNeumorphism.isNeumorphismDesign
+            ? const TextStyle(fontSize: 35, fontWeight: FontWeight.bold, color: OlukoColors.primary)
+            : const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
       ),
       const SizedBox(height: 5),
       Text(
