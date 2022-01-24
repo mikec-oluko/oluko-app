@@ -39,7 +39,7 @@ class _ImageAndVideoContainerState extends State<ImageAndVideoContainer> {
               color: OlukoColors.black,
             ),
             child: ImageAndVideoPreviewCard(
-              backgroundImage: backgroundNetworkImage(),
+              backgroundImage: backgroundCachedNetworkImageProvider(),
               videoUrl: widget.videoUrl,
               isContentVideo: widget.isContentVideo,
               showTitle: widget.displayOnViewNamed == ActualProfileRoute.userAssessmentVideos ||
@@ -55,7 +55,7 @@ class _ImageAndVideoContainerState extends State<ImageAndVideoContainer> {
               color: OlukoColors.black,
             ),
             child: ImageAndVideoPreviewCard(
-              backgroundImage: backgroundNetworkImage(),
+              backgroundImage: backgroundCachedNetworkImageProvider(),
               videoUrl: widget.videoUrl,
               isContentVideo: widget.isContentVideo,
               showTitle: widget.displayOnViewNamed == ActualProfileRoute.userAssessmentVideos ||
@@ -65,7 +65,7 @@ class _ImageAndVideoContainerState extends State<ImageAndVideoContainer> {
             ));
   }
 
-  Image backgroundNetworkImage() {
+  Image backgroundCachedNetworkImageProvider() {
     if (widget.isForCarousel) {
       return Image.network(
         widget.backgroundImage,

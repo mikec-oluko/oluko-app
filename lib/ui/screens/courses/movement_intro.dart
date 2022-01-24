@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -110,7 +111,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                 image: DecorationImage(
                     colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.94), BlendMode.darken),
                     fit: BoxFit.cover,
-                    image: NetworkImage(backgroundImageUrl))),
+                    image: CachedNetworkImageProvider(backgroundImageUrl))),
         width: ScreenUtils.width(context),
         height: OlukoNeumorphism.isNeumorphismDesign ? ScreenUtils.height(context) : ScreenUtils.height(context) - toolbarHeight,
         child: OlukoNeumorphism.isNeumorphismDesign ? _viewBodyNeumorphic() : _viewBody(),

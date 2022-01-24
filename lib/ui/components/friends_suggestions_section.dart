@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/user_helper.dart';
@@ -55,8 +56,8 @@ class _FriendSuggestionSectionState extends State<FriendSuggestionSection> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     CircleAvatar(
-                      // backgroundImage: NetworkImage(widget.userData.photoURL),
-                      backgroundImage: NetworkImage(widget.imageUser),
+                      // backgroundImage: CachedNetworkImageProvider(widget.userData.photoURL),
+                      backgroundImage: CachedNetworkImageProvider(widget.imageUser),
                       backgroundColor: Colors.red,
                       radius: 30,
                     ),

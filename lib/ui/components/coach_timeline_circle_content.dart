@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -36,7 +37,7 @@ class _CoachTimelineCircleContentState extends State<CoachTimelineCircleContent>
                             height: 70,
                             child: widget.circleImage != null
                                 ? CircleAvatar(
-                                    backgroundImage: NetworkImage(widget.circleImage),
+                                    backgroundImage: CachedNetworkImageProvider(widget.circleImage),
                                     backgroundColor: OlukoColors.randomColor(),
                                     radius: 30,
                                   )
