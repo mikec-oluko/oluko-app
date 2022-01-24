@@ -309,7 +309,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                       Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
                           arguments: {'course': course, 'fromCoach': false, 'isCoachRecommendation': false});
                     },
-                    child: Container(height: 100, child: Image.network(course.image)))
+                    child: Container(height: 100, child: CachedNetworkImage(imageUrl: course.image)))
               ],
             ),
             Padding(
@@ -383,7 +383,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                     child: Container(
                         padding: EdgeInsets.all(4),
                         height: 150,
-                        child: ClipRRect(borderRadius: BorderRadius.circular(5), child: Image.network(course.image))))
+                        child: ClipRRect(borderRadius: BorderRadius.circular(5), child: CachedNetworkImage(imageUrl: course.image))))
               ],
             ),
           ],

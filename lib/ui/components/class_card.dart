@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -43,7 +44,7 @@ class _State extends State<ClassCard> {
                       'courseEnrollment': widget.courseEnrollment,
                       'classIndex': widget.classIndex,
                       'courseIndex': widget.courseIndex,
-                      'classImage':widget.courseEnrollment.classes[widget.classIndex].image
+                      'classImage': widget.courseEnrollment.classes[widget.classIndex].image
                     }),
                 child: classContainer(150.0, 110.0))
           ]));
@@ -80,10 +81,11 @@ class _State extends State<ClassCard> {
             child: Column(children: [
           Stack(alignment: Alignment.bottomRight, children: [
             ClipRRect(
-              child: Image.network(
-                widget.enrollmentClass.image != null
-                    ? widget.enrollmentClass.image // TODO: set default picture in const file
-                    : "https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/classes_sample_images%2Fclass_sample_2.png?alt=media&token=f3ac6b80-a2f5-4612-ab72-ea72f88ad00e",
+              child: Image(
+                image: CachedNetworkImageProvider(
+                  widget.enrollmentClass.image ??
+                      "https://firebasestorage.googleapis.com/v0/b/oluko-2671e.appspot.com/o/classes_sample_images%2Fclass_sample_2.png?alt=media&token=f3ac6b80-a2f5-4612-ab72-ea72f88ad00e",
+                ),
                 height: height,
                 width: width,
                 fit: BoxFit.cover,
@@ -104,8 +106,11 @@ class _State extends State<ClassCard> {
     return Padding(
         padding: EdgeInsets.all(5),
         child: GestureDetector(
-            onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass],
-                arguments: {'courseEnrollment': widget.courseEnrollment, 'classIndex': widget.classIndex,'classImage':widget.courseEnrollment.classes[widget.classIndex].image}),
+            onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
+                  'courseEnrollment': widget.courseEnrollment,
+                  'classIndex': widget.classIndex,
+                  'classImage': widget.courseEnrollment.classes[widget.classIndex].image
+                }),
             child: Stack(alignment: Alignment.center, children: [
               Image.asset(
                 'assets/home/ellipse_button.png',

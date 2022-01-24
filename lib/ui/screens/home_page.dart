@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -145,11 +146,13 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: GestureDetector(
                               //TODO: Change to RouteEnum.courseMarketing
                               //when finish with enrolledClass
-                              onTap: () =>
-                                  Navigator.pushNamed(context, routeLabels[RouteEnum.enrolledClass], arguments: {'course': course, 'fromCoach': false}),
+                              onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.enrolledClass],
+                                  arguments: {'course': course, 'fromCoach': false}),
                               child: _getCourseCard(
-                                  Image.network(
-                                    course.image,
+                                  Image(
+                                    image: CachedNetworkImageProvider(
+                                      course.image,
+                                    ),
                                     fit: BoxFit.cover,
                                     frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
                                         ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 120),
