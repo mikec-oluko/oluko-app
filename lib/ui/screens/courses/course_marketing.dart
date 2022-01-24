@@ -41,7 +41,8 @@ class CourseMarketing extends StatefulWidget {
   final bool isCoachRecommendation;
   final CourseEnrollment courseEnrollment;
   final int courseIndex;
-  CourseMarketing({Key key, this.course, this.fromCoach = false, this.isCoachRecommendation = false, this.courseEnrollment, this.courseIndex})
+  CourseMarketing(
+      {Key key, this.course, this.fromCoach = false, this.isCoachRecommendation = false, this.courseEnrollment, this.courseIndex})
       : super(key: key);
 
   get progress => null;
@@ -112,13 +113,12 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                 Padding(
                                   padding: const EdgeInsets.only(bottom: 3),
                                   child: OverlayVideoPreview(
-                                    image: widget.course.image,
-                                    video: widget.course.video,
-                                    showBackButton: true,
-                                    showHeartButton: true,
-                                    showShareButton: true,
-                                    onBackPressed: () => Navigator.pop(context)
-                                  ),
+                                      image: widget.course.image,
+                                      video: widget.course.video,
+                                      showBackButton: true,
+                                      showHeartButton: true,
+                                      showShareButton: true,
+                                      onBackPressed: () => Navigator.pop(context)),
                                 ),
                                 showEnrollButton(enrollmentState.courseEnrollment, context),
                                 Padding(
@@ -178,8 +178,8 @@ class _CourseMarketingState extends State<CourseMarketing> {
   }
 
   Widget showEnrollButton(CourseEnrollment courseEnrollment, BuildContext context) {
-    if ((courseEnrollment != null && courseEnrollment.isUnenrolled == true) ||
-        (courseEnrollment == null || courseEnrollment.completion >= 1)) {
+    /*if ((courseEnrollment != null && courseEnrollment.isUnenrolled == true) ||
+        (courseEnrollment == null || courseEnrollment.completion >= 1)) {*/
       return BlocListener<CourseEnrollmentBloc, CourseEnrollmentState>(
           listener: (context, courseEnrollmentState) {
             if (courseEnrollmentState is CreateEnrollmentSuccess) {
@@ -195,20 +195,21 @@ class _CourseMarketingState extends State<CourseMarketing> {
                   OlukoPrimaryButton(
                     title: OlukoLocalizations.get(context, 'enroll'),
                     onPressed: () {
-                      if (_disableAction == false) {
+                      BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
+                      /*if (_disableAction == false) {
                         BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
                         if (!widget.isCoachRecommendation) {
                           BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
                         }
                       }
-                      _disableAction = true;
+                      _disableAction = true;*/
                     },
                   ),
                 ],
               )));
-    } else {
+    /*} else {
       return const SizedBox();
-    }
+    }*/
   }
 
   Widget buildStatistics() {
@@ -276,8 +277,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                       onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
                         'courseEnrollment': widget.courseEnrollment,
                         'classIndex': _classItems.indexOf(item),
-                        'courseIndex':widget.courseIndex
-                        
+                        'courseIndex': widget.courseIndex
                       }),
                       child: Padding(
                         padding: const EdgeInsets.all(5.0),
@@ -295,7 +295,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                       onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
                         'courseEnrollment': widget.courseEnrollment,
                         'classIndex': _classItems.indexOf(item),
-                        'courseIndex':widget.courseIndex
+                        'courseIndex': widget.courseIndex
                       }),
                       child: Padding(
                         padding: const EdgeInsets.all(5.0),
@@ -316,7 +316,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                   onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
                     'courseEnrollment': widget.courseEnrollment,
                     'classIndex': _classItems.indexOf(item),
-                    'courseIndex':widget.courseIndex
+                    'courseIndex': widget.courseIndex
                   }),
                   child: Padding(
                     padding: const EdgeInsets.all(5.0),
