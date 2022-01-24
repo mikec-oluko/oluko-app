@@ -35,6 +35,9 @@ import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/progress_bar.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/ui/screens/courses/collapsed_movement_videos_section.dart';
 import 'package:oluko_app/ui/screens/courses/feedback_card.dart';
 import 'package:oluko_app/ui/screens/courses/movement_videos_section.dart';
@@ -295,7 +298,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
             _timerSection(keyboardVisibilty),
             _lowerSection(),
             if (isWorkStateFinished())
-              showFinishedButtons()
+              OlukoNeumorphism.isNeumorphismDesign ? neumorphicFinishedButtons() : showFinishedButtons()
             else
               const SizedBox(
                 height: 90,
@@ -369,6 +372,81 @@ class _SegmentClocksState extends State<SegmentClocks> {
               },
             ),
           ],
+        ),
+      );
+    }
+  }
+
+  Widget neumorphicFinishedButtons() {
+    if (widget.workoutType == WorkoutType.segmentWithRecording && !shareDone) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            OlukoPrimaryButton(
+              title: OlukoLocalizations.get(context, 'done'),
+              thinPadding: true,
+              onPressed: () {
+                setState(() {
+                  shareDone = true;
+                });
+              },
+            ),
+          ],
+        ),
+      );
+    } else {
+      return ClipRRect(
+        borderRadius: const BorderRadius.only(
+          topLeft: OlukoNeumorphism.radiusValue,
+          topRight: OlukoNeumorphism.radiusValue,
+        ),
+        child: Container(
+          height: 100,
+          decoration: const BoxDecoration(
+              color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+              border: Border(top: BorderSide(color: OlukoColors.grayColorFadeTop))),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Center(
+              child: Container(
+                height: 50,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    OlukoNeumorphicSecondaryButton(
+                        title: OlukoLocalizations.get(context, 'goToClass'),
+                        textColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                        thinPadding: true,
+                        onPressed: () {
+                          if (!waitingForSegSubCreation) {
+                            goToClassAction();
+                          } else {
+                            DialogUtils.getDialog(context, stopProcessConfirmationContent(goToClassAction), showExitButton: false);
+                          }
+                        }),
+                    const SizedBox(
+                      width: 15,
+                    ),
+                    OlukoNeumorphicPrimaryButton(
+                      title: widget.segmentIndex == widget.segments.length - 1
+                          ? OlukoLocalizations.get(context, 'done')
+                          : OlukoLocalizations.get(context, 'nextSegment'),
+                      thinPadding: true,
+                      onPressed: () {
+                        if (!waitingForSegSubCreation) {
+                          nextSegmentAction();
+                        } else {
+                          DialogUtils.getDialog(context, stopProcessConfirmationContent(nextSegmentAction), showExitButton: false);
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ),
       );
     }
@@ -465,16 +543,23 @@ class _SegmentClocksState extends State<SegmentClocks> {
     } else {
       final String currentTask = timerEntries[timerTaskIndex].labels[0];
       final String nextTask = timerTaskIndex < timerEntries.length - 1 ? timerEntries[timerTaskIndex + 1].labels[0] : '';
-      return Column(
-        children: [
-          currentTaskWidget(keyboardVisibilty, currentTask),
-          const SizedBox(height: 10),
-          nextTaskWidget(nextTask, keyboardVisibilty),
-          const SizedBox(height: 15),
-          ...counterTextField(keyboardVisibilty),
-        ],
+      return Padding(
+        padding: OlukoNeumorphism.isNeumorphismDesign ? EdgeInsets.only(top: 20) : EdgeInsets.zero,
+        child: currentAndNextTaskWithCounter(keyboardVisibilty, currentTask, nextTask),
       );
     }
+  }
+
+  Column currentAndNextTaskWithCounter(bool keyboardVisibilty, String currentTask, String nextTask) {
+    return Column(
+      children: [
+        currentTaskWidget(keyboardVisibilty, currentTask),
+        const SizedBox(height: 10),
+        nextTaskWidget(nextTask, keyboardVisibilty),
+        const SizedBox(height: 15),
+        ...counterTextField(keyboardVisibilty),
+      ],
+    );
   }
 
   List<Widget> counterTextField(bool keyboardVisibilty) {
@@ -1011,6 +1096,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15),
       child: Column(
+        crossAxisAlignment: OlukoNeumorphism.isNeumorphismDesign ? CrossAxisAlignment.start : CrossAxisAlignment.center,
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -1038,6 +1124,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                     )
                   : Column(children: SegmentUtils.getWorkouts(widget.segments[widget.segmentIndex], OlukoColors.grayColor)),
           SizedBox(height: 10),
+          if (OlukoNeumorphism.isNeumorphismDesign) const OlukoNeumorphicDivider() else const SizedBox.shrink(),
           Padding(
               padding: const EdgeInsets.symmetric(vertical: 20.0),
               child: widget.workoutType == WorkoutType.segment || shareDone
