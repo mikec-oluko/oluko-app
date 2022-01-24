@@ -22,6 +22,7 @@ import 'package:oluko_app/ui/components/people_section.dart';
 import 'package:oluko_app/ui/components/segment_step_section.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
 import 'package:oluko_app/ui/components/vertical_divider.dart' as verticalDivider;
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/screens/courses/audio_panel.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
@@ -200,15 +201,14 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   // TODO: CHECK IF IS DISABLE/ENABLE BUTTON
   Widget startWorkoutsButton() {
     return OlukoNeumorphism.isNeumorphismDesign
-        ? Padding(
-            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 35),
-            child: (widget.segment.isChallenge && canStartSegment) || !widget.segment.isChallenge
-                ? OlukoNeumorphicPrimaryButton(
+        ? (widget.segment.isChallenge && canStartSegment) || !widget.segment.isChallenge
+            ? Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: OlukoNeumorphicPrimaryButton(
                     useBorder: true,
                     thinPadding: true,
                     isExpanded: false,
                     title: OlukoLocalizations.get(context, 'startWorkouts'),
-                    // color: OlukoColors.primary,
                     onPressed: () {
                       //CoachRequest coachRequest = getSegmentCoachRequest(widget.segment.id);
                       if (_coachRequest != null) {
@@ -218,15 +218,18 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                       } else {
                         navigateToSegmentWithoutRecording();
                       }
-                    })
-                : OlukoNeumorphicPrimaryButton(
+                    }),
+              )
+            : Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: OlukoNeumorphicPrimaryButton(
                     isDisabled: true,
                     useBorder: true,
                     thinPadding: true,
                     isExpanded: false,
                     title: OlukoLocalizations.get(context, 'locked'),
                     onPressed: () {}),
-          )
+              )
         : Padding(
             padding: const EdgeInsets.only(left: 15, right: 15, bottom: 25.0),
             child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -527,5 +530,30 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
         )
       ]),
     );
+  }
+
+  Widget _getStartButton() {
+    if (OlukoNeumorphism.isNeumorphismDesign) {
+      return OlukoNeumorphicPrimaryButton(
+        title: OlukoLocalizations.get(context, 'start'),
+        thinPadding: true,
+        onPressed: () => _onStartPressed(),
+      );
+    } else {
+      return OlukoPrimaryButton(
+        title: OlukoLocalizations.get(context, 'startWorkouts'),
+        color: OlukoColors.primary,
+        onPressed: () => _onStartPressed(),
+      );
+    }
+  }
+
+  _onStartPressed() {
+    //CoachRequest coachRequest = getSegmentCoachRequest(widget.segment.id);
+    if (_coachRequest != null) {
+      BottomDialogUtils.showBottomDialog(context: context, content: dialogContainer(widget.coach.firstName, widget.coach.avatar));
+    } else {
+      navigateToSegmentWithoutRecording();
+    }
   }
 }

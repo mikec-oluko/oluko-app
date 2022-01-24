@@ -600,38 +600,48 @@ class _InsideClassesState extends State<InsideClass> {
     return SizedBox(
       height: 52,
       width: 52,
-      child: OlukoBlurredButton(
-        childContent: GestureDetector(
-          onTap: () => _audioQty > 0 ? _audioAction() : null,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Image.asset(
-                'assets/courses/audioNeumorphism.png',
-                height: 30,
-                width: 30,
+      child: Stack(
+        children: [
+          OlukoBlurredButton(
+            childContent: GestureDetector(
+              onTap: () => _audioQty > 0 ? _audioAction() : null,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 2),
+                    child: Image.asset(
+                      'assets/courses/audioNeumorphism.png',
+                      height: 25,
+                      width: 25,
+                    ),
+                  ),
+                ],
               ),
-              if (_audioQty > 0)
-                Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Image.asset(
-                      'assets/courses/audio_notification.png',
-                      height: 22,
-                      width: 22,
-                    ),
-                    Text(
-                      _audioQty.toString(),
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w300, color: Colors.white),
-                    ),
-                  ],
-                )
-              else
-                const SizedBox(),
-            ],
+            ),
           ),
-        ),
+          if (_audioQty > 0)
+            Align(
+              alignment: Alignment.topRight,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Image.asset(
+                    'assets/courses/audio_neumorphic_notification.png',
+                    height: 18,
+                    width: 18,
+                  ),
+                  Text(
+                    _audioQty.toString(),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: Colors.white),
+                  ),
+                ],
+              ),
+            )
+          else
+            const SizedBox()
+        ],
       ),
     );
   }

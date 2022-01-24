@@ -84,6 +84,7 @@
     "uploadingWithDots": "Uploading...",
     "errorOcurred": "An error ocurred.",
     "errorOcurredOn": "An error ocurred on: ",
+    "includedIn": "Included in",
     "classes": "Classes",
     "course": "Course",
     "enroll": "Enroll",
@@ -130,7 +131,7 @@
     "assessment": "Assessment",
     "private": "Private",
     "done": "Done",
-    "doneThis": "done this",
+    "doneThis": "Done this",
     "skip": "Skip",
     "makeThisPublic": "Make this public",
     "retake": "Retake",
@@ -274,5 +275,8 @@
     "removeThisPersonBody2": " from your list?",
     "cancel": "Cancel",
     "rememberTo": "Remember to",
-    "switchSide": "switch side"
+    "switchSide": "switch side",
+    "cancelVoiceMessage": "Cancel voice message?",
+    "allow": "Allow",
+    "deny": "Deny"
 }
