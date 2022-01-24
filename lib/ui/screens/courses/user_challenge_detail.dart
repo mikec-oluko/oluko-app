@@ -22,6 +22,7 @@ import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/user_submodel.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/challenge_audio_section.dart';
+import 'package:oluko_app/ui/components/delete_audio_panel.dart';
 import 'package:oluko_app/ui/components/modal_people_enrolled.dart';
 import 'package:oluko_app/ui/components/modal_personal_record.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
@@ -126,7 +127,7 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
                 collapsed: Container(
                   color: Colors.black,
                 ),
-                panel: dialogContent(),
+                panel: DeleteAudioPanel(panelController: panelController),
                 body: Container(
                   color: Colors.black,
                   child: classInfoSection(),
