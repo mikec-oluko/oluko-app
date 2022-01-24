@@ -22,5 +22,6 @@ class MovementItem extends StatelessWidget {
         ),
       );
     }
+    return const SizedBox(); //TODO: add placeholder
   }
 }
