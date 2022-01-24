@@ -14,9 +14,16 @@ class ChallengesCard extends StatefulWidget {
   final UserResponse userRequested;
   final bool navigateToSegment;
   final bool useAudio;
+  final bool noAudioIcon;
 
   ChallengesCard(
-      {this.challenge, this.routeToGo, this.segmentChallenge, this.userRequested, this.useAudio = true, this.navigateToSegment = false});
+      {this.challenge,
+      this.routeToGo,
+      this.segmentChallenge,
+      this.userRequested,
+      this.useAudio = true,
+      this.navigateToSegment = false,
+      this.noAudioIcon = false});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -32,7 +39,7 @@ class _State extends State<ChallengesCard> {
         widget.segmentChallenge.previousSegmentFinish ? unlockedCard(context) : lockedCard(context)
       else
         widget.challenge.completedAt != null ? unlockedCard(context) : lockedCard(context),
-      if (widget.useAudio)
+      if (widget.useAudio && !widget.noAudioIcon)
         Padding(
             padding: EdgeInsets.only(top: 13),
             child: GestureDetector(
@@ -54,7 +61,7 @@ class _State extends State<ChallengesCard> {
 
   Widget lockedCard(BuildContext context) {
     return GestureDetector(
-      onTap: !widget.useAudio && widget.navigateToSegment
+      onTap: (widget.useAudio && !widget.noAudioIcon) && widget.navigateToSegment
           ? () => Navigator.pushNamed(context, routeLabels[RouteEnum.segmentDetail], arguments: {
                 'segmentIndex': widget.segmentChallenge.segmentIndex,
                 'classIndex': widget.segmentChallenge.classIndex,
@@ -108,7 +115,7 @@ class _State extends State<ChallengesCard> {
 
   Widget unlockedCard(BuildContext context) {
     return GestureDetector(
-      onTap: !widget.useAudio && widget.navigateToSegment
+      onTap: (widget.useAudio && !widget.noAudioIcon) && widget.navigateToSegment
           ? () => Navigator.pushNamed(context, routeLabels[RouteEnum.segmentDetail], arguments: {
                 'segmentIndex': widget.segmentChallenge.segmentIndex,
                 'classIndex': widget.segmentChallenge.classIndex,

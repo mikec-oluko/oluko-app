@@ -5,16 +5,16 @@ import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/submodels/segment_submodel.dart';
 import 'package:oluko_app/ui/components/challenges_card.dart';
-import 'package:oluko_app/ui/newDesignComponents/challenge_card_course_segment.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ChallengeSection extends StatefulWidget {
   final List<SegmentSubmodel> challenges;
+  final List<Widget> challengesCard;
   final bool addTitle;
   final bool addName;
 
-  ChallengeSection({this.addName, this.challenges, this.addTitle = false});
+  ChallengeSection({this.addName=false, this.challenges, this.addTitle = false, this.challengesCard});
 
   @override
   _State createState() => _State();
@@ -59,7 +59,7 @@ class _State extends State<ChallengeSection> {
           SizedBox(height: widget.addTitle || widget.addName ? 20 : 0),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            child: Row(mainAxisAlignment: MainAxisAlignment.start, children: getChallengesCards()),
+            child: Row(mainAxisAlignment: MainAxisAlignment.start, children:widget.challengesCard?? getChallengesCards()),
           )
         ],
       ),
@@ -80,16 +80,7 @@ class _State extends State<ChallengeSection> {
 
   List<Widget> getChallengesCards() {
     List<Widget> challengeCards = [];
-    OlukoNeumorphism.isNeumorphismDesign
-        ? widget.challenges.forEach((challenge) {
-            challengeCards.add(
-              lockedCardChallenge(
-                image: challenge.challengeImage,
-              ),
-            );
-            challengeCards.add(SizedBox(width: 15));
-          })
-        : widget.challenges.forEach((challenge) {
+     widget.challenges.forEach((challenge) {
             challengeCards.add(
               Stack(
                 alignment: Alignment.center,

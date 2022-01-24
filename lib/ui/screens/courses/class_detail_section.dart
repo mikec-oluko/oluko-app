@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/models/class.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
@@ -11,8 +12,9 @@ class ClassDetailSection extends StatefulWidget {
   final List<Segment> segments;
   final List<Movement> movements;
   final Function(BuildContext, Movement) onPressedMovement;
+  final ChallengeNavigation segmentChallenge;
 
-  ClassDetailSection({this.classObj, this.onPressedMovement, this.movements, this.segments});
+  ClassDetailSection({this.classObj, this.onPressedMovement, this.movements, this.segments, this.segmentChallenge});
 
   @override
   _State createState() => _State();
@@ -48,11 +50,31 @@ class _State extends State<ClassDetailSection> {
     ];
     for (int i = 0; i < widget.classObj.segments.length; i++) {
       List<Movement> movements = ClassService.getClassSegmentMovements(widget.classObj.segments[i].sections, widget.movements);
+      for (int j = 0; j < widget.segments.length; j++) {
+        if (widget.segments[j].id == widget.classObj.segments[i].id && widget.segments[j].isChallenge == true) {
+          for (int k = 0; k < widget.segmentChallenge.enrolledCourse.classes.length; k++) {
+            if (widget.segmentChallenge.enrolledCourse.classes[k].id == widget.classObj.id) {
+              if (i - 1 > 0) {
+                widget.segmentChallenge.previousSegmentFinish =
+                    widget.segmentChallenge.enrolledCourse.classes[k].segments[i - 1].completedAt != null;
+                widget.segmentChallenge.challengeSegment = widget.segmentChallenge.enrolledCourse.classes[k].segments[i];
+                widget.segmentChallenge.segmentIndex = i;
+              }
+              else {
+              widget.segmentChallenge.segmentIndex = i;
+              widget.segmentChallenge.previousSegmentFinish = true;
+              widget.segmentChallenge.challengeSegment = widget.segmentChallenge.enrolledCourse.classes[k].segments[i];
+            }
+            } 
+          }
+        }
+      }
       widgets.add(ClassSegmentSection(
+          segmentChallenge: widget.segmentChallenge,
           showTopDivider: i != 0,
           segment: widget.segments.length - 1 >= i ? widget.segments[i] : null,
           movements: ClassService.getClassSegmentMovements(widget.classObj.segments[i].sections, movements),
-          onPressedMovement: widget.onPressedMovement));//TODO:check null value
+          onPressedMovement: widget.onPressedMovement)); //TODO:check null value
     }
     return widgets;
   }
