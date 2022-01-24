@@ -178,64 +178,6 @@ class _UserChallengeDetailState extends State<UserChallengeDetail> {
     );
   }
 
-  Widget dialogContent() {
-    return Container(
-        padding: EdgeInsets.symmetric(horizontal: 32),
-        decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/courses/gray_background.png'),
-              fit: BoxFit.cover,
-            ),
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
-        child: Column(
-            crossAxisAlignment: OlukoNeumorphism.isNeumorphismDesign ? CrossAxisAlignment.start : CrossAxisAlignment.center,
-            children: [
-              SizedBox(height: !OlukoNeumorphism.isNeumorphismDesign ? 10 : 30),
-              !OlukoNeumorphism.isNeumorphismDesign
-                  ? Icon(Icons.warning_amber_rounded, color: OlukoColors.coral, size: 100)
-                  : Text(
-                      OlukoLocalizations.get(context, 'cancelVoiceMessage'),
-                      style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white),
-                    ),
-              SizedBox(height: !OlukoNeumorphism.isNeumorphismDesign ? 5 : 15),
-              Text(OlukoLocalizations.get(context, 'deleteMessageConfirm'),
-                  textAlign: !OlukoNeumorphism.isNeumorphismDesign ? TextAlign.center : TextAlign.start,
-                  style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400, customColor: OlukoColors.grayColor)),
-              SizedBox(height: !OlukoNeumorphism.isNeumorphismDesign ? 25 : 40),
-              Row(
-                children: [
-                  Expanded(child: SizedBox()),
-                  !OlukoNeumorphism.isNeumorphismDesign
-                      ? OlukoOutlinedButton(
-                          title: OlukoLocalizations.get(context, 'no'),
-                          onPressed: () {
-                            panelController.close();
-                          },
-                        )
-                      : OlukoNeumorphicTextButton(
-                          title: OlukoLocalizations.get(context, 'deny'),
-                          onPressed: () {
-                            panelController.close();
-                          }),
-                  !OlukoNeumorphism.isNeumorphismDesign
-                      ? OlukoPrimaryButton(
-                          title: OlukoLocalizations.get(context, 'yes'),
-                          onPressed: () {
-                            BlocProvider.of<PanelAudioBloc>(context).deleteAudio(false);
-                            panelController.close();
-                          },
-                        )
-                      : OlukoNeumorphicPrimaryButton(
-                          title: OlukoLocalizations.get(context, 'allow'),
-                          onPressed: () {
-                            BlocProvider.of<PanelAudioBloc>(context).deleteAudio(false);
-                            panelController.close();
-                          })
-                ],
-              ),
-            ]));
-  }
-
   Widget showVideoPlayer(String videoUrl) {
     List<Widget> widgets = [];
     if (_controller == null) {
