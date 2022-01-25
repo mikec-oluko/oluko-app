@@ -6,6 +6,7 @@ import 'package:oluko_app/models/enums/parameter_enum.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
+import 'package:oluko_app/models/submodels/segment_submodel.dart';
 import 'package:oluko_app/models/timer_entry.dart';
 import 'package:oluko_app/ui/newDesignComponents/movement_items_bubbles_neumorphic.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -15,7 +16,7 @@ import 'oluko_localizations.dart';
 class SegmentUtils {
   static List<Widget> getSegmentSummary(Segment segment, BuildContext context, Color color) {
     List<Widget> workoutWidgets = getWorkouts(segment, color);
-    return [getRoundTitle(segment, context, color), SizedBox(height: 12.0)] + workoutWidgets;
+    return [getRoundTitle(context, color, segment: segment), SizedBox(height: 12.0)] + workoutWidgets;
   }
 
   static bool isEMOM(Segment segment) {
@@ -26,21 +27,63 @@ class SegmentUtils {
     return segment.type == SegmentTypeEnum.Duration;
   }
 
-  static Widget getRoundTitle(Segment segment, BuildContext context, Color color) {
-    if (isEMOM(segment)) {
-      return getEMOMTitle(segment, context, color);
-    } else if (isAMRAP(segment)) {
-      return Text(
-        segment.totalTime.toString() + " " + OlukoLocalizations.get(context, 'seconds').toLowerCase() + " " + "AMRAP",
-        style: OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
-      );
+  static bool isAMRAPforSubmodel(SegmentSubmodel segment) {
+    if (segment != null) {
+      if (segment.type != null) {
+        return segment.type == SegmentTypeEnum.Duration;
+      } else {
+        return false;
+      }
     } else {
-      return segment.rounds > 1
-          ? Text(
-              segment.rounds.toString() + " " + OlukoLocalizations.get(context, 'rounds'),
-              style: OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
-            )
-          : SizedBox();
+      return false;
+    }
+  }
+
+  static Widget getRoundTitle(BuildContext context, Color color, {Segment segment, SegmentSubmodel segmentSubmodel}) {
+    if (segmentSubmodel == null) {
+      if (isEMOM(segment)) {
+        return getEMOMTitle(segment, context, color);
+      } else if (isAMRAP(segment)) {
+        return Text(
+          segment.totalTime.toString() + " " + OlukoLocalizations.get(context, 'seconds').toLowerCase() + " " + "AMRAP",
+          style: OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
+        );
+      } else {
+        return segment.rounds > 1
+            ? Text(
+                segment.rounds.toString() + " " + OlukoLocalizations.get(context, 'rounds'),
+                style: OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
+              )
+            : SizedBox();
+      }
+    } else {
+      if (isEMOMforSubmodel(segmentSubmodel)) {
+        return Text(
+          "EMOM: " +
+              segment.rounds.toString() +
+              " " +
+              OlukoLocalizations.get(context, 'rounds') +
+              " " +
+              OlukoLocalizations.get(context, 'in') +
+              " " +
+              (segmentSubmodel.totalTime).toString() +
+              " " +
+              OlukoLocalizations.get(context, 'seconds'),
+          style: OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
+        );
+      } else if (isAMRAPforSubmodel(segmentSubmodel)) {
+        return Text(
+          segment.totalTime.toString() + " " + OlukoLocalizations.get(context, 'seconds').toLowerCase() + " " + "AMRAP",
+          style: OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
+        );
+      } else {
+        return (segment.rounds is int ? segment.rounds as int > 1 : false)
+            ? Text(
+                segment.rounds.toString() + " " + OlukoLocalizations.get(context, 'rounds'),
+                style: OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
+              )
+            : SizedBox();
+      }
     }
   }
 
@@ -227,7 +270,18 @@ class SegmentUtils {
     List<Widget> workoutWidgets = getWorkouts(segment, color);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [getRoundTitle(segment, context, OlukoColors.white)] + workoutWidgets,
+      children: [getRoundTitle(context, OlukoColors.white, segment: segment)] + workoutWidgets,
     );
   }
+}
+
+bool isEMOMforSubmodel(SegmentSubmodel segment) {
+  if (segment != null) {
+    if (segment.sections != null && segment.type != null) {
+      return segment.sections.length == 1 && segment.type == SegmentTypeEnum.RoundsAndDuration;
+    } else {
+      return false;
+    }
+  }
+  return false;
 }
