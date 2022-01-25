@@ -95,7 +95,6 @@ class CourseEnrollmentRepository {
     final List<EnrollmentClass> classes = courseEnrollment.classes;
     classes[classIndex].segments[segmentIndex].completedAt = Timestamp.now();
 
-    //final bool isClassCompleted = CourseEnrollmentService.getFirstUncompletedSegmentIndex(classes[classIndex]) == -1;
     final bool isClassCompleted = segmentIndex == classes[classIndex].segments.length - 1;
     if (isClassCompleted) {
       if (classIndex == courseEnrollment.classes.length - 1) {
@@ -106,7 +105,11 @@ class CourseEnrollmentRepository {
       }
       classes[classIndex].completedAt = Timestamp.now();
     }
-    reference.update({'classes': List<dynamic>.from(classes.map((c) => c.toJson())), 'completion': courseEnrollment.completion, 'updated_at': FieldValue.serverTimestamp()});
+    reference.update({
+      'classes': List<dynamic>.from(classes.map((c) => c.toJson())),
+      'completion': courseEnrollment.completion,
+      'updated_at': FieldValue.serverTimestamp()
+    });
   }
 
   static Future<CourseEnrollment> create(User user, Course course) async {
@@ -238,7 +241,10 @@ class CourseEnrollmentRepository {
         .get();
     for (var challengeDoc in query.docs) {
       final Map<String, dynamic> challenge = challengeDoc.data() as Map<String, dynamic>;
-      challenges.add(Challenge.fromJson(challenge));
+      Challenge newChallenge = Challenge.fromJson(challenge);
+      if (challenges.where((challenge) => challenge.classId == newChallenge.classId).isEmpty) {
+        challenges.add(newChallenge);
+      }
     }
   }
 
@@ -328,14 +334,5 @@ class CourseEnrollmentRepository {
         .orderBy('created_at', descending: true)
         .snapshots();
     return courseEnrollmentsStream;
-  }
-
-  static Future<void> markAudioAsDeleted(CourseEnrollment courseEnrollment, List<Audio> audios) async {
-    final DocumentReference reference = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('courseEnrollments')
-        .doc(courseEnrollment.id);
-    await reference.update({'audios': List<dynamic>.from(audios.map((audio) => audio.toJson()))});
   }
 }

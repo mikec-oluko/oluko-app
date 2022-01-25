@@ -15,4 +15,3 @@ class KeyboardState {
       this.focus,
       this.textScrollController,});
 }
-

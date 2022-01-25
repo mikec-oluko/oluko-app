@@ -70,12 +70,16 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
         }
         return Padding(
           padding: const EdgeInsets.symmetric(
-              horizontal: OlukoNeumorphism.isNeumorphismDesign ? 20 : 10, vertical: OlukoNeumorphism.isNeumorphismDesign ? 20 : 5),
+              horizontal: OlukoNeumorphism.isNeumorphismDesign ? 20 : 10, vertical: OlukoNeumorphism.isNeumorphismDesign ? 10 : 5),
           //TODO: Check if need neumorphic outside
           child: Container(
             decoration: UserInformationBackground.getContainerGradientDecoration(isNeumorphic: OlukoNeumorphism.isNeumorphismDesign),
             width: MediaQuery.of(context).size.width,
-            height: OlukoNeumorphism.isNeumorphismDesign ? MediaQuery.of(context).size.height / 3.3 : null,
+            height: OlukoNeumorphism.isNeumorphismDesign
+                ? MediaQuery.of(context).size.height < 700
+                    ? MediaQuery.of(context).size.height / 2.7
+                    : MediaQuery.of(context).size.height / 3.5
+                : null,
             child: Padding(
                 padding: const EdgeInsets.all(OlukoNeumorphism.isNeumorphismDesign ? 20 : 10),
                 child: OlukoNeumorphism.isNeumorphismDesign
@@ -124,85 +128,86 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                             height: 45,
                             width: 45,
                           ).image,
-                          radius: 45.0,
+                          radius: 40.0,
                         ),
                       ),
                       getVisibility(widget, context, _isOwner),
                     ]),
                   )
                 else
-                  Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: Stack(children: [
-                      CircleAvatar(
-                        backgroundColor: widget.userToDisplayInformation != null
-                            ? OlukoColors.userColor(widget.userToDisplayInformation.firstName, widget.userToDisplayInformation.lastName)
-                            : OlukoColors.black,
-                        radius: 45.0,
-                        child: Text(widget.userToDisplayInformation != null ? profileDefaultProfilePicContent : '',
-                            style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500)),
-                      ),
-                      getVisibility(widget, context, _isOwner),
-                    ]),
-                  ),
-                Padding(
-                  padding: const EdgeInsets.only(left: OlukoNeumorphism.isNeumorphismDesign ? 20 : 10),
+                  // Padding(
+                  //   padding: const EdgeInsets.all(5.0),
+                  // child:
+                  Stack(children: [
+                    CircleAvatar(
+                      backgroundColor: widget.userToDisplayInformation != null
+                          ? OlukoColors.userColor(widget.userToDisplayInformation.firstName, widget.userToDisplayInformation.lastName)
+                          : OlukoColors.black,
+                      radius: 40.0,
+                      child: Text(widget.userToDisplayInformation != null ? profileDefaultProfilePicContent : '',
+                          style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500)),
+                    ),
+                    getVisibility(widget, context, _isOwner),
+                  ]),
+                // ),
+                Expanded(
                   child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      //PROFILE NAME AND LASTNAME
-                      if (_isOwner) userInfoUnlocked(location) else canShowDetails ? userInfoUnlocked(location) : userInfoLocked(),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 5),
+                        child: _isOwner
+                            ? userInfoUnlocked(location)
+                            : canShowDetails
+                                ? userInfoUnlocked(location)
+                                : userInfoLocked(),
+                      ),
+                      if (!_isOwner && widget.actualRoute == ActualProfileRoute.userProfile)
+                        Expanded(
+                          child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
+                            listener: (context, hiFiveSendState) {
+                              if (hiFiveSendState is HiFiveSendSuccess) {
+                                AppMessages.clearAndShowSnackbarTranslated(
+                                    context, hiFiveSendState.hiFive ? 'hiFiveSent' : 'hiFiveRemoved');
+                              }
+                              BlocProvider.of<HiFiveReceivedBloc>(context)
+                                  .get(context, _authState.user.id, widget.userToDisplayInformation.id);
+                            },
+                            child: BlocBuilder<HiFiveReceivedBloc, HiFiveReceivedState>(builder: (context, HiFiveReceivedState) {
+                              return HiFiveReceivedState is HiFiveReceivedSuccess
+                                  ? TextButton(
+                                      style: TextButton.styleFrom(
+                                        padding: EdgeInsets.zero,
+                                      ),
+                                      onPressed: () {
+                                        BlocProvider.of<HiFiveSendBloc>(context).set(
+                                          context,
+                                          _authState.user.id,
+                                          widget.userToDisplayInformation.id,
+                                        );
+                                      },
+                                      child: Image.asset(
+                                        HiFiveReceivedState.hiFive ? 'assets/profile/hiFive_selected.png' : 'assets/profile/hiFive.png',
+                                        colorBlendMode: BlendMode.lighten,
+                                        scale: 4,
+                                      ),
+                                    )
+                                  : const SizedBox.shrink();
+                            }),
+                          ),
+                        )
+                      else
+                        const SizedBox.shrink(),
                     ],
                   ),
                 ),
                 //HIFIVE BUTTON
-                if (!_isOwner && widget.actualRoute == ActualProfileRoute.userProfile)
-                  Expanded(
-                    child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
-                      listener: (context, hiFiveSendState) {
-                        if (hiFiveSendState is HiFiveSendSuccess) {
-                          AppMessages.clearAndShowSnackbarTranslated(context, hiFiveSendState.hiFive ? 'hiFiveSent' : 'hiFiveRemoved');
-                        }
-                        BlocProvider.of<HiFiveReceivedBloc>(context).get(context, _authState.user.id, widget.userToDisplayInformation.id);
-                      },
-                      child: BlocBuilder<HiFiveReceivedBloc, HiFiveReceivedState>(builder: (context, HiFiveReceivedState) {
-                        return HiFiveReceivedState is HiFiveReceivedSuccess
-                            ? Container(
-                                height: 50,
-                                width: 50,
-                                child: TextButton(
-                                    style: TextButton.styleFrom(
-                                      padding: EdgeInsets.zero,
-                                    ),
-                                    onPressed: () {
-                                      BlocProvider.of<HiFiveSendBloc>(context).set(
-                                        context,
-                                        _authState.user.id,
-                                        widget.userToDisplayInformation.id,
-                                      );
-                                    },
-                                    child: Image.asset(
-                                      HiFiveReceivedState.hiFive ? 'assets/profile/hiFive_selected.png' : 'assets/profile/hiFive.png',
-                                      fit: BoxFit.cover,
-                                      colorBlendMode: BlendMode.lighten,
-                                      height: 60,
-                                      width: 60,
-                                    )),
-                              )
-                            : const SizedBox.shrink();
-                      }),
-                    ),
-                  )
-                else
-                  const SizedBox.shrink(),
               ],
             ),
           ],
         ),
         if (OlukoNeumorphism.isNeumorphismDesign)
           const Padding(
-            padding: EdgeInsets.symmetric(vertical: 20),
+            padding: EdgeInsets.symmetric(vertical: 10),
             child: OlukoNeumorphicDivider(
               isFadeOut: true,
             ),
@@ -267,7 +272,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                     ]),
                   ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 10.0),
+                  padding: const EdgeInsets.only(left: 5.0),
                   child: Row(
                     children: [
                       //PROFILE NAME AND LASTNAME
@@ -344,7 +349,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
     return Visibility(
       visible: userProfileWidget.actualRoute == ActualProfileRoute.userProfile && isOwner,
       child: Positioned(
-        top: 25,
+        top: OlukoNeumorphism.isNeumorphismDesign ? 45 : 30,
         right: -12,
         child: Container(
           width: 40,
@@ -407,13 +412,16 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
       constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width / 2),
       child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.start, children: [
         Padding(
-          padding: const EdgeInsets.only(left: 10.0).copyWith(top: 5),
-          child: Text(
-            '${widget.userToDisplayInformation.firstName} ${widget.userToDisplayInformation.lastName}',
-            style: OlukoFonts.olukoBigFont(
-                customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary,
-                custoFontWeight: FontWeight.w500),
-            overflow: TextOverflow.ellipsis,
+          padding: const EdgeInsets.only(top: 5),
+          child: Padding(
+            padding: OlukoNeumorphism.isNeumorphismDesign ? EdgeInsets.only(left: 10.0) : EdgeInsets.zero,
+            child: Text(
+              '${widget.userToDisplayInformation.firstName} ${widget.userToDisplayInformation.lastName}',
+              style: OlukoFonts.olukoBigFont(
+                  customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary,
+                  custoFontWeight: FontWeight.w500),
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         ),
         const SizedBox(

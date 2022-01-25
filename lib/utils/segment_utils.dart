@@ -16,7 +16,19 @@ import 'oluko_localizations.dart';
 class SegmentUtils {
   static List<Widget> getSegmentSummary(Segment segment, BuildContext context, Color color) {
     List<Widget> workoutWidgets = getWorkouts(segment, color);
-    return [getRoundTitle(context, color, segment: segment), SizedBox(height: 12.0)] + workoutWidgets;
+    return OlukoNeumorphism.isNeumorphismDesign
+        ? [getRoundTitle(context, color,segment: segment), SizedBox(height: 12.0)] + workoutWidgets
+        : [getRoundTitle(context, color,segment: segment), SizedBox(height: 12.0)] + workoutWidgets;
+  }
+
+  static List<Widget> getSegmentSummaryforNeumorphic(Segment segment, BuildContext context, Color color,
+      {bool roundTitle = true, bool restTime = true, List<Movement> movements = const [], bool viewDetailsScreen = false}) {
+    List<Widget> workoutWidgets = getWorkoutsforNeumorphic(segment, color,
+        restTime: restTime, movements: movements, context: context, viewDetailsScreen: viewDetailsScreen);
+    if (roundTitle)
+      return [getRoundTitle(context, color,segment: segment), SizedBox(height: 12.0)] + workoutWidgets;
+    else
+      return workoutWidgets;
   }
 
   static bool isEMOM(Segment segment) {
@@ -46,13 +58,15 @@ class SegmentUtils {
       } else if (isAMRAP(segment)) {
         return Text(
           segment.totalTime.toString() + " " + OlukoLocalizations.get(context, 'seconds').toLowerCase() + " " + "AMRAP",
-          style: OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
+          style: OlukoNeumorphism.isNeumorphismDesign
+              ? OlukoFonts.olukoSmallFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold)
+              : OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
         );
       } else {
         return segment.rounds > 1
             ? Text(
                 segment.rounds.toString() + " " + OlukoLocalizations.get(context, 'rounds'),
-                style: OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
+                style: OlukoFonts.olukoSuperBigFont(customColor: color, custoFontWeight: FontWeight.bold),
               )
             : SizedBox();
       }
@@ -99,7 +113,9 @@ class SegmentUtils {
           (segment.totalTime).toString() +
           " " +
           OlukoLocalizations.get(context, 'seconds'),
-      style: OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
+      style: OlukoNeumorphism.isNeumorphismDesign
+          ? OlukoFonts.olukoSmallFont(customColor: color, custoFontWeight: FontWeight.bold)
+          : OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
     );
   }
 
@@ -131,7 +147,7 @@ class SegmentUtils {
             }
           if (restTime)
             workouts.add(getTextWidget(getLabel(movement), color));
-          else if (movement.name != "Rest time") {
+          else if (movement.name != "Rest time" && movement.name != "Rest") {
             workouts.add(Row(
               children: [
                 MovementItemBubblesNeumorphic(
@@ -161,7 +177,9 @@ class SegmentUtils {
         padding: EdgeInsets.only(bottom: 12.0),
         child: Text(
           text,
-          style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400, customColor: color),
+          style: OlukoNeumorphism.isNeumorphismDesign
+              ? OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400, customColor: color)
+              : OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400, customColor: color),
         ));
   }
 
@@ -217,21 +235,28 @@ class SegmentUtils {
         }
       }
     }
+    if (entries[entries.length - 1].movement.isRestTime && entries[entries.length - 1].movement.counter != CounterEnum.none) {
+      entries.removeAt(entries.length - 1);
+    }
     return entries;
   }
 
   static String getLabel(MovementSubmodel movement) {
     String label = movement.value == null ? "5" : movement.value.toString();
+    String parameter;
     if (movement.parameter != null) {
       switch (movement.parameter) {
         case ParameterEnum.duration:
           label += "s";
+          parameter = "s";
           break;
         case ParameterEnum.reps:
           label += "x";
+          parameter = "x";
           break;
         case ParameterEnum.distance:
           label += "m";
+          parameter = "m";
           break;
       }
     } else {
@@ -239,6 +264,11 @@ class SegmentUtils {
     }
 
     label += " " + movement.name;
+    if (movement.isBothSide) {
+      int qty = (movement.value / 2).toInt();
+      String text = qty.toString() + parameter + " " + movement.name;
+      label += " (" + text + " / " + text + ")";
+    }
     return label;
   }
 

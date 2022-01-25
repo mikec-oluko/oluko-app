@@ -84,6 +84,7 @@
     "uploadingWithDots": "Subiendo...",
     "errorOcurred": "Ocurrio un error.",
     "errorOcurredOn": "Ocurrio un error en: ",
+    "includedIn": "Incluido en",
     "classes": "Clases",
     "course": "Curso",
     "enroll": "Inscribirse",
@@ -265,10 +266,16 @@
     "coachPageAssessmentsText": "Completa las tareas a continuación para que se te asigne un entrenador",
     "bestYouCanDo": "Lo mejor que puede hacer por su estado físico",
     "loginSubtitle": "Esto le ayudará a realizar un seguimiento de los datos de su estado fisico.",
+    "locked": "Bloqueado",
     "enrolledCourses": "Cursos inscritos",
     "activeNow": "Activos ahora",
     "removeThisPerson": "¿Quitar a esta persona?",
     "removeThisPersonBody1": "¿Estás seguro de que quieres eliminar a ",
     "removeThisPersonBody2": " de tu lista?",
-    "cancel": "Cancelar"
+    "cancel": "Cancelar",
+    "rememberTo": "Recuerda cambiar",
+    "switchSide": "de lado",
+    "cancelVoiceMessage": "¿Cancelar mensaje de voz?",
+    "allow": "Allow",
+    "deny": "Deny"
 }

@@ -20,6 +20,11 @@ class CourseEnrollmentsByUserSuccess extends CourseEnrollmentListState {
   CourseEnrollmentsByUserSuccess({this.courseEnrollments});
 }
 
+class CourseEnrollmentsByUserUpdate extends CourseEnrollmentListState {
+  final List<CourseEnrollment> courseEnrollments;
+  CourseEnrollmentsByUserUpdate({this.courseEnrollments});
+}
+
 class GetCourseEnrollmentUpdate extends CourseEnrollmentListState {
   final List<CourseEnrollment> courseEnrollments;
   GetCourseEnrollmentUpdate({this.courseEnrollments});

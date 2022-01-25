@@ -16,7 +16,8 @@ class DoneChallengeUsersLoading extends DoneChallengeUsersState {}
 class DoneChallengeUsersSuccess extends DoneChallengeUsersState {
   final List<UserSubmodel> users;
   final List<UserSubmodel> favoriteUsers;
-  DoneChallengeUsersSuccess({this.users, this.favoriteUsers});
+  final int occurrencesInClasses;
+  DoneChallengeUsersSuccess({this.users, this.favoriteUsers, this.occurrencesInClasses});
 }
 
 class DoneChallengeUsersFailure extends DoneChallengeUsersState {
@@ -32,32 +33,42 @@ class DoneChallengeUsersBloc extends Cubit<DoneChallengeUsersState> {
       final List<Challenge> challengesList = await ChallengeRepository.getBySegmentId(segmentId);
 
       List<UserSubmodel> uniqueUserList = [];
+      List<String> uniqueChallengeList = [];
       List<UserSubmodel> favoriteUserList = [];
       if (challengesList != null) {
         challengesList.forEach((challenge) {
-          if (challenge.user != null && challenge.completedAt != null && !uniqueUserList.any((element) => element.id == challenge.user.id)) {
+          if (challenge.user != null &&
+              challenge.completedAt != null &&
+              !uniqueUserList.any((element) => element.id == challenge.user.id)) {
             uniqueUserList.add(challenge.user);
+          }
+          if (!uniqueChallengeList.any((element) => element == challenge.classId)) {
+            uniqueChallengeList.add(challenge.classId);
           }
         });
 
         final Friend friendData = await FriendRepository.getUserFriendsByUserId(userId);
         final List<FriendModel> friends = friendData?.friends;
 
-        for (final friend in friends) {
-          if (friend.isFavorite) {
-            final index = uniqueUserList.map((user) => user.id).toList().indexOf(friend.id);
-            if (index != -1) {
-              final user = uniqueUserList[index];
-              final stories = await StoryRepository.getByUserId(user.id);
-              final UserStories userStories = UserStories(avatar: user.avatar, avatar_thumbnail: user.avatarThumbnail, id: user.id, name: user.firstName, stories: stories);
-              user.stories = userStories;
-              uniqueUserList.removeAt(index);
-              favoriteUserList.add(user);
+        if (friends != null) {
+          for (final friend in friends) {
+            if (friend.isFavorite) {
+              final index = uniqueUserList.map((user) => user.id).toList().indexOf(friend.id);
+              if (index != -1) {
+                final user = uniqueUserList[index];
+                final stories = await StoryRepository.getByUserId(user.id);
+                final UserStories userStories = UserStories(
+                    avatar: user.avatar, avatar_thumbnail: user.avatarThumbnail, id: user.id, name: user.firstName, stories: stories);
+                user.stories = userStories;
+                uniqueUserList.removeAt(index);
+                favoriteUserList.add(user);
+              }
             }
           }
         }
       }
-      emit(DoneChallengeUsersSuccess(users: uniqueUserList, favoriteUsers: favoriteUserList));
+      emit(DoneChallengeUsersSuccess(
+          users: uniqueUserList, favoriteUsers: favoriteUserList, occurrencesInClasses: uniqueChallengeList.length));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

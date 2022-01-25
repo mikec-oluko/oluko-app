@@ -150,6 +150,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
               ]
             : [
                 GridView.count(
+                    padding: EdgeInsets.zero,
                     childAspectRatio: 0.7,
                     crossAxisCount: 4,
                     physics: const NeverScrollableScrollPhysics(),

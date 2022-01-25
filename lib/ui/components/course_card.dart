@@ -123,7 +123,7 @@ class _State extends State<CourseCard> {
             child: Align(
               alignment: Alignment.center,
               child: FractionallySizedBox(
-                heightFactor: 1,
+                heightFactor: OlukoNeumorphism.isNeumorphismDesign ? 0.8 : 1,
                 widthFactor: 0.6,
                 child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 1.0, vertical: 8.0), child: CourseProgressBar(value: widget.progress)),
