@@ -99,7 +99,7 @@ class _State extends State<CourseCard> {
           child: Stack(
             children: [
               widget.imageCover,
-              !OlukoNeumorphism.isNeumorphismDesign
+              OlukoNeumorphism.isNeumorphismDesign
                   ? Positioned(
                       top: 0,
                       right: -15,

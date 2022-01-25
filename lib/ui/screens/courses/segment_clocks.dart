@@ -480,7 +480,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
     return Center(
         child: Column(
       children: [
-        getSegmentLabel(),
+        OlukoNeumorphism.isNeumorphismDesign ? const SizedBox.shrink() : getSegmentLabel(),
         Padding(
             padding: const EdgeInsets.only(top: OlukoNeumorphism.isNeumorphismDesign ? 20 : 3, bottom: 8),
             child: Stack(alignment: Alignment.center, children: [getRoundsTimer(keyboardVisibilty), _countdownSection()])),
@@ -540,7 +540,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
     //TODO: DIVIDERS
     final bool hasMultipleLabels = timerEntries[timerTaskIndex].labels.length > 1;
     if (hasMultipleLabels) {
-      return Column(children: SegmentUtils.getJoinedLabel(timerEntries[timerTaskIndex].labels));
+      return Padding(
+        padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.only(top: 50) : EdgeInsets.zero,
+        child: Column(children: SegmentUtils.getJoinedLabel(timerEntries[timerTaskIndex].labels)),
+      );
     } else {
       final String currentTask = timerEntries[timerTaskIndex].labels[0];
       final String nextTask = timerTaskIndex < timerEntries.length - 1 ? timerEntries[timerTaskIndex + 1].labels[0] : '';
@@ -551,15 +554,18 @@ class _SegmentClocksState extends State<SegmentClocks> {
     }
   }
 
-  Column currentAndNextTaskWithCounter(bool keyboardVisibilty, String currentTask, String nextTask) {
-    return Column(
-      children: [
-        currentTaskWidget(keyboardVisibilty, currentTask),
-        const SizedBox(height: 10),
-        nextTaskWidget(nextTask, keyboardVisibilty),
-        const SizedBox(height: 15),
-        ...counterTextField(keyboardVisibilty),
-      ],
+  Widget currentAndNextTaskWithCounter(bool keyboardVisibilty, String currentTask, String nextTask) {
+    return Padding(
+      padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.only(top: 50) : EdgeInsets.zero,
+      child: Column(
+        children: [
+          currentTaskWidget(keyboardVisibilty, currentTask),
+          const SizedBox(height: 10),
+          nextTaskWidget(nextTask, keyboardVisibilty),
+          const SizedBox(height: 15),
+          ...counterTextField(keyboardVisibilty),
+        ],
+      ),
     );
   }
 
@@ -568,7 +574,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
         (timerEntries[timerTaskIndex - 1].counter == CounterEnum.reps ||
             timerEntries[timerTaskIndex - 1].counter == CounterEnum.distance)) {
       return [
-        getTextField(keyboardVisibilty),
+        OlukoNeumorphism.isNeumorphismDesign ? SizedBox.shrink() : getTextField(keyboardVisibilty),
         getKeyboard(keyboardVisibilty),
         !keyboardVisibilty && !isSegmentWithRecording()
             ? SizedBox(
@@ -583,6 +589,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   Widget getTextField(bool keyboardVisibilty) {
     final bool isCounterByReps = timerEntries[timerTaskIndex - 1].counter == CounterEnum.reps;
+    return OlukoNeumorphism.isNeumorphismDesign ? neumorphicTextfieldForScore(isCounterByReps) : textfieldForScore(isCounterByReps);
+  }
+
+  Container textfieldForScore(bool isCounterByReps) {
     return Container(
         decoration: const BoxDecoration(
             image: DecorationImage(
@@ -645,6 +655,60 @@ class _SegmentClocksState extends State<SegmentClocks> {
             ]),
           ],
         ));
+  }
+
+  Container neumorphicTextfieldForScore(bool isCounterByReps) {
+    return Container(
+        decoration: const BoxDecoration(color: OlukoNeumorphismColors.olukoNeumorphicSearchBarFirstColor),
+        height: 50,
+        child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+          SizedBox(
+              width: isCounterByReps ? 40 : 70,
+              child: BlocBuilder<KeyboardBloc, KeyboardState>(
+                builder: (context, state) {
+                  return () {
+                    final _customKeyboardBloc = BlocProvider.of<KeyboardBloc>(context);
+                    TextSelection textSelection = state.textEditingController.selection;
+                    textSelection = state.textEditingController.selection.copyWith(
+                      baseOffset: state.textEditingController.text.length,
+                      extentOffset: state.textEditingController.text.length,
+                    );
+                    textController = state.textEditingController;
+                    textController.selection = textSelection;
+
+                    return TextField(
+                      scrollController: state.textScrollController,
+                      controller: textController,
+                      onTap: () {
+                        !state.setVisible ? _customKeyboardBloc.add(SetVisible()) : null;
+                      },
+                      style: const TextStyle(
+                        fontSize: 20,
+                        color: OlukoColors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      focusNode: state.focus,
+                      readOnly: true,
+                      showCursor: true,
+                      decoration: const InputDecoration(
+                        hintText: 'enter score',
+                        border: InputBorder.none,
+                      ),
+                    );
+                  }();
+                },
+              )),
+          // const SizedBox(width: 25),
+          if (isCounterByReps)
+            Text(timerEntries[timerTaskIndex - 1].movement.name,
+                style: TextStyle(fontSize: 18, color: OlukoColors.white, fontWeight: FontWeight.w300))
+          else
+            textController.value != null || textController.value != ''
+                ? Text('m',
+                    // OlukoLocalizations.get(context, 'meters'),
+                    style: TextStyle(fontSize: 18, color: OlukoColors.white, fontWeight: FontWeight.w300))
+                : SizedBox.shrink(),
+        ]));
   }
 
   Widget getKeyboard(bool keyboardVisibilty) {
@@ -734,7 +798,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
     }*/
 
     if (workState == WorkState.resting) {
-      return TimerUtils.restTimer(circularProgressIndicatorValue, TimeConverter.durationToString(timeLeft), context);
+      final bool needInput = useInput();
+      return TimerUtils.restTimer(
+          needInput ? getTextField(true) : null, circularProgressIndicatorValue, TimeConverter.durationToString(timeLeft), context);
     }
 
     if (timerEntries[timerTaskIndex].round == null) {
@@ -746,12 +812,15 @@ class _SegmentClocksState extends State<SegmentClocks> {
         if (AMRAPRound == 1) {
           _saveSegmentRound(timerEntries[timerTaskIndex]);
         }
-      });
+      }, AMRAPRound);
     }
     final String counter = timerEntries[timerTaskIndex].counter == CounterEnum.reps ? timerEntries[timerTaskIndex].movement.name : null;
     return TimerUtils.timeTimer(circularProgressIndicatorValue, TimeConverter.durationToString(timeLeft), context, counter,
         timerEntries[timerTaskIndex].movement.isBothSide);
   }
+
+  bool useInput() => (isCurrentMovementRest() &&
+      (timerEntries[timerTaskIndex - 1].counter == CounterEnum.reps || timerEntries[timerTaskIndex - 1].counter == CounterEnum.distance));
 
   Widget currentTaskWidget(bool keyboardVisibilty, String currentTask, [bool smaller = false]) {
     return Visibility(
