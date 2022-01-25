@@ -70,11 +70,11 @@ class TimerUtils {
 
   static Widget roundsTimer(int totalRounds, int currentRound, [bool keyboardVisibilty = false]) => Container(
       height: () {
-        if (keyboardVisibilty) return OlukoNeumorphism.isNeumorphismDesign ? 200.0 : 240.0;
+        if (keyboardVisibilty) return OlukoNeumorphism.isNeumorphismDesign ? 240.0 : 240.0;
         return OlukoNeumorphism.isNeumorphismDesign ? 300.0 : 340.0;
       }(),
       width: () {
-        if (keyboardVisibilty) return OlukoNeumorphism.isNeumorphismDesign ? 200.0 : 240.0;
+        if (keyboardVisibilty) return OlukoNeumorphism.isNeumorphismDesign ? 240.0 : 240.0;
         return OlukoNeumorphism.isNeumorphismDesign ? 300.0 : 340.0;
       }(),
       child: SegmentedIndeterminateProgressbar(
@@ -276,13 +276,21 @@ class TimerUtils {
                   child: CircularProgressIndicator(
                       strokeWidth: OlukoNeumorphism.isNeumorphismDesign ? 2 : 4,
                       value: progressValue,
-                      color: OlukoColors.skyblue,
+                      color: OlukoNeumorphism.isNeumorphismDesign
+                          ? OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor
+                          : OlukoColors.skyblue,
                       backgroundColor: OlukoNeumorphism.isNeumorphismDesign
                           ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark
                           : OlukoColors.grayColorSemiTransparent)),
               Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Text(OlukoLocalizations.get(context, 'rest').toUpperCase(),
-                    textAlign: TextAlign.center, style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: OlukoColors.skyblue)),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: OlukoNeumorphism.isNeumorphismDesign
+                            ? OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor
+                            : OlukoColors.skyblue)),
                 SizedBox(height: 12),
                 Text(duration,
                     textAlign: TextAlign.center, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white))

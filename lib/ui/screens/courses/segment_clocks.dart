@@ -537,6 +537,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   }
 
   Widget taskSectionWithoutRecording(bool keyboardVisibilty) {
+    //TODO: DIVIDERS
     final bool hasMultipleLabels = timerEntries[timerTaskIndex].labels.length > 1;
     if (hasMultipleLabels) {
       return Column(children: SegmentUtils.getJoinedLabel(timerEntries[timerTaskIndex].labels));

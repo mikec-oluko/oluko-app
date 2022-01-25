@@ -8,6 +8,7 @@ import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/timer_entry.dart';
 import 'package:oluko_app/ui/newDesignComponents/movement_items_bubbles_neumorphic.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 import 'oluko_localizations.dart';
@@ -242,13 +243,21 @@ class SegmentUtils {
     List<Widget> labelWidgets = [];
     labels.forEach((label) {
       labelWidgets.add(Text(label, style: TextStyle(fontSize: 20, color: OlukoColors.white, fontWeight: FontWeight.w300)));
-      labelWidgets.add(Divider(
-        height: 10,
-        color: OlukoColors.divider,
-        thickness: 0,
-        indent: 0,
-        endIndent: 0,
-      ));
+      labelWidgets.add(OlukoNeumorphism.isNeumorphismDesign
+          ? Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+              child: OlukoNeumorphicDivider(
+                isForList: true,
+                isFadeOut: true,
+              ),
+            )
+          : Divider(
+              height: 10,
+              color: OlukoColors.divider,
+              thickness: 0,
+              indent: 0,
+              endIndent: 0,
+            ));
     });
     return labelWidgets;
   }
