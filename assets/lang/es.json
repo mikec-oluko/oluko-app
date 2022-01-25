@@ -277,5 +277,7 @@
     "switchSide": "de lado",
     "cancelVoiceMessage": "¿Cancelar mensaje de voz?",
     "allow": "Allow",
-    "deny": "Deny"
+    "deny": "Deny",
+    "enterWeight": "Ingrese peso: ",
+    "lbs": "lbs"
 }

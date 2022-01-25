@@ -278,5 +278,8 @@
     "switchSide": "switch side",
     "cancelVoiceMessage": "Cancel voice message?",
     "allow": "Allow",
-    "deny": "Deny"
+    "deny": "Deny",
+    "enterWeight": "Enter weight: ",
+    "lbs": "lbs"
+
 }
