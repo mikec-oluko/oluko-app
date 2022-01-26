@@ -7,12 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
 import 'package:oluko_app/blocs/keyboard/keyboard_bloc.dart';
-
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/story_bloc.dart' as storyBloc;
@@ -257,34 +257,65 @@ class _SegmentClocksState extends State<SegmentClocks> {
   Widget getAction() {
     return Padding(
         padding: const EdgeInsets.only(right: 10),
-        child: OutlinedButton(
-          onPressed: () {
-            final bool isCurrentTaskTimed = timerEntries[timerTaskIndex].parameter == ParameterEnum.duration;
-            setState(() {
-              if (isPlaying) {
-                panelController.open();
-                if (isCurrentTaskTimed) {
-                  _pauseCountdown();
-                } else {
-                  setPaused();
-                }
-              } else {
-                panelController.close();
-                workState = lastWorkStateBeforePause;
-                if (isCurrentTaskTimed) {
-                  _playCountdown();
-                }
-              }
-              isPlaying = !isPlaying;
-            });
-          },
-          style: OutlinedButton.styleFrom(
-            padding: const EdgeInsets.all(12),
-            shape: const CircleBorder(),
-            side: const BorderSide(color: Colors.white),
-          ),
-          child: Icon(isPlaying ? Icons.pause : Icons.play_arrow, color: Colors.white),
-        ));
+        child: OlukoNeumorphism.isNeumorphismDesign
+            ? Container(
+                height: 35,
+                width: 35,
+                child: OlukoNeumorphicPrimaryButton(
+                  isExpanded: false,
+                  title: '',
+                  onlyIcon: true,
+                  onPressed: () {
+                    final bool isCurrentTaskTimed = timerEntries[timerTaskIndex].parameter == ParameterEnum.duration;
+                    setState(() {
+                      if (isPlaying) {
+                        panelController.open();
+                        if (isCurrentTaskTimed) {
+                          _pauseCountdown();
+                        } else {
+                          setPaused();
+                        }
+                      } else {
+                        panelController.close();
+                        workState = lastWorkStateBeforePause;
+                        if (isCurrentTaskTimed) {
+                          _playCountdown();
+                        }
+                      }
+                      isPlaying = !isPlaying;
+                    });
+                  },
+                  icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow, color: Colors.white),
+                ),
+              )
+            : OutlinedButton(
+                onPressed: () {
+                  final bool isCurrentTaskTimed = timerEntries[timerTaskIndex].parameter == ParameterEnum.duration;
+                  setState(() {
+                    if (isPlaying) {
+                      panelController.open();
+                      if (isCurrentTaskTimed) {
+                        _pauseCountdown();
+                      } else {
+                        setPaused();
+                      }
+                    } else {
+                      panelController.close();
+                      workState = lastWorkStateBeforePause;
+                      if (isCurrentTaskTimed) {
+                        _playCountdown();
+                      }
+                    }
+                    isPlaying = !isPlaying;
+                  });
+                },
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.all(12),
+                  shape: const CircleBorder(),
+                  side: const BorderSide(color: Colors.white),
+                ),
+                child: Icon(isPlaying ? Icons.pause : Icons.play_arrow, color: Colors.white),
+              ));
   }
 
   Widget _body(bool keyboardVisibilty) {
@@ -478,14 +509,17 @@ class _SegmentClocksState extends State<SegmentClocks> {
   ///Countdown & movements information
   Widget _timerSection(bool keyboardVisibilty) {
     return Center(
-        child: Column(
-      children: [
-        OlukoNeumorphism.isNeumorphismDesign ? const SizedBox.shrink() : getSegmentLabel(),
-        Padding(
-            padding: const EdgeInsets.only(top: OlukoNeumorphism.isNeumorphismDesign ? 20 : 3, bottom: 8),
-            child: Stack(alignment: Alignment.center, children: [getRoundsTimer(keyboardVisibilty), _countdownSection()])),
-        if (isWorkStateFinished()) const SizedBox() else _tasksSection(keyboardVisibilty)
-      ],
+        child: Container(
+      color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+      child: Column(
+        children: [
+          OlukoNeumorphism.isNeumorphismDesign ? const SizedBox.shrink() : getSegmentLabel(),
+          Padding(
+              padding: const EdgeInsets.only(top: OlukoNeumorphism.isNeumorphismDesign ? 20 : 3, bottom: 8),
+              child: Stack(alignment: Alignment.center, children: [getRoundsTimer(keyboardVisibilty), _countdownSection()])),
+          if (isWorkStateFinished()) const SizedBox() else _tasksSection(keyboardVisibilty)
+        ],
+      ),
     ));
   }
 
@@ -658,57 +692,87 @@ class _SegmentClocksState extends State<SegmentClocks> {
   }
 
   Container neumorphicTextfieldForScore(bool isCounterByReps) {
+    //TODO: AJUSTAR EL INPUT
     return Container(
-        decoration: const BoxDecoration(color: OlukoNeumorphismColors.olukoNeumorphicSearchBarFirstColor),
-        height: 50,
-        child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-          SizedBox(
-              width: isCounterByReps ? 40 : 70,
-              child: BlocBuilder<KeyboardBloc, KeyboardState>(
-                builder: (context, state) {
-                  return () {
-                    final _customKeyboardBloc = BlocProvider.of<KeyboardBloc>(context);
-                    TextSelection textSelection = state.textEditingController.selection;
-                    textSelection = state.textEditingController.selection.copyWith(
-                      baseOffset: state.textEditingController.text.length,
-                      extentOffset: state.textEditingController.text.length,
-                    );
-                    textController = state.textEditingController;
-                    textController.selection = textSelection;
+        decoration: const BoxDecoration(color: Colors.transparent),
+        height: 65,
+        child: Column(
+          children: [
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              SizedBox(
+                  width: isCounterByReps ? ScreenUtils.width(context) / 3.5 : ScreenUtils.width(context) / 3.0,
+                  child: BlocBuilder<KeyboardBloc, KeyboardState>(
+                    builder: (context, state) {
+                      return Scrollbar(
+                        controller: state.textScrollController,
+                        child: () {
+                          final _customKeyboardBloc = BlocProvider.of<KeyboardBloc>(context);
+                          TextSelection textSelection = state.textEditingController.selection;
+                          textSelection = state.textEditingController.selection.copyWith(
+                            baseOffset: state.textEditingController.text.length,
+                            extentOffset: state.textEditingController.text.length,
+                          );
+                          textController = state.textEditingController;
+                          textController.selection = textSelection;
 
-                    return TextField(
-                      scrollController: state.textScrollController,
-                      controller: textController,
-                      onTap: () {
-                        !state.setVisible ? _customKeyboardBloc.add(SetVisible()) : null;
-                      },
-                      style: const TextStyle(
-                        fontSize: 20,
-                        color: OlukoColors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      focusNode: state.focus,
-                      readOnly: true,
-                      showCursor: true,
-                      decoration: const InputDecoration(
-                        hintText: 'enter score',
-                        border: InputBorder.none,
-                      ),
-                    );
-                  }();
-                },
-              )),
-          // const SizedBox(width: 25),
-          if (isCounterByReps)
-            Text(timerEntries[timerTaskIndex - 1].movement.name,
-                style: TextStyle(fontSize: 18, color: OlukoColors.white, fontWeight: FontWeight.w300))
-          else
-            textController.value != null || textController.value != ''
-                ? Text('m',
-                    // OlukoLocalizations.get(context, 'meters'),
+                          return TextField(
+                            textAlign: TextAlign.center,
+                            scrollController: state.textScrollController,
+                            controller: textController,
+                            onTap: () {
+                              !state.setVisible ? _customKeyboardBloc.add(SetVisible()) : null;
+                            },
+                            style: const TextStyle(
+                              fontSize: 32,
+                              color: OlukoColors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            focusNode: state.focus,
+                            readOnly: true,
+                            showCursor: true,
+                            decoration: const InputDecoration(
+                              isDense: false,
+                              contentPadding: EdgeInsets.zero,
+                              focusColor: Colors.transparent,
+                              fillColor: Colors.transparent,
+                              hintText: 'enter score',
+                              hintStyle: TextStyle(color: OlukoColors.grayColorSemiTransparent, fontSize: 24),
+                              hintMaxLines: 1,
+                              border: InputBorder.none,
+                            ),
+                          );
+                        }(),
+                      );
+                    },
+                  )),
+              // const SizedBox(width: 25),
+              if (isCounterByReps)
+                Text(timerEntries[timerTaskIndex - 1].movement.name,
                     style: TextStyle(fontSize: 18, color: OlukoColors.white, fontWeight: FontWeight.w300))
-                : SizedBox.shrink(),
-        ]));
+              else
+                textController.value != null && textController.value.text != ""
+                    ? Expanded(
+                        child: Text(OlukoLocalizations.get(context, 'meters'),
+                            style: TextStyle(fontSize: 24, color: OlukoColors.white, fontWeight: FontWeight.w300)),
+                      )
+                    : SizedBox.shrink(),
+            ]),
+            textController.value != null && textController.value.text != ""
+                ? SizedBox.shrink()
+                : Align(
+                    alignment: Alignment.center,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // SizedBox(height: 30),
+                        Text('Tap here to type the score',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal, color: OlukoColors.primary))
+                      ],
+                    ),
+                  )
+          ],
+        ));
   }
 
   Widget getKeyboard(bool keyboardVisibilty) {
@@ -825,9 +889,12 @@ class _SegmentClocksState extends State<SegmentClocks> {
   Widget currentTaskWidget(bool keyboardVisibilty, String currentTask, [bool smaller = false]) {
     return Visibility(
       visible: !keyboardVisibilty,
-      child: Text(
-        currentTask,
-        style: TextStyle(fontSize: smaller ? 20 : 25, color: Colors.white, fontWeight: FontWeight.bold),
+      child: Padding(
+        padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.symmetric(horizontal: 20) : EdgeInsets.zero,
+        child: Text(
+          currentTask,
+          style: TextStyle(fontSize: smaller ? 20 : 25, color: Colors.white, fontWeight: FontWeight.bold),
+        ),
       ),
     );
     ;
