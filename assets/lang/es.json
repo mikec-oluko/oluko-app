@@ -279,5 +279,8 @@
     "allow": "Allow",
     "deny": "Deny",
     "enterWeight": "Ingrese peso: ",
-    "lbs": "lbs"
+    "lbs": "lbs",
+    "cancelSession": "Cancelar la sesión?",
+    "cancelMessage": "Esta acción paró la grabación. Deberas reiniciar la sesión desde el principio si quieres grabar el segmento.",
+    "restart": "Reiniciar"
 }

@@ -280,6 +280,8 @@
     "allow": "Allow",
     "deny": "Deny",
     "enterWeight": "Enter weight: ",
-    "lbs": "lbs"
-
+    "lbs": "lbs",
+    "cancelSession": "Cancel the session?",
+    "cancelMessage": "This action stopped the recording. You will have to restart the session from beginning if you want to record the segment.",
+    "restart": "Re-Start"
 }

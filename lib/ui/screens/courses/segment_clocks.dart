@@ -33,6 +33,7 @@ import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/custom_keyboard.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
+import 'package:oluko_app/ui/components/pause_dialog_content.dart';
 import 'package:oluko_app/ui/components/progress_bar.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/screens/courses/collapsed_movement_videos_section.dart';
@@ -40,6 +41,7 @@ import 'package:oluko_app/ui/screens/courses/feedback_card.dart';
 import 'package:oluko_app/ui/screens/courses/movement_videos_section.dart';
 import 'package:oluko_app/ui/screens/courses/share_card.dart';
 import 'package:oluko_app/utils/app_messages.dart';
+import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -776,6 +778,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
           });
           if (isSegmentWithRecording()) {
             await cameraController.stopVideoRecording();
+            BottomDialogUtils.showBottomDialog(
+                            context: context,
+                            content: PauseDialogContent());
           }
           setState(() {
             workoutType = WorkoutType.segment;
