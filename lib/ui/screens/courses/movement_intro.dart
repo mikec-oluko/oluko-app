@@ -13,6 +13,9 @@ import 'package:oluko_app/ui/components/oluko_image_bar.dart';
 import 'package:oluko_app/ui/components/movement_item_bubbles.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
+import 'package:oluko_app/ui/newDesignComponents/movement_items_bubbles_neumorphic.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -81,8 +84,8 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
 
   //Controllers
   TabController tabController;
-  List<ChewieController> _videoControllers = [null, null];
-  List<Key> _videoKeys = [GlobalKey(), GlobalKey()];
+  List<ChewieController> _videoControllers = [null];
+  List<Key> _videoKeys = [GlobalKey()];
   MovementInfoSuccess _movementInfoSuccess;
 
   @override
@@ -96,32 +99,37 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
   Widget build(BuildContext context) {
     BlocProvider.of<MovementInfoBloc>(context).get(widget.movement.id);
     return Scaffold(
-      appBar: OlukoImageBar(actions: [], movements: [widget.movement], onPressedMovement: (context, movement) => {}),
-      backgroundColor: Colors.black,
+      appBar: OlukoNeumorphism.isNeumorphismDesign
+          ? null
+          : OlukoImageBar(actions: [], movements: [widget.movement], onPressedMovement: (context, movement) => {}),
+      backgroundColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker : Colors.black,
       body: Container(
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.94), BlendMode.darken),
-                fit: BoxFit.cover,
-                image: NetworkImage(backgroundImageUrl))),
+        decoration: OlukoNeumorphism.isNeumorphismDesign
+            ? BoxDecoration(color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker)
+            : BoxDecoration(
+                image: DecorationImage(
+                    colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.94), BlendMode.darken),
+                    fit: BoxFit.cover,
+                    image: NetworkImage(backgroundImageUrl))),
         width: ScreenUtils.width(context),
-        height: ScreenUtils.height(context) - toolbarHeight,
-        child: _viewBody(),
+        height: OlukoNeumorphism.isNeumorphismDesign ? ScreenUtils.height(context) : ScreenUtils.height(context) - toolbarHeight,
+        child: OlukoNeumorphism.isNeumorphismDesign ? _viewBodyNeumorphic() : _viewBody(),
       ),
     );
   }
 
   Widget _viewBody() {
     return BlocBuilder<MovementInfoBloc, MovementInfoState>(builder: (context, movementInfoState) {
-      // if (_movementInfoSuccess == null && !(movementInfoState is MovementInfoSuccess)) {
-      // }
-      if (movementInfoState is MovementInfoSuccess) {
+      if (movementInfoState is MovementInfoSuccess && widget.movement.id == movementInfoState.movement.id) {
         if (_movementInfoSuccess == null) {
           _movementInfoSuccess = movementInfoState;
           movementInfoState.movementVariants.forEach((element) {
             tabs.add(element.name);
+            _videoKeys.add(GlobalKey());
+            _videoControllers.add(null);
           });
-          tabController = TabController(initialIndex: 0, length: tabs.length, vsync: this);
+
+          tabController = TabController(length: tabs.length, vsync: this);
         }
         return Container(
           child: ListView(
@@ -182,6 +190,106 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
     });
   }
 
+  Widget _viewBodyNeumorphic() {
+    return BlocBuilder<MovementInfoBloc, MovementInfoState>(builder: (context, movementInfoState) {
+      // if (_movementInfoSuccess == null && !(movementInfoState is MovementInfoSuccess)) {
+      // }
+      if (movementInfoState is MovementInfoSuccess && widget.movement.id == movementInfoState.movement.id) {
+        if (_movementInfoSuccess == null) {
+          _movementInfoSuccess = movementInfoState;
+          movementInfoState.movementVariants.forEach((element) {
+            tabs.add(element.name);
+          });
+          tabController = TabController(length: tabs.length, vsync: this);
+        }
+        return Container(
+          child: ListView(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Row(children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 15.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 20.0),
+                                  child: Container(
+                                    //TODO: light behind
+                                    height: 55,
+                                    width: 55,
+                                    child: GestureDetector(
+                                      onTap: () => Navigator.pop(context),
+                                      child: OlukoBlurredButton(
+                                        childContent: Image.asset('assets/courses/left_arrow_back.png'),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                                  child: MovementUtils.movementTitle(widget.movement.name),
+                                ),
+                                SizedBox(
+                                  height: 55,
+                                  width: 55,
+                                )
+                              ],
+                            ),
+                          ),
+                          OlukoNeumorphicDivider(
+                            isFadeOut: true,
+                          ),
+                          SizedBox(height: 25),
+                          Column(
+                            children: [
+                              Container(
+                                width: ScreenUtils.width(context),
+                                child: TabBar(
+                                  isScrollable: true,
+                                  onTap: (index) => this.setState(() {
+                                    this.setState(() {
+                                      tabController.index = index;
+                                    });
+                                  }),
+                                  controller: tabController,
+                                  indicatorSize: TabBarIndicatorSize.label,
+                                  indicator: BoxDecoration(
+                                      border: Border(bottom: BorderSide(color: OlukoNeumorphismColors.initialGradientColorPrimary))),
+                                  tabs: _getTabs(),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Builder(builder: (context) {
+                            if (tabController.index == 0) {
+                              return _firstTab(widget.movement);
+                            } else {
+                              return _firstTab(movementInfoState.movementVariants[tabController.index - 1]);
+                            }
+                          })
+                        ],
+                      ),
+                    )
+                  ]),
+                ]),
+              ),
+            ],
+          ),
+        );
+      } else {
+        return SizedBox();
+      }
+    });
+  }
+
   Widget courseRow(Course course) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -193,8 +301,13 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
             Column(
               children: [
                 GestureDetector(
-                    onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
-                        arguments: {'course': course, 'fromCoach': false}),
+                    onTap: () {
+                      if (_videoControllers[tabController.index] != null) {
+                        _videoControllers[tabController.index].pause();
+                      }
+                      Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
+                          arguments: {'course': course, 'fromCoach': false, 'isCoachRecommendation': false});
+                    },
                     child: Container(height: 100, child: Image.network(course.image)))
               ],
             ),
@@ -202,7 +315,6 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(left: 3.0),
@@ -222,7 +334,6 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Icon(
                             this.coursesBookmarked[course.id] != null && this.coursesBookmarked[course.id] == true
@@ -242,6 +353,38 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                 ],
               ),
             )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget neumorphicCourseRow(Course course) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 20.0),
+      child: Container(
+        decoration: BoxDecoration(
+            color: OlukoNeumorphismColors.olukoNeumorphicSearchBarSecondColor, borderRadius: BorderRadius.all(Radius.circular(5))),
+        height: 150,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Column(
+              children: [
+                GestureDetector(
+                    onTap: () {
+                      if (_videoControllers[tabController.index] != null) {
+                        _videoControllers[tabController.index].pause();
+                      }
+                      Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
+                          arguments: {'course': course, 'fromCoach': false, 'isCoachRecommendation': false});
+                    },
+                    child: Container(
+                        padding: EdgeInsets.all(4),
+                        height: 150,
+                        child: ClipRRect(borderRadius: BorderRadius.circular(5), child: Image.network(course.image))))
+              ],
+            ),
           ],
         ),
       ),
@@ -275,20 +418,31 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
   Widget _firstTab(Movement movement) {
     return Container(
       child: Column(children: [
-        Container(height: 200, child: Stack(children: _videoPlayer(movement.video, tabController.index))),
+        //getVideoWidget(movement.video),
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(20.0),
+          child: OlukoNeumorphism.isNeumorphismDesign
+              ? Container(
+                  height: 180,
+                  child: ClipRRect(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      child: Stack(children: _videoPlayer(movement.video, tabController.index))))
+              : Container(height: 200, child: Stack(children: _videoPlayer(movement.video, tabController.index))),
+        ),
+        Padding(
+          padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.all(15.0) : const EdgeInsets.all(8.0),
           child: Column(
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: Text(
                   movement.description,
-                  style: OlukoFonts.olukoMediumFont(),
+                  style: OlukoNeumorphism.isNeumorphismDesign
+                      ? TextStyle(fontSize: OlukoFonts.olukoMediumFontSize, color: Colors.grey)
+                      : OlukoFonts.olukoMediumFont(),
                 ),
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   TitleBody(
                     OlukoLocalizations.get(context, 'referenceMovements'),
@@ -299,18 +453,33 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    MovementItemBubbles(
-                        onPressed: (context, movement) =>
-                            Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement}),
-                        content: this._movementInfoSuccess.relatedMovements,
-                        width: ScreenUtils.width(context) / 1.2),
+                    OlukoNeumorphism.isNeumorphismDesign
+                        ? MovementItemBubblesNeumorphic(
+                            referenceMovementsSection: true,
+                            onPressed: (context, movement) {
+                              if (_videoControllers[tabController.index] != null) {
+                                _videoControllers[tabController.index].pause();
+                              }
+                              Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.movementIntro],
+                                  arguments: {'movement': movement});
+                            },
+                            content: _movementInfoSuccess.relatedMovements,
+                            width: ScreenUtils.width(context) / 1.2)
+                        : MovementItemBubbles(
+                            onPressed: (context, movement) {
+                              if (_videoControllers[tabController.index] != null) {
+                                _videoControllers[tabController.index].pause();
+                              }
+                              Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.movementIntro],
+                                  arguments: {'movement': movement});
+                            },
+                            content: _movementInfoSuccess.relatedMovements,
+                            width: ScreenUtils.width(context) / 1.2),
                   ],
                 ),
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -321,7 +490,18 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                   ),
                 ],
               ),
-              Column(children: this._movementInfoSuccess.relatedCourses.map((Course course) => courseRow(course)).toList()),
+              OlukoNeumorphism.isNeumorphismDesign
+                  ? SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                          children: _movementInfoSuccess.relatedCourses
+                              .map((Course course) => Padding(
+                                    padding: const EdgeInsets.only(right: 20.0),
+                                    child: neumorphicCourseRow(course),
+                                  ))
+                              .toList()),
+                    )
+                  : Column(children: _movementInfoSuccess.relatedCourses.map((Course course) => courseRow(course)).toList()),
             ],
           ),
         )
@@ -345,7 +525,6 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                 ),
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   TitleBody(
                     OlukoLocalizations.get(context, 'referenceMovements'),
@@ -356,14 +535,12 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     MovementItemBubbles(content: this.referenceMovements, width: ScreenUtils.width(context) / 1.2),
                   ],
                 ),
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -386,17 +563,18 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
     return Tab(
       child: Container(
         decoration: BoxDecoration(),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Text(
-            name.toUpperCase(),
-            style: OlukoFonts.olukoMediumFont(
-                customColor: disabled != null && disabled == true
-                    ? Colors.grey.shade700
-                    : tabController.index == index
-                        ? Colors.black
-                        : Colors.white),
-          ),
+        child: Text(
+          OlukoNeumorphism.isNeumorphismDesign ? name : name.toUpperCase(),
+          style: OlukoFonts.olukoMediumFont(
+              customColor: disabled != null && disabled == true
+                  ? Colors.grey.shade700
+                  : tabController.index == index
+                      ? OlukoNeumorphism.isNeumorphismDesign
+                          ? Colors.white
+                          : Colors.black
+                      : OlukoNeumorphism.isNeumorphismDesign
+                          ? Colors.grey
+                          : Colors.white),
         ),
       ),
     );
@@ -408,5 +586,13 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
       tabItems.add(_tabItem(tabs[i], i));
     }
     return tabItems;
+  }
+
+  Widget getVideoWidget(String video) {
+    if (video != null) {
+      return SizedBox(height: 200, child: Stack(children: _videoPlayer(video, tabController.index)));
+    } else {
+      return const SizedBox();
+    }
   }
 }

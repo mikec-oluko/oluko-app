@@ -7,7 +7,8 @@ import 'coach_timeline_panel.dart';
 import 'dart:math' as math;
 
 class CoachSlidingUpPanel extends StatefulWidget {
-  const CoachSlidingUpPanel({this.content, this.timelineItemsContent});
+  const CoachSlidingUpPanel({this.content, this.timelineItemsContent, this.isIntroductionVideoComplete});
+  final bool isIntroductionVideoComplete;
   final Widget content;
   final List<CoachTimelineGroup> timelineItemsContent;
 
@@ -92,11 +93,11 @@ class _CoachSlidingUpPanelState extends State<CoachSlidingUpPanel> {
       borderRadius: radius,
       backdropEnabled: true,
       padding: EdgeInsets.zero,
-      color: OlukoColors.black,
+      color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
       minHeight: 50.0,
       panel: Container(
         decoration: BoxDecoration(
-          color: OlukoColors.black,
+          color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
           borderRadius: radius,
           gradient: const LinearGradient(
               colors: [OlukoColors.grayColorFadeTop, OlukoColors.grayColorFadeBottom],
@@ -107,12 +108,12 @@ class _CoachSlidingUpPanelState extends State<CoachSlidingUpPanel> {
         width: MediaQuery.of(context).size.width,
         height: 300,
         child: CoachTimelinePanel(
-          timelineContentItems: widget.timelineItemsContent,
+          isIntroductionVideoComplete: widget.isIntroductionVideoComplete,
         ),
       ),
       controller: _panelController,
       body: Container(
-        color: OlukoColors.black,
+        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
         child: widget.content,
       ),
     );

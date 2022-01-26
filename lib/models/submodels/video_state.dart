@@ -1,7 +1,8 @@
 import 'package:enum_to_string/enum_to_string.dart';
+import 'package:equatable/equatable.dart';
 import 'package:oluko_app/models/enums/submission_state_enum.dart';
 
-class VideoState {
+class VideoState extends Equatable {
   String stateInfo;
   String stateExtraInfo;
   SubmissionStateEnum state;
@@ -29,4 +30,12 @@ class VideoState {
         'error': error,
         'state': state.index,
       };
+
+  @override
+  List<Object> get props => [
+        state,
+        stateInfo,
+        stateExtraInfo,
+        error,
+      ];
 }

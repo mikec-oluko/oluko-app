@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:equatable/equatable.dart';
 
-class CourseTimelineSubmodel {
+class CourseTimelineSubmodel extends Equatable {
   DocumentReference reference;
   String id;
   String name;
 
-  CourseTimelineSubmodel({this.id, this.name, this.reference});
+  CourseTimelineSubmodel({this.id = '0', this.name = 'all', this.reference});
 
   factory CourseTimelineSubmodel.fromJson(Map<String, dynamic> json) {
     return CourseTimelineSubmodel(
@@ -17,4 +18,7 @@ class CourseTimelineSubmodel {
         'id': id,
         'name': name,
       };
+
+  @override
+  List<Object> get props => [reference, id, name];
 }

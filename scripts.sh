@@ -51,12 +51,12 @@ if [ "$1" = "increment_build" ]
     then perl -i -pe 's/^(version:\s+\d+\.\d+\.)(\d+)(\+)(\d+)$/$1.($2).$3.($4+1)/e' pubspec.yaml
 fi
 if [[ "$1" != "qa" ]] && [[ "$1" != "dev" ]] && [[ "$1" != "prod" ]] && [[ "$1" != "appbundle" ]] && [[ "$1" != "increment_build" ]] && [[ "$1" != "deploy" ]]
-    then echo "Arguments allowed qa / dev / prod / appbundle / increment_build"
+    then echo "Arguments allowed qa / dev / prod / appbundle / increment_build / deploy"
 fi
 if [ "$1" = "deploy" ]
     then
     if [ -z "$2" ] 
-    then echo "No 2nd argument supplied"
+        then echo "No 2nd argument supplied"
     else
         if [ "$2" = "dev" ]
             then
@@ -70,8 +70,21 @@ if [ "$1" = "deploy" ]
             then 
                 SetupQAEnv
         fi
-        echo "Starting deploy..." && \
-        cd android && bundle exec fastlane beta && \
-        cd .. && cd ios && pod install && bundle exec fastlane beta
+        if [ -z "$3" ] 
+            then
+                echo "Starting deploy..." && \
+                cd android && bundle exec fastlane beta && \
+                cd .. && cd ios && pod install && bundle exec fastlane beta
+        fi
+        if [ "$3" = "ios" ]
+            then 
+                echo "Starting iOS deploy..." && \
+                cd ios && pod install && bundle exec fastlane beta
+        fi
+        if [ "$3" = "android" ]
+            then 
+                echo "Starting android deploy..." && \
+                cd android && bundle exec fastlane beta
+        fi
     fi
 fi

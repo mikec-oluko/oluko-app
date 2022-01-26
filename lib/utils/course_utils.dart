@@ -139,7 +139,7 @@ class CourseUtils {
 
   static Widget filterSelector(TagSuccess state, {Function(List<Base>) onSubmit, Function() onClosed, List<Tag> selectedTags = const []}) {
     return Padding(
-        padding: EdgeInsets.only(top: 15.0, left: 8, right: 8),
+        padding: EdgeInsets.only(top: 15.0, left: 0, right: 0),
         child: FilterSelector<Tag>(
             itemList: Map.fromIterable(state.tagsByCategories.entries,
                 key: (entry) => entry.key.name.toString(),

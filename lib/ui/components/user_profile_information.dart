@@ -1,7 +1,6 @@
-// ignore_for_file: avoid_positional_boolean_parameters
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_received_bloc.dart';
 import 'package:oluko_app/blocs/friends/hi_five_send_bloc.dart';
@@ -9,9 +8,11 @@ import 'package:oluko_app/blocs/profile/upload_avatar_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/privacy_options.dart';
+import 'package:oluko_app/helpers/user_helper.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/models/user_statistics.dart';
 import 'package:oluko_app/ui/components/user_profile_progress.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/container_grediant.dart';
 import 'package:oluko_app/utils/image_utils.dart';
@@ -23,12 +24,7 @@ class UserProfileInformation extends StatefulWidget {
   final UserResponse currentUser;
   final UserConnectStatus connectStatus;
   final UserStatistics userStats;
-  const UserProfileInformation(
-      {this.userToDisplayInformation,
-      this.actualRoute,
-      this.currentUser,
-      this.connectStatus,
-      this.userStats})
+  const UserProfileInformation({this.userToDisplayInformation, this.actualRoute, this.currentUser, this.connectStatus, this.userStats})
       : super();
 
   @override
@@ -46,16 +42,12 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
   @override
   void initState() {
     _userLocation = getUserLocation(widget.userToDisplayInformation);
-    _isOwner = _isOwnerProfile(
-        currentUser: widget.currentUser,
-        userRequested: widget.userToDisplayInformation);
+    _isOwner = _isOwnerProfile(currentUser: widget.currentUser, userRequested: widget.userToDisplayInformation);
 
     super.initState();
   }
 
-  bool _isOwnerProfile(
-      {@required UserResponse currentUser,
-      @required UserResponse userRequested}) {
+  bool _isOwnerProfile({@required UserResponse currentUser, @required UserResponse userRequested}) {
     return currentUser.id == userRequested.id;
   }
 
@@ -74,17 +66,25 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
       child: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
         if (_hiFiveReceivedState == null && authState is AuthSuccess) {
           _authState = authState;
-          BlocProvider.of<HiFiveReceivedBloc>(context).get(
-              context, authState.user.id, widget.userToDisplayInformation.id);
+          BlocProvider.of<HiFiveReceivedBloc>(context).get(context, authState.user.id, widget.userToDisplayInformation.id);
         }
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          padding: const EdgeInsets.symmetric(
+              horizontal: OlukoNeumorphism.isNeumorphismDesign ? 20 : 10, vertical: OlukoNeumorphism.isNeumorphismDesign ? 10 : 5),
+          //TODO: Check if need neumorphic outside
           child: Container(
-            decoration: ContainerGradient.getContainerGradientDecoration(),
+            decoration: UserInformationBackground.getContainerGradientDecoration(isNeumorphic: OlukoNeumorphism.isNeumorphismDesign),
             width: MediaQuery.of(context).size.width,
+            height: OlukoNeumorphism.isNeumorphismDesign
+                ? MediaQuery.of(context).size.height < 700
+                    ? MediaQuery.of(context).size.height / 2.7
+                    : MediaQuery.of(context).size.height / 3.5
+                : null,
             child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: _profileUserInformation(_userLocation, _valuesDemo)),
+                padding: const EdgeInsets.all(OlukoNeumorphism.isNeumorphismDesign ? 20 : 10),
+                child: OlukoNeumorphism.isNeumorphismDesign
+                    ? _profileUserNeumorphicInformation(_userLocation, _valuesDemo)
+                    : _profileUserInformation(_userLocation, _valuesDemo)),
           ),
         );
       }),
@@ -95,8 +95,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
     return "${user.city ?? ''}, ${user.state ?? ''} ${user.country ?? ''}";
   }
 
-  Widget _profileUserInformation(
-      String location, List<String> valuesForArchivements) {
+  Widget _profileUserNeumorphicInformation(String location, List<String> valuesForArchivements) {
     final bool canShowDetails = _privacyOptions.canShowDetails(
         isOwner: _isOwner,
         currentUser: widget.currentUser,
@@ -104,7 +103,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
         connectStatus: widget.connectStatus);
 
     final profileDefaultProfilePicContent =
-        '${widget.userToDisplayInformation.firstName.characters.first.toUpperCase()} ${widget.userToDisplayInformation.lastName.characters.first.toUpperCase()}';
+        '${widget.userToDisplayInformation.firstName.characters.first.toUpperCase()}${widget.userToDisplayInformation.lastName.characters.first.toUpperCase()}';
     return Column(
       children: [
         //PROFILE IMAGE AND INFO
@@ -112,8 +111,131 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
           children: [
             //USER CIRCLEAVATAR
             Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                if (widget.userToDisplayInformation.avatarThumbnail != null)
+                  Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Stack(clipBehavior: Clip.none, children: [
+                      Neumorphic(
+                        style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
+                        child: CircleAvatar(
+                          backgroundColor: OlukoColors.black,
+                          backgroundImage: Image.network(
+                            widget.userToDisplayInformation.avatarThumbnail,
+                            fit: BoxFit.contain,
+                            frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
+                                ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 45, width: 45),
+                            height: 45,
+                            width: 45,
+                          ).image,
+                          radius: 40.0,
+                        ),
+                      ),
+                      getVisibility(widget, context, _isOwner),
+                    ]),
+                  )
+                else
+                  // Padding(
+                  //   padding: const EdgeInsets.all(5.0),
+                  // child:
+                  Stack(children: [
+                    CircleAvatar(
+                      backgroundColor: widget.userToDisplayInformation != null
+                          ? OlukoColors.userColor(widget.userToDisplayInformation.firstName, widget.userToDisplayInformation.lastName)
+                          : OlukoColors.black,
+                      radius: 40.0,
+                      child: Text(widget.userToDisplayInformation != null ? profileDefaultProfilePicContent : '',
+                          style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500)),
+                    ),
+                    getVisibility(widget, context, _isOwner),
+                  ]),
+                // ),
+                Expanded(
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 5),
+                        child: _isOwner
+                            ? userInfoUnlocked(location)
+                            : canShowDetails
+                                ? userInfoUnlocked(location)
+                                : userInfoLocked(),
+                      ),
+                      if (!_isOwner && widget.actualRoute == ActualProfileRoute.userProfile)
+                        Expanded(
+                          child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
+                            listener: (context, hiFiveSendState) {
+                              if (hiFiveSendState is HiFiveSendSuccess) {
+                                AppMessages.clearAndShowSnackbarTranslated(
+                                    context, hiFiveSendState.hiFive ? 'hiFiveSent' : 'hiFiveRemoved');
+                              }
+                              BlocProvider.of<HiFiveReceivedBloc>(context)
+                                  .get(context, _authState.user.id, widget.userToDisplayInformation.id);
+                            },
+                            child: BlocBuilder<HiFiveReceivedBloc, HiFiveReceivedState>(builder: (context, HiFiveReceivedState) {
+                              return HiFiveReceivedState is HiFiveReceivedSuccess
+                                  ? TextButton(
+                                      style: TextButton.styleFrom(
+                                        padding: EdgeInsets.zero,
+                                      ),
+                                      onPressed: () {
+                                        BlocProvider.of<HiFiveSendBloc>(context).set(
+                                          context,
+                                          _authState.user.id,
+                                          widget.userToDisplayInformation.id,
+                                        );
+                                      },
+                                      child: Image.asset(
+                                        HiFiveReceivedState.hiFive ? 'assets/profile/hiFive_selected.png' : 'assets/profile/hiFive.png',
+                                        colorBlendMode: BlendMode.lighten,
+                                        scale: 4,
+                                      ),
+                                    )
+                                  : const SizedBox.shrink();
+                            }),
+                          ),
+                        )
+                      else
+                        const SizedBox.shrink(),
+                    ],
+                  ),
+                ),
+                //HIFIVE BUTTON
+              ],
+            ),
+          ],
+        ),
+        if (OlukoNeumorphism.isNeumorphismDesign)
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 10),
+            child: OlukoNeumorphicDivider(
+              isFadeOut: true,
+            ),
+          )
+        else
+          const SizedBox.shrink(),
+        //TODO: CHECK IF NEU
+        Expanded(child: getUserProfileProgress(widget.userStats, canShowDetails))
+      ],
+    );
+  }
+
+  Widget _profileUserInformation(String location, List<String> valuesForArchivements) {
+    final bool canShowDetails = _privacyOptions.canShowDetails(
+        isOwner: _isOwner,
+        currentUser: widget.currentUser,
+        userRequested: widget.userToDisplayInformation,
+        connectStatus: widget.connectStatus);
+
+    final profileDefaultProfilePicContent =
+        '${widget.userToDisplayInformation.firstName.characters.first.toUpperCase()}${widget.userToDisplayInformation.lastName.characters.first.toUpperCase()}';
+    return Column(
+      children: [
+        //PROFILE IMAGE AND INFO
+        Column(
+          children: [
+            //USER CIRCLEAVATAR
+            Row(
               children: [
                 if (widget.userToDisplayInformation.avatarThumbnail != null)
                   Padding(
@@ -124,11 +246,8 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                         backgroundImage: Image.network(
                           widget.userToDisplayInformation.avatarThumbnail,
                           fit: BoxFit.contain,
-                          frameBuilder: (BuildContext context, Widget child,
-                                  int frame, bool wasSynchronouslyLoaded) =>
-                              ImageUtils.frameBuilder(
-                                  context, child, frame, wasSynchronouslyLoaded,
-                                  height: 30, width: 30),
+                          frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
+                              ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 30, width: 30),
                           height: 30,
                           width: 30,
                         ).image,
@@ -142,85 +261,65 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                     padding: const EdgeInsets.all(5.0),
                     child: Stack(children: [
                       CircleAvatar(
-                        backgroundColor: OlukoColors.userColor(
-                            widget.userToDisplayInformation.firstName,
-                            widget.userToDisplayInformation.lastName),
+                        backgroundColor: widget.userToDisplayInformation != null
+                            ? OlukoColors.userColor(widget.userToDisplayInformation.firstName, widget.userToDisplayInformation.lastName)
+                            : OlukoColors.black,
                         radius: 30.0,
-                        child: Text(profileDefaultProfilePicContent,
-                            style: OlukoFonts.olukoBigFont(
-                                customColor: OlukoColors.primary,
-                                custoFontWeight: FontWeight.w500)),
+                        child: Text(widget.userToDisplayInformation != null ? profileDefaultProfilePicContent : '',
+                            style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500)),
                       ),
                       getVisibility(widget, context, _isOwner),
                     ]),
                   ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 10.0),
+                  padding: const EdgeInsets.only(left: 5.0),
                   child: Row(
                     children: [
                       //PROFILE NAME AND LASTNAME
-                      _isOwner
-                          ? userInfoUnlocked(location)
-                          : canShowDetails
-                              ? userInfoUnlocked(location)
-                              : userInfoLocked(),
+                      if (_isOwner) userInfoUnlocked(location) else canShowDetails ? userInfoUnlocked(location) : userInfoLocked(),
                     ],
                   ),
                 ),
-                //TODO: Check show/hide button conditions
                 //HIFIVE BUTTON
-                !_isOwner &&
-                        widget.actualRoute == ActualProfileRoute.userProfile
-                    ? Expanded(
-                        child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
-                          listener: (context, hiFiveSendState) {
-                            if (hiFiveSendState is HiFiveSendSuccess) {
-                              AppMessages.showSnackbarTranslated(
-                                  context,
-                                  hiFiveSendState.hiFive
-                                      ? 'hiFiveSent'
-                                      : 'hiFiveRemoved');
-                            }
-                            BlocProvider.of<HiFiveReceivedBloc>(context).get(
-                                context,
-                                _authState.user.id,
-                                widget.userToDisplayInformation.id);
-                          },
-                          child: BlocBuilder<HiFiveReceivedBloc,
-                                  HiFiveReceivedState>(
-                              builder: (context, HiFiveReceivedState) {
-                            return HiFiveReceivedState is HiFiveReceivedSuccess
-                                ? Container(
-                                    height: 50,
-                                    width: 50,
-                                    child: TextButton(
-                                        style: TextButton.styleFrom(
-                                          padding: EdgeInsets.zero,
-                                        ),
-                                        onPressed: () {
-                                          BlocProvider.of<HiFiveSendBloc>(
-                                                  context)
-                                              .set(
-                                            context,
-                                            _authState.user.id,
-                                            widget.userToDisplayInformation.id,
-                                          );
-                                        },
-                                        child: Image.asset(
-                                          HiFiveReceivedState.hiFive
-                                              ? 'assets/profile/hiFive_selected.png'
-                                              : 'assets/profile/hiFive.png',
-                                          fit: BoxFit.cover,
-                                          colorBlendMode: BlendMode.lighten,
-                                          height: 60,
-                                          width: 60,
-                                        )),
-                                  )
-                                : SizedBox();
-                          }),
-                        ),
-                      )
-                    : SizedBox(),
+                if (!_isOwner && widget.actualRoute == ActualProfileRoute.userProfile)
+                  Expanded(
+                    child: BlocListener<HiFiveSendBloc, HiFiveSendState>(
+                      listener: (context, hiFiveSendState) {
+                        if (hiFiveSendState is HiFiveSendSuccess) {
+                          AppMessages.clearAndShowSnackbarTranslated(context, hiFiveSendState.hiFive ? 'hiFiveSent' : 'hiFiveRemoved');
+                        }
+                        BlocProvider.of<HiFiveReceivedBloc>(context).get(context, _authState.user.id, widget.userToDisplayInformation.id);
+                      },
+                      child: BlocBuilder<HiFiveReceivedBloc, HiFiveReceivedState>(builder: (context, HiFiveReceivedState) {
+                        return HiFiveReceivedState is HiFiveReceivedSuccess
+                            ? Container(
+                                height: 50,
+                                width: 50,
+                                child: TextButton(
+                                    style: TextButton.styleFrom(
+                                      padding: EdgeInsets.zero,
+                                    ),
+                                    onPressed: () {
+                                      BlocProvider.of<HiFiveSendBloc>(context).set(
+                                        context,
+                                        _authState.user.id,
+                                        widget.userToDisplayInformation.id,
+                                      );
+                                    },
+                                    child: Image.asset(
+                                      HiFiveReceivedState.hiFive ? 'assets/profile/hiFive_selected.png' : 'assets/profile/hiFive.png',
+                                      fit: BoxFit.cover,
+                                      colorBlendMode: BlendMode.lighten,
+                                      height: 60,
+                                      width: 60,
+                                    )),
+                              )
+                            : const SizedBox.shrink();
+                      }),
+                    ),
+                  )
+                else
+                  const SizedBox.shrink(),
               ],
             ),
           ],
@@ -230,8 +329,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
     );
   }
 
-  UserProfileProgress getUserProfileProgress(
-      UserStatistics userStats, bool canShowDetails) {
+  UserProfileProgress getUserProfileProgress(UserStatistics userStats, bool canShowDetails) {
     if (!canShowDetails || userStats == null) {
       return UserProfileProgress(
         challengesCompleted: _archivementsDefaultValue,
@@ -247,17 +345,13 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
     }
   }
 
-  Visibility getVisibility(UserProfileInformation userProfileWidget,
-      BuildContext context, bool isOwner) {
+  Visibility getVisibility(UserProfileInformation userProfileWidget, BuildContext context, bool isOwner) {
     return Visibility(
-      visible:
-          userProfileWidget.actualRoute == ActualProfileRoute.userProfile &&
-              isOwner,
+      visible: userProfileWidget.actualRoute == ActualProfileRoute.userProfile && isOwner,
       child: Positioned(
-        top: 25,
+        top: OlukoNeumorphism.isNeumorphismDesign ? 45 : 30,
         right: -12,
         child: Container(
-          clipBehavior: Clip.none,
           width: 40,
           height: 40,
           child: TextButton(
@@ -272,20 +366,16 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
 
   Column userInfoLocked() {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 10.0),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '${this.widget.userToDisplayInformation.firstName} ${this.widget.userToDisplayInformation.lastName}',
-                style: OlukoFonts.olukoBigFont(
-                    customColor: OlukoColors.primary,
-                    custoFontWeight: FontWeight.w500),
+                '${widget.userToDisplayInformation.firstName} ${widget.userToDisplayInformation.lastName}',
+                style: OlukoFonts.olukoBigFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
                 overflow: TextOverflow.ellipsis,
               ),
             ],
@@ -309,9 +399,7 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
               width: 150,
               height: 25,
               child: Text(OlukoLocalizations.get(context, 'privateProfile'),
-                  style: OlukoFonts.olukoMediumFont(
-                      customColor: OlukoColors.grayColor,
-                      custoFontWeight: FontWeight.w300)),
+                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300)),
             )
           ],
         )
@@ -321,57 +409,53 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
 
   Widget userInfoUnlocked(String location) {
     return ConstrainedBox(
-      constraints:
-          BoxConstraints(maxWidth: MediaQuery.of(context).size.width / 2),
-      child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 10.0).copyWith(top: 5),
-              child: Text(
-                '${this.widget.userToDisplayInformation.firstName} ${this.widget.userToDisplayInformation.lastName}',
-                style: OlukoFonts.olukoBigFont(
-                    customColor: OlukoColors.primary,
-                    custoFontWeight: FontWeight.w500),
-                overflow: TextOverflow.ellipsis,
-              ),
+      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width / 2),
+      child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 5),
+          child: Padding(
+            padding: OlukoNeumorphism.isNeumorphismDesign ? EdgeInsets.only(left: 10.0) : EdgeInsets.zero,
+            child: Text(
+              '${widget.userToDisplayInformation.firstName} ${widget.userToDisplayInformation.lastName}',
+              style: OlukoFonts.olukoBigFont(
+                  customColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.primary,
+                  custoFontWeight: FontWeight.w500),
+              overflow: TextOverflow.ellipsis,
             ),
-            SizedBox(
-              height: 5.0,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 10.0),
-              child: IntrinsicHeight(
-                child: Container(
-                  height: 30,
-                  width: 170,
-                  child: Wrap(
-                    children: [
-                      Text(
-                        this.widget.userToDisplayInformation.username ?? '',
-                        overflow: TextOverflow.ellipsis,
-                        style: OlukoFonts.olukoMediumFont(
-                            customColor: OlukoColors.grayColor,
-                            custoFontWeight: FontWeight.w300),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 3),
-                      ),
-                      _userLocation != null
-                          ? Text(
-                              location,
-                              style: OlukoFonts.olukoMediumFont(
-                                  customColor: OlukoColors.grayColor,
-                                  custoFontWeight: FontWeight.w300),
-                            )
-                          : SizedBox(),
-                    ],
+          ),
+        ),
+        const SizedBox(
+          height: 5.0,
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 10.0),
+          child: IntrinsicHeight(
+            child: Container(
+              height: 30,
+              width: 170,
+              child: Wrap(
+                children: [
+                  Text(
+                    UserHelper.printUsername(widget.userToDisplayInformation.username, widget.userToDisplayInformation.id) ?? '',
+                    overflow: TextOverflow.ellipsis,
+                    style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300),
                   ),
-                ),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 3),
+                  ),
+                  if (_userLocation != null && _userLocation != "null, null null")
+                    Text(
+                      location,
+                      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300),
+                    )
+                  else
+                    const SizedBox.shrink(),
+                ],
               ),
-            )
-          ]),
+            ),
+          ),
+        ),
+      ]),
     );
   }
 }

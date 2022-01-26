@@ -13,16 +13,12 @@ class EnrollmentMovement {
         id: json['id']?.toString(),
         reference: json['reference'] as DocumentReference,
         name: json['name']?.toString(),
-        counters: json['counters'] == null
+        counters: json['counters'] == null || json['counters'].runtimeType == int
             ? null
-            : List<int>.from((json['counters'] as Iterable)
-                .map((counter) => counter as int)));
+            : json['counters'] is int
+                ? [json['counters'] as int]
+                : List<int>.from((json['counters'] as Iterable).map((counter) => counter as int)));
   }
 
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'reference': reference,
-        'name': name,
-        'counters': counters == null ? null : counters
-      };
+  Map<String, dynamic> toJson() => {'id': id, 'reference': reference, 'name': name, 'counters': counters == null ? null : counters};
 }

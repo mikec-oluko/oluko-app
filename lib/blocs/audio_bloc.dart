@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
+import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/challenge_repository.dart';
 import 'package:oluko_app/utils/video_process.dart';
 import 'package:path_provider/path_provider.dart';
@@ -25,11 +27,11 @@ class AudioFailure extends AudioState {
 class AudioBloc extends Cubit<AudioState> {
   AudioBloc() : super(Loading());
 
-  Future<void> saveAudio(
-      File audioFile, String userId, String challengeId) async {
+  Future<void> saveAudio(File audioFile, UserResponse user, String challengeId) async {
     try {
       Audio audio;
-      audio = await _processAudio(audioFile, userId);
+      audio = await _processAudio(audioFile, user);
+      print("S3 bucket URL: " + audio.url);
       await ChallengeRepository.saveAudio(challengeId, audio);
       emit(AudioSuccess(audio: audio));
     } catch (e, stackTrace) {
@@ -42,11 +44,11 @@ class AudioBloc extends Cubit<AudioState> {
     }
   }
 
-  Future<Audio> _processAudio(File audioFile, String userId) async {
-    String audioName = userId;
+  Future<Audio> _processAudio(File audioFile, UserResponse user) async {
+    String audioName = user.id;
     var uuid = Uuid();
     String audioId = uuid.v1();
-    Audio audio = Audio(userId: userId, id: audioId);
+    Audio audio = Audio(id: audioId, userId: user.id, userAvatarThumbnail: user.avatarThumbnail, userName: user.firstName);
     final Directory extDir = await getApplicationDocumentsDirectory();
     final outDirPath = '${extDir.path}/Audios/$audioId';
     final audiosDir = new Directory(outDirPath);
@@ -62,8 +64,8 @@ class AudioBloc extends Cubit<AudioState> {
     String audioUrl;
     if (audioPath != null) {
       audioUrl = await VideoProcess.uploadFile(audioPath, audio.id);
+      audio.url = audioUrl;
     }
-    audio.url = audioUrl;
     return audio;
   }
 }

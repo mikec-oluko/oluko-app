@@ -23,9 +23,9 @@ platform :android do
 
   desc "Submit a new Beta Build"
   lane :beta do
-    sh "cd .. && cd .. && bash ./build_scripts.sh increment_build"
+    sh "cd .. && cd .. && bash ./scripts.sh increment_build"
     # gradle(task: "clean")
-    sh "cd .. && cd .. && bash ./build_scripts.sh appbundle"
+    sh "cd .. && cd .. && bash ./scripts.sh appbundle"
     # crashlytics
     upload_to_play_store(track:"internal",
     aab: "../build/app/outputs/bundle/release/app-release.aab", 

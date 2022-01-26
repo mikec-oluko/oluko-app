@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/helpers/s3_provider.dart';
@@ -17,7 +18,7 @@ class UserRepository {
   FirebaseFirestore firestoreInstance;
 
   UserRepository() {
-    firestoreInstance = FirebaseFirestore.instance;
+    this.firestoreInstance = FirebaseFirestore.instance;
   }
 
   UserRepository.test({FirebaseFirestore firestoreInstance}) {
@@ -25,18 +26,20 @@ class UserRepository {
   }
 
   Future<UserResponse> get(String email) async {
-    QuerySnapshot docRef = await FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('users')
-        .where('email', isEqualTo: email.toLowerCase())
-        .get();
-    if (docRef.docs == null || docRef.docs.length == 0) {
-      return null;
+    if (email != null) {
+      QuerySnapshot docRef = await FirebaseFirestore.instance
+          .collection('projects')
+          .doc(GlobalConfiguration().getValue('projectId'))
+          .collection('users')
+          .where('email', isEqualTo: email.toLowerCase())
+          .get();
+      if (docRef.docs == null || docRef.docs.length == 0) {
+        return null;
+      }
+      var response = docRef.docs[0].data() as Map<String, dynamic>;
+      var loginResponseBody = UserResponse.fromJson(response as Map<String, dynamic>);
+      return loginResponseBody;
     }
-    var response = docRef.docs[0].data() as Map<String, dynamic>;
-    var loginResponseBody = UserResponse.fromJson(response as Map<String, dynamic>);
-    return loginResponseBody;
   }
 
   Future<UserResponse> getById(String id) async {
@@ -70,28 +73,21 @@ class UserRepository {
   }
 
   Future<List<UserResponse>> getAll() async {
-    QuerySnapshot docRef = await FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('users')
-        .get();
+    QuerySnapshot docRef =
+        await FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users').get();
     if (docRef.docs == null || docRef.docs.length == 0) {
       return null;
     }
-    List<UserResponse> response =
-        docRef.docs.map((doc) => UserResponse.fromJson(doc.data() as Map<String, dynamic>)).toList();
+    List<UserResponse> response = docRef.docs.map((doc) => UserResponse.fromJson(doc.data() as Map<String, dynamic>)).toList();
 
     return response;
   }
 
   Future<UserResponse> createSSO(SignUpRequest signUpRequest) async {
-    CollectionReference reference = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('users');
+    CollectionReference reference =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users');
 
-    UserResponse user =
-        UserResponse(firstName: signUpRequest.firstName, lastName: signUpRequest.lastName, email: signUpRequest.email);
+    UserResponse user = UserResponse(firstName: signUpRequest.firstName, lastName: signUpRequest.lastName, email: signUpRequest.email);
     final DocumentReference docRef = reference.doc();
     user.id = docRef.id;
     user.username = docRef.id;
@@ -122,7 +118,7 @@ class UserRepository {
     return null;
   }
 
-  Future<UserResponse> updateUserAvatar(UserResponse user, PickedFile file) async {
+  Future<UserResponse> updateUserAvatar(UserResponse user, XFile file) async {
     DocumentReference<Object> userReference = getUserReference(user);
 
     final thumbnail = await ImageUtils().getThumbnailForImage(file, 250);
@@ -144,7 +140,7 @@ class UserRepository {
     }
   }
 
-  Future<UserResponse> updateUserCoverImage({UserResponse user, PickedFile coverImage}) async {
+  Future<UserResponse> updateUserCoverImage({UserResponse user, XFile coverImage}) async {
     DocumentReference<Object> userReference = getUserReference(user);
 
     final coverDownloadImage = await _uploadFile(coverImage.path, userReference.path);
@@ -163,11 +159,8 @@ class UserRepository {
   }
 
   DocumentReference<Object> getUserReference(UserResponse user) {
-    DocumentReference userReference = FirebaseFirestore.instance
-        .collection('projects')
-        .doc(GlobalConfiguration().getValue('projectId'))
-        .collection('users')
-        .doc(user.id);
+    DocumentReference userReference =
+        FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users').doc(user.id);
     return userReference;
   }
 
@@ -181,14 +174,30 @@ class UserRepository {
     return downloadUrl;
   }
 
-  Future<UserResponse> updateUserSettingsPreferences(
-      UserResponse user, int privacyIndex, bool notificationValue) async {
+  Future<UserResponse> updateUserSettingsPreferences(UserResponse user, int privacyIndex, bool notificationValue) async {
     DocumentReference<Object> userReference = getUserReference(user);
 
     user.notification = notificationValue;
     user.privacy = privacyIndex;
     try {
       await userReference.update(user.toJson());
+      AuthRepository().storeLoginData(user);
+      return user;
+    } on Exception catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
+      rethrow;
+    }
+  }
+
+  Future<UserResponse> updateRecordingAlert(UserResponse user) async {
+    DocumentReference<Object> userReference = getUserReference(user);
+    user.showRecordingAlert = !user.showRecordingAlert;
+    try {
+      var userJson = user.toJson();
+      await userReference.update(userJson);
       AuthRepository().storeLoginData(user);
       return user;
     } on Exception catch (e, stackTrace) {
@@ -215,4 +224,5 @@ class UserRepository {
       rethrow;
     }
   }
+
 }

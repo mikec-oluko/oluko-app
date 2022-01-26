@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 class UserProfileProgress extends StatefulWidget {
   final String challengesCompleted;
@@ -16,28 +17,69 @@ class UserProfileProgress extends StatefulWidget {
 class _UserProfileProgressState extends State<UserProfileProgress> {
   @override
   Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: OlukoNeumorphism.isNeumorphismDesign ? buildUserNeumorphicStatistics() : buildUserStatistics(),
+    );
+  }
+
+  IntrinsicHeight buildUserNeumorphicStatistics() {
+    return IntrinsicHeight(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  profileNeumorphicAccomplishments(
+                      achievementTitleKey: 'challengesCompleted', achievementValue: widget.challengesCompleted, color: OlukoColors.white),
+                  profileNeumorphicAccomplishments(
+                      achievementTitleKey: 'classesCompleted', achievementValue: widget.classesCompleted, color: OlukoColors.white),
+                ],
+              ),
+            ),
+          ),
+          Align(child: profileVerticalDivider(isNeumorphic: true)),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 20).copyWith(top: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  profileNeumorphicAccomplishments(
+                      achievementTitleKey: 'coursesCompleted', achievementValue: widget.coursesCompleted, color: OlukoColors.white),
+                  const SizedBox(
+                    height: 40,
+                  )
+                ],
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Column buildUserStatistics() {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         IntrinsicHeight(
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              //CHALLENGES COMPLETED
               profileAccomplishments(
                   achievementTitleKey: 'challengesCompleted', achievementValue: widget.challengesCompleted, color: OlukoColors.primary),
-              //SEPARATOR
               profileVerticalDivider(),
               const Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
-              //COURSES COMPLETED
               profileAccomplishments(
                   achievementTitleKey: 'coursesCompleted', achievementValue: widget.coursesCompleted, color: OlukoColors.primary),
-              //SEPARATOR
               profileVerticalDivider(),
               const Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
-              //CLASSES COMPLETED
               profileAccomplishments(
                   achievementTitleKey: 'classesCompleted', achievementValue: widget.classesCompleted, color: OlukoColors.white),
             ],
@@ -47,23 +89,21 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
     );
   }
 
-  VerticalDivider profileVerticalDivider() {
-    return const VerticalDivider(
-      color: OlukoColors.white,
+  VerticalDivider profileVerticalDivider({bool isNeumorphic = false}) {
+    return VerticalDivider(
+      color: isNeumorphic ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.white,
       thickness: 1,
-      indent: 20,
+      indent: isNeumorphic ? 5 : 20,
       endIndent: 6,
       width: 1,
     );
   }
 
   Widget profileAccomplishments({String achievementTitleKey, String achievementValue, Color color}) {
-    const double _textContainerWidth = 80;
+    const double _textContainerWidth = 88;
     return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        //VALUE
         Column(
           children: [
             Text(
@@ -72,22 +112,51 @@ class _UserProfileProgressState extends State<UserProfileProgress> {
             ),
           ],
         ),
-        SizedBox(
+        const SizedBox(
           height: 5,
         ),
-        //SUBTITLE
         Column(
           children: [
-            Container(
+            SizedBox(
               width: _textContainerWidth,
-              child: Text(
-                OlukoLocalizations.get(context, achievementTitleKey),
-                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300),
-              ),
+              child: Text(OlukoLocalizations.get(context, achievementTitleKey),
+                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w300)),
             ),
           ],
         ),
       ],
+    );
+  }
+
+  Widget profileNeumorphicAccomplishments({String achievementTitleKey, String achievementValue, Color color}) {
+    return Expanded(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            achievementValue,
+            style: OlukoFonts.olukoSuperBigFont(customColor: color, custoFontWeight: FontWeight.w500),
+          ),
+          const SizedBox(
+            width: 5,
+          ),
+          if (ScreenUtils.height(context) < 700)
+            Expanded(
+                child: Text(
+              OlukoLocalizations.get(context, achievementTitleKey),
+              style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w400),
+            ))
+          else
+            Container(
+              width: 60,
+              child: Text(
+                OlukoLocalizations.get(context, achievementTitleKey),
+                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w400),
+              ),
+            )
+        ],
+      ),
     );
   }
 }

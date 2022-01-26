@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/course.dart';
+import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/ui/components/course_progress_bar.dart';
+import 'package:oluko_app/ui/components/unenroll_menu.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class CourseCard extends StatefulWidget {
@@ -8,8 +13,19 @@ class CourseCard extends StatefulWidget {
   final double width;
   final double height;
   final List<String> userRecommendationsAvatarUrls;
+  final CourseEnrollment actualCourse;
+  final bool canUnenrollCourse;
+  final Function() unrolledFunction;
 
-  CourseCard({this.imageCover, this.progress, this.width, this.height, this.userRecommendationsAvatarUrls});
+  CourseCard(
+      {this.imageCover,
+      this.progress,
+      this.width,
+      this.height,
+      this.userRecommendationsAvatarUrls,
+      this.actualCourse,
+      this.unrolledFunction,
+      this.canUnenrollCourse = false});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -20,28 +36,102 @@ class _State extends State<CourseCard> {
 
   @override
   Widget build(BuildContext context) {
+    return OlukoNeumorphism.isNeumorphismDesign ? buildNeumorphicCourseCard() : buildCourseCard();
+  }
+
+  Container buildCourseCard() {
     return Container(
       width: widget.width,
       child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-        widget.userRecommendationsAvatarUrls != null
-            ? Expanded(flex: 2, child: _userRecommendations(widget.userRecommendationsAvatarUrls))
-            : SizedBox(),
-        Expanded(flex: 9, child: widget.imageCover),
-        widget.progress != null
-            ? Expanded(
-                flex: 1,
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: FractionallySizedBox(
-                    heightFactor: 1,
-                    widthFactor: 0.6,
-                    child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 1.0, vertical: 8.0),
-                        child: CourseProgressBar(value: widget.progress)),
+        if (widget.userRecommendationsAvatarUrls != null)
+          Expanded(flex: 2, child: _userRecommendations(widget.userRecommendationsAvatarUrls))
+        else
+          SizedBox(),
+        Expanded(
+            flex: 9,
+            child: Stack(
+              children: [
+                widget.imageCover,
+                Positioned(
+                  top: 0,
+                  right: -15,
+                  child: Visibility(
+                    visible: widget.canUnenrollCourse,
+                    child: Align(
+                        alignment: Alignment.topRight,
+                        child: UnenrollCourse(
+                          actualCourse: widget.actualCourse,
+                          unrolledFunction: widget.unrolledFunction,
+                        )),
                   ),
-                ),
-              )
-            : SizedBox()
+                )
+              ],
+            )),
+        if (widget.progress != null)
+          Expanded(
+            flex: 1,
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: FractionallySizedBox(
+                heightFactor: 1,
+                widthFactor: 0.6,
+                child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 1.0, vertical: 8.0), child: CourseProgressBar(value: widget.progress)),
+              ),
+            ),
+          )
+        else
+          SizedBox()
+      ]),
+    );
+  }
+
+  Widget buildNeumorphicCourseCard() {
+    return Container(
+      width: widget.width,
+      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        if (widget.userRecommendationsAvatarUrls != null)
+          Expanded(flex: 2, child: _userRecommendations(widget.userRecommendationsAvatarUrls))
+        else
+          SizedBox(),
+        Neumorphic(
+          style: OlukoNeumorphism.getNeumorphicStyleForCardElement(),
+          child: Stack(
+            children: [
+              widget.imageCover,
+              !OlukoNeumorphism.isNeumorphismDesign
+                  ? Positioned(
+                      top: 0,
+                      right: -15,
+                      child: Visibility(
+                        visible: widget.canUnenrollCourse,
+                        child: Align(
+                            alignment: Alignment.topRight,
+                            child: UnenrollCourse(
+                              actualCourse: widget.actualCourse,
+                              unrolledFunction: widget.unrolledFunction,
+                            )),
+                      ),
+                    )
+                  : SizedBox.shrink()
+            ],
+          ),
+        ),
+        if (widget.progress != null)
+          Expanded(
+            flex: 1,
+            child: Align(
+              alignment: Alignment.center,
+              child: FractionallySizedBox(
+                heightFactor: OlukoNeumorphism.isNeumorphismDesign ? 0.8 : 1,
+                widthFactor: 0.6,
+                child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 1.0, vertical: 8.0), child: CourseProgressBar(value: widget.progress)),
+              ),
+            ),
+          )
+        else
+          SizedBox()
       ]),
     );
   }

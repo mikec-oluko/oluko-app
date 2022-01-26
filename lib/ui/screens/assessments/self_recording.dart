@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +8,8 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/gallery_video_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/helpers/permissions.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/open_settings_modal.dart';
@@ -33,6 +37,8 @@ class _State extends State<SelfRecording> {
   bool _recording = false;
   bool isCameraFront = false;
 
+  bool _buttonBlocked = false;
+
   Task _task;
   List<Task> _tasks;
 
@@ -57,7 +63,7 @@ class _State extends State<SelfRecording> {
             if (taskState is TaskSuccess) {
               _tasks = taskState.values;
               _task = _tasks[widget.taskIndex];
-              return form();
+              return OlukoNeumorphism.isNeumorphismDesign ? NeumorphicForm() : form();
             } else {
               return const SizedBox();
             }
@@ -70,37 +76,106 @@ class _State extends State<SelfRecording> {
   }
 
   Widget form() {
+    return Form(key: _formKey, child: Scaffold(bottomNavigationBar: bottomBar(), body: cameraContent()));
+  }
+
+  Widget NeumorphicForm() {
     return Form(
         key: _formKey,
         child: Scaffold(
-            bottomNavigationBar: bottomBar(),
-            body: Container(
-                color: Colors.black,
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  child: ListView(
-                    children: [
-                      ConstrainedBox(
-                          constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height),
-                          child: (!_isReady)
-                              ? Container()
-                              : Stack(alignment: Alignment.topRight, children: [
-                                  AspectRatio(aspectRatio: 3.0 / 4.0, child: CameraPreview(cameraController)),
-                                  Padding(
-                                      padding: const EdgeInsets.all(10),
-                                      child: IconButton(
-                                        icon: const Icon(
-                                          Icons.close,
-                                          size: 30,
-                                          color: Colors.white,
-                                        ),
-                                        onPressed: () => Navigator.pop(context),
-                                      )),
-                                ])),
-                      formSection(),
-                    ],
-                  ),
-                ))));
+            extendBody: true,
+            bottomNavigationBar: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(6.0), topRight: Radius.circular(6.0)),
+                ),
+                height: 100,
+                child: bottomBar()),
+            body: neumorphicCameraContent()));
+  }
+
+  Container cameraContent() {
+    return Container(
+        color: Colors.black,
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          child: ListView(
+            shrinkWrap: true,
+            children: [
+              ConstrainedBox(
+                  constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height),
+                  child: (!_isReady)
+                      ? Container()
+                      : Stack(alignment: Alignment.topRight, children: [
+                          AspectRatio(aspectRatio: 3.0 / 4.0, child: CameraPreview(cameraController)),
+                          Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: IconButton(
+                                icon: const Icon(
+                                  Icons.close,
+                                  size: 30,
+                                  color: Colors.white,
+                                ),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {
+                                    'taskIndex': widget.taskIndex,
+                                    'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
+                                    'taskCompleted': true /**TODO: */
+                                  });
+                                },
+                              )),
+                        ])),
+              OlukoNeumorphism.isNeumorphismDesign ? neumorphicFormSection() : formSection(),
+            ],
+          ),
+        ));
+  }
+
+  Container neumorphicCameraContent() {
+    return Container(
+        color: Colors.black,
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height / 1.1,
+          child: Stack(
+            children: [
+              ConstrainedBox(
+                  constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height),
+                  child: (!_isReady)
+                      ? Container()
+                      : Stack(alignment: Alignment.topRight, children: [
+                          Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height / 1.1,
+                              child: CameraPreview(cameraController)),
+                          Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: IconButton(
+                                icon: const Icon(
+                                  Icons.close,
+                                  size: 30,
+                                  color: Colors.white,
+                                ),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails], arguments: {
+                                    'taskIndex': widget.taskIndex,
+                                    'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask,
+                                    'taskCompleted': true /**TODO: */
+                                  });
+                                },
+                              )),
+                        ])),
+              OlukoNeumorphism.isNeumorphismDesign
+                  ? Positioned(
+                      bottom: 10,
+                      left: 10,
+                      right: 10,
+                      child: Container(width: MediaQuery.of(context).size.width - 40, height: 200, child: neumorphicFormSection()))
+                  : formSection(),
+            ],
+          ),
+        ));
   }
 
   Widget formSection() {
@@ -114,8 +189,7 @@ class _State extends State<SelfRecording> {
                   padding: EdgeInsets.symmetric(horizontal: 10),
                   child: Text(
                     _task.stepsTitle,
-                    style: OlukoFonts.olukoSuperBigFont(
-                        customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.normal),
+                    style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.normal),
                   ))
               : const SizedBox(),
         ),
@@ -133,18 +207,59 @@ class _State extends State<SelfRecording> {
     );
   }
 
+  Widget neumorphicFormSection() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(10, 10, 10, 20),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+          child: Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 15.0),
+                  child: _task.stepsTitle != null
+                      ? Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          child: Text(
+                            _task.stepsTitle,
+                            style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.normal),
+                          ))
+                      : const SizedBox(),
+                ),
+                if (_task.stepsDescription != null)
+                  Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Text(
+                        _task.stepsDescription.replaceAll('\\n', '\n'),
+                        style: OlukoFonts.olukoSuperBigFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.normal),
+                      ))
+                else
+                  const SizedBox(),
+                const SizedBox(height: 50)
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Future<void> _setupCameras() async {
     final int cameraPos = isCameraFront ? 0 : 1;
     try {
-      cameras = await availableCameras();
-      cameraController = CameraController(cameras[cameraPos], ResolutionPreset.medium);
-      await cameraController.initialize();
-    } on CameraException catch (e) {
-      if (e.code == ExceptionCodes.cameraPermissionError) {
+      if (!await Permissions.requiredPermissionsEnabled(DeviceContentFrom.camera)) {
         Navigator.pop(context);
         DialogUtils.getDialog(context, [OpenSettingsModal(context)], showExitButton: false);
         return;
       }
+      cameras = await availableCameras();
+      cameraController = CameraController(cameras[cameraPos], ResolutionPreset.medium);
+      await cameraController.initialize();
+    } on CameraException catch (e) {
+      return;
     }
     if (!mounted) return;
     setState(() {
@@ -153,77 +268,84 @@ class _State extends State<SelfRecording> {
   }
 
   Widget bottomBar() {
-    return BottomAppBar(
-      color: Colors.black,
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            !_recording
-                ? GestureDetector(
-                    onTap: () async {
-                      setState(() {
-                        isCameraFront = !isCameraFront;
+    return ClipRRect(
+      borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+      child: BottomAppBar(
+        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth : Colors.black,
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              !_recording
+                  ? GestureDetector(
+                      onTap: () async {
+                        setState(() {
+                          isCameraFront = !isCameraFront;
+                        });
+                        _setupCameras();
+                      },
+                      child: Stack(alignment: Alignment.center, children: [
+                        Image.asset(
+                          'assets/assessment/camera.png',
+                          scale: 4,
+                        ),
+                        const Icon(
+                          Icons.cached,
+                          color: OlukoColors.grayColor,
+                          size: 18,
+                        ),
+                      ]))
+                  : SizedBox(),
+              GestureDetector(
+                onTap: () async {
+                  if (!_buttonBlocked) {
+                    if (_recording) {
+                      final XFile videopath = await cameraController.stopVideoRecording();
+                      final String path = videopath.path;
+                      Navigator.pop(context);
+                      Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecordingPreview], arguments: {
+                        'taskIndex': widget.taskIndex,
+                        'filePath': path,
+                        'isPublic': widget.isPublic,
+                        'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
                       });
-                      _setupCameras();
-                    },
-                    child: Stack(alignment: Alignment.center, children: [
-                      Image.asset(
-                        'assets/assessment/camera.png',
-                        scale: 4,
-                      ),
-                      const Icon(
-                        Icons.cached,
-                        color: OlukoColors.grayColor,
-                        size: 18,
-                      ),
-                    ]))
-                : SizedBox(),
-            GestureDetector(
-              onTap: () async {
-                if (_recording) {
-                  final XFile videopath = await cameraController.stopVideoRecording();
-                  final String path = videopath.path;
-                  Navigator.pop(context);
-                  //TODO: Send flag to set assesment as last upload
-                  Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecordingPreview], arguments: {
-                    'taskIndex': widget.taskIndex,
-                    'filePath': path,
-                    'isPublic': widget.isPublic,
-                    'isLastTask': widget.isLastTask
-                  });
-                } else {
-                  await cameraController.startVideoRecording();
-                }
-                setState(() {
-                  _recording = !_recording;
-                });
-              },
-              child: _recording ? recordingIcon() : recordIcon(),
-            ),
-            BlocListener<GalleryVideoBloc, GalleryVideoState>(
-                listener: (context, state) {
-                  if (state is Success && state.pickedFile != null) {
-                    Navigator.pop(context);
-                    Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecordingPreview], arguments: {
-                      'taskIndex': widget.taskIndex,
-                      'filePath': state.pickedFile.path,
-                      'isPublic': widget.isPublic,
+                    } else {
+                      await cameraController.startVideoRecording();
+                    }
+                    setState(() {
+                      _recording = !_recording;
                     });
+                  } else {
+                    await cameraController.startVideoRecording();
                   }
                 },
-                child: GestureDetector(
-                  onTap: () {
-                    BlocProvider.of<GalleryVideoBloc>(context).getVideoFromGallery();
+                child: _recording ? recordingIcon() : recordIcon(),
+              ),
+              BlocListener<GalleryVideoBloc, GalleryVideoState>(
+                  listener: (context, state) {
+                    if (state is Success && state.pickedFile != null) {
+                      Navigator.pop(context);
+                      Navigator.pushNamed(context, routeLabels[RouteEnum.selfRecordingPreview], arguments: {
+                        'taskIndex': widget.taskIndex,
+                        'filePath': state.pickedFile.path,
+                        'isPublic': widget.isPublic,
+                        'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
+                      });
+                    }
                   },
-                  child: const Icon(
-                    Icons.file_upload,
-                    size: 30,
-                    color: OlukoColors.grayColor,
-                  ),
-                )),
-          ],
+                  child: GestureDetector(
+                    onTap: () {
+                      BlocProvider.of<GalleryVideoBloc>(context).getVideoFromGallery();
+                    },
+                    child: const Icon(
+                      Icons.file_upload,
+                      size: 30,
+                      color: OlukoColors.grayColor,
+                    ),
+                  )),
+            ],
+          ),
         ),
       ),
     );

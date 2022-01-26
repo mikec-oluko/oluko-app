@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/user_helper.dart';
+import 'package:oluko_app/models/dto/story_dto.dart';
 import 'package:oluko_app/models/submodels/user_submodel.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
@@ -8,18 +10,17 @@ import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/user_utils.dart';
 
-class ModalPeopleInChallenge extends StatefulWidget {
-  String segmentId;
+class ModalPeopleEnrolled extends StatefulWidget {
   String userId;
-  List<UserSubmodel> users;
-  List<UserSubmodel> favorites;
-  ModalPeopleInChallenge({this.segmentId, this.userId, this.users, this.favorites});
+  List<dynamic> users;
+  List<dynamic> favorites;
+  ModalPeopleEnrolled({this.userId, this.users, this.favorites});
 
   @override
-  _ModalPeopleInChallengeState createState() => _ModalPeopleInChallengeState();
+  _ModalPeopleEnrolledState createState() => _ModalPeopleEnrolledState();
 }
 
-class _ModalPeopleInChallengeState extends State<ModalPeopleInChallenge> {
+class _ModalPeopleEnrolledState extends State<ModalPeopleEnrolled> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -58,7 +59,7 @@ class _ModalPeopleInChallengeState extends State<ModalPeopleInChallenge> {
     );
   }
 
-  Widget usersGrid(List<UserSubmodel> users) {
+  Widget usersGrid(List<dynamic> users) {
     if (users != null && users.isNotEmpty) {
       return GridView.count(
           childAspectRatio: 0.7,
@@ -67,25 +68,28 @@ class _ModalPeopleInChallengeState extends State<ModalPeopleInChallenge> {
           shrinkWrap: true,
           children: users
               .map((user) => GridTile(
-                    child: GestureDetector(
-                      onTap: () => {
-                        if (user?.stories?.stories?.isNotEmpty)
-                          {
-                            Navigator.pushNamed(context, routeLabels[RouteEnum.story], arguments: {'userStories': user.stories, 'userId': widget.userId})
-                          }
-                      },
-                      child: Column(
-                        children: [
-                          StoriesItem(
-                            maxRadius: 35,
-                            imageUrl: user.avatarThumbnail ?? UserUtils().defaultAvatarImageUrl,
-                            stories: user.stories?.stories,
-                          ),
-                          Text('${user.firstName} ${user.lastName}', textAlign: TextAlign.center, overflow: TextOverflow.ellipsis, style: OlukoFonts.olukoMediumFont()),
-                          const SizedBox(height: 1),
-                          Text(user.username, style: const TextStyle(color: Colors.grey, fontSize: 14), textAlign: TextAlign.center),
-                        ],
-                      ),
+                    child: Column(
+                      children: [
+                        StoriesItem(
+                          itemUserId: user.id?.toString() ?? '',
+                          name: (() {
+                            if (user.username != null) {
+                              return UserHelper.printUsername(user.username.toString(), user.id.toString());
+                            } else {
+                              return user.firstName?.toString() ?? '';
+                            }
+                          })(),
+                          currentUserId: widget.userId,
+                          maxRadius: 35,
+                          imageUrl: user.avatarThumbnail?.toString() ?? UserUtils().defaultAvatarImageUrl,
+                          stories: user is UserSubmodel && user.stories?.stories != null ? user.stories.stories : [],
+                        ),
+                        Text('${user.firstName ?? ''} ${user.lastName ?? ''}',
+                            textAlign: TextAlign.center, overflow: TextOverflow.ellipsis, style: OlukoFonts.olukoMediumFont()),
+                        const SizedBox(height: 1),
+                        Text(user.username?.toString() ?? '',
+                            style: const TextStyle(color: Colors.grey, fontSize: 14), textAlign: TextAlign.center),
+                      ],
                     ),
                   ))
               .toList());

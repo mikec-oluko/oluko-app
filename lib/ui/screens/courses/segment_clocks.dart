@@ -11,6 +11,8 @@ import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
+import 'package:oluko_app/blocs/keyboard/keyboard_bloc.dart';
+
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/story_bloc.dart' as storyBloc;
@@ -28,6 +30,7 @@ import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/timer_entry.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
+import 'package:oluko_app/ui/components/custom_keyboard.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/progress_bar.dart';
@@ -37,6 +40,7 @@ import 'package:oluko_app/ui/screens/courses/feedback_card.dart';
 import 'package:oluko_app/ui/screens/courses/movement_videos_section.dart';
 import 'package:oluko_app/ui/screens/courses/share_card.dart';
 import 'package:oluko_app/utils/app_messages.dart';
+import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -44,6 +48,7 @@ import 'package:oluko_app/utils/segment_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 import 'package:oluko_app/utils/timer_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:wakelock/wakelock.dart';
 
 enum WorkoutType { segment, segmentWithRecording }
 
@@ -53,8 +58,19 @@ class SegmentClocks extends StatefulWidget {
   final int classIndex;
   final int segmentIndex;
   final List<Segment> segments;
+  final int courseIndex;
+  final bool fromChallenge;
 
-  SegmentClocks({Key key, this.workoutType, this.classIndex, this.segmentIndex, this.courseEnrollment, this.segments}) : super(key: key);
+  SegmentClocks(
+      {Key key,
+      this.courseIndex,
+      this.workoutType,
+      this.classIndex,
+      this.segmentIndex,
+      this.courseEnrollment,
+      this.segments,
+      this.fromChallenge})
+      : super(key: key);
 
   @override
   _SegmentClocksState createState() => _SegmentClocksState();
@@ -102,11 +118,15 @@ class _SegmentClocksState extends State<SegmentClocks> {
   bool counter = false;
   bool _wantsToCreateStory = false;
   bool _isVideoUploaded = false;
+  bool waitingForSegSubCreation = false;
 
   CoachRequest _coachRequest;
 
+  XFile videoRecorded;
+
   @override
   void initState() {
+    Wakelock.enable();
     workoutType = widget.workoutType;
     if (isSegmentWithRecording()) {
       _setupCameras();
@@ -122,18 +142,17 @@ class _SegmentClocksState extends State<SegmentClocks> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () => onWillPop(context),
+      onWillPop: () {
+        return onWillPop(context, isSegmentWithRecording());
+      },
       child: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
         if (authState is AuthSuccess) {
           _user = authState.firebaseUser;
-          return BlocBuilder<MovementBloc, MovementState>(
-              builder: (context, movementState) {
-            return BlocBuilder<CoachRequestBloc, CoachRequestState>(
-                builder: (context, coachRequestState) {
-              if (movementState is GetAllSuccess &&
-                  coachRequestState is GetCoachRequestSuccess) {
+          return BlocBuilder<MovementBloc, MovementState>(builder: (context, movementState) {
+            return BlocBuilder<CoachRequestBloc, CoachRequestState>(builder: (context, coachRequestState) {
+              if (movementState is GetAllSuccess && coachRequestState is ClassCoachRequestsSuccess) {
                 _movements = movementState.movements;
-                _coachRequest = coachRequestState.coachRequest;
+                _coachRequest = getSegmentCoachRequest(coachRequestState.coachRequests, widget.segments[widget.segmentIndex].id);
                 return GestureDetector(
                     onTap: () {
                       FocusScope.of(context).unfocus();
@@ -142,27 +161,19 @@ class _SegmentClocksState extends State<SegmentClocks> {
                         listener: (context, state) {
                           updateSegment(state);
                         },
-                        child: BlocListener<SegmentSubmissionBloc,
-                                SegmentSubmissionState>(
+                        child: BlocListener<SegmentSubmissionBloc, SegmentSubmissionState>(
                             listener: (context, state) {
                               if (state is CreateSuccess) {
                                 if (_segmentSubmission == null) {
                                   _segmentSubmission = state.segmentSubmission;
                                   BlocProvider.of<VideoBloc>(context)
-                                    ..createVideo(
-                                        context,
-                                        File(_segmentSubmission
-                                            .videoState.stateInfo),
-                                        3.0 / 4.0,
-                                        _segmentSubmission.id);
+                                    ..createVideo(context, File(_segmentSubmission.videoState.stateInfo), 3.0 / 4.0, _segmentSubmission.id);
                                 }
-                              } else if (state
-                                  is UpdateSegmentSubmissionSuccess) {
-                                BlocProvider.of<CoachRequestBloc>(context)
-                                  ..resolve(_coachRequest, _user.uid);
+                              } else if (state is UpdateSegmentSubmissionSuccess) {
+                                waitingForSegSubCreation = false;
+                                BlocProvider.of<CoachRequestBloc>(context)..resolve(_coachRequest, _user.uid);
                                 if (_wantsToCreateStory) {
-                                  callBlocToCreateStory(
-                                      context, state.segmentSubmission);
+                                  callBlocToCreateStory(context, state.segmentSubmission);
                                 } else {
                                   _isVideoUploaded = true;
                                   _segmentSubmission = state?.segmentSubmission;
@@ -171,24 +182,37 @@ class _SegmentClocksState extends State<SegmentClocks> {
                             },
                             child: form())));
               } else {
-                return SizedBox();
+                return const SizedBox();
               }
             });
           });
         } else {
-          return SizedBox();
+          return const SizedBox();
         }
       }),
     );
   }
 
-  Future<void> callBlocToCreateStory(BuildContext context, SegmentSubmission segmentSubmission) => BlocProvider.of<storyBloc.StoryBloc>(context).createStory(segmentSubmission);
+  CoachRequest getSegmentCoachRequest(List<CoachRequest> coachRequests, String segmentId) {
+    for (var i = 0; i < coachRequests.length; i++) {
+      if (coachRequests[i].segmentId == segmentId) {
+        return coachRequests[i];
+      }
+    }
+    return null;
+  }
+
+  Future<void> callBlocToCreateStory(BuildContext context, SegmentSubmission segmentSubmission) async {
+    BlocProvider.of<storyBloc.StoryBloc>(context).createStory(segmentSubmission);
+    AppMessages.clearAndShowSnackbarTranslated(context, 'storyCreated');
+  }
 
   bool isSegmentWithRecording() {
     return workoutType == WorkoutType.segmentWithRecording;
   }
 
   Widget form() {
+    bool keyboardVisibilty = false;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: OlukoAppBar(
@@ -198,20 +222,28 @@ class _SegmentClocksState extends State<SegmentClocks> {
         actions: [topBarIcon, audioIcon()],
       ),
       backgroundColor: Colors.black,
-      body: isSegmentWithoutRecording() && workState != WorkState.finished
-          ? SlidingUpPanel(
-              controller: panelController,
-              borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-              minHeight: 90,
-              maxHeight: 185,
-              collapsed: CollapsedMovementVideosSection(action: getAction()),
-              panel: MovementVideosSection(
-                  action: getAction(),
-                  segment: widget.segments[widget.segmentIndex],
-                  movements: _movements,
-                  onPressedMovement: (BuildContext context, Movement movement) => Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement})),
-              body: _body())
-          : _body(),
+      body: workState != WorkState.finished
+          ? BlocBuilder<KeyboardBloc, KeyboardState>(
+              builder: (context, state) {
+                keyboardVisibilty = state.setVisible;
+                return !keyboardVisibilty && isSegmentWithoutRecording()
+                    ? SlidingUpPanel(
+                        controller: panelController,
+                        borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                        minHeight: 90.0,
+                        maxHeight: 185.0,
+                        collapsed: CollapsedMovementVideosSection(action: getAction()),
+                        panel: MovementVideosSection(
+                            action: getAction(),
+                            segment: widget.segments[widget.segmentIndex],
+                            movements: _movements,
+                            onPressedMovement: (BuildContext context, Movement movement) =>
+                                Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement})),
+                        body: _body(keyboardVisibilty))
+                    : _body(keyboardVisibilty);
+              },
+            )
+          : _body(keyboardVisibilty),
     );
   }
 
@@ -252,14 +284,37 @@ class _SegmentClocksState extends State<SegmentClocks> {
         ));
   }
 
-  Widget _body() {
+  Widget _body(bool keyboardVisibilty) {
+    final _controller = ScrollController();
+    if (!keyboardVisibilty) {
+      return Container(
+        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+        child: ListView(
+          controller: _controller,
+          children: [
+            _timerSection(keyboardVisibilty),
+            _lowerSection(),
+            if (isWorkStateFinished())
+              showFinishedButtons()
+            else
+              const SizedBox(
+                height: 90,
+              ),
+          ],
+        ),
+      );
+    }
+
     return ListView(
+      controller: _controller,
       children: [
-    _timerSection(),
-    _lowerSection(),
-    if (isWorkStateFinished()) showFinishedButtons() else const SizedBox(),
+        _timerSection(keyboardVisibilty),
+        _lowerSection(),
+        if (isWorkStateFinished()) showFinishedButtons() else const SizedBox(),
       ],
     );
+
+    ;
   }
 
   Widget showFinishedButtons() {
@@ -290,25 +345,27 @@ class _SegmentClocksState extends State<SegmentClocks> {
             OlukoOutlinedButton(
                 title: OlukoLocalizations.get(context, 'goToClass'),
                 thinPadding: true,
-                onPressed: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {'courseEnrollment': widget.courseEnrollment, 'classIndex': widget.classIndex})),
+                onPressed: () {
+                  if (!waitingForSegSubCreation) {
+                    goToClassAction();
+                  } else {
+                    DialogUtils.getDialog(context, stopProcessConfirmationContent(goToClassAction), showExitButton: false);
+                  }
+                }),
             const SizedBox(
               width: 15,
             ),
             OlukoPrimaryButton(
-              title: OlukoLocalizations.get(context, 'nextSegment'),
+              title: widget.segmentIndex == widget.segments.length - 1
+                  ? OlukoLocalizations.get(context, 'done')
+                  : OlukoLocalizations.get(context, 'nextSegment'),
               thinPadding: true,
               onPressed: () {
-                Navigator.pop(context);
-                widget.segmentIndex < widget.segments.length - 1
-                    ? Navigator.pushNamed(context, routeLabels[RouteEnum.segmentDetail], arguments: {
-                        'segmentIndex': widget.segmentIndex + 1,
-                        'classIndex': widget.classIndex,
-                        'courseEnrollment': widget.courseEnrollment,
-                      })
-                    : Navigator.pushNamed(context, routeLabels[RouteEnum.completedClass], arguments: {
-                        'classIndex': widget.classIndex,
-                        'courseEnrollment': widget.courseEnrollment,
-                      });
+                if (!waitingForSegSubCreation) {
+                  nextSegmentAction();
+                } else {
+                  DialogUtils.getDialog(context, stopProcessConfirmationContent(nextSegmentAction), showExitButton: false);
+                }
               },
             ),
           ],
@@ -317,14 +374,39 @@ class _SegmentClocksState extends State<SegmentClocks> {
     }
   }
 
+  void nextSegmentAction() {
+    widget.segmentIndex < widget.segments.length - 1
+        ? Navigator.popAndPushNamed(context, routeLabels[RouteEnum.segmentDetail], arguments: {
+            'segmentIndex': widget.segmentIndex + 1,
+            'classIndex': widget.classIndex,
+            'courseEnrollment': widget.courseEnrollment,
+            'courseIndex': widget.courseIndex,
+            'fromChallenge': widget.fromChallenge
+          })
+        : Navigator.popAndPushNamed(context, routeLabels[RouteEnum.completedClass], arguments: {
+            'classIndex': widget.classIndex,
+            'courseEnrollment': widget.courseEnrollment,
+            'courseIndex': widget.courseIndex,
+          });
+  }
+
+  void goToClassAction() {
+    widget.fromChallenge ? null : Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.insideClass]));
+
+    Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.insideClass],
+        arguments: {'courseEnrollment': widget.courseEnrollment, 'classIndex': widget.classIndex, 'courseIndex': widget.courseIndex});
+  }
+
   ///Countdown & movements information
-  Widget _timerSection() {
+  Widget _timerSection(bool keyboardVisibilty) {
     return Center(
         child: Column(
       children: [
         getSegmentLabel(),
-        Padding(padding: const EdgeInsets.only(top: 3, bottom: 8), child: Stack(alignment: Alignment.center, children: [getRoundsTimer(), _countdownSection()])),
-        if (isWorkStateFinished()) const SizedBox() else _tasksSection()
+        Padding(
+            padding: const EdgeInsets.only(top: OlukoNeumorphism.isNeumorphismDesign ? 20 : 3, bottom: 8),
+            child: Stack(alignment: Alignment.center, children: [getRoundsTimer(keyboardVisibilty), _countdownSection()])),
+        if (isWorkStateFinished()) const SizedBox() else _tasksSection(keyboardVisibilty)
       ],
     ));
   }
@@ -351,47 +433,69 @@ class _SegmentClocksState extends State<SegmentClocks> {
     }
   }
 
-  Widget getRoundsTimer() {
+  Widget getRoundsTimer(bool keyboardVisibilty) {
     if (SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) && isWorkStateFinished()) {
-      return TimerUtils.roundsTimer(AMRAPRound, AMRAPRound + 1);
+      return TimerUtils.roundsTimer(AMRAPRound, AMRAPRound, keyboardVisibilty);
     } else if (isWorkStateFinished()) {
-      return TimerUtils.roundsTimer(widget.segments[widget.segmentIndex].rounds, widget.segments[widget.segmentIndex].rounds + 1);
+      return TimerUtils.roundsTimer(
+          widget.segments[widget.segmentIndex].rounds, widget.segments[widget.segmentIndex].rounds, keyboardVisibilty);
     } else if (SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex])) {
-      return TimerUtils.roundsTimer(AMRAPRound + 1, AMRAPRound);
+      return TimerUtils.roundsTimer(AMRAPRound, AMRAPRound, keyboardVisibilty);
     } else {
-      return TimerUtils.roundsTimer(widget.segments[widget.segmentIndex].rounds, timerEntries[timerTaskIndex].round);
+      return TimerUtils.roundsTimer(widget.segments[widget.segmentIndex].rounds, timerEntries[timerTaskIndex].round, keyboardVisibilty);
     }
   }
 
   ///Current and next movement labels
-  Widget _tasksSection() {
-    return isSegmentWithoutRecording() ? taskSectionWithoutRecording() : Column(children: [SizedBox(height: 10), recordingTaskSection(), counterTextField(), SizedBox(height: 20)]);
+  Widget _tasksSection(bool keyboardVisibilty) {
+    return isSegmentWithoutRecording()
+        ? taskSectionWithoutRecording(keyboardVisibilty)
+        : Column(children: [
+            SizedBox(height: 10),
+            recordingTaskSection(keyboardVisibilty),
+            ...counterTextField(keyboardVisibilty),
+            SizedBox(height: 20)
+          ]);
   }
 
-  Widget taskSectionWithoutRecording() {
+  Widget taskSectionWithoutRecording(bool keyboardVisibilty) {
     final bool hasMultipleLabels = timerEntries[timerTaskIndex].labels.length > 1;
     if (hasMultipleLabels) {
-      return Padding(padding: const EdgeInsets.only(top: 25), child: Column(children: SegmentUtils.getJoinedLabel(timerEntries[timerTaskIndex].labels)));
+      return Column(children: SegmentUtils.getJoinedLabel(timerEntries[timerTaskIndex].labels));
     } else {
       final String currentTask = timerEntries[timerTaskIndex].labels[0];
       final String nextTask = timerTaskIndex < timerEntries.length - 1 ? timerEntries[timerTaskIndex + 1].labels[0] : '';
-      return Padding(
-          padding: const EdgeInsets.only(top: 25),
-          child: Column(
-            children: [currentTaskWidget(currentTask), const SizedBox(height: 10), nextTaskWidget(nextTask), const SizedBox(height: 15), counterTextField()],
-          ));
+      return Column(
+        children: [
+          currentTaskWidget(keyboardVisibilty, currentTask),
+          const SizedBox(height: 10),
+          nextTaskWidget(nextTask, keyboardVisibilty),
+          const SizedBox(height: 15),
+          ...counterTextField(keyboardVisibilty),
+        ],
+      );
     }
   }
 
-  Widget counterTextField() {
-    if (isCurrentMovementRest() && (timerEntries[timerTaskIndex - 1].counter == CounterEnum.reps || timerEntries[timerTaskIndex - 1].counter == CounterEnum.distance)) {
-      return getTextField();
+  List<Widget> counterTextField(bool keyboardVisibilty) {
+    if (isCurrentMovementRest() &&
+        (timerEntries[timerTaskIndex - 1].counter == CounterEnum.reps ||
+            timerEntries[timerTaskIndex - 1].counter == CounterEnum.distance)) {
+      return [
+        getTextField(keyboardVisibilty),
+        getKeyboard(keyboardVisibilty),
+        !keyboardVisibilty && !isSegmentWithRecording()
+            ? SizedBox(
+                height: ScreenUtils.height(context) / 4,
+              )
+            : SizedBox()
+      ];
     } else {
-      return const SizedBox();
+      return [const SizedBox()];
     }
   }
 
-  Widget getTextField() {
+  Widget getTextField(bool keyboardVisibilty) {
     final bool isCounterByReps = timerEntries[timerTaskIndex - 1].counter == CounterEnum.reps;
     return Container(
         decoration: const BoxDecoration(
@@ -400,27 +504,84 @@ class _SegmentClocksState extends State<SegmentClocks> {
           fit: BoxFit.cover,
         )),
         height: 50,
-        child: Row(children: [
-          const SizedBox(width: 20),
-          Text(OlukoLocalizations.get(context, 'enterScore'), style: TextStyle(fontSize: 18, color: OlukoColors.white, fontWeight: FontWeight.w300)),
-          const SizedBox(width: 10),
-          SizedBox(
-              width: isCounterByReps ? 40 : 70,
-              child: TextField(
-                controller: textController,
-                style: const TextStyle(fontSize: 20, color: OlukoColors.white, fontWeight: FontWeight.bold),
-                keyboardType: TextInputType.number,
-              )),
-          const SizedBox(width: 10),
-          if (isCounterByReps) Text(timerEntries[timerTaskIndex - 1].movement.name, style: TextStyle(fontSize: 18, color: OlukoColors.white, fontWeight: FontWeight.w300)) else Text(OlukoLocalizations.get(context, 'meters'), style: TextStyle(fontSize: 18, color: OlukoColors.white, fontWeight: FontWeight.w300)),
-        ]));
+        child: Column(
+          children: [
+            Row(children: [
+              const SizedBox(width: 20),
+              Text(OlukoLocalizations.get(context, 'enterScore'),
+                  style: TextStyle(fontSize: 18, color: OlukoColors.white, fontWeight: FontWeight.w300)),
+              const SizedBox(width: 10),
+              SizedBox(
+                  width: isCounterByReps ? 40 : 70,
+                  child: BlocBuilder<KeyboardBloc, KeyboardState>(
+                    builder: (context, state) {
+                      return Scrollbar(
+                        controller: state.textScrollController,
+                        child: () {
+                          final _customKeyboardBloc = BlocProvider.of<KeyboardBloc>(context);
+                          TextSelection textSelection = state.textEditingController.selection;
+                          textSelection = state.textEditingController.selection.copyWith(
+                            baseOffset: state.textEditingController.text.length,
+                            extentOffset: state.textEditingController.text.length,
+                          );
+                          textController = state.textEditingController;
+                          textController.selection = textSelection;
+
+                          return TextField(
+                            scrollController: state.textScrollController,
+                            controller: textController,
+                            onTap: () {
+                              !state.setVisible ? _customKeyboardBloc.add(SetVisible()) : null;
+                            },
+                            style: const TextStyle(
+                              fontSize: 20,
+                              color: OlukoColors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            focusNode: state.focus,
+                            readOnly: true,
+                            showCursor: true,
+                            decoration: const InputDecoration(
+                              border: InputBorder.none,
+                            ),
+                          );
+                        }(),
+                      );
+                    },
+                  )),
+              const SizedBox(width: 25),
+              if (isCounterByReps)
+                Text(timerEntries[timerTaskIndex - 1].movement.name,
+                    style: TextStyle(fontSize: 18, color: OlukoColors.white, fontWeight: FontWeight.w300))
+              else
+                Text(OlukoLocalizations.get(context, 'meters'),
+                    style: TextStyle(fontSize: 18, color: OlukoColors.white, fontWeight: FontWeight.w300)),
+            ]),
+          ],
+        ));
   }
 
-  Widget recordingTaskSection() {
+  Widget getKeyboard(bool keyboardVisibilty) {
+    const boxDecoration = BoxDecoration(
+        gradient: LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [Color(0xff2b2f35), Color(0xff16171b)],
+    ));
+    return Visibility(
+        visible: keyboardVisibilty,
+        child: CustomKeyboard(
+          boxDecoration: boxDecoration,
+        ));
+    ;
+  }
+
+  Widget recordingTaskSection(bool keyboardVisibilty) {
     final bool hasMultipleLabels = timerEntries[timerTaskIndex].labels.length > 1;
     if (hasMultipleLabels) {
       final List<Widget> items = SegmentUtils.getJoinedLabel(timerEntries[timerTaskIndex].labels);
-      return SizedBox(height: 45, child: ListView(children: [Padding(padding: const EdgeInsets.only(top: 10), child: Column(children: items))]));
+      return SizedBox(
+          height: 45, child: ListView(children: [Padding(padding: const EdgeInsets.only(top: 10), child: Column(children: items))]));
     } else {
       final String currentTask = timerEntries[timerTaskIndex].labels[0];
       final String nextTask = timerTaskIndex < timerEntries.length - 1 ? timerEntries[timerTaskIndex + 1].labels[0] : '';
@@ -431,7 +592,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  currentTaskWidget(currentTask, true),
+                  currentTaskWidget(keyboardVisibilty, currentTask, true),
                   Positioned(
                       left: ScreenUtils.width(context) - 70,
                       child: Text(
@@ -449,21 +610,28 @@ class _SegmentClocksState extends State<SegmentClocks> {
       return TimerUtils.completedTimer(context);
     }
 
-    if (!isWorkStatePaused() && isCurrentTaskByReps()) {
-      return TimerUtils.repsTimer(
-          () => setState(() {
-                _goToNextStep();
-              }),
-          context);
+    if (!isWorkStatePaused() && (isCurrentTaskByReps() || isCurrentTaskByDistance())) {
+      return BlocBuilder<KeyboardBloc, KeyboardState>(
+        builder: (context, state) {
+          BlocProvider.of<KeyboardBloc>(context).add(HideKeyboard());
+          return TimerUtils.repsTimer(
+              () => setState(() {
+                    _goToNextStep();
+                  }),
+              context,
+              timerEntries[timerTaskIndex].movement.isBothSide);
+        },
+      );
     }
 
-    if (isWorkStatePaused() && isCurrentTaskByReps()) {
+    if (isWorkStatePaused() && (isCurrentTaskByReps() || isCurrentTaskByDistance())) {
       return TimerUtils.pausedTimer(context);
     }
 
     final Duration actualTime = Duration(seconds: timerEntries[timerTaskIndex].value) - timeLeft;
 
-    final double circularProgressIndicatorValue = actualTime.inSeconds / timerEntries[timerTaskIndex].value;
+    double circularProgressIndicatorValue = actualTime.inSeconds / timerEntries[timerTaskIndex].value;
+    if (circularProgressIndicatorValue.isNaN) circularProgressIndicatorValue = 0;
 
     if (isWorkStatePaused()) {
       return TimerUtils.pausedTimer(context, TimeConverter.durationToString(timeLeft));
@@ -495,29 +663,37 @@ class _SegmentClocksState extends State<SegmentClocks> {
       });
     }
     final String counter = timerEntries[timerTaskIndex].counter == CounterEnum.reps ? timerEntries[timerTaskIndex].movement.name : null;
-    return TimerUtils.timeTimer(circularProgressIndicatorValue, TimeConverter.durationToString(timeLeft), context, counter);
+    return TimerUtils.timeTimer(circularProgressIndicatorValue, TimeConverter.durationToString(timeLeft), context, counter,
+        timerEntries[timerTaskIndex].movement.isBothSide);
   }
 
-  Widget currentTaskWidget(String currentTask, [bool smaller = false]) {
-    return Text(
-      currentTask,
-      style: TextStyle(fontSize: smaller ? 20 : 25, color: Colors.white, fontWeight: FontWeight.bold),
-    );
-  }
-
-  Widget nextTaskWidget(String nextTask) {
-    return ShaderMask(
-      shaderCallback: (rect) {
-        return const LinearGradient(
-          begin: Alignment.center,
-          end: Alignment.bottomCenter,
-          colors: [Colors.black, Colors.transparent],
-        ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
-      },
-      blendMode: BlendMode.dstIn,
+  Widget currentTaskWidget(bool keyboardVisibilty, String currentTask, [bool smaller = false]) {
+    return Visibility(
+      visible: !keyboardVisibilty,
       child: Text(
-        nextTask,
-        style: const TextStyle(fontSize: 25, color: Color.fromRGBO(255, 255, 255, 0.25), fontWeight: FontWeight.bold),
+        currentTask,
+        style: TextStyle(fontSize: smaller ? 20 : 25, color: Colors.white, fontWeight: FontWeight.bold),
+      ),
+    );
+    ;
+  }
+
+  Widget nextTaskWidget(String nextTask, bool keyboardVisibilty) {
+    return Visibility(
+      visible: !keyboardVisibilty,
+      child: ShaderMask(
+        shaderCallback: (rect) {
+          return const LinearGradient(
+            begin: Alignment.center,
+            end: Alignment.bottomCenter,
+            colors: [Colors.black, Colors.transparent],
+          ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
+        },
+        blendMode: BlendMode.dstIn,
+        child: Text(
+          nextTask,
+          style: const TextStyle(fontSize: 25, color: Color.fromRGBO(255, 255, 255, 0.25), fontWeight: FontWeight.bold),
+        ),
       ),
     );
   }
@@ -540,13 +716,16 @@ class _SegmentClocksState extends State<SegmentClocks> {
             width: ScreenUtils.width(context),
             child: Stack(
               children: [
-                if (!_isReady) Container() else Container(
-                        decoration: const BoxDecoration(
-                            image: DecorationImage(
-                          image: AssetImage('assets/courses/camera_background.png'),
-                          fit: BoxFit.cover,
-                        )),
-                        child: Center(child: AspectRatio(aspectRatio: 3.0 / 4.0, child: CameraPreview(cameraController)))),
+                if (!_isReady)
+                  Container()
+                else
+                  Container(
+                      decoration: const BoxDecoration(
+                          image: DecorationImage(
+                        image: AssetImage('assets/courses/camera_background.png'),
+                        fit: BoxFit.cover,
+                      )),
+                      child: Center(child: AspectRatio(aspectRatio: 3.0 / 4.0, child: CameraPreview(cameraController)))),
                 Align(alignment: Alignment.bottomCenter, child: Padding(padding: const EdgeInsets.all(20.0), child: pauseButton())),
               ],
             ));
@@ -558,6 +737,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   bool isCurrentTaskByReps() {
     return timerEntries[timerTaskIndex].parameter == ParameterEnum.reps;
+  }
+
+  bool isCurrentTaskByDistance() {
+    return timerEntries[timerTaskIndex].parameter == ParameterEnum.distance;
   }
 
   bool isCurrentMovementRest() {
@@ -575,7 +758,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
             }
           });
           if (isSegmentWithRecording()) {
-            final XFile videopath = await cameraController.stopVideoRecording();
+            await cameraController.stopVideoRecording();
           }
           setState(() {
             workoutType = WorkoutType.segment;
@@ -614,17 +797,39 @@ class _SegmentClocksState extends State<SegmentClocks> {
   //Timer Functions
   _saveSegmentRound(TimerEntry timerEntry) async {
     if (isSegmentWithRecording()) {
-      final XFile video = await cameraController.stopVideoRecording();
+      videoRecorded = await cameraController.stopVideoRecording();
       setState(() {
         workoutType = WorkoutType.segment;
       });
-      BlocProvider.of<SegmentSubmissionBloc>(context).create(_user, widget.courseEnrollment, widget.segments[widget.segmentIndex], video.path, _coachRequest);
+      AppMessages.clearAndShowSnackbar(context, OlukoLocalizations.get(context, 'roundInfo'));
+      /*DialogUtils.getDialog(context, _confirmDialogContent(),
+          showExitButton: true);*/
     }
+  }
+
+  List<Widget> _confirmDialogContent() {
+    return [
+      Icon(Icons.info_outline, color: Colors.white, size: 60),
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(OlukoLocalizations.get(context, 'roundInfo'), textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont()),
+      ),
+      Padding(
+          padding: const EdgeInsets.only(top: 8.0, right: 65, left: 65),
+          child: Row(children: [
+            OlukoPrimaryButton(
+              title: OlukoLocalizations.get(context, 'ok'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            )
+          ])),
+    ];
   }
 
   void _goToNextStep() {
     if (!SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) && timerEntries[timerTaskIndex].round == 0) {
-      if (timerTaskIndex == timerEntries.length || timerEntries[timerTaskIndex + 1].round == 1) {
+      if (timerTaskIndex == timerEntries.length - 1 || timerEntries[timerTaskIndex + 1].round == 1) {
         _saveSegmentRound(timerEntries[timerTaskIndex]);
       }
     }
@@ -649,9 +854,15 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
       addScoreEntry();
 
-      BlocProvider.of<CourseEnrollmentUpdateBloc>(context)
-        .saveMovementCounter(widget.courseEnrollment, widget.segmentIndex, timerEntries[timerTaskIndex - 1].sectionIndex, widget.classIndex, timerEntries[timerTaskIndex - 1].movement,
-            widget.segments[widget.segmentIndex].rounds, timerEntries[timerTaskIndex - 1].round, int.parse(textController.text));
+      BlocProvider.of<CourseEnrollmentUpdateBloc>(context).saveMovementCounter(
+          widget.courseEnrollment,
+          widget.segmentIndex,
+          timerEntries[timerTaskIndex - 1].sectionIndex,
+          widget.classIndex,
+          timerEntries[timerTaskIndex - 1].movement,
+          widget.segments[widget.segmentIndex].rounds,
+          timerEntries[timerTaskIndex - 1].round,
+          int.parse(textController.text));
     }
     textController.clear();
   }
@@ -700,6 +911,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
     //Reset countdown variables
     timerTaskIndex = 0;
     timerEntries = SegmentUtils.getExercisesList(widget.segments[widget.segmentIndex]);
+    if (timerEntries.isEmpty) {
+      _finishWorkout();
+      return;
+    }
     _playTask();
   }
 
@@ -728,6 +943,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   @override
   void dispose() {
+    Wakelock.disable();
     if (countdownTimer != null && countdownTimer.isActive) {
       countdownTimer.cancel();
     }
@@ -808,9 +1024,16 @@ class _SegmentClocksState extends State<SegmentClocks> {
             ),
           ),
           const SizedBox(height: 5),
-          if (counter) Column(crossAxisAlignment: CrossAxisAlignment.center, children: getScoresByRound()) else Column(children: SegmentUtils.getWorkouts(widget.segments[widget.segmentIndex], OlukoColors.grayColor)),
+          if (counter)
+            Column(crossAxisAlignment: CrossAxisAlignment.center, children: getScoresByRound())
+          else
+            Column(children: SegmentUtils.getWorkouts(widget.segments[widget.segmentIndex], OlukoColors.grayColor)),
           SizedBox(height: 10),
-          Padding(padding: const EdgeInsets.symmetric(vertical: 20.0), child: widget.workoutType == WorkoutType.segment || shareDone ? FeedbackCard() : ShareCard(createStory: _createStory)),
+          Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20.0),
+              child: widget.workoutType == WorkoutType.segment || shareDone
+                  ? FeedbackCard()
+                  : ShareCard(createStory: _createStory, whistleAction: coachAction)),
         ],
       ),
     );
@@ -818,9 +1041,25 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   _createStory() {
     _wantsToCreateStory = true;
-    if (_isVideoUploaded) {
-      callBlocToCreateStory(context, _segmentSubmission);
+    if (waitingForSegSubCreation) {
+      if (_isVideoUploaded) {
+        callBlocToCreateStory(context, _segmentSubmission);
+      }
+    } else if (_segmentSubmission == null) {
+      createSegmentSubmission();
     }
+  }
+
+  coachAction() {
+    if (!waitingForSegSubCreation) {
+      createSegmentSubmission();
+    }
+  }
+
+  createSegmentSubmission() {
+    waitingForSegSubCreation = true;
+    BlocProvider.of<SegmentSubmissionBloc>(context)
+        .create(_user, widget.courseEnrollment, widget.segments[widget.segmentIndex], videoRecorded.path, _coachRequest);
   }
 
   List<Widget> getScoresByRound() {
@@ -842,9 +1081,14 @@ class _SegmentClocksState extends State<SegmentClocks> {
       widgets.add(Padding(
           padding: const EdgeInsets.only(bottom: 10),
           child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Text('${OlukoLocalizations.get(context, 'round')} ${i + 1}', style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w600, customColor: OlukoColors.white)),
+            Text('${OlukoLocalizations.get(context, 'round')} ${i + 1}',
+                style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w600, customColor: OlukoColors.white)),
             Container(width: 60),
-            SizedBox(width: 50, child: Text(scores[i], textAlign: TextAlign.end, style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400, customColor: OlukoColors.white)))
+            SizedBox(
+                width: 50,
+                child: Text(scores[i],
+                    textAlign: TextAlign.end,
+                    style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400, customColor: OlukoColors.white)))
           ])));
     }
     return widgets;
@@ -902,7 +1146,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
     } else {
       message = OlukoLocalizations.get(context, 'segmentUploadedSuccessfully');
     }
-    AppMessages.showSnackbar(context, message);
+    AppMessages.clearAndShowSnackbar(context, message);
   }
 
   void updateProgress(VideoProcessing state) {
@@ -912,17 +1156,18 @@ class _SegmentClocksState extends State<SegmentClocks> {
     });
   }
 
-  static Future<bool> onWillPop(BuildContext context) async {
+  static Future<bool> onWillPop(BuildContext contextWBloc, bool isRecording) async {
     return (await showDialog(
-          context: context,
+          context: contextWBloc,
           builder: (context) => AlertDialog(
             backgroundColor: Colors.black,
-            title: TitleBody(
-                OlukoLocalizations.get(context, 'exitConfirmationTitle')),
-            content:
-                Text('Do you want to go back? Your recordings will be lost.',
-                    // OlukoLocalizations.get(context, 'exitConfirmationBody'),
-                    style: OlukoFonts.olukoBigFont()),
+            title: TitleBody(OlukoLocalizations.get(context, 'exitConfirmationTitle')),
+            content: Text(
+                isRecording
+                    ? OlukoLocalizations.get(context, 'goBackConfirmationWithRecording')
+                    : OlukoLocalizations.get(context, 'goBackConfirmationWithoutRecording'),
+                // OlukoLocalizations.get(context, 'exitConfirmationBody'),
+                style: OlukoFonts.olukoBigFont()),
             actions: <Widget>[
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
@@ -930,14 +1175,19 @@ class _SegmentClocksState extends State<SegmentClocks> {
                   OlukoLocalizations.get(context, 'no'),
                 ),
               ),
-              TextButton(
-                onPressed: (){
-                  Navigator.pop(context);
-                  Navigator.pop(context);
+              BlocBuilder<KeyboardBloc, KeyboardState>(
+                bloc: BlocProvider.of<KeyboardBloc>(contextWBloc),
+                builder: (context, state) {
+                  return TextButton(
+                    onPressed: () {
+                      Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.segmentDetail]));
+                      BlocProvider.of<KeyboardBloc>(contextWBloc).add(HideKeyboard());
+                    },
+                    child: Text(
+                      OlukoLocalizations.get(context, 'yes'),
+                    ),
+                  );
                 },
-                child: Text(
-                  OlukoLocalizations.get(context, 'yes'),
-                ),
               ),
             ],
           ),
@@ -958,7 +1208,40 @@ class _SegmentClocksState extends State<SegmentClocks> {
             const SizedBox(height: 10),
             Padding(padding: const EdgeInsets.all(40.0), child: ProgressBar(processPhase: processPhase, progress: progress)),
           ])),
-      Align(alignment: Alignment.topRight, child: IconButton(icon: const Icon(Icons.close, color: Colors.white), onPressed: () => Navigator.pop(context)))
+      Align(
+          alignment: Alignment.topRight,
+          child: IconButton(icon: const Icon(Icons.close, color: Colors.white), onPressed: () => Navigator.pop(context)))
     ]);
+  }
+
+  List<Widget> stopProcessConfirmationContent(function) {
+    return [
+      Text(
+        OlukoLocalizations.get(context, 'stopProcessConfirmation'),
+        textAlign: TextAlign.center,
+        style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
+      ),
+      Padding(
+          padding: const EdgeInsets.only(top: 25.0),
+          child: Row(
+            children: [
+              OlukoOutlinedButton(
+                title: OlukoLocalizations.get(context, 'no'),
+                thinPadding: true,
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              const SizedBox(width: 20),
+              OlukoPrimaryButton(
+                title: OlukoLocalizations.get(context, 'yes'),
+                onPressed: () {
+                  Navigator.pop(context);
+                  function();
+                },
+              ),
+            ],
+          ))
+    ];
   }
 }

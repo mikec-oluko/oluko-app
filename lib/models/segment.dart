@@ -47,8 +47,13 @@ class Segment extends Base {
             isHidden: isHidden);
 
   factory Segment.fromJson(Map<String, dynamic> json) {
+    if (json == null) return null;
+    // debugger(when: json['total_time'] is! int, message: 'total_time is not int');
+    if (json['total_time'] == '') {
+      json['total_time'] = null;
+    }
     Segment segment = Segment(
-        challengeVideo: json['challenge_video']?.toString(),
+        challengeVideo: json['challenge_video'] == null ? null : json['challenge_video'].toString(),
         name: json['name']?.toString(),
         image: json['image']?.toString(),
         rounds: json['rounds'] as int,
@@ -58,27 +63,22 @@ class Segment extends Base {
             : json['is_challenge'] is bool
                 ? json['is_challenge'] as bool
                 : false,
-        challengeImage: json['challenge_image'] == null
-            ? null
-            : json['challenge_image']?.toString(),
+        challengeImage: json['challenge_image'] == null ? null : json['challenge_image']?.toString(),
         totalTime: json['total_time'] as int,
         initialTimer: json['initial_timer'] as int,
         isPublished: json['is_published'] as bool,
-        type: json['type'] == null
-            ? null
-            : SegmentTypeEnum.values[json['type'] as int],
+        type: json['type'] == null ? null : SegmentTypeEnum.values[json['type'] as int],
         sections: json['sections'] == null
             ? null
-            : List<SectionSubmodel>.from((json['sections'] as Iterable).map(
-                (section) => SectionSubmodel.fromJson(
-                    section as Map<String, dynamic>))));
+            : List<SectionSubmodel>.from(
+                (json['sections'] as Iterable).map((section) => SectionSubmodel.fromJson(section as Map<String, dynamic>))));
     segment.setBase(json);
     return segment;
   }
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> segmentJson = {
-      'challenge_video': challengeVideo,
+      'challenge_video': challengeVideo == null ? null : challengeVideo,
       'name': name,
       'image': image,
       'rounds': rounds,
@@ -89,9 +89,7 @@ class Segment extends Base {
       'is_challenge': isChallenge,
       'challenge_image': challengeImage,
       'type': type == null ? null : type.index,
-      'movements': sections == null
-          ? null
-          : List<dynamic>.from(sections.map((section) => section.toJson()))
+      'movements': sections == null ? null : List<dynamic>.from(sections.map((section) => section.toJson()))
     };
     segmentJson.addEntries(super.toJson().entries);
     return segmentJson;

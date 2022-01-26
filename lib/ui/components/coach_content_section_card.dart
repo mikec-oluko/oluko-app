@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class CoachContentSectionCard extends StatefulWidget {
   final String title;
   final bool needTitle;
-  final bool isForCarousel;
-  const CoachContentSectionCard({this.title, this.needTitle = true, this.isForCarousel});
+
+  const CoachContentSectionCard({this.title, this.needTitle = true});
 
   @override
   _CoachContentSectionCardState createState() => _CoachContentSectionCardState();
 }
 
 class _CoachContentSectionCardState extends State<CoachContentSectionCard> {
+  final ImageProvider _defaultImage = const AssetImage('assets/home/mvtthumbnail.png');
+  final _filterForDefaultImage = true;
+
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Column(
@@ -27,46 +28,24 @@ class _CoachContentSectionCardState extends State<CoachContentSectionCard> {
               child: widget.needTitle
                   ? Text(
                       widget.title,
-                      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+                      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                     )
-                  : SizedBox(),
+                  : const SizedBox(),
             ),
             Padding(
-              padding: widget.isForCarousel ? const EdgeInsets.all(0) : const EdgeInsets.all(0.0),
-              child: !widget.isForCarousel
-                  ? Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        color: OlukoColors.blackColorSemiTransparent,
-                      ),
-                      width: 150,
-                      height: 100,
-                      child: Center(
-                        child: Text(
-                          OlukoLocalizations.get(context, 'noContent'),
-                          style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
-                        ),
-                      ),
-                    )
-                  : Wrap(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                            color: OlukoColors.blackColorSemiTransparent,
-                          ),
-                          width: 200,
-                          height: 150,
-                          child: Center(
-                            child: Text(
-                              OlukoLocalizations.get(context, 'noContent'),
-                              style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-            )
+                padding: EdgeInsets.zero,
+                child: Container(
+                  decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                      color: OlukoColors.blackColorSemiTransparent,
+                      image: DecorationImage(
+                        colorFilter: _filterForDefaultImage ? ColorFilter.mode(Colors.black.withOpacity(0.15), BlendMode.dstATop) : null,
+                        image: _defaultImage,
+                        fit: BoxFit.fill,
+                      )),
+                  width: 150,
+                  height: 100,
+                ))
           ],
         )
       ],

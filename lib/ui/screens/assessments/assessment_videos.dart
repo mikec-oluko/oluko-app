@@ -24,6 +24,7 @@ import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/task_card.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/app_navigator.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
@@ -31,9 +32,10 @@ import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
 class AssessmentVideos extends StatefulWidget {
-  const AssessmentVideos({this.isFirstTime, this.isForCoachPage = false, Key key}) : super(key: key);
-
-  final bool isFirstTime, isForCoachPage;
+  const AssessmentVideos({this.isFirstTime, this.isForCoachPage = false, this.assessmentsDone = false, Key key}) : super(key: key);
+  final bool isFirstTime;
+  final bool isForCoachPage;
+  final bool assessmentsDone;
 
   @override
   _AssessmentVideosState createState() => _AssessmentVideosState();
@@ -56,39 +58,52 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AssessmentAssignmentBloc, AssessmentAssignmentState>(
-      listener: (context, assessmentAssignmentState) {
-        if (assessmentAssignmentState is AssessmentAssignmentSuccess) {
-          BlocProvider.of<TaskSubmissionListBloc>(context).get(assessmentAssignmentState.assessmentAssignment);
-        }
-      },
-      child: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
-        if (authState is AuthSuccess) {
-          _user = authState.user;
-          BlocProvider.of<AssessmentBloc>(context).getById('emnsmBgZ13UBRqTS26Qd');
-          return BlocBuilder<AssessmentBloc, AssessmentState>(builder: (context, assessmentState) {
-            if (assessmentState is AssessmentSuccess) {
-              _assessment = assessmentState.assessment;
-              if (_user.currentPlan < 1) {
-                assessmentsTasksList = _assessment.tasks.getRange(0, 2).toList();
-              } else {
-                assessmentsTasksList = _assessment.tasks;
-              }
-              BlocProvider.of<TaskBloc>(context).get(_assessment);
-              if (widget.isFirstTime) {
-                BlocProvider.of<AssessmentAssignmentBloc>(context).setAsSeen(_user.id);
-              }
-              BlocProvider.of<AssessmentAssignmentBloc>(context).getOrCreate(_user.id, _assessment);
-              return form();
+    return WillPopScope(
+        onWillPop: () async {
+          if (widget.isFirstTime) {
+            //TODO: check wanted flow BlocProvider.of<AuthBloc>(context).logout(context);
+            return false;
+          }
+          if (Navigator.canPop(context)) {
+            return true;
+          } else {
+            Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
+            return false;
+          }
+        },
+        child: BlocListener<AssessmentAssignmentBloc, AssessmentAssignmentState>(
+          listener: (context, assessmentAssignmentState) {
+            if (assessmentAssignmentState is AssessmentAssignmentSuccess) {
+              BlocProvider.of<TaskSubmissionListBloc>(context).get(assessmentAssignmentState.assessmentAssignment);
+            }
+          },
+          child: BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
+            if (authState is AuthSuccess) {
+              _user = authState.user;
+              BlocProvider.of<AssessmentBloc>(context).getById('emnsmBgZ13UBRqTS26Qd');
+              return BlocBuilder<AssessmentBloc, AssessmentState>(builder: (context, assessmentState) {
+                if (assessmentState is AssessmentSuccess) {
+                  _assessment = assessmentState.assessment;
+                  if (_user.currentPlan < 1) {
+                    assessmentsTasksList = _assessment.tasks.getRange(0, 2).toList();
+                  } else {
+                    assessmentsTasksList = _assessment.tasks;
+                  }
+                  BlocProvider.of<TaskBloc>(context).get(_assessment);
+                  if (widget.isFirstTime) {
+                    BlocProvider.of<AssessmentAssignmentBloc>(context).setAsSeen(_user.id);
+                  }
+                  BlocProvider.of<AssessmentAssignmentBloc>(context).getOrCreate(_user.id, _assessment);
+                  return form();
+                } else {
+                  return const SizedBox();
+                }
+              });
             } else {
               return const SizedBox();
             }
-          });
-        } else {
-          return const SizedBox();
-        }
-      }),
-    );
+          }),
+        ));
   }
 
   Widget form() {
@@ -96,22 +111,38 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
         key: _formKey,
         child: Scaffold(
             appBar: OlukoAppBar(
+              showActions: widget.isFirstTime,
               onPressed: widget.isForCoachPage
                   ? () {
+                      if (_controller != null) {
+                        _controller.pause();
+                      }
+                      Navigator.pop(context);
                       AppNavigator().returnToHome(context);
                     }
                   : () {
+                      if (_controller != null) {
+                        _controller.pause();
+                      }
                       Navigator.pop(context);
+                      //TODO: fix for case in which there is no more screen in navigation stack
+                      if (!Navigator.canPop(context)) {
+                        Navigator.pushNamed(context, routeLabels[RouteEnum.root], arguments: {
+                          'tab': 1,
+                        });
+                      }
+                      if (_controller != null) {
+                        _controller.pause();
+                      }
                     },
+              showTitle: true,
               showBackButton: !widget.isFirstTime,
-              title: widget.isForCoachPage
-                  ? OlukoLocalizations.get(context, 'coach')
-                  : OlukoLocalizations.get(context, 'assessment'),
+              title: widget.isForCoachPage ? OlukoLocalizations.get(context, 'coach') : OlukoLocalizations.get(context, 'assessment'),
               actions: [skipButton()],
             ),
             body: Container(
-                color: Colors.black,
-                child: ListView(children: [
+                color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
+                child: ListView(shrinkWrap: true, children: [
                   Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15),
                       child: Column(children: [
@@ -119,58 +150,74 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                           padding: const EdgeInsets.symmetric(vertical: 15),
                           child: OrientationBuilder(
                             builder: (context, orientation) {
-                              return showVideoPlayer(_assessment.video);
+                              return widget.isForCoachPage && OlukoNeumorphism.isNeumorphismDesign
+                                  ? Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                                      child: showVideoPlayer(_assessment.video),
+                                    )
+                                  : showVideoPlayer(_assessment.video);
                             },
                           ),
                         ),
+                        // OlukoLocalizations.get(context, 'coachPageAssessmentsText')
                         Padding(
                             padding: const EdgeInsets.only(bottom: 8),
-                            child: Text(
-                              _assessment.description,
-                              textAlign: TextAlign.justify,
-                              style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white),
-                            )),
-                        BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(
-                            builder: (context, assessmentAssignmentState) {
+                            child: widget.isForCoachPage && OlukoNeumorphism.isNeumorphismDesign
+                                ? Padding(
+                                    padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                                      child: Text(
+                                        OlukoLocalizations.get(context, 'coachPageAssessmentsText'),
+                                        textAlign: TextAlign.justify,
+                                        style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white),
+                                      ),
+                                    ),
+                                  )
+                                : Text(
+                                    _assessment.description,
+                                    textAlign: TextAlign.justify,
+                                    style: OlukoFonts.olukoBigFont(customColor: OlukoColors.white),
+                                  )),
+                        BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(builder: (context, assessmentAssignmentState) {
                           if (assessmentAssignmentState is AssessmentAssignmentSuccess) {
                             _assessmentAssignment = assessmentAssignmentState.assessmentAssignment;
                             return Column(
                               children: [
-                                BlocBuilder<TaskSubmissionListBloc, TaskSubmissionListState>(
-                                    builder: (context, taskSubmissionListState) {
+                                BlocBuilder<TaskSubmissionListBloc, TaskSubmissionListState>(builder: (context, taskSubmissionListState) {
                                   if (taskSubmissionListState is GetTaskSubmissionSuccess) {
                                     taskSubmissionsCompleted = taskSubmissionListState.taskSubmissions;
                                     final completedTask = taskSubmissionListState.taskSubmissions.length;
                                     var enabledTask = 0;
-                                    for (var i = 0; i < _assessment.tasks.length; i++) {
+                                    for (var i = 0; i < assessmentsTasksList.length; i++) {
                                       if (!OlukoPermissions.isAssessmentTaskDisabled(_user, i)) {
                                         enabledTask++;
                                       }
                                     }
                                     if (completedTask == enabledTask && _assessmentAssignment.completedAt == null) {
-                                      BlocProvider.of<TaskSubmissionBloc>(context)
-                                          .setCompleted(_assessmentAssignment.id)
-                                          .then((value) => {
-                                                _assessmentAssignment.completedAt = value,
-                                                BlocProvider.of<AssessmentAssignmentBloc>(context)
-                                                    .getOrCreate(_user.id, _assessment)
-                                              });
-                                    } else if (completedTask != enabledTask &&
-                                        _assessmentAssignment.completedAt != null) {
-                                      BlocProvider.of<TaskSubmissionBloc>(context)
-                                          .setIncompleted(_assessmentAssignment.id);
+                                      BlocProvider.of<TaskSubmissionBloc>(context).setCompleted(_assessmentAssignment.id).then((value) => {
+                                            _assessmentAssignment.completedAt = value,
+                                            BlocProvider.of<AssessmentAssignmentBloc>(context).getOrCreate(_user.id, _assessment)
+                                          });
+                                    } else if (completedTask != enabledTask && _assessmentAssignment.completedAt != null) {
+                                      BlocProvider.of<TaskSubmissionBloc>(context).setIncompleted(_assessmentAssignment.id);
                                       _assessmentAssignment.completedAt = null;
                                     }
-                                    return taskCardsSection(taskSubmissionListState.taskSubmissions);
+                                    return widget.isForCoachPage && OlukoNeumorphism.isNeumorphismDesign
+                                        ? Padding(
+                                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                                            child: taskCardsSection(taskSubmissionListState.taskSubmissions),
+                                          )
+                                        : taskCardsSection(taskSubmissionListState.taskSubmissions);
                                   } else {
-                                    return const Padding(
-                                        padding: EdgeInsets.only(top: 30), child: CircularProgressIndicator());
+                                    return const Padding(padding: EdgeInsets.only(top: 30), child: CircularProgressIndicator());
                                   }
                                 }),
                                 const SizedBox(
                                   height: 10,
                                 ),
-                                if (assessmentAssignmentState.assessmentAssignment.completedAt != null)
+                                if (assessmentAssignmentState.assessmentAssignment.completedAt != null &&
+                                    !OlukoNeumorphism.isNeumorphismDesign)
                                   Row(children: [
                                     OlukoPrimaryButton(
                                       title: OlukoLocalizations.get(context, 'done'),
@@ -180,7 +227,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                                     )
                                   ])
                                 else
-                                  const SizedBox()
+                                  const SizedBox.shrink()
                               ],
                             );
                           }
@@ -189,11 +236,59 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                         const SizedBox(
                           height: 10,
                         ),
-                        const SizedBox(
-                          height: 50,
-                        ),
+                        OlukoNeumorphism.isNeumorphismDesign
+                            ? SizedBox.shrink()
+                            : const SizedBox(
+                                height: 50,
+                              ),
                       ])),
+                  widget.assessmentsDone && OlukoNeumorphism.isNeumorphismDesign
+                      ? BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(
+                          builder: (context, state) {
+                            Widget contentToShow = SizedBox.shrink();
+                            if (state is AssessmentAssignmentSuccess &&
+                                (state.assessmentAssignment != null && state.assessmentAssignment.completedAt != null)) {
+                              contentToShow = assessmentDoneBottomPanel(context);
+                            }
+                            return contentToShow;
+                          },
+                        )
+                      : SizedBox.shrink(),
                 ]))));
+  }
+
+  Container assessmentDoneBottomPanel(BuildContext context) {
+    return Container(
+      height: 100,
+      width: MediaQuery.of(context).size.width,
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.only(right: 20),
+        child: Align(
+          alignment: Alignment.centerRight,
+          child: Container(
+            width: 100,
+            child: OlukoNeumorphicPrimaryButton(
+              title: OlukoLocalizations.get(context, 'done'),
+              onPressed: () {
+                if (_controller != null) {
+                  _controller.pause();
+                }
+                Navigator.pushNamed(
+                  context,
+                  routeLabels[RouteEnum.assessmentNeumorphicDone],
+                );
+              },
+              isExpanded: false,
+              customHeight: 60,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   Widget showVideoPlayer(String videoUrl) {
@@ -201,12 +296,22 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
     if (_controller == null) {
       widgets.add(const Center(child: CircularProgressIndicator()));
     }
-    widgets.add(OlukoVideoPlayer(
-        videoUrl: videoUrl,
-        autoPlay: false,
-        whenInitialized: (ChewieController chewieController) => setState(() {
-              _controller = chewieController;
-            })));
+    widgets.add(OlukoNeumorphism.isNeumorphismDesign
+        ? ClipRRect(
+            borderRadius: BorderRadius.circular(15),
+            child: OlukoVideoPlayer(
+                videoUrl: videoUrl,
+                autoPlay: false,
+                whenInitialized: (ChewieController chewieController) => setState(() {
+                      _controller = chewieController;
+                    })),
+          )
+        : OlukoVideoPlayer(
+            videoUrl: videoUrl,
+            autoPlay: false,
+            whenInitialized: (ChewieController chewieController) => setState(() {
+                  _controller = chewieController;
+                })));
 
     return ConstrainedBox(
         constraints: BoxConstraints(
@@ -243,7 +348,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                             _controller.pause();
                           }
                           if (OlukoPermissions.isAssessmentTaskDisabled(_user, index)) {
-                            AppMessages.showSnackbar(
+                            AppMessages.clearAndShowSnackbar(
                                 context, OlukoLocalizations.get(context, 'yourCurrentPlanDoesntIncludeAssessment'));
                           } else {
                             if (assessmentsTasksList.length - taskSubmissionsCompleted.length == 1) {
@@ -251,14 +356,23 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                                 isLastTask = true;
                               });
                             }
+                            BlocProvider.of<TaskSubmissionBloc>(context).setLoaderTaskSubmissionOfTask();
                             return Navigator.pushNamed(context, routeLabels[RouteEnum.taskDetails],
-                                arguments: {'taskIndex': index, 'isLastTask': isLastTask}).then((value) => BlocProvider.of<AssessmentBloc>(context).getById('emnsmBgZ13UBRqTS26Qd'));
+                                    arguments: {'taskIndex': index, 'isLastTask': isLastTask, 'taskCompleted': taskSubmission != null})
+                                .then((value) => BlocProvider.of<AssessmentBloc>(context).getById('emnsmBgZ13UBRqTS26Qd'));
                           }
                         },
                       ));
                 });
           } else {
-            return Padding(padding: const EdgeInsets.all(50.0), child: OlukoCircularProgressIndicator());
+            return Padding(
+                padding: const EdgeInsets.all(50.0),
+                child: OlukoNeumorphism.isNeumorphismDesign
+                    ? Container(
+                        color:
+                            OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.black,
+                        child: OlukoCircularProgressIndicator())
+                    : OlukoCircularProgressIndicator());
           }
         }),
       ],
@@ -314,25 +428,31 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
                 )),
             Text(
               OlukoLocalizations.get(context, 'assessmentMessagePart1'),
+              textAlign: TextAlign.center,
               style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
             ),
             Text(
               OlukoLocalizations.get(context, 'assessmentMessagePart2'),
+              textAlign: TextAlign.center,
               style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
             ),
             Padding(
                 padding: const EdgeInsets.only(top: 25.0),
                 child: Row(
                   children: [
-                    OlukoPrimaryButton(
+                    OlukoOutlinedButton(
                       title: OlukoLocalizations.get(context, 'goBack'),
                       thinPadding: true,
                       onPressed: () {
-                        Navigator.pop(context);
+                        if (Navigator.canPop(context)) {
+                          Navigator.pop(context);
+                        } else {
+                          Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
+                        }
                       },
                     ),
                     const SizedBox(width: 20),
-                    OlukoOutlinedButton(
+                    OlukoPrimaryButton(
                       title: OlukoLocalizations.get(context, 'ok'),
                       onPressed: () {
                         if (_controller != null) {

@@ -20,7 +20,7 @@ class _State extends State<StoriesHeader> {
 
   @override
   Widget build(BuildContext context) {
-    BlocProvider.of<StoryListBloc>(context).getStream(widget.userId);
+    //BlocProvider.of<StoryListBloc>(context).getStream(widget.userId);
     BlocProvider.of<StoryListBloc>(context).get(widget.userId);
     return BlocBuilder<StoryListBloc, StoryListState>(buildWhen: (_, state) {
       return state is! StoryListUpdate;
@@ -32,14 +32,10 @@ class _State extends State<StoriesHeader> {
               scrollDirection: Axis.horizontal,
               child: Row(
                   children: storyState.usersStories.map((userStory) {
-                return GestureDetector(
-                    onTap: () => {
-                          Navigator.pushNamed(context, routeLabels[RouteEnum.story], arguments: {'userStories': userStory, 'userId': widget.userId})
-                        },
-                    child: Container(
-                      margin: const EdgeInsets.only(top: 5),
-                      child: StoriesItem(stories: userStory.stories, imageUrl: userStory.avatar_thumbnail, maxRadius: 35, userStoryId: userStory.id, name: userStory.name),
-                    ));
+                return Container(
+                  margin: const EdgeInsets.only(top: 5),
+                  child: StoriesItem(stories: userStory.stories, imageUrl: userStory.avatar_thumbnail, maxRadius: 35, itemUserId: userStory.id, name: userStory.name, currentUserId: widget.userId, showName: true),
+                );
               }).toList())),
         );
       } else {

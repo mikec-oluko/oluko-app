@@ -21,6 +21,7 @@ class SearchResultsGrid<T> extends StatefulWidget {
 }
 
 class _State extends State<SearchResultsGrid> {
+  final ImageProvider defaultImage = const AssetImage('assets/home/mvtthumbnail.png');
   @override
   Widget build(BuildContext context) {
     return GridView.count(
@@ -34,15 +35,17 @@ class _State extends State<SearchResultsGrid> {
                       child: GestureDetector(
                     //TODO: not generic, depends on T being course only
                     onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
-                        arguments: {'course': e as Course, 'fromCoach': false}),
-                    child: _getCourseCard(
-                      Image.network(
-                        e.image as String,
-                        fit: BoxFit.cover,
-                        frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
-                            ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 120),
-                      ),
-                    ),
+                        arguments: {'course': e as Course, 'fromCoach': false, 'isCoachRecommendation': false}),
+                    child: e.image != null
+                        ? _getCourseCard(
+                            Image.network(
+                              e.image as String,
+                              fit: BoxFit.cover,
+                              frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
+                                  ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 120),
+                            ),
+                          )
+                        : Image(image: defaultImage),
                   )),
                 ))
             .toList());

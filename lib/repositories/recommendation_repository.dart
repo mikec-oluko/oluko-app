@@ -41,4 +41,21 @@ class RecommendationRepository {
     });
     return response;
   }
+
+  void removeRecomendedCourse(String userId, String courseId) {
+    FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('recommendations')
+        .where('destination_user_id', isEqualTo: userId)
+        .where('entity_id', isEqualTo: courseId)
+        .get()
+        .then((recommendations) {
+      if (recommendations?.docs != null) {
+        for (final recommendation in recommendations.docs) {
+          recommendation.reference.update({'is_deleted': true, 'deleted_at': FieldValue.serverTimestamp()});
+        }
+      }
+    });
+  }
 }

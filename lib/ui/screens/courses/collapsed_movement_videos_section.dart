@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/enums/movement_videos_action_enum.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
@@ -28,6 +29,13 @@ class _State extends State<CollapsedMovementVideosSection> {
             ),
             borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
         child: Column(children: [
+          !OlukoNeumorphism.isNeumorphismDesign ? SizedBox.shrink() : SizedBox(height: 5),
+          !OlukoNeumorphism.isNeumorphismDesign
+              ? SizedBox.shrink()
+              : Container(
+                  width: 50,
+                  child: Image.asset('assets/courses/horizontal_vector.png', scale: 2, color: OlukoColors.grayColor),
+                ),
           SizedBox(height: 15),
           Row(children: [
             Padding(
@@ -37,13 +45,15 @@ class _State extends State<CollapsedMovementVideosSection> {
             SizedBox(width: 10),
             Icon(Icons.directions_run, color: Colors.white, size: 30),
             Expanded(child: SizedBox()),
-            widget.action
+            OlukoNeumorphism.isNeumorphismDesign ? SizedBox.shrink() : widget.action
           ]),
           SizedBox(height: 10),
-          Image.asset(
-            'assets/courses/horizontal_vector.png',
-            scale: 2,
-          )
+          OlukoNeumorphism.isNeumorphismDesign
+              ? SizedBox.shrink()
+              : Image.asset(
+                  'assets/courses/horizontal_vector.png',
+                  scale: 2,
+                )
         ]));
   }
 }

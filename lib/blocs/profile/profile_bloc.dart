@@ -33,19 +33,19 @@ class ProfileBloc extends Cubit<ProfileState> {
   ProfileRepository _profileRepository = ProfileRepository();
 
   void uploadImageForProfile({DeviceContentFrom uploadedFrom, UploadFrom contentFor}) async {
-    PickedFile _image;
+    XFile _image;
 
     try {
-      final imagePicker = ImagePicker();
+      final ImagePicker imagePicker = ImagePicker();
       if (uploadedFrom == DeviceContentFrom.gallery) {
-        _image = await imagePicker.getImage(source: ImageSource.gallery);
+        _image = await imagePicker.pickImage(source: ImageSource.gallery);
       }
       if (uploadedFrom == DeviceContentFrom.camera) {
-        _image = await imagePicker.getImage(source: ImageSource.camera);
+        _image = await imagePicker.pickImage(source: ImageSource.camera);
       }
 
-      if (_image == null) {
-        emit(ProfileFailure(exception: new Exception("Profile upload aborted")));
+      if (_image == null && _image is! XFile) {
+        emit(ProfileFailure(exception: Exception('Profile upload aborted')));
         return;
       }
 
