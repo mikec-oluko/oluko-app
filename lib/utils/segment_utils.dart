@@ -17,8 +17,8 @@ class SegmentUtils {
   static List<Widget> getSegmentSummary(Segment segment, BuildContext context, Color color) {
     List<Widget> workoutWidgets = getWorkouts(segment, color);
     return OlukoNeumorphism.isNeumorphismDesign
-        ? [getRoundTitle(context, color,segment: segment), SizedBox(height: 12.0)] + workoutWidgets
-        : [getRoundTitle(context, color,segment: segment), SizedBox(height: 12.0)] + workoutWidgets;
+        ? [getRoundTitle(segment, context, color), SizedBox(height: 12.0)] + workoutWidgets
+        : [getRoundTitle(segment, context, color), SizedBox(height: 12.0)] + workoutWidgets;
   }
 
   static List<Widget> getSegmentSummaryforNeumorphic(Segment segment, BuildContext context, Color color,
@@ -26,7 +26,7 @@ class SegmentUtils {
     List<Widget> workoutWidgets = getWorkoutsforNeumorphic(segment, color,
         restTime: restTime, movements: movements, context: context, viewDetailsScreen: viewDetailsScreen);
     if (roundTitle)
-      return [getRoundTitle(context, color,segment: segment), SizedBox(height: 12.0)] + workoutWidgets;
+      return [getRoundTitle(segment, context, color), SizedBox(height: 12.0)] + workoutWidgets;
     else
       return workoutWidgets;
   }
@@ -39,20 +39,7 @@ class SegmentUtils {
     return segment.type == SegmentTypeEnum.Duration;
   }
 
-  static bool isAMRAPforSubmodel(SegmentSubmodel segment) {
-    if (segment != null) {
-      if (segment.type != null) {
-        return segment.type == SegmentTypeEnum.Duration;
-      } else {
-        return false;
-      }
-    } else {
-      return false;
-    }
-  }
-
-  static Widget getRoundTitle(BuildContext context, Color color, {Segment segment, SegmentSubmodel segmentSubmodel}) {
-    if (segmentSubmodel == null) {
+  static Widget getRoundTitle(Segment segment,BuildContext context, Color color) {
       if (isEMOM(segment)) {
         return getEMOMTitle(segment, context, color);
       } else if (isAMRAP(segment)) {
@@ -70,35 +57,6 @@ class SegmentUtils {
               )
             : SizedBox();
       }
-    } else {
-      if (isEMOMforSubmodel(segmentSubmodel)) {
-        return Text(
-          "EMOM: " +
-              segment.rounds.toString() +
-              " " +
-              OlukoLocalizations.get(context, 'rounds') +
-              " " +
-              OlukoLocalizations.get(context, 'in') +
-              " " +
-              (segmentSubmodel.totalTime).toString() +
-              " " +
-              OlukoLocalizations.get(context, 'seconds'),
-          style: OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
-        );
-      } else if (isAMRAPforSubmodel(segmentSubmodel)) {
-        return Text(
-          segment.totalTime.toString() + " " + OlukoLocalizations.get(context, 'seconds').toLowerCase() + " " + "AMRAP",
-          style: OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
-        );
-      } else {
-        return (segment.rounds is int ? segment.rounds as int > 1 : false)
-            ? Text(
-                segment.rounds.toString() + " " + OlukoLocalizations.get(context, 'rounds'),
-                style: OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
-              )
-            : SizedBox();
-      }
-    }
   }
 
   static Widget getEMOMTitle(Segment segment, BuildContext context, Color color) {
@@ -300,18 +258,9 @@ class SegmentUtils {
     List<Widget> workoutWidgets = getWorkouts(segment, color);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [getRoundTitle(context, OlukoColors.white, segment: segment)] + workoutWidgets,
+      children: [getRoundTitle(segment,context, OlukoColors.white)] + workoutWidgets,
     );
   }
 }
 
-bool isEMOMforSubmodel(SegmentSubmodel segment) {
-  if (segment != null) {
-    if (segment.sections != null && segment.type != null) {
-      return segment.sections.length == 1 && segment.type == SegmentTypeEnum.RoundsAndDuration;
-    } else {
-      return false;
-    }
-  }
-  return false;
-}
+
