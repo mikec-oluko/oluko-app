@@ -137,6 +137,6 @@ class _State extends State<ClassSegmentSection> {
   }
 
   Widget getRoundTitle() {
-    return SegmentUtils.getRoundTitle(widget.segment, context, OlukoColors.grayColor);
+    return SegmentUtils.getRoundTitle( context, OlukoColors.grayColor,segment: widget.segment,);
   }
 }
