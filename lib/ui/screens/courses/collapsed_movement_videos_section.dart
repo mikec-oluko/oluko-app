@@ -45,7 +45,7 @@ class _State extends State<CollapsedMovementVideosSection> {
             SizedBox(width: 10),
             Icon(Icons.directions_run, color: Colors.white, size: 30),
             Expanded(child: SizedBox()),
-            OlukoNeumorphism.isNeumorphismDesign ? SizedBox.shrink() : widget.action
+            widget.action
           ]),
           SizedBox(height: 10),
           OlukoNeumorphism.isNeumorphismDesign
