@@ -28,9 +28,9 @@ Runs all the tests
 ```sh
 [bundle exec] fastlane android beta
 ```
-fastlane android beta
-```
+
 Submit a new Beta Build
+
 ### android deploy
 
 ```sh
