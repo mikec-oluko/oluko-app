@@ -1,7 +1,204 @@
 import 'dart:math';
 import 'dart:ui' show Color;
-
 import 'package:flutter/material.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+
+class OlukoNeumorphism {
+  static const bool isNeumorphismDesign = true;
+  static const Radius radiusValue = Radius.circular(15.0);
+
+  static NeumorphicStyle primaryButtonStyleDisable(
+      {bool useBorder = false,
+      bool ligthShadow = true,
+      bool darkShadow = true,
+      num depth = 3,
+      NeumorphicShape buttonShape,
+      NeumorphicBoxShape boxShape}) {
+    return NeumorphicStyle(
+        border: useBorder
+            ? const NeumorphicBorder(width: 1.5, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark)
+            : const NeumorphicBorder.none(),
+        depth: 5,
+        intensity: 0.5,
+        color: OlukoNeumorphismColors.initialGradientColorPrimary.withOpacity(0.25),
+        shape: buttonShape,
+        lightSource: LightSource.top,
+        boxShape: boxShape,
+        shadowDarkColorEmboss: OlukoNeumorphismColors.finalGradientColorPrimary,
+        shadowLightColorEmboss: OlukoColors.black,
+        surfaceIntensity: 1,
+        shadowLightColor: ligthShadow ? Colors.white60 : Colors.transparent,
+        shadowDarkColor: darkShadow ? Colors.black : Colors.transparent);
+  }
+
+  static NeumorphicStyle primaryButtonStyle(
+      {bool useBorder = false,
+      bool ligthShadow = true,
+      bool darkShadow = true,
+      num depth = 3,
+      NeumorphicShape buttonShape,
+      NeumorphicBoxShape boxShape}) {
+    return NeumorphicStyle(
+        border: useBorder
+            ? const NeumorphicBorder(width: 1.5, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark)
+            : const NeumorphicBorder.none(),
+        depth: 5,
+        intensity: 0.5,
+        color: OlukoNeumorphismColors.initialGradientColorPrimary,
+        shape: buttonShape,
+        lightSource: LightSource.top,
+        boxShape: boxShape,
+        shadowDarkColorEmboss: OlukoNeumorphismColors.finalGradientColorPrimary,
+        shadowLightColorEmboss: OlukoColors.black,
+        surfaceIntensity: 1,
+        shadowLightColor: ligthShadow ? Colors.white60 : Colors.transparent,
+        shadowDarkColor: darkShadow ? Colors.black : Colors.transparent);
+  }
+
+  static NeumorphicStyle secondaryButtonStyle(
+      {bool useBorder = false,
+      bool ligthShadow = true,
+      bool darkShadow = true,
+      num depth = 3,
+      NeumorphicShape buttonShape,
+      NeumorphicBoxShape boxShape}) {
+    return NeumorphicStyle(
+        border: useBorder
+            ? const NeumorphicBorder(width: 1.5, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark)
+            : const NeumorphicBorder.none(),
+        depth: 5,
+        intensity: 0.5,
+        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+        shape: buttonShape,
+        lightSource: LightSource.top,
+        boxShape: boxShape,
+        shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+        shadowLightColorEmboss: OlukoColors.black,
+        surfaceIntensity: 0.5,
+        shadowLightColor: ligthShadow ? Colors.white60 : Colors.transparent,
+        shadowDarkColor: darkShadow ? Colors.black : Colors.transparent);
+  }
+
+  static NeumorphicStyle getNeumorphicStyleForCircleElement() {
+    return const NeumorphicStyle(
+        border: NeumorphicBorder(width: 1.5, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark),
+        depth: 3,
+        intensity: 0.5,
+        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+        shape: NeumorphicShape.flat,
+        lightSource: LightSource.topLeft,
+        boxShape: NeumorphicBoxShape.circle(),
+        shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+        shadowLightColorEmboss: OlukoColors.black,
+        surfaceIntensity: 1,
+        shadowLightColor: OlukoColors.grayColor,
+        shadowDarkColor: Colors.black);
+  }
+
+  static NeumorphicStyle getNeumorphicStyleForInnerCircleWatch() {
+    return const NeumorphicStyle(
+        depth: -12,
+        intensity: 0.95,
+        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+        shape: NeumorphicShape.concave,
+        boxShape: NeumorphicBoxShape.circle(),
+        shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicSearchBarFirstColor,
+        shadowLightColorEmboss: OlukoNeumorphismColors.olukoNeumorphicSearchBarSecondColor,
+        surfaceIntensity: 1,
+        shadowLightColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+        shadowDarkColor: OlukoNeumorphismColors.olukoNeumorphicSearchBarSecondColor,
+        oppositeShadowLightSource: true);
+  }
+
+  static NeumorphicStyle getNeumorphicStyleForCircleElementNegativeDepth() {
+    return const NeumorphicStyle(
+        border: NeumorphicBorder(width: 3, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark),
+        depth: -2,
+        intensity: 0.5,
+        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+        lightSource: LightSource.topLeft,
+        boxShape: NeumorphicBoxShape.circle(),
+        surfaceIntensity: 1,
+        shadowLightColor: OlukoColors.grayColor,
+        shadowDarkColor: Colors.black);
+  }
+
+  static NeumorphicStyle getNeumorphicStyleForCircleWatchWithShadows() {
+    return NeumorphicStyle(
+        depth: 15,
+        intensity: 1,
+        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+        boxShape: const NeumorphicBoxShape.circle(),
+        shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+        shadowLightColorEmboss: OlukoNeumorphismColors.olukoNeumorphicSearchBarSecondColor.withOpacity(0.5),
+        surfaceIntensity: 0.4,
+        shadowLightColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+        shadowDarkColor: OlukoNeumorphismColors.olukoNeumorphicSearchBarSecondColor.withOpacity(0.9));
+  }
+
+  static NeumorphicStyle getNeumorphicStyleForCardElement() {
+    return NeumorphicStyle(
+        border: NeumorphicBorder(width: 1.5, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark),
+        depth: 6,
+        intensity: 0.8,
+        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+        shape: NeumorphicShape.flat,
+        lightSource: LightSource.topLeft,
+        boxShape: NeumorphicBoxShape.roundRect(BorderRadius.all(Radius.circular(5))),
+        shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+        shadowLightColorEmboss: OlukoColors.black,
+        surfaceIntensity: 1,
+        shadowLightColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+        shadowDarkColor: Colors.black);
+  }
+
+  static NeumorphicStyle getNeumorphicStyleForCardClasses(bool isStarted) {
+    return NeumorphicStyle(
+        border:
+            isStarted ? NeumorphicBorder.none() : NeumorphicBorder(width: 15, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark),
+        depth: -5,
+        intensity: 0.8,
+        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+        shape: NeumorphicShape.flat,
+        lightSource: LightSource.bottomRight,
+        boxShape: NeumorphicBoxShape.roundRect(BorderRadius.all(Radius.circular(10))),
+        shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+        shadowLightColorEmboss: OlukoColors.black,
+        surfaceIntensity: 1,
+        shadowLightColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+        shadowDarkColor: Colors.black);
+  }
+
+  static LinearGradient OlukoNeumorphicGradientPrimary() {
+    return const LinearGradient(
+        colors: [OlukoNeumorphismColors.initialGradientColorPrimary, OlukoNeumorphismColors.finalGradientColorPrimary],
+        stops: [0.0, 1],
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter);
+  }
+
+  static LinearGradient OlukoNeumorphicGradientDark() {
+    return const LinearGradient(
+        colors: [OlukoNeumorphismColors.initialGradientColorDark, OlukoNeumorphismColors.finalGradientColorDark],
+        stops: [0.0, 1],
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter);
+  }
+}
+
+class OlukoNeumorphismColors {
+  static const Color olukoNeumorphicBackgroundLigth = Color.fromRGBO(43, 47, 52, 1);
+  static const Color olukoNeumorphicBackgroundDark = Color.fromRGBO(26, 30, 33, 1);
+  static const Color olukoNeumorphicBackgroundDarker = Color.fromRGBO(32, 36, 39, 1);
+  static const Color initialGradientColorPrimary = Color.fromRGBO(192, 198, 155, 1);
+  static const Color finalGradientColorPrimary = Color.fromRGBO(192, 131, 98, 1);
+  static const Color initialGradientColorDark = Color.fromRGBO(47, 53, 58, 1);
+  static const Color finalGradientColorDark = Color.fromRGBO(28, 31, 34, 1);
+  static const Color olukoNeumorphicGreyBackgroundFlat = Color.fromRGBO(42, 45, 47, 1);
+  static const Color olukoNeumorphicSearchBarFirstColor = Color.fromRGBO(29, 35, 40, 1);
+  static const Color olukoNeumorphicSearchBarSecondColor = Color.fromRGBO(19, 19, 20, 1);
+  static const Color olukoNeumorphicBlueBackgroundColor = Color(0XFF1976D2);
+}
 
 class OlukoColors {
   static const Color black = Color(0xFF000000);
@@ -70,6 +267,8 @@ class OlukoColors {
 
   static const Color orange = Color.fromRGBO(251, 147, 133, 1);
 
+  static const Color yellow = Color.fromRGBO(254, 192, 0, 1);
+
   static const Color challengeLockedFilterColor = Color.fromRGBO(218, 5, 5, 0.2);
 
   static const Color grayColorSemiTransparent = Color.fromRGBO(148, 148, 148, 0.6);
@@ -79,6 +278,8 @@ class OlukoColors {
   static const Color taskCardBackgroundDisabled = Color.fromRGBO(30, 30, 30, 0.8);
 
   static const Color disabled = Color.fromRGBO(30, 30, 30, 0.8);
+
+  static const Color coachTabIndicatorColor = Color.fromRGBO(247, 177, 171, 1);
 
   static Color randomColor() {
     var list = [grayColorSemiTransparent, skyblue, coral, searchSuggestionsAlreadyWrittenText, inputError, purple, orange];

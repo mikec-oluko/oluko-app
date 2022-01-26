@@ -3,16 +3,31 @@ import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/enums/segment_type_enum.dart';
 import 'package:oluko_app/models/enums/counter_enum.dart';
 import 'package:oluko_app/models/enums/parameter_enum.dart';
+import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
 import 'package:oluko_app/models/timer_entry.dart';
+import 'package:oluko_app/ui/newDesignComponents/movement_items_bubbles_neumorphic.dart';
+import 'package:oluko_app/utils/screen_utils.dart';
 
 import 'oluko_localizations.dart';
 
 class SegmentUtils {
   static List<Widget> getSegmentSummary(Segment segment, BuildContext context, Color color) {
     List<Widget> workoutWidgets = getWorkouts(segment, color);
-    return [getRoundTitle(segment, context, color), SizedBox(height: 12.0)] + workoutWidgets;
+    return OlukoNeumorphism.isNeumorphismDesign
+        ? [getRoundTitle(segment, context, color), SizedBox(height: 12.0)] + workoutWidgets
+        : [getRoundTitle(segment, context, color), SizedBox(height: 12.0)] + workoutWidgets;
+  }
+
+  static List<Widget> getSegmentSummaryforNeumorphic(Segment segment, BuildContext context, Color color,
+      {bool roundTitle = true, bool restTime = true, List<Movement> movements = const [], bool viewDetailsScreen = false}) {
+    List<Widget> workoutWidgets = getWorkoutsforNeumorphic(segment, color,
+        restTime: restTime, movements: movements, context: context, viewDetailsScreen: viewDetailsScreen);
+    if (roundTitle)
+      return [getRoundTitle(segment, context, color), SizedBox(height: 12.0)] + workoutWidgets;
+    else
+      return workoutWidgets;
   }
 
   static bool isEMOM(Segment segment) {
@@ -29,13 +44,15 @@ class SegmentUtils {
     } else if (isAMRAP(segment)) {
       return Text(
         segment.totalTime.toString() + " " + OlukoLocalizations.get(context, 'seconds').toLowerCase() + " " + "AMRAP",
-        style: OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
+        style: OlukoNeumorphism.isNeumorphismDesign
+            ? OlukoFonts.olukoSmallFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold)
+            : OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
       );
     } else {
       return segment.rounds > 1
           ? Text(
               segment.rounds.toString() + " " + OlukoLocalizations.get(context, 'rounds'),
-              style: OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
+              style: OlukoFonts.olukoSuperBigFont(customColor: color, custoFontWeight: FontWeight.bold),
             )
           : SizedBox();
     }
@@ -53,7 +70,9 @@ class SegmentUtils {
           (segment.totalTime).toString() +
           " " +
           OlukoLocalizations.get(context, 'seconds'),
-      style: OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
+      style: OlukoNeumorphism.isNeumorphismDesign
+          ? OlukoFonts.olukoSmallFont(customColor: color, custoFontWeight: FontWeight.bold)
+          : OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
     );
   }
 
@@ -71,12 +90,53 @@ class SegmentUtils {
     return workouts;
   }
 
+  static List<Widget> getWorkoutsforNeumorphic(Segment segment, Color color,
+      {bool restTime = true, List<Movement> movements = const [], BuildContext context, bool viewDetailsScreen = false}) {
+    List<Widget> workouts = [];
+    if (segment.sections != null) {
+      for (var sectionIndex = 0; sectionIndex < segment.sections.length; sectionIndex++) {
+        for (var movementIndex = 0; movementIndex < segment.sections[sectionIndex].movements.length; movementIndex++) {
+          MovementSubmodel movement = segment.sections[sectionIndex].movements[movementIndex];
+          Movement movementWithImage;
+          if (movements.isNotEmpty)
+            for (var movementsIndex = 0; movementsIndex < movements.length; movementsIndex++) {
+              if (movement.id == movements[movementsIndex].id) movementWithImage = movements[movementsIndex];
+            }
+          if (restTime)
+            workouts.add(getTextWidget(getLabel(movement), color));
+          else if (movement.name != "Rest time" && movement.name != "Rest") {
+            workouts.add(Row(
+              children: [
+                MovementItemBubblesNeumorphic(
+                  content: movements,
+                  viewDetailsScreen: true,
+                  movement: movementWithImage, //movementWithImage=null? overflow error
+                  width: ScreenUtils.width(context) / 4,
+                  bubbleName: false,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8),
+                  child: getTextWidget(getLabel(movement), color),
+                ),
+              ],
+            ));
+          }
+          ;
+        }
+      }
+    }
+
+    return workouts;
+  }
+
   static Widget getTextWidget(String text, Color color) {
     return Padding(
         padding: EdgeInsets.only(bottom: 12.0),
         child: Text(
           text,
-          style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400, customColor: color),
+          style: OlukoNeumorphism.isNeumorphismDesign
+              ? OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400, customColor: color)
+              : OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w400, customColor: color),
         ));
   }
 
@@ -111,8 +171,8 @@ class SegmentUtils {
               MovementSubmodel movementSubmodel = segment.sections[sectionIndex].movements[0];
               entries.add(TimerEntry(
                   movement: movementSubmodel,
-                  parameter: movementSubmodel.parameter,
-                  value: movementSubmodel.value,
+                  parameter: movementSubmodel.parameter == null ? ParameterEnum.reps : movementSubmodel.parameter,
+                  value: movementSubmodel.value == null ? 5 : movementSubmodel.value,
                   round: roundIndex,
                   sectionIndex: sectionIndex,
                   counter: movementSubmodel.counter,
@@ -121,8 +181,8 @@ class SegmentUtils {
               MovementSubmodel movementSubmodel = segment.sections[sectionIndex].movements[0];
               entries.add(TimerEntry(
                   movement: movementSubmodel,
-                  parameter: movementSubmodel.parameter,
-                  value: movementSubmodel.value,
+                  parameter: movementSubmodel.parameter == null ? ParameterEnum.reps : movementSubmodel.parameter,
+                  value: movementSubmodel.value == null ? 5 : movementSubmodel.value,
                   round: roundIndex,
                   sectionIndex: sectionIndex,
                   counter: movementSubmodel.counter,
@@ -132,20 +192,40 @@ class SegmentUtils {
         }
       }
     }
+    if (entries[entries.length - 1].movement.isRestTime && entries[entries.length - 1].movement.counter != CounterEnum.none) {
+      entries.removeAt(entries.length - 1);
+    }
     return entries;
   }
 
   static String getLabel(MovementSubmodel movement) {
-    String label = movement.value.toString();
-    switch (movement.parameter) {
-      case ParameterEnum.duration:
-        label += "s";
-        break;
-      case ParameterEnum.reps:
-        label += "x";
-        break;
+    String label = movement.value == null ? "5" : movement.value.toString();
+    String parameter;
+    if (movement.parameter != null) {
+      switch (movement.parameter) {
+        case ParameterEnum.duration:
+          label += "s";
+          parameter = "s";
+          break;
+        case ParameterEnum.reps:
+          label += "x";
+          parameter = "x";
+          break;
+        case ParameterEnum.distance:
+          label += "m";
+          parameter = "m";
+          break;
+      }
+    } else {
+      label += "x";
     }
+
     label += " " + movement.name;
+    if (movement.isBothSide) {
+      int qty = (movement.value / 2).toInt();
+      String text = qty.toString() + parameter + " " + movement.name;
+      label += " (" + text + " / " + text + ")";
+    }
     return label;
   }
 

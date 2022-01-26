@@ -38,7 +38,7 @@ class VideoProcess {
   }
 
   ///Generate a thumbnail for a Video with the specified width & height.
-  static Future<String> getThumbnailForVideo(PickedFile video, int width, {int height}) async {
+  static Future<String> getThumbnailForVideo(XFile video, int width, {int height}) async {
     MediaInformation videoInfo = await EncodingProvider.getMediaInformation(video.path);
 
     if (height == null) {

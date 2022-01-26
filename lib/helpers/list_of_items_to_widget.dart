@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/enums/file_type_enum.dart';
@@ -12,8 +13,6 @@ import 'package:oluko_app/ui/components/coach_assessment_card.dart';
 import 'package:oluko_app/ui/components/coach_tab_challenge_card.dart';
 import 'package:oluko_app/ui/components/coach_tab_segment_card.dart';
 import 'package:oluko_app/ui/components/image_and_video_container.dart';
-import 'package:oluko_app/utils/oluko_localizations.dart';
-
 import 'coach_segment_content.dart';
 import 'coach_segment_info.dart';
 import 'enum_collection.dart';
@@ -23,35 +22,36 @@ class TransformListOfItemsToWidget {
       {List<TransformationJourneyUpload> tansformationJourneyData,
       List<TaskSubmission> assessmentVideoData,
       List<Challenge> upcomingChallenges,
+      List<ChallengeNavigation> challengeSegments,
       ActualProfileRoute requestedFromRoute,
-      UserResponse requestedUser}) {
-    List<Widget> contentForSection = [];
+      UserResponse requestedUser,
+      bool isFriend,
+      bool useAudio = true}) {
+    final List<Widget> contentForSection = [];
 
-    if (tansformationJourneyData != null &&
-        (assessmentVideoData == null && upcomingChallenges == null)) {
-      tansformationJourneyData.forEach((contentUploaded) {
-        contentForSection.add(getImageAndVideoCard(
-            transformationJourneyContent: contentUploaded,
-            routeForContent: requestedFromRoute));
-      });
+    if (tansformationJourneyData != null && (assessmentVideoData == null && upcomingChallenges == null)) {
+      for (final contentUploaded in tansformationJourneyData) {
+        contentForSection.add(getImageAndVideoCard(transformationJourneyContent: contentUploaded, routeForContent: requestedFromRoute));
+      }
     }
 
-    if (assessmentVideoData != null &&
-        (tansformationJourneyData == null && upcomingChallenges == null)) {
-      assessmentVideoData.forEach((assessmentVideo) {
-        contentForSection.add(getImageAndVideoCard(
-            taskSubmissionContent: assessmentVideo,
-            routeForContent: requestedFromRoute));
-      });
+    if (assessmentVideoData != null && (tansformationJourneyData == null && upcomingChallenges == null)) {
+      for (final assessmentVideo in assessmentVideoData) {
+        if ((requestedUser.id == assessmentVideo.createdBy) || (assessmentVideo.isPublic && isFriend != false)) {
+          contentForSection.add(getImageAndVideoCard(taskSubmissionContent: assessmentVideo, routeForContent: requestedFromRoute));
+        }
+      }
     }
-
-    if (upcomingChallenges != null &&
-        (tansformationJourneyData == null && assessmentVideoData == null)) {
-      upcomingChallenges.forEach((challenge) {
+    if (upcomingChallenges != null && (tansformationJourneyData == null && assessmentVideoData == null)) {
+      for (final challenge in upcomingChallenges) {
         contentForSection.add(getImageAndVideoCard(
-            upcomingChallengesContent: challenge,
-            routeForContent: requestedFromRoute,
-            requestedUser: requestedUser));
+            upcomingChallengesContent: challenge, routeForContent: requestedFromRoute, requestedUser: requestedUser, useAudio: useAudio));
+      }
+    }
+    if ((challengeSegments != null && upcomingChallenges == null) && (tansformationJourneyData == null && assessmentVideoData == null)) {
+      challengeSegments.forEach((challengeSegment) {
+        contentForSection.add(getImageAndVideoCard(
+            challengeSegment: challengeSegment, routeForContent: requestedFromRoute, requestedUser: requestedUser, useAudio: useAudio));
       });
     }
     return contentForSection.toList();
@@ -62,7 +62,9 @@ class TransformListOfItemsToWidget {
       {TransformationJourneyUpload transformationJourneyContent,
       TaskSubmission taskSubmissionContent,
       Challenge upcomingChallengesContent,
+      ChallengeNavigation challengeSegment,
       ActualProfileRoute routeForContent,
+      bool useAudio = false,
       UserResponse requestedUser}) {
     Widget contentForReturn = SizedBox();
 
@@ -71,10 +73,7 @@ class TransformListOfItemsToWidget {
         padding: const EdgeInsets.all(5.0),
         child: ImageAndVideoContainer(
           backgroundImage: transformationJourneyContent.thumbnail,
-          isContentVideo:
-              transformationJourneyContent.type == FileTypeEnum.video
-                  ? true
-                  : false,
+          isContentVideo: transformationJourneyContent.type == FileTypeEnum.video ? true : false,
           videoUrl: transformationJourneyContent.file,
           displayOnViewNamed: routeForContent,
           originalContent: transformationJourneyContent,
@@ -85,13 +84,9 @@ class TransformListOfItemsToWidget {
       contentForReturn = Padding(
         padding: const EdgeInsets.all(5.0),
         child: ImageAndVideoContainer(
-          backgroundImage: taskSubmissionContent.video.thumbUrl != null
-              ? taskSubmissionContent.video.thumbUrl
-              : '',
+          backgroundImage: taskSubmissionContent.video.thumbUrl != null ? taskSubmissionContent.video.thumbUrl : '',
           isContentVideo: taskSubmissionContent.video != null,
-          videoUrl: taskSubmissionContent.video.url != null
-              ? taskSubmissionContent.video.url
-              : '',
+          videoUrl: taskSubmissionContent.video.url != null ? taskSubmissionContent.video.url : '',
           originalContent: taskSubmissionContent,
           displayOnViewNamed: routeForContent,
         ),
@@ -100,40 +95,40 @@ class TransformListOfItemsToWidget {
     if (upcomingChallengesContent != null) {
       contentForReturn = Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5),
+        child: ChallengesCard(challenge: upcomingChallengesContent, routeToGo: "/", userRequested: requestedUser, useAudio: useAudio),
+      );
+    }
+    if (challengeSegment != null) {
+      contentForReturn = Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 5),
         child: ChallengesCard(
-            challenge: upcomingChallengesContent,
-            routeToGo: "/",
-            userRequested: requestedUser),
+          segmentChallenge: challengeSegment,
+          userRequested: requestedUser,
+          useAudio: useAudio,
+          navigateToSegment: true,
+        ),
       );
     }
     return contentForReturn;
   }
 
-  static List<Widget> coachChallengesAndSegments(
-      {List<Challenge> challenges, List<CoachSegmentContent> segments}) {
-    List<Widget> contentForSection = [];
-
-    if (challenges.length != 0) {
-      challenges.forEach((challenge) {
-        contentForSection.add(returnCardForChallenge(challenge));
-      });
-    }
-
-    if (segments.length != 0) {
-      segments.forEach((segment) {
+  static List<Widget> coachChallengesAndSegments({List<CoachSegmentContent> segments}) {
+    final List<Widget> contentForSection = [];
+    if (segments.isNotEmpty) {
+      for (final segment in segments) {
         if (segment.completedAt == null) {
-          contentForSection.add(returnCardForSegment(segment));
+          contentForSection.add(returnCardForChallenge(segment));
         }
-      });
+      }
     }
     return contentForSection;
   }
 
-  static Widget returnCardForChallenge(Challenge upcomingChallengesContent) {
+  static Widget returnCardForChallenge(CoachSegmentContent challengeSegment) {
     Widget contentForReturn = SizedBox();
     contentForReturn = Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5),
-      child: CoachTabChallengeCard(challenge: upcomingChallengesContent),
+      child: CoachTabChallengeCard(challenge: challengeSegment),
     );
     return contentForReturn;
   }
@@ -142,65 +137,63 @@ class TransformListOfItemsToWidget {
     Widget contentForReturn = SizedBox();
     contentForReturn = Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5),
-      child: GestureDetector(
-          onTap: () {}, child: CoachTabSegmentCard(segment: segment)),
+      child: GestureDetector(onTap: () {}, child: CoachTabSegmentCard(segment: segment)),
     );
     return contentForReturn;
   }
 
-  static List<Widget> getAssessmentCards(
-      {List<Task> tasks, List<TaskSubmission> tasksSubmitted}) {
-    List<Widget> contentForSection = [];
-    tasks.forEach((task) {
-      contentForSection.add(returnCardForAssessment(task, tasksSubmitted));
-    });
+  static List<Widget> getAssessmentCards({List<Task> tasks, List<TaskSubmission> tasksSubmitted, bool introductionVideoDone}) {
+    final List<Widget> contentForSection = [];
+    for (final task in tasks) {
+      contentForSection.add(returnCardForAssessment(task, tasksSubmitted, introductionVideoDone));
+    }
     return contentForSection;
   }
 
-  static Widget returnCardForAssessment(
-      Task task, List<TaskSubmission> tasksSubmitted) {
+  static Widget returnCardForAssessment(Task task, List<TaskSubmission> tasksSubmitted, bool introductionVideoDone) {
     return Padding(
         padding: const EdgeInsets.all(5.0),
-        child:
-            CoachAssessmentCard(task: task, assessmentVideos: tasksSubmitted));
+        child: CoachAssessmentCard(
+          task: task,
+          assessmentVideos: tasksSubmitted,
+          introductionVideoDone: introductionVideoDone,
+        ));
   }
 
-  static List<InfoForSegments> segments(
-      List<CourseEnrollment> courseEnrollments) {
-    List<InfoForSegments> listOfSegments = [];
+  static List<InfoForSegments> segments(List<CourseEnrollment> courseEnrollments) {
+    final List<InfoForSegments> listOfSegments = [];
     String className;
     String classImage;
 
-    courseEnrollments.forEach((courseEnrollment) {
-      courseEnrollment.classes.forEach((classToCheck) {
+    for (final courseEnrollment in courseEnrollments) {
+      for (final classToCheck in courseEnrollment.classes) {
         className = classToCheck.name;
         classImage = classToCheck.image;
-        InfoForSegments infoForSegmentElement = InfoForSegments(
-            classImage: classImage, className: className, segments: []);
-        classToCheck.segments.forEach((segment) {
+        final InfoForSegments infoForSegmentElement = InfoForSegments(classImage: classImage, className: className, segments: []);
+        for (final segment in classToCheck.segments) {
           infoForSegmentElement.segments.add(segment);
-        });
+        }
         listOfSegments.add(infoForSegmentElement);
-      });
-    });
+      }
+    }
     return listOfSegments;
   }
 
-  static List<CoachSegmentContent> createSegmentContentInforamtion(
-      List<InfoForSegments> segments) {
-    List<CoachSegmentContent> coachSegmentContent = [];
+  static List<CoachSegmentContent> createSegmentContentInforamtion(List<InfoForSegments> segments) {
+    final List<CoachSegmentContent> coachSegmentContent = [];
 
-    segments.forEach((segment) {
-      segment.segments.forEach((actualSegment) {
+    for (final segment in segments) {
+      for (final actualSegment in segment.segments) {
         coachSegmentContent.add(CoachSegmentContent(
             segmentId: actualSegment.id,
             classImage: segment.classImage,
             className: segment.className,
             segmentName: actualSegment.name,
             completedAt: actualSegment.completedAt,
-            segmentReference: actualSegment.reference));
-      });
-    });
+            segmentReference: actualSegment.reference,
+            isChallenge: actualSegment.isChallenge));
+      }
+    }
     return coachSegmentContent;
   }
 }

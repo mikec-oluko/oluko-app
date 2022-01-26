@@ -1,9 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/sign_up_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/sign_up_request.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/screens/authentication/peek_password.dart';
 import 'package:oluko_app/utils/app_loader.dart';
 import 'package:global_configuration/global_configuration.dart';
@@ -74,8 +76,8 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
                                           child: Stack(children: [
                                             Align(
                                               alignment: Alignment.center,
-                                              child: Image.network(
-                                                'https://img.icons8.com/color/452/google-logo.png',
+                                              child: Image(
+                                                image: CachedNetworkImageProvider('https://img.icons8.com/color/452/google-logo.png'),
                                                 width: 30,
                                               ),
                                             ),
@@ -94,8 +96,9 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
                                           child: Stack(children: [
                                             Align(
                                               alignment: Alignment.center,
-                                              child: Image.network(
-                                                'https://cdn.icon-icons.com/icons2/1826/PNG/512/4202110facebooklogosocialsocialmedia-115707_115594.png',
+                                              child: CachedNetworkImage(
+                                                imageUrl:
+                                                    'https://cdn.icon-icons.com/icons2/1826/PNG/512/4202110facebooklogosocialsocialmedia-115707_115594.png',
                                                 width: 30,
                                               ),
                                             ),
@@ -133,7 +136,7 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
                       ]));
                 })),
             InkWell(
-              onTap: () => Navigator.pushNamed(context, '/log-in'),
+              onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.logInUsername]),
               child: Padding(
                 padding: EdgeInsets.only(top: 10),
                 child: Column(

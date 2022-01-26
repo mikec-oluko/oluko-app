@@ -1,10 +1,12 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/coach_segment_content.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class CoachTabChallengeCard extends StatefulWidget {
-  final Challenge challenge;
+  final CoachSegmentContent challenge;
   const CoachTabChallengeCard({this.challenge});
 
   @override
@@ -27,7 +29,7 @@ class _CoachTabChallengeCardState extends State<CoachTabChallengeCard> {
                 child: Container(
                   decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: NetworkImage(widget.challenge.image),
+                        image: CachedNetworkImageProvider(widget.challenge.classImage),
                         fit: BoxFit.cover,
                         onError: (exception, stackTrace) {
                           return Text('Your error widget...');
@@ -57,7 +59,7 @@ class _CoachTabChallengeCardState extends State<CoachTabChallengeCard> {
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 2),
                             child: Text(
-                              widget.challenge.challengeName,
+                              widget.challenge.segmentName,
                               overflow: TextOverflow.ellipsis,
                               style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                             ),

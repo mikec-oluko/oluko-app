@@ -31,7 +31,13 @@ class TimeConverter {
   String formatTimeWithCentiSeconds(Duration duration) {
     String minutes = (duration.inMinutes).toString().padLeft(2, '0');
     String seconds = (duration.inSeconds % 60).toString().padLeft(2, '0');
-    String centisecond = ((duration.inMilliseconds / 10) - (duration.inSeconds % 60 * 100) - (duration.inMinutes * 60 * 100) - (duration.inHours * 60 * 60 * 100)).round().toString().padLeft(2, '0');
+    String centisecond = ((duration.inMilliseconds / 10) -
+            (duration.inSeconds % 60 * 100) -
+            (duration.inMinutes * 60 * 100) -
+            (duration.inHours * 60 * 60 * 100))
+        .round()
+        .toString()
+        .padLeft(2, '0');
     return '$minutes:$seconds:$centisecond';
   }
 
@@ -43,18 +49,30 @@ class TimeConverter {
   }
 
   static String toCourseDuration(int weeks, int classes, BuildContext context) {
-    return weeks.toString() + " " + OlukoLocalizations.get(context, 'weeks') + ", " + classes.toString() + " " + OlukoLocalizations.get(context, 'classes');
+    return weeks.toString() +
+        " " +
+        OlukoLocalizations.get(context, 'weeks') +
+        ", " +
+        classes.toString() +
+        " " +
+        OlukoLocalizations.get(context, 'classes');
   }
 
   static String toClassProgress(int currentClass, int totalClasses, BuildContext context) {
-    return OlukoLocalizations.get(context, 'class') + " " + (currentClass + 1).toString() + " " + OlukoLocalizations.get(context, 'of') + " " + totalClasses.toString();
+    return OlukoLocalizations.get(context, 'class') +
+        " " +
+        (currentClass + 1).toString() +
+        " " +
+        OlukoLocalizations.get(context, 'of') +
+        " " +
+        totalClasses.toString();
   }
 
   static String returnDateAndTimeOnStringFormat({Timestamp dateToFormat, BuildContext context, String separator}) {
     //date doc: https://pub.dev/documentation/intl/latest/intl/DateFormat-class.html
     //7/10/1996 5:08 PM
     final String ymdLocalized = DateFormat.yMd(Localizations.localeOf(context).languageCode).add_jm().format(dateToFormat.toDate());
-    if(separator != null) ymdLocalized.replaceAll('/', '.');
+    if (separator != null) ymdLocalized.replaceAll('/', '.');
     final dateSplitted = ymdLocalized.split(' ');
     dateSplitted[0] = '${dateSplitted[0]} |';
     return dateSplitted.join(' ');
@@ -68,5 +86,19 @@ class TimeConverter {
       ymdLocalized.replaceAll('/', separator);
     }
     return ymdLocalized;
+  }
+
+  static String getDateAndTimeOnStringFormat({Timestamp dateToFormat, BuildContext context}) {
+    final String ymdLocalized = DateFormat.yMd(Localizations.localeOf(context).languageCode).add_jm().format(dateToFormat.toDate());
+    ymdLocalized.replaceAll('/', '.');
+    final dateSplitted = ymdLocalized.split(' ');
+    dateSplitted[0] = '${dateSplitted[0]},';
+    List<String> months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    String ret = dateSplitted[1] + " " + dateSplitted[2];
+    String day = dateToFormat.toDate().day.toString();
+    String year = dateToFormat.toDate().year.toString();
+    String month = months[dateToFormat.toDate().month - 1];
+    ret += ", " + day + " " + month + ", " + year;
+    return ret;
   }
 }

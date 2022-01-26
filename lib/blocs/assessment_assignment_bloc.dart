@@ -1,4 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
+// ignore_for_file: prefer_is_not_operator
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/models/assessment.dart';
 import 'package:oluko_app/models/assessment_assignment.dart';
@@ -42,7 +43,6 @@ class AssessmentAssignmentBloc extends Cubit<AssessmentAssignmentState> {
   }
 
   void setAsSeen(String userId) async {
-    emit(AssessmentAssignmentLoading());
     try {
       await AssessmentAssignmentRepository.setAsSeen(userId);
     } catch (exception, stackTrace) {

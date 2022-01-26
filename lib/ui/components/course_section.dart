@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:nil/nil.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -14,6 +15,7 @@ class CourseSection extends StatefulWidget {
   final CourseEnrollment courseEnrollment;
   final int courseIndex;
   final int qtyCourses;
+  final int classIndex;
 
   const CourseSection({
     Key key,
@@ -21,6 +23,7 @@ class CourseSection extends StatefulWidget {
     @required this.courseEnrollment,
     @required this.courseIndex,
     @required this.qtyCourses,
+    this.classIndex,
   }) : super(key: key);
 
   @override
@@ -33,7 +36,9 @@ class _CourseSectionState extends State<CourseSection> {
     return Container(
         decoration: BoxDecoration(
             image: DecorationImage(
-          image: widget.course.image != null ? NetworkImage(widget.course.image) : AssetImage("assets/home/mvt.png") as ImageProvider,
+          image: widget.course.image != null
+              ? CachedNetworkImageProvider(widget.course.image)
+              : AssetImage("assets/home/mvt.png") as ImageProvider,
           fit: widget.course.image != null ? BoxFit.cover : BoxFit.contain,
         )),
         height: ScreenUtils.height(context),
@@ -60,7 +65,7 @@ class _CourseSectionState extends State<CourseSection> {
           SizedBox(height: 2),
           CourseStepSection(totalCourseSteps: widget.qtyCourses, currentCourseStep: widget.courseIndex + 1),
           SizedBox(height: 25),
-          ClassCarouselGallery(courseEnrollment: widget.courseEnrollment),
+          ClassCarouselGallery(courseEnrollment: widget.courseEnrollment, courseIndex: widget.courseIndex, classIndex: widget.classIndex),
         ]));
   }
 }

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -5,6 +6,7 @@ import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/user_helper.dart';
 import 'package:oluko_app/models/submodels/friend_model.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
@@ -89,7 +91,8 @@ class _FriendCardState extends State<FriendCard> {
                         ),
                       ],
                     ),
-                    Text(widget.friendUser.username ?? '', style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor)),
+                    Text(UserHelper.printUsername(widget.friendUser.username, widget.friendUser.id) ?? '',
+                        style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor)),
                   ],
                 ),
               )
@@ -139,7 +142,7 @@ class _FriendCardState extends State<FriendCard> {
       setBackgroundImageAsError();
       return null;
     } else {
-      return NetworkImage(avatarUrl);
+      return CachedNetworkImageProvider(avatarUrl);
     }
   }
 }

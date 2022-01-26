@@ -74,7 +74,7 @@ class _State extends State<StatisticChart> {
                     child: Column(children: [
                       Row(
                         children: [
-                          Text((widget.courseStatistics != null ? widget.courseStatistics.takingUp.toString() : '0'),
+                          Text((widget.courseStatistics != null ? widget.courseStatistics.completed.toString() : '0'),
                               style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold)),
                           Text(' ' + OlukoLocalizations.get(context, 'people'), style: OlukoFonts.olukoSuperBigFont())
                         ],
@@ -82,19 +82,19 @@ class _State extends State<StatisticChart> {
                       Row(
                         children: [
                           Text(
-                            OlukoLocalizations.of(context).find('haveTakingUpThis'),
+                            OlukoLocalizations.of(context).find('completedIt'),
                             style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor),
                           ),
                         ],
                       ),
-                      Row(
+                    /*Row(
                         children: [
                           Text(
                             OlukoLocalizations.get(context, 'courseSmall'),
                             style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor),
                           ),
                         ],
-                      ),
+                      ),*/
                     ]),
                   ),
                 ],

@@ -85,4 +85,13 @@ class MovementRepository {
       return Movement.fromJson(movementData);
     }).toList();
   }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getMovementsSubscription() {
+    Stream<QuerySnapshot<Map<String, dynamic>>> movementsStream = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('movements')
+        .snapshots();
+    return movementsStream;
+  }
 }

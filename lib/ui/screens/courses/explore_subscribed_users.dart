@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
+import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
+import 'package:oluko_app/helpers/enum_collection.dart';
+import 'package:oluko_app/helpers/user_helper.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
@@ -52,7 +55,7 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
                         ),
                       ),
                       if (subscribedCourseUsersState is SubscribedCourseUsersSuccess)
-                        usersGrid(subscribedCourseUsersState.favoriteUsers)
+                        usersGrid(subscribedCourseUsersState.favoriteUsers, true)
                       else
                         const SizedBox(),
                       Padding(
@@ -63,7 +66,9 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
                           ],
                         ),
                       ),
-                      subscribedCourseUsersState is SubscribedCourseUsersSuccess ? usersGrid(subscribedCourseUsersState.users) : SizedBox()
+                      subscribedCourseUsersState is SubscribedCourseUsersSuccess
+                          ? usersGrid(subscribedCourseUsersState.users, false)
+                          : SizedBox()
                     ],
                   );
                 }),
@@ -83,7 +88,7 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
     );
   }
 
-  Widget usersGrid(List<UserResponse> users) {
+  Widget usersGrid(List<UserResponse> users, bool areFriends) {
     if (users.isNotEmpty) {
       return GridView.count(
           childAspectRatio: 0.7,
@@ -93,20 +98,35 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
           children: users
               .map((user) => Column(
                     children: [
-                      StoriesItem(
-                        maxRadius: 30,
-                        imageUrl: user.avatar ?? UserUtils().defaultAvatarImageUrl,
-                      ),
+                      if (areFriends)
+                        StoriesItem(
+                          maxRadius: 30,
+                          imageUrl: user.avatarThumbnail,
+                          bloc: StoryListBloc(),
+                          getStories: true,
+                          itemUserId: user.id,
+                          currentUserId: loggedUser.user.id,
+                          name: user.firstName,
+                          from: StoriesItemFrom.friends,
+                        )
+                      else
+                        StoriesItem(
+                          maxRadius: 30,
+                          imageUrl: user.avatarThumbnail,
+                          name: user.firstName,
+                        ),
                       Padding(
                         padding: const EdgeInsets.only(top: 8.0, bottom: 0.0),
                         child: Text(
-                          '${user.firstName} ${user.lastName}',
+                          user.firstName != null && user.lastName != null && user.firstName.isNotEmpty && user.lastName.isNotEmpty
+                              ? '${user.firstName} ${user.lastName}'
+                              : '',
                           style: const TextStyle(color: Colors.white, fontSize: 13),
                           textAlign: TextAlign.center,
                         ),
                       ),
                       Text(
-                        user.username,
+                        user.username != null && user.username.isNotEmpty ? UserHelper.printUsername(user.username, user.id) : '',
                         style: const TextStyle(color: Colors.grey, fontSize: 10),
                         textAlign: TextAlign.center,
                       )

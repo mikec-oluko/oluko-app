@@ -26,4 +26,13 @@ class CourseCategoryRepository {
     });
     return response;
   }
+
+    Stream<QuerySnapshot<Map<String, dynamic>>> getCategoriesSubscription() {
+    Stream<QuerySnapshot<Map<String, dynamic>>> categoriesStream = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('courseCategories')
+        .snapshots();
+    return categoriesStream;
+  }
 }

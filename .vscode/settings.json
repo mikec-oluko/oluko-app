@@ -14,12 +14,15 @@
         "statusBarItem.hoverBackground": "#1aa7a7",
         "titleBar.inactiveBackground": "#137b7b99",
         "titleBar.inactiveForeground": "#e7e7e799",
-        "editorGroup.border": "#1aa7a7",
-        "panel.border": "#1aa7a7",
         "sash.hoverBorder": "#1aa7a7",
-        "sideBar.border": "#1aa7a7",
         "statusBarItem.remoteBackground": "#137b7b",
         "statusBarItem.remoteForeground": "#e7e7e7"
     },
-    "peacock.color": "#137b7b"
+    "peacock.color": "#137b7b",
+    "cSpell.words": [
+        "appbundle",
+        "fastlane",
+        "oluko",
+        "testflight"
+    ]
 }

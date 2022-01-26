@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -9,15 +10,17 @@ class CoachTimelineVideoContent extends StatefulWidget {
   final String videoTitle, videoThumbnail;
   final DateTime date;
   final CoachFileTypeEnum fileType;
+
   @override
   _CoachTimelineVideoContentState createState() => _CoachTimelineVideoContentState();
 }
 
 class _CoachTimelineVideoContentState extends State<CoachTimelineVideoContent> {
+  final ImageProvider defaultImage = const AssetImage('assets/home/mvtthumbnail.png');
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: OlukoColors.black,
+      color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
@@ -42,7 +45,9 @@ class _CoachTimelineVideoContentState extends State<CoachTimelineVideoContent> {
                                       decoration: BoxDecoration(
                                           borderRadius: const BorderRadius.all(Radius.circular(5)),
                                           image: DecorationImage(
-                                            image: NetworkImage(widget.videoThumbnail),
+                                            image: widget.videoThumbnail != null
+                                                ? CachedNetworkImageProvider(widget.videoThumbnail)
+                                                : defaultImage,
                                             fit: BoxFit.cover,
                                           )))),
                               Align(
@@ -64,11 +69,9 @@ class _CoachTimelineVideoContentState extends State<CoachTimelineVideoContent> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(CoachHeders.getContentHeader(context: context, fileType: widget.fileType),
-                                  style: OlukoFonts.olukoMediumFont(
-                                      customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
+                                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500)),
                               Text(widget.videoTitle,
-                                  style: OlukoFonts.olukoMediumFont(
-                                      customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
+                                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500)),
                             ],
                           ),
                         )

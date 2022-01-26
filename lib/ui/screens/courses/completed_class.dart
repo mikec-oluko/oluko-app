@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -18,8 +19,9 @@ import 'package:oluko_app/utils/time_converter.dart';
 class CompletedClass extends StatefulWidget {
   final CourseEnrollment courseEnrollment;
   final int classIndex;
+  final int courseIndex;
 
-  CompletedClass({Key key, this.courseEnrollment, this.classIndex}) : super(key: key);
+  CompletedClass({Key key, this.courseEnrollment, this.classIndex, this.courseIndex}) : super(key: key);
 
   @override
   _CompletedClassState createState() => _CompletedClassState();
@@ -28,15 +30,18 @@ class CompletedClass extends StatefulWidget {
 class _CompletedClassState extends State<CompletedClass> {
   User _user;
 
-  PickedFile _image;
+  XFile _image;
   final imagePicker = ImagePicker();
 
   String _imageUrl;
 
   DateTime _date;
 
+  bool newSelfieUploaded;
+
   @override
   void initState() {
+    newSelfieUploaded = false;
     super.initState();
   }
 
@@ -55,6 +60,7 @@ class _CompletedClassState extends State<CompletedClass> {
   Widget form() {
     return Scaffold(
         appBar: OlukoAppBar(
+          showBackButton: false,
           showDivider: false,
           title: ' ',
           actions: [],
@@ -74,7 +80,14 @@ class _CompletedClassState extends State<CompletedClass> {
                     OlukoPrimaryButton(
                         title: OlukoLocalizations.get(context, 'done'),
                         onPressed: () {
-                          Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.insideClass]));
+                          if (widget.classIndex < widget.courseEnrollment.classes.length - 1) {
+                            Navigator.pushNamed(context, routeLabels[RouteEnum.root], arguments: {
+                              'index': widget.courseIndex,
+                              'classIndex': widget.classIndex + 1,
+                            });
+                          } else {
+                            Navigator.pushNamed(context, routeLabels[RouteEnum.root]);
+                          }
                         })
                   ])),
               SizedBox(height: 20),
@@ -83,8 +96,10 @@ class _CompletedClassState extends State<CompletedClass> {
 
   Widget showPhotoFrame() {
     return BlocBuilder<CourseEnrollmentUpdateBloc, CourseEnrollmentUpdateState>(builder: (context, courseEnrollmentUpdateState) {
-      if (courseEnrollmentUpdateState is SaveSelfieSuccess) {
-        _imageUrl = courseEnrollmentUpdateState.courseEnrollment.classes[widget.classIndex].selfieThumbnailUrl;
+      if (newSelfieUploaded) {
+        if (courseEnrollmentUpdateState is SaveSelfieSuccess) {
+          _imageUrl = courseEnrollmentUpdateState.courseEnrollment.classes[widget.classIndex].selfieThumbnailUrl;
+        }
         _date = DateTime.now();
         return getPhotoFrame();
       } else {
@@ -124,7 +139,7 @@ class _CompletedClassState extends State<CompletedClass> {
                       decoration: BoxDecoration(
                         image: DecorationImage(
                           fit: BoxFit.fill,
-                          image: NetworkImage(_imageUrl),
+                          image: CachedNetworkImageProvider(_imageUrl ?? _image.path),
                         ),
                       ),
                     ))),
@@ -157,8 +172,13 @@ class _CompletedClassState extends State<CompletedClass> {
   }
 
   showCameraAndSaveSelfie() async {
-    _image = await imagePicker.getImage(source: ImageSource.camera);
-    BlocProvider.of<CourseEnrollmentUpdateBloc>(context)..saveSelfie(widget.courseEnrollment, widget.classIndex, _image);
+    _image = await imagePicker.pickImage(source: ImageSource.camera, preferredCameraDevice: CameraDevice.front);
+    if (_image != null) {
+      BlocProvider.of<CourseEnrollmentUpdateBloc>(context).saveSelfie(widget.courseEnrollment, widget.classIndex, _image);
+      setState(() {
+        newSelfieUploaded = true;
+      });
+    }
   }
 
   Widget getAddPhotoFrame() {
@@ -204,13 +224,21 @@ class _CompletedClassState extends State<CompletedClass> {
                     height: 174,
                     width: 120,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(5)),
-                      color: OlukoColors.challengeLockedFilterColor,
-                      image: new DecorationImage(
-                        fit: BoxFit.cover,
-                        image: new NetworkImage(widget.courseEnrollment.classes[widget.classIndex].image),
-                      ),
-                    ),
+                        borderRadius: BorderRadius.all(Radius.circular(5)),
+                        color: OlukoColors.challengeLockedFilterColor,
+                        image: () {
+                          if (widget.courseEnrollment != null &&
+                              widget.courseEnrollment.classes[widget.classIndex] != null &&
+                              widget.courseEnrollment.classes[widget.classIndex].image != null) {
+                            return DecorationImage(
+                              fit: BoxFit.cover,
+                              image: CachedNetworkImageProvider(widget.courseEnrollment.classes[widget.classIndex].image),
+                            );
+                          } else {
+                            final ImageProvider defaultImage = const AssetImage('assets/home/mvtthumbnail.png');
+                            return DecorationImage(fit: BoxFit.cover, image: defaultImage);
+                          }
+                        }()),
                   ),
                   Expanded(
                       child: Padding(

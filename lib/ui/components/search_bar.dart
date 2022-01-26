@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/search_results.dart';
@@ -13,6 +14,7 @@ class SearchBar<T> extends StatefulWidget {
   final List<T> Function(String, List<T>) searchMethod;
   final List<T> items;
   final GlobalKey<SearchState> searchKey;
+  final Function() onTapClose;
 
   const SearchBar(
       {Key key,
@@ -22,6 +24,7 @@ class SearchBar<T> extends StatefulWidget {
       this.items,
       this.onSearchSubmit,
       this.whenInitialized,
+      this.onTapClose,
       this.searchKey})
       : super(key: key);
 
@@ -43,20 +46,43 @@ class SearchState<T> extends State<SearchBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(color: Colors.white10, borderRadius: BorderRadius.all(Radius.circular(5))),
+      decoration: OlukoNeumorphism.isNeumorphismDesign
+          ? neumorphicDecoration()
+          : BoxDecoration(color: Colors.white10, borderRadius: BorderRadius.all(Radius.circular(5))),
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 15),
-        child: Row(
-          children: [
-            _cancelIcon(),
-            Expanded(
-              child: _buildSearchField(),
-            ),
-            _searchIcon()
-          ],
-        ),
+        child: OlukoNeumorphism.isNeumorphismDesign
+            ? Row(
+                children: [
+                  Expanded(
+                    child: _buildSearchField(),
+                    // _buildSearchField(),
+                  ),
+                  _cancelIcon(),
+                ],
+              )
+            : Row(
+                children: [
+                  _cancelIcon(),
+                  Expanded(
+                    child: _buildSearchField(),
+                    // _buildSearchField(),
+                  ),
+                  _searchIcon()
+                ],
+              ),
       ),
     );
+  }
+
+  BoxDecoration neumorphicDecoration() {
+    return BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.bottomCenter,
+          end: Alignment.topCenter,
+          colors: [OlukoNeumorphismColors.olukoNeumorphicSearchBarFirstColor, Colors.black],
+        ),
+        borderRadius: BorderRadius.all(Radius.circular(25)));
   }
 
   Widget _searchIcon() {
@@ -75,14 +101,21 @@ class SearchState<T> extends State<SearchBar> {
   }
 
   Widget _cancelIcon() {
-    return _searchQueryController.text != ''
+    return _searchQueryController.text != '' || OlukoNeumorphism.isNeumorphismDesign
         ? GestureDetector(
-            onTap: _cancelSearch,
+            onTap: OlukoNeumorphism.isNeumorphismDesign
+                ? () {
+                    _cancelSearch();
+                    //Close keyboard
+                    FocusScope.of(context).unfocus();
+                    widget.onTapClose();
+                  }
+                : _cancelSearch,
             child: Padding(
               padding: const EdgeInsets.only(right: 8.0),
               child: Icon(
                 Icons.close,
-                color: OlukoColors.appBarIcon,
+                color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.grayColor : OlukoColors.appBarIcon,
               ),
             ),
           )
@@ -90,7 +123,7 @@ class SearchState<T> extends State<SearchBar> {
   }
 
   void _cancelSearch() {
-    _debounce.cancel();
+    _debounce?.cancel();
     setState(() {
       _searchQueryController.text = '';
       updateSearchQuery(_searchQueryController.text);

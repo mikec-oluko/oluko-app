@@ -1,16 +1,17 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/user_helper.dart';
 
 class FriendSuggestionSection extends StatefulWidget {
   final String name;
   final String lastName;
   final String userName;
+  final String userId;
   final String imageUser;
-  FriendSuggestionSection(
-      {this.name, this.lastName, this.userName, this.imageUser});
+  const FriendSuggestionSection({this.name, this.lastName, this.userName, this.imageUser, this.userId});
   @override
-  _FriendSuggestionSectionState createState() =>
-      _FriendSuggestionSectionState();
+  _FriendSuggestionSectionState createState() => _FriendSuggestionSectionState();
 }
 
 /**
@@ -41,8 +42,7 @@ class _FriendSuggestionSectionState extends State<FriendSuggestionSection> {
                 onPressed: () {},
                 child: Text(
                   _viewAllText,
-                  style: OlukoFonts.olukoMediumFont(
-                      customColor: OlukoColors.primary),
+                  style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary),
                 ),
               ),
             ],
@@ -56,8 +56,8 @@ class _FriendSuggestionSectionState extends State<FriendSuggestionSection> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     CircleAvatar(
-                      // backgroundImage: NetworkImage(widget.userData.photoURL),
-                      backgroundImage: NetworkImage(widget.imageUser),
+                      // backgroundImage: CachedNetworkImageProvider(widget.userData.photoURL),
+                      backgroundImage: CachedNetworkImageProvider(widget.imageUser),
                       backgroundColor: Colors.red,
                       radius: 30,
                     ),
@@ -85,9 +85,8 @@ class _FriendSuggestionSectionState extends State<FriendSuggestionSection> {
                           ),
                           Text(
                               // widget.userData.displayName,
-                              widget.userName,
-                              style: OlukoFonts.olukoMediumFont(
-                                  customColor: OlukoColors.grayColor)),
+                              UserHelper.printUsername(widget.userName, widget.userId),
+                              style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor)),
                         ],
                       ),
                     )
@@ -106,12 +105,10 @@ class _FriendSuggestionSectionState extends State<FriendSuggestionSection> {
                           onPressed: () {},
                           child: Text(
                             "Confirm",
-                            style: OlukoFonts.olukoMediumFont(
-                                customColor: OlukoColors.black),
+                            style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.black),
                           ),
                           style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all(OlukoColors.primary),
+                            backgroundColor: MaterialStateProperty.all(OlukoColors.primary),
                           ),
                         ),
                       ),

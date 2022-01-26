@@ -1,17 +1,20 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/submodels/audio.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class AudioDialogContent extends StatefulWidget {
   final UserResponse coach;
   final Audio audio;
+    PanelController panelController;
 
-  AudioDialogContent({this.coach, this.audio});
+  AudioDialogContent({this.coach, this.audio, this.panelController});
 
   @override
   _State createState() => _State();
@@ -44,13 +47,6 @@ class _State extends State<AudioDialogContent> {
     audioPlayer.onAudioPositionChanged.listen((Duration p) {
       setState(() => _position = p);
     });
-
-    /* audioPlayer.onPlayerCompletion.listen((event) {
-      setState(() {
-        isPlaying = false;
-        _position = Duration.zero;
-      });
-    });*/
   }
 
   Widget audioSlider() {
@@ -82,70 +78,89 @@ class _State extends State<AudioDialogContent> {
   }
 
   Widget audioDialogContent(BuildContext context, UserResponse coach) {
-    return Container(
-        decoration: BoxDecoration(
-            image: DecorationImage(
-          image: AssetImage("assets/courses/dialog_background.png"),
-          fit: BoxFit.cover,
-        )),
-        child: Stack(children: [
-          Center(
-              child: Column(children: [
-            SizedBox(height: 30),
-            Stack(alignment: Alignment.center, children: [
-              StoriesItem(maxRadius: 65, imageUrl: coach.avatar),
-              Image.asset('assets/courses/photo_ellipse.png', scale: 4)
-            ]),
-            SizedBox(height: 15),
-            Text(coach.firstName + ' ' + coach.lastName,
-                textAlign: TextAlign.center,
-                style: OlukoFonts.olukoSuperBigFont(
-                    custoFontWeight: FontWeight.bold)),
-            SizedBox(height: 15),
-            Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 50),
-                child: Text(OlukoLocalizations.get(context, 'hasMessage'),
-                    textAlign: TextAlign.center,
-                    style: OlukoFonts.olukoBigFont(
-                        custoFontWeight: FontWeight.w300))),
-            SizedBox(height: 10),
-            audioSlider(),
-            SizedBox(height: 5),
-            GestureDetector(
-                onTap: () {
-                  if (isPlaying == false) {
-                    audioPlayer.resume();
-                    setState(() {
-                      isPlaying = true;
-                    });
-
-                    audioPlayer.onPlayerCompletion.listen((_) {
+    return ClipRRect(
+      borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+      child: Container(
+          decoration: BoxDecoration(
+              image: DecorationImage(
+            image: AssetImage("assets/courses/dialog_background.png"),
+            fit: BoxFit.cover,
+          )),
+          child: Stack(children: [
+            Center(
+                child: Column(children: [
+              SizedBox(height: 30),
+              Stack(alignment: Alignment.bottomCenter, children: [
+                StoriesItem(
+                    maxRadius: 65, imageUrl: coach == null ? widget.audio.userAvatarThumbnail : coach.avatar, bloc: StoryListBloc()),
+                Image.asset('assets/courses/photo_ellipse.png', scale: 4)
+              ]),
+              SizedBox(height: 15),
+              Text(coach == null ? widget.audio.userName : coach.firstName + ' ' + coach.lastName,
+                  textAlign: TextAlign.center, style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold)),
+              SizedBox(height: 15),
+              Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 50),
+                  child: Text(OlukoLocalizations.get(context, 'hasMessage'),
+                      textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w300))),
+              SizedBox(height: 10),
+              /*OlukoNeumorphism.isNeumorphismDesign
+                  ? Image.asset(
+                      'assets/courses/audio.png',
+                      scale: 3,
+                    )
+                  :*/ audioSlider(),
+              SizedBox(height: 5),
+              GestureDetector(
+                  onTap: () {
+                    if (isPlaying == false) {
+                      audioPlayer.resume();
+                      setState(() {
+                        isPlaying = true;
+                      });
+                      audioPlayer.onPlayerCompletion.listen((_) {
+                        setState(() {
+                          isPlaying = false;
+                          _position = Duration.zero;
+                          audioPlayer.stop();
+                        });
+                      });
+                    } else {
+                      audioPlayer.pause();
                       setState(() {
                         isPlaying = false;
-                        _position = Duration.zero;
                       });
-                    });
-                  } else {
-                    audioPlayer.pause();
-                    setState(() {
-                      isPlaying = false;
-                    });
-                  }
-                },
-                child: Stack(alignment: Alignment.center, children: [
-                  Image.asset(
-                    'assets/courses/green_circle.png',
-                    scale: 4.5,
-                  ),
-                  Icon(isPlaying ? Icons.pause : Icons.play_arrow,
-                      size: 32, color: OlukoColors.black)
-                ])),
+                    }
+                  },
+                  child: OlukoNeumorphism.isNeumorphismDesign
+                      ? Padding(
+                          padding: const EdgeInsets.only(bottom: 10.0),
+                          child: Stack(alignment: Alignment.center, children: [
+                            Image.asset(
+                              'assets/assessment/green_ellipse.png',
+                              scale: 2.5,
+                            ),
+                            isPlaying
+                                ? Image.asset(
+                                    'assets/assessment/pause.png',
+                                  )
+                                : Image.asset(
+                                    'assets/assessment/play_triangle.png',
+                                  ),
+                          ]),
+                        )
+                      : Stack(alignment: Alignment.center, children: [
+                          Image.asset(
+                            'assets/courses/green_circle.png',
+                            scale: 4.5,
+                          ),
+                          Icon(isPlaying ? Icons.pause : Icons.play_arrow, size: 32, color: OlukoColors.black)
+                        ])),
+            ])),
+            Align(
+                alignment: Alignment.topRight,
+                child: IconButton(icon: Icon(Icons.close, color: Colors.white), onPressed: () => widget.panelController.close()))
           ])),
-          Align(
-              alignment: Alignment.topRight,
-              child: IconButton(
-                  icon: Icon(Icons.close, color: Colors.white),
-                  onPressed: () => Navigator.pop(context)))
-        ]));
+    );
   }
 }

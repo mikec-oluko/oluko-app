@@ -12,8 +12,7 @@ class ClassDetailSection extends StatefulWidget {
   final List<Movement> movements;
   final Function(BuildContext, Movement) onPressedMovement;
 
-  ClassDetailSection(
-      {this.classObj, this.onPressedMovement, this.movements, this.segments});
+  ClassDetailSection({this.classObj, this.onPressedMovement, this.movements, this.segments});
 
   @override
   _State createState() => _State();
@@ -29,8 +28,7 @@ class _State extends State<ClassDetailSection> {
               image: AssetImage('assets/courses/gray_background.png'),
               fit: BoxFit.cover,
             ),
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
         child: Column(children: [
           Padding(
               padding: EdgeInsets.only(top: 20, bottom: 10),
@@ -49,14 +47,12 @@ class _State extends State<ClassDetailSection> {
       )
     ];
     for (int i = 0; i < widget.classObj.segments.length; i++) {
-      List<Movement> movements = ClassService.getClassSegmentMovements(
-          widget.classObj.segments[i].sections, widget.movements);
+      List<Movement> movements = ClassService.getClassSegmentMovements(widget.classObj.segments[i].sections, widget.movements);
       widgets.add(ClassSegmentSection(
           showTopDivider: i != 0,
-          segment: widget.segments[i],
-          movements: ClassService.getClassSegmentMovements(
-              widget.classObj.segments[i].sections, movements),
-          onPressedMovement: widget.onPressedMovement));
+          segment: widget.segments.length - 1 >= i ? widget.segments[i] : null,
+          movements: ClassService.getClassSegmentMovements(widget.classObj.segments[i].sections, movements),
+          onPressedMovement: widget.onPressedMovement));//TODO:check null value
     }
     return widgets;
   }

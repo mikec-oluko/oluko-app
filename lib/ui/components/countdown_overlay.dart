@@ -11,8 +11,10 @@ class CountdownOverlay extends StatefulWidget {
   final int totalRounds;
   final int currentRound;
   final bool recording;
+  final Function() onShowAgainPressed;
+  final bool showPanel;
 
-  CountdownOverlay({this.seconds = 5, this.totalRounds, this.currentRound, this.recording});
+  CountdownOverlay({this.seconds = 5, this.totalRounds, this.currentRound, this.recording, this.onShowAgainPressed, this.showPanel});
 
   @override
   _CountdownOverlayState createState() => _CountdownOverlayState(seconds);
@@ -42,14 +44,17 @@ class _CountdownOverlayState extends State<CountdownOverlay> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.black.withOpacity(0.8),
-        body: widget.recording
+        body: widget.recording && widget.showPanel
             ? SlidingUpPanel(
                 borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
                 controller: panelController,
                 minHeight: 0,
                 maxHeight: 330,
                 collapsed: Container(color: Colors.black),
-                panel: InitialTimerPanel(panelController: panelController),
+                panel: InitialTimerPanel(
+                  panelController: panelController,
+                  onShowAgainPressed: widget.onShowAgainPressed,
+                ),
                 body: body())
             : body());
   }

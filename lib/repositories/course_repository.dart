@@ -42,19 +42,6 @@ class CourseRepository {
     return Course.fromJson(ds.data() as Map<String, dynamic>);
   }
 
-  static Future<CourseStatistics> getStatistics(DocumentReference reference) async {
-    if (reference == null) {
-      return null;
-    }
-    DocumentSnapshot docRef = await reference.get();
-
-    if (!docRef.exists) {
-      return null;
-    }
-
-    return CourseStatistics.fromJson(docRef.data() as Map<String, dynamic>);
-  }
-
   static Course create(Course course) {
     CollectionReference reference =
         FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('courses');
@@ -82,7 +69,9 @@ class CourseRepository {
     List<CourseEnrollment> coruseEnrollments = await CourseEnrollmentRepository.getUserCourseEnrollments(userId);
     for (CourseEnrollment courseEnrollment in coruseEnrollments) {
       final DocumentSnapshot ds = await courseEnrollment.course.reference.get();
-      coursesList.add(Course.fromJson(ds.data() as Map<String, dynamic>));
+      if (courseEnrollment.isUnenrolled != true) {
+        coursesList.add(Course.fromJson(ds.data() as Map<String, dynamic>));
+      }
     }
     return coursesList;
   }
@@ -91,8 +80,41 @@ class CourseRepository {
     List<Course> courses = [];
     for (CourseEnrollment courseEnrollment in courseEnrollments) {
       DocumentSnapshot ds = await courseEnrollment.course.reference.get();
-      courses.add(Course.fromJson(ds.data() as Map<String, dynamic>));
+      if (courseEnrollment.isUnenrolled != true) {
+        courses.add(Course.fromJson(ds.data() as Map<String, dynamic>));
+      }
     }
     return courses;
+  }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> getCoursesSubscription() {
+    Stream<QuerySnapshot<Map<String, dynamic>>> coursesStream = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('courses')
+        .snapshots();
+    return coursesStream;
+  }
+
+  static Future<CourseStatistics> getStatistics(DocumentReference reference) async {
+    if (reference == null) {
+      return null;
+    }
+    DocumentSnapshot docRef = await reference.get();
+
+    if (!docRef.exists) {
+      return null;
+    }
+
+    return CourseStatistics.fromJson(docRef.data() as Map<String, dynamic>);
+  }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getStatisticsSubscription() {
+    Stream<QuerySnapshot<Map<String, dynamic>>> statisticsStream = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('courseStatistics')
+        .snapshots();
+    return statisticsStream;
   }
 }

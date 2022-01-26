@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
@@ -60,16 +61,19 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
   Widget _imageItem(BuildContext context, String imageUrl, String name, {Function(BuildContext) onPressed}) {
     return GestureDetector(
       onTap: () => onPressed(context),
-      child: Container(
+      child: SizedBox(
         width: 85,
+        height: 100,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            StoriesItem(maxRadius: 28, imageUrl: imageUrl),
+            StoriesItem(maxRadius: 23, imageUrl: imageUrl, bloc: StoryListBloc()),
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
               child: Text(
                 name,
                 textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
                 style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor),
               ),
             )

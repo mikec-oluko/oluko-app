@@ -1,14 +1,21 @@
+import 'dart:ui';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/submodels/segment_submodel.dart';
+import 'package:oluko_app/ui/components/challenges_card.dart';
+import 'package:oluko_app/ui/newDesignComponents/challenge_card_course_segment.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ChallengeSection extends StatefulWidget {
   final List<SegmentSubmodel> challenges;
   final bool addTitle;
+  final bool addName;
 
-  ChallengeSection({this.challenges, this.addTitle = false});
+  ChallengeSection({this.addName, this.challenges, this.addTitle = false});
 
   @override
   _State createState() => _State();
@@ -22,17 +29,35 @@ class _State extends State<ChallengeSection> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Divider(
-            color: OlukoColors.grayColor,
-            height: 50,
-          ),
+          if (OlukoNeumorphism.isNeumorphismDesign)
+            const Padding(
+                padding: EdgeInsets.all(20.0),
+                child: OlukoNeumorphicDivider(
+                  isFadeOut: true,
+                ))
+          else
+            const Divider(
+              color: OlukoColors.grayColor,
+              height: 50,
+            ),
           widget.addTitle
+              ? OlukoNeumorphism.isNeumorphismDesign
+                  ? Text(
+                      buildTitle(),
+                      style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.white),
+                    )
+                  : Text(
+                      buildTitle(),
+                      style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
+                    )
+              : SizedBox(),
+          widget.addName != null && widget.addName
               ? Text(
-                  buildTitle(),
+                  widget.challenges[0].name,
                   style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
                 )
               : SizedBox(),
-          SizedBox(height: widget.addTitle ? 20 : 0),
+          SizedBox(height: widget.addTitle || widget.addName ? 20 : 0),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(mainAxisAlignment: MainAxisAlignment.start, children: getChallengesCards()),
@@ -56,30 +81,39 @@ class _State extends State<ChallengeSection> {
 
   List<Widget> getChallengesCards() {
     List<Widget> challengeCards = [];
-    widget.challenges.forEach((challenge) {
-      challengeCards.add(
-        Stack(
-          alignment: Alignment.center,
-          children: [
-            ClipRRect(
-              child: Image.network(
-                challenge.challengeImage,
-                height: 140,
-                width: 100,
-                fit: BoxFit.cover,
+    OlukoNeumorphism.isNeumorphismDesign
+        ? widget.challenges.forEach((challenge) {
+            challengeCards.add(
+              lockedCardChallenge(
+                image: challenge.challengeImage,
               ),
-              borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-            ),
-            Image.asset(
-              'assets/courses/locked_challenge.png',
-              width: 60,
-              height: 60,
-            )
-          ],
-        ),
-      );
-      challengeCards.add(SizedBox(width: 15));
-    });
+            );
+            challengeCards.add(SizedBox(width: 15));
+          })
+        : widget.challenges.forEach((challenge) {
+            challengeCards.add(
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  ClipRRect(
+                    child: CachedNetworkImage(
+                      imageUrl: challenge.challengeImage,
+                      height: 140,
+                      width: 100,
+                      fit: BoxFit.cover,
+                    ),
+                    borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+                  ),
+                  Image.asset(
+                    'assets/courses/locked_challenge.png',
+                    width: 60,
+                    height: 60,
+                  )
+                ],
+              ),
+            );
+            challengeCards.add(SizedBox(width: 15));
+          });
     return challengeCards;
   }
 }

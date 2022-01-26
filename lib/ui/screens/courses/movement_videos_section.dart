@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
@@ -31,18 +32,29 @@ class _State extends State<MovementVideosSection> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: EdgeInsets.only(left: 18),
-        decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/courses/gray_background.png'),
-              fit: BoxFit.cover,
-            ),
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+        // padding: EdgeInsets.only(left: 18),
+        decoration: OlukoNeumorphism.isNeumorphismDesign
+            ? BoxDecoration(
+                color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)))
+            : decorationImage(),
         child: Column(children: [
-          SizedBox(height: 15),
+          SizedBox(height: OlukoNeumorphism.isNeumorphismDesign ? 5 : 15),
+          !OlukoNeumorphism.isNeumorphismDesign
+              ? SizedBox.shrink()
+              : Center(
+                  child: Container(
+                    width: 50,
+                    child: Image.asset('assets/courses/horizontal_vector.png', scale: 2, color: OlukoColors.grayColor),
+                  ),
+                ),
+          OlukoNeumorphism.isNeumorphismDesign ? SizedBox(height: 10) : SizedBox.shrink(),
           Row(children: [
-            Text(OlukoLocalizations.get(context, 'movementVideos'),
-                style: TextStyle(fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold)),
+            Padding(
+              padding: EdgeInsets.only(left: 20),
+              child: Text(OlukoLocalizations.get(context, 'movementVideos'),
+                  style: TextStyle(fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold)),
+            ),
             SizedBox(width: 10),
             Icon(Icons.directions_run, color: Colors.white, size: 30),
             Expanded(child: SizedBox()),
@@ -54,11 +66,22 @@ class _State extends State<MovementVideosSection> {
                   scrollDirection: Axis.horizontal,
                   child: MovementItemBubbles(
                       onPressed: widget.onPressedMovement, content: segmentMovements, width: ScreenUtils.width(context) / 1))),
-          Image.asset(
-            'assets/courses/horizontal_vector.png',
-            scale: 2,
-          )
+          OlukoNeumorphism.isNeumorphismDesign
+              ? SizedBox.shrink()
+              : Image.asset(
+                  'assets/courses/horizontal_vector.png',
+                  scale: 2,
+                )
         ]));
+  }
+
+  BoxDecoration decorationImage() {
+    return BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/courses/gray_background.png'),
+          fit: BoxFit.cover,
+        ),
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)));
   }
 
   List<Movement> getSegmentMovements() {

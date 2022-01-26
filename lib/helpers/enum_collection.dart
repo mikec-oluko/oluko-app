@@ -37,6 +37,13 @@ enum CoachFileTypeEnum {
   faqVideo,
 }
 
+enum StoriesItemFrom {
+  friends,
+  friendsModal,
+  home,
+  longPressHome
+}
+
 enum CoachAssignmentStatusEnum { requested, approved, rejected }
 
 //TODO: Check and use that
