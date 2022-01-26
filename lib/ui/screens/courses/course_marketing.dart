@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:chewie/chewie.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -31,7 +29,6 @@ import 'package:oluko_app/ui/components/class_section.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/overlay_video_preview.dart';
 import 'package:oluko_app/ui/components/statistics_chart.dart';
-import 'package:oluko_app/utils/app_loader.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 
@@ -178,8 +175,8 @@ class _CourseMarketingState extends State<CourseMarketing> {
   }
 
   Widget showEnrollButton(CourseEnrollment courseEnrollment, BuildContext context) {
-    /*if ((courseEnrollment != null && courseEnrollment.isUnenrolled == true) ||
-        (courseEnrollment == null || courseEnrollment.completion >= 1)) {*/
+    if ((courseEnrollment != null && courseEnrollment.isUnenrolled == true) ||
+        (courseEnrollment == null || courseEnrollment.completion >= 1)) {
       return BlocListener<CourseEnrollmentBloc, CourseEnrollmentState>(
           listener: (context, courseEnrollmentState) {
             if (courseEnrollmentState is CreateEnrollmentSuccess) {
@@ -195,21 +192,20 @@ class _CourseMarketingState extends State<CourseMarketing> {
                   OlukoPrimaryButton(
                     title: OlukoLocalizations.get(context, 'enroll'),
                     onPressed: () {
-                      BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
-                      /*if (_disableAction == false) {
+                      if (_disableAction == false) {
                         BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
                         if (!widget.isCoachRecommendation) {
                           BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
                         }
                       }
-                      _disableAction = true;*/
+                      _disableAction = true;
                     },
                   ),
                 ],
               )));
-    /*} else {
+    } else {
       return const SizedBox();
-    }*/
+    }
   }
 
   Widget buildStatistics() {
