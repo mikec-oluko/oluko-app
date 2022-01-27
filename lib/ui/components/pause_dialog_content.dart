@@ -1,18 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
-import 'package:oluko_app/ui/components/oluko_primary_button.dart';
-import 'package:oluko_app/ui/components/stories_item.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
-import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_text_button.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class PauseDialogContent extends StatefulWidget {
-  final Function() onRecordingAction;
-  final Function() onNotRecordingAction;
+  final Function() restartAction;
 
-  const PauseDialogContent({this.onRecordingAction, this.onNotRecordingAction});
+  const PauseDialogContent({this.restartAction});
 
   @override
   _PauseDialogContentState createState() => _PauseDialogContentState();
@@ -51,8 +46,8 @@ class _PauseDialogContentState extends State<PauseDialogContent> {
                   Row(
                     children: [
                       Expanded(child: SizedBox()),
-                      OlukoNeumorphicTextButton(title: OlukoLocalizations.get(context, 'restart'), onPressed: () {}),
-                      OlukoNeumorphicPrimaryButton(title: OlukoLocalizations.get(context, 'resume'), onPressed: () {})
+                      OlukoNeumorphicTextButton(title: OlukoLocalizations.get(context, 'restart'), onPressed: () => widget.restartAction()),
+                      OlukoNeumorphicPrimaryButton(title: OlukoLocalizations.get(context, 'resume'), onPressed: () => Navigator.pop(context))
                     ],
                   ),
                 ])));

@@ -778,9 +778,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
           });
           if (isSegmentWithRecording()) {
             await cameraController.stopVideoRecording();
-            BottomDialogUtils.showBottomDialog(
-                            context: context,
-                            content: PauseDialogContent());
+            BottomDialogUtils.showBottomDialog(context: context, content: PauseDialogContent(restartAction: _goToSegmentDetail));
           }
           setState(() {
             workoutType = WorkoutType.segment;
@@ -814,6 +812,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
         size: 30,
       ),
     );
+  }
+
+  _goToSegmentDetail() {
+    Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.segmentDetail]));
   }
 
   //Timer Functions
