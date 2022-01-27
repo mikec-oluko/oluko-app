@@ -189,7 +189,7 @@ class SegmentUtils {
         }
       }
     }
-    if (entries[entries.length - 1].movement.isRestTime && entries[entries.length - 1].movement.counter != CounterEnum.none) {
+    if (entries[entries.length - 1].movement.isRestTime && entries[entries.length - 1].movement.counter == CounterEnum.none) {
       entries.removeAt(entries.length - 1);
     }
     return entries;
