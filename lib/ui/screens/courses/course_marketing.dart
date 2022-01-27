@@ -130,9 +130,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                           Padding(
                                             padding: const EdgeInsets.only(top: 10.0, right: 10),
                                             child: Text(
-                                              //TODO: change weeks number
-                                              TimeConverter.toCourseDuration(
-                                                  6, widget.course.classes != null ? widget.course.classes.length : 0, context),
+                                              widget.course.duration,
                                               style: OlukoFonts.olukoBigFont(
                                                   custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
                                             ),
