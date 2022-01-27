@@ -39,24 +39,22 @@ class SegmentUtils {
     return segment.type == SegmentTypeEnum.Duration;
   }
 
-  static Widget getRoundTitle(Segment segment,BuildContext context, Color color) {
-      if (isEMOM(segment)) {
-        return getEMOMTitle(segment, context, color);
-      } else if (isAMRAP(segment)) {
-        return Text(
-          segment.totalTime.toString() + " " + OlukoLocalizations.get(context, 'seconds').toLowerCase() + " " + "AMRAP",
-          style: OlukoNeumorphism.isNeumorphismDesign
-              ? OlukoFonts.olukoSmallFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold)
-              : OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
-        );
-      } else {
-        return segment.rounds > 1
-            ? Text(
-                segment.rounds.toString() + " " + OlukoLocalizations.get(context, 'rounds'),
-                style: OlukoFonts.olukoSuperBigFont(customColor: color, custoFontWeight: FontWeight.bold),
-              )
-            : SizedBox();
-      }
+  static Widget getRoundTitle(Segment segment, BuildContext context, Color color) {
+    if (isEMOM(segment)) {
+      return getEMOMTitle(segment, context, color);
+    } else if (isAMRAP(segment)) {
+      return Text(
+        segment.totalTime.toString() + " " + OlukoLocalizations.get(context, 'seconds').toLowerCase() + " " + "AMRAP",
+        style: OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
+      );
+    } else {
+      return segment.rounds > 1
+          ? Text(
+              segment.rounds.toString() + " " + OlukoLocalizations.get(context, 'rounds'),
+              style: OlukoFonts.olukoSuperBigFont(customColor: color, custoFontWeight: FontWeight.bold),
+            )
+          : SizedBox();
+    }
   }
 
   static Widget getEMOMTitle(Segment segment, BuildContext context, Color color) {
@@ -71,9 +69,7 @@ class SegmentUtils {
           (segment.totalTime).toString() +
           " " +
           OlukoLocalizations.get(context, 'seconds'),
-      style: OlukoNeumorphism.isNeumorphismDesign
-          ? OlukoFonts.olukoSmallFont(customColor: color, custoFontWeight: FontWeight.bold)
-          : OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
+      style: OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
     );
   }
 
@@ -258,9 +254,7 @@ class SegmentUtils {
     List<Widget> workoutWidgets = getWorkouts(segment, color);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [getRoundTitle(segment,context, OlukoColors.white)] + workoutWidgets,
+      children: [getRoundTitle(segment, context, OlukoColors.white)] + workoutWidgets,
     );
   }
 }
-
-

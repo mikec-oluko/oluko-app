@@ -278,5 +278,10 @@
     "switchSide": "switch side",
     "cancelVoiceMessage": "Cancel voice message?",
     "allow": "Allow",
-    "deny": "Deny"
+    "deny": "Deny",
+    "enterWeight": "Enter weight: ",
+    "lbs": "lbs",
+    "cancelSession": "Cancel the session?",
+    "cancelMessage": "This action stopped the recording. You will have to restart the session from beginning if you want to record the segment.",
+    "restart": "Re-Start"
 }

@@ -22,7 +22,7 @@ class OlukoNeumorphicSecondaryButton extends StatefulWidget {
       @required this.onPressed,
       this.thinPadding = false,
       // this.color,
-      this.textColor = Colors.black,
+      this.textColor = OlukoColors.grayColor,
       this.textAlign = TextAlign.center,
       this.icon,
       this.buttonShape,
