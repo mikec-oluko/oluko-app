@@ -16,8 +16,8 @@ import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/src/models/subtitle_model.dart';
 
-class CupertinoControls extends StatefulWidget {
-  const CupertinoControls({
+class OlukoCupertinoControls extends StatefulWidget {
+  const OlukoCupertinoControls({
      this.backgroundColor,
      this.iconColor,
     Key key,
@@ -28,11 +28,11 @@ class CupertinoControls extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return _CupertinoControlsState();
+    return _OlukoCupertinoControlsState();
   }
 }
 
-class _CupertinoControlsState extends State<CupertinoControls>
+class _OlukoCupertinoControlsState extends State<OlukoCupertinoControls>
     with SingleTickerProviderStateMixin {
    PlayerNotifier notifier;
    VideoPlayerValue _latestValue;

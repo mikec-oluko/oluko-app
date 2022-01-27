@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:nil/nil.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_cupertino_controls.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_material_controls.dart';
 import 'package:video_player/video_player.dart';
 import 'dart:io';
@@ -32,7 +33,7 @@ class OlukoVideoPlayer extends StatefulWidget {
     this.aspectRatio,
     Key key,
     this.allowFullScreen = true,
-    this.isOlukoControls=false,
+    this.isOlukoControls = false,
   }) : super(key: key);
 
   @override
@@ -65,10 +66,12 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
 
     Widget controls;
     if (Platform.isAndroid) {
-      OlukoNeumorphism.isNeumorphismDesign &&widget.isOlukoControls ? controls = OlukoMaterialControls() : controls = MaterialControls();
+      OlukoNeumorphism.isNeumorphismDesign && widget.isOlukoControls ? controls = OlukoMaterialControls() : controls = MaterialControls();
     } else if (Platform.isIOS) {
       //TODO:Change IOS controls
-      controls = CupertinoControls(backgroundColor: Colors.grey[200].withOpacity(0.3), iconColor: Colors.black);
+      OlukoNeumorphism.isNeumorphismDesign && widget.isOlukoControls
+          ? controls = OlukoCupertinoControls(backgroundColor: Colors.grey[200].withOpacity(0.3), iconColor: Colors.black)
+          : controls = CupertinoControls(backgroundColor: Colors.grey[200].withOpacity(0.3), iconColor: Colors.black);
     }
     if (_controller != null) {
       _controller.initialize().then((value) {
