@@ -72,7 +72,7 @@ class SegmentUtils {
           " " +
           OlukoLocalizations.get(context, 'seconds'),
       style: OlukoNeumorphism.isNeumorphismDesign
-          ? OlukoFonts.olukoSmallFont(customColor: color, custoFontWeight: FontWeight.bold)
+          ? OlukoFonts.olukoSuperBigFont(customColor: color, custoFontWeight: FontWeight.bold)
           : OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
     );
   }

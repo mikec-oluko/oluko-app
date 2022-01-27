@@ -50,7 +50,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
         }
         return Scaffold(
             appBar: AppBar(
-              backgroundColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+              backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
               flexibleSpace: Container(
                 decoration: UserInformationBackground.getContainerGradientDecoration(
                     customBorder: false, isNeumorphic: OlukoNeumorphism.isNeumorphismDesign),
@@ -73,9 +73,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
                       .toList()),
             ),
             body: _timelineContentItems == null
-                ? Container(
-                    color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
-                    child: OlukoCircularProgressIndicator())
+                ? Container(color: OlukoNeumorphismColors.appBackgroundColor, child: OlukoCircularProgressIndicator())
                 : _timelineContentItems.isNotEmpty
                     ? TabBarView(
                         controller: _tabController,
@@ -92,7 +90,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
                             .toList(),
                       )
                     : Container(
-                        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+                        color: OlukoNeumorphismColors.appBackgroundColor,
                         child: Center(
                           child: Text(
                             OlukoLocalizations.get(context, 'noContent'),
@@ -142,7 +140,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
                 arguments: {'course': content.courseForNavigation, 'fromCoach': true, 'isCoachRecommendation': false});
           },
           child: Container(
-            color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+            color: OlukoNeumorphismColors.appBackgroundColor,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -160,7 +158,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
         );
       case TimelineInteractionType.classes:
         return Container(
-          color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+          color: OlukoNeumorphismColors.appBackgroundColor,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -177,7 +175,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
         );
       case TimelineInteractionType.segment:
         return Container(
-          color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+          color: OlukoNeumorphismColors.appBackgroundColor,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -199,7 +197,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
             Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': content.movementForNavigation});
           },
           child: Container(
-            color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+            color: OlukoNeumorphismColors.appBackgroundColor,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -215,7 +213,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
         );
       case TimelineInteractionType.mentoredVideo:
         return Container(
-          color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+          color: OlukoNeumorphismColors.appBackgroundColor,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

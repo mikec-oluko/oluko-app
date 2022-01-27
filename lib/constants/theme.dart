@@ -1,10 +1,9 @@
 import 'dart:math';
 import 'dart:ui' show Color;
-import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
 class OlukoNeumorphism {
-  static const bool isNeumorphismDesign = true;
+  static const bool isNeumorphismDesign = false;
   static const Radius radiusValue = Radius.circular(15.0);
 
   static NeumorphicStyle primaryButtonStyleDisable(
@@ -199,6 +198,8 @@ class OlukoNeumorphismColors {
   static const Color olukoNeumorphicSearchBarSecondColor = Color.fromRGBO(19, 19, 20, 1);
   static const Color olukoNeumorphicBlueBackgroundColor = Color(0XFF1976D2);
   static const Color olukoNeumorphicGreenWatchColor = Color.fromRGBO(51, 188, 132, 1);
+  static const Color appBackgroundColor =
+      OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black;
 }
 
 class OlukoColors {

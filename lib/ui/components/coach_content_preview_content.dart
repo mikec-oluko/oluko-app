@@ -95,7 +95,7 @@ class _CoachContentPreviewContentState extends State<CoachContentPreviewContent>
                 child: Container(
                   width: 150,
                   height: 115,
-                  color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+                  color: OlukoNeumorphismColors.appBackgroundColor,
                   child: widget.coachAnnotationContent.isNotEmpty
                       ? CoachVideoContent(videoThumbnail: getThumbnails(annotations: widget.coachAnnotationContent), isForGallery: false)
                       : CoachContentSectionCard(title: widget.titleForSection, needTitle: false),

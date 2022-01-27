@@ -32,14 +32,14 @@ class _NoCoachPageState extends State<NoCoachPage> {
       body: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
-        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+        color: OlukoNeumorphismColors.appBackgroundColor,
         child: Column(
           children: [
             SizedBox(
               height: 50,
             ),
             Container(
-              color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+              color: OlukoNeumorphismColors.appBackgroundColor,
               width: MediaQuery.of(context).size.width,
               height: 250,
               child: Stack(
@@ -55,7 +55,7 @@ class _NoCoachPageState extends State<NoCoachPage> {
               ),
             ),
             Container(
-                color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+                color: OlukoNeumorphismColors.appBackgroundColor,
                 width: MediaQuery.of(context).size.width,
                 child: Column(
                   children: [

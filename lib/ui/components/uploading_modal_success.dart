@@ -30,7 +30,7 @@ class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
     final _successText = OlukoLocalizations.get(context, 'uploadedSuccessfully');
     final _doneButtonText = OlukoLocalizations.get(context, 'done');
     return Container(
-      color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+      color: OlukoNeumorphismColors.appBackgroundColor,
       width: MediaQuery.of(context).size.width,
       height: 300,
       child: Row(
@@ -117,7 +117,8 @@ class _UploadingModalSuccessState extends State<UploadingModalSuccess> {
     return CircleAvatar(
       backgroundColor: OlukoColors.primary,
       radius: 40.0,
-      child: IconButton(icon: Icon(Icons.check, color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.black), onPressed: () {}),
+      child: IconButton(
+          icon: Icon(Icons.check, color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.white : OlukoColors.black), onPressed: () {}),
     );
   }
 }

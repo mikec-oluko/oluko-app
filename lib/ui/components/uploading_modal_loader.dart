@@ -28,13 +28,13 @@ class LoaderAndUploadingText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+        color: OlukoNeumorphismColors.appBackgroundColor,
         width: MediaQuery.of(context).size.width,
         height: 300,
         child: Row(children: [
           Expanded(
             child: Container(
-              color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+              color: OlukoNeumorphismColors.appBackgroundColor,
               width: MediaQuery.of(context).size.width,
               height: 200,
               child: Column(

@@ -339,7 +339,7 @@ class _CoachPageState extends State<CoachPage> {
                   BlocProvider.of<TaskBloc>(context).get(_assessment);
                   final carouselNotificationWidgetList = carouselNotificationWidget(context);
                   return Container(
-                    color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+                    color: OlukoNeumorphismColors.appBackgroundColor,
                     child: ListView(
                       children: [
                         if (carouselNotificationWidgetList.isNotEmpty && widget.coachAssignment.introductionCompleted)

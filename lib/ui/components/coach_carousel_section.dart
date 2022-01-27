@@ -36,7 +36,7 @@ class _CoachCarouselSliderSectionState extends State<CoachCarouselSliderSection>
           }
         }
         return Container(
-          color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+          color: OlukoNeumorphismColors.appBackgroundColor,
           width: MediaQuery.of(context).size.width,
           height: 250,
           child: Stack(

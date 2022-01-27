@@ -32,7 +32,7 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
 
   Widget returnList(BuildContext context) {
     return Container(
-      color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+      color: OlukoNeumorphismColors.appBackgroundColor,
       width: MediaQuery.of(context).size.width,
       height: 100,
       child: ListView(

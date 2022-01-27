@@ -24,7 +24,7 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
     return Container(
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(10)),
-        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+        color: OlukoNeumorphismColors.appBackgroundColor,
       ),
       child: Stack(
         alignment: Alignment.center,
@@ -39,8 +39,7 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
                         height: 100,
                         width: 130,
                         decoration: BoxDecoration(
-                            color:
-                                OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+                            color: OlukoNeumorphismColors.appBackgroundColor,
                             borderRadius: const BorderRadius.all(Radius.circular(5)),
                             image: DecorationImage(
                               image: widget.videoThumbnail != null && widget.videoThumbnail.isNotEmpty
@@ -62,8 +61,7 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
                         height: 100,
                         width: 140,
                         decoration: BoxDecoration(
-                            color:
-                                OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+                            color: OlukoNeumorphismColors.appBackgroundColor,
                             borderRadius: const BorderRadius.all(Radius.circular(5)),
                             image: DecorationImage(
                               image: widget.videoThumbnail != null && widget.videoThumbnail.isNotEmpty
@@ -85,7 +83,7 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
                       height: 100,
                       width: 150,
                       decoration: BoxDecoration(
-                          color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+                          color: OlukoNeumorphismColors.appBackgroundColor,
                           borderRadius: const BorderRadius.all(Radius.circular(5)),
                           image: DecorationImage(
                             image: widget.videoThumbnail != null && widget.videoThumbnail.isNotEmpty
@@ -125,7 +123,7 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
       width: 100,
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(10)),
-        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+        color: OlukoNeumorphismColors.appBackgroundColor,
       ),
       child: Stack(
         children: [
@@ -134,7 +132,7 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
               Align(
                   child: Container(
                       decoration: BoxDecoration(
-                          color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+                          color: OlukoNeumorphismColors.appBackgroundColor,
                           borderRadius: const BorderRadius.all(Radius.circular(5)),
                           image: DecorationImage(
                             image: widget.videoThumbnail != null && widget.videoThumbnail.isNotEmpty

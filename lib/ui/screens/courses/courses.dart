@@ -114,7 +114,7 @@ class _State extends State<Courses> {
         onWillPop: () => AppNavigator.onWillPop(context),
         child: OrientationBuilder(builder: (context, orientation) {
           return Container(
-            color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+            color: OlukoNeumorphismColors.appBackgroundColor,
             height: ScreenUtils.height(context),
             width: ScreenUtils.width(context),
             child: showFilterSelector
@@ -141,9 +141,7 @@ class _State extends State<Courses> {
     }
 
     // this return will handle this states: TagLoading TagFailure CourseLoading CourseFailure
-    return Container(
-        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
-        child: OlukoCircularProgressIndicator());
+    return Container(color: OlukoNeumorphismColors.appBackgroundColor, child: OlukoCircularProgressIndicator());
   }
 
   PreferredSizeWidget _appBar(bool goBack) {
@@ -356,7 +354,7 @@ class _State extends State<Courses> {
                   children: courseEnrollmentState.courseEnrollments.map((CourseEnrollment courseEnrollment) {
                     final activeCourseList = _courses.where((enrolledCourse) => enrolledCourse.id == courseEnrollment.course.id).toList();
                     Course course;
-                    int courseIndex=courseEnrollmentState.courseEnrollments.indexOf(courseEnrollment);
+                    int courseIndex = courseEnrollmentState.courseEnrollments.indexOf(courseEnrollment);
                     if (activeCourseList.isNotEmpty) {
                       course = activeCourseList[0];
                       return Padding(
@@ -367,7 +365,7 @@ class _State extends State<Courses> {
                             'fromCoach': false,
                             'isCoachRecommendation': false,
                             'courseEnrollment': courseEnrollment,
-                            'courseIndex':courseIndex
+                            'courseIndex': courseIndex
                           }),
                           child: _getCourseCard(
                             _generateImageCourse(course.image),

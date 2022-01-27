@@ -41,7 +41,8 @@ class CourseMarketing extends StatefulWidget {
   final bool isCoachRecommendation;
   final CourseEnrollment courseEnrollment;
   final int courseIndex;
-  CourseMarketing({Key key, this.course, this.fromCoach = false, this.isCoachRecommendation = false, this.courseEnrollment, this.courseIndex})
+  CourseMarketing(
+      {Key key, this.course, this.fromCoach = false, this.isCoachRecommendation = false, this.courseEnrollment, this.courseIndex})
       : super(key: key);
 
   get progress => null;
@@ -105,20 +106,19 @@ class _CourseMarketingState extends State<CourseMarketing> {
                   key: _formKey,
                   child: Scaffold(
                       body: Container(
-                          color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+                          color: OlukoNeumorphismColors.appBackgroundColor,
                           child: Stack(
                             children: [
                               ListView(children: [
                                 Padding(
                                   padding: const EdgeInsets.only(bottom: 3),
                                   child: OverlayVideoPreview(
-                                    image: widget.course.image,
-                                    video: widget.course.video,
-                                    showBackButton: true,
-                                    showHeartButton: true,
-                                    showShareButton: true,
-                                    onBackPressed: () => Navigator.pop(context)
-                                  ),
+                                      image: widget.course.image,
+                                      video: widget.course.video,
+                                      showBackButton: true,
+                                      showHeartButton: true,
+                                      showShareButton: true,
+                                      onBackPressed: () => Navigator.pop(context)),
                                 ),
                                 showEnrollButton(enrollmentState.courseEnrollment, context),
                                 Padding(
@@ -276,8 +276,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                       onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
                         'courseEnrollment': widget.courseEnrollment,
                         'classIndex': _classItems.indexOf(item),
-                        'courseIndex':widget.courseIndex
-                        
+                        'courseIndex': widget.courseIndex
                       }),
                       child: Padding(
                         padding: const EdgeInsets.all(5.0),
@@ -295,7 +294,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                       onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
                         'courseEnrollment': widget.courseEnrollment,
                         'classIndex': _classItems.indexOf(item),
-                        'courseIndex':widget.courseIndex
+                        'courseIndex': widget.courseIndex
                       }),
                       child: Padding(
                         padding: const EdgeInsets.all(5.0),
@@ -316,7 +315,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                   onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
                     'courseEnrollment': widget.courseEnrollment,
                     'classIndex': _classItems.indexOf(item),
-                    'courseIndex':widget.courseIndex
+                    'courseIndex': widget.courseIndex
                   }),
                   child: Padding(
                     padding: const EdgeInsets.all(5.0),

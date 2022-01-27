@@ -46,7 +46,7 @@ class _FriendRequestCardState extends State<FriendRequestCard> {
     return Container(
       alignment: Alignment.center,
       decoration: BoxDecoration(
-          color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+          color: OlukoNeumorphismColors.appBackgroundColor,
           border: OlukoNeumorphism.isNeumorphismDesign ? null : Border(bottom: BorderSide(width: 1.0, color: OlukoColors.grayColor))),
       height: OlukoNeumorphism.isNeumorphismDesign ? 150 : 120,
       child: Padding(

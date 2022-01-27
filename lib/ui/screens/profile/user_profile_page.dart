@@ -277,7 +277,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   Container buildProfileView(UserResponse userRequested) {
     return Container(
-      color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+      color: OlukoNeumorphismColors.appBackgroundColor,
       constraints: const BoxConstraints.expand(),
       child: ListView(
         clipBehavior: Clip.none,
@@ -552,11 +552,11 @@ class _UserProfilePageState extends State<UserProfilePage> {
   Widget profileCoverImage() {
     return ShaderMask(
       shaderCallback: (rect) {
-        return const LinearGradient(
+        return LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+            OlukoNeumorphismColors.appBackgroundColor,
             Colors.transparent,
           ],
         ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));

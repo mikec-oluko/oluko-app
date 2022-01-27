@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:avatar_glow/avatar_glow.dart';
 import 'package:camera/camera.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -80,27 +81,22 @@ class SegmentClocks extends StatefulWidget {
 }
 
 class _SegmentClocksState extends State<SegmentClocks> {
+  final toolbarHeight = kToolbarHeight * 2;
   //Imported from Timer POC Models
   WorkState workState;
   WorkState lastWorkStateBeforePause;
-
   //Current task running on Countdown Timer
   int timerTaskIndex = 0;
   Duration timeLeft;
   Timer countdownTimer;
-
-  final toolbarHeight = kToolbarHeight * 2;
-
   //Flex proportions to display sections vertically in body.
   List<num> flexProportions(WorkoutType workoutType) => isSegmentWithRecording() ? [3, 7] : [8, 2];
-
   //Camera
   List<CameraDescription> cameras;
   CameraController cameraController;
   bool _isReady = false;
   bool isCameraFront = false;
   List<TimerEntry> timerEntries;
-
   User _user;
   SegmentSubmission _segmentSubmission;
   List<Movement> _movements = [];
@@ -113,18 +109,14 @@ class _SegmentClocksState extends State<SegmentClocks> {
   double progress = 0.0;
   bool isThereError = false;
   bool shareDone = false;
-
   WorkoutType workoutType;
-
   List<String> scores = [];
   int totalScore = 0;
   bool counter = false;
   bool _wantsToCreateStory = false;
   bool _isVideoUploaded = false;
   bool waitingForSegSubCreation = false;
-
   CoachRequest _coachRequest;
-
   XFile videoRecorded;
 
   @override
@@ -169,12 +161,12 @@ class _SegmentClocksState extends State<SegmentClocks> {
                               if (state is CreateSuccess) {
                                 if (_segmentSubmission == null) {
                                   _segmentSubmission = state.segmentSubmission;
-                                  BlocProvider.of<VideoBloc>(context)
-                                    ..createVideo(context, File(_segmentSubmission.videoState.stateInfo), 3.0 / 4.0, _segmentSubmission.id);
+                                  BlocProvider.of<VideoBloc>(context).createVideo(
+                                      context, File(_segmentSubmission.videoState.stateInfo), 3.0 / 4.0, _segmentSubmission.id);
                                 }
                               } else if (state is UpdateSegmentSubmissionSuccess) {
                                 waitingForSegSubCreation = false;
-                                BlocProvider.of<CoachRequestBloc>(context)..resolve(_coachRequest, _user.uid);
+                                BlocProvider.of<CoachRequestBloc>(context).resolve(_coachRequest, _user.uid);
                                 if (_wantsToCreateStory) {
                                   callBlocToCreateStory(context, state.segmentSubmission);
                                 } else {
@@ -219,9 +211,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: OlukoAppBar(
+        showActions: true,
         showDivider: false,
         title: ' ',
-        showBackButton: false,
+        showTitle: false,
+        showBackButton: true,
         actions: [topBarIcon, audioIcon()],
       ),
       backgroundColor: Colors.black,
@@ -322,7 +316,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
     final _controller = ScrollController();
     if (!keyboardVisibilty) {
       return Container(
-        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+        color: OlukoNeumorphismColors.appBackgroundColor,
         child: ListView(
           controller: _controller,
           children: [
@@ -339,13 +333,16 @@ class _SegmentClocksState extends State<SegmentClocks> {
       );
     }
 
-    return ListView(
-      controller: _controller,
-      children: [
-        _timerSection(keyboardVisibilty),
-        _lowerSection(),
-        if (isWorkStateFinished()) showFinishedButtons() else const SizedBox(),
-      ],
+    return Container(
+      color: OlukoNeumorphismColors.appBackgroundColor,
+      child: ListView(
+        controller: _controller,
+        children: [
+          _timerSection(keyboardVisibilty),
+          _lowerSection(),
+          if (isWorkStateFinished()) showFinishedButtons() else const SizedBox(),
+        ],
+      ),
     );
 
     ;
@@ -510,18 +507,40 @@ class _SegmentClocksState extends State<SegmentClocks> {
   Widget _timerSection(bool keyboardVisibilty) {
     return Center(
         child: Container(
-      color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+      color: OlukoNeumorphismColors.appBackgroundColor,
       child: Column(
         children: [
           OlukoNeumorphism.isNeumorphismDesign ? const SizedBox.shrink() : getSegmentLabel(),
           Padding(
-              padding: const EdgeInsets.only(top: OlukoNeumorphism.isNeumorphismDesign ? 20 : 3, bottom: 8),
-              child: Stack(alignment: Alignment.center, children: [getRoundsTimer(keyboardVisibilty), _countdownSection()])),
+              padding: EdgeInsets.only(
+                  top: OlukoNeumorphism.isNeumorphismDesign
+                      ? workState == WorkState.resting
+                          ? 0
+                          : 50
+                      : 3,
+                  bottom: 8),
+              child: Stack(alignment: Alignment.center, children: [
+                usePulseAnimation() ? roundTimerWithPulse(keyboardVisibilty) : getRoundsTimer(keyboardVisibilty),
+                _countdownSection()
+              ])),
           if (isWorkStateFinished()) const SizedBox() else _tasksSection(keyboardVisibilty)
         ],
       ),
     ));
   }
+
+  AvatarGlow roundTimerWithPulse(bool keyboardVisibilty) {
+    return AvatarGlow(
+        glowColor: OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor,
+        endRadius: 200.0,
+        duration: Duration(milliseconds: 2000),
+        repeat: true,
+        showTwoGlows: true,
+        repeatPauseDuration: Duration(milliseconds: 100),
+        child: getRoundsTimer(keyboardVisibilty));
+  }
+
+  bool usePulseAnimation() => OlukoNeumorphism.isNeumorphismDesign && (workState == WorkState.resting);
 
   bool isWorkStateFinished() {
     return workState == WorkState.finished;
@@ -758,7 +777,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                     : SizedBox.shrink(),
             ]),
             textController.value != null && textController.value.text != ""
-                ? SizedBox.shrink()
+                ? const SizedBox.shrink()
                 : Align(
                     alignment: Alignment.center,
                     child: Column(
