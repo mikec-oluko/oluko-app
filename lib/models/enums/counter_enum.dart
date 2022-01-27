@@ -1,1 +1,1 @@
-enum CounterEnum { none, distance, reps }
+enum CounterEnum { none, distance, reps, weight }

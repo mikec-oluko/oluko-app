@@ -39,6 +39,7 @@ import 'package:oluko_app/ui/components/uploading_modal_loader.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_video_preview.dart';
 import 'package:oluko_app/ui/screens/courses/audio_dialog_content.dart';
 import 'package:oluko_app/ui/screens/courses/class_detail_section.dart';
 import 'package:oluko_app/ui/screens/courses/course_info_section.dart';
@@ -50,7 +51,12 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 enum PanelEnum { audios, classDetail }
 
 class InsideClass extends StatefulWidget {
-  InsideClass({this.courseEnrollment, this.classIndex, this.courseIndex, Key key}) : super(key: key);
+  InsideClass({
+    this.courseEnrollment,
+    this.classIndex,
+    this.courseIndex,
+    Key key,
+  }) : super(key: key);
   final CourseEnrollment courseEnrollment;
   final int classIndex;
   final int courseIndex;
@@ -74,7 +80,7 @@ class _InsideClassesState extends State<InsideClass> {
   AudioPlayer audioPlayer = AudioPlayer();
   EnrollmentAudio _enrollmentAudio;
   int _audioQty = 0;
-
+  bool _isVideoPlaying=false;
   Widget panelContent;
   PanelEnum panelState;
 
@@ -299,7 +305,7 @@ class _InsideClassesState extends State<InsideClass> {
       children: [
         Padding(
           padding: const EdgeInsets.only(bottom: 3),
-          child: OverlayVideoPreview(
+          child: OlukoVideoPreview(
             video: _class.video,
             showBackButton: true,
             audioWidget: OlukoNeumorphism.isNeumorphismDesign ? _getAudioWidget() : null,
@@ -315,6 +321,8 @@ class _InsideClassesState extends State<InsideClass> {
                 },
               );
             },
+            onPlay: () => isVideoPlaying(),
+            videoVisibilty: _isVideoPlaying,
           ),
         ),
         Padding(
@@ -462,6 +470,12 @@ class _InsideClassesState extends State<InsideClass> {
         ),
       ],
     );
+  }
+
+  void isVideoPlaying() {
+    return setState(() {
+      _isVideoPlaying = !_isVideoPlaying;
+    });
   }
 
   BlocListener<InsideClassContentBloc, InsideClassContentState> slidingUpPanelComponent(BuildContext context) {
