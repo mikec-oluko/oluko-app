@@ -94,7 +94,7 @@ class _State extends State<StoriesItem> {
           }
         },
         child: Padding(
-          padding: OlukoNeumorphism.isNeumorphismDesign ? EdgeInsets.fromLTRB(10, 15, 10, 0) : EdgeInsets.fromLTRB(8, 0, 8, 0),
+          padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.fromLTRB(10, 0, 10, 0) : const EdgeInsets.fromLTRB(8, 0, 8, 0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -175,6 +175,7 @@ class _State extends State<StoriesItem> {
       }
     }
   }
+
   Widget getCircularAvatar() {
     if (widget.imageUrl != null) {
       return OlukoNeumorphism.isNeumorphismDesign
@@ -222,6 +223,9 @@ class _State extends State<StoriesItem> {
     switch (widget.from) {
       case StoriesItemFrom.home:
         return 7;
+        break;
+      case StoriesItemFrom.neumorphicHome:
+        return 8.2;
         break;
       case StoriesItemFrom.friendsModal:
         return 6.2;
