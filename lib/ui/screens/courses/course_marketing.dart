@@ -58,15 +58,16 @@ class CourseMarketing extends StatefulWidget {
     CourseEnrollment outsideCourseEnrollment,
     int outsideCourseIndex,
   }) {
-    final CourseEnrollment enrollment = courseEnrollment ?? outsideCourseEnrollment;
+
+final CourseEnrollment enrollment = courseEnrollment ?? outsideCourseEnrollment;
     final int index = courseIndex ?? outsideCourseIndex;
-    List<Class> _coursesClases = CourseService.getCourseClasses(course ?? outsideCourse, classes);
+
+List<Class> _coursesClases = CourseService.getCourseClasses(course ?? outsideCourse, classes);
     List<ClassItem> _classItems = [];
     _coursesClases.forEach((element) {
       ClassItem classItem = ClassItem(classObj: element, expanded: false);
       _classItems.add(classItem);
     });
-
     return ListView(
       physics: NeverScrollableScrollPhysics(),
       shrinkWrap: true,
@@ -78,8 +79,11 @@ class CourseMarketing extends StatefulWidget {
                     style: OlukoNeumorphism.getNeumorphicStyleForCardClasses(
                         CourseEnrollmentService.getClassProgress(enrollment, _classItems.indexOf(item)) > 0),
                     child: GestureDetector(
-                      onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass],
-                          arguments: {'courseEnrollment': enrollment, 'classIndex': _classItems.indexOf(item), 'courseIndex': index}),
+                      onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
+                        'courseEnrollment': enrollment,
+                        'classIndex': _classItems.indexOf(item),
+                        'courseIndex': index
+                      }),
                       child: Padding(
                         padding: const EdgeInsets.all(5.0),
                         child: ClassSection(
@@ -93,8 +97,11 @@ class CourseMarketing extends StatefulWidget {
                     ))
                 : Container(
                     child: GestureDetector(
-                      onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass],
-                          arguments: {'courseEnrollment': enrollment, 'classIndex': _classItems.indexOf(item), 'courseIndex': index}),
+                      onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
+                        'courseEnrollment': enrollment,
+                        'classIndex': _classItems.indexOf(item),
+                        'courseIndex': index
+                      }),
                       child: Padding(
                         padding: const EdgeInsets.all(5.0),
                         child: ClassSection(
@@ -111,8 +118,11 @@ class CourseMarketing extends StatefulWidget {
         ..._classItems.map((item) => enrollment.classes[_classItems.indexOf(item)].completedAt != null
             ? Container(
                 child: GestureDetector(
-                  onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass],
-                      arguments: {'courseEnrollment': enrollment, 'classIndex': _classItems.indexOf(item), 'courseIndex': index}),
+                  onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
+                    'courseEnrollment': enrollment,
+                    'classIndex': _classItems.indexOf(item),
+                    'courseIndex': index
+                  }),
                   child: Padding(
                     padding: const EdgeInsets.all(5.0),
                     child: ClassSection(
@@ -125,7 +135,7 @@ class CourseMarketing extends StatefulWidget {
                   ),
                 ),
               )
-            : const SizedBox(),)
+            : SizedBox())
       ],
     );
   }
@@ -210,20 +220,15 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                             widget.course.name,
                                             style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
                                           ),
-                                          if (OlukoNeumorphism.isNeumorphismDesign)
-                                            const SizedBox()
-                                          else
-                                            Padding(
-                                              padding: const EdgeInsets.only(top: 10.0, right: 10),
-                                              child: Text(
-                                                //TODO: change weeks number
-                                                TimeConverter.toCourseDuration(
-                                                    6, widget.course.classes != null ? widget.course.classes.length : 0, context),
-                                                style: OlukoFonts.olukoBigFont(
-                                                    custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
-                                              ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(top: 10.0, right: 10),
+                                            child: Text(
+                                              widget.course.duration,
+                                              style: OlukoFonts.olukoBigFont(
+                                                  custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
                                             ),
-                                          OlukoNeumorphism.isNeumorphismDesign ? SizedBox() : buildStatistics(),
+                                          ),
+                                          buildStatistics(),
                                           Padding(
                                             padding: const EdgeInsets.only(top: 10.0, right: 10),
                                             child: Text(
@@ -338,6 +343,85 @@ class _CourseMarketingState extends State<CourseMarketing> {
       movements: _movements,
       onPressedMovement: (BuildContext context, Movement movement) =>
           Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement}),
+    );
+  }
+
+  Widget buildClassEnrolledCards() {
+    List<Class> _coursesClases = CourseService.getCourseClasses(widget.course, _classes);
+    List<ClassItem> _classItems = [];
+    _coursesClases.forEach((element) {
+      ClassItem classItem = ClassItem(classObj: element, expanded: false);
+      _classItems.add(classItem);
+    });
+    return ListView(
+      physics: NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      children: [
+        ..._classItems.map((item) => widget.courseEnrollment.classes[_classItems.indexOf(item)].completedAt == null
+            ? CourseEnrollmentService.getClassProgress(widget.courseEnrollment, _classItems.indexOf(item)) == 0
+                ? Neumorphic(
+                    margin: EdgeInsets.all(10),
+                    style: OlukoNeumorphism.getNeumorphicStyleForCardClasses(
+                        CourseEnrollmentService.getClassProgress(widget.courseEnrollment, _classItems.indexOf(item)) > 0),
+                    child: GestureDetector(
+                      onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
+                        'courseEnrollment': widget.courseEnrollment,
+                        'classIndex': _classItems.indexOf(item),
+                        'courseIndex': widget.courseIndex
+                      }),
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: ClassSection(
+                          classProgress: CourseEnrollmentService.getClassProgress(widget.courseEnrollment, _classItems.indexOf(item)),
+                          isCourseEnrolled: true,
+                          index: _classItems.indexOf(item),
+                          total: _classItems.length,
+                          classObj: item.classObj,
+                        ),
+                      ),
+                    ))
+                : Container(
+                    child: GestureDetector(
+                      onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
+                        'courseEnrollment': widget.courseEnrollment,
+                        'classIndex': _classItems.indexOf(item),
+                        'courseIndex': widget.courseIndex
+                      }),
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: ClassSection(
+                          classProgress: CourseEnrollmentService.getClassProgress(widget.courseEnrollment, _classItems.indexOf(item)),
+                          isCourseEnrolled: true,
+                          index: _classItems.indexOf(item),
+                          total: _classItems.length,
+                          classObj: item.classObj,
+                        ),
+                      ),
+                    ),
+                  )
+            : SizedBox()),
+        ..._classItems.map((item) => widget.courseEnrollment.classes[_classItems.indexOf(item)].completedAt != null
+            ? Container(
+                child: GestureDetector(
+                  onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
+                    'courseEnrollment': widget.courseEnrollment,
+                    'classIndex': _classItems.indexOf(item),
+                    'courseIndex': widget.courseIndex
+                  }),
+                  child: Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: ClassSection(
+                      classProgress: 1,
+                      isCourseEnrolled: true,
+                      index: _classItems.indexOf(item),
+                      total: _classItems.length,
+                      classObj: item.classObj,
+                    ),
+                  ),
+                ),
+              )
+            : SizedBox())
+      ],
     );
   }
 }

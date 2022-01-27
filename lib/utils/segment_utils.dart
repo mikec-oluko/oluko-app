@@ -6,6 +6,7 @@ import 'package:oluko_app/models/enums/parameter_enum.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/movement_submodel.dart';
+import 'package:oluko_app/models/submodels/segment_submodel.dart';
 import 'package:oluko_app/models/timer_entry.dart';
 import 'package:oluko_app/ui/newDesignComponents/movement_items_bubbles_neumorphic.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -44,9 +45,7 @@ class SegmentUtils {
     } else if (isAMRAP(segment)) {
       return Text(
         segment.totalTime.toString() + " " + OlukoLocalizations.get(context, 'seconds').toLowerCase() + " " + "AMRAP",
-        style: OlukoNeumorphism.isNeumorphismDesign
-            ? OlukoFonts.olukoSmallFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.bold)
-            : OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
+        style: OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
       );
     } else {
       return segment.rounds > 1
@@ -70,9 +69,7 @@ class SegmentUtils {
           (segment.totalTime).toString() +
           " " +
           OlukoLocalizations.get(context, 'seconds'),
-      style: OlukoNeumorphism.isNeumorphismDesign
-          ? OlukoFonts.olukoSmallFont(customColor: color, custoFontWeight: FontWeight.bold)
-          : OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
+      style: OlukoFonts.olukoBigFont(customColor: color, custoFontWeight: FontWeight.bold),
     );
   }
 
@@ -192,7 +189,7 @@ class SegmentUtils {
         }
       }
     }
-    if (entries[entries.length - 1].movement.isRestTime && entries[entries.length - 1].movement.counter != CounterEnum.none) {
+    if (entries[entries.length - 1].movement.isRestTime && entries[entries.length - 1].movement.counter == CounterEnum.none) {
       entries.removeAt(entries.length - 1);
     }
     return entries;

@@ -103,6 +103,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
           },
           options: CarouselOptions(
             disableCenter: true,
+            enableInfiniteScroll: false,
             height: ScreenUtils.height(context),
             initialPage: widget.index ?? 0,
             viewportFraction: 1,
