@@ -142,9 +142,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                                   Padding(
                                                     padding: const EdgeInsets.only(top: 10.0, right: 10),
                                                     child: Text(
-                                                      //TODO: change weeks number
-                                                      TimeConverter.toCourseDuration(
-                                                          6, widget.course.classes != null ? widget.course.classes.length : 0, context),
+                                                      widget.course.duration ?? '',
                                                       style: OlukoFonts.olukoBigFont(
                                                           custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
                                                     ),
@@ -306,37 +304,10 @@ class _CourseMarketingState extends State<CourseMarketing> {
             SliverList(
                 delegate: SliverChildListDelegate([
               Padding(
-                padding: EdgeInsets.only(right: 15, left: 15, top: 0),
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      BlocBuilder<SubscribedCourseUsersBloc, SubscribedCourseUsersState>(
-                        builder: (context, subscribedCourseUsersState) {
-                          if (subscribedCourseUsersState is SubscribedCourseUsersSuccess) {
-                            final int favorites =
-                                subscribedCourseUsersState.favoriteUsers != null ? subscribedCourseUsersState.favoriteUsers.length : 0;
-                            final int normalUsers = subscribedCourseUsersState.users != null ? subscribedCourseUsersState.users.length : 0;
-                            final int qty = favorites + normalUsers;
-                            return GestureDetector(
-                              onTap: () =>
-                                  _peopleAction(subscribedCourseUsersState.users, subscribedCourseUsersState.favoriteUsers, context),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 5.0),
-                                child: peopleSection(context, qty),
-                              ),
-                            );
-                          } else {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 5.0),
-                              child: peopleSection(context, 0),
-                            );
-                          }
-                        },
-                      ),
-                    ],
-                  ),
+                padding: EdgeInsets.only(right: 15, left: 15, top: 10),
+                child: Text(
+                  widget.course.duration ?? '',
+                  style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
                 ),
               ),
             ])),
