@@ -46,7 +46,6 @@ class _State extends State<AudioSection> {
   @override
   void dispose() {
     widget.audioPlayer.stop();
-    //widget.audioPlayer.dispose();
     super.dispose();
   }
 

@@ -32,7 +32,6 @@ class _State extends State<AudioDialogContent> {
   @override
   void dispose() {
     widget.audioPlayer.stop();
-    //widget.audioPlayer.dispose();
     super.dispose();
   }
 
