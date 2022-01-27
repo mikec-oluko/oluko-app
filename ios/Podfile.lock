@@ -353,7 +353,7 @@ PODS:
   - BoringSSL-GRPC/Interface (0.0.7)
   - camera (0.0.1):
     - Flutter
-  - cloud_firestore (2.2.2):
+  - cloud_firestore (2.5.4):
     - Firebase/Firestore (= 8.9.0)
     - firebase_core
     - Flutter
@@ -719,7 +719,7 @@ SPEC CHECKSUMS:
   audioplayers: 455322b54050b30ea4b1af7cd9e9d105f74efa8c
   BoringSSL-GRPC: 8edf627ee524575e2f8d19d56f068b448eea3879
   camera: a0ca5080336f7af47b88436e5e26da3dee5568f0
-  cloud_firestore: cf459a7a138f25bd26645cbca402518f152bfa3d
+  cloud_firestore: 0c744725c0d1544d77db2c8eb35ef919cb19a176
   FBAEMKit: 56c0bb9b42e3747cd82b67934f0c2b19325382ea
   FBSDKCoreKit: 75368765d9c2303073145a7925dfaa9d60bcd77b
   FBSDKCoreKit_Basics: 39865aff97e5f6951a78fb3e89dc4460e35e1895
@@ -752,7 +752,7 @@ SPEC CHECKSUMS:
   GTMAppAuth: ad5c2b70b9a8689e1a04033c9369c4915bfcbe89
   GTMSessionFetcher: 43748f93435c2aa068b1cbe39655aaf600652e91
   image_picker: 9aa50e1d8cdacdbed739e925b7eea16d014367e6
-  in_app_purchase_ios: 18c65275991b8a28b2a47634a7797fb23d5d773e
+  in_app_purchase_ios: 04ed55fdd1012db54095d6801335b5f5de0a475f
   leveldb-library: 50c7b45cbd7bf543c81a468fe557a16ae3db8729
   libwebp: 98a37e597e40bfdb4c911fc98f2c53d0b12d05fc
   Mantle: c5aa8794a29a022dfbbfc9799af95f477a69b62d
@@ -774,4 +774,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 043178726e2bc6909a8e6b75aea1b95769aa56ba
 
-COCOAPODS: 1.11.2
+COCOAPODS: 1.10.2
