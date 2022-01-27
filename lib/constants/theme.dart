@@ -3,7 +3,7 @@ import 'dart:ui' show Color;
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
 class OlukoNeumorphism {
-  static const bool isNeumorphismDesign = false;
+  static const bool isNeumorphismDesign = true;
   static const Radius radiusValue = Radius.circular(15.0);
 
   static NeumorphicStyle primaryButtonStyleDisable(

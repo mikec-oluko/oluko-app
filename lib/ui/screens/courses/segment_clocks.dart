@@ -517,7 +517,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
               padding: EdgeInsets.only(
                   top: OlukoNeumorphism.isNeumorphismDesign
                       ? workState == WorkState.resting
-                          ? 0
+                          ? usePulseAnimation()
+                              ? 0
+                              : 50
                           : 50
                       : 3,
                   bottom: 8),
@@ -541,8 +543,12 @@ class _SegmentClocksState extends State<SegmentClocks> {
         repeatPauseDuration: Duration(milliseconds: 100),
         child: getRoundsTimer(keyboardVisibilty));
   }
+  //TODO: QUITAR ANIMACION  Y CIRCULAR
 
-  bool usePulseAnimation() => OlukoNeumorphism.isNeumorphismDesign && (workState == WorkState.resting);
+  bool usePulseAnimation() =>
+      (OlukoNeumorphism.isNeumorphismDesign &&
+          !(timerEntries[timerTaskIndex].counter == CounterEnum.reps || timerEntries[timerTaskIndex].counter == CounterEnum.distance)) &&
+      (workState == WorkState.resting);
 
   bool isWorkStateFinished() {
     return workState == WorkState.finished;
@@ -611,7 +617,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   Widget currentAndNextTaskWithCounter(bool keyboardVisibilty, String currentTask, String nextTask) {
     return Padding(
-      padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.only(top: 50) : EdgeInsets.zero,
+      padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.only(top: 0) : EdgeInsets.zero,
       child: Column(
         children: [
           currentTaskWidget(keyboardVisibilty, currentTask),
@@ -631,7 +637,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
             timerEntries[timerTaskIndex - 1].counter == CounterEnum.weight)) {
       final bool isCounterByReps = timerEntries[timerTaskIndex - 1].counter == CounterEnum.reps;
       return [
-        OlukoNeumorphism.isNeumorphismDesign ? neumorphicTextfieldForScore(isCounterByReps) : getTextField(keyboardVisibilty),
+        OlukoNeumorphism.isNeumorphismDesign ? SizedBox.shrink() : getTextField(keyboardVisibilty),
         getKeyboard(keyboardVisibilty),
         !keyboardVisibilty && !isSegmentWithRecording()
             ? SizedBox(
@@ -898,8 +904,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
     if (workState == WorkState.resting) {
       final bool needInput = useInput();
-      return TimerUtils.restTimer(
-          needInput ? getTextField(true) : null, circularProgressIndicatorValue, TimeConverter.durationToString(timeLeft), context);
+      return needInput && OlukoNeumorphism.isNeumorphismDesign
+          ? TimerUtils.restTimer(needInput ? neumorphicTextfieldForScore(true) : null, circularProgressIndicatorValue,
+              TimeConverter.durationToString(timeLeft), context)
+          : TimerUtils.restTimer(
+              needInput ? getTextField(true) : null, circularProgressIndicatorValue, TimeConverter.durationToString(timeLeft), context);
     }
 
     if (timerEntries[timerTaskIndex].round == null) {
@@ -947,9 +956,12 @@ class _SegmentClocksState extends State<SegmentClocks> {
           ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
         },
         blendMode: BlendMode.dstIn,
-        child: Text(
-          nextTask,
-          style: const TextStyle(fontSize: 25, color: Color.fromRGBO(255, 255, 255, 0.25), fontWeight: FontWeight.bold),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Text(
+            nextTask,
+            style: const TextStyle(fontSize: 25, color: Color.fromRGBO(255, 255, 255, 0.25), fontWeight: FontWeight.bold),
+          ),
         ),
       ),
     );
