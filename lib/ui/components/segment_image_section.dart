@@ -16,6 +16,7 @@ import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/services/audio_service.dart';
 import 'package:oluko_app/ui/components/audio_section.dart';
+import 'package:oluko_app/ui/components/coach_request_content.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/people_section.dart';
@@ -214,7 +215,12 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                       if (_coachRequest != null) {
                         //TODO: CHECK CHALLENGE
                         BottomDialogUtils.showBottomDialog(
-                            context: context, content: dialogContainer(widget.coach.firstName, widget.coach.avatar));
+                            context: context,
+                            content: CoachRequestContent(
+                                name: widget.coach.firstName,
+                                image: widget.coach.avatar,
+                                onNotRecordingAction: navigateToSegmentWithoutRecording,
+                                onRecordingAction: navigateToSegmentWithRecording));
                       } else {
                         navigateToSegmentWithoutRecording();
                       }
@@ -240,7 +246,12 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
                     //CoachRequest coachRequest = getSegmentCoachRequest(widget.segment.id);
                     if (_coachRequest != null) {
                       BottomDialogUtils.showBottomDialog(
-                          context: context, content: dialogContainer(widget.coach.firstName, widget.coach.avatar));
+                          context: context,
+                          content: CoachRequestContent(
+                              name: widget.coach.firstName,
+                              image: widget.coach.avatar,
+                              onNotRecordingAction: navigateToSegmentWithoutRecording,
+                              onRecordingAction: navigateToSegmentWithRecording));
                     } else {
                       navigateToSegmentWithoutRecording();
                     }
@@ -256,56 +267,6 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
       }
     }
     return null;
-  }
-
-  Widget dialogContainer(String name, String image) {
-    return Container(
-        decoration: const BoxDecoration(
-            image: DecorationImage(
-          image: AssetImage('assets/courses/dialog_background.png'),
-          fit: BoxFit.cover,
-        )),
-        child: Stack(children: [
-          Column(children: [
-            const SizedBox(height: 30),
-            Stack(alignment: Alignment.center, children: [
-              StoriesItem(maxRadius: 65, imageUrl: image /*, bloc: StoryListBloc()*/),
-              Image.asset('assets/courses/photo_ellipse.png', scale: 4)
-            ]),
-            const SizedBox(height: 15),
-            Text('${OlukoLocalizations.get(context, 'coach')} $name',
-                textAlign: TextAlign.center, style: OlukoFonts.olukoSuperBigFont(custoFontWeight: FontWeight.bold)),
-            const SizedBox(height: 20),
-            Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 50),
-                child: Text('${OlukoLocalizations.get(context, 'coach')} $name ${OlukoLocalizations.get(context, 'coachRequest')}',
-                    textAlign: TextAlign.center, style: OlukoFonts.olukoBigFont())),
-            const SizedBox(height: 35),
-            Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    OlukoOutlinedButton(
-                      title: OlukoLocalizations.get(context, 'ignore'),
-                      onPressed: () {
-                        navigateToSegmentWithoutRecording();
-                      },
-                    ),
-                    const SizedBox(width: 20),
-                    OlukoPrimaryButton(
-                      title: 'Ok',
-                      onPressed: () {
-                        navigateToSegmentWithRecording();
-                      },
-                    )
-                  ],
-                )),
-          ]),
-          Align(
-              alignment: Alignment.topRight,
-              child: IconButton(icon: const Icon(Icons.close, color: Colors.white), onPressed: () => Navigator.pop(context)))
-        ]));
   }
 
   navigateToSegmentWithRecording() {
@@ -551,7 +512,13 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   _onStartPressed() {
     //CoachRequest coachRequest = getSegmentCoachRequest(widget.segment.id);
     if (_coachRequest != null) {
-      BottomDialogUtils.showBottomDialog(context: context, content: dialogContainer(widget.coach.firstName, widget.coach.avatar));
+      BottomDialogUtils.showBottomDialog(
+          context: context,
+          content: CoachRequestContent(
+              name: widget.coach.firstName,
+              image: widget.coach.avatar,
+              onNotRecordingAction: navigateToSegmentWithoutRecording,
+              onRecordingAction: navigateToSegmentWithRecording));
     } else {
       navigateToSegmentWithoutRecording();
     }
