@@ -871,7 +871,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
   }
 
   _saveCounter() {
-    if (isCurrentMovementRest() && timerEntries[timerTaskIndex - 1].movement.counter != null && textController.text != '') {
+    if (isCurrentMovementRest() &&
+        timerEntries[timerTaskIndex - 1].movement.counter != null &&
+        timerEntries[timerTaskIndex - 1].movement.counter != CounterEnum.none &&
+        textController.text != '') {
       setState(() {
         counter = true;
       });
