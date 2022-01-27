@@ -53,7 +53,7 @@ class _State extends State<ClassSectionExpansionPanel> {
                                   padding: const EdgeInsets.only(left: 15.0),
                                   child: Text(
                                     "${OlukoLocalizations.get(context, 'class').toUpperCase()} ${widget.index + 1}/${widget.total}",
-                                    style: OlukoFonts.olukoSmallFont(custoFontWeight: FontWeight.bold, customColor: Color(0xffFEC000)),
+                                    style: OlukoFonts.olukoSmallFont(custoFontWeight: FontWeight.bold, customColor: OlukoColors.yellow),
                                   )),
                               Padding(
                                 padding: const EdgeInsets.only(left: 15.0, top: 5, bottom: 0),
