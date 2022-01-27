@@ -139,10 +139,19 @@ class _HomeContentState extends State<HomeContent> {
         ShaderMask(
           shaderCallback: (rect) {
             return const LinearGradient(
-              begin: Alignment.center,
-              end: Alignment.bottomCenter,
-              colors: [Colors.black, Colors.transparent],
-            ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
+                stops: [
+                  0.2,
+                  0.5,
+                  0.8,
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0xFF3e3737),
+                  Color(0xFFbfbaba),
+                  Color(0xFF3e3737),
+                ],
+              ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
           },
           blendMode: BlendMode.dstIn,
           child: Container(
@@ -155,12 +164,6 @@ class _HomeContentState extends State<HomeContent> {
             height: ScreenUtils.height(context) - 200,
             width: ScreenUtils.width(context),
           ),
-        ),
-        Image.asset(
-          'assets/home/degraded.png',
-          // scale: 5,
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
         ),
         notErolledContent()
       ],

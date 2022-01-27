@@ -19,6 +19,7 @@ import 'package:oluko_app/ui/components/overlay_video_preview.dart';
 import 'package:oluko_app/ui/components/stories_header.dart';
 import 'package:oluko_app/ui/components/video_overlay.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/screens/courses/course_marketing.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -43,14 +44,8 @@ class HomeNeumorphicContent extends StatefulWidget {
 class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   @override
   Widget build(BuildContext context) {
+    BlocProvider.of<StoryBloc>(context).hasStories(widget.user.uid);
     return homeContainer();
-  }
-
-  Widget form() {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: homeContainer(),
-    );
   }
 
   Widget homeContainer() {
@@ -77,7 +72,6 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   Widget enrolled() {
     if (widget.courseEnrollments.length == widget.courses.length) {
       BlocProvider.of<ClassSubscriptionBloc>(context).getStream();
-      BlocProvider.of<StoryBloc>(context).hasStories(widget.user.uid);
       return Scaffold(
         backgroundColor: Colors.black,
         body: CarouselSlider.builder(
@@ -267,47 +261,77 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
   }
 
   Widget notEnrolled() {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: OlukoAppBar(
-        title: OlukoLocalizations.get(context, 'home'),
-        showLogo: true,
-        showBackButton: false,
-        actions: [HandWidget(authState: widget.authState)],
-        showDivider: true,
-        showTitle: false,
-      ),
-      body: Stack(
-        children: [
-          ShaderMask(
-            shaderCallback: (rect) {
-              return const LinearGradient(
-                begin: Alignment.center,
-                end: Alignment.bottomCenter,
-                colors: [Colors.black, Colors.transparent],
-              ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
-            },
-            blendMode: BlendMode.dstIn,
-            child: Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/courses/profile_photos.png'),
-                  fit: BoxFit.cover,
+    return BlocBuilder<StoryBloc, StoryState>(
+      builder: (context, hasStories) {
+        final bool showStories = hasStories is HasStoriesSuccess && hasStories.hasStories;
+        return Scaffold(
+          backgroundColor: Colors.black,
+          body: Column(
+            children: [
+              Container(
+                color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
+                child: Column(
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 20, top: 40, bottom: showStories ? 0 : 40),
+                        child: Align(
+                          alignment: Alignment.topLeft,
+                          child: Image.asset(
+                            'assets/home/mvt.png',
+                            scale: 4,
+                          ),
+                        ),
+                      ),
+                    ),
+                    if (showStories)
+                      StoriesHeader(
+                        widget.user.uid,
+                        maxRadius: 30,
+                      ),
+                    const OlukoNeumorphicDivider()
+                  ],
                 ),
               ),
-              height: ScreenUtils.height(context) - 200,
-              width: ScreenUtils.width(context),
-            ),
+              Stack(
+                children: [
+                  ShaderMask(
+                    shaderCallback: (rect) {
+                      return const LinearGradient(
+                        stops: [
+                          0.2,
+                          0.5,
+                          0.8,
+                        ],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Color(0xFF3e3737),
+                          Color(0xFFbfbaba),
+                          Color(0xFF3e3737),
+                        ],
+                      ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
+                    },
+                    //blendMode: BlendMode.dstIn,
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage('assets/courses/profile_photos.png'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      height: ScreenUtils.height(context) - (showStories ? 240 : 181),
+                      width: ScreenUtils.width(context),
+                    ),
+                  ),
+                  Center(child: notErolledContent(showStories))
+                ],
+              ),
+            ],
           ),
-          Image.asset(
-            'assets/home/degraded.png',
-            // scale: 5,
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-          ),
-          notErolledContent()
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -328,20 +352,22 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
     );
   }
 
-  Widget notErolledContent() {
+  Widget notErolledContent(bool showStories) {
     return Column(
       children: [
-        const SizedBox(height: 85),
+        SizedBox(
+          height: showStories ? 40 : 80,
+        ),
         Text(
           OlukoLocalizations.get(context, 'welcomeTo'),
           style: OlukoFonts.olukoSubtitleFont(custoFontWeight: FontWeight.bold, customColor: OlukoColors.white),
         ),
-        const SizedBox(height: 25),
+        const SizedBox(height: 15),
         Image.asset(
           'assets/home/mvt.png',
           scale: 2,
         ),
-        const SizedBox(height: 50),
+        const SizedBox(height: 80),
         Padding(
           padding: const EdgeInsets.only(bottom: 16),
           child: GestureDetector(
@@ -367,7 +393,7 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
             ),
           ),
         ),
-        const SizedBox(height: 100),
+        const SizedBox(height: 30),
         enrollButton()
       ],
     );
