@@ -74,7 +74,7 @@ class _VideoOverlayState extends State<VideoOverlay> {
             [
               Visibility(
                 child: Positioned(
-                  top: 20,
+                  top: 25,
                   right: 10,
                   child: GestureDetector(
                     onTap: () => widget.onPlay(),
