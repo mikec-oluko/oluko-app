@@ -136,9 +136,8 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
 
   Widget videoSection() {
     return Stack(alignment: Alignment.center, children: [
-      SizedBox(
-        width: ScreenUtils.width(context),
-        height: ScreenUtils.height(context) / 1.4,
+      AspectRatio(
+        aspectRatio: 480 / 600,
         child: widget.image == null
             ? Image.asset(
                 'assets/courses/profile_photos.png',
@@ -150,9 +149,8 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
               ),
       ),
       if (widget.video != null && widget.video != "null")
-        SizedBox(
-          width: ScreenUtils.width(context),
-          height: ScreenUtils.height(context) / 1.4,
+        AspectRatio(
+          aspectRatio: 480 / 600,
           child: Padding(
               padding: EdgeInsets.only(bottom: widget.videoVisibilty ? 0 : 16),
               child: GestureDetector(

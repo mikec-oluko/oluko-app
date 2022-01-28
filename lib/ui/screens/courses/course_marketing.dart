@@ -195,7 +195,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                                 child: Text(
                                                   //TODO: change weeks number
                                                   TimeConverter.toCourseDuration(
-                                                     6, widget.course.classes != null ? widget.course.classes.length : 0, context),
+                                                      6, widget.course.classes != null ? widget.course.classes.length : 0, context),
                                                   style: OlukoFonts.olukoBigFont(
                                                       custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
                                                 ),
@@ -256,15 +256,12 @@ class _CourseMarketingState extends State<CourseMarketing> {
                         ),
                       ))),
               SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 3),
-                  child: OlukoVideoPreview(
-                    image: widget.course.image,
-                    video: widget.course.video,
-                    onBackPressed: () => Navigator.pop(context),
-                    onPlay: () => isVideoPlaying(),
-                    videoVisibilty: _isVideoPlaying,
-                  ),
+                child: OlukoVideoPreview(
+                  image: widget.course.image,
+                  video: widget.course.video,
+                  onBackPressed: () => Navigator.pop(context),
+                  onPlay: () => isVideoPlaying(),
+                  videoVisibilty: _isVideoPlaying,
                 ),
               ),
               SliverPersistentHeader(
@@ -299,8 +296,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                 padding: EdgeInsets.only(right: 15, left: 15, top: 10),
                 child: Text(
                   //TODO:Change weeks number
-                  TimeConverter.toCourseDuration(
-                      6, widget.course.classes != null ? widget.course.classes.length : 0, context),
+                  TimeConverter.toCourseDuration(6, widget.course.classes != null ? widget.course.classes.length : 0, context),
                   style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
                 ),
               ),
