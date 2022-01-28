@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
@@ -53,7 +54,7 @@ class _CourseCarouselGalleryState extends State<CourseCarouselGallery> {
                       decoration: BoxDecoration(
                         image: DecorationImage(
                           fit: BoxFit.fill,
-                          image: NetworkImage(widget.courseEnrollments[i].course.image),
+                          image: CachedNetworkImageProvider(widget.courseEnrollments[i].course.image),
                         ),
                         borderRadius: const BorderRadius.all(Radius.circular(8)),
                       ),

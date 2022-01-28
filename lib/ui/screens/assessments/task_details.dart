@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -606,7 +607,7 @@ class _TaskDetailsState extends State<TaskDetails> {
           child: ClipRRect(
             borderRadius: const BorderRadius.all(Radius.circular(20)),
             child: Stack(alignment: AlignmentDirectional.center, children: [
-              if (thumbnail == null) const Icon(Icons.no_photography) else Image.network(thumbnail),
+              if (thumbnail == null) const Icon(Icons.no_photography) else Image(image: CachedNetworkImageProvider(thumbnail)),
               Align(
                   alignment: Alignment.center,
                   child: OlukoNeumorphism.isNeumorphismDesign

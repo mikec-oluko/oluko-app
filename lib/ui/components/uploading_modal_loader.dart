@@ -19,7 +19,8 @@ class _UploadingModalLoaderState extends State<UploadingModalLoader> {
       return LoaderAndUploadingText();
     } else if (widget.toUpload == UploadFrom.profileImage) {
       return LoaderAndUploadingText();
-    } 
+    }
+    return Container();
   }
 }
 
@@ -45,7 +46,10 @@ class LoaderAndUploadingText extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 50.0),
                     child: Transform.scale(
                       scale: 2,
-                      child: CircularProgressIndicator(strokeWidth: 2, backgroundColor: OlukoColors.grayColor, valueColor: AlwaysStoppedAnimation<Color>(OlukoColors.primary)),
+                      child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          backgroundColor: OlukoColors.grayColor,
+                          valueColor: AlwaysStoppedAnimation<Color>(OlukoColors.primary)),
                     ),
                   ),
                   Padding(

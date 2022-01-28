@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/coach_segment_content.dart';
@@ -15,8 +16,7 @@ class _CoachTabSegmentCardState extends State<CoachTabSegmentCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-          color: OlukoColors.challengesGreyBackground, borderRadius: BorderRadius.all(Radius.circular(5))),
+      decoration: BoxDecoration(color: OlukoColors.challengesGreyBackground, borderRadius: BorderRadius.all(Radius.circular(5))),
       height: 100,
       width: 150,
       child: Wrap(
@@ -31,7 +31,7 @@ class _CoachTabSegmentCardState extends State<CoachTabSegmentCard> {
                             color: OlukoColors.challengesGreyBackground,
                             borderRadius: BorderRadius.all(Radius.circular(5)),
                             image: DecorationImage(
-                              image: NetworkImage(widget.segment.classImage),
+                              image: CachedNetworkImageProvider(widget.segment.classImage),
                               fit: BoxFit.cover,
                               onError: (exception, stackTrace) {
                                 return Text('Your error widget...');
@@ -51,8 +51,7 @@ class _CoachTabSegmentCardState extends State<CoachTabSegmentCard> {
                           child: Center(
                               child: Text(
                             OlukoLocalizations.get(context, 'segment'),
-                            style: OlukoFonts.olukoSmallFont(
-                                customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                            style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                           )),
                         )),
               Expanded(
@@ -67,8 +66,7 @@ class _CoachTabSegmentCardState extends State<CoachTabSegmentCard> {
                             padding: const EdgeInsets.symmetric(vertical: 2),
                             child: Text(
                               widget.segment.className,
-                              style: OlukoFonts.olukoSmallFont(
-                                  customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+                              style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
                             ),
                           ),
                           Padding(
@@ -76,8 +74,7 @@ class _CoachTabSegmentCardState extends State<CoachTabSegmentCard> {
                             child: Text(
                               widget.segment.segmentName,
                               overflow: TextOverflow.ellipsis,
-                              style: OlukoFonts.olukoMediumFont(
-                                  customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+                              style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
                             ),
                           ),
                         ],

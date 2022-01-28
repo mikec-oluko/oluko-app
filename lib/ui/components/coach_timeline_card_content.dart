@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -43,7 +44,7 @@ class _CoachTimelineCardContentState extends State<CoachTimelineCardContent> {
                           decoration: BoxDecoration(
                               borderRadius: const BorderRadius.all(Radius.circular(5)),
                               image: DecorationImage(
-                                image: NetworkImage(widget.cardImage),
+                                image: CachedNetworkImageProvider(widget.cardImage),
                                 fit: BoxFit.cover,
                               )),
                         ),

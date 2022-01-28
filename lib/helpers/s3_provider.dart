@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:path/path.dart' as path;
 import 'package:async/async.dart';
@@ -10,10 +11,10 @@ import 'package:oluko_app/helpers/s3_policy.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 class S3Provider {
-  String accessKeyId = GlobalConfiguration().getValue("accessKeyID");
-  String secretKeyId = GlobalConfiguration().getValue("secretAccessKey");
-  String endpoint = GlobalConfiguration().getValue("bucket");
-  String region = GlobalConfiguration().getValue("region");
+  String accessKeyId = GlobalConfiguration().getValue('accessKeyID');
+  String secretKeyId = GlobalConfiguration().getValue('secretAccessKey');
+  String endpoint = GlobalConfiguration().getValue('bucket');
+  String region = GlobalConfiguration().getValue('region');
 
   S3Provider();
   //{this.accessKeyId, this.secretKeyId, this.endpoint, this.region}
@@ -23,11 +24,10 @@ class S3Provider {
     final length = await file.length();
 
     final uri = Uri.parse(endpoint);
-    final req = http.MultipartRequest("POST", uri);
+    final req = http.MultipartRequest('POST', uri);
     final multipartFile = http.MultipartFile('file', stream, length, filename: path.basename(file.path));
 
-    final policy = Policy.fromS3PresignedPost('uploaded/square-cinnamon.jpg', 'bucketname', accessKeyId, 15, length,
-        region: region);
+    final policy = Policy.fromS3PresignedPost('uploaded/square-cinnamon.jpg', 'bucketname', accessKeyId, 15, length, region: region);
     final key = SigV4.calculateSigningKey(secretKeyId, policy.datetime, region, 's3');
     final signature = SigV4.calculateSignature(key, policy.encode());
 
@@ -43,29 +43,31 @@ class S3Provider {
     try {
       final res = await req.send();
       await for (var value in res.stream.transform(utf8.decoder)) {
-        print(value);
+        if (kDebugMode) {
+          print(value);
+        }
       }
     } catch (e, stackTrace) {
       await Sentry.captureException(
         e,
         stackTrace: stackTrace,
       );
-      print(e.toString());
+      if (kDebugMode) {
+        print(e.toString());
+      }
       rethrow;
     }
   }
 
-  void getFile(String fileName, String path) async {
+  void getFile(String fileName, String path) {
     final uri = Uri.parse('$endpoint/$path/$fileName');
     try {
-      http.Response res = await http.get(uri);
-      await putFile(res.bodyBytes, 'Thumbnails', 'panda-test.jpg');
+      http.get(uri).then((http.Response res) => putFile(res.bodyBytes, 'Thumbnails', 'panda-test.jpg'));
     } catch (e, stackTrace) {
-      await Sentry.captureException(
+      Sentry.captureException(
         e,
         stackTrace: stackTrace,
-      );
-      print(e.toString());
+      ).then((e) => print(e.toString()));
       rethrow;
     }
   }
