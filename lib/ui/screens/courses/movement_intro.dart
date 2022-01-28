@@ -228,7 +228,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                                     child: GestureDetector(
                                       onTap: () => Navigator.pop(context),
                                       child: OlukoBlurredButton(
-                                        childContent: Image.asset('assets/courses/left_back_arrow.png'),
+                                        childContent: Image.asset('assets/courses/left_back_arrow.png',scale: 3.5,),
                                       ),
                                     ),
                                   ),

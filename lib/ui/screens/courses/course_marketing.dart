@@ -131,21 +131,13 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                         ),
                                         showEnrollButton(enrollmentState.courseEnrollment, context),
                                         Padding(
-                                            padding: EdgeInsets.only(right: 15, left: 15, top: 0),
+                                            padding: EdgeInsets.only(right: 15, left: 15, top: 5),
                                             child: Container(
                                                 width: MediaQuery.of(context).size.width,
                                                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                                                   Text(
                                                     widget.course.name,
                                                     style: OlukoFonts.olukoTitleFont(custoFontWeight: FontWeight.bold),
-                                                  ),
-                                                  Padding(
-                                                    padding: const EdgeInsets.only(top: 10.0, right: 10),
-                                                    child: Text(
-                                                      widget.course.duration ?? '',
-                                                      style: OlukoFonts.olukoBigFont(
-                                                          custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
-                                                    ),
                                                   ),
                                                   Padding(
                                                     padding: const EdgeInsets.only(top: 10.0, right: 10),
@@ -203,7 +195,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                                 child: Text(
                                                   //TODO: change weeks number
                                                   TimeConverter.toCourseDuration(
-                                                      6, widget.course.classes != null ? widget.course.classes.length : 0, context),
+                                                     6, widget.course.classes != null ? widget.course.classes.length : 0, context),
                                                   style: OlukoFonts.olukoBigFont(
                                                       custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
                                                 ),
@@ -306,7 +298,9 @@ class _CourseMarketingState extends State<CourseMarketing> {
               Padding(
                 padding: EdgeInsets.only(right: 15, left: 15, top: 10),
                 child: Text(
-                  widget.course.duration ?? '',
+                  //TODO:Change weeks number
+                  TimeConverter.toCourseDuration(
+                      6, widget.course.classes != null ? widget.course.classes.length : 0, context),
                   style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
                 ),
               ),

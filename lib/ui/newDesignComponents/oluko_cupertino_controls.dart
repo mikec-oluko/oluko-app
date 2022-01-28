@@ -12,6 +12,7 @@ import 'package:chewie/src/notifiers/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_center_play_button.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/src/models/subtitle_model.dart';
@@ -293,12 +294,20 @@ class _OlukoCupertinoControlsState extends State<OlukoCupertinoControls>
                 notifier.hideStuff = false;
               });
             },
-      child: CenterPlayButton(
+      /*child: CenterPlayButton(
         backgroundColor: widget.backgroundColor,
         iconColor: widget.iconColor,
         isFinished: isFinished,
         isPlaying: controller.value.isPlaying,
         show: !_latestValue.isPlaying && !_dragging,
+        onPressed: _playPause,
+      ),*/
+      child: OlukoCenterPlayButton(
+        backgroundColor: Colors.black54,
+        iconColor: Colors.white,
+        isFinished: isFinished,
+        isPlaying: controller.value.isPlaying,
+        show:!_latestValue.isPlaying && !_dragging,
         onPressed: _playPause,
       ),
     );
