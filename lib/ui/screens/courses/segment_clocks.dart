@@ -882,6 +882,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
   _saveStopwatch() {
     if (timerEntries[timerTaskIndex].stopwatch && (timerTaskIndex == timerEntries.length - 1 ||
         timerEntries[timerTaskIndex].round < timerEntries[timerTaskIndex + 1].round)) {
+          int currentDuration = stopwatchDuration.inSeconds;
+          _stopAndResetStopwatch();
       BlocProvider.of<CourseEnrollmentUpdateBloc>(context).saveSectionStopwatch(
           widget.courseEnrollment,
           widget.segmentIndex,
@@ -889,8 +891,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
           widget.classIndex,
           widget.segments[widget.segmentIndex].rounds,
           timerEntries[timerTaskIndex].round,
-          stopwatchDuration.inSeconds);
-      _resetStopwatch();
+          currentDuration);
+      
     }
   }
 
@@ -1317,14 +1319,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
     });
   }
 
-  _stopStopwatch() {
+  _stopAndResetStopwatch() {
     setState(() {
       stopwatchTimer.cancel();
-    });
-  }
-
-  void _resetStopwatch() {
-    setState(() {
       stopwatchDuration = Duration();
     });
   }
