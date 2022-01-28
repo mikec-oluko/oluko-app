@@ -136,8 +136,9 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
 
   Widget videoSection() {
     return Stack(alignment: Alignment.center, children: [
-      AspectRatio(
-        aspectRatio: 1,
+      SizedBox(
+        width: ScreenUtils.width(context),
+        height: ScreenUtils.height(context) / 1.4,
         child: widget.image == null
             ? Image.asset(
                 'assets/courses/profile_photos.png',
@@ -149,37 +150,38 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
               ),
       ),
       if (widget.video != null && widget.video != "null")
-        Padding(
-            padding: EdgeInsets.only(bottom: widget.videoVisibilty ? 0 : 16),
-            child: GestureDetector(
-              onTap: () => widget.onPlay(),
-              child: Align(
-                  child: Stack(alignment: Alignment.center, children: [
-                Visibility(
-                    visible: widget.videoVisibilty,
-                    child: SizedBox(
-                        width: ScreenUtils.width(context),
-                        height: ScreenUtils.height(context) / 2,
-                        child: VideoOverlay(
-                          isOlukoControls: true,
-                          autoPlay: true,
-                          videoUrl: widget.video,
-                          onPlay: widget.onPlay,
-                        ))),
-                Visibility(
-                    visible: !widget.videoVisibilty,
-                    child: Container(
-                      height: 52,
-                      width: 52,
-                      child: OlukoBlurredButton(
-                        childContent: Image.asset(
-                          'assets/courses/white_play.png',
-                          scale: 3.5,
+        SizedBox(
+          width: ScreenUtils.width(context),
+          height: ScreenUtils.height(context) / 1.4,
+          child: Padding(
+              padding: EdgeInsets.only(bottom: widget.videoVisibilty ? 0 : 16),
+              child: GestureDetector(
+                onTap: () => widget.onPlay(),
+                child: Align(
+                    child: Stack(children: [
+                  Visibility(
+                      visible: widget.videoVisibilty,
+                      child: VideoOverlay(
+                        isOlukoControls: true,
+                        autoPlay: true,
+                        videoUrl: widget.video,
+                        onPlay: widget.onPlay,
+                      )),
+                  Visibility(
+                      visible: !widget.videoVisibilty,
+                      child: Container(
+                        height: 52,
+                        width: 52,
+                        child: OlukoBlurredButton(
+                          childContent: Image.asset(
+                            'assets/courses/white_play.png',
+                            scale: 3.5,
+                          ),
                         ),
-                      ),
-                    ))
-              ])),
-            ))
+                      ))
+                ])),
+              )),
+        )
     ]);
   }
 }

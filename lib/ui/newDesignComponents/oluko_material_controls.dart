@@ -323,7 +323,7 @@ class _OlukoMaterialControlsState extends State<OlukoMaterialControls> with Sing
             _cancelAndRestartTimer();
           }
         } else {
-          _playPause();
+          
 
           setState(() {
             notifier.hideStuff = true;

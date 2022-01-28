@@ -62,50 +62,36 @@ class _VideoOverlayState extends State<VideoOverlay> {
       widgets.add(
         OlukoVideoPlayer(
           isOlukoControls: widget.isOlukoControls,
-          videoUrl: 'https://oluko-mvt.s3.us-west-1.amazonaws.com/classes/QwvycOHGGIe8DW4ynrZJ/video.mp4',
+          videoUrl: 'https://oluko-mvt.s3.us-west-1.amazonaws.com/classes/4ioaQSqohpOnmXk3f39T/video.mp4',
           autoPlay: widget.autoPlay,
           whenInitialized: (ChewieController chewieController) => setState(() {
             _controller = chewieController;
           }),
         ),
       );
-
-      return ConstrainedBox(
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).orientation == Orientation.portrait
-              ? ScreenUtils.height(context) / 2
-              : ScreenUtils.height(context) / 1.5,
-          minHeight: MediaQuery.of(context).orientation == Orientation.portrait
-              ? ScreenUtils.height(context) / 2
-              : ScreenUtils.height(context) / 1.5,
-        ),
-        child: SizedBox(
-          height: 400,
-          child: Stack(
-            children: widgets +
-                [
-                  Visibility(
-                    child: Positioned(
-                      top: 20,
-                      right: 10,
-                      child: GestureDetector(
-                        onTap: () => widget.onPlay(),
-                        child: SizedBox(
-                          height: 46,
-                          width: 46,
-                          child: OlukoBlurredButton(
-                            childContent: Image.asset(
-                              'assets/courses/white_cross.png',
-                              scale: 3.5,
-                            ),
-                          ),
+      return Stack(
+        children: widgets +
+            [
+              Visibility(
+                child: Positioned(
+                  top: 20,
+                  right: 10,
+                  child: GestureDetector(
+                    onTap: () => widget.onPlay(),
+                    child: SizedBox(
+                      height: 46,
+                      width: 46,
+                      child: OlukoBlurredButton(
+                        childContent: Image.asset(
+                          'assets/courses/white_cross.png',
+                          scale: 3.5,
                         ),
                       ),
                     ),
-                  )
-                ],
-          ),
-        ),
+                  ),
+                ),
+              )
+            ],
       );
     } else {
       widgets.add(
