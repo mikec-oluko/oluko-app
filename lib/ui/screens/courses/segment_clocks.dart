@@ -12,7 +12,6 @@ import 'package:oluko_app/blocs/coach/coach_request_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_update_bloc.dart';
 import 'package:oluko_app/blocs/keyboard/keyboard_bloc.dart';
-
 import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/segment_submission_bloc.dart';
 import 'package:oluko_app/blocs/story_bloc.dart' as storyBloc;
@@ -87,6 +86,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
   int timerTaskIndex = 0;
   Duration timeLeft;
   Timer countdownTimer;
+
+  //Stopwatch
+  Duration stopwatchDuration = Duration();
+  Timer stopwatchTimer;
 
   final toolbarHeight = kToolbarHeight * 2;
 
@@ -860,6 +863,8 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
     _saveCounter();
 
+    _saveStopwatch();
+
     if (timerTaskIndex == timerEntries.length - 1) {
       _finishWorkout();
       return;
@@ -868,6 +873,25 @@ class _SegmentClocksState extends State<SegmentClocks> {
       timerTaskIndex++;
       _playTask();
     });
+
+    if (timerEntries[timerTaskIndex].stopwatch) {
+      _startStopwatch();
+    }
+  }
+
+  _saveStopwatch() {
+    if (timerEntries[timerTaskIndex].stopwatch && (timerTaskIndex == timerEntries.length - 1 ||
+        timerEntries[timerTaskIndex].round < timerEntries[timerTaskIndex + 1].round)) {
+      BlocProvider.of<CourseEnrollmentUpdateBloc>(context).saveSectionStopwatch(
+          widget.courseEnrollment,
+          widget.segmentIndex,
+          timerEntries[timerTaskIndex].sectionIndex,
+          widget.classIndex,
+          widget.segments[widget.segmentIndex].rounds,
+          timerEntries[timerTaskIndex].round,
+          stopwatchDuration.inSeconds);
+      _resetStopwatch();
+    }
   }
 
   _saveCounter() {
@@ -944,6 +968,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
       _finishWorkout();
       return;
     }
+    if (timerEntries[0].stopwatch) {
+      _startStopwatch();
+    }
     _playTask();
   }
 
@@ -975,6 +1002,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
     Wakelock.disable();
     if (countdownTimer != null && countdownTimer.isActive) {
       countdownTimer.cancel();
+    }
+    if (stopwatchTimer != null && stopwatchTimer.isActive) {
+      stopwatchTimer.cancel();
     }
     cameraController?.dispose();
     super.dispose();
@@ -1272,5 +1302,30 @@ class _SegmentClocksState extends State<SegmentClocks> {
             ],
           ))
     ];
+  }
+
+//STOPWATCH FUNCTIONS
+  void _startStopwatch() {
+    stopwatchTimer = Timer.periodic(const Duration(seconds: 1), (_) => _addTime());
+  }
+
+  _addTime() {
+    final int addSeconds = 1;
+    setState(() {
+      final int seconds = stopwatchDuration.inSeconds + addSeconds;
+      stopwatchDuration = Duration(seconds: seconds);
+    });
+  }
+
+  _stopStopwatch() {
+    setState(() {
+      stopwatchTimer.cancel();
+    });
+  }
+
+  void _resetStopwatch() {
+    setState(() {
+      stopwatchDuration = Duration();
+    });
   }
 }
