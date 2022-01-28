@@ -76,7 +76,7 @@ class SegmentImageSection extends StatefulWidget {
 
 class _SegmentImageSectionState extends State<SegmentImageSection> {
   CoachRequest _coachRequest;
-  bool canStartSegment = true;
+  bool _canStartSegment = true;
   List<Audio> _challengeAudios;
   int _audioQty;
 
@@ -84,13 +84,17 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   void initState() {
     _challengeAudios = widget.challenge == null ? null : AudioService.getNotDeletedAudios(widget.challenge.audios);
     _coachRequest = getSegmentCoachRequest(widget.segment.id);
-    canStartSegment = widget.courseEnrollment.classes[widget.classIndex].segments[getPreviousIndex()].completedAt != null;
+    _canStartSegment = canStartSegment();
     BlocProvider.of<DoneChallengeUsersBloc>(context).get(widget.segment.id, widget.userId);
     _audioQty = _challengeAudios != null ? _challengeAudios.length : 0;
     super.initState();
   }
 
-  int getPreviousIndex() => widget.currentSegmentStep <= 1 ? widget.currentSegmentStep : widget.currentSegmentStep - 2;
+  bool canStartSegment() {
+    if (widget.currentSegmentStep < 2) return true;
+    return widget.courseEnrollment.classes[widget.classIndex].segments[widget.currentSegmentStep - 2].completedAt != null;
+  }
+  
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -106,8 +110,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
       ListView(padding: OlukoNeumorphism.isNeumorphismDesign ? EdgeInsets.zero : null, children: [
         Stack(children: [
           imageSection(),
-          if (widget.segment.isChallenge)
-            challengeButtons(),
+          if (widget.segment.isChallenge) challengeButtons(),
           //TODO: SEGMENT INFO
           Padding(
             padding: EdgeInsets.symmetric(horizontal: OlukoNeumorphism.isNeumorphismDesign ? 20 : 0),
@@ -171,7 +174,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   // TODO: CHECK IF IS DISABLE/ENABLE BUTTON
   Widget startWorkoutsButton() {
     return OlukoNeumorphism.isNeumorphismDesign
-        ? (widget.segment.isChallenge && canStartSegment) || !widget.segment.isChallenge
+        ? (widget.segment.isChallenge && _canStartSegment) || !widget.segment.isChallenge
             ? Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: OlukoNeumorphicPrimaryButton(
