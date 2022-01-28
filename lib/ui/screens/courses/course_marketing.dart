@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:chewie/chewie.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -31,7 +29,6 @@ import 'package:oluko_app/ui/components/class_section.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/overlay_video_preview.dart';
 import 'package:oluko_app/ui/components/statistics_chart.dart';
-import 'package:oluko_app/utils/app_loader.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 
@@ -41,7 +38,8 @@ class CourseMarketing extends StatefulWidget {
   final bool isCoachRecommendation;
   final CourseEnrollment courseEnrollment;
   final int courseIndex;
-  CourseMarketing({Key key, this.course, this.fromCoach = false, this.isCoachRecommendation = false, this.courseEnrollment, this.courseIndex})
+  CourseMarketing(
+      {Key key, this.course, this.fromCoach = false, this.isCoachRecommendation = false, this.courseEnrollment, this.courseIndex})
       : super(key: key);
 
   get progress => null;
@@ -112,13 +110,12 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                 Padding(
                                   padding: const EdgeInsets.only(bottom: 3),
                                   child: OverlayVideoPreview(
-                                    image: widget.course.image,
-                                    video: widget.course.video,
-                                    showBackButton: true,
-                                    showHeartButton: true,
-                                    showShareButton: true,
-                                    onBackPressed: () => Navigator.pop(context)
-                                  ),
+                                      image: widget.course.image,
+                                      video: widget.course.video,
+                                      showBackButton: true,
+                                      showHeartButton: true,
+                                      showShareButton: true,
+                                      onBackPressed: () => Navigator.pop(context)),
                                 ),
                                 showEnrollButton(enrollmentState.courseEnrollment, context),
                                 Padding(
@@ -133,9 +130,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                           Padding(
                                             padding: const EdgeInsets.only(top: 10.0, right: 10),
                                             child: Text(
-                                              //TODO: change weeks number
-                                              TimeConverter.toCourseDuration(
-                                                  6, widget.course.classes != null ? widget.course.classes.length : 0, context),
+                                              widget.course.duration,
                                               style: OlukoFonts.olukoBigFont(
                                                   custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
                                             ),
@@ -276,8 +271,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                       onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
                         'courseEnrollment': widget.courseEnrollment,
                         'classIndex': _classItems.indexOf(item),
-                        'courseIndex':widget.courseIndex
-                        
+                        'courseIndex': widget.courseIndex
                       }),
                       child: Padding(
                         padding: const EdgeInsets.all(5.0),
@@ -295,7 +289,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                       onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
                         'courseEnrollment': widget.courseEnrollment,
                         'classIndex': _classItems.indexOf(item),
-                        'courseIndex':widget.courseIndex
+                        'courseIndex': widget.courseIndex
                       }),
                       child: Padding(
                         padding: const EdgeInsets.all(5.0),
@@ -316,7 +310,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                   onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
                     'courseEnrollment': widget.courseEnrollment,
                     'classIndex': _classItems.indexOf(item),
-                    'courseIndex':widget.courseIndex
+                    'courseIndex': widget.courseIndex
                   }),
                   child: Padding(
                     padding: const EdgeInsets.all(5.0),
