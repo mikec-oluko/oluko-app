@@ -40,6 +40,7 @@ import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_secondary_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_watch_app_bar.dart';
 import 'package:oluko_app/ui/screens/courses/collapsed_movement_videos_section.dart';
 import 'package:oluko_app/ui/screens/courses/feedback_card.dart';
 import 'package:oluko_app/ui/screens/courses/movement_videos_section.dart';
@@ -208,18 +209,32 @@ class _SegmentClocksState extends State<SegmentClocks> {
     return workoutType == WorkoutType.segmentWithRecording;
   }
 
-  Widget form() {
-    bool keyboardVisibilty = false;
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: OlukoAppBar(
+  PreferredSizeWidget getAppBar() {
+    PreferredSizeWidget appBarToUse;
+    if (OlukoNeumorphism.isNeumorphismDesign) {
+      appBarToUse = OlukoWatchAppBar(
+        onPressed: () => onWillPop(context, isSegmentWithRecording()),
+        actions: [topBarIcon, audioIcon()],
+      );
+    } else {
+      appBarToUse = OlukoAppBar(
         showActions: true,
         showDivider: false,
         title: ' ',
         showTitle: false,
         showBackButton: true,
         actions: [topBarIcon, audioIcon()],
-      ),
+      );
+    }
+    return appBarToUse;
+  }
+
+  Widget form() {
+    bool keyboardVisibilty = false;
+    return Scaffold(
+      extendBodyBehindAppBar: OlukoNeumorphism.isNeumorphismDesign,
+      resizeToAvoidBottomInset: false,
+      appBar: getAppBar(),
       backgroundColor: Colors.black,
       body: workState != WorkState.finished
           ? BlocBuilder<KeyboardBloc, KeyboardState>(
@@ -507,6 +522,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   ///Countdown & movements information
   Widget _timerSection(bool keyboardVisibilty) {
+    // TODO: VER EL PADDING CON LA ANIMACIONN cambiar a stack y fijar workout
     return Center(
         child: Container(
       color: OlukoNeumorphismColors.appBackgroundColor,

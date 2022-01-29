@@ -57,7 +57,7 @@ class _CoachContentPreviewContentState extends State<CoachContentPreviewContent>
                 },
                 child: Container(
                   width: 150,
-                  height: 115,
+                  height: 120,
                   color: Colors.black,
                   child: widget.segmentSubmissionContent.isNotEmpty
                       ? CoachVideoContent(videoThumbnail: getThumbnails(segments: widget.segmentSubmissionContent), isForGallery: false)
@@ -94,7 +94,7 @@ class _CoachContentPreviewContentState extends State<CoachContentPreviewContent>
                 },
                 child: Container(
                   width: 150,
-                  height: 115,
+                  height: 120,
                   color: OlukoNeumorphismColors.appBackgroundColor,
                   child: widget.coachAnnotationContent.isNotEmpty
                       ? CoachVideoContent(videoThumbnail: getThumbnails(annotations: widget.coachAnnotationContent), isForGallery: false)

@@ -48,7 +48,6 @@ class _SegmentedIndeterminateProgressbarState extends State<SegmentedIndetermina
             child: CircularStepProgressIndicator(
               roundedCap: (_, isSelected) => true,
               padding: math.pi / 15,
-
               totalSteps: max.toInt(),
               width: 100,
               selectedStepSize: 20,

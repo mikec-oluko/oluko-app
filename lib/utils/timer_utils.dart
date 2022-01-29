@@ -10,16 +10,13 @@ enum InitialTimerType { Start, End }
 
 class TimerUtils {
   //TODO: CIRCULAR PROGRESS ELEMENT
-  static const double _olukoNeumorphicWatchFullSize = 340;
-  static const double _olukoNeumorphicWatchWithKeyboardSize = 300;
+  static const double _olukoNeumorphicWatchSize = 300;
   static const double _olukoWatchFullSize = 240;
-  static const double _olukoWatchWithKeyboardSize = 240;
   static const double _olukoNeumorphicWatchProgressSize = 220;
   static const double _olukoWatchProgressSize = 180;
   static const double _watchHeight = OlukoNeumorphism.isNeumorphismDesign ? _olukoNeumorphicWatchProgressSize : _olukoWatchProgressSize;
   static const double _watchWidth = OlukoNeumorphism.isNeumorphismDesign ? _olukoNeumorphicWatchProgressSize : _olukoWatchProgressSize;
-  static const double _roundWatchWidthWithKeyboard =
-      OlukoNeumorphism.isNeumorphismDesign ? _olukoNeumorphicWatchWithKeyboardSize : _olukoWatchFullSize;
+  static const double _roundWatchWidthWithKeyboard = OlukoNeumorphism.isNeumorphismDesign ? _olukoNeumorphicWatchSize : _olukoWatchFullSize;
 
   static const double _progressIndicatorStroke = OlukoNeumorphism.isNeumorphismDesign ? 2 : 4;
   static const Color getGreenOrCoral =

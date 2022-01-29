@@ -168,7 +168,7 @@ class OlukoNeumorphism {
         shadowDarkColor: Colors.black);
   }
 
-  static LinearGradient OlukoNeumorphicGradientPrimary() {
+  static LinearGradient olukoNeumorphicGradientPrimary() {
     return const LinearGradient(
         colors: [OlukoNeumorphismColors.initialGradientColorPrimary, OlukoNeumorphismColors.finalGradientColorPrimary],
         stops: [0.0, 1],
@@ -176,12 +176,22 @@ class OlukoNeumorphism {
         end: Alignment.bottomCenter);
   }
 
-  static LinearGradient OlukoNeumorphicGradientDark() {
+  static LinearGradient olukoNeumorphicGradientDark() {
     return const LinearGradient(
         colors: [OlukoNeumorphismColors.initialGradientColorDark, OlukoNeumorphismColors.finalGradientColorDark],
         stops: [0.0, 1],
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter);
+  }
+
+  static LinearGradient olukoNeumorphicGradientBlueAccent() {
+    return const LinearGradient(colors: [
+      OlukoNeumorphismColors.olukoNeumorphicSearchBarSecondColor,
+      OlukoNeumorphismColors.olukoNeumorphicSearchBarFirstColor,
+    ], stops: [
+      0.0,
+      1
+    ], begin: Alignment.topCenter, end: Alignment.bottomCenter);
   }
 }
 

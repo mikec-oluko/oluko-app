@@ -15,6 +15,7 @@ import 'package:oluko_app/utils/container_grediant.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'coach_timeline_card_content.dart';
 import 'oluko_circular_progress_indicator.dart';
+import "package:collection/collection.dart";
 
 class CoachTimelinePanel extends StatefulWidget {
   final bool isIntroductionVideoComplete;
@@ -47,6 +48,13 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
         if (state is CoachTimelineTabsUpdate) {
           _tabController = TabController(length: state.timelineContentItems.length, vsync: this);
           _timelineContentItems = state.timelineContentItems;
+          state.timelineContentItems.forEach((CoachTimelineGroup timelineGroup) {
+            //TODO: ADAPT, LIST DATE, LISTGROUP WITH STYLE FOR CONTENT
+            Map<String, List<CoachTimelineItem>> groupedArray =
+                groupBy(timelineGroup.timelineElements, (CoachTimelineItem obj) => DateFormat.yMMMd().format(obj.createdAt.toDate()));
+          });
+          // state.timelineContentItems[1].timelineElements.map((e) => e.createdAt.toDate()).toList().retainWhere((element) => false);
+          // var groupedArray = groupBy(_timelineContentItems, (CoachTimelineGroup obj) => DateTime.fromMillisecondsSinceEpoch(obj.));
         }
         return Scaffold(
             appBar: AppBar(
