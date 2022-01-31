@@ -37,6 +37,7 @@ import 'package:oluko_app/ui/components/statistics_chart.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_video_preview.dart';
+import 'package:oluko_app/ui/screens/courses/enrolled_class.dart';
 import 'package:oluko_app/utils/app_loader.dart';
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -121,7 +122,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                   child: Stack(
                                     children: [
                                       ListView(children: [
-                                        OlukoVideoPreview(                                  
+                                        OlukoVideoPreview(
                                           showBackButton: true,
                                           image: widget.course.image,
                                           video: widget.course.video,
@@ -457,32 +458,41 @@ class _CourseMarketingState extends State<CourseMarketing> {
       ClassItem classItem = ClassItem(classObj: element, expanded: false);
       _classItems.add(classItem);
     });
+    List<ClassItem> _classItemsToUse = [];
+    widget.courseEnrollment.classes.forEach((enrolledClass) {
+      _classItems.forEach((courseClass) {
+        if (enrolledClass.id == courseClass.classObj.id) {
+          _classItemsToUse.add(courseClass);
+        }
+      });
+    });
+
     return ListView(
       physics: NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       children: [
-        ..._classItems.map((item) => widget.courseEnrollment.classes[_classItems.indexOf(item)].completedAt == null
-            ? CourseEnrollmentService.getClassProgress(widget.courseEnrollment, _classItems.indexOf(item)) == 0
+        ..._classItemsToUse.map((item) => widget.courseEnrollment.classes[_classItemsToUse.indexOf(item)].completedAt == null
+            ? CourseEnrollmentService.getClassProgress(widget.courseEnrollment, _classItemsToUse.indexOf(item)) == 0
                 ? Neumorphic(
                     margin: EdgeInsets.all(10),
                     style: OlukoNeumorphism.getNeumorphicStyleForCardClasses(
-                        CourseEnrollmentService.getClassProgress(widget.courseEnrollment, _classItems.indexOf(item)) > 0),
+                        CourseEnrollmentService.getClassProgress(widget.courseEnrollment, _classItemsToUse.indexOf(item)) > 0),
                     child: GestureDetector(
                       onTap: () {
                         isVideoPlaying();
                         Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
                           'courseEnrollment': widget.courseEnrollment,
-                          'classIndex': _classItems.indexOf(item),
+                          'classIndex': _classItemsToUse.indexOf(item),
                           'courseIndex': widget.courseIndex,
                         });
                       },
                       child: Padding(
                         padding: const EdgeInsets.all(5.0),
                         child: ClassSection(
-                          classProgress: CourseEnrollmentService.getClassProgress(widget.courseEnrollment, _classItems.indexOf(item)),
+                          classProgress: CourseEnrollmentService.getClassProgress(widget.courseEnrollment, _classItemsToUse.indexOf(item)),
                           isCourseEnrolled: true,
-                          index: _classItems.indexOf(item),
-                          total: _classItems.length,
+                          index: _classItemsToUse.indexOf(item),
+                          total: _classItemsToUse.length,
                           classObj: item.classObj,
                         ),
                       ),
@@ -491,28 +501,29 @@ class _CourseMarketingState extends State<CourseMarketing> {
                     child: GestureDetector(
                       onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
                         'courseEnrollment': widget.courseEnrollment,
-                        'classIndex': _classItems.indexOf(item),
+                        'classIndex': _classItemsToUse.indexOf(item),
                         'courseIndex': widget.courseIndex,
                       }),
                       child: Padding(
                         padding: const EdgeInsets.all(5.0),
                         child: ClassSection(
-                          classProgress: CourseEnrollmentService.getClassProgress(widget.courseEnrollment, _classItems.indexOf(item)),
+                          classProgress: CourseEnrollmentService.getClassProgress(widget.courseEnrollment, _classItemsToUse.indexOf(item)),
                           isCourseEnrolled: true,
-                          index: _classItems.indexOf(item),
-                          total: _classItems.length,
+                          index: _classItemsToUse.indexOf(item),
+                          total: _classItemsToUse.length,
                           classObj: item.classObj,
                         ),
                       ),
                     ),
                   )
             : SizedBox()),
-        ..._classItems.map((item) => widget.courseEnrollment.classes[_classItems.indexOf(item)].completedAt != null
+        ..._classItemsToUse.map((item) => widget.courseEnrollment.classes[_classItemsToUse.indexOf(item)] != null &&
+                widget.courseEnrollment.classes[_classItemsToUse.indexOf(item)].completedAt != null
             ? Container(
                 child: GestureDetector(
                   onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
                     'courseEnrollment': widget.courseEnrollment,
-                    'classIndex': _classItems.indexOf(item),
+                    'classIndex': _classItemsToUse.indexOf(item),
                     'courseIndex': widget.courseIndex,
                   }),
                   child: Padding(
@@ -520,8 +531,8 @@ class _CourseMarketingState extends State<CourseMarketing> {
                     child: ClassSection(
                       classProgress: 1,
                       isCourseEnrolled: true,
-                      index: _classItems.indexOf(item),
-                      total: _classItems.length,
+                      index: _classItemsToUse.indexOf(item),
+                      total: _classItemsToUse.length,
                       classObj: item.classObj,
                     ),
                   ),
