@@ -6,16 +6,15 @@ class LockedChallenge extends StatelessWidget {
   const LockedChallenge({
     Key key,
     this.challengeImage,
-    this.defaultImage = const AssetImage('assets/home/mvtthumbnail.png'),
     this.context,
   }) : super(key: key);
 
   final String challengeImage;
-  final ImageProvider<Object> defaultImage;
   final BuildContext context;
 
   @override
   Widget build(BuildContext context) {
+    final ImageProvider defaultImage = const AssetImage('assets/home/mvtthumbnail.png');
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
