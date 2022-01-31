@@ -166,7 +166,6 @@ class CourseMarketing extends StatefulWidget {
 
 class _CourseMarketingState extends State<CourseMarketing> {
   final _formKey = GlobalKey<FormState>();
-  ChewieController _controller;
   User _user;
   AuthSuccess _userState;
   List<Class> _classes;
@@ -177,7 +176,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
   @override
   void initState() {
     super.initState();
-    
+
     widget.isVideoPlaying = () => setState(() {
           _isVideoPlaying = !_isVideoPlaying;
         });
@@ -404,8 +403,8 @@ class _CourseMarketingState extends State<CourseMarketing> {
               Padding(
                 padding: EdgeInsets.only(right: 15, left: 15, top: 10),
                 child: Text(
-                  //TODO:Change weeks number
-                  TimeConverter.toCourseDuration(6, widget.course.classes != null ? widget.course.classes.length : 0, context),
+                  TimeConverter.toCourseDuration(widget.course.duration is int ? widget.course.duration as int : 0,
+                      widget.course.classes != null ? widget.course.classes.length : 0, context),
                   style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
                 ),
               ),
