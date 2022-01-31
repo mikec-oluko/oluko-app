@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
-
 import 'package:chewie/src/animated_play_pause.dart';
 import 'package:chewie/src/center_play_button.dart';
 import 'package:chewie/src/chewie_player.dart';
@@ -19,8 +18,8 @@ import 'package:chewie/src/models/subtitle_model.dart';
 
 class OlukoCupertinoControls extends StatefulWidget {
   const OlukoCupertinoControls({
-     this.backgroundColor,
-     this.iconColor,
+    this.backgroundColor,
+    this.iconColor,
     Key key,
   }) : super(key: key);
 
@@ -33,10 +32,9 @@ class OlukoCupertinoControls extends StatefulWidget {
   }
 }
 
-class _OlukoCupertinoControlsState extends State<OlukoCupertinoControls>
-    with SingleTickerProviderStateMixin {
-   PlayerNotifier notifier;
-   VideoPlayerValue _latestValue;
+class _OlukoCupertinoControlsState extends State<OlukoCupertinoControls> with SingleTickerProviderStateMixin {
+  PlayerNotifier notifier;
+  VideoPlayerValue _latestValue;
   double _latestVolume;
   Timer _hideTimer;
   final marginSize = 5.0;
@@ -45,8 +43,9 @@ class _OlukoCupertinoControlsState extends State<OlukoCupertinoControls>
   bool _dragging = false;
   Duration _subtitlesPosition;
   bool _subtitleOn = false;
+  bool _displayTapped = false;
 
-   VideoPlayerController controller;
+  VideoPlayerController controller;
   // We know that _chewieController is set in didChangeDependencies
   ChewieController get chewieController => _chewieController;
   ChewieController _chewieController;
@@ -94,7 +93,7 @@ class _OlukoCupertinoControlsState extends State<OlukoCupertinoControls>
                 )
               else
                 _buildHitArea(),
-             /* Column(
+              /* Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   _buildTopBar(
@@ -166,9 +165,7 @@ class _OlukoCupertinoControlsState extends State<OlukoCupertinoControls>
       padding: EdgeInsets.only(left: marginSize, right: marginSize),
       child: Container(
         padding: const EdgeInsets.all(5),
-        decoration: BoxDecoration(
-            color: const Color(0x96000000),
-            borderRadius: BorderRadius.circular(10.0)),
+        decoration: BoxDecoration(color: const Color(0x96000000), borderRadius: BorderRadius.circular(10.0)),
         child: Text(
           currentSubtitle.first.text,
           style: const TextStyle(
@@ -221,8 +218,7 @@ class _OlukoCupertinoControlsState extends State<OlukoCupertinoControls>
                           _buildProgressBar(),
                           _buildRemaining(iconColor),
                           _buildSubtitleToggle(iconColor, barHeight),
-                          if (chewieController.allowPlaybackSpeedChanging)
-                            _buildSpeedButton(controller, iconColor, barHeight),
+                          if (chewieController.allowPlaybackSpeedChanging) _buildSpeedButton(controller, iconColor, barHeight),
                         ],
                       ),
               ),
@@ -283,17 +279,22 @@ class _OlukoCupertinoControlsState extends State<OlukoCupertinoControls>
 
   Widget _buildHitArea() {
     final bool isFinished = _latestValue.position >= _latestValue.duration;
-
     return GestureDetector(
-      onTap: _latestValue.isPlaying
-          ? _cancelAndRestartTimer
-          : () {
-              _hideTimer?.cancel();
+      onTap: () {
+        _latestValue.isPlaying
+            ? _displayTapped
+                ? setState(() {
+                    notifier.hideStuff = true;
+                  })
+                : _cancelAndRestartTimer
+            : () {
+                _hideTimer?.cancel();
 
-              setState(() {
-                notifier.hideStuff = false;
-              });
-            },
+                setState(() {
+                  notifier.hideStuff = true;
+                });
+              };
+      },
       /*child: CenterPlayButton(
         backgroundColor: widget.backgroundColor,
         iconColor: widget.iconColor,
@@ -301,13 +302,31 @@ class _OlukoCupertinoControlsState extends State<OlukoCupertinoControls>
         isPlaying: controller.value.isPlaying,
         show: !_latestValue.isPlaying && !_dragging,
         onPressed: _playPause,
-      ),*/
+      ),
+          return GestureDetector(
+      onTap: () {
+        if (_latestValue.isPlaying) {
+          if (_displayTapped) {
+            setState(() {
+              notifier.hideStuff = true;
+            });
+          } else {
+            _cancelAndRestartTimer();
+          }
+        } else {
+          
+
+          setState(() {
+            notifier.hideStuff = true;
+          });
+        }
+      },*/
       child: OlukoCenterPlayButton(
         backgroundColor: Colors.black54,
         iconColor: Colors.white,
         isFinished: isFinished,
         isPlaying: controller.value.isPlaying,
-        show:!_latestValue.isPlaying && !_dragging,
+        show: !_latestValue.isPlaying && !_dragging,
         onPressed: _playPause,
       ),
     );
@@ -547,13 +566,9 @@ class _OlukoCupertinoControlsState extends State<OlukoCupertinoControls>
       ),
       child: Row(
         children: <Widget>[
-          if (chewieController.allowFullScreen)
-            _buildExpandButton(
-                backgroundColor, iconColor, barHeight, buttonPadding),
+          if (chewieController.allowFullScreen) _buildExpandButton(backgroundColor, iconColor, barHeight, buttonPadding),
           const Spacer(),
-          if (chewieController.allowMuting)
-            _buildMuteButton(controller, backgroundColor, iconColor, barHeight,
-                buttonPadding),
+          if (chewieController.allowMuting) _buildMuteButton(controller, backgroundColor, iconColor, barHeight, buttonPadding),
         ],
       ),
     );
@@ -681,16 +696,14 @@ class _OlukoCupertinoControlsState extends State<OlukoCupertinoControls>
   void _skipBack() {
     _cancelAndRestartTimer();
     final beginning = const Duration().inMilliseconds;
-    final skip =
-        (_latestValue.position - const Duration(seconds: 15)).inMilliseconds;
+    final skip = (_latestValue.position - const Duration(seconds: 15)).inMilliseconds;
     controller.seekTo(Duration(milliseconds: math.max(skip, beginning)));
   }
 
   void _skipForward() {
     _cancelAndRestartTimer();
     final end = _latestValue.duration.inMilliseconds;
-    final skip =
-        (_latestValue.position + const Duration(seconds: 15)).inMilliseconds;
+    final skip = (_latestValue.position + const Duration(seconds: 15)).inMilliseconds;
     controller.seekTo(Duration(milliseconds: math.min(skip, end)));
   }
 
@@ -714,8 +727,8 @@ class _OlukoCupertinoControlsState extends State<OlukoCupertinoControls>
 class _PlaybackSpeedDialog extends StatelessWidget {
   const _PlaybackSpeedDialog({
     Key key,
-     List<double> speeds,
-     double selected,
+    List<double> speeds,
+    double selected,
   })  : _speeds = speeds,
         _selected = selected,
         super(key: key);
@@ -737,8 +750,7 @@ class _PlaybackSpeedDialog extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  if (e == _selected)
-                    Icon(Icons.check, size: 20.0, color: selectedColor),
+                  if (e == _selected) Icon(Icons.check, size: 20.0, color: selectedColor),
                   Text(e.toString()),
                 ],
               ),
