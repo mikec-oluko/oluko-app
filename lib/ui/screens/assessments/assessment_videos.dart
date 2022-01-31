@@ -82,7 +82,7 @@ class _AssessmentVideosState extends State<AssessmentVideos> {
               _user = authState.user;
               BlocProvider.of<AssessmentBloc>(context).getById('emnsmBgZ13UBRqTS26Qd');
               return BlocBuilder<AssessmentBloc, AssessmentState>(builder: (context, assessmentState) {
-                if (assessmentState is AssessmentSuccess) {
+                if (assessmentState is AssessmentSuccess && assessmentState.assessment != null) {
                   _assessment = assessmentState.assessment;
                   if (_user.currentPlan < 1) {
                     assessmentsTasksList = _assessment.tasks.getRange(0, 2).toList();
