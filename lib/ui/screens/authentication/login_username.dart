@@ -116,6 +116,7 @@ class _LoginUsernamePageState extends State<LoginUsernamePage> {
                   thinPadding: true,
                   textColor: Colors.grey[800],
                   title: OlukoLocalizations.get(context, 'continue'),
+                  onPressed: () {}, //TODO: warn user it is disabled
                 ),
         ),
         Padding(

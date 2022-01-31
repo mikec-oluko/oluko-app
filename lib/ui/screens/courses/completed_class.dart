@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -138,7 +139,7 @@ class _CompletedClassState extends State<CompletedClass> {
                       decoration: BoxDecoration(
                         image: DecorationImage(
                           fit: BoxFit.fill,
-                          image: NetworkImage(_imageUrl ?? _image.path),
+                          image: CachedNetworkImageProvider(_imageUrl ?? _image.path),
                         ),
                       ),
                     ))),
@@ -231,7 +232,7 @@ class _CompletedClassState extends State<CompletedClass> {
                               widget.courseEnrollment.classes[widget.classIndex].image != null) {
                             return DecorationImage(
                               fit: BoxFit.cover,
-                              image: NetworkImage(widget.courseEnrollment.classes[widget.classIndex].image),
+                              image: CachedNetworkImageProvider(widget.courseEnrollment.classes[widget.classIndex].image),
                             );
                           } else {
                             final ImageProvider defaultImage = const AssetImage('assets/home/mvtthumbnail.png');

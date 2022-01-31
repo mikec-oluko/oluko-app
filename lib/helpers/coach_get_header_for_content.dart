@@ -20,5 +20,6 @@ class CoachHeders {
       case CoachFileTypeEnum.faqVideo:
         return OlukoLocalizations.of(context).find('timelineFaqVideo');
     }
+    return '';
   }
 }

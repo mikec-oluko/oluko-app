@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/transformation_journey_uploads.dart';
@@ -51,8 +52,8 @@ class _TransformationJourneyContentDetailState extends State<TransformationJourn
                       image: DecorationImage(
                           fit: BoxFit.cover,
                           alignment: Alignment.center,
-                          image: Image.network(
-                            widget.contentToShow.file,
+                          image: Image(
+                            image: CachedNetworkImageProvider(widget.contentToShow.file),
                             frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
                                 ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 120),
                           ).image)),

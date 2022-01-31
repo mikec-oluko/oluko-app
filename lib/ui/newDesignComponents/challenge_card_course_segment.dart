@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/ui/components/challenges_card.dart';
@@ -40,9 +41,9 @@ class lockedCardChallenge extends StatelessWidget {
                   fit: BoxFit.cover,
                   colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.7), BlendMode.dstATop),
                   image: image != null
-                      ? new NetworkImage(image)
+                      ? new CachedNetworkImageProvider(image)
                       : widget.challenge.image != null
-                          ? new NetworkImage(widget.challenge.image)
+                          ? new CachedNetworkImageProvider(widget.challenge.image)
                           : defaultImage,
                 ),
               ),

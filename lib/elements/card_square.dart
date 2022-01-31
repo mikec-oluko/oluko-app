@@ -1,12 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 
 class CardSquare extends StatelessWidget {
-  CardSquare(
-      {this.title = "Placeholder Title",
-      this.cta = "",
-      this.img = "https://via.placeholder.com/200",
-      this.tap = defaultFunc});
+  CardSquare({this.title = "Placeholder Title", this.cta = "", this.img = "https://via.placeholder.com/200", this.tap = defaultFunc});
 
   final String cta;
   final String img;
@@ -26,8 +23,7 @@ class CardSquare extends StatelessWidget {
           onTap: tap,
           child: Card(
               elevation: 0.4,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(8.0))),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -35,30 +31,21 @@ class CardSquare extends StatelessWidget {
                       flex: 3,
                       child: Container(
                           decoration: BoxDecoration(
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(6.0),
-                                  topRight: Radius.circular(6.0)),
+                              borderRadius: BorderRadius.only(topLeft: Radius.circular(6.0), topRight: Radius.circular(6.0)),
                               image: DecorationImage(
-                                image: NetworkImage(img),
+                                image: CachedNetworkImageProvider(img),
                                 fit: BoxFit.cover,
                               )))),
                   Flexible(
                       flex: 1,
                       child: Padding(
-                        padding: const EdgeInsets.only(
-                            top: 8.0, bottom: 8.0, left: 8.0),
+                        padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 8.0),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(title,
-                                style: TextStyle(
-                                    color: OlukoColors.header, fontSize: 13)),
-                            Text(cta,
-                                style: TextStyle(
-                                    color: OlukoColors.primary,
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w600))
+                            Text(title, style: TextStyle(color: OlukoColors.header, fontSize: 13)),
+                            Text(cta, style: TextStyle(color: OlukoColors.primary, fontSize: 11, fontWeight: FontWeight.w600))
                           ],
                         ),
                       ))

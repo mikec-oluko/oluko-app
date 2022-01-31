@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -51,8 +52,8 @@ class _State extends State<ClassSection> {
                           borderRadius: widget.isCourseEnrolled
                               ? BorderRadius.only(bottomLeft: (Radius.circular(22)), topLeft: (Radius.circular(22)))
                               : const BorderRadius.all(Radius.circular(10)),
-                          child: Image.network(
-                            widget.classObj.image,
+                          child: CachedNetworkImage(
+                            imageUrl: widget.classObj.image,
                             height: 100,
                             width: 90,
                             fit: BoxFit.cover,
@@ -139,8 +140,8 @@ class _State extends State<ClassSection> {
                     children: [
                       ClipRRect(
                         borderRadius: const BorderRadius.all(Radius.circular(10)),
-                        child: Image.network(
-                          widget.classObj.image,
+                        child: CachedNetworkImage(
+                          imageUrl: widget.classObj.image,
                           height: 90,
                           width: 90,
                           fit: BoxFit.cover,

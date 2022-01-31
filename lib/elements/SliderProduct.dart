@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
@@ -30,24 +31,18 @@ class _ProductCarouselState extends State<ProductCarousel> {
                       padding: const EdgeInsets.all(8.0),
                       child: Container(
                         decoration: BoxDecoration(boxShadow: [
-                          BoxShadow(
-                              color: Color.fromRGBO(0, 0, 0, 0.4),
-                              blurRadius: 8,
-                              spreadRadius: 0.3,
-                              offset: Offset(0, 3))
+                          BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.4), blurRadius: 8, spreadRadius: 0.3, offset: Offset(0, 3))
                         ]),
                         child: AspectRatio(
                           aspectRatio: 2 / 2,
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(4),
-                            child: Image.network(
-                              item["img"],
+                            child: CachedNetworkImage(
+                              imageUrl: item["img"],
                               fit: BoxFit.cover,
                               alignment: Alignment.topCenter,
-                              errorBuilder: (BuildContext context,
-                                  Object exception, StackTrace stackTrace) {
-                                return Text('Your error widget...');
-                              },
+                              errorWidget: (BuildContext context, String exception, dynamic stackTrace) =>
+                                  const Text('Your error widget...'),
                             ),
                           ),
                         ),
@@ -57,19 +52,13 @@ class _ProductCarouselState extends State<ProductCarousel> {
                       padding: const EdgeInsets.only(top: 16.0),
                       child: Column(
                         children: [
-                          Text(item["price"],
-                              style: TextStyle(
-                                  fontSize: 16, color: OlukoColors.header)),
-                          Text(item["title"],
-                              style: TextStyle(
-                                  fontSize: 32, color: OlukoColors.text)),
+                          Text(item["price"], style: TextStyle(fontSize: 16, color: OlukoColors.header)),
+                          Text(item["title"], style: TextStyle(fontSize: 32, color: OlukoColors.text)),
                           Padding(
-                            padding: const EdgeInsets.only(
-                                left: 16.0, right: 16.0, top: 8),
+                            padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 8),
                             child: Text(
                               item["description"],
-                              style: TextStyle(
-                                  fontSize: 16, color: OlukoColors.muted),
+                              style: TextStyle(fontSize: 16, color: OlukoColors.muted),
                               textAlign: TextAlign.center,
                             ),
                           )

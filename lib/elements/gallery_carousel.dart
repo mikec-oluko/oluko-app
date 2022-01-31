@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
@@ -31,26 +32,18 @@ class _GalleryCarouselState extends State<GalleryCarousel> {
                         padding: const EdgeInsets.all(8.0),
                         child: Container(
                           decoration: BoxDecoration(boxShadow: [
-                            BoxShadow(
-                                color: Color.fromRGBO(0, 0, 0, 0.4),
-                                blurRadius: 8,
-                                spreadRadius: 0.3,
-                                offset: Offset(0, 3))
+                            BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.4), blurRadius: 8, spreadRadius: 0.3, offset: Offset(0, 3))
                           ]),
                           child: AspectRatio(
                             aspectRatio: 2 / 1.25,
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(4),
-                              child: Image.network(
-                                item["img"],
+                              child: CachedNetworkImage(
+                                imageUrl: item['img'],
                                 fit: BoxFit.cover,
                                 alignment: Alignment.topCenter,
                                 color: Colors.black,
                                 colorBlendMode: BlendMode.softLight,
-                                errorBuilder: (BuildContext context,
-                                    Object exception, StackTrace stackTrace) {
-                                  return Text('Your error widget...');
-                                },
                               ),
                             ),
                           ),
@@ -67,10 +60,7 @@ class _GalleryCarouselState extends State<GalleryCarousel> {
                               padding: EdgeInsets.only(top: 20),
                               child: Row(children: [
                                 Text(item['title'],
-                                    style: TextStyle(
-                                        color: OlukoColors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 25.0)),
+                                    style: TextStyle(color: OlukoColors.white, fontWeight: FontWeight.bold, fontSize: 25.0)),
                               ])),
                         ])))
               ]))

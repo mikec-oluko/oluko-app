@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -17,14 +18,13 @@ class _State extends State<ChallengeCard> {
       alignment: Alignment.center,
       children: [
         ClipRRect(
-          child: Image.network(
-            widget.image,
+          child: CachedNetworkImage(
+            imageUrl: widget.image,
             height: 140,
             width: 100,
             fit: BoxFit.cover,
           ),
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+          borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
         ),
         Image.asset(
           'assets/courses/locked_challenge.png',
