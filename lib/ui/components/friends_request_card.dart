@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -211,7 +212,7 @@ class _FriendRequestCardState extends State<FriendRequestCard> {
       setBackgroundImageAsError();
       return null;
     } else {
-      return NetworkImage(avatarUrl);
+      return CachedNetworkImageProvider(avatarUrl);
     }
   }
 }

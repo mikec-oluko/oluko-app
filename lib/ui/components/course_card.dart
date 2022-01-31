@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -152,7 +153,7 @@ class _State extends State<CourseCard> {
                     right: (index + (userRecommendationImageUrls.length <= 3 ? 0 : 1)) * (userRadius / 1.5),
                     child: CircleAvatar(
                       minRadius: userRadius,
-                      backgroundImage: NetworkImage(userUrl),
+                      backgroundImage: CachedNetworkImageProvider(userUrl),
                     ),
                   ),
                   index))

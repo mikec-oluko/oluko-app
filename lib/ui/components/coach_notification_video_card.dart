@@ -1,3 +1,4 @@
+// import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
@@ -103,8 +104,8 @@ class _CoachNotificationVideoCardState extends State<CoachNotificationVideoCard>
     switch (fileType) {
       case CoachFileTypeEnum.mentoredVideo:
         return OlukoLocalizations.of(context).find('mentoredVideo');
-
       default:
+        return '';
     }
   }
 }

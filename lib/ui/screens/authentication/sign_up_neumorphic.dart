@@ -118,6 +118,7 @@ class MainSignUpPage extends StatelessWidget {
                             width: 140,
                             height: 50,
                             child: OlukoNeumorphicSecondaryButton(
+                              title: '',
                               useBorder: true,
                               isExpanded: false,
                               thinPadding: true,
@@ -137,6 +138,7 @@ class MainSignUpPage extends StatelessWidget {
                             width: 140,
                             height: 50,
                             child: OlukoNeumorphicSecondaryButton(
+                              title: '',
                               useBorder: true,
                               isExpanded: false,
                               thinPadding: true,

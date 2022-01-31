@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
@@ -568,8 +569,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
           height: MediaQuery.of(context).size.height / 3,
           child: _userProfileToDisplay.coverImage == null
               ? defaultWidgetNoContent
-              : Image.network(
-                  _userProfileToDisplay.coverImage,
+              : Image(
+                  image: CachedNetworkImageProvider(_userProfileToDisplay.coverImage),
                   fit: BoxFit.cover,
                   colorBlendMode: BlendMode.colorBurn,
                   height: MediaQuery.of(context).size.height,
@@ -682,8 +683,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
           actualCourse: courseInfo,
           width: 120,
           height: 120,
-          imageCover: Image.network(
-            courseInfo.course.image,
+          imageCover: Image(
+            image: CachedNetworkImageProvider(courseInfo.course.image),
             frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
                 ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, width: 120),
           ),

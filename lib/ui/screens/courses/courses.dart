@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -425,8 +426,8 @@ class _State extends State<Courses> {
 
   Image _generateImageCourse(String imageUrl) {
     if (imageUrl != null) {
-      return Image.network(
-        imageUrl,
+      return Image(
+        image: CachedNetworkImageProvider(imageUrl),
         fit: BoxFit.cover,
         frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
             ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 120),

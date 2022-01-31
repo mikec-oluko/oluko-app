@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -90,8 +91,9 @@ class _OverlayVideoPreviewState extends State<OverlayVideoPreview> {
                   : const SizedBox()
             else if (widget.showBackButton)
               IconButton(
-                  icon: const Icon(Icons.chevron_left, size: 35, color: Colors.white),
-                  onPressed: () => widget.onBackPressed != null ? widget.onBackPressed() : Navigator.pop(context),)
+                icon: const Icon(Icons.chevron_left, size: 35, color: Colors.white),
+                onPressed: () => widget.onBackPressed != null ? widget.onBackPressed() : Navigator.pop(context),
+              )
             else
               const SizedBox(),
             const Expanded(child: SizedBox()),
@@ -125,8 +127,8 @@ class _OverlayVideoPreviewState extends State<OverlayVideoPreview> {
                   'assets/courses/profile_photos.png',
                   fit: BoxFit.cover,
                 )
-              : Image.network(
-                  widget.image,
+              : Image(
+                  image: CachedNetworkImageProvider(widget.image),
                   fit: BoxFit.cover,
                 )),
       if (widget.video != null && widget.video != "null")

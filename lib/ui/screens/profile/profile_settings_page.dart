@@ -197,12 +197,14 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
       setState(() {
         _privacyNewValue = index;
       });
-      BlocProvider.of<ProfileBloc>(context).updateSettingsPreferences(_authUser, _privacyNewValue, _notificationNewValue);
+      BlocProvider.of<ProfileBloc>(context)
+          .updateSettingsPreferences(_authUser, _privacyNewValue, notificationValue: _notificationNewValue);
     } else if (_notificationNewValue != _authUser.notification) {
       if (index == null) {
         index = _privacyNewValue;
       }
-      BlocProvider.of<ProfileBloc>(context).updateSettingsPreferences(_authUser, _privacyNewValue, _notificationNewValue);
+      BlocProvider.of<ProfileBloc>(context)
+          .updateSettingsPreferences(_authUser, _privacyNewValue, notificationValue: _notificationNewValue);
     }
   }
 
@@ -210,7 +212,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
     setState(() {
       _notificationNewValue = value;
     });
-    BlocProvider.of<ProfileBloc>(context).updateSettingsPreferences(_authUser, _privacyNewValue, _notificationNewValue);
+    BlocProvider.of<ProfileBloc>(context).updateSettingsPreferences(_authUser, _privacyNewValue, notificationValue: _notificationNewValue);
   }
 
   String returnOption(String option) => option.split(".")[1];

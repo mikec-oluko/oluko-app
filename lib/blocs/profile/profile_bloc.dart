@@ -69,11 +69,11 @@ class ProfileBloc extends Cubit<ProfileState> {
     }
   }
 
-  void updateSettingsPreferences(UserResponse userToUpdate, int privacyIndex, bool notificationValue) async {
+  updateSettingsPreferences(UserResponse userToUpdate, int privacyIndex, {bool notificationValue}) {
     try {
-      await _profileRepository.updateUserPreferences(userToUpdate, privacyIndex, notificationValue);
+      _profileRepository.updateUserPreferences(userToUpdate, privacyIndex, notificationValue: notificationValue);
     } catch (exception, stackTrace) {
-      await Sentry.captureException(
+      Sentry.captureException(
         exception,
         stackTrace: stackTrace,
       );
