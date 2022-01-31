@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
@@ -120,8 +121,8 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                         style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
                         child: CircleAvatar(
                           backgroundColor: OlukoColors.black,
-                          backgroundImage: Image.network(
-                            widget.userToDisplayInformation.avatarThumbnail,
+                          backgroundImage: Image(
+                            image: CachedNetworkImageProvider(widget.userToDisplayInformation.avatarThumbnail),
                             fit: BoxFit.contain,
                             frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
                                 ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 45, width: 45),
@@ -243,8 +244,8 @@ class _UserProfileInformationState extends State<UserProfileInformation> {
                     child: Stack(clipBehavior: Clip.none, children: [
                       CircleAvatar(
                         backgroundColor: OlukoColors.black,
-                        backgroundImage: Image.network(
-                          widget.userToDisplayInformation.avatarThumbnail,
+                        backgroundImage: Image(
+                          image: CachedNetworkImageProvider(widget.userToDisplayInformation.avatarThumbnail),
                           fit: BoxFit.contain,
                           frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
                               ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 30, width: 30),

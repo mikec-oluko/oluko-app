@@ -1,5 +1,6 @@
 import 'dart:ffi';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -108,8 +109,8 @@ class _State extends State<CourseSegmentSection> {
               if (widget.segment.challengeImage != null) {
                 return ClipRRect(
                   borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-                  child: Image.network(
-                    widget.segment.challengeImage,
+                  child: Image(
+                    image: CachedNetworkImageProvider(widget.segment.challengeImage),
                     height: 140,
                     width: 100,
                     fit: BoxFit.cover,

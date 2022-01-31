@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/helpers/s3_provider.dart';
@@ -14,19 +15,17 @@ class TransformationJourneyRepository {
   FirebaseFirestore firestoreInstance;
 
   static DocumentReference projectReference =
-      FirebaseFirestore.instance.collection("projects").doc(GlobalConfiguration().getValue('projectId'));
+      FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId'));
 
   TransformationJourneyRepository() {
     firestoreInstance = FirebaseFirestore.instance;
   }
 
-  TransformationJourneyRepository.test({FirebaseFirestore firestoreInstance}) {
-    this.firestoreInstance = firestoreInstance;
-  }
+  TransformationJourneyRepository.test({this.firestoreInstance});
 
   Future<List<TransformationJourneyUpload>> getUploadedContentByUserId(String userId) async {
     try {
-      QuerySnapshot docRef = await FirebaseFirestore.instance
+      final QuerySnapshot docRef = await FirebaseFirestore.instance
           .collection('projects')
           .doc(GlobalConfiguration().getValue('projectId'))
           .collection('users')
@@ -34,11 +33,11 @@ class TransformationJourneyRepository {
           .collection('transformationJourneyUploads')
           .where('is_deleted', isNotEqualTo: true)
           .get();
-      List<TransformationJourneyUpload> contentUploaded = [];
-      docRef.docs.forEach((doc) {
+      final List<TransformationJourneyUpload> contentUploaded = [];
+      for (final doc in docRef.docs) {
         final Map<String, dynamic> content = doc.data() as Map<String, dynamic>;
         contentUploaded.add(TransformationJourneyUpload.fromJson(content));
-      });
+      }
       contentUploaded.sort((a, b) => a.index.compareTo(b.index));
       return contentUploaded;
     } catch (e, stackTrace) {
@@ -53,7 +52,7 @@ class TransformationJourneyRepository {
   static Future<TransformationJourneyUpload> createTransformationJourneyUpload(
       FileTypeEnum type, XFile file, String userId, int index) async {
     try {
-      CollectionReference transformationJourneyUploadsReference =
+      final CollectionReference transformationJourneyUploadsReference =
           projectReference.collection('users').doc(userId).collection('transformationJourneyUploads');
 
       String thumbnail;
@@ -74,12 +73,12 @@ class TransformationJourneyRepository {
 
         final downloadUrl = await _uploadFile(file.path, transformationJourneyUploadsReference.path);
 
-        TransformationJourneyUpload transformationJourneyUpload = TransformationJourneyUpload(
+        final TransformationJourneyUpload transformationJourneyUpload = TransformationJourneyUpload(
             createdBy: userId,
             name: '',
             from: Timestamp.now(),
             description: '',
-            index: index == null ? 0 : index,
+            index: index ?? 0,
             type: type,
             file: downloadUrl,
             isPublic: true,
@@ -98,14 +97,15 @@ class TransformationJourneyRepository {
       );
       rethrow;
     }
+    return null;
   }
 
   static Future<String> _uploadFile(String filePath, String folderName) async {
-    final file = new File(filePath);
+    final file = File(filePath);
     final basename = p.basename(filePath);
 
     final S3Provider s3Provider = S3Provider();
-    String downloadUrl = await s3Provider.putFile(file.readAsBytesSync(), folderName, basename);
+    final String downloadUrl = await s3Provider.putFile(file.readAsBytesSync(), folderName, basename);
 
     return downloadUrl;
   }
@@ -119,14 +119,16 @@ class TransformationJourneyRepository {
       await updateDocument(userId, elementReplaced);
       return true;
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
 
       return false;
     }
   }
 
   static Future updateDocument(String userId, TransformationJourneyUpload elementToUpdate) async {
-    DocumentReference contentReference =
+    final DocumentReference contentReference =
         projectReference.collection('users').doc(userId).collection('transformationJourneyUploads').doc(elementToUpdate.id);
     await contentReference.update(elementToUpdate.toJson());
   }

@@ -50,7 +50,7 @@ class _ModalAudioState extends State<ModalAudio> {
   Widget audioSection() {
     if (_audios.length == 1) {
       return AudioDialogContent(
-          coach: widget.users != null ? widget.users[0] : null, audio: _audios[0], panelController: widget.panelController);
+          coach: widget.users != null ? widget.users[0] : null, audio: _audios[0], panelController: widget.panelController, audioPlayer: widget.audioPlayer);
     } else {
       return AudioPanel(
         onAudioPressed: (int index) => widget.onAudioPressed(index, widget.challenge),

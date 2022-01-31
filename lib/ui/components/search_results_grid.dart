@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
@@ -38,8 +39,8 @@ class _State extends State<SearchResultsGrid> {
                         arguments: {'course': e as Course, 'fromCoach': false, 'isCoachRecommendation': false}),
                     child: e.image != null
                         ? _getCourseCard(
-                            Image.network(
-                              e.image as String,
+                            Image(
+                              image: CachedNetworkImageProvider(e.image as String),
                               fit: BoxFit.cover,
                               frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
                                   ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 120),

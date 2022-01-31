@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -102,7 +103,9 @@ class _State extends State<SubscriptionCard> {
                           decoration: BoxDecoration(
                               color: Colors.black,
                               image: DecorationImage(
-                                  fit: BoxFit.cover, alignment: Alignment.centerRight, image: NetworkImage(widget.backgroundImage)),
+                                  fit: BoxFit.cover,
+                                  alignment: Alignment.centerRight,
+                                  image: CachedNetworkImageProvider(widget.backgroundImage)),
                               borderRadius: BorderRadius.all(Radius.circular(9))),
                           child: Padding(
                             padding: EdgeInsets.symmetric(vertical: 30, horizontal: 10),

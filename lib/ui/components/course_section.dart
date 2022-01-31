@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:nil/nil.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -35,7 +36,9 @@ class _CourseSectionState extends State<CourseSection> {
     return Container(
         decoration: BoxDecoration(
             image: DecorationImage(
-          image: widget.course.image != null ? NetworkImage(widget.course.image) : AssetImage("assets/home/mvt.png") as ImageProvider,
+          image: widget.course.image != null
+              ? CachedNetworkImageProvider(widget.course.image)
+              : AssetImage("assets/home/mvt.png") as ImageProvider,
           fit: widget.course.image != null ? BoxFit.cover : BoxFit.contain,
         )),
         height: ScreenUtils.height(context),

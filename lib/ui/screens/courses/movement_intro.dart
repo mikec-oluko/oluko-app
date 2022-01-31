@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -110,7 +111,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                 image: DecorationImage(
                     colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.94), BlendMode.darken),
                     fit: BoxFit.cover,
-                    image: NetworkImage(backgroundImageUrl))),
+                    image: CachedNetworkImageProvider(backgroundImageUrl))),
         width: ScreenUtils.width(context),
         height: OlukoNeumorphism.isNeumorphismDesign ? ScreenUtils.height(context) : ScreenUtils.height(context) - toolbarHeight,
         child: OlukoNeumorphism.isNeumorphismDesign ? _viewBodyNeumorphic() : _viewBody(),
@@ -308,7 +309,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                       Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
                           arguments: {'course': course, 'fromCoach': false, 'isCoachRecommendation': false});
                     },
-                    child: Container(height: 100, child: Image.network(course.image)))
+                    child: Container(height: 100, child: CachedNetworkImage(imageUrl: course.image)))
               ],
             ),
             Padding(
@@ -382,7 +383,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                     child: Container(
                         padding: EdgeInsets.all(4),
                         height: 150,
-                        child: ClipRRect(borderRadius: BorderRadius.circular(5), child: Image.network(course.image))))
+                        child: ClipRRect(borderRadius: BorderRadius.circular(5), child: CachedNetworkImage(imageUrl: course.image))))
               ],
             ),
           ],

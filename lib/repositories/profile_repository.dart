@@ -29,8 +29,9 @@ class ProfileRepository {
     return userUpdated;
   }
 
-  Future<UserResponse> updateUserPreferences(UserResponse user, int privacyIndex, bool notificationValue) async {
-    UserResponse userUpdated = await _userRepository.updateUserSettingsPreferences(user, privacyIndex, notificationValue);
+  Future<UserResponse> updateUserPreferences(UserResponse user, int privacyIndex, {bool notificationValue}) async {
+    UserResponse userUpdated =
+        await _userRepository.updateUserSettingsPreferences(user, privacyIndex, notificationValue: notificationValue);
     return userUpdated;
   }
 

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -88,8 +89,8 @@ class _CoachProfileState extends State<CoachProfile> {
       height: MediaQuery.of(context).size.height / 3,
       child: widget.coachUser.coverImage == null
           ? SizedBox()
-          : Image.network(
-              widget.coachUser.coverImage,
+          : Image(
+              image: CachedNetworkImageProvider(widget.coachUser.coverImage),
               fit: BoxFit.cover,
               colorBlendMode: BlendMode.colorBurn,
               height: MediaQuery.of(context).size.height,
@@ -331,8 +332,8 @@ class _CoachProfileState extends State<CoachProfile> {
                                 ])
                               : CircleAvatar(
                                   backgroundColor: OlukoColors.black,
-                                  backgroundImage: Image.network(
-                                    widget.coachUser.avatarThumbnail,
+                                  backgroundImage: Image(
+                                    image: CachedNetworkImageProvider(widget.coachUser.avatarThumbnail),
                                     fit: BoxFit.contain,
                                     frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
                                         ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 30, width: 30),

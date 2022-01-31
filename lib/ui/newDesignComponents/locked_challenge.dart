@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 
@@ -36,7 +37,11 @@ class LockedChallenge extends StatelessWidget {
                 image: DecorationImage(
                   fit: BoxFit.cover,
                   colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.7), BlendMode.dstATop),
-                  image: challengeImage != null ? new NetworkImage(challengeImage) : defaultImage,
+                  image: challengeImage != null
+                      ? CachedNetworkImageProvider(challengeImage)
+                      : challengeImage != null
+                          ? new CachedNetworkImageProvider(challengeImage)
+                          : defaultImage,
                 ),
               ),
             ),

@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -86,8 +87,8 @@ class _State extends State<ChallengeSection> {
                 alignment: Alignment.center,
                 children: [
                   ClipRRect(
-                    child: Image.network(
-                      challenge.challengeImage,
+                    child: CachedNetworkImage(
+                      imageUrl: challenge.challengeImage,
                       height: 140,
                       width: 100,
                       fit: BoxFit.cover,

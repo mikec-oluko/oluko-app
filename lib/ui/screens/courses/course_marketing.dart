@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:chewie/chewie.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -37,8 +35,6 @@ import 'package:oluko_app/ui/components/statistics_chart.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_video_preview.dart';
-import 'package:oluko_app/ui/screens/courses/enrolled_class.dart';
-import 'package:oluko_app/utils/app_loader.dart';
 import 'package:oluko_app/utils/bottom_dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -165,9 +161,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                   ))
                               : customScrollView(enrollmentState.courseEnrollment)
                           : Container(
-                              color: OlukoNeumorphism.isNeumorphismDesign
-                                  ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark
-                                  : Colors.black,
+                              color: Colors.black,
                               child: Stack(
                                 children: [
                                   ListView(children: [
@@ -196,12 +190,12 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                                 child: Text(
                                                   //TODO: change weeks number
                                                   TimeConverter.toCourseDuration(
-                                                      6, widget.course.classes != null ? widget.course.classes.length : 0, context),
+                                                      widget.course.duration is int? widget.course.duration as int : 0, widget.course.classes != null ? widget.course.classes.length : 0, context),
                                                   style: OlukoFonts.olukoBigFont(
                                                       custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
                                                 ),
                                               ),
-                                              OlukoNeumorphism.isNeumorphismDesign ? SizedBox() : buildStatistics(),
+                                              buildStatistics(),
                                               Padding(
                                                 padding: const EdgeInsets.only(top: 10.0, right: 10),
                                                 child: Text(

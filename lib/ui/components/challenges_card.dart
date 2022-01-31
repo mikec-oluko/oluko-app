@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
@@ -93,10 +94,10 @@ class _State extends State<ChallengesCard> {
                     colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.7), BlendMode.dstATop),
                     image: widget.navigateToSegment
                         ? widget.segmentChallenge.challengeSegment.challengeImage != null
-                            ? NetworkImage(widget.segmentChallenge.challengeSegment.challengeImage)
+                            ? CachedNetworkImageProvider(widget.segmentChallenge.challengeSegment.challengeImage)
                             : defaultImage
                         : widget.challenge.image != null
-                            ? NetworkImage(widget.challenge.image)
+                            ? CachedNetworkImageProvider(widget.challenge.image)
                             : defaultImage,
                   ),
                 ),
@@ -145,10 +146,10 @@ class _State extends State<ChallengesCard> {
                     fit: BoxFit.cover,
                     image: widget.navigateToSegment
                         ? widget.segmentChallenge.challengeSegment.challengeImage != null
-                            ? NetworkImage(widget.segmentChallenge.challengeSegment.challengeImage)
+                            ? CachedNetworkImageProvider(widget.segmentChallenge.challengeSegment.challengeImage)
                             : defaultImage
                         : widget.challenge.image != null
-                            ? NetworkImage(widget.challenge.image)
+                            ? CachedNetworkImageProvider(widget.challenge.image)
                             : defaultImage,
                   ),
                 ),

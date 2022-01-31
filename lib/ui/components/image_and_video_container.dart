@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
@@ -39,7 +40,7 @@ class _ImageAndVideoContainerState extends State<ImageAndVideoContainer> {
               color: OlukoColors.black,
             ),
             child: ImageAndVideoPreviewCard(
-              backgroundImage: backgroundNetworkImage(),
+              backgroundImage: backgroundCachedNetworkImageProvider(),
               videoUrl: widget.videoUrl,
               isContentVideo: widget.isContentVideo,
               showTitle: widget.displayOnViewNamed == ActualProfileRoute.userAssessmentVideos ||
@@ -55,7 +56,7 @@ class _ImageAndVideoContainerState extends State<ImageAndVideoContainer> {
               color: OlukoColors.black,
             ),
             child: ImageAndVideoPreviewCard(
-              backgroundImage: backgroundNetworkImage(),
+              backgroundImage: backgroundCachedNetworkImageProvider(),
               videoUrl: widget.videoUrl,
               isContentVideo: widget.isContentVideo,
               showTitle: widget.displayOnViewNamed == ActualProfileRoute.userAssessmentVideos ||
@@ -65,10 +66,10 @@ class _ImageAndVideoContainerState extends State<ImageAndVideoContainer> {
             ));
   }
 
-  Image backgroundNetworkImage() {
+  Image backgroundCachedNetworkImageProvider() {
     if (widget.isForCarousel) {
-      return Image.network(
-        widget.backgroundImage,
+      return Image(
+        image: CachedNetworkImageProvider(widget.backgroundImage),
         fit: BoxFit.contain,
         height: 150,
         width: 250,
@@ -76,8 +77,8 @@ class _ImageAndVideoContainerState extends State<ImageAndVideoContainer> {
             ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 150, width: 250),
       );
     }
-    return Image.network(
-      widget.backgroundImage,
+    return Image(
+      image: CachedNetworkImageProvider(widget.backgroundImage),
       fit: BoxFit.contain,
       height: widget.isCoach ? 150 : 120,
       width: 120,
