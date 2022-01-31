@@ -19,6 +19,7 @@ class StoriesItem extends StatefulWidget {
   final bool showName;
   final bool getStories;
   final bool addUnseenStoriesRing;
+  final bool isSegmentSection;
   String imageUrl;
   String name;
   String lastname;
@@ -39,7 +40,8 @@ class StoriesItem extends StatefulWidget {
       this.currentUserId,
       this.itemUserId,
       this.bloc,
-      this.from = StoriesItemFrom.home}) {
+      this.from = StoriesItemFrom.home,
+      this.isSegmentSection = false}) {
     if (getStories == true &&
         currentUserId != null &&
         itemUserId != null &&
@@ -175,9 +177,10 @@ class _State extends State<StoriesItem> {
       }
     }
   }
+
   Widget getCircularAvatar() {
     if (widget.imageUrl != null) {
-      return OlukoNeumorphism.isNeumorphismDesign
+      return OlukoNeumorphism.isNeumorphismDesign && !widget.isSegmentSection
           ? Neumorphic(
               style: OlukoNeumorphism.getNeumorphicStyleForCircleElement(),
               child: CircleAvatar(

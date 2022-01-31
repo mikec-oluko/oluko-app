@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:oluko_app/models/enums/segment_type_enum.dart';
 import 'package:oluko_app/models/submodels/object_submodel.dart';
 import 'package:oluko_app/models/submodels/section_submodel.dart';
 
@@ -9,9 +10,11 @@ class SegmentSubmodel {
   bool isChallenge;
   String challengeImage;
   List<SectionSubmodel> sections;
+  SegmentTypeEnum type;
+  int rounds;
+  int totalTime;
 
-  SegmentSubmodel({this.id, this.reference, this.challengeImage, this.name, this.sections, this.isChallenge});
-
+  SegmentSubmodel({this.id, this.reference, this.challengeImage, this.name, this.sections, this.isChallenge,this.rounds,this.totalTime,this.type});
   factory SegmentSubmodel.fromJson(Map<String, dynamic> json) {
     return SegmentSubmodel(
         id: json['id']?.toString(),
@@ -26,7 +29,11 @@ class SegmentSubmodel {
         sections: json['sections'] == null
             ? null
             : List<SectionSubmodel>.from((json['sections'] as Iterable)
-                .map((section) => SectionSubmodel.fromJson(section as Map<String, dynamic>))));
+                .map((section) => SectionSubmodel.fromJson(section as Map<String, dynamic>))),
+        rounds: json['rounds'] as int,
+        totalTime:json['total_time'] is int? json['total_time'] as int:int.tryParse(json['total_time'].toString()),
+        type: json['type'] == null ? null : SegmentTypeEnum.values[json['type'] as int],
+                );
   }
 
   Map<String, dynamic> toJson() => {
