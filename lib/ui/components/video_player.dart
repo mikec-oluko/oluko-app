@@ -17,7 +17,7 @@ class OlukoVideoPlayer extends StatefulWidget {
   final String filePath;
   final bool allowFullScreen;
   final bool isOlukoControls;
-
+  
   final Function(ChewieController chewieController) whenInitialized;
   final Function() onVideoFinished;
 

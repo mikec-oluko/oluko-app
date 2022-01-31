@@ -121,7 +121,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                   child: Stack(
                                     children: [
                                       ListView(children: [
-                                        OlukoVideoPreview(
+                                        OlukoVideoPreview(                                  
                                           showBackButton: true,
                                           image: widget.course.image,
                                           video: widget.course.video,
@@ -443,8 +443,10 @@ class _CourseMarketingState extends State<CourseMarketing> {
     return ClassExpansionPanel(
       classes: CourseService.getCourseClasses(widget.course, _classes),
       movements: _movements,
-      onPressedMovement: (BuildContext context, Movement movement) =>
-          Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement}),
+      onPressedMovement: (BuildContext context, Movement movement) {
+        isVideoPlaying();
+        Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement});
+      },
     );
   }
 
@@ -466,11 +468,14 @@ class _CourseMarketingState extends State<CourseMarketing> {
                     style: OlukoNeumorphism.getNeumorphicStyleForCardClasses(
                         CourseEnrollmentService.getClassProgress(widget.courseEnrollment, _classItems.indexOf(item)) > 0),
                     child: GestureDetector(
-                      onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
-                        'courseEnrollment': widget.courseEnrollment,
-                        'classIndex': _classItems.indexOf(item),
-                        'courseIndex': widget.courseIndex,
-                      }),
+                      onTap: () {
+                        isVideoPlaying();
+                        Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
+                          'courseEnrollment': widget.courseEnrollment,
+                          'classIndex': _classItems.indexOf(item),
+                          'courseIndex': widget.courseIndex,
+                        });
+                      },
                       child: Padding(
                         padding: const EdgeInsets.all(5.0),
                         child: ClassSection(

@@ -19,9 +19,7 @@ class _OlukoBlurredButtonState extends State<OlukoBlurredButton> {
         width: 100,
         height: 100,
         color: Colors.transparent.withOpacity(0.3),
-        child: Padding(
-            padding: const EdgeInsets.only(left: 3.5),
-            child: BackdropFilter(filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20), child: widget.childContent)),
+        child: BackdropFilter(filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20), child: widget.childContent),
       ),
     );
   }

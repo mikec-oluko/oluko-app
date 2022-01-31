@@ -10,8 +10,14 @@ class VideoOverlay extends StatefulWidget {
   final Function() onPlay;
   final bool autoPlay;
   final bool isOlukoControls;
-
-  VideoOverlay({this.videoUrl, this.onPlay, Key key, this.autoPlay = false, this.isOlukoControls = false}) : super(key: key);
+  VideoOverlay(
+      {this.videoUrl,
+      this.onPlay,
+      Key key,
+      this.autoPlay = false,
+      this.isOlukoControls = false,
+      })
+      : super(key: key);
 
   @override
   _VideoOverlayState createState() => _VideoOverlayState();
@@ -62,7 +68,7 @@ class _VideoOverlayState extends State<VideoOverlay> {
       widgets.add(
         OlukoVideoPlayer(
           isOlukoControls: widget.isOlukoControls,
-          videoUrl: 'https://oluko-mvt.s3.us-west-1.amazonaws.com/classes/4ioaQSqohpOnmXk3f39T/video.mp4',
+          videoUrl:videoUrl,
           autoPlay: widget.autoPlay,
           whenInitialized: (ChewieController chewieController) => setState(() {
             _controller = chewieController;
@@ -96,7 +102,7 @@ class _VideoOverlayState extends State<VideoOverlay> {
     } else {
       widgets.add(
         OlukoVideoPlayer(
-          videoUrl: 'https://oluko-mvt.s3.us-west-1.amazonaws.com/classes/QwvycOHGGIe8DW4ynrZJ/video.mp4',
+          videoUrl: videoUrl,
           autoPlay: false,
           whenInitialized: (ChewieController chewieController) => setState(() {
             _controller = chewieController;

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/video_overlay.dart';
+import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 
@@ -157,29 +158,72 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
                 onTap: () => widget.onPlay(),
                 child: Align(
                     child: Stack(children: [
-                  Visibility(
-                      visible: widget.videoVisibilty,
-                      child: VideoOverlay(
-                        isOlukoControls: true,
-                        autoPlay: true,
-                        videoUrl: widget.video,
-                        onPlay: widget.onPlay,
-                      )),
-                  Visibility(
-                      visible: !widget.videoVisibilty,
-                      child: Container(
-                        height: 52,
-                        width: 52,
-                        child: OlukoBlurredButton(
-                          childContent: Image.asset(
-                            'assets/courses/white_play.png',
-                            scale: 3.5,
-                          ),
+                  if (widget.videoVisibilty)
+                    showVideoPlayer(widget.video)
+                  /*VideoOverlay(
+                      customController: widget.chewieController,
+                      isOlukoControls: true,
+                      autoPlay: true,
+                      videoUrl: widget.video,
+                      onPlay: widget.onPlay,
+                    )*/
+                  else
+                    SizedBox(
+                      height: 52,
+                      width: 52,
+                      child: OlukoBlurredButton(
+                        childContent: Image.asset(
+                          'assets/courses/white_play.png',
+                          scale: 3.5,
                         ),
-                      ))
+                      ),
+                    ),
                 ])),
               )),
         )
     ]);
+  }
+
+  Widget showVideoPlayer(String videoUrl) {
+    List<Widget> widgets = [];
+    if (_controller == null) {
+      widgets.add(const Center(child: CircularProgressIndicator()));
+    }
+    widgets.add(
+      OlukoVideoPlayer(
+        isOlukoControls: true,
+        videoUrl: videoUrl,
+        whenInitialized: (ChewieController chewieController) => setState(() {
+          _controller = chewieController;
+        }),
+      ),
+    );
+    return Container(
+      color: Colors.black,
+      child: Stack(
+        children: widgets +
+            [
+              Visibility(
+                child: Positioned(
+                  top: 25,
+                  right: 10,
+                  child: GestureDetector(
+                    onTap: () => widget.onPlay(),
+                    child: SizedBox(
+                      height: 46,
+                      width: 46,
+                      child: OlukoBlurredButton(
+                        childContent: Image.asset(
+                          'assets/courses/white_cross.png',
+                          scale: 3.5,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            ],
+      ),
+    );
   }
 }
