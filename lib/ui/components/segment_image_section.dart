@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -406,8 +407,8 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
         aspectRatio: 3 / 4,
         child: () {
           if (widget.segment.image != null) {
-            return Image.network(
-              widget.segment.image,
+            return Image(
+              image: CachedNetworkImageProvider(widget.segment.image),
               fit: BoxFit.cover,
             );
           } else {

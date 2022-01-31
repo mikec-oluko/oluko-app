@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -83,7 +84,7 @@ class _ModalPersonalRecordState extends State<ModalPersonalRecord> {
                           child: ClipRRect(
                               borderRadius: BorderRadius.circular(4),
                               child: record.image != null
-                                  ? Image.network(record.image, fit: BoxFit.cover, width: 65, height: 90)
+                                  ? Image(image: CachedNetworkImageProvider(record.image), fit: BoxFit.cover, width: 65, height: 90)
                                   : SizedBox.shrink()),
                         ),
                       ])

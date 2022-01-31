@@ -1,5 +1,5 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -18,7 +18,7 @@ class _State extends State<CoursePoster> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5),
-      child: Padding(padding: const EdgeInsets.only(top: 40), child: Column(children: [classContainer(140.0, 108.0)])),
+      child: Padding(padding: EdgeInsets.only(top: 40), child: Container(child: Column(children: [classContainer(140.0, 108.0)]))),
     );
   }
 
@@ -37,8 +37,8 @@ class _State extends State<CoursePoster> {
             children: [
               ClipRRect(
                 borderRadius: const BorderRadius.all(Radius.circular(3)),
-                child: Image.network(
-                  widget.image,
+                child: Image(
+                  image: CachedNetworkImageProvider(widget.image),
                   height: height,
                   width: width,
                   fit: BoxFit.cover,

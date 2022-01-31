@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -48,7 +49,7 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
                                       ? defaultImage
                                       : widget.videoThumbnail.first == useDefaultImage
                                           ? defaultImage
-                                          : NetworkImage(
+                                          : CachedNetworkImageProvider(
                                               widget.videoThumbnail.length > 2 ? widget.videoThumbnail.first : widget.videoThumbnail.first)
                                   : defaultImage,
                               fit: BoxFit.fill,
@@ -70,10 +71,10 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
                                   ? widget.videoThumbnail.length == 2
                                       ? widget.videoThumbnail.first == useDefaultImage
                                           ? defaultImage
-                                          : NetworkImage(widget.videoThumbnail.first)
+                                          : CachedNetworkImageProvider(widget.videoThumbnail.first)
                                       : widget.videoThumbnail[1] == useDefaultImage
                                           ? defaultImage
-                                          : NetworkImage(widget.videoThumbnail[1])
+                                          : CachedNetworkImageProvider(widget.videoThumbnail[1])
                                   : defaultImage,
                               fit: BoxFit.fill,
                             ))))
@@ -91,7 +92,7 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
                             image: widget.videoThumbnail != null && widget.videoThumbnail.isNotEmpty
                                 ? widget.videoThumbnail.last == useDefaultImage
                                     ? defaultImage
-                                    : NetworkImage(widget.videoThumbnail.last)
+                                    : CachedNetworkImageProvider(widget.videoThumbnail.last)
                                 : defaultImage,
                             fit: BoxFit.cover,
                           )))),
@@ -139,7 +140,7 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
                           image: DecorationImage(
                             image: widget.videoThumbnail != null && widget.videoThumbnail.isNotEmpty
                                 ? widget.videoThumbnail[0] != null
-                                    ? NetworkImage(widget.videoThumbnail[0])
+                                    ? CachedNetworkImageProvider(widget.videoThumbnail[0])
                                     : defaultImage
                                 : defaultImage,
                             fit: BoxFit.cover,

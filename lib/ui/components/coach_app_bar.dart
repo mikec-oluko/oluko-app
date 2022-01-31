@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_review_pending_bloc.dart';
@@ -103,8 +104,8 @@ class _CoachAppBarState extends State<CoachAppBar> {
       padding: const EdgeInsets.only(right: 5),
       child: CircleAvatar(
         backgroundColor: OlukoColors.black,
-        backgroundImage: Image.network(
-          widget.coachUser.avatarThumbnail,
+        backgroundImage: Image(
+          image: CachedNetworkImageProvider(widget.coachUser.avatarThumbnail),
           fit: BoxFit.contain,
           frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
               ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, height: 24, width: 24),

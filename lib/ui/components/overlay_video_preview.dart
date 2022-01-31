@@ -1,5 +1,5 @@
 import 'dart:math';
-
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -129,8 +129,8 @@ class _OverlayVideoPreviewState extends State<OverlayVideoPreview> {
                   'assets/courses/profile_photos.png',
                   fit: BoxFit.cover,
                 )
-              : Image.network(
-                  widget.randomImages[random(0, widget.randomImages.length - 1)],
+              : Image(
+                  image: CachedNetworkImageProvider(widget.randomImages[random(0, widget.randomImages.length - 1)]),
                   fit: BoxFit.cover,
                 )),
       if (widget.video != null && widget.video != "null")

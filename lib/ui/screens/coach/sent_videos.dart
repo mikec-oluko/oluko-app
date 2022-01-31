@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -214,7 +215,7 @@ class _SentVideosPageState extends State<SentVideosPage> {
 
   ImageProvider getImage(SegmentSubmission segmentSubmitted) {
     return segmentSubmitted.video.thumbUrl != null
-        ? NetworkImage(segmentSubmitted.video.thumbUrl)
+        ? CachedNetworkImageProvider(segmentSubmitted.video.thumbUrl)
         : const AssetImage('assets/home/mvt.png') as ImageProvider;
   }
 

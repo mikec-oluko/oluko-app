@@ -13,24 +13,22 @@ class FriendRepository {
     firestoreInstance = FirebaseFirestore.instance;
   }
 
-  FriendRepository.test({FirebaseFirestore firestoreInstance}) {
-    this.firestoreInstance = firestoreInstance;
-  }
+  FriendRepository.test({this.firestoreInstance});
 
   static Future<Friend> getUserFriendsByUserId(String userId) async {
     try {
-      QuerySnapshot docRef = await FirebaseFirestore.instance
+      final QuerySnapshot docRef = await FirebaseFirestore.instance
           .collection('projects')
           .doc(GlobalConfiguration().getValue('projectId'))
           .collection('friends')
           .where('id', isEqualTo: userId)
           .get();
 
-      if (docRef.docs.length == 0) {
+      if (docRef.docs.isEmpty) {
         return null;
       }
-      var document = docRef.docs[0].data() as Map<String, dynamic>;
-      Friend friendData = Friend.fromJson(document);
+      final document = docRef.docs[0].data() as Map<String, dynamic>;
+      final Friend friendData = Friend.fromJson(document);
       return friendData;
     } catch (e, stackTrace) {
       await Sentry.captureException(
@@ -89,14 +87,23 @@ class FriendRepository {
       );
       rethrow;
     }
+    return null;
   }
 
   static DocumentReference<Map<String, dynamic>> getFriendUserDocReferenceById(String userId) {
-    return FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('friends').doc(userId);
+    return FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('friends')
+        .doc(userId);
   }
 
   static DocumentReference<Map<String, dynamic>> getUserDocReferenceById(String userId) {
-    return FirebaseFirestore.instance.collection('projects').doc(GlobalConfiguration().getValue('projectId')).collection('users').doc(userId);
+    return FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('users')
+        .doc(userId);
   }
 
   static Future<void> addFriendToFriendList(Friend friend, FriendModel friendModel, String friendId) async {
@@ -207,6 +214,7 @@ class FriendRepository {
       );
       rethrow;
     }
+    return null;
   }
 
   static Future<User> sendHiFiveToFriend(String userId, User friendToGreet) async {
@@ -227,6 +235,7 @@ class FriendRepository {
       );
       rethrow;
     }
+    return null;
   }
 
   static Future<FriendRequestModel> cancelFriendRequestSend(Friend friend, FriendRequestModel friendRequest) async {
