@@ -33,6 +33,7 @@ import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/coach_timeline_item.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/enums/status_enum.dart';
+import 'package:oluko_app/models/recommendation_media.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/submodels/video.dart';
 import 'package:oluko_app/models/task.dart';
@@ -395,7 +396,7 @@ class _CoachPageState extends State<CoachPage> {
       separatorBox,
       sentVideos(),
       separatorBox,
-      CoachContentSectionCard(title: OlukoLocalizations.get(context, 'recomendedVideos')),
+      recommendedVideos(),
       separatorBox,
       CoachContentSectionCard(title: OlukoLocalizations.get(context, 'voiceMessages')),
     ];
@@ -572,9 +573,7 @@ class _CoachPageState extends State<CoachPage> {
         : null;
     _coachRecommendationTimelineContent.isNotEmpty
         ? _coachRecommendationTimelineContent.forEach((recomendationTimelineItem) {
-            if (_allContent
-                .where((contentElement) => contentElement.contentThumbnail == recomendationTimelineItem.contentThumbnail)
-                .isEmpty) {
+            if (_allContent.where((contentElement) => contentElement.contentName == recomendationTimelineItem.contentName).isEmpty) {
               _allContent.add(recomendationTimelineItem);
             }
           })
@@ -625,7 +624,7 @@ class _CoachPageState extends State<CoachPage> {
 
   Widget sentVideos() {
     return _sentVideosContent != null && _sentVideosContent.isNotEmpty
-        ? CoachContentPreviewContent(
+        ? CoachContentPreviewComponent(
             contentFor: CoachContentSection.sentVideos,
             titleForSection: OlukoLocalizations.get(context, 'sentVideos'),
             segmentSubmissionContent: _sentVideosContent,
@@ -640,7 +639,7 @@ class _CoachPageState extends State<CoachPage> {
 
   Widget mentoredVideos({bool isForCarousel}) {
     return _annotationVideosContent != null && _annotationVideosContent.isNotEmpty
-        ? CoachContentPreviewContent(
+        ? CoachContentPreviewComponent(
             contentFor: CoachContentSection.mentoredVideos,
             titleForSection: OlukoLocalizations.get(context, 'mentoredVideos'),
             coachAnnotationContent: _annotationVideosContent,
@@ -648,6 +647,28 @@ class _CoachPageState extends State<CoachPage> {
                 ? BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation()
                 : () {})
         : CoachContentSectionCard(title: OlukoLocalizations.get(context, 'mentoredVideos'));
+  }
+
+  Widget recommendedVideos({bool isForCarousel}) {
+    return _coachRecommendations != null && _coachRecommendations.isNotEmpty
+        ? CoachContentPreviewComponent(
+            contentFor: CoachContentSection.recomendedVideos,
+            titleForSection: OlukoLocalizations.get(context, 'recomendedVideos'),
+            recommendedVideoContent: testS(),
+            onNavigation: () => !widget.coachAssignment.introductionCompleted
+                ? BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation()
+                : () {})
+        : CoachContentSectionCard(title: OlukoLocalizations.get(context, 'recomendedVideos'));
+  }
+
+  List<RecommendationMedia> testS() {
+    List<RecommendationMedia> recommendationVideos = [];
+    for (var recommendation in _coachRecommendations) {
+      if (TimelineContentOption.getTimelineOption(recommendation.contentTypeIndex as int) == TimelineInteractionType.recommendedVideo) {
+        recommendationVideos.add(recommendation.recommendationMedia);
+      }
+      return recommendationVideos;
+    }
   }
 
   void checkAnnotationUpdate(List<Annotation> annotationUpdateListofContent) {

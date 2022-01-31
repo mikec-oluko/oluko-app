@@ -538,7 +538,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
                               : 50
                           : 50
                       : 3,
-                  bottom: 8),
+                  bottom: 0),
               child: Stack(alignment: Alignment.center, children: [
                 usePulseAnimation() ? roundTimerWithPulse(keyboardVisibilty) : getRoundsTimer(keyboardVisibilty),
                 _countdownSection()
@@ -625,24 +625,25 @@ class _SegmentClocksState extends State<SegmentClocks> {
       final String currentTask = timerEntries[timerTaskIndex].labels[0];
       final String nextTask = timerTaskIndex < timerEntries.length - 1 ? timerEntries[timerTaskIndex + 1].labels[0] : '';
       return Padding(
-        padding: OlukoNeumorphism.isNeumorphismDesign ? EdgeInsets.only(top: 20) : EdgeInsets.zero,
+        padding: OlukoNeumorphism.isNeumorphismDesign
+            ? (workState == WorkState.resting && usePulseAnimation())
+                ? EdgeInsets.only(top: 0)
+                : EdgeInsets.only(top: 45)
+            : EdgeInsets.zero,
         child: currentAndNextTaskWithCounter(keyboardVisibilty, currentTask, nextTask),
       );
     }
   }
 
   Widget currentAndNextTaskWithCounter(bool keyboardVisibilty, String currentTask, String nextTask) {
-    return Padding(
-      padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.only(top: 0) : EdgeInsets.zero,
-      child: Column(
-        children: [
-          currentTaskWidget(keyboardVisibilty, currentTask),
-          const SizedBox(height: 10),
-          nextTaskWidget(nextTask, keyboardVisibilty),
-          const SizedBox(height: 15),
-          ...counterTextField(keyboardVisibilty),
-        ],
-      ),
+    return Column(
+      children: [
+        currentTaskWidget(keyboardVisibilty, currentTask),
+        const SizedBox(height: 10),
+        nextTaskWidget(nextTask, keyboardVisibilty),
+        const SizedBox(height: 15),
+        ...counterTextField(keyboardVisibilty),
+      ],
     );
   }
 

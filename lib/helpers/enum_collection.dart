@@ -35,16 +35,11 @@ enum CoachFileTypeEnum {
   recommendedMovement,
   recommendedSegment,
   faqVideo,
+  recommendedVideo
 }
 
-enum StoriesItemFrom {
-  friends,
-  friendsModal,
-  home,
-  longPressHome
-}
+enum StoriesItemFrom { friends, friendsModal, home, longPressHome }
 
 enum CoachAssignmentStatusEnum { requested, approved, rejected }
 
-//TODO: Check and use that
-enum TimelineInteractionType { course, classes, segment, movement, mentoredVideo, sentVideo }
+enum TimelineInteractionType { course, classes, segment, movement, mentoredVideo, sentVideo, recommendedVideo }

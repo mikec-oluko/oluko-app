@@ -228,7 +228,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
               dateForContent,
               CoachTimelineVideoContent(
                   videoThumbnail: content.contentThumbnail,
-                  videoTitle: content.contentName ?? OlukoLocalizations.get(context, 'mentoredVideo'),
+                  videoTitle: content.contentDescription ?? OlukoLocalizations.get(context, 'mentoredVideo'),
                   date: content.createdAt.toDate(),
                   fileType: CoachFileTypeEnum.mentoredVideo),
             ],
@@ -242,9 +242,23 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
               dateForContent,
               CoachTimelineVideoContent(
                   videoThumbnail: content.contentThumbnail,
-                  videoTitle: content.contentName ?? OlukoLocalizations.get(context, 'sentVideo'),
+                  videoTitle: content.contentDescription ?? OlukoLocalizations.get(context, 'sentVideo'),
                   date: content.createdAt.toDate(),
                   fileType: CoachFileTypeEnum.sentVideo),
+            ],
+          ),
+        );
+      case TimelineInteractionType.recommendedVideo:
+        return Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              dateForContent,
+              CoachTimelineVideoContent(
+                  videoThumbnail: content.contentThumbnail,
+                  videoTitle: content.contentName ?? OlukoLocalizations.get(context, 'recomendedVideos'),
+                  date: content.createdAt.toDate(),
+                  fileType: CoachFileTypeEnum.recommendedVideo),
             ],
           ),
         );

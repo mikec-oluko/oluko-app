@@ -678,27 +678,26 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   Widget _getCourseCard({CourseEnrollment courseInfo}) {
     return Padding(
-      padding: const EdgeInsets.only(right: 15.0),
-      child: CourseCard(
-          actualCourse: courseInfo,
-          width: 120,
-          height: 120,
-          imageCover: Image(
-            image: CachedNetworkImageProvider(courseInfo.course.image),
-            frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
-                ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, width: 120),
-          ),
-          progress: getCourseProgress(
-              courseEnrollments: _courseEnrollmentList,
-              // && !courseInfo.isUnenrolled
-              course: _coursesToUse.isNotEmpty
-                  ? _coursesToUse.where((element) => element.id == courseInfo.course.id && courseInfo.isUnenrolled != true).isNotEmpty
-                      ? _coursesToUse.where((element) => element.id == courseInfo.course.id && courseInfo.isUnenrolled != true).first
-                      : null
-                  : null),
-          canUnenrollCourse: _isCurrentUser,
-          unrolledFunction: () => _requestContentForUser(context: context, userRequested: widget.userRequested)),
-    );
+        padding: const EdgeInsets.only(right: 15.0),
+        child: CourseCard(
+            actualCourse: courseInfo,
+            width: 120,
+            height: 120,
+            imageCover: Image(
+              image: CachedNetworkImageProvider(courseInfo.course.image),
+              frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) =>
+                  ImageUtils.frameBuilder(context, child, frame, wasSynchronouslyLoaded, width: 120),
+            ),
+            progress: getCourseProgress(
+                courseEnrollments: _courseEnrollmentList,
+                // && !courseInfo.isUnenrolled
+                course: _coursesToUse.isNotEmpty
+                    ? _coursesToUse.where((element) => element.id == courseInfo.course.id && courseInfo.isUnenrolled != true).isNotEmpty
+                        ? _coursesToUse.where((element) => element.id == courseInfo.course.id && courseInfo.isUnenrolled != true).first
+                        : null
+                    : null),
+            canUnenrollCourse: _isCurrentUser,
+            unrolledFunction: () => _requestContentForUser(context: context, userRequested: widget.userRequested)));
   }
 
   double getCourseProgress({List<CourseEnrollment> courseEnrollments, Course course}) {

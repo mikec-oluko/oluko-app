@@ -1,4 +1,5 @@
 // import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -31,13 +32,13 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
         children: [
           Visibility(
               visible: widget.videoThumbnail != null && widget.videoThumbnail.length > 2,
-              child: thirdElementPreview(getImageToShowOnPreview(widget.videoThumbnail[2]))),
+              child: thirdElementPreview(widget.videoThumbnail.length > 2 ? widget.videoThumbnail[2] : widget.videoThumbnail[0])),
           Visibility(
               visible: widget.videoThumbnail != null && widget.videoThumbnail.length > 1,
-              child: secondElementPreview(getImageToShowOnPreview(widget.videoThumbnail[1]))),
+              child: secondElementPreview(widget.videoThumbnail.length > 2 ? widget.videoThumbnail[1] : widget.videoThumbnail[0])),
           Visibility(
               visible: widget.videoThumbnail != null && widget.videoThumbnail.isNotEmpty,
-              child: firstElementPreview(getImageToShowOnPreview(widget.videoThumbnail[0]))),
+              child: firstElementPreview(widget.videoThumbnail[0])),
         ],
       ),
     );
@@ -51,12 +52,12 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
     }
   }
 
-  Positioned thirdElementPreview(ImageProvider<Object> image) {
+  Positioned thirdElementPreview(String imageUrl) {
     return Positioned(
       top: 20,
       child: Center(
         child: Container(
-          decoration: videoCardDecoration(image: image),
+          decoration: videoCardDecoration(image: imageUrl),
           width: _maxWidth - 20,
           height: _maxHeight,
         ),
@@ -64,12 +65,12 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
     );
   }
 
-  Positioned secondElementPreview(ImageProvider<Object> image) {
+  Positioned secondElementPreview(String imageUrl) {
     return Positioned(
       top: 10,
       child: Center(
         child: Container(
-          decoration: videoCardDecoration(image: image),
+          decoration: videoCardDecoration(image: imageUrl),
           width: _maxWidth - 10,
           height: _maxHeight,
         ),
@@ -77,12 +78,12 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
     );
   }
 
-  Positioned firstElementPreview(ImageProvider<Object> image) {
+  Positioned firstElementPreview(String imageUrl) {
     return Positioned(
       top: 0,
       child: Center(
         child: Container(
-          decoration: videoCardDecoration(image: image),
+          decoration: videoCardDecoration(image: imageUrl),
           width: _maxWidth,
           height: _maxHeight,
           child: Center(child: playIconButton()),
@@ -91,11 +92,11 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
     );
   }
 
-  BoxDecoration videoCardDecoration({ImageProvider<Object> image}) {
+  BoxDecoration videoCardDecoration({String image}) {
     return BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(5)),
         color: OlukoNeumorphismColors.olukoNeumorphicGreyBackgroundFlat,
-        image: DecorationImage(image: image, fit: BoxFit.cover));
+        image: DecorationImage(image: getImageToShowOnPreview(image), fit: BoxFit.cover));
   }
 
   SizedBox playIconButton() {
@@ -135,7 +136,7 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
                           image: DecorationImage(
                             image: widget.videoThumbnail != null && widget.videoThumbnail.isNotEmpty
                                 ? widget.videoThumbnail[0] != null
-                                    ? NetworkImage(widget.videoThumbnail[0])
+                                    ? CachedNetworkImageProvider(widget.videoThumbnail[0])
                                     : _defaultImage
                                 : _defaultImage,
                             fit: BoxFit.cover,

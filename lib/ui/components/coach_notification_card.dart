@@ -1,4 +1,4 @@
-// import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/coach_get_header_for_content.dart';
@@ -79,7 +79,7 @@ class _CoachNotificationCardState extends State<CoachNotificationCard> {
                                           decoration: BoxDecoration(
                                               borderRadius: const BorderRadius.all(Radius.circular(10)),
                                               image: DecorationImage(
-                                                // image: CachedNetworkImageProvider(widget.cardImage),
+                                                image: CachedNetworkImageProvider(widget.cardImage),
                                                 fit: BoxFit.cover,
                                               )),
                                           child: Stack(

@@ -5,7 +5,7 @@ class UserInformationBackground {
   static BoxDecoration getContainerGradientDecoration({bool customBorder = false, bool isNeumorphic = false, bool useGradient = false}) {
     return isNeumorphic
         ? BoxDecoration(
-            gradient: useGradient ? OlukoNeumorphism.OlukoNeumorphicGradientBlueAccent() : null,
+            gradient: useGradient ? OlukoNeumorphism.olukoNeumorphicGradientBlueAccent() : null,
             color: OlukoNeumorphismColors.olukoNeumorphicGreyBackgroundFlat,
             borderRadius: customBorder
                 ? const BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))

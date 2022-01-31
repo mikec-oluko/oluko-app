@@ -63,7 +63,7 @@ class CoachTimelineFunctions {
             coachId: element.coachId,
             coachReference: element.coachReference,
             contentDescription: element.id == 'introVideo' ? 'Introduction Video' : OlukoLocalizations.get(context, 'mentoredVideo'),
-            contentName: element.id == 'introVideo' ? 'Introduction Video' : OlukoLocalizations.get(context, 'mentoredVideo'),
+            contentName: element.id == 'introVideo' ? 'Introduction Video' : element.segmentSubmissionId,
             contentThumbnail: element.video.thumbUrl,
             contentType: 4,
             mentoredVideosForNavigation: annotationContent,
@@ -82,7 +82,7 @@ class CoachTimelineFunctions {
             coachId: element.coachId,
             coachReference: element.coachReference,
             contentDescription: OlukoLocalizations.get(context, 'sentVideo'),
-            contentName: OlukoLocalizations.get(context, 'sentVideo'),
+            contentName: element.segmentId,
             contentThumbnail: element.video.thumbUrl,
             contentType: 5,
             sentVideosForNavigation: segmentSubmittedContent,
@@ -189,6 +189,7 @@ class CoachTimelineFunctions {
             movementContent: recommendation.movementContent ?? recommendation.movementContent,
             mentoredContent: recommendation.mentoredContent ?? recommendation.mentoredContent,
             courseContent: recommendation.courseContent ?? recommendation.courseContent,
+            recommendationMediaContent: recommendation.recommendationMedia,
           );
 
           if (recommendationsAsNotification

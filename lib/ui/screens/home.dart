@@ -86,7 +86,7 @@ class _HomeState extends State<Home> {
             actions: [_handWidget()],
             showDivider: false,
             showTitle: false),
-        body: ListView(children: [
+        body: ListView(padding: EdgeInsets.zero, physics: const NeverScrollableScrollPhysics(), shrinkWrap: true, children: [
           Center(child: StoriesHeader(_user.uid)),
           WillPopScope(
             onWillPop: () => AppNavigator.onWillPop(context),
@@ -143,7 +143,11 @@ class _HomeState extends State<Home> {
       } else {
         if (_courses[i] != null) {
           widgets.add(CourseSection(
-              classIndex: widget.index == null ? 0 : i == widget.index ? widget.classIndex : 0,
+              classIndex: widget.index == null
+                  ? 0
+                  : i == widget.index
+                      ? widget.classIndex
+                      : 0,
               qtyCourses: _courses.length,
               courseIndex: i,
               course: _courses[i],
@@ -159,7 +163,7 @@ class _HomeState extends State<Home> {
       ShaderMask(
           shaderCallback: (rect) {
             return LinearGradient(
-              begin: Alignment.center,
+              begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [Colors.black, Colors.transparent],
             ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));

@@ -1,4 +1,4 @@
-// import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
@@ -51,7 +51,7 @@ class _CoachNotificationVideoCardState extends State<CoachNotificationVideoCard>
                 decoration: BoxDecoration(
                     borderRadius: const BorderRadius.all(Radius.circular(10)),
                     image: DecorationImage(
-                      image: widget.cardImage != null ? NetworkImage(widget.cardImage) : defaultImage,
+                      image: widget.cardImage != null ? CachedNetworkImageProvider(widget.cardImage) : defaultImage,
                       fit: BoxFit.cover,
                     )),
                 child: Stack(
@@ -104,6 +104,8 @@ class _CoachNotificationVideoCardState extends State<CoachNotificationVideoCard>
     switch (fileType) {
       case CoachFileTypeEnum.mentoredVideo:
         return OlukoLocalizations.of(context).find('mentoredVideo');
+      case CoachFileTypeEnum.recommendedVideo:
+        return OlukoLocalizations.of(context).find('recomendedVideos');
       default:
         return '';
     }

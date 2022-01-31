@@ -2,36 +2,47 @@ import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/annotation.dart';
+import 'package:oluko_app/models/recommendation_media.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import '../../routes.dart';
 import 'coach_content_section_card.dart';
 import 'coach_video_content.dart';
 
-class CoachContentPreviewContent extends StatefulWidget {
+class CoachContentPreviewComponent extends StatefulWidget {
   final CoachContentSection contentFor;
   final String titleForSection;
   final List<SegmentSubmission> segmentSubmissionContent;
   final List<Annotation> coachAnnotationContent;
+  final List<RecommendationMedia> recommendedVideoContent;
   final Function() onNavigation;
-  const CoachContentPreviewContent(
-      {this.contentFor, this.titleForSection, this.segmentSubmissionContent, this.coachAnnotationContent, this.onNavigation});
+  const CoachContentPreviewComponent(
+      {this.contentFor,
+      this.titleForSection,
+      this.segmentSubmissionContent,
+      this.coachAnnotationContent,
+      this.onNavigation,
+      this.recommendedVideoContent});
 
   @override
-  _CoachContentPreviewContentState createState() => _CoachContentPreviewContentState();
+  _CoachContentPreviewComponentState createState() => _CoachContentPreviewComponentState();
 }
 
-class _CoachContentPreviewContentState extends State<CoachContentPreviewContent> {
+class _CoachContentPreviewComponentState extends State<CoachContentPreviewComponent> {
   final String _useDefaultImage = 'defaultImage';
   Widget imageAndVideoContainer;
   //TODO: CHECK UPDATE TO USE IT ON CAROUSEL COACH
   @override
   Widget build(BuildContext context) {
-    return widget.segmentSubmissionContent != null
-        ? segmentSubmissionWidget()
-        : widget.coachAnnotationContent != null
-            ? mentoredVideosWidget()
-            : null;
+    if (widget.segmentSubmissionContent != null && widget.segmentSubmissionContent.isNotEmpty) {
+      return segmentSubmissionWidget();
+    }
+    if (widget.coachAnnotationContent != null && widget.coachAnnotationContent.isNotEmpty) {
+      return mentoredVideosWidget();
+    }
+    if (widget.recommendedVideoContent != null && widget.recommendedVideoContent.isNotEmpty) {
+      return recommendedVideosWidget();
+    }
   }
 
   Row segmentSubmissionWidget() {
@@ -108,6 +119,44 @@ class _CoachContentPreviewContentState extends State<CoachContentPreviewContent>
     );
   }
 
+  Row recommendedVideosWidget() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 5),
+              child: Text(
+                widget.titleForSection,
+                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, custoFontWeight: FontWeight.w500),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.zero,
+              child: GestureDetector(
+                onTap: () {
+                  widget.onNavigation();
+                  widget.recommendedVideoContent.isNotEmpty ? getRouteForContent(widget.contentFor) : () {};
+                },
+                child: Container(
+                  width: 150,
+                  height: 120,
+                  color: OlukoNeumorphismColors.appBackgroundColor,
+                  child: widget.recommendedVideoContent.isNotEmpty
+                      ? CoachVideoContent(
+                          videoThumbnail: getThumbnails(recommendedVideoContent: widget.recommendedVideoContent), isForGallery: false)
+                      : CoachContentSectionCard(title: widget.titleForSection, needTitle: false),
+                ),
+              ),
+            )
+          ],
+        )
+      ],
+    );
+  }
+
   getRouteForContent(CoachContentSection contentFor) {
     switch (contentFor) {
       case CoachContentSection.mentoredVideos:
@@ -125,7 +174,8 @@ class _CoachContentPreviewContentState extends State<CoachContentPreviewContent>
     }
   }
 
-  List<String> getThumbnails({List<SegmentSubmission> segments, List<Annotation> annotations}) {
+  List<String> getThumbnails(
+      {List<SegmentSubmission> segments, List<Annotation> annotations, List<RecommendationMedia> recommendedVideoContent}) {
     List<String> thumbnailsList = [];
     if (segments != null && segments.isNotEmpty) {
       List<SegmentSubmission> limitSegments = [];
@@ -146,6 +196,22 @@ class _CoachContentPreviewContentState extends State<CoachContentPreviewContent>
       limitAnnotations.forEach((annotation) {
         if (annotation.video.thumbUrl != null) {
           thumbnailsList.add(annotation.video.thumbUrl);
+        } else {
+          thumbnailsList.insert(0, _useDefaultImage);
+        }
+      });
+    }
+
+    if (recommendedVideoContent != null && recommendedVideoContent.isNotEmpty) {
+      List<RecommendationMedia> limitVideoRecommendation = [];
+      recommendedVideoContent.length >= 3
+          ? limitVideoRecommendation =
+              recommendedVideoContent.getRange(limitVideoRecommendation.length - 3, recommendedVideoContent.length).toList()
+          : limitVideoRecommendation = recommendedVideoContent;
+
+      limitVideoRecommendation.forEach((videoRecommended) {
+        if (videoRecommended.video.thumbUrl != null) {
+          thumbnailsList.add(videoRecommended.video.thumbUrl);
         } else {
           thumbnailsList.insert(0, _useDefaultImage);
         }
