@@ -404,7 +404,11 @@ packages:
       name: flutter_facebook_auth_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
+<<<<<<< HEAD
     version: "2.8.0"
+=======
+    version: "2.7.1"
+>>>>>>> 8680b1fbade1d0ad40fcf15b03ecaa3ec32459ac
   flutter_facebook_auth_web:
     dependency: transitive
     description:
@@ -538,7 +542,11 @@ packages:
       name: google_sign_in_web
       url: "https://pub.dartlang.org"
     source: hosted
+<<<<<<< HEAD
     version: "0.10.0+4"
+=======
+    version: "0.10.0"
+>>>>>>> 8680b1fbade1d0ad40fcf15b03ecaa3ec32459ac
   html:
     dependency: transitive
     description:
@@ -594,7 +602,11 @@ packages:
       name: image_picker_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
+<<<<<<< HEAD
     version: "2.4.3"
+=======
+    version: "2.4.1"
+>>>>>>> 8680b1fbade1d0ad40fcf15b03ecaa3ec32459ac
   image_test_utils:
     dependency: "direct dev"
     description:
@@ -629,7 +641,11 @@ packages:
       name: in_app_purchase_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
+<<<<<<< HEAD
     version: "1.3.1"
+=======
+    version: "1.0.1"
+>>>>>>> 8680b1fbade1d0ad40fcf15b03ecaa3ec32459ac
   infinite_listview:
     dependency: transitive
     description:
@@ -671,7 +687,11 @@ packages:
       name: lint
       url: "https://pub.dartlang.org"
     source: hosted
+<<<<<<< HEAD
     version: "1.7.2"
+=======
+    version: "1.6.0"
+>>>>>>> 8680b1fbade1d0ad40fcf15b03ecaa3ec32459ac
   logger:
     dependency: transitive
     description:
@@ -937,7 +957,11 @@ packages:
       name: quiver
       url: "https://pub.dartlang.org"
     source: hosted
+<<<<<<< HEAD
     version: "3.0.1+1"
+=======
+    version: "3.0.1"
+>>>>>>> 8680b1fbade1d0ad40fcf15b03ecaa3ec32459ac
   recase:
     dependency: transitive
     description:
@@ -1096,7 +1120,11 @@ packages:
       name: sqflite_common
       url: "https://pub.dartlang.org"
     source: hosted
+<<<<<<< HEAD
     version: "2.0.1+1"
+=======
+    version: "2.2.0"
+>>>>>>> 8680b1fbade1d0ad40fcf15b03ecaa3ec32459ac
   stack_trace:
     dependency: transitive
     description:
@@ -1350,5 +1378,5 @@ packages:
     source: hosted
     version: "3.1.0"
 sdks:
-  dart: ">=2.14.0 <3.0.0"
+  dart: ">=2.15.0 <3.0.0"
   flutter: ">=2.5.0"
