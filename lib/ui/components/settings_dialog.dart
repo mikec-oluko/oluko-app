@@ -6,15 +6,15 @@ import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-class OpenSettingsModal extends StatefulWidget {
+class SettingsDialog extends StatefulWidget {
   BuildContext profileViewContext;
-  OpenSettingsModal(this.profileViewContext, {Key key}) : super(key: key);
+  SettingsDialog(this.profileViewContext, {Key key}) : super(key: key);
 
   @override
-  _OpenSettingsModalState createState() => _OpenSettingsModalState();
+  _SettingsDialogState createState() => _SettingsDialogState();
 }
 
-class _OpenSettingsModalState extends State<OpenSettingsModal> {
+class _SettingsDialogState extends State<SettingsDialog> {
   @override
   Widget build(BuildContext context) {
     return Column(children: [

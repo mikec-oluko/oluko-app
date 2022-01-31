@@ -15,12 +15,13 @@ import 'package:oluko_app/ui/components/image_and_video_container.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
 import 'package:oluko_app/ui/components/modal_upload_options.dart';
-import 'package:oluko_app/ui/components/open_settings_modal.dart';
+import 'package:oluko_app/ui/components/settings_dialog.dart';
 import 'package:oluko_app/ui/components/uploading_modal_loader.dart';
 import 'package:oluko_app/ui/components/uploading_modal_success.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/permissions_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class ProfileTransformationJourneyPage extends StatefulWidget {
@@ -173,7 +174,7 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
             _panelController.close();
           }
           if (state is TransformationJourneyRequirePermissions) {
-            _panelController.close().then((value) => DialogUtils.getDialog(context, [OpenSettingsModal(context)], showExitButton: false));
+            _panelController.close().then((value) => PermissionsUtils.showSettingsMessage(context));
           }
           return _contentForPanel;
         }),
