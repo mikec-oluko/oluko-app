@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +19,8 @@ class StoryPage extends StatefulWidget {
   String userStoriesId;
   String name;
   String avatarThumbnail;
-  StoryPage({@required this.stories, @required this.userId, @required this.userStoriesId, @required this.name, @required this.avatarThumbnail});
+  StoryPage(
+      {@required this.stories, @required this.userId, @required this.userStoriesId, @required this.name, @required this.avatarThumbnail});
   @override
   _StoryPageState createState() => _StoryPageState();
 }
@@ -90,8 +92,8 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
                 final Story story = widget.stories[i];
                 switch (story.content_type) {
                   case 'image':
-                    var img = Image.network(
-                      story.url,
+                    var img = Image(
+                      image: CachedNetworkImageProvider(story.url),
                       fit: BoxFit.cover,
                       loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent loadingProgress) {
                         if (loadingProgress == null) {
@@ -110,7 +112,9 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
                         }
                         return Center(
                           child: CircularProgressIndicator(
-                            value: loadingProgress.expectedTotalBytes != null ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes : null,
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes
+                                : null,
                           ),
                         );
                       },
@@ -373,8 +377,8 @@ class UserInfo extends StatelessWidget {
         CircleAvatar(
           radius: 22.0,
           backgroundColor: Colors.grey[300],
-          backgroundImage: Image.network(
-            avatarThumbnail,
+          backgroundImage: Image(
+            image: CachedNetworkImageProvider(avatarThumbnail),
           ).image,
         ),
         const SizedBox(width: 16.0),

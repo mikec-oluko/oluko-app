@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
 
@@ -25,37 +26,31 @@ class CardShopping extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
           Expanded(
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                      height: 65,
-                      child: ClipRRect(
-                          borderRadius: BorderRadius.circular(4.0),
-                          child: Image.network(
-                            img,
-                            errorBuilder: (BuildContext context,
-                                Object exception, StackTrace stackTrace) {
-                              return Text('Your error widget...');
-                            },
-                          )),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(3.0)),
-                      )),
-                  FlatButton(
-                    textColor: OlukoColors.white,
-                    color: OlukoColors.initial,
-                    onPressed: () {},
-                    shape: RoundedRectangleBorder(
+            child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              Container(
+                  height: 65,
+                  child: ClipRRect(
                       borderRadius: BorderRadius.circular(4.0),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                          left: 5.0, right: 5.0, top: 12, bottom: 12),
-                      child: Dropdown(),
-                    ),
-                  ),
-                ]),
+                      child: CachedNetworkImage(
+                        imageUrl: img,
+                        errorWidget: (context, url, error) => const Text('Your error widget...'),
+                      )),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(3.0)),
+                  )),
+              FlatButton(
+                textColor: OlukoColors.white,
+                color: OlukoColors.initial,
+                onPressed: () {},
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4.0),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.only(left: 5.0, right: 5.0, top: 12, bottom: 12),
+                  child: Dropdown(),
+                ),
+              ),
+            ]),
           ),
           Expanded(
             flex: 2,
@@ -66,11 +61,7 @@ class CardShopping extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(body,
-                        style: TextStyle(
-                            color: OlukoColors.black,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w400)),
+                    Text(body, style: TextStyle(color: OlukoColors.black, fontSize: 13, fontWeight: FontWeight.w400)),
                     Expanded(
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
@@ -79,22 +70,16 @@ class CardShopping extends StatelessWidget {
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(left: 1.0),
-                            child: Text(
-                                stock == true ? 'In Stock' : 'Not In Stock',
+                            child: Text(stock == true ? 'In Stock' : 'Not In Stock',
                                 style: TextStyle(
-                                    color: stock == true
-                                        ? OlukoColors.success
-                                        : OlukoColors.error,
+                                    color: stock == true ? OlukoColors.success : OlukoColors.error,
                                     fontSize: 12,
                                     fontWeight: FontWeight.w300)),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(right: 8.0),
-                            child: Text("\$$price",
-                                style: TextStyle(
-                                    color: OlukoColors.primary,
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w500)),
+                            child:
+                                Text("\$$price", style: TextStyle(color: OlukoColors.primary, fontSize: 11, fontWeight: FontWeight.w500)),
                           ),
                         ],
                       ),
@@ -113,12 +98,8 @@ class CardShopping extends StatelessWidget {
                             borderRadius: BorderRadius.circular(4.0),
                           ),
                           child: Padding(
-                              padding: EdgeInsets.only(
-                                  left: 5.0, right: 5.0, top: 12, bottom: 12),
-                              child: Text("DELETE",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 11.0))),
+                              padding: EdgeInsets.only(left: 5.0, right: 5.0, top: 12, bottom: 12),
+                              child: Text("DELETE", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 11.0))),
                         ),
                         FlatButton(
                           textColor: OlukoColors.white,
@@ -128,12 +109,8 @@ class CardShopping extends StatelessWidget {
                             borderRadius: BorderRadius.circular(4.0),
                           ),
                           child: Padding(
-                              padding: EdgeInsets.only(
-                                  left: 5.0, right: 5.0, top: 12, bottom: 12),
-                              child: Text("SAVE FOR LATER",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 11.0))),
+                              padding: EdgeInsets.only(left: 5.0, right: 5.0, top: 12, bottom: 12),
+                              child: Text("SAVE FOR LATER", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 11.0))),
                         )
                       ],
                     )
@@ -194,15 +171,10 @@ class _DropdownState extends State<Dropdown> {
                 dropdownValue = newValue;
               });
             },
-            items: <String>['1', '2', '3', '4']
-                .map<DropdownMenuItem<String>>((String value) {
+            items: <String>['1', '2', '3', '4'].map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,
-                child: Text(value,
-                    style: TextStyle(
-                        color: OlukoColors.white,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 12.0)),
+                child: Text(value, style: TextStyle(color: OlukoColors.white, fontWeight: FontWeight.w600, fontSize: 12.0)),
               );
             }).toList(),
           ),

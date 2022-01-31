@@ -42,5 +42,6 @@ class VideoInfoRepository {
       markers.add(marker);
     }
     reference.update({'markers': markers});
+    return marker;
   }
 }

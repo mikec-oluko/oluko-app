@@ -197,6 +197,7 @@ class _FriendModalContentState extends State<FriendModalContent> {
                           height: 50,
                           width: 50,
                           child: OlukoNeumorphicSecondaryButton(
+                            title: '',
                             isExpanded: false,
                             onPressed: () {
                               if (friendState is GetFriendsSuccess) {

@@ -141,6 +141,7 @@ class _LoginPasswordPageState extends State<LoginPasswordPage> {
                   thinPadding: true,
                   textColor: Colors.grey[800],
                   title: OlukoLocalizations.get(context, 'continue'),
+                  onPressed: () {}, //TODO: warn user it is disabled
                 ),
         ),
       ),

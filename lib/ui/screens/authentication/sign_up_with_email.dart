@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
@@ -75,8 +76,8 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
                                           child: Stack(children: [
                                             Align(
                                               alignment: Alignment.center,
-                                              child: Image.network(
-                                                'https://img.icons8.com/color/452/google-logo.png',
+                                              child: Image(
+                                                image: CachedNetworkImageProvider('https://img.icons8.com/color/452/google-logo.png'),
                                                 width: 30,
                                               ),
                                             ),
@@ -95,8 +96,9 @@ class _SignUpWithMailContentPageState extends State<SignUpWithMailContentPage> {
                                           child: Stack(children: [
                                             Align(
                                               alignment: Alignment.center,
-                                              child: Image.network(
-                                                'https://cdn.icon-icons.com/icons2/1826/PNG/512/4202110facebooklogosocialsocialmedia-115707_115594.png',
+                                              child: CachedNetworkImage(
+                                                imageUrl:
+                                                    'https://cdn.icon-icons.com/icons2/1826/PNG/512/4202110facebooklogosocialsocialmedia-115707_115594.png',
                                                 width: 30,
                                               ),
                                             ),

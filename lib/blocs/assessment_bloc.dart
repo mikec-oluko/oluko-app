@@ -27,11 +27,11 @@ class AssessmentBloc extends Cubit<AssessmentState> {
   AssessmentBloc() : super(AssessmentLoading());
 
   void get() async {
-    if (!(state is AssessmentSuccess)) {
+    if (state is! AssessmentSuccess) {
       emit(AssessmentLoading());
     }
     try {
-      List<Assessment> assessments = await AssessmentRepository().getAll();
+      final List<Assessment> assessments = await AssessmentRepository().getAll();
       emit(AssessmentsSuccess(assessments: assessments));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -44,11 +44,11 @@ class AssessmentBloc extends Cubit<AssessmentState> {
   }
 
   void getById(String id) async {
-    if (!(state is AssessmentSuccess)) {
+    if (state is! AssessmentSuccess) {
       emit(AssessmentLoading());
     }
     try {
-      Assessment assessment = await AssessmentRepository().getById(id);
+      final Assessment assessment = await AssessmentRepository().getById(id);
       emit(AssessmentSuccess(assessment: assessment));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
