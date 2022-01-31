@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/repositories/introduction_media_repository.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -19,9 +20,9 @@ class Success extends IntroductionMediaState {
 class IntroductionMediaBloc extends Cubit<IntroductionMediaState> {
   IntroductionMediaBloc() : super(Loading());
 
-  Future<String> getIntroVideo() async {
+  Future<String> getVideo(IntroductionMediaTypeEnum type) async {
     try {
-      final String mediaURL = await IntroductionMediaRepository.getIntroVideoURL();
+      final String mediaURL = await IntroductionMediaRepository.getVideoURL(type);
       return mediaURL;
     } catch (exception, stackTrace) {
       await Sentry.captureException(
