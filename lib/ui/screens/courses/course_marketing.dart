@@ -230,14 +230,21 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                   child: Stack(
                                     children: [
                                       ListView(children: [
-                                        OlukoVideoPreview(
+                                        OverlayVideoPreview(
+                                          image: widget.course.image,
+                                          video: widget.course.video,
+                                          showBackButton: true,
+                                          showHeartButton: true,
+                                          showShareButton: true,
+                                          onBackPressed: () => Navigator.pop(context)),
+                                        /*OlukoVideoPreview(
                                           showBackButton: true,
                                           image: widget.course.image,
                                           video: widget.course.video,
                                           onBackPressed: () => Navigator.pop(context),
                                           onPlay: () => widget.isVideoPlaying(),
                                           videoVisibilty: _isVideoPlaying,
-                                        ),
+                                        ),*/
                                         showEnrollButton(enrollmentState.courseEnrollment, context),
                                         Padding(
                                             padding: EdgeInsets.only(right: 15, left: 15, top: 5),
@@ -366,13 +373,20 @@ class _CourseMarketingState extends State<CourseMarketing> {
                         ),
                       ))),
               SliverToBoxAdapter(
-                child: OlukoVideoPreview(
+                child: /*OlukoVideoPreview(
                   image: widget.course.image,
                   video: widget.course.video,
                   onBackPressed: () => Navigator.pop(context),
                   onPlay: () => widget.isVideoPlaying(),
                   videoVisibilty: _isVideoPlaying,
-                ),
+                ),*/
+                OverlayVideoPreview(
+                                          image: widget.course.image,
+                                          video: widget.course.video,
+                                          showBackButton: true,
+                                          showHeartButton: true,
+                                          showShareButton: true,
+                                          onBackPressed: () => Navigator.pop(context)),
               ),
               SliverPersistentHeader(
                   pinned: true,
