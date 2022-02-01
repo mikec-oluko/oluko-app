@@ -671,6 +671,8 @@ class Routes {
           BlocProvider<StoryListBloc>.value(value: _storyListBloc),
           BlocProvider<RecommendationBloc>.value(value: _recommendationBloc),
           BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
+          BlocProvider<InsideClassContentBloc>.value(value: _insideClassContentBloc),
+          BlocProvider<SegmentBloc>.value(value: _segmentBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = CourseMarketing(

@@ -83,7 +83,7 @@ class _OverlayVideoPreviewState extends State<OverlayVideoPreview> {
                             width: 52,
                             height: 52,
                             child: Image.asset(
-                              'assets/courses/left_back_arrow.png',
+                              'assets/courses/left_back_arrow.png',scale: 3.5,
                             )),
                       )) /*IconButton(
                     icon: Icon(Icons.chevron_left, size: 35, color: Colors.white),

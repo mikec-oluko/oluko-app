@@ -118,7 +118,7 @@ class _State extends State<ClassSection> {
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(50),
                                   child: Container(
-                                    color: Color(0xff33BC84),
+                                    color: OlukoColors.success,
                                     width: 25,
                                     height: 25,
                                     child: Image.asset(
