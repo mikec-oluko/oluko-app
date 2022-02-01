@@ -35,6 +35,7 @@ import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/pause_dialog_content.dart';
 import 'package:oluko_app/ui/components/progress_bar.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_round_alert.dart';
 import 'package:oluko_app/ui/screens/courses/collapsed_movement_videos_section.dart';
 import 'package:oluko_app/ui/screens/courses/feedback_card.dart';
 import 'package:oluko_app/ui/screens/courses/movement_videos_section.dart';
@@ -411,6 +412,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
         Padding(
             padding: const EdgeInsets.only(top: OlukoNeumorphism.isNeumorphismDesign ? 20 : 3, bottom: 8),
             child: Stack(alignment: Alignment.center, children: [getRoundsTimer(keyboardVisibilty), _countdownSection()])),
+            //TODO: put alert here
         if (isWorkStateFinished()) const SizedBox() else _tasksSection(keyboardVisibilty)
       ],
     ));
