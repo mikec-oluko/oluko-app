@@ -425,18 +425,23 @@ class _SegmentClocksState extends State<SegmentClocks> {
   Widget neumorphicFinishedButtons() {
     if (widget.workoutType == WorkoutType.segmentWithRecording && !shareDone) {
       return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            OlukoPrimaryButton(
-              title: OlukoLocalizations.get(context, 'done'),
-              thinPadding: true,
-              onPressed: () {
-                setState(() {
-                  shareDone = true;
-                });
-              },
+            SizedBox(
+              height: 50,
+              width: ScreenUtils.width(context) - 40,
+              child: OlukoNeumorphicPrimaryButton(
+                isExpanded: false,
+                title: OlukoLocalizations.get(context, 'done'),
+                thinPadding: true,
+                onPressed: () {
+                  setState(() {
+                    shareDone = true;
+                  });
+                },
+              ),
             ),
           ],
         ),
@@ -522,7 +527,6 @@ class _SegmentClocksState extends State<SegmentClocks> {
 
   ///Countdown & movements information
   Widget _timerSection(bool keyboardVisibilty) {
-    // TODO: VER EL PADDING CON LA ANIMACIONN cambiar a stack y fijar workout
     return Center(
         child: Container(
       color: OlukoNeumorphismColors.appBackgroundColor,
@@ -531,14 +535,14 @@ class _SegmentClocksState extends State<SegmentClocks> {
           OlukoNeumorphism.isNeumorphismDesign ? const SizedBox.shrink() : getSegmentLabel(),
           Padding(
               padding: EdgeInsets.only(
-                  top: OlukoNeumorphism.isNeumorphismDesign
-                      ? workState == WorkState.resting
-                          ? usePulseAnimation()
-                              ? 0
-                              : 50
-                          : 50
-                      : 3,
-                  bottom: 0),
+                top: OlukoNeumorphism.isNeumorphismDesign
+                    ? workState == WorkState.resting
+                        ? usePulseAnimation()
+                            ? 0
+                            : 40
+                        : 40
+                    : 0,
+              ),
               child: Stack(alignment: Alignment.center, children: [
                 usePulseAnimation() ? roundTimerWithPulse(keyboardVisibilty) : getRoundsTimer(keyboardVisibilty),
                 _countdownSection()
@@ -549,15 +553,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
     ));
   }
 
-  AvatarGlow roundTimerWithPulse(bool keyboardVisibilty) {
+  Widget roundTimerWithPulse(bool keyboardVisibilty) {
     return AvatarGlow(
-        glowColor: OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor,
-        endRadius: 200.0,
-        duration: Duration(milliseconds: 2000),
-        repeat: true,
-        showTwoGlows: true,
-        repeatPauseDuration: Duration(milliseconds: 100),
-        child: getRoundsTimer(keyboardVisibilty));
+        glowColor: OlukoNeumorphismColors.olukoNeumorphicGreenWatchColor, endRadius: 190.0, child: getRoundsTimer(keyboardVisibilty));
   }
   //TODO: QUITAR ANIMACION  Y CIRCULAR
 
@@ -606,10 +604,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
     return isSegmentWithoutRecording()
         ? taskSectionWithoutRecording(keyboardVisibilty)
         : Column(children: [
-            SizedBox(height: 10),
+            OlukoNeumorphism.isNeumorphismDesign ? SizedBox.shrink() : SizedBox(height: 10),
             recordingTaskSection(keyboardVisibilty),
             ...counterTextField(keyboardVisibilty),
-            SizedBox(height: 20)
+            OlukoNeumorphism.isNeumorphismDesign ? SizedBox.shrink() : SizedBox(height: 20),
           ]);
   }
 
@@ -1334,7 +1332,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
           SizedBox(height: 10),
           if (OlukoNeumorphism.isNeumorphismDesign) const OlukoNeumorphicDivider() else const SizedBox.shrink(),
           Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20.0),
+              padding: const EdgeInsets.symmetric(vertical: 10.0),
               child: widget.workoutType == WorkoutType.segment || shareDone
                   ? FeedbackCard()
                   : ShareCard(createStory: _createStory, whistleAction: coachAction)),
