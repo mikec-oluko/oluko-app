@@ -10,11 +10,12 @@ import 'package:oluko_app/helpers/permissions.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/user_response.dart';
-import 'package:oluko_app/ui/components/open_settings_modal.dart';
+import 'package:oluko_app/ui/components/settings_dialog.dart';
 import 'package:oluko_app/ui/screens/courses/segment_clocks.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/exception_codes.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/permissions_utils.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/timer_utils.dart';
 
@@ -186,7 +187,7 @@ class _State extends State<SegmentCameraPreview> {
     try {
       if (!await Permissions.requiredPermissionsEnabled(DeviceContentFrom.camera)) {
         Navigator.pop(context);
-        DialogUtils.getDialog(context, [OpenSettingsModal(context)], showExitButton: false);
+        PermissionsUtils.showSettingsMessage(context);
         return;
       }
       cameras = await availableCameras();
