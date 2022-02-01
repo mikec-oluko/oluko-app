@@ -231,12 +231,12 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                     children: [
                                       ListView(children: [
                                         OverlayVideoPreview(
-                                          image: widget.course.image,
-                                          video: widget.course.video,
-                                          showBackButton: true,
-                                          showHeartButton: true,
-                                          showShareButton: true,
-                                          onBackPressed: () => Navigator.pop(context)),
+                                            image: widget.course.image,
+                                            video: widget.course.video,
+                                            showBackButton: true,
+                                            showHeartButton: true,
+                                            showShareButton: true,
+                                            onBackPressed: () => Navigator.pop(context)),
                                         /*OlukoVideoPreview(
                                           showBackButton: true,
                                           image: widget.course.image,
@@ -380,13 +380,8 @@ class _CourseMarketingState extends State<CourseMarketing> {
                   onPlay: () => widget.isVideoPlaying(),
                   videoVisibilty: _isVideoPlaying,
                 ),*/
-                OverlayVideoPreview(
-                                          image: widget.course.image,
-                                          video: widget.course.video,
-                                          showBackButton: true,
-                                          showHeartButton: true,
-                                          showShareButton: true,
-                                          onBackPressed: () => Navigator.pop(context)),
+                    OverlayVideoPreview(
+                        image: widget.course.image, video: widget.course.video, onBackPressed: () => Navigator.pop(context)),
               ),
               SliverPersistentHeader(
                   pinned: true,
