@@ -72,7 +72,7 @@ dependencies:
   firebase_database: ^8.0.0
   timeline_tile: ^2.0.0
   badges: ^2.0.1
-  syncfusion_flutter_gauges: ^19.3.44
+  syncfusion_flutter_gauges: ^19.4.48
   audioplayers: ^0.20.1
   uuid: ^3.0.5
   flutter_sound_lite: ^8.3.9
