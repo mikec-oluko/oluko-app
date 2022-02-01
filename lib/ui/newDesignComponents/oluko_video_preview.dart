@@ -149,7 +149,7 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
                 fit: BoxFit.cover,
               ),
       ),
-      if (widget.video != null && widget.video != "null")
+      if (widget.video != null )
         AspectRatio(
           aspectRatio: 480 / 600,
           child: Padding(
