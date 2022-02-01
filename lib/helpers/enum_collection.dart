@@ -41,10 +41,18 @@ enum StoriesItemFrom {
   friends,
   friendsModal,
   home,
+  neumorphicHome,
   longPressHome
 }
 
 enum CoachAssignmentStatusEnum { requested, approved, rejected }
+
+enum IntroductionMediaTypeEnum { introVideo, homeVideo }
+
+Map<IntroductionMediaTypeEnum, String> introductionMediaType = {
+  IntroductionMediaTypeEnum.introVideo: 'intro video',
+  IntroductionMediaTypeEnum.homeVideo: 'home video',
+};
 
 //TODO: Check and use that
 enum TimelineInteractionType { course, classes, segment, movement, mentoredVideo, sentVideo }

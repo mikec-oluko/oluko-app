@@ -1,9 +1,6 @@
 import 'package:chewie/chewie.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:nil/nil.dart';
@@ -38,14 +35,110 @@ class CourseMarketing extends StatefulWidget {
   final bool isCoachRecommendation;
   final CourseEnrollment courseEnrollment;
   final int courseIndex;
+  final bool fromHome;
   CourseMarketing(
-      {Key key, this.course, this.fromCoach = false, this.isCoachRecommendation = false, this.courseEnrollment, this.courseIndex})
+      {Key key,
+      this.course,
+      this.fromCoach = false,
+      this.isCoachRecommendation = false,
+      this.courseEnrollment,
+      this.courseIndex,
+      this.fromHome = false})
       : super(key: key);
 
   get progress => null;
 
   @override
   _CourseMarketingState createState() => _CourseMarketingState();
+
+  Widget buildClassEnrolledCards(
+    BuildContext context,
+    List<Class> classes, {
+    Course outsideCourse,
+    CourseEnrollment outsideCourseEnrollment,
+    int outsideCourseIndex,
+  }) {
+
+final CourseEnrollment enrollment = courseEnrollment ?? outsideCourseEnrollment;
+    final int index = courseIndex ?? outsideCourseIndex;
+
+List<Class> _coursesClases = CourseService.getCourseClasses(course ?? outsideCourse, classes);
+    List<ClassItem> _classItems = [];
+    _coursesClases.forEach((element) {
+      ClassItem classItem = ClassItem(classObj: element, expanded: false);
+      _classItems.add(classItem);
+    });
+    return ListView(
+      physics: NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      children: [
+        ..._classItems.map((item) => enrollment.classes[_classItems.indexOf(item)].completedAt == null
+            ? CourseEnrollmentService.getClassProgress(enrollment, _classItems.indexOf(item)) == 0
+                ? Neumorphic(
+                    margin: EdgeInsets.all(10),
+                    style: OlukoNeumorphism.getNeumorphicStyleForCardClasses(
+                        CourseEnrollmentService.getClassProgress(enrollment, _classItems.indexOf(item)) > 0),
+                    child: GestureDetector(
+                      onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
+                        'courseEnrollment': enrollment,
+                        'classIndex': _classItems.indexOf(item),
+                        'courseIndex': index
+                      }),
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: ClassSection(
+                          classProgress: CourseEnrollmentService.getClassProgress(enrollment, _classItems.indexOf(item)),
+                          isCourseEnrolled: true,
+                          index: _classItems.indexOf(item),
+                          total: _classItems.length,
+                          classObj: item.classObj,
+                        ),
+                      ),
+                    ))
+                : Container(
+                    child: GestureDetector(
+                      onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
+                        'courseEnrollment': enrollment,
+                        'classIndex': _classItems.indexOf(item),
+                        'courseIndex': index
+                      }),
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: ClassSection(
+                          classProgress: CourseEnrollmentService.getClassProgress(enrollment, _classItems.indexOf(item)),
+                          isCourseEnrolled: true,
+                          index: _classItems.indexOf(item),
+                          total: _classItems.length,
+                          classObj: item.classObj,
+                        ),
+                      ),
+                    ),
+                  )
+            : SizedBox()),
+        ..._classItems.map((item) => enrollment.classes[_classItems.indexOf(item)].completedAt != null
+            ? Container(
+                child: GestureDetector(
+                  onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
+                    'courseEnrollment': enrollment,
+                    'classIndex': _classItems.indexOf(item),
+                    'courseIndex': index
+                  }),
+                  child: Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: ClassSection(
+                      classProgress: 1,
+                      isCourseEnrolled: true,
+                      index: _classItems.indexOf(item),
+                      total: _classItems.length,
+                      classObj: item.classObj,
+                    ),
+                  ),
+                ),
+              )
+            : SizedBox())
+      ],
+    );
+  }
 }
 
 class _CourseMarketingState extends State<CourseMarketing> {
@@ -135,7 +228,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                                   custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
                                             ),
                                           ),
-                                          OlukoNeumorphism.isNeumorphismDesign ? SizedBox() : buildStatistics(),
+                                          buildStatistics(),
                                           Padding(
                                             padding: const EdgeInsets.only(top: 10.0, right: 10),
                                             child: Text(
@@ -144,15 +237,18 @@ class _CourseMarketingState extends State<CourseMarketing> {
                                                   custoFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
                                             ),
                                           ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(top: 25.0),
-                                            child: Text(
-                                              OlukoLocalizations.get(context, 'classes'),
-                                              style: OlukoFonts.olukoSubtitleFont(custoFontWeight: FontWeight.bold),
+                                          if (OlukoNeumorphism.isNeumorphismDesign)
+                                            const SizedBox()
+                                          else
+                                            Padding(
+                                              padding: const EdgeInsets.only(top: 25.0),
+                                              child: Text(
+                                                OlukoLocalizations.get(context, 'classes'),
+                                                style: OlukoFonts.olukoSubtitleFont(custoFontWeight: FontWeight.bold),
+                                              ),
                                             ),
-                                          ),
                                           OlukoNeumorphism.isNeumorphismDesign && widget.courseEnrollment != null
-                                              ? buildClassEnrolledCards()
+                                              ? widget.buildClassEnrolledCards(context, _classes)
                                               : buildClassExpansionPanels()
                                         ]))),
                                 SizedBox(
