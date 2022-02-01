@@ -535,13 +535,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
           OlukoNeumorphism.isNeumorphismDesign ? const SizedBox.shrink() : getSegmentLabel(),
           Padding(
               padding: EdgeInsets.only(
-                top: OlukoNeumorphism.isNeumorphismDesign
-                    ? workState == WorkState.resting
-                        ? usePulseAnimation()
-                            ? 0
-                            : 40
-                        : 40
-                    : 0,
+                top: getWatchPadding(),
               ),
               child: Stack(alignment: Alignment.center, children: [
                 usePulseAnimation() ? roundTimerWithPulse(keyboardVisibilty) : getRoundsTimer(keyboardVisibilty),
@@ -551,6 +545,20 @@ class _SegmentClocksState extends State<SegmentClocks> {
         ],
       ),
     ));
+  }
+
+  double getWatchPadding() {
+    double paddingValue = 0;
+    if (OlukoNeumorphism.isNeumorphismDesign) {
+      if (workState == WorkState.resting) {
+        if (!usePulseAnimation()) {
+          paddingValue = 40.0;
+        }
+      } else {
+        paddingValue = 40.0;
+      }
+    }
+    return paddingValue;
   }
 
   Widget roundTimerWithPulse(bool keyboardVisibilty) {
@@ -721,8 +729,11 @@ class _SegmentClocksState extends State<SegmentClocks> {
                   )),
               // const SizedBox(width: 25),
               if (isCounterByReps)
-                Text(timerEntries[timerTaskIndex - 1].movement.name,
-                    style: TextStyle(fontSize: 18, color: OlukoColors.white, fontWeight: FontWeight.w300))
+                Text(
+                    OlukoNeumorphism.isNeumorphismDesign && ScreenUtils.height(context) < 700
+                        ? 'Reps'
+                        : timerEntries[timerTaskIndex - 1].movement.name,
+                    style: TextStyle(fontSize: 18, color: OlukoColors.white, overflow: TextOverflow.ellipsis, fontWeight: FontWeight.w300))
               else
                 textController.value != null && textController.value.text != ""
                     ? Expanded(

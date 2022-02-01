@@ -35,7 +35,7 @@ class _CoachVideoContentState extends State<CoachVideoContent> {
               child: thirdElementPreview(widget.videoThumbnail.length > 2 ? widget.videoThumbnail[2] : widget.videoThumbnail[0])),
           Visibility(
               visible: widget.videoThumbnail != null && widget.videoThumbnail.length > 1,
-              child: secondElementPreview(widget.videoThumbnail.length > 2 ? widget.videoThumbnail[1] : widget.videoThumbnail[0])),
+              child: secondElementPreview(widget.videoThumbnail.length > 1 ? widget.videoThumbnail[1] : widget.videoThumbnail[0])),
           Visibility(
               visible: widget.videoThumbnail != null && widget.videoThumbnail.isNotEmpty,
               child: firstElementPreview(widget.videoThumbnail[0])),

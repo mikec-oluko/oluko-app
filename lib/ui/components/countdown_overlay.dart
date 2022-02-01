@@ -44,7 +44,7 @@ class _CountdownOverlayState extends State<CountdownOverlay> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: OlukoNeumorphismColors.appBackgroundColor.withOpacity(0.8),
+        backgroundColor: OlukoNeumorphismColors.appBackgroundColor.withOpacity(OlukoNeumorphism.isNeumorphismDesign ? 1 : 0.8),
         body: widget.recording && widget.showPanel
             ? SlidingUpPanel(
                 borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
