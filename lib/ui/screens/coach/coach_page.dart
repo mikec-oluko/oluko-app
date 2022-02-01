@@ -650,7 +650,12 @@ class _CoachPageState extends State<CoachPage> {
   }
 
   Widget recommendedVideos({bool isForCarousel}) {
-    return _coachRecommendations != null && _coachRecommendations.isNotEmpty
+    return ((_coachRecommendations != null && _coachRecommendations.isNotEmpty) &&
+            _coachRecommendations
+                .where((coachRecommendation) =>
+                    TimelineContentOption.getTimelineOption(coachRecommendation.contentTypeIndex as int) ==
+                    TimelineInteractionType.recommendedVideo)
+                .isNotEmpty)
         ? CoachContentPreviewComponent(
             contentFor: CoachContentSection.recomendedVideos,
             titleForSection: OlukoLocalizations.get(context, 'recomendedVideos'),

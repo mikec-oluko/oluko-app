@@ -43,6 +43,7 @@ class _CoachContentPreviewComponentState extends State<CoachContentPreviewCompon
     if (widget.recommendedVideoContent != null && widget.recommendedVideoContent.isNotEmpty) {
       return recommendedVideosWidget();
     }
+    return SizedBox.shrink();
   }
 
   Row segmentSubmissionWidget() {
