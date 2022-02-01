@@ -14,6 +14,7 @@ import 'package:oluko_app/blocs/movement_bloc.dart';
 import 'package:oluko_app/blocs/segment_bloc.dart';
 import 'package:oluko_app/blocs/subscribed_course_users_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/class.dart';
@@ -28,6 +29,7 @@ import 'package:oluko_app/services/audio_service.dart';
 import 'package:oluko_app/services/class_service.dart';
 import 'package:oluko_app/services/course_enrollment_service.dart';
 import 'package:oluko_app/ui/components/challenge_section.dart';
+import 'package:oluko_app/ui/components/challenges_card.dart';
 import 'package:oluko_app/ui/components/class_movements_section.dart';
 import 'package:oluko_app/ui/components/course_progress_bar.dart';
 import 'package:oluko_app/ui/components/modal_audio.dart';
@@ -36,9 +38,11 @@ import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_primary_button.dart';
 import 'package:oluko_app/ui/components/overlay_video_preview.dart';
 import 'package:oluko_app/ui/components/uploading_modal_loader.dart';
+import 'package:oluko_app/ui/components/video_overlay.dart';
 import 'package:oluko_app/ui/components/video_player.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_video_preview.dart';
 import 'package:oluko_app/ui/screens/courses/audio_dialog_content.dart';
 import 'package:oluko_app/ui/screens/courses/class_detail_section.dart';
 import 'package:oluko_app/ui/screens/courses/course_info_section.dart';
@@ -50,7 +54,12 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 enum PanelEnum { audios, classDetail }
 
 class InsideClass extends StatefulWidget {
-  InsideClass({this.courseEnrollment, this.classIndex, this.courseIndex, Key key}) : super(key: key);
+  InsideClass({
+    this.courseEnrollment,
+    this.classIndex,
+    this.courseIndex,
+    Key key,
+  }) : super(key: key);
   final CourseEnrollment courseEnrollment;
   final int classIndex;
   final int courseIndex;
@@ -74,7 +83,7 @@ class _InsideClassesState extends State<InsideClass> {
   AudioPlayer audioPlayer = AudioPlayer();
   EnrollmentAudio _enrollmentAudio;
   int _audioQty = 0;
-
+  bool _isVideoPlaying = false;
   Widget panelContent;
   PanelEnum panelState;
 
@@ -242,8 +251,7 @@ class _InsideClassesState extends State<InsideClass> {
     final List<SegmentSubmodel> challenges = getChallenges();
     if (challenges.isNotEmpty) {
       return ChallengeSection(
-        addTitle: true,
-        challenges: challenges,
+        challengesCard: getChallengesCard(),
       );
     } else {
       return const SizedBox();
@@ -260,22 +268,61 @@ class _InsideClassesState extends State<InsideClass> {
     return challenges;
   }
 
+  List<Widget> getChallengesCard() {
+    ChallengeNavigation segmentChallenge =
+        ChallengeNavigation(enrolledCourse: widget.courseEnrollment, classIndex: widget.classIndex, courseIndex: widget.courseIndex);
+    List<Widget> challengesCard = [];
+    _class.segments.forEach((SegmentSubmodel segment) {
+      if (segment.challengeImage != null) {
+        for (int j = 0; j < widget.courseEnrollment.classes.length; j++) {
+          if (widget.courseEnrollment.classes[j].id == _class.id) {
+            for (int k = 0; k < widget.courseEnrollment.classes[j].segments.length; k++) {
+              if (widget.courseEnrollment.classes[j].segments[k].id == segment.id) {
+                if (k - 1 > 1) {
+                  segmentChallenge.previousSegmentFinish = widget.courseEnrollment.classes[j].segments[k - 1].completedAt != null;
+                  segmentChallenge.challengeSegment = widget.courseEnrollment.classes[j].segments[k];
+                  segmentChallenge.segmentIndex = k;
+                } else {
+                  segmentChallenge.segmentIndex = k;
+                  segmentChallenge.previousSegmentFinish = true;
+                  segmentChallenge.challengeSegment = widget.courseEnrollment.classes[j].segments[k];
+                }
+              }
+            }
+          }
+        }
+        challengesCard.add(ChallengesCard(
+          segmentChallenge: segmentChallenge,
+          navigateToSegment: true,
+          audioIcon: false,
+        ));
+      }
+    });
+
+    return challengesCard;
+  }
+
   Widget classMovementSection() {
     _classMovements = ClassService.getClassMovements(_class, _movements);
     return ClassMovementSection(
       panelController: panelController,
       movements: _classMovements,
       classObj: _class,
-      onPressedMovement: (BuildContext context, Movement movement) =>
-          Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement}),
+      onPressedMovement: (BuildContext context, Movement movement) {
+        isVideoPlaying();
+        Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement});
+      },
     );
   }
 
   Widget classDetailSection() {
+    ChallengeNavigation segmentChallenge =
+        ChallengeNavigation(enrolledCourse: widget.courseEnrollment, classIndex: widget.classIndex, courseIndex: widget.courseIndex);
     return BlocBuilder<SegmentBloc, SegmentState>(
       builder: (context, segmentState) {
         if (segmentState is GetSegmentsSuccess) {
-          return ClassDetailSection(classObj: _class, movements: _movements, segments: segmentState.segments);
+          return ClassDetailSection(
+              segmentChallenge: segmentChallenge, classObj: _class, movements: _movements, segments: segmentState.segments);
         } else {
           return Container(
             padding: const EdgeInsets.symmetric(horizontal: 25),
@@ -297,27 +344,66 @@ class _InsideClassesState extends State<InsideClass> {
     final String _classImage = widget.courseEnrollment.classes[widget.classIndex].image;
     return ListView(
       children: [
-        Padding(
-          padding: const EdgeInsets.only(bottom: 3),
-          child: OverlayVideoPreview(
-            randomImages: _class.randomImages,
-            video: _class.video,
-            showBackButton: true,
-            audioWidget: OlukoNeumorphism.isNeumorphismDesign ? _getAudioWidget() : null,
-            bottomWidgets: [_getCourseInfoSection(_classImage)],
-            onBackPressed: () {
-              Navigator.pop(context);
-              Navigator.pushReplacementNamed(
-                context,
-                routeLabels[RouteEnum.root],
-                arguments: {
-                  'index': widget.courseIndex,
-                  'classIndex': widget.classIndex,
-                },
-              );
-            },
+        if (OlukoNeumorphism.isNeumorphismDesign)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 3),
+            child: OverlayVideoPreview(
+              video: _class.video,
+              showBackButton: true,
+              audioWidget: OlukoNeumorphism.isNeumorphismDesign ? _getAudioWidget() : null,
+              bottomWidgets: [_getCourseInfoSection(_classImage)],
+              onBackPressed: () {
+                Navigator.pop(context);
+                Navigator.pushReplacementNamed(
+                  context,
+                  routeLabels[RouteEnum.root],
+                  arguments: {
+                    'index': widget.courseIndex,
+                    'classIndex': widget.classIndex,
+                  },
+                );
+              },
+            ), /*OlukoVideoPreview(
+              video: _class.video,
+              showBackButton: true,
+              audioWidget: OlukoNeumorphism.isNeumorphismDesign ? _getAudioWidget() : null,
+              bottomWidgets: [_getCourseInfoSection(_classImage)],
+              onBackPressed: () {
+                Navigator.pop(context);
+                Navigator.pushReplacementNamed(
+                  context,
+                  routeLabels[RouteEnum.root],
+                  arguments: {
+                    'index': widget.courseIndex,
+                    'classIndex': widget.classIndex,
+                  },
+                );
+              },
+              onPlay: () => isVideoPlaying(),
+              videoVisibilty: _isVideoPlaying,
+            ),*/
+          )
+        else
+          Padding(
+            padding: const EdgeInsets.only(bottom: 3),
+            child: OverlayVideoPreview(
+              video: _class.video,
+              showBackButton: true,
+              audioWidget: OlukoNeumorphism.isNeumorphismDesign ? _getAudioWidget() : null,
+              bottomWidgets: [_getCourseInfoSection(_classImage)],
+              onBackPressed: () {
+                Navigator.pop(context);
+                Navigator.pushReplacementNamed(
+                  context,
+                  routeLabels[RouteEnum.root],
+                  arguments: {
+                    'index': widget.courseIndex,
+                    'classIndex': widget.classIndex,
+                  },
+                );
+              },
+            ),
           ),
-        ),
         Padding(
           padding: const EdgeInsets.only(right: 15, left: 15, top: 25),
           child: SizedBox(
@@ -463,6 +549,18 @@ class _InsideClassesState extends State<InsideClass> {
         ),
       ],
     );
+  }
+
+  void pauseVideo() {
+    if (_controller != null) {
+      _controller.pause();
+    }
+  }
+
+  void isVideoPlaying() {
+    return setState(() {
+      _isVideoPlaying = !_isVideoPlaying;
+    });
   }
 
   BlocListener<InsideClassContentBloc, InsideClassContentState> slidingUpPanelComponent(BuildContext context) {

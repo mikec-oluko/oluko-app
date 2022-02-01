@@ -20,7 +20,7 @@ class _State extends State<CourseProgressBar> {
         child: LinearProgressIndicator(
           value: widget.value,
           valueColor: AlwaysStoppedAnimation<Color>(OlukoNeumorphism.isNeumorphismDesign? OlukoColors.yellow:OlukoColors.primary),
-          backgroundColor: OlukoNeumorphism.isNeumorphismDesign? widget.isStartedClass ? Color(0xff202427) : Colors.grey[200]:Colors.white24,
+          backgroundColor: OlukoNeumorphism.isNeumorphismDesign? widget.isStartedClass ? OlukoColors.taskCardBackground : Colors.grey[200]:Colors.white24,
         ));
   }
 }

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/ui/components/challenge_card.dart';
 import 'package:oluko_app/ui/components/challenges_card.dart';
 import 'package:oluko_app/ui/components/movement_item_bubbles.dart';
-import 'package:oluko_app/ui/newDesignComponents/challenge_card_course_segment.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/utils/movement_utils.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
@@ -17,8 +17,9 @@ class ClassSegmentSection extends StatefulWidget {
   final List<Movement> movements;
   final bool showTopDivider;
   final Function(BuildContext, Movement) onPressedMovement;
+  final ChallengeNavigation segmentChallenge;
 
-  ClassSegmentSection({this.movements, this.onPressedMovement, this.segment, this.showTopDivider = true});
+  ClassSegmentSection({this.movements, this.onPressedMovement, this.segment, this.showTopDivider = true, this.segmentChallenge});
 
   @override
   _State createState() => _State();
@@ -51,8 +52,10 @@ class _State extends State<ClassSegmentSection> {
                     Padding(
                         padding: const EdgeInsets.only(bottom: 35.0),
                         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          lockedCardChallenge(
-                            image: widget.segment.image,
+                          ChallengesCard(
+                            segmentChallenge: widget.segmentChallenge,
+                            navigateToSegment: true,
+                            audioIcon: false,
                           ),
                           SizedBox(width: 30.0),
                           Padding(
