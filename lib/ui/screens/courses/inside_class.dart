@@ -269,29 +269,30 @@ class _InsideClassesState extends State<InsideClass> {
   }
 
   List<Widget> getChallengesCard() {
-    ChallengeNavigation segmentChallenge = ChallengeNavigation(enrolledCourse: widget.courseEnrollment,classIndex: widget.classIndex,courseIndex: widget.courseIndex);
+    ChallengeNavigation segmentChallenge =
+        ChallengeNavigation(enrolledCourse: widget.courseEnrollment, classIndex: widget.classIndex, courseIndex: widget.courseIndex);
     List<Widget> challengesCard = [];
     _class.segments.forEach((SegmentSubmodel segment) {
-      if (segment.challengeImage != null) {     
-          for (int j = 0; j < widget.courseEnrollment.classes.length; j++) {
-            if (widget.courseEnrollment.classes[j].id == _class.id) {
-              for (int k = 0; k < widget.courseEnrollment.classes[j].segments.length; k++) {
-                if (widget.courseEnrollment.classes[j].segments[k].id == segment.id) {
-                  if (k - 1 > 1) {
-                    segmentChallenge.previousSegmentFinish = widget.courseEnrollment.classes[j].segments[k - 1].completedAt != null;
-                    segmentChallenge.challengeSegment = widget.courseEnrollment.classes[j].segments[k];
-                    segmentChallenge.segmentIndex = k;
-                  } else {
-                    segmentChallenge.segmentIndex = k;
-                    segmentChallenge.previousSegmentFinish = true;
-                    segmentChallenge.challengeSegment = widget.courseEnrollment.classes[j].segments[k];
-                  }
+      if (segment.challengeImage != null) {
+        for (int j = 0; j < widget.courseEnrollment.classes.length; j++) {
+          if (widget.courseEnrollment.classes[j].id == _class.id) {
+            for (int k = 0; k < widget.courseEnrollment.classes[j].segments.length; k++) {
+              if (widget.courseEnrollment.classes[j].segments[k].id == segment.id) {
+                if (k - 1 > 1) {
+                  segmentChallenge.previousSegmentFinish = widget.courseEnrollment.classes[j].segments[k - 1].completedAt != null;
+                  segmentChallenge.challengeSegment = widget.courseEnrollment.classes[j].segments[k];
+                  segmentChallenge.segmentIndex = k;
+                } else {
+                  segmentChallenge.segmentIndex = k;
+                  segmentChallenge.previousSegmentFinish = true;
+                  segmentChallenge.challengeSegment = widget.courseEnrollment.classes[j].segments[k];
                 }
               }
             }
           }
+        }
         challengesCard.add(ChallengesCard(
-          segmentChallenge: segmentChallenge,    
+          segmentChallenge: segmentChallenge,
           navigateToSegment: true,
           noAudioIcon: true,
         ));
@@ -346,7 +347,23 @@ class _InsideClassesState extends State<InsideClass> {
         if (OlukoNeumorphism.isNeumorphismDesign)
           Padding(
             padding: const EdgeInsets.only(bottom: 3),
-            child: OlukoVideoPreview(
+            child: OverlayVideoPreview(
+              video: _class.video,
+              showBackButton: true,
+              audioWidget: OlukoNeumorphism.isNeumorphismDesign ? _getAudioWidget() : null,
+              bottomWidgets: [_getCourseInfoSection(_classImage)],
+              onBackPressed: () {
+                Navigator.pop(context);
+                Navigator.pushReplacementNamed(
+                  context,
+                  routeLabels[RouteEnum.root],
+                  arguments: {
+                    'index': widget.courseIndex,
+                    'classIndex': widget.classIndex,
+                  },
+                );
+              },
+            ), /*OlukoVideoPreview(
               video: _class.video,
               showBackButton: true,
               audioWidget: OlukoNeumorphism.isNeumorphismDesign ? _getAudioWidget() : null,
@@ -364,7 +381,7 @@ class _InsideClassesState extends State<InsideClass> {
               },
               onPlay: () => isVideoPlaying(),
               videoVisibilty: _isVideoPlaying,
-            ),
+            ),*/
           )
         else
           Padding(

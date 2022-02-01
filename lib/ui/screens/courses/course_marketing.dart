@@ -98,8 +98,10 @@ class CourseMarketing extends StatefulWidget {
                     style: OlukoNeumorphism.getNeumorphicStyleForCardClasses(
                         CourseEnrollmentService.getClassProgress(enrollment, _classItemsToUse.indexOf(item)) > 0),
                     child: GestureDetector(
-                      onTap: () {
-                        isVideoPlaying();
+                      onTap: () async {
+                        if (isVideoPlaying != null) {
+                          isVideoPlaying();
+                        }
                         Navigator.pushNamed(context, routeLabels[RouteEnum.insideClass], arguments: {
                           'courseEnrollment': enrollment,
                           'classIndex': _classItemsToUse.indexOf(item),
