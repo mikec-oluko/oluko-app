@@ -198,6 +198,7 @@ class OlukoNeumorphismColors {
   static const Color olukoNeumorphicSearchBarFirstColor = Color.fromRGBO(29, 35, 40, 1);
   static const Color olukoNeumorphicSearchBarSecondColor = Color.fromRGBO(19, 19, 20, 1);
   static const Color olukoNeumorphicBlueBackgroundColor = Color(0XFF1976D2);
+  static const List<Color> homeGradientColorList = [Color(0xFF3e3737), Color(0xFFbfbaba), Color(0xFF3e3737)];
 }
 
 class OlukoColors {
