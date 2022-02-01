@@ -104,6 +104,17 @@ class StoryRepository {
     return returnList;
   }
 
+  Future<bool> hasStories(String userId) async {
+    final DataSnapshot snapshot = await FirebaseDatabase.instance
+        .reference()
+        .child('${GlobalConfiguration().getValue('projectId')}${'/users/$userId/userStories'}')
+        .get();
+    if (snapshot.value == null) {
+      return false;
+    }
+    return true;
+  }
+
   Stream<Event> getSubscription(String userId) {
     return FirebaseDatabase.instance
         .reference()

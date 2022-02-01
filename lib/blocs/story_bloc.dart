@@ -12,6 +12,11 @@ class CreateSuccess extends StoryState {
   CreateSuccess({this.story});
 }
 
+class HasStoriesSuccess extends StoryState {
+  HasStoriesSuccess({this.hasStories});
+  final bool hasStories;
+}
+
 class Failure extends StoryState {
   final dynamic exception;
 
@@ -40,6 +45,20 @@ class StoryBloc extends Cubit<StoryState> {
       StoryRepository.setStoryAsSeen(userId, userStoryId, storyId);
     } catch (exception, stackTrace) {
       Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: exception));
+      rethrow;
+    }
+  }
+
+  void hasStories(String userId) async {
+    try {
+      final bool hasStories = await StoryRepository().hasStories(userId);
+      emit(HasStoriesSuccess(hasStories: hasStories));
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
         exception,
         stackTrace: stackTrace,
       );

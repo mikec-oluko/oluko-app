@@ -56,6 +56,7 @@ import 'package:oluko_app/blocs/transformation_journey_bloc.dart';
 import 'package:oluko_app/blocs/user_audio_bloc.dart';
 import 'package:oluko_app/blocs/user_list_bloc.dart';
 import 'package:oluko_app/blocs/video_bloc.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/course.dart';
@@ -393,8 +394,16 @@ class Routes {
           BlocProvider<CoachRecommendationsBloc>.value(value: _coachRecommendationsBloc),
           BlocProvider<CoachIntroductionVideoBloc>.value(value: _coachIntroductionVideo),
           BlocProvider<CoachReviewPendingBloc>.value(value: _coachReviewPendingBloc),
+          BlocProvider<IntroductionMediaBloc>.value(value: _introductionMediaBloc),
         ];
-
+        if (OlukoNeumorphism.isNeumorphismDesign) {
+          providers.addAll([
+            BlocProvider<MovementBloc>.value(value: _movementBloc),
+            BlocProvider<ClassSubscriptionBloc>.value(value: _classSubscriptionBloc),
+            BlocProvider<StatisticsSubscriptionBloc>.value(value: _statisticsSubscriptionBloc),
+            BlocProvider<StoryBloc>.value(value: _storyBloc)
+          ]);
+        }
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = MainPage(
           index: argumentsToAdd == null || argumentsToAdd['index'] == null ? null : argumentsToAdd['index'] as int,

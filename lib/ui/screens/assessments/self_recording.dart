@@ -12,9 +12,10 @@ import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/permissions.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/routes.dart';
-import 'package:oluko_app/ui/components/open_settings_modal.dart';
+import 'package:oluko_app/ui/components/settings_dialog.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/exception_codes.dart';
+import 'package:oluko_app/utils/permissions_utils.dart';
 
 class SelfRecording extends StatefulWidget {
   const SelfRecording({this.taskIndex, this.isPublic, this.isLastTask = false, Key key}) : super(key: key);
@@ -252,7 +253,7 @@ class _State extends State<SelfRecording> {
     try {
       if (!await Permissions.requiredPermissionsEnabled(DeviceContentFrom.camera)) {
         Navigator.pop(context);
-        DialogUtils.getDialog(context, [OpenSettingsModal(context)], showExitButton: false);
+        PermissionsUtils.showSettingsMessage(context);
         return;
       }
       cameras = await availableCameras();

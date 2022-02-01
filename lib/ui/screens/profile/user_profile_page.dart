@@ -34,7 +34,7 @@ import 'package:oluko_app/ui/components/course_card.dart';
 import 'package:oluko_app/ui/components/modal_upload_options.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
-import 'package:oluko_app/ui/components/open_settings_modal.dart';
+import 'package:oluko_app/ui/components/settings_dialog.dart';
 import 'package:oluko_app/ui/components/uploading_modal_loader.dart';
 import 'package:oluko_app/ui/components/uploading_modal_success.dart';
 import 'package:oluko_app/ui/components/user_profile_information.dart';
@@ -44,6 +44,7 @@ import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/permissions_utils.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
@@ -239,7 +240,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
       if (state is ProfileCoverRequirePermissions) {
         _panelController
             .close()
-            .then((value) => DialogUtils.getDialog(profileViewContext, [OpenSettingsModal(profileViewContext)], showExitButton: false));
+            .then((value) => 
+        PermissionsUtils.showSettingsMessage(context));
       }
       return _contentForPanel;
     });
@@ -270,7 +272,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
       if (state is ProfileAvatarRequirePermissions) {
         _panelController
             .close()
-            .then((value) => DialogUtils.getDialog(profileViewContext, [OpenSettingsModal(profileViewContext)], showExitButton: false));
+            .then((value) => PermissionsUtils.showSettingsMessage(context));
       }
       return _contentForPanel;
     });

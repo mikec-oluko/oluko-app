@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:nil/nil.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -28,6 +27,7 @@ class OlukoAppBar<T> extends StatefulWidget implements PreferredSizeWidget {
   final bool showDivider;
   final bool showTitle;
   final bool showActions;
+  final bool reduceHeight;
 
   OlukoAppBar(
       {this.title,
@@ -46,12 +46,13 @@ class OlukoAppBar<T> extends StatefulWidget implements PreferredSizeWidget {
       this.whenSearchBarInitialized,
       this.actionButton,
       this.searchKey,
-      this.showActions = false});
+      this.showActions = false,
+      this.reduceHeight = false});
 
   @override
   State<OlukoAppBar<T>> createState() => _OlukoAppBarState<T>();
   @override
-  Size get preferredSize => showSearchBar == true || OlukoNeumorphism.isNeumorphismDesign
+  Size get preferredSize => showSearchBar == true || OlukoNeumorphism.isNeumorphismDesign && !reduceHeight
       ? new Size.fromHeight(kToolbarHeight * 2)
       : new Size.fromHeight(kToolbarHeight);
 }
@@ -145,7 +146,8 @@ class _OlukoAppBarState<T> extends State<OlukoAppBar<T>> {
         child: AppBar(
           automaticallyImplyLeading: false,
           backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
-          bottom: PreferredSize(preferredSize: Size.fromHeight(kToolbarHeight), child: neumorphicDivider(context)),
+          bottom:
+              widget.showDivider ? PreferredSize(preferredSize: Size.fromHeight(kToolbarHeight), child: neumorphicDivider(context)) : null,
           flexibleSpace: widget.showLogo
               ? Align(
                   alignment: Alignment.centerLeft,
