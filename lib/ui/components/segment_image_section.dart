@@ -421,16 +421,16 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
             final int favorites = doneChallengeUsersState.favoriteUsers != null ? doneChallengeUsersState.favoriteUsers.length : 0;
             final int normalUsers = doneChallengeUsersState.users != null ? doneChallengeUsersState.users.length : 0;
             final int qty = favorites + normalUsers;
-            return Buttons(
+            return PeopleAndIncludedInButtons(
               widget: widget,
               qty: qty,
               state: doneChallengeUsersState,
             );
           } else {
-            return Buttons(widget: widget);
+            return PeopleAndIncludedInButtons(widget: widget);
           }
         }),
-        if (OlukoNeumorphism.isNeumorphismDesign) verticalDividerComponent else const SizedBox(),
+        if (OlukoNeumorphism.isNeumorphismDesign) verticalDividerComponent,
         GestureDetector(onTap: widget.clockAction, child: clockSection()),
       ])
     ]);
@@ -483,8 +483,8 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   }
 }
 
-class Buttons extends StatelessWidget {
-  const Buttons({
+class PeopleAndIncludedInButtons extends StatelessWidget {
+  const PeopleAndIncludedInButtons({
     Key key,
     @required this.widget,
     this.state,
