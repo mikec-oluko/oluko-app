@@ -3,6 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:global_configuration/global_configuration.dart';
 import 'package:nil/nil.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -46,7 +47,8 @@ class StoriesItem extends StatefulWidget {
         itemUserId != null &&
         currentUserId.isNotEmpty &&
         itemUserId.isNotEmpty &&
-        bloc != null) {
+        bloc != null &&
+        GlobalConfiguration().getValue('showStories') == 'true') {
       getStoriesFromUser();
     }
     checkForUnseenStories();
@@ -120,7 +122,8 @@ class _State extends State<StoriesItem> {
                       widget.currentUserId != null &&
                       widget.itemUserId != null &&
                       widget.name != null &&
-                      widget.imageUrl != null)
+                      widget.imageUrl != null &&
+                      GlobalConfiguration().getValue('showStories') == 'true')
                     GestureDetector(
                         child: getCircularAvatar(),
                         onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.story], arguments: {
