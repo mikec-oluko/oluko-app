@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:chewie/chewie.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +13,8 @@ import 'package:oluko_app/utils/screen_utils.dart';
 class OlukoVideoPreview extends StatefulWidget {
   final String video;
   final String image;
+  final List<String> randomImages;
+
   final bool showBackButton;
   final bool showShareButton;
   final bool showHeartButton;
@@ -29,6 +33,7 @@ class OlukoVideoPreview extends StatefulWidget {
       this.showShareButton = false,
       this.bottomWidgets,
       this.onBackPressed,
+      this.randomImages,
       Key key,
       this.onPlay,
       this.videoVisibilty = false,
@@ -138,18 +143,17 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
   Widget videoSection() {
     return Stack(alignment: Alignment.center, children: [
       AspectRatio(
-        aspectRatio: 480 / 600,
-        child: widget.image == null
-            ? Image.asset(
-                'assets/courses/profile_photos.png',
-                fit: BoxFit.cover,
-              )
-            : Image.network(
-                widget.image,
-                fit: BoxFit.cover,
-              ),
-      ),
-      if (widget.video != null )
+          aspectRatio: 480 / 600,
+          child: widget.randomImages == null
+              ? Image.asset(
+                  'assets/courses/profile_photos.png',
+                  fit: BoxFit.cover,
+                )
+              : Image.network(
+                  widget.randomImages[random(0, widget.randomImages.length - 1)],
+                  fit: BoxFit.cover,
+                )),
+      if (widget.video != null)
         AspectRatio(
           aspectRatio: 480 / 600,
           child: Padding(
@@ -225,5 +229,10 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
             ],
       ),
     );
+  }
+
+  int random(int min, int max) {
+    var rn = new Random();
+    return min + rn.nextInt(max - min);
   }
 }

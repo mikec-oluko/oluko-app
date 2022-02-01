@@ -412,10 +412,23 @@ class _SegmentClocksState extends State<SegmentClocks> {
         Padding(
             padding: const EdgeInsets.only(top: OlukoNeumorphism.isNeumorphismDesign ? 20 : 3, bottom: 8),
             child: Stack(alignment: Alignment.center, children: [getRoundsTimer(keyboardVisibilty), _countdownSection()])),
-            //TODO: put alert here
+        //getAlert(),
         if (isWorkStateFinished()) const SizedBox() else _tasksSection(keyboardVisibilty)
       ],
     ));
+  }
+
+  Widget getAlert() {
+    if (widget.segments[widget.segmentIndex].alerts != null) {
+      String roundAlert = widget.segments[widget.segmentIndex].alerts[timerEntries[timerTaskIndex].round];
+      if (roundAlert != null) {
+        return OlukoRoundAlert(text: roundAlert);
+      } else {
+        return SizedBox();
+      }
+    } else {
+      return SizedBox();
+    }
   }
 
   bool isWorkStateFinished() {
