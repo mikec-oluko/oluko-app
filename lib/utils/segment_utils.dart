@@ -149,6 +149,7 @@ class SegmentUtils {
           value: segment.totalTime,
           round: null,
           counter: CounterEnum.none,
+          stopwatch: segment.sections[0].stopwatch,
           labels: getLabels(segment.sections[0].movements)));
     } else {
       for (var roundIndex = 0; roundIndex < segment.rounds; roundIndex++) {
@@ -160,6 +161,7 @@ class SegmentUtils {
               value: (segment.totalTime / segment.rounds).toInt(),
               round: roundIndex,
               counter: CounterEnum.none,
+              stopwatch: segment.sections[0].stopwatch,
               labels: getLabels(segment.sections[0].movements)));
         } else {
           for (var sectionIndex = 0; sectionIndex < segment.sections.length; sectionIndex++) {
@@ -173,6 +175,7 @@ class SegmentUtils {
                   round: roundIndex,
                   sectionIndex: sectionIndex,
                   counter: movementSubmodel.counter,
+                  stopwatch: segment.sections[sectionIndex].stopwatch,
                   labels: getLabels(segment.sections[sectionIndex].movements)));
             } else {
               MovementSubmodel movementSubmodel = segment.sections[sectionIndex].movements[0];
@@ -183,6 +186,7 @@ class SegmentUtils {
                   round: roundIndex,
                   sectionIndex: sectionIndex,
                   counter: movementSubmodel.counter,
+                  stopwatch: segment.sections[sectionIndex].stopwatch,
                   labels: [getLabel(movementSubmodel)]));
             }
           }

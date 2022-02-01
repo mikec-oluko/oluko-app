@@ -1,15 +1,16 @@
+import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/video_overlay.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_blurred_button.dart';
 
 class OverlayVideoPreview extends StatefulWidget {
   final String video;
   final String image;
+  final List<String> randomImages;
   final bool showBackButton;
   final bool showShareButton;
   final bool showHeartButton;
@@ -28,6 +29,7 @@ class OverlayVideoPreview extends StatefulWidget {
       this.bottomWidgets,
       this.onBackPressed,
       this.audioWidget,
+      this.randomImages,
       Key key})
       : super(key: key);
 
@@ -122,13 +124,13 @@ class _OverlayVideoPreviewState extends State<OverlayVideoPreview> {
     return Stack(alignment: Alignment.center, children: [
       AspectRatio(
           aspectRatio: 1,
-          child: widget.image == null
+          child: widget.randomImages == null
               ? Image.asset(
                   'assets/courses/profile_photos.png',
                   fit: BoxFit.cover,
                 )
               : Image(
-                  image: CachedNetworkImageProvider(widget.image),
+                  image: CachedNetworkImageProvider(widget.randomImages[random(0, widget.randomImages.length - 1)]),
                   fit: BoxFit.cover,
                 )),
       if (widget.video != null && widget.video != "null")
@@ -173,5 +175,10 @@ class _OverlayVideoPreviewState extends State<OverlayVideoPreview> {
                         ])),
             ))
     ]);
+  }
+
+  int random(int min, int max) {
+    var rn = new Random();
+    return min + rn.nextInt(max - min);
   }
 }

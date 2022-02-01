@@ -14,8 +14,6 @@ class Failure extends CourseEnrollmentUpdateState {
   Failure({this.exception});
 }
 
-class UpdateCounterSuccess extends CourseEnrollmentUpdateState {}
-
 class SaveSelfieSuccess extends CourseEnrollmentUpdateState {
   CourseEnrollment courseEnrollment;
   SaveSelfieSuccess({this.courseEnrollment});
@@ -29,7 +27,21 @@ class CourseEnrollmentUpdateBloc extends Cubit<CourseEnrollmentUpdateState> {
     try {
       await CourseEnrollmentRepository.saveMovementCounter(
           courseEnrollment, segmentIndex, classIndex, sectionIndex, movement, totalRounds, currentRound, counter);
-      emit(UpdateCounterSuccess());
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      emit(Failure(exception: exception));
+      rethrow;
+    }
+  }
+
+  void saveSectionStopwatch(CourseEnrollment courseEnrollment, int segmentIndex, int sectionIndex, int classIndex, int totalRounds,
+      int currentRound, int stopwatch) async {
+    try {
+      await CourseEnrollmentRepository.saveSectionStopwatch(
+          courseEnrollment, segmentIndex, classIndex, sectionIndex, totalRounds, currentRound, stopwatch);
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
