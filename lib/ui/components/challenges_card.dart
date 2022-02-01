@@ -15,7 +15,7 @@ class ChallengesCard extends StatefulWidget {
   final UserResponse userRequested;
   final bool navigateToSegment;
   final bool useAudio;
-  final bool noAudioIcon;
+  final bool audioIcon;
 
   ChallengesCard(
       {this.challenge,
@@ -24,7 +24,7 @@ class ChallengesCard extends StatefulWidget {
       this.userRequested,
       this.useAudio = true,
       this.navigateToSegment = false,
-      this.noAudioIcon = false});
+      this.audioIcon = true});
 
   @override
   State<StatefulWidget> createState() => _State();
@@ -40,7 +40,7 @@ class _State extends State<ChallengesCard> {
         widget.segmentChallenge.previousSegmentFinish ? unlockedCard(context) : lockedCard(context)
       else
         widget.challenge.completedAt != null ? unlockedCard(context) : lockedCard(context),
-      if (widget.useAudio && !widget.noAudioIcon)
+      if (widget.useAudio && widget.audioIcon)
         Padding(
             padding: EdgeInsets.only(top: 13),
             child: GestureDetector(

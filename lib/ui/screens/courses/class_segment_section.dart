@@ -55,7 +55,7 @@ class _State extends State<ClassSegmentSection> {
                           ChallengesCard(
                             segmentChallenge: widget.segmentChallenge,
                             navigateToSegment: true,
-                            noAudioIcon: true,
+                            audioIcon: false,
                           ),
                           SizedBox(width: 30.0),
                           Padding(

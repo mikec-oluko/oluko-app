@@ -294,7 +294,7 @@ class _InsideClassesState extends State<InsideClass> {
         challengesCard.add(ChallengesCard(
           segmentChallenge: segmentChallenge,
           navigateToSegment: true,
-          noAudioIcon: true,
+          audioIcon: false,
         ));
       }
     });
