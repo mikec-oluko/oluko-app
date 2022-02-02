@@ -6,6 +6,7 @@ import 'package:oluko_app/models/enums/file_type_enum.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/repositories/auth_repository.dart';
 import 'package:oluko_app/repositories/transformation_journey_repository.dart';
+import 'package:oluko_app/utils/permissions_utils.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class TransformationJourneyContentState {}
@@ -32,7 +33,10 @@ class TransformationJourneyContentBloc extends Cubit<TransformationJourneyConten
     XFile _image;
     try {
 
-      if (!await requiredTJourneyPermissionsEnabled(uploadedFrom)) return;
+      if (!await PermissionsUtils.permissionsEnabled(uploadedFrom, checkMicrophone: false)) {
+        emit(TransformationJourneyRequirePermissions());
+        return;
+      }
       
       final ImagePicker imagePicker = ImagePicker();
       if (uploadedFrom == DeviceContentFrom.gallery) {
@@ -60,14 +64,6 @@ class TransformationJourneyContentBloc extends Cubit<TransformationJourneyConten
       emit(TransformationJourneyContentFailure(exception: e));
       rethrow;
     }
-  }
-
-  Future<bool> requiredTJourneyPermissionsEnabled(DeviceContentFrom uploadedFrom) async {
-    if (!await Permissions.requiredPermissionsEnabled(uploadedFrom, checkMicrophone: false)) {
-      emit(TransformationJourneyRequirePermissions());
-      return false;
-    }
-    return true;
   }
 
   void emitDefaultState() {

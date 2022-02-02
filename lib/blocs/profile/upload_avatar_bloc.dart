@@ -1,9 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
-import 'package:oluko_app/helpers/permissions.dart';
 import 'package:oluko_app/repositories/profile_repository.dart';
 import 'package:oluko_app/utils/image_utils.dart';
+import 'package:oluko_app/utils/permissions_utils.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:path/path.dart' as p;
 
@@ -37,9 +37,11 @@ class ProfileAvatarBloc extends Cubit<ProfileAvatarState> {
   void uploadProfileAvatarImage({DeviceContentFrom uploadedFrom, UploadFrom contentFor}) async {
     XFile _image;
     try {
+      if (!await PermissionsUtils.permissionsEnabled(uploadedFrom, checkMicrophone: false)) {
+        emit(ProfileAvatarRequirePermissions());
+        return;
+      }
 
-      if (!await requiredAvatarPermissionsEnabled(uploadedFrom)) return;
-      
       final ImagePicker imagePicker = ImagePicker();
 
       if (uploadedFrom == DeviceContentFrom.gallery) {
@@ -68,14 +70,6 @@ class ProfileAvatarBloc extends Cubit<ProfileAvatarState> {
       // rethrow;
       return;
     }
-  }
-
-  Future<bool> requiredAvatarPermissionsEnabled(DeviceContentFrom uploadedFrom) async {
-    if (!await Permissions.requiredPermissionsEnabled(uploadedFrom, checkMicrophone: false)) {
-      emit(ProfileAvatarRequirePermissions());
-      return false;
-    }
-    return true;
   }
 
   void emitDefaultState() {

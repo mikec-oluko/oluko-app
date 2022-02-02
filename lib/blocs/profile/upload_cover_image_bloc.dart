@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
-import 'package:oluko_app/helpers/permissions.dart';
 import 'package:oluko_app/repositories/profile_repository.dart';
+import 'package:oluko_app/utils/permissions_utils.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class ProfileCoverImageState {}
@@ -37,7 +37,10 @@ class ProfileCoverImageBloc extends Cubit<ProfileCoverImageState> {
 
     try {
 
-      if (!await requiredCoverPermissionsEnabled(uploadedFrom)) return;
+      if (!await PermissionsUtils.permissionsEnabled(uploadedFrom, checkMicrophone: false)) {
+        emit(ProfileCoverRequirePermissions());
+        return;
+      }
       
       final ImagePicker imagePicker = ImagePicker();
       if (uploadedFrom == DeviceContentFrom.gallery) {
@@ -62,14 +65,6 @@ class ProfileCoverImageBloc extends Cubit<ProfileCoverImageState> {
       // rethrow;
       return;
     }
-  }
-
-  Future<bool> requiredCoverPermissionsEnabled(DeviceContentFrom uploadedFrom) async {
-    if (!await Permissions.requiredPermissionsEnabled(uploadedFrom, checkMicrophone: false)) {
-      emit(ProfileCoverRequirePermissions());
-      return false;
-    }
-    return true;
   }
 
   void emitDefaultState() {
