@@ -1,24 +1,21 @@
+import 'package:flutter/cupertino.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:oluko_app/constants/theme.dart';
-import 'package:oluko_app/ui/components/challenges_card.dart';
 
-class lockedCardChallenge extends StatelessWidget {
-  const lockedCardChallenge({
+class LockedChallenge extends StatelessWidget {
+  const LockedChallenge({
     Key key,
-    this.widget,
-    this.defaultImage,
+    this.challengeImage,
     this.context,
-    this.image,
   }) : super(key: key);
 
-  final ChallengesCard widget;
-  final ImageProvider<Object> defaultImage;
+  final String challengeImage;
   final BuildContext context;
-  final String image;
 
   @override
   Widget build(BuildContext context) {
+    final ImageProvider defaultImage = const AssetImage('assets/home/mvtthumbnail.png');
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -40,10 +37,10 @@ class lockedCardChallenge extends StatelessWidget {
                 image: DecorationImage(
                   fit: BoxFit.cover,
                   colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.7), BlendMode.dstATop),
-                  image: image != null
-                      ? new CachedNetworkImageProvider(image)
-                      : widget.challenge.image != null
-                          ? new CachedNetworkImageProvider(widget.challenge.image)
+                  image: challengeImage != null
+                      ? CachedNetworkImageProvider(challengeImage)
+                      : challengeImage != null
+                          ? new CachedNetworkImageProvider(challengeImage)
                           : defaultImage,
                 ),
               ),

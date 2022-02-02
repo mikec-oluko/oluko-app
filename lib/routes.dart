@@ -124,6 +124,7 @@ import 'blocs/coach/coach_recommendations_bloc.dart';
 import 'blocs/coach/coach_review_pending_bloc.dart';
 import 'blocs/coach/coach_sent_videos_bloc.dart';
 import 'blocs/coach/coach_timeline_bloc.dart';
+import 'blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
 import 'blocs/keyboard/keyboard_bloc.dart';
 import 'blocs/movement_info_bloc.dart';
 import 'blocs/friends/hi_five_send_bloc.dart';
@@ -297,6 +298,7 @@ class Routes {
   final TaskSubmissionListBloc _taskSubmissionListBloc = TaskSubmissionListBloc();
   final GalleryVideoBloc _galleryVideoBloc = GalleryVideoBloc();
   final CourseEnrollmentListBloc _courseEnrollmentListBloc = CourseEnrollmentListBloc();
+  final CourseEnrollmentListStreamBloc _courseEnrollmentListStreamBloc = CourseEnrollmentListStreamBloc();
   final SegmentSubmissionBloc _segmentSubmissionBloc = SegmentSubmissionBloc();
   final TransformationJourneyContentBloc _transformationJourneyContentBloc = TransformationJourneyContentBloc();
   final ProfileAvatarBloc _profileAvatarBloc = ProfileAvatarBloc();
@@ -361,7 +363,7 @@ class Routes {
           BlocProvider<CourseHomeBloc>.value(value: _courseHomeBloc),
           BlocProvider<CourseSubscriptionBloc>.value(value: _courseSubscriptionBloc),
           BlocProvider<ClassBloc>.value(value: _classBloc),
-          BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
+          BlocProvider<CourseEnrollmentListStreamBloc>.value(value: _courseEnrollmentListStreamBloc),
           BlocProvider<TagBloc>.value(value: _tagBloc),
           BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
           BlocProvider<FavoriteBloc>.value(value: _favoriteBloc),
@@ -507,6 +509,7 @@ class Routes {
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
           BlocProvider<ChallengeBloc>.value(value: _challengeBloc),
           BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
+          BlocProvider<CourseEnrollmentListStreamBloc>.value(value: _courseEnrollmentListStreamBloc),
           BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
           BlocProvider<ProfileCoverImageBloc>.value(value: _profileCoverImageBloc),
           BlocProvider<ProfileAvatarBloc>.value(value: _profileAvatarBloc),
@@ -664,13 +667,15 @@ class Routes {
           BlocProvider<StatisticsSubscriptionBloc>.value(value: _statisticsSubscriptionBloc),
           BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
           BlocProvider<MovementBloc>.value(value: _movementBloc),
-          BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
+          BlocProvider<CourseEnrollmentListStreamBloc>.value(value: _courseEnrollmentListStreamBloc),
           BlocProvider<CourseHomeBloc>.value(value: _courseHomeBloc),
           BlocProvider<StoryListBloc>.value(value: _storyListBloc),
           BlocProvider<SubscribedCourseUsersBloc>.value(value: _subscribedCourseUsersBloc),
           BlocProvider<StoryListBloc>.value(value: _storyListBloc),
           BlocProvider<RecommendationBloc>.value(value: _recommendationBloc),
           BlocProvider<CoachAssignmentBloc>.value(value: _coachAssignmentBloc),
+          BlocProvider<InsideClassContentBloc>.value(value: _insideClassContentBloc),
+          BlocProvider<SegmentBloc>.value(value: _segmentBloc),
         ];
         final Map<String, dynamic> argumentsToAdd = arguments as Map<String, dynamic>;
         newRouteView = CourseMarketing(
@@ -808,7 +813,7 @@ class Routes {
           BlocProvider<CourseEnrollmentBloc>.value(value: _courseEnrollmentBloc),
           BlocProvider<TagBloc>.value(value: _tagBloc),
           BlocProvider<RecommendationBloc>.value(value: _recommendationBloc),
-          BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
+          BlocProvider<CourseEnrollmentListStreamBloc>.value(value: _courseEnrollmentListStreamBloc),
           BlocProvider<CourseSubscriptionBloc>.value(value: _courseSubscriptionBloc),
         ];
         final Map<String, dynamic> args = arguments as Map<String, dynamic>;
@@ -852,7 +857,7 @@ class Routes {
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
           BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
-          BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
+          BlocProvider<CourseEnrollmentListStreamBloc>.value(value: _courseEnrollmentListStreamBloc),
           BlocProvider<TaskBloc>.value(value: _taskBloc),
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),
@@ -874,7 +879,7 @@ class Routes {
           BlocProvider<ProfileBloc>.value(value: _profileBloc),
           BlocProvider<TaskSubmissionBloc>.value(value: _taskSubmissionBloc),
           BlocProvider<TransformationJourneyBloc>.value(value: _transformationJourneyBloc),
-          BlocProvider<CourseEnrollmentListBloc>.value(value: _courseEnrollmentListBloc),
+          BlocProvider<CourseEnrollmentListStreamBloc>.value(value: _courseEnrollmentListStreamBloc),
           BlocProvider<TaskBloc>.value(value: _taskBloc),
           BlocProvider<AssessmentBloc>.value(value: _assessmentBloc),
           BlocProvider<UserStatisticsBloc>.value(value: _userStatisticsBloc),

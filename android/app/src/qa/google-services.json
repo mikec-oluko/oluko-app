@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:214950619734:android:ec7f72cd8af9ec25a7e9f7",
+        "mobilesdk_app_id": "1:214950619734:android:882e027a0f8f5317a7e9f7",
         "android_client_info": {
-          "package_name": "com.app.oluko"
+          "package_name": "com.app.oluko.qa"
         }
       },
       "oauth_client": [
@@ -31,48 +31,11 @@
               "client_type": 3
             },
             {
-              "client_id": "214950619734-tn9jjkkgncep7fvsekfl5f63ljcbbuae.apps.googleusercontent.com",
+              "client_id": "214950619734-bhf65nb0t8rqc43kgduc61o11olga97i.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.app.olukoApp",
-                "app_store_id": "1566271606"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:214950619734:android:5342f6a96897a2e4a7e9f7",
-        "android_client_info": {
-          "package_name": "com.app.oluko_app"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "214950619734-b3a8abqf8a9j9l9171396qt4rlght5g6.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDyZ97hes4QXbKqTaC40u6EH6cM0TRWTNM"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "214950619734-b3a8abqf8a9j9l9171396qt4rlght5g6.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "214950619734-tn9jjkkgncep7fvsekfl5f63ljcbbuae.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.app.olukoApp",
-                "app_store_id": "1566271606"
+                "bundle_id": "com.app.oluko.qa",
+                "app_store_id": "1580311039"
               }
             }
           ]

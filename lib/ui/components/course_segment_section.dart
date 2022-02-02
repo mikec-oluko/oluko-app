@@ -6,7 +6,12 @@ import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/submodels/segment_submodel.dart';
+import 'package:oluko_app/ui/components/challenges_card.dart';
+import 'package:oluko_app/ui/newDesignComponents/locked_challenge.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_divider.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
+import 'package:oluko_app/utils/segment_submodel_utils.dart';
+import 'package:oluko_app/utils/segment_utils.dart';
 import 'movement_item_bubbles.dart';
 
 class CourseSegmentSection extends StatefulWidget {
@@ -24,40 +29,79 @@ class _State extends State<CourseSegmentSection> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: MediaQuery.of(context).size.width,
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Divider(
-              color: OlukoColors.grayColor,
-              height: 50,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 20.0),
-              child: Text(
-                widget.segment.name,
-                style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
-              ),
-            ),
-            SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(children: [
-                  widget.segment.isChallenge ? challengeCard() : SizedBox(),
-                  MovementItemBubbles(onPressed: widget.onPressedMovement, content: widget.movements, width: ScreenUtils.width(context) / 1)
-                ])),
-          ],
-        ),
-      ),
-    );
+        width: MediaQuery.of(context).size.width,
+        child: OlukoNeumorphism.isNeumorphismDesign
+            ? Container(
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.all(const Radius.circular(10)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 20.0),
+                      child: Text(
+                        widget.segment.name,
+                        style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
+                      ),
+                    ),
+                    SegmentSubmodelUtils.getRoundTitle(widget.segment, context, OlukoColors.white),
+                    SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(children: [
+                          if (widget.segment.isChallenge)
+                            LockedChallenge(challengeImage: widget.segment.challengeImage, context: context)
+                          else
+                            const SizedBox(),
+                          MovementItemBubbles(
+                            onPressed: widget.onPressedMovement,
+                            content: widget.movements,
+                            width: ScreenUtils.width(context) / 1,
+                            isSegmentSection: true,
+                          )
+                        ])),            
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 20.0),
+                        child: OlukoNeumorphicDivider(
+                          isFadeOut: true,
+                        ),
+                      )
+                  ],
+                ),
+              )
+            : Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Divider(
+                      color: OlukoColors.grayColor,
+                      height: 50,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 20.0),
+                      child: Text(
+                        widget.segment.name,
+                        style: OlukoFonts.olukoBigFont(custoFontWeight: FontWeight.w500, customColor: OlukoColors.grayColor),
+                      ),
+                    ),
+                    SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(children: [
+                          widget.segment.isChallenge ? challengeCard() : SizedBox(),
+                          MovementItemBubbles(
+                              onPressed: widget.onPressedMovement, content: widget.movements, width: ScreenUtils.width(context) / 1)
+                        ])),
+                  ],
+                ),
+              ));
   }
 
   Widget challengeCard() {
     return Padding(
-        padding: EdgeInsets.only(right: 10),
+        padding: const EdgeInsets.only(right: 10),
         child: Stack(
           alignment: Alignment.center,
           children: [
