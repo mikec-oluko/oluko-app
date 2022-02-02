@@ -54,12 +54,30 @@ class _CoachAppBarState extends State<CoachAppBar> {
 
   PreferredSize neumorphicCoachAppBar(BuildContext context) {
     return PreferredSize(
-      preferredSize: Size.fromHeight(250.0),
+      preferredSize: Size.fromHeight(kToolbarHeight),
       child: AppBar(
         automaticallyImplyLeading: false,
-        flexibleSpace: Padding(
-          padding: const EdgeInsets.only(top: 10),
-          child: Column(
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(kToolbarHeight),
+          child: Container(
+            color: OlukoNeumorphismColors.olukoNeumorphicSearchBarSecondColor,
+            child: Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  child: showCoachProfle
+                      ? goToCoachProfile(context)
+                      : Text(
+                          '$numberOfReviewPendingItems ${OlukoLocalizations.get(context, 'reviewsPending')}',
+                          style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
+                        ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        leading: Container(
+          child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               OlukoNeumorphicCircleButton(
@@ -70,25 +88,6 @@ class _CoachAppBarState extends State<CoachAppBar> {
                     Icons.arrow_back_ios,
                     color: OlukoColors.grayColor,
                   )),
-              Container(
-                color: OlukoNeumorphismColors.olukoNeumorphicSearchBarSecondColor,
-                child: Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 5),
-                      child: showCoachProfle
-                          ? goToCoachProfile(context)
-                          : Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                '$numberOfReviewPendingItems ${OlukoLocalizations.get(context, 'reviewsPending')}',
-                                style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
-                              ),
-                            ),
-                    ),
-                  ],
-                ),
-              ),
             ],
           ),
         ),

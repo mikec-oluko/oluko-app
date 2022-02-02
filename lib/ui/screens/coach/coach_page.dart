@@ -15,6 +15,7 @@ import 'package:oluko_app/blocs/coach/coach_timeline_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
+// import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
@@ -145,17 +146,18 @@ class _CoachPageState extends State<CoachPage> {
                 _coachUser = state.coach;
               }
               return Scaffold(
+                extendBody: true,
                 appBar: CoachAppBar(
                   coachUser: _coachUser,
                   onNavigation: () => !widget.coachAssignment.introductionCompleted
                       ? BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation()
                       : () {},
                 ),
-                body: BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(
+                //CourseEnrollmentListStreamBloc extends Cubit<CourseEnrollmentListStreamState>
+                body: BlocBuilder<CourseEnrollmentListStreamBloc, CourseEnrollmentListStreamState>(
                   builder: (context, courseEnrollmentState) {
-                    if (courseEnrollmentState is CourseEnrollmentsByUserSuccess) {
-                      _courseEnrollmentList =
-                          courseEnrollmentState.courseEnrollments.where((courseEnroll) => courseEnroll.isUnenrolled != true).toList();
+                    if (courseEnrollmentState is CourseEnrollmentsByUserStreamSuccess) {
+                      _courseEnrollmentList = courseEnrollmentState.courseEnrollments;
                       _segmentsFromCourseEnrollmentClasses = TransformListOfItemsToWidget.segments(_courseEnrollmentList);
                       _allSegmentsForUser =
                           TransformListOfItemsToWidget.createSegmentContentInforamtion(_segmentsFromCourseEnrollmentClasses);
@@ -309,13 +311,13 @@ class _CoachPageState extends State<CoachPage> {
         if (state is GetCoachRequestUpdate) {
           _coachRequestUpdateList = state.values;
           checkCoachRequestUpdate(_coachRequestUpdateList);
-          // getCoachRequiredSegments(_allSegmentsForUser);
+          getCoachRequiredSegments(_allSegmentsForUser);
         }
       },
       builder: (context, state) {
         if (state is CoachRequestSuccess) {
           _coachRequestList = state.values;
-          // getCoachRequiredSegments(_allSegmentsForUser);
+          getCoachRequiredSegments(_allSegmentsForUser);
         }
         return BlocBuilder<AssessmentBloc, AssessmentState>(
           builder: (context, state) {
@@ -429,15 +431,11 @@ class _CoachPageState extends State<CoachPage> {
               if (OlukoNeumorphism.isNeumorphismDesign)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Container(
-                    height: ScreenUtils.height(context) / 2.7,
-                    width: ScreenUtils.width(context),
-                    child: ListView(
-                        padding: EdgeInsets.zero,
-                        shrinkWrap: true,
-                        scrollDirection: Axis.vertical,
-                        children: [Wrap(children: toDoContent())]),
-                  ),
+                  child: ListView(
+                      padding: EdgeInsets.zero,
+                      shrinkWrap: true,
+                      scrollDirection: Axis.vertical,
+                      children: [Wrap(children: toDoContent())]),
                 )
               else
                 CoachHorizontalCarousel(contentToDisplay: toDoContent()),
@@ -460,13 +458,25 @@ class _CoachPageState extends State<CoachPage> {
             if (state is TaskSuccess) {
               _tasks = state.values;
             }
-            return CoachHorizontalCarousel(
-              contentToDisplay: TransformListOfItemsToWidget.getAssessmentCards(
-                  tasks: _tasks,
-                  tasksSubmitted: _assessmentVideosContent,
-                  introductionVideoDone: widget.coachAssignment.introductionCompleted),
-              isAssessmentContent: true,
-            );
+            return OlukoNeumorphism.isNeumorphismDesign
+                ? Padding(
+                    padding: paddingTopForElements.copyWith(left: 20, right: 20),
+                    child: ListView(padding: EdgeInsets.zero, shrinkWrap: true, scrollDirection: Axis.vertical, children: [
+                      Wrap(
+                          alignment: WrapAlignment.center,
+                          children: TransformListOfItemsToWidget.getAssessmentCards(
+                              tasks: _tasks,
+                              tasksSubmitted: _assessmentVideosContent,
+                              introductionVideoDone: widget.coachAssignment.introductionCompleted))
+                    ]),
+                  )
+                : CoachHorizontalCarousel(
+                    contentToDisplay: TransformListOfItemsToWidget.getAssessmentCards(
+                        tasks: _tasks,
+                        tasksSubmitted: _assessmentVideosContent,
+                        introductionVideoDone: widget.coachAssignment.introductionCompleted),
+                    isAssessmentContent: true,
+                  );
           },
         );
       },

@@ -142,18 +142,21 @@ class TransformListOfItemsToWidget {
     return contentForReturn;
   }
 
-  static List<Widget> getAssessmentCards({List<Task> tasks, List<TaskSubmission> tasksSubmitted, bool introductionVideoDone}) {
+  static List<Widget> getAssessmentCards(
+      {List<Task> tasks, List<TaskSubmission> tasksSubmitted, bool introductionVideoDone, bool verticalList}) {
     final List<Widget> contentForSection = [];
     for (final task in tasks) {
-      contentForSection.add(returnCardForAssessment(task, tasksSubmitted, introductionVideoDone));
+      contentForSection.add(returnCardForAssessment(task, tasksSubmitted, introductionVideoDone, OlukoNeumorphism.isNeumorphismDesign));
     }
     return contentForSection;
   }
 
-  static Widget returnCardForAssessment(Task task, List<TaskSubmission> tasksSubmitted, bool introductionVideoDone) {
+  static Widget returnCardForAssessment(Task task, List<TaskSubmission> tasksSubmitted, bool introductionVideoDone, bool isVerticalList) {
     return Padding(
         padding: const EdgeInsets.all(5.0),
         child: CoachAssessmentCard(
+          isAssessmentTask: true,
+          isForVerticalList: isVerticalList,
           task: task,
           assessmentVideos: tasksSubmitted,
           introductionVideoDone: introductionVideoDone,
