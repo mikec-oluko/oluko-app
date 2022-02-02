@@ -125,6 +125,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   bool _wantsToCreateStory = false;
   bool _isVideoUploaded = false;
   bool waitingForSegSubCreation = false;
+  String _roundAlert = null;
 
   CoachRequest _coachRequest;
 
@@ -412,23 +413,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
         Padding(
             padding: const EdgeInsets.only(top: OlukoNeumorphism.isNeumorphismDesign ? 20 : 3, bottom: 8),
             child: Stack(alignment: Alignment.center, children: [getRoundsTimer(keyboardVisibilty), _countdownSection()])),
-        //getAlert(),
+        _roundAlert != null ? OlukoRoundAlert(text: _roundAlert) : SizedBox(),
         if (isWorkStateFinished()) const SizedBox() else _tasksSection(keyboardVisibilty)
       ],
     ));
-  }
-
-  Widget getAlert() {
-    if (widget.segments[widget.segmentIndex].alerts != null) {
-      String roundAlert = widget.segments[widget.segmentIndex].alerts[timerEntries[timerTaskIndex].round];
-      if (roundAlert != null) {
-        return OlukoRoundAlert(text: roundAlert);
-      } else {
-        return SizedBox();
-      }
-    } else {
-      return SizedBox();
-    }
   }
 
   bool isWorkStateFinished() {
@@ -884,8 +872,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
       _finishWorkout();
       return;
     }
+
     setState(() {
       timerTaskIndex++;
+      setAlert();
       _playTask();
     });
 
@@ -974,10 +964,18 @@ class _SegmentClocksState extends State<SegmentClocks> {
     print('Workout finished');
     BlocProvider.of<CourseEnrollmentBloc>(context).markSegmentAsCompleted(widget.courseEnrollment, widget.segmentIndex, widget.classIndex);
     setState(() {
+      setAlert();
       if (_segmentSubmission != null && widget.workoutType == WorkoutType.segmentWithRecording && !_isVideoUploaded) {
         topBarIcon = uploadingIcon();
       }
     });
+  }
+
+  setAlert() {
+    if (widget.segments[widget.segmentIndex].alerts != null) {
+      String roundAlert = widget.segments[widget.segmentIndex].alerts[timerEntries[timerTaskIndex].round + 1];
+      _roundAlert = roundAlert;
+    }
   }
 
   _startMovement() {
