@@ -972,9 +972,9 @@ class _SegmentClocksState extends State<SegmentClocks> {
   }
 
   setAlert() {
-    if (widget.segments[widget.segmentIndex].alerts != null) {
-      String roundAlert = widget.segments[widget.segmentIndex].alerts[timerEntries[timerTaskIndex].round + 1];
-      _roundAlert = roundAlert;
+    List<String> alerts = widget.segments[widget.segmentIndex].alerts;
+    if (alerts != null && !alerts.isEmpty) {
+      _roundAlert = alerts[timerEntries[timerTaskIndex].round + 1];
     }
   }
 
