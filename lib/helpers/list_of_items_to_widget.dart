@@ -164,12 +164,23 @@ class TransformListOfItemsToWidget {
     final List<InfoForSegments> listOfSegments = [];
     String className;
     String classImage;
+    int classIndex;
+    int courseIndex;
 
     for (final courseEnrollment in courseEnrollments) {
       for (final classToCheck in courseEnrollment.classes) {
         className = classToCheck.name;
         classImage = classToCheck.image;
-        final InfoForSegments infoForSegmentElement = InfoForSegments(classImage: classImage, className: className, segments: []);
+        classIndex = courseEnrollment.classes.indexOf(classToCheck);
+        courseIndex = courseEnrollments.indexOf(courseEnrollment);
+        final InfoForSegments infoForSegmentElement = InfoForSegments(
+          classImage: classImage,
+          courseEnrollment: courseEnrollment,
+          classIndex: classIndex,
+          courseIndex: courseIndex,
+          className: className,
+          segments: [],
+        );
         for (final segment in classToCheck.segments) {
           infoForSegmentElement.segments.add(segment);
         }
@@ -184,14 +195,20 @@ class TransformListOfItemsToWidget {
 
     for (final segment in segments) {
       for (final actualSegment in segment.segments) {
-        coachSegmentContent.add(CoachSegmentContent(
-            segmentId: actualSegment.id,
-            classImage: segment.classImage,
-            className: segment.className,
-            segmentName: actualSegment.name,
-            completedAt: actualSegment.completedAt,
-            segmentReference: actualSegment.reference,
-            isChallenge: actualSegment.isChallenge));
+        coachSegmentContent.add(
+          CoachSegmentContent(
+              segmentId: actualSegment.id,
+              classImage: segment.classImage,
+              className: segment.className,
+              segmentName: actualSegment.name,
+              completedAt: actualSegment.completedAt,
+              segmentReference: actualSegment.reference,
+              isChallenge: actualSegment.isChallenge,
+              indexClass: segment.classIndex,
+              indexCourse: segment.courseIndex,
+              indexSegment: segment.segments.indexOf(actualSegment),
+              courseEnrollment: segment.courseEnrollment),
+        );
       }
     }
     return coachSegmentContent;

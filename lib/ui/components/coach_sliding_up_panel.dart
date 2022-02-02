@@ -94,7 +94,7 @@ class _CoachSlidingUpPanelState extends State<CoachSlidingUpPanel> {
       backdropEnabled: true,
       padding: EdgeInsets.zero,
       color: OlukoNeumorphismColors.appBackgroundColor,
-      minHeight: 50.0,
+      minHeight: OlukoNeumorphism.isNeumorphismDesign ? 75 : 50,
       panel: Container(
         decoration: BoxDecoration(
           color: OlukoNeumorphismColors.appBackgroundColor,

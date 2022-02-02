@@ -282,5 +282,7 @@
     "lbs": "lbs",
     "cancelSession": "Cancelar la sesión?",
     "cancelMessage": "Esta acción paró la grabación. Deberas reiniciar la sesión desde el principio si quieres grabar el segmento.",
-    "restart": "Reiniciar"
+    "restart": "Reiniciar",
+    "reps": "Reps",
+    "reviewsPending": "revisión pendiente"
 }

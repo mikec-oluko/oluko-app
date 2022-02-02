@@ -283,5 +283,7 @@
     "lbs": "lbs",
     "cancelSession": "Cancel the session?",
     "cancelMessage": "This action stopped the recording. You will have to restart the session from beginning if you want to record the segment.",
-    "restart": "Re-Start"
+    "restart": "Re-Start",
+    "reps": "Reps",
+    "reviewsPending": "reviews pending"
 }

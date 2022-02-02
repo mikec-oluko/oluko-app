@@ -121,6 +121,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   bool waitingForSegSubCreation = false;
   CoachRequest _coachRequest;
   XFile videoRecorded;
+  bool _isFromChallenge = false;
 
   @override
   void initState() {
@@ -134,6 +135,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
     if (widget.segments[widget.segmentIndex].rounds != null) {
       scores = List<String>.filled(widget.segments[widget.segmentIndex].rounds, '-');
     }
+
+    setState(() {
+      _isFromChallenge = widget.fromChallenge ?? false;
+    });
     super.initState();
   }
 
@@ -509,7 +514,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
             'classIndex': widget.classIndex,
             'courseEnrollment': widget.courseEnrollment,
             'courseIndex': widget.courseIndex,
-            'fromChallenge': widget.fromChallenge
+            'fromChallenge': _isFromChallenge
           })
         : Navigator.popAndPushNamed(context, routeLabels[RouteEnum.completedClass], arguments: {
             'classIndex': widget.classIndex,
@@ -519,8 +524,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   }
 
   void goToClassAction() {
-    final bool isFromChallenge = widget.fromChallenge ?? false;
-    isFromChallenge ? () {} : Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.insideClass]));
+    _isFromChallenge ? () {} : Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.insideClass]));
 
     Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.insideClass],
         arguments: {'courseEnrollment': widget.courseEnrollment, 'classIndex': widget.classIndex, 'courseIndex': widget.courseIndex});
@@ -730,11 +734,14 @@ class _SegmentClocksState extends State<SegmentClocks> {
                   )),
               // const SizedBox(width: 25),
               if (isCounterByReps)
-                Text(
-                    OlukoNeumorphism.isNeumorphismDesign && ScreenUtils.height(context) < 700
-                        ? 'Reps'
-                        : timerEntries[timerTaskIndex - 1].movement.name,
-                    style: TextStyle(fontSize: 18, color: OlukoColors.white, overflow: TextOverflow.ellipsis, fontWeight: FontWeight.w300))
+                Expanded(
+                  child: Text(
+                      OlukoNeumorphism.isNeumorphismDesign && ScreenUtils.height(context) < 700
+                          ? OlukoLocalizations.get(context, 'reps')
+                          : timerEntries[timerTaskIndex - 1].movement.name,
+                      style:
+                          TextStyle(fontSize: 18, color: OlukoColors.white, overflow: TextOverflow.ellipsis, fontWeight: FontWeight.w300)),
+                )
               else
                 textController.value != null && textController.value.text != ""
                     ? Expanded(
