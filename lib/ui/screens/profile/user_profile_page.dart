@@ -4,8 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_bloc.dart';
 import 'package:oluko_app/blocs/course/course_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
 import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
-import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
 import 'package:oluko_app/blocs/profile/profile_bloc.dart';
 import 'package:oluko_app/blocs/profile/upload_avatar_bloc.dart';
@@ -34,7 +34,7 @@ import 'package:oluko_app/ui/components/course_card.dart';
 import 'package:oluko_app/ui/components/modal_upload_options.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
-import 'package:oluko_app/ui/components/open_settings_modal.dart';
+import 'package:oluko_app/ui/components/settings_dialog.dart';
 import 'package:oluko_app/ui/components/uploading_modal_loader.dart';
 import 'package:oluko_app/ui/components/uploading_modal_success.dart';
 import 'package:oluko_app/ui/components/user_profile_information.dart';
@@ -44,6 +44,7 @@ import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/permissions_utils.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
@@ -237,9 +238,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
         _panelController.close();
       }
       if (state is ProfileCoverRequirePermissions) {
-        _panelController
-            .close()
-            .then((value) => DialogUtils.getDialog(profileViewContext, [OpenSettingsModal(profileViewContext)], showExitButton: false));
+        _panelController.close().then((value) => PermissionsUtils.showSettingsMessage(context));
       }
       return _contentForPanel;
     });
@@ -268,9 +267,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
         _panelController.close();
       }
       if (state is ProfileAvatarRequirePermissions) {
-        _panelController
-            .close()
-            .then((value) => DialogUtils.getDialog(profileViewContext, [OpenSettingsModal(profileViewContext)], showExitButton: false));
+        _panelController.close().then((value) => PermissionsUtils.showSettingsMessage(context));
       }
       return _contentForPanel;
     });
@@ -317,10 +314,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
     );
   }
 
-  BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState> activeChallengesSlider() {
-    return BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(
+  BlocBuilder<CourseEnrollmentListStreamBloc, CourseEnrollmentListStreamState> activeChallengesSlider() {
+    return BlocBuilder<CourseEnrollmentListStreamBloc, CourseEnrollmentListStreamState>(
       builder: (context, state) {
-        if (state is CourseEnrollmentsByUserSuccess) {
+        if (state is CourseEnrollmentsByUserStreamSuccess) {
           ChallengeNavigation newChallenge;
           int classIndex;
           int segmentIndex;
@@ -396,10 +393,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
     );
   }
 
-  BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState> activeCoursesSlider() {
-    return BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(
+  BlocBuilder<CourseEnrollmentListStreamBloc, CourseEnrollmentListStreamState> activeCoursesSlider() {
+    return BlocBuilder<CourseEnrollmentListStreamBloc, CourseEnrollmentListStreamState>(
       builder: (context, state) {
-        if (state is CourseEnrollmentsByUserSuccess) {
+        if (state is CourseEnrollmentsByUserStreamSuccess) {
           _courseEnrollmentList = state.courseEnrollments.where((courseEnroll) => courseEnroll.isUnenrolled != true).toList();
         }
         return BlocBuilder<CourseBloc, CourseState>(
@@ -594,7 +591,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   void _requestContentForUser({BuildContext context, UserResponse userRequested}) {
     if (PrivacyOptions().canShowDetails(
         isOwner: _isCurrentUser, currentUser: _currentAuthUser, userRequested: _userProfileToDisplay, connectStatus: connectStatus)) {
-      BlocProvider.of<CourseEnrollmentListBloc>(context).getCourseEnrollmentsByUserId(userRequested.id);
+      BlocProvider.of<CourseEnrollmentListStreamBloc>(context).getStream(userRequested.id);
       BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionByUserId(userRequested.id);
       BlocProvider.of<CourseBloc>(context).getUserEnrolled(userRequested.id);
       BlocProvider.of<TransformationJourneyBloc>(context).getContentByUserId(userRequested.id);

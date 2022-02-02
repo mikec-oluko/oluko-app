@@ -9,7 +9,8 @@ class MovementItemBubbles extends StatefulWidget {
   final double width;
   final bool showAsGrid;
   final Function(BuildContext, Movement) onPressed;
-  MovementItemBubbles({this.content, this.width, this.onPressed, this.showAsGrid = false});
+  final bool isSegmentSection;
+  MovementItemBubbles({this.content, this.width, this.onPressed, this.showAsGrid = false, this.isSegmentSection = false});
   @override
   _MovementItemBubblesState createState() => _MovementItemBubblesState();
 }
@@ -67,6 +68,14 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            if(OlukoNeumorphism.isNeumorphismDesign)
+            StoriesItem(
+              maxRadius: widget.isSegmentSection ? 30 : 23,
+              imageUrl: imageUrl,
+              bloc: StoryListBloc(),
+              isSegmentSection: widget.isSegmentSection,
+            )
+            else
             StoriesItem(maxRadius: 23, imageUrl: imageUrl, bloc: StoryListBloc()),
             Padding(
               padding: const EdgeInsets.only(top: 8.0),

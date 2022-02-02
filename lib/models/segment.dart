@@ -11,6 +11,7 @@ class Segment extends Base {
   int initialTimer;
   SegmentTypeEnum type;
   int rounds;
+  List<String> alerts;
   int totalTime;
   bool isPublished;
   List<SectionSubmodel> sections;
@@ -30,6 +31,7 @@ class Segment extends Base {
       this.challengeVideo,
       this.challengeImage,
       this.type,
+      this.alerts,
       String id,
       Timestamp createdAt,
       String createdBy,
@@ -68,6 +70,11 @@ class Segment extends Base {
         initialTimer: json['initial_timer'] as int,
         isPublished: json['is_published'] as bool,
         type: json['type'] == null ? null : SegmentTypeEnum.values[json['type'] as int],
+        alerts: json['alerts'] == null || json['alerts'].runtimeType == String
+            ? null
+            : json['alerts'] is String
+                ? [json['alerts'] as String]
+                : List<String>.from((json['alerts'] as Iterable).map((alert) => alert as String)),
         sections: json['sections'] == null
             ? null
             : List<SectionSubmodel>.from(
@@ -88,6 +95,7 @@ class Segment extends Base {
       'is_published': isPublished,
       'is_challenge': isChallenge,
       'challenge_image': challengeImage,
+      'alerts': alerts == null ? null : alerts,
       'type': type == null ? null : type.index,
       'movements': sections == null ? null : List<dynamic>.from(sections.map((section) => section.toJson()))
     };

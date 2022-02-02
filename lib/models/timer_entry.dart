@@ -10,7 +10,8 @@ class TimerEntry {
       this.value,
       this.round,
       this.sectionIndex,
-      this.counter});
+      this.counter,
+      this.stopwatch});
 
   MovementSubmodel movement;
   List<String> labels;
@@ -19,4 +20,5 @@ class TimerEntry {
   int value;
   CounterEnum counter;
   int sectionIndex;
+  bool stopwatch;
 }

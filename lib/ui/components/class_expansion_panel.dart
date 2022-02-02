@@ -2,13 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/class.dart';
+import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/movement.dart';
+import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/submodels/class_item.dart';
 import 'package:oluko_app/services/class_service.dart';
 import 'package:oluko_app/ui/components/challenge_section.dart';
 import 'package:oluko_app/ui/components/class_section.dart';
 import 'package:oluko_app/ui/components/course_segment_section.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
+import 'package:oluko_app/ui/newDesignComponents/class_section_expansion_panel.dart';
+import 'package:oluko_app/ui/screens/courses/custom_expansion_panel_list.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
 class ClassExpansionPanel extends StatefulWidget {
@@ -39,7 +43,13 @@ class _State extends State<ClassExpansionPanel> {
 
   @override
   Widget build(BuildContext context) {
-    //_classItems = generateClassItems();
+    if (OlukoNeumorphism.isNeumorphismDesign)
+      return expansionPanelNeumorphic();
+    else
+      return expansionPanel();
+  }
+
+  Widget expansionPanel() {
     return _classItems.length > 0
         ? ExpansionPanelList(
             expansionCallback: (int index, bool isExpanded) {
@@ -74,6 +84,45 @@ class _State extends State<ClassExpansionPanel> {
               child: TitleBody(OlukoLocalizations.get(context, "noClasses")),
             ),
           );
+  }
+
+  Widget expansionPanelNeumorphic() {
+    if (_classItems.isNotEmpty) {
+      return CustomExpansionPanelList(
+        expansionCallback: (int index, bool isExpanded) {
+          setState(() {
+            _classItems[index].expanded = !_classItems[index].expanded;
+          });
+        },
+        children: _classItems.map<ExpansionPanel>((ClassItem item) {
+          return ExpansionPanel(
+            canTapOnHeader: true,
+            backgroundColor:
+                OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDarker : OlukoColors.black,
+            headerBuilder: (BuildContext context, bool isExpanded) {
+              return Padding(
+                padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.only(left: 15.0) : const EdgeInsets.only(left: 0),
+                child: ClassSectionExpansionPanel(
+                  index: _classItems.indexOf(item),
+                  total: _classItems.length,
+                  classObj: item.classObj,
+                  onPressed: () {},
+                ),
+              );
+            },
+            body: _subClassItems[_classItems.indexOf(item)],
+            isExpanded: item.expanded,
+          );
+        }).toList(),
+      );
+    } else {
+      return Center(
+        child: Padding(
+          padding: EdgeInsets.only(top: 10),
+          child: TitleBody(OlukoLocalizations.get(context, "noClasses")),
+        ),
+      );
+    }
   }
 
   List<Widget> generateSubClassItems() {

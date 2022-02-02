@@ -16,7 +16,7 @@ class SectionSubmodel {
                   MovementSubmodel.fromJson(movement as Map<String, dynamic>))),
       estimatedTime:
           json['estimated_time'] == null ? null : json['estimated_time'] as int,
-      stopwatch: json['stopwatch'] == null ? null : json['stopwatch'] as bool,
+      stopwatch: json['stopwatch'] == null ? false : json['stopwatch'] as bool,
     );
   }
 

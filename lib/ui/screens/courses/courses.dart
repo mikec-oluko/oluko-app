@@ -10,7 +10,7 @@ import 'package:oluko_app/blocs/course/course_bloc.dart';
 import 'package:oluko_app/blocs/course/course_subscrption_bloc.dart';
 import 'package:oluko_app/blocs/course_category_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_bloc.dart';
-import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
 import 'package:oluko_app/blocs/favorite_bloc.dart';
 import 'package:oluko_app/blocs/recommendation_bloc.dart';
 import 'package:oluko_app/blocs/tag_bloc.dart';
@@ -344,11 +344,10 @@ class _State extends State<Courses> {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
       if (authState is AuthSuccess) {
         AuthSuccess authSuccess = authState;
-        return BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(
-            bloc: BlocProvider.of<CourseEnrollmentListBloc>(context)
-              ..getCourseEnrollmentsByUser(authSuccess.user.id ?? authSuccess.user.firebaseId),
+        return BlocBuilder<CourseEnrollmentListStreamBloc, CourseEnrollmentListStreamState>(
+            bloc: BlocProvider.of<CourseEnrollmentListStreamBloc>(context)..getStream(authSuccess.user.id ?? authSuccess.user.firebaseId),
             builder: (context, courseEnrollmentState) {
-              if (courseEnrollmentState is CourseEnrollmentsByUserSuccess && (courseEnrollmentState.courseEnrollments.isNotEmpty)) {
+              if (courseEnrollmentState is CourseEnrollmentsByUserStreamSuccess && (courseEnrollmentState.courseEnrollments.isNotEmpty)) {
                 return CarouselSection(
                   title: OlukoLocalizations.get(context, 'activeCourses'),
                   height: carouselSectionHeight + 10,
