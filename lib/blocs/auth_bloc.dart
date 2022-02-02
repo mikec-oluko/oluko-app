@@ -29,6 +29,7 @@ import 'coach/coach_review_pending_bloc.dart';
 import 'coach/coach_sent_videos_bloc.dart';
 import 'course/course_subscrption_bloc.dart';
 import 'course_enrollment/course_enrollment_list_bloc.dart';
+import 'course_enrollment/course_enrollment_list_stream_bloc.dart';
 
 abstract class AuthState {}
 
@@ -237,7 +238,7 @@ class AuthBloc extends Cubit<AuthState> {
       BlocProvider.of<StoryListBloc>(context).dispose();
       BlocProvider.of<CoachSentVideosBloc>(context).dispose();
       BlocProvider.of<CoachReviewPendingBloc>(context).dispose();
-      BlocProvider.of<CourseEnrollmentListBloc>(context).dispose();
+      BlocProvider.of<CourseEnrollmentListStreamBloc>(context).dispose();
       BlocProvider.of<CourseSubscriptionBloc>(context).dispose();
       BlocProvider.of<CourseCategoryBloc>(context).dispose();
       if (OlukoNeumorphism.isNeumorphismDesign) {

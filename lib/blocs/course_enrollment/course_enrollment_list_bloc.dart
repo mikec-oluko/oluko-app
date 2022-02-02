@@ -20,11 +20,6 @@ class CourseEnrollmentsByUserSuccess extends CourseEnrollmentListState {
   CourseEnrollmentsByUserSuccess({this.courseEnrollments});
 }
 
-class CourseEnrollmentsByUserUpdate extends CourseEnrollmentListState {
-  final List<CourseEnrollment> courseEnrollments;
-  CourseEnrollmentsByUserUpdate({this.courseEnrollments});
-}
-
 class GetCourseEnrollmentUpdate extends CourseEnrollmentListState {
   final List<CourseEnrollment> courseEnrollments;
   GetCourseEnrollmentUpdate({this.courseEnrollments});
@@ -32,15 +27,6 @@ class GetCourseEnrollmentUpdate extends CourseEnrollmentListState {
 
 class CourseEnrollmentListBloc extends Cubit<CourseEnrollmentListState> {
   CourseEnrollmentListBloc() : super(Loading());
-
-  StreamSubscription<QuerySnapshot<Map<String, dynamic>>> subscription;
-  @override
-  void dispose() {
-    if (subscription != null) {
-      subscription.cancel();
-      subscription = null;
-    }
-  }
 
   void getCourseEnrollmentsByUser(String userId) async {
     try {
@@ -82,19 +68,5 @@ class CourseEnrollmentListBloc extends Cubit<CourseEnrollmentListState> {
       emit(Failure(exception: exception));
       rethrow;
     }
-  }
-
-  StreamSubscription<QuerySnapshot<Map<String, dynamic>>> getStream(String userId) {
-    subscription ??= CourseEnrollmentRepository.getUserCourseEnrollmentsSubscription(userId).listen((snapshot) async {
-      List<CourseEnrollment> courseEnrollments = [];
-      snapshot.docs.forEach((doc) {
-        final Map<String, dynamic> content = doc.data();
-        courseEnrollments.add(CourseEnrollment.fromJson(content));
-      });
-      emit(CourseEnrollmentsByUserSuccess(
-          courseEnrollments:
-              courseEnrollments.where((element) => element.completion < 1).where((element) => element.isUnenrolled != true).toList()));
-    });
-    return subscription;
   }
 }
