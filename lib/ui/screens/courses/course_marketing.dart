@@ -217,15 +217,15 @@ class _CourseMarketingState extends State<CourseMarketing> {
                         ),
                       ))),
               SliverToBoxAdapter(
-                child: /*OlukoVideoPreview(
+                child: OlukoVideoPreview(
                   image: widget.course.image,
                   video: widget.course.video,
                   onBackPressed: () => Navigator.pop(context),
                   onPlay: () => widget.isVideoPlaying(),
                   videoVisibilty: _isVideoPlaying,
-                ),*/
-                    OverlayVideoPreview(
-                        image: widget.course.image, video: widget.course.video, onBackPressed: () => Navigator.pop(context)),
+                ),
+                   /* OverlayVideoPreview(
+                        image: widget.course.image, video: widget.course.video, onBackPressed: () => Navigator.pop(context)),*/
               ),
               SliverPersistentHeader(
                   pinned: true,

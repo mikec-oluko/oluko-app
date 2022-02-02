@@ -92,7 +92,7 @@ import 'package:oluko_app/ui/screens/courses/completed_class.dart';
 import 'package:oluko_app/ui/screens/courses/course_marketing.dart';
 import 'package:oluko_app/ui/screens/courses/courses.dart';
 import 'package:oluko_app/ui/screens/courses/enrolled_class.dart';
-import 'package:oluko_app/ui/screens/courses/enrolled_course_item.dart';
+import 'package:oluko_app/ui/screens/courses/enrolled_course.dart';
 import 'package:oluko_app/ui/screens/courses/explore_subscribed_users.dart';
 import 'package:oluko_app/ui/screens/courses/inside_class.dart';
 import 'package:oluko_app/ui/screens/courses/movement_intro.dart';

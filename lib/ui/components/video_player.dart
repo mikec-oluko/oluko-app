@@ -20,6 +20,7 @@ class OlukoVideoPlayer extends StatefulWidget {
   
   final Function(ChewieController chewieController) whenInitialized;
   final Function() onVideoFinished;
+  final Function() closeVideoPlayer;
 
   OlukoVideoPlayer({
     this.videoUrl =
@@ -33,7 +34,8 @@ class OlukoVideoPlayer extends StatefulWidget {
     this.aspectRatio,
     Key key,
     this.allowFullScreen = true,
-    this.isOlukoControls = false,
+    this.isOlukoControls = false, 
+    this.closeVideoPlayer,
   }) : super(key: key);
 
   @override
@@ -60,6 +62,13 @@ class _OlukoVideoPlayerState extends State<OlukoVideoPlayer> {
       _controller.addListener(() {
         if (_controller.value.position == _controller.value.duration) {
           widget.onVideoFinished();
+        }
+      });
+    }
+    if (widget.closeVideoPlayer != null) {
+      _controller.addListener(() {
+        if (_controller.value.position == _controller.value.duration) {
+          widget.closeVideoPlayer();
         }
       });
     }
