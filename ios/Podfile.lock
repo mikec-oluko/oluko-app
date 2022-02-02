@@ -353,7 +353,7 @@ PODS:
   - BoringSSL-GRPC/Interface (0.0.7)
   - camera (0.0.1):
     - Flutter
-  - cloud_firestore (2.2.2):
+  - cloud_firestore (2.5.4):
     - Firebase/Firestore (= 8.11.0)
     - firebase_core
     - Flutter
@@ -391,11 +391,11 @@ PODS:
   - firebase_core (1.12.0):
     - Firebase/CoreOnly (= 8.11.0)
     - Flutter
-  - firebase_database (8.0.0):
+  - firebase_database (8.2.0):
     - Firebase/Database (= 8.11.0)
     - firebase_core
     - Flutter
-  - firebase_storage (10.0.5):
+  - firebase_storage (10.2.6):
     - Firebase/Storage (= 8.11.0)
     - firebase_core
     - Flutter
@@ -468,9 +468,10 @@ PODS:
     - Mantle
     - SDWebImage
     - SDWebImageWebPCoder
-  - flutter_sound_lite (8.3.9):
+  - flutter_sound_core (8.5.0)
+  - flutter_sound_lite (8.5.0):
     - Flutter
-    - tau_core (= 8.3.9)
+    - flutter_sound_core (= 8.5.0)
   - FMDB (2.7.5):
     - FMDB/standard (= 2.7.5)
   - FMDB/standard (2.7.5)
@@ -577,7 +578,7 @@ PODS:
   - nanopb/encode (2.30908.0)
   - package_info_plus (0.4.5):
     - Flutter
-  - path_provider (0.0.1):
+  - path_provider_ios (0.0.1):
     - Flutter
   - "permission_handler (5.1.0+2)":
     - Flutter
@@ -595,12 +596,11 @@ PODS:
     - Flutter
     - FlutterMacOS
     - Sentry (~> 7.1.3)
-  - shared_preferences (0.0.1):
+  - shared_preferences_ios (0.0.1):
     - Flutter
   - sqflite (0.0.2):
     - Flutter
     - FMDB (>= 2.7.5)
-  - tau_core (8.3.9)
   - video_player (0.0.1):
     - Flutter
   - wakelock (0.0.1):
@@ -626,10 +626,10 @@ DEPENDENCIES:
   - image_picker (from `.symlinks/plugins/image_picker/ios`)
   - in_app_purchase_ios (from `.symlinks/plugins/in_app_purchase_ios/ios`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
-  - path_provider (from `.symlinks/plugins/path_provider/ios`)
+  - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
   - permission_handler (from `.symlinks/plugins/permission_handler/ios`)
   - sentry_flutter (from `.symlinks/plugins/sentry_flutter/ios`)
-  - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
+  - shared_preferences_ios (from `.symlinks/plugins/shared_preferences_ios/ios`)
   - sqflite (from `.symlinks/plugins/sqflite/ios`)
   - video_player (from `.symlinks/plugins/video_player/ios`)
   - wakelock (from `.symlinks/plugins/wakelock/ios`)
@@ -653,6 +653,7 @@ SPEC REPOS:
     - FirebaseFirestore
     - FirebaseInstallations
     - FirebaseStorage
+    - flutter_sound_core
     - FMDB
     - GoogleAppMeasurement
     - GoogleDataTransport
@@ -671,7 +672,6 @@ SPEC REPOS:
     - SDWebImage
     - SDWebImageWebPCoder
     - Sentry
-    - tau_core
 
 EXTERNAL SOURCES:
   audioplayers:
@@ -706,14 +706,14 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/in_app_purchase_ios/ios"
   package_info_plus:
     :path: ".symlinks/plugins/package_info_plus/ios"
-  path_provider:
-    :path: ".symlinks/plugins/path_provider/ios"
+  path_provider_ios:
+    :path: ".symlinks/plugins/path_provider_ios/ios"
   permission_handler:
     :path: ".symlinks/plugins/permission_handler/ios"
   sentry_flutter:
     :path: ".symlinks/plugins/sentry_flutter/ios"
-  shared_preferences:
-    :path: ".symlinks/plugins/shared_preferences/ios"
+  shared_preferences_ios:
+    :path: ".symlinks/plugins/shared_preferences_ios/ios"
   sqflite:
     :path: ".symlinks/plugins/sqflite/ios"
   video_player:
@@ -729,7 +729,7 @@ SPEC CHECKSUMS:
   audioplayers: 455322b54050b30ea4b1af7cd9e9d105f74efa8c
   BoringSSL-GRPC: 8edf627ee524575e2f8d19d56f068b448eea3879
   camera: a0ca5080336f7af47b88436e5e26da3dee5568f0
-  cloud_firestore: cd7f0ea10bc717e1f4663980511507bee18d7dbf
+  cloud_firestore: b6f2881c2ab05197836bf773780c1b9ba4411156
   FBAEMKit: 56c0bb9b42e3747cd82b67934f0c2b19325382ea
   FBSDKCoreKit: 75368765d9c2303073145a7925dfaa9d60bcd77b
   FBSDKCoreKit_Basics: 39865aff97e5f6951a78fb3e89dc4460e35e1895
@@ -737,8 +737,8 @@ SPEC CHECKSUMS:
   Firebase: 44dd9724c84df18b486639e874f31436eaa9a20c
   firebase_auth: ccdb84a0d52a2d7897898ae8121689da6e13d71f
   firebase_core: 443bccfd6aa6b42f07be365b500773dc69db2d87
-  firebase_database: b10c49a9f4dc0149973f869243a68e25a1d0d801
-  firebase_storage: 4b7f14ca7de98ad1ee7aa2f1cefeae955dab4648
+  firebase_database: fc6464cdd48087835584f3af4c23ca1c62a5ca6c
+  firebase_storage: e1ac35b46a4ead41de4d8d6dd44728c476fb87b3
   FirebaseAnalytics: 4e4b13031034e6561ed3bd1d47b6fdabbd6487c6
   FirebaseAuth: d96d73aba85d192d7a7aa0b86dd6d7f8ec170b4b
   FirebaseCore: 2f4f85b453cc8fea4bb2b37e370007d2bcafe3f0
@@ -751,7 +751,8 @@ SPEC CHECKSUMS:
   flutter_facebook_auth: dfd6b2563406c538098e2127512d385c9ffd70ad
   flutter_ffmpeg: 3ec3912c74649851e6c3b1885511eef78142ac4f
   flutter_image_compress: fd2b476345226e1a10ea352fa306af95704642c1
-  flutter_sound_lite: 8b52ef1cb71c88a0d55f14eaaaf498659f22b8c2
+  flutter_sound_core: d9396f10752a0df9aa3197f4c431d62d934918cc
+  flutter_sound_lite: 175808b357d0b3eeee1345843545bb2fbde06e6c
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   google_sign_in: c5cecea71f3be43282263550556e311c4cc03582
   GoogleAppMeasurement: aa3cb422fab2b05d2efac543a5720d1a85b9dea5
@@ -763,27 +764,26 @@ SPEC CHECKSUMS:
   GTMAppAuth: ad5c2b70b9a8689e1a04033c9369c4915bfcbe89
   GTMSessionFetcher: 43748f93435c2aa068b1cbe39655aaf600652e91
   image_picker: 0d37d1cb66231c2473a0e3ccb8d062d0c2b3d297
-  in_app_purchase_ios: 18c65275991b8a28b2a47634a7797fb23d5d773e
+  in_app_purchase_ios: 04ed55fdd1012db54095d6801335b5f5de0a475f
   leveldb-library: 50c7b45cbd7bf543c81a468fe557a16ae3db8729
   libwebp: 98a37e597e40bfdb4c911fc98f2c53d0b12d05fc
   Mantle: c5aa8794a29a022dfbbfc9799af95f477a69b62d
   mobile-ffmpeg-min-gpl: 123f47d1bd9ec498688627a5be2621bcd6e88a01
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   package_info_plus: 6c92f08e1f853dc01228d6f553146438dafcd14e
-  path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
+  path_provider_ios: 7d7ce634493af4477d156294792024ec3485acd5
   permission_handler: ccb20a9fad0ee9b1314a52b70b76b473c5f8dab0
   PromisesObjC: 68159ce6952d93e17b2dfe273b8c40907db5ba58
   SDWebImage: 53179a2dba77246efa8a9b85f5c5b21f8f43e38f
   SDWebImageWebPCoder: f93010f3f6c031e2f8fb3081ca4ee6966c539815
   Sentry: 1d3eb1a25f8c5333c88dd5603904a6d461cd9fcf
   sentry_flutter: f20d4f199442900fbdab2b8496f1d2091d8b94d9
-  shared_preferences: 5033afbb22d372e15aff8ff766df9021b845f273
+  shared_preferences_ios: aef470a42dc4675a1cdd50e3158b42e3d1232b32
   sqflite: 6d358c025f5b867b29ed92fc697fd34924e11904
-  tau_core: f7bbd1c6a632f52c2fa7c14feea385ab966b1e45
-  video_player: ecd305f42e9044793efd34846e1ce64c31ea6fcb
+  video_player: 7e9dad9437c238a97648819f6dd443c8854cf0c7
   wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
   webview_flutter: d2b4d6c66968ad042ad94cbb791f5b72b4678a96
 
-PODFILE CHECKSUM: 043178726e2bc6909a8e6b75aea1b95769aa56ba
+PODFILE CHECKSUM: 4ac1baa29b4eb2bd3c33dd1640730c9f87323e7c
 
 COCOAPODS: 1.11.2

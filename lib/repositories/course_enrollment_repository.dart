@@ -335,4 +335,24 @@ class CourseEnrollmentRepository {
         .snapshots();
     return courseEnrollmentsStream;
   }
+
+  static Future<void> saveSectionStopwatch(CourseEnrollment courseEnrollment, int segmentIndex, int classIndex, int sectionIndex,
+      int totalRounds, int currentRound, int stopwatch) async {
+    final DocumentReference reference = FirebaseFirestore.instance
+        .collection('projects')
+        .doc(GlobalConfiguration().getValue('projectId'))
+        .collection('courseEnrollments')
+        .doc(courseEnrollment.id);
+
+    final List<EnrollmentClass> classes = courseEnrollment.classes;
+
+    final EnrollmentSection section = classes[classIndex].segments[segmentIndex].sections[sectionIndex];
+
+    if (section.stopwatchs == null) {
+      section.stopwatchs = List<int>.filled(totalRounds, 0);
+    }
+    section.stopwatchs[currentRound] = stopwatch;
+
+    reference.update({'classes': List<dynamic>.from(classes.map((c) => c.toJson()))});
+  }
 }

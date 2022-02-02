@@ -86,7 +86,7 @@ class _State extends State<MovementVideosSection> {
 
   List<Movement> getSegmentMovements() {
     List<String> movementIds = [];
-    List<Movement> movements = [];
+
     widget.segment.sections.forEach((section) {
       section.movements.forEach((MovementSubmodel movement) {
         if (!movement.isRestTime) {
@@ -94,9 +94,11 @@ class _State extends State<MovementVideosSection> {
         }
       });
     });
+    List<Movement> movements = List<Movement>.filled(movementIds.length, null);
     widget.movements.forEach((movement) {
-      if (movementIds.contains(movement.id)) {
-        movements.add(movement);
+      int index = movementIds.indexOf(movement.id);
+      if (index > -1) {
+        movements[index] = movement;
       }
     });
     return movements;
