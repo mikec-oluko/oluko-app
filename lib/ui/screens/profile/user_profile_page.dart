@@ -339,7 +339,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                       classIndex: classIndex,
                       classId: enrolledClass.id,
                       courseIndex: courseIndex,
-                      previousSegmentFinish: courseEnrolled.classes[classIndex].segments[segmentIndex - 1].completedAt != null);
+                      previousSegmentFinish: segmentIndex == 0 ? true : courseEnrolled.classes[classIndex].segments[segmentIndex - 1].completedAt != null,);
 
                   if (listOfChallenges.isEmpty) {
                     if (newChallenge != null) {
