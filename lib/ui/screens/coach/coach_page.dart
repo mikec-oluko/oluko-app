@@ -14,6 +14,7 @@ import 'package:oluko_app/blocs/coach/coach_sent_videos_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_timeline_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_user_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
 import 'package:oluko_app/blocs/task_bloc.dart';
 import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
@@ -155,9 +156,9 @@ class _CoachPageState extends State<CoachPage> {
                   showSearchBar: false,
                   showTitle: true,
                 ),
-                body: BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(
+                body: BlocBuilder<CourseEnrollmentListStreamBloc, CourseEnrollmentListStreamState>(
                   builder: (context, state) {
-                    if (state is CourseEnrollmentsByUserSuccess) {
+                    if (state is CourseEnrollmentsByUserStreamSuccess) {
                       _courseEnrollmentList = state.courseEnrollments.where((courseEnroll) => courseEnroll.isUnenrolled != true).toList();
                     }
                     return BlocConsumer<CoachMentoredVideosBloc, CoachMentoredVideosState>(
@@ -302,15 +303,14 @@ class _CoachPageState extends State<CoachPage> {
     BlocProvider.of<CoachRecommendationsBloc>(context).getStream(_currentAuthUser.id, widget.coachAssignment.coachId);
     BlocProvider.of<CoachMentoredVideosBloc>(context).getStream(_currentAuthUser.id, widget.coachAssignment.coachId);
     BlocProvider.of<CoachTimelineItemsBloc>(context).getStream(_currentAuthUser.id);
-    BlocProvider.of<CourseEnrollmentListBloc>(context).getCourseEnrollmentsByUserId(_currentAuthUser.id);
     BlocProvider.of<UserStatisticsBloc>(context).getUserStatistics(_currentAuthUser.id);
     BlocProvider.of<CoachSentVideosBloc>(context).getSentVideosByUserId(_currentAuthUser.id);
   }
 
   Widget coachViewPageContent(BuildContext context) {
-    return BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(
+    return BlocBuilder<CourseEnrollmentListStreamBloc, CourseEnrollmentListStreamState>(
       builder: (context, state) {
-        if (state is CourseEnrollmentsByUserSuccess) {
+        if (state is CourseEnrollmentsByUserStreamSuccess) {
           _courseEnrollmentList = state.courseEnrollments.where((courseEnroll) => courseEnroll.isUnenrolled != true).toList();
           _segmentsFromCourseEnrollmentClasses = TransformListOfItemsToWidget.segments(_courseEnrollmentList);
           _allSegmentsForUser = TransformListOfItemsToWidget.createSegmentContentInforamtion(_segmentsFromCourseEnrollmentClasses);
