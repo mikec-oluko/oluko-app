@@ -85,7 +85,8 @@ class _OverlayVideoPreviewState extends State<OverlayVideoPreview> {
                             width: 52,
                             height: 52,
                             child: Image.asset(
-                              'assets/courses/left_back_arrow.png',scale: 3.5,
+                              'assets/courses/left_back_arrow.png',
+                              scale: 3.5,
                             )),
                       )) /*IconButton(
                     icon: Icon(Icons.chevron_left, size: 35, color: Colors.white),
@@ -124,15 +125,20 @@ class _OverlayVideoPreviewState extends State<OverlayVideoPreview> {
     return Stack(alignment: Alignment.center, children: [
       AspectRatio(
           aspectRatio: 1,
-          child: widget.randomImages == null
-              ? Image.asset(
-                  'assets/courses/profile_photos.png',
+          child: widget.image != null
+              ? Image(
+                  image: CachedNetworkImageProvider(widget.image),
                   fit: BoxFit.cover,
                 )
-              : Image(
-                  image: CachedNetworkImageProvider(widget.randomImages[random(0, widget.randomImages.length - 1)]),
-                  fit: BoxFit.cover,
-                )),
+              : widget.randomImages == null
+                  ? Image.asset(
+                      'assets/courses/profile_photos.png',
+                      fit: BoxFit.cover,
+                    )
+                  : Image(
+                      image: CachedNetworkImageProvider(widget.randomImages[random(0, widget.randomImages.length - 1)]),
+                      fit: BoxFit.cover,
+                    )),
       if (widget.video != null && widget.video != "null")
         Padding(
             padding: const EdgeInsets.only(bottom: 16),

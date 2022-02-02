@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -144,15 +145,20 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
     return Stack(alignment: Alignment.center, children: [
       AspectRatio(
           aspectRatio: 480 / 600,
-          child: widget.randomImages == null
-              ? Image.asset(
-                  'assets/courses/profile_photos.png',
+          child: widget.image != null
+              ? Image(
+                  image: CachedNetworkImageProvider(widget.image),
                   fit: BoxFit.cover,
                 )
-              : Image.network(
-                  widget.randomImages[random(0, widget.randomImages.length - 1)],
-                  fit: BoxFit.cover,
-                )),
+              : widget.randomImages == null
+                  ? Image.asset(
+                      'assets/courses/profile_photos.png',
+                      fit: BoxFit.cover,
+                    )
+                  : Image(
+                      image: CachedNetworkImageProvider(widget.randomImages[random(0, widget.randomImages.length - 1)]),
+                      fit: BoxFit.cover,
+                    )),
       if (widget.video != null)
         AspectRatio(
           aspectRatio: 480 / 600,
@@ -195,6 +201,7 @@ class _OlukoVideoPreviewState extends State<OlukoVideoPreview> {
     }
     widgets.add(
       OlukoVideoPlayer(
+        closeVideoPlayer: () => widget.onPlay(),
         isOlukoControls: true,
         videoUrl: videoUrl,
         whenInitialized: (ChewieController chewieController) => setState(() {
