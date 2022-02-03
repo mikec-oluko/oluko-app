@@ -22,7 +22,7 @@ class TitleHeader extends StatelessWidget {
                   ? 20
                   : 30
               : 30,
-          fontWeight: bold ? FontWeight.bold : FontWeight.w200,
+          fontWeight: bold ? FontWeight.bold : FontWeight.w400,
           color: isNeumorphic ? OlukoColors.grayColor : Colors.white),
     );
   }
