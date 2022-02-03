@@ -407,6 +407,7 @@ class _CoachPageState extends State<CoachPage> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: ListView(
+                      physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                       padding: EdgeInsets.zero,
                       shrinkWrap: true,
                       scrollDirection: Axis.vertical,
@@ -436,14 +437,19 @@ class _CoachPageState extends State<CoachPage> {
             return OlukoNeumorphism.isNeumorphismDesign
                 ? Padding(
                     padding: paddingTopForElements.copyWith(left: 20, right: 20),
-                    child: ListView(padding: EdgeInsets.zero, shrinkWrap: true, scrollDirection: Axis.vertical, children: [
-                      Wrap(
-                          alignment: WrapAlignment.center,
-                          children: TransformListOfItemsToWidget.getAssessmentCards(
-                              tasks: _tasks,
-                              tasksSubmitted: _assessmentVideosContent,
-                              introductionVideoDone: widget.coachAssignment.introductionCompleted))
-                    ]),
+                    child: ListView(
+                        padding: EdgeInsets.zero,
+                        shrinkWrap: true,
+                        scrollDirection: Axis.vertical,
+                        physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                        children: [
+                          Wrap(
+                              alignment: WrapAlignment.center,
+                              children: TransformListOfItemsToWidget.getAssessmentCards(
+                                  tasks: _tasks,
+                                  tasksSubmitted: _assessmentVideosContent,
+                                  introductionVideoDone: widget.coachAssignment.introductionCompleted))
+                        ]),
                   )
                 : CoachHorizontalCarousel(
                     contentToDisplay: TransformListOfItemsToWidget.getAssessmentCards(
