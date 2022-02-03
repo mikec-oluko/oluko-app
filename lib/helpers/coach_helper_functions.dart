@@ -1,10 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:oluko_app/helpers/coach_notification_content.dart';
+import 'package:oluko_app/helpers/coach_timeline_content.dart';
+import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/models/annotation.dart';
 import 'package:oluko_app/models/coach_assignment.dart';
 import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/coach_timeline_item.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/submodels/video.dart';
+import 'package:oluko_app/ui/components/coach_content_preview_content.dart';
+import 'package:oluko_app/ui/components/coach_content_section_card.dart';
+import 'package:oluko_app/ui/components/coach_notification_panel_content_card.dart';
+import 'package:oluko_app/utils/oluko_localizations.dart';
 
 import 'coach_recommendation_default.dart';
 
@@ -109,5 +117,52 @@ class CoachHelperFunctions {
       }
     });
     return actualTimelineContent;
+  }
+
+  static List<CoachRecommendationDefault> getRecommendedContentByType(List<CoachRecommendationDefault> coachRecommendations,
+      TimelineInteractionType contentTypeRequired, List<CoachRecommendationDefault> listToFill) {
+    for (CoachRecommendationDefault recommendation in coachRecommendations) {
+      if (TimelineContentOption.getTimelineOption(recommendation.contentTypeIndex as int) == contentTypeRequired) {
+        listToFill.add(recommendation);
+      }
+    }
+    return listToFill;
+  }
+
+  static List<Widget> notificationsWidget(
+      List<CoachNotificationContent> contentForNotificationPanel, List<Widget> carouselContent, String coachId, String userId) {
+    contentForNotificationPanel.forEach((notificationContent) {
+      carouselContent.add(CoachNotificationPanelContentCard(
+        content: notificationContent,
+        coachId: coachId,
+        userId: userId,
+      ));
+    });
+    return carouselContent;
+  }
+
+  static Widget sentVideosSection(
+      {BuildContext context, List<SegmentSubmission> sentVideosContent, bool introductionCompleted, Function onNavigation}) {
+    return sentVideosContent != null && sentVideosContent.isNotEmpty
+        ? CoachContentPreviewComponent(
+            contentFor: CoachContentSection.sentVideos,
+            titleForSection: OlukoLocalizations.get(context, 'sentVideos'),
+            segmentSubmissionContent: sentVideosContent,
+            onNavigation: () => !introductionCompleted ? onNavigation : () {},
+          )
+        : CoachContentSectionCard(
+            title: OlukoLocalizations.get(context, 'sentVideos'),
+          );
+  }
+
+  static Widget mentoredVideosSection(
+      {BuildContext context, List<Annotation> annotation, bool introFinished, Function onNavigation, bool isForCarousel}) {
+    return annotation != null && annotation.isNotEmpty
+        ? CoachContentPreviewComponent(
+            contentFor: CoachContentSection.mentoredVideos,
+            titleForSection: OlukoLocalizations.get(context, 'mentoredVideos'),
+            coachAnnotationContent: annotation,
+            onNavigation: () => !introFinished ? onNavigation : () {})
+        : CoachContentSectionCard(title: OlukoLocalizations.get(context, 'mentoredVideos'));
   }
 }

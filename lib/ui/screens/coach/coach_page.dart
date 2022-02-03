@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/assessment_bloc.dart';
@@ -38,7 +37,6 @@ import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/enums/status_enum.dart';
 import 'package:oluko_app/models/recommendation_media.dart';
 import 'package:oluko_app/models/segment_submission.dart';
-import 'package:oluko_app/models/submodels/video.dart';
 import 'package:oluko_app/models/task.dart';
 import 'package:oluko_app/models/task_submission.dart';
 import 'package:oluko_app/models/user_response.dart';
@@ -48,7 +46,6 @@ import 'package:oluko_app/ui/components/coach_carousel_section.dart';
 import 'package:oluko_app/ui/components/coach_content_preview_content.dart';
 import 'package:oluko_app/ui/components/coach_content_section_card.dart';
 import 'package:oluko_app/ui/components/coach_horizontal_carousel_component.dart';
-import 'package:oluko_app/ui/components/coach_notification_panel_content_card.dart';
 import 'package:oluko_app/ui/components/coach_sliding_up_panel.dart';
 import 'package:oluko_app/ui/components/coach_user_progress_card.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
@@ -220,6 +217,7 @@ class _CoachPageState extends State<CoachPage> {
                                   builder: (context, state) {
                                     if (state is CoachRecommendationsSuccess) {
                                       _coachRecommendations = state.coachRecommendationList;
+
                                       coachRecommendationsTimelineItems();
                                     }
                                     timelineContentBuilding(context);
@@ -379,11 +377,23 @@ class _CoachPageState extends State<CoachPage> {
       width: 10,
     );
     return [
-      mentoredVideosSection(),
+      CoachHelperFunctions.mentoredVideosSection(
+          context: context,
+          annotation: _annotationVideosContent,
+          introFinished: widget.coachAssignment.introductionCompleted,
+          onNavigation: () => BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation()),
       _separatorBox,
-      sentVideosSection(),
+      CoachHelperFunctions.sentVideosSection(
+          context: context,
+          sentVideosContent: _sentVideosContent,
+          introductionCompleted: widget.coachAssignment.introductionCompleted,
+          onNavigation: () => BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation()),
       _separatorBox,
       recommendedVideosSection(),
+      _separatorBox,
+      recommendedCoursesSection(),
+      _separatorBox,
+      recommendedMovementsSection(),
       _separatorBox,
       CoachContentSectionCard(title: OlukoLocalizations.get(context, 'voiceMessages')),
     ];
@@ -471,19 +481,22 @@ class _CoachPageState extends State<CoachPage> {
     if (_coachRecommendations.isNotEmpty) {
       contentForNotificationPanel =
           CoachTimelineFunctions.coachRecommendationsForInteraction(coachRecommendations: _coachRecommendations, context: context);
-      notificationsWidget(contentForNotificationPanel, carouselContent);
+      carouselContent = CoachHelperFunctions.notificationsWidget(
+          contentForNotificationPanel, carouselContent, widget.coachId, widget.coachAssignment.userId);
     }
 
     if (_annotationVideosContent.isNotEmpty) {
       contentForNotificationPanel =
           CoachTimelineFunctions.mentoredVideoForInteraction(annotationContent: _annotationVideosContent, context: context);
-      notificationsWidget(contentForNotificationPanel, carouselContent);
+      carouselContent = CoachHelperFunctions.notificationsWidget(
+          contentForNotificationPanel, carouselContent, widget.coachId, widget.coachAssignment.userId);
     }
 
     if (_requiredSegmentList.isNotEmpty) {
       contentForNotificationPanel =
           CoachTimelineFunctions.requiredSegmentsForInteraction(requiredSegments: _requiredSegmentList, context: context);
-      notificationsWidget(contentForNotificationPanel, carouselContent);
+      carouselContent = CoachHelperFunctions.notificationsWidget(
+          contentForNotificationPanel, carouselContent, widget.coachId, widget.coachAssignment.userId);
     }
     return carouselContent;
   }
@@ -607,16 +620,6 @@ class _CoachPageState extends State<CoachPage> {
     }
   }
 
-  void notificationsWidget(List<CoachNotificationContent> contentForNotificationPanel, List<Widget> carouselContent) {
-    contentForNotificationPanel.forEach((notificationContent) {
-      carouselContent.add(CoachNotificationPanelContentCard(
-        content: notificationContent,
-        coachId: widget.coachId,
-        userId: widget.coachAssignment.userId,
-      ));
-    });
-  }
-
   void getCoachRequiredSegments(List<CoachSegmentContent> allSegments) {
     if (_coachRequestList.isNotEmpty) {
       _coachRequestList.forEach((coachRequestItem) {
@@ -642,33 +645,6 @@ class _CoachPageState extends State<CoachPage> {
     }
   }
 
-  Widget sentVideosSection() {
-    return _sentVideosContent != null && _sentVideosContent.isNotEmpty
-        ? CoachContentPreviewComponent(
-            contentFor: CoachContentSection.sentVideos,
-            titleForSection: OlukoLocalizations.get(context, 'sentVideos'),
-            segmentSubmissionContent: _sentVideosContent,
-            onNavigation: () => !widget.coachAssignment.introductionCompleted
-                ? BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation()
-                : () {},
-          )
-        : CoachContentSectionCard(
-            title: OlukoLocalizations.get(context, 'sentVideos'),
-          );
-  }
-
-  Widget mentoredVideosSection({bool isForCarousel}) {
-    return _annotationVideosContent != null && _annotationVideosContent.isNotEmpty
-        ? CoachContentPreviewComponent(
-            contentFor: CoachContentSection.mentoredVideos,
-            titleForSection: OlukoLocalizations.get(context, 'mentoredVideos'),
-            coachAnnotationContent: _annotationVideosContent,
-            onNavigation: () => !widget.coachAssignment.introductionCompleted
-                ? BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation()
-                : () {})
-        : CoachContentSectionCard(title: OlukoLocalizations.get(context, 'mentoredVideos'));
-  }
-
   Widget recommendedVideosSection({bool isForCarousel}) {
     return ((_coachRecommendations != null && _coachRecommendations.isNotEmpty) &&
             _coachRecommendations
@@ -684,6 +660,32 @@ class _CoachPageState extends State<CoachPage> {
                 ? BlocProvider.of<CoachIntroductionVideoBloc>(context).pauseVideoForNavigation()
                 : () {})
         : CoachContentSectionCard(title: OlukoLocalizations.get(context, 'recomendedVideos'));
+  }
+
+  Widget recommendedCoursesSection({bool isForCarousel}) {
+    Widget widgetToReturn = const CoachContentSectionCard(title: 'Recommened Courses');
+    List<CoachRecommendationDefault> coursesRecommended = [];
+    if (_coachRecommendations != null && _coachRecommendations.isNotEmpty) {
+      coursesRecommended =
+          CoachHelperFunctions.getRecommendedContentByType(_coachRecommendations, TimelineInteractionType.course, coursesRecommended);
+      if (coursesRecommended.isNotEmpty) {
+        widgetToReturn = CoachContentSectionCard(title: 'Recommened Courses');
+      }
+    }
+    return widgetToReturn;
+  }
+
+  Widget recommendedMovementsSection({bool isForCarousel}) {
+    Widget widgetToReturn = CoachContentSectionCard(title: 'Recommened Movements');
+    List<CoachRecommendationDefault> movementsRecommended = [];
+    if (_coachRecommendations != null && _coachRecommendations.isNotEmpty) {
+      movementsRecommended =
+          CoachHelperFunctions.getRecommendedContentByType(_coachRecommendations, TimelineInteractionType.movement, movementsRecommended);
+      if (movementsRecommended.isNotEmpty) {
+        widgetToReturn = CoachContentSectionCard(title: 'Recommened Movements');
+      }
+    }
+    return widgetToReturn;
   }
 
   List<RecommendationMedia> getRecommendedVideosContent() {
