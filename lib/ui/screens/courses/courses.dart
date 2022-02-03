@@ -362,7 +362,7 @@ class _State extends State<Courses> {
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: GestureDetector(
-                          onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing], arguments: {
+                          onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.enrolledCourse], arguments: {
                             'course': course,
                             'fromCoach': false,
                             'isCoachRecommendation': false,
