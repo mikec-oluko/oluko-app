@@ -18,6 +18,7 @@ import 'package:oluko_app/helpers/challenge_navigation.dart';
 import 'package:oluko_app/helpers/enum_collection.dart';
 import 'package:oluko_app/helpers/list_of_items_to_widget.dart';
 import 'package:oluko_app/helpers/privacy_options.dart';
+import 'package:oluko_app/helpers/profile_helper_functions.dart';
 import 'package:oluko_app/models/challenge.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/course_enrollment.dart';
@@ -34,14 +35,12 @@ import 'package:oluko_app/ui/components/course_card.dart';
 import 'package:oluko_app/ui/components/modal_upload_options.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/components/oluko_outlined_button.dart';
-import 'package:oluko_app/ui/components/settings_dialog.dart';
 import 'package:oluko_app/ui/components/uploading_modal_loader.dart';
 import 'package:oluko_app/ui/components/uploading_modal_success.dart';
 import 'package:oluko_app/ui/components/user_profile_information.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/app_messages.dart';
-import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'package:oluko_app/utils/permissions_utils.dart';
@@ -75,7 +74,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
   UserStatistics userStats;
   final PanelController _panelController = PanelController();
   double _panelMaxHeight = 100.0;
-  double _statePanelMaxHeight = 100.0;
   bool _isNewCoverImage = false;
   bool _friendsRequested = false;
   bool canHidePanel = true;
@@ -107,7 +105,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
         }
         _requestContentForUser(context: context, userRequested: _userProfileToDisplay);
 
-        if (_isCurrentUser == false && _friendsRequested == false) {
+        if (!_isCurrentUser && !_friendsRequested) {
           BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_currentAuthUser.id);
           _friendsRequested = true;
         }
@@ -136,7 +134,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
         elevation: 0.0,
         backgroundColor: Colors.transparent,
         leading: OlukoNeumorphism.isNeumorphismDesign
-            ? SizedBox.shrink()
+            ? const SizedBox.shrink()
             : IconButton(
                 icon: const Icon(
                   Icons.arrow_back_ios,
@@ -299,7 +297,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
               height: MediaQuery.of(context).size.height / 16,
             )
           else
-            SizedBox.shrink(),
+            const SizedBox.shrink(),
           Column(
             children: [
               if (!_isCurrentUser) otherUserInteraction(userRequested) else defaultWidgetNoContent,
@@ -318,44 +316,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
     return BlocBuilder<CourseEnrollmentListStreamBloc, CourseEnrollmentListStreamState>(
       builder: (context, state) {
         if (state is CourseEnrollmentsByUserStreamSuccess) {
-          ChallengeNavigation newChallenge;
-          int classIndex;
-          int segmentIndex;
-          int courseIndex;
-
           _courseEnrollmentList = state.courseEnrollments.where((courseEnroll) => courseEnroll.isUnenrolled != true).toList();
-          _courseEnrollmentList.forEach((courseEnrolled) {
-            courseIndex = _courseEnrollmentList.indexOf(courseEnrolled);
-            courseEnrolled.classes.forEach((enrolledClass) {
-              classIndex = courseEnrolled.classes.indexOf(enrolledClass);
-              enrolledClass.segments.forEach((enrolledSegment) {
-                segmentIndex = enrolledClass.segments.indexOf(enrolledSegment);
-                if (enrolledSegment.isChallenge == true) {
-                  newChallenge = ChallengeNavigation(
-                      enrolledCourse: courseEnrolled,
-                      challengeSegment: enrolledSegment,
-                      segmentIndex: segmentIndex,
-                      segmentId: enrolledSegment.id,
-                      classIndex: classIndex,
-                      classId: enrolledClass.id,
-                      courseIndex: courseIndex,
-                      previousSegmentFinish: courseEnrolled.classes[classIndex].segments[segmentIndex - 1].completedAt != null);
-
-                  if (listOfChallenges.isEmpty) {
-                    if (newChallenge != null) {
-                      listOfChallenges.add(newChallenge);
-                    }
-                  } else {
-                    if (newChallenge != null) {
-                      if (!listOfChallenges.contains(newChallenge)) {
-                        listOfChallenges.add(newChallenge);
-                      }
-                    }
-                  }
-                }
-              });
-            });
-          });
+          listOfChallenges = ProfileHelperFunctions.getChallenges(_courseEnrollmentList);
         }
         /*if (state is CourseEnrollmentListSuccess) {
                       _courseEnrollmentList = state.courseEnrollmentList;
@@ -368,14 +330,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   builder: (context, state) {
                     if (state is GetChallengeSuccess) {
                       _activeChallenges = state.challenges;
-                      listOfChallenges.forEach((challengeElement) {
-                        _activeChallenges.forEach((activeChallenge) {
-                          if (challengeElement.classId == activeChallenge.classId &&
-                              challengeElement.segmentId == activeChallenge.segmentId) {
-                            challengeElement.challengeForAudio = activeChallenge;
-                          }
-                        });
-                      });
+                      listOfChallenges = ProfileHelperFunctions.getActiveChallenges(_activeChallenges, listOfChallenges);
                     }
                     return buildChallengeSection(
                         listOfChallenges: listOfChallenges,
@@ -499,7 +454,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   Positioned userInformationPanel() {
     return Positioned(
       top: OlukoNeumorphism.isNeumorphismDesign ? ScreenUtils.height(context) / 4.5 : ScreenUtils.height(context) / 3.5,
-      child: Container(
+      child: SizedBox(
           width: ScreenUtils.width(context),
           height: OlukoNeumorphism.isNeumorphismDesign
               ? ScreenUtils.height(context) < 700
@@ -531,7 +486,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
       right: 10,
       child: Visibility(
         visible: _isCurrentUser,
-        child: Container(
+        child: SizedBox(
           width: 40,
           height: 40,
           child: TextButton(
@@ -550,7 +505,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   Widget profileCoverImage() {
     return ShaderMask(
       shaderCallback: (rect) {
-        return LinearGradient(
+        return const LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
@@ -732,25 +687,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
       connectStatus = UserConnectStatus.notConnected;
     }
 
-    if (_connectButtonTitle != returnTitleForConnectButton(connectStatus)) {
+    if (_connectButtonTitle != ProfileHelperFunctions.returnTitleForConnectButton(connectStatus)) {
       setState(() {
-        _connectButtonTitle = returnTitleForConnectButton(connectStatus);
+        _connectButtonTitle = ProfileHelperFunctions.returnTitleForConnectButton(connectStatus);
       });
-    }
-  }
-
-  String returnTitleForConnectButton(UserConnectStatus connectStatus) {
-    switch (connectStatus) {
-      case UserConnectStatus.connected:
-        return 'remove';
-      case UserConnectStatus.notConnected:
-        return 'connect';
-      case UserConnectStatus.requestPending:
-        return 'cancelConnectionRequested';
-      case UserConnectStatus.requestReceived:
-        return 'confirm';
-      default:
-        return 'fail';
     }
   }
 }

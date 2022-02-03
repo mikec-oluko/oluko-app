@@ -50,4 +50,12 @@ Map<IntroductionMediaTypeEnum, String> introductionMediaType = {
 };
 
 //TODO: Check and use that
-enum TimelineInteractionType { course, classes, segment, movement, mentoredVideo, sentVideo, recommendedVideo }
+enum TimelineInteractionType {
+  course,
+  classes,
+  segment,
+  movement,
+  mentoredVideo,
+  recommendedVideo,
+  sentVideo,
+}

@@ -21,6 +21,7 @@ import 'package:oluko_app/blocs/task_submission/task_submission_bloc.dart';
 import 'package:oluko_app/blocs/user_statistics_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/helpers/coach_content_for_timeline_panel.dart';
+import 'package:oluko_app/helpers/coach_helper_functions.dart';
 import 'package:oluko_app/helpers/coach_notification_content.dart';
 import 'package:oluko_app/helpers/coach_recommendation_default.dart';
 import 'package:oluko_app/helpers/coach_segment_content.dart';
@@ -96,33 +97,13 @@ class _CoachPageState extends State<CoachPage> {
   void initState() {
     BlocProvider.of<CoachUserBloc>(context).get(widget.coachAssignment.coachId);
     setState(() {
-      createWelcomeVideoFromCoachAssignment();
+      _introductionVideo = CoachHelperFunctions.createWelcomeVideoFromCoachAssignment(
+        coachAssignment: widget.coachAssignment,
+        userId: widget.userId,
+        defaultIntroVideoId: _defaultIntroductionVideoId,
+      );
     });
     super.initState();
-  }
-
-  void createWelcomeVideoFromCoachAssignment() {
-    if (widget.coachAssignment.videoHLS != null
-        ? true
-        : (widget.coachAssignment.video?.url != null ? true : widget.coachAssignment.introductionVideo != null)) {
-      widget.coachAssignment.userId == widget.userId
-          ? _introductionVideo = Annotation(
-              coachId: widget.coachAssignment.coachId,
-              userId: widget.coachAssignment.userId,
-              id: _defaultIntroductionVideoId,
-              favorite: widget.coachAssignment.isFavorite,
-              createdAt: widget.coachAssignment.createdAt ?? Timestamp.now(),
-              video: Video(
-                url: widget.coachAssignment.videoHLS ??
-                    (widget.coachAssignment.video != null ? widget.coachAssignment.video.url : widget.coachAssignment.introductionVideo),
-                aspectRatio: widget.coachAssignment.video != null ? widget.coachAssignment.video.aspectRatio ?? 0.60 : 0.60,
-                thumbUrl: widget.coachAssignment.video != null ? widget.coachAssignment.video.thumbUrl ?? null : null,
-              ),
-              videoHLS: widget.coachAssignment.videoHLS ??
-                  (widget.coachAssignment.video != null ? widget.coachAssignment.video.url : widget.coachAssignment.introductionVideo),
-            )
-          : null;
-    }
   }
 
   @override
@@ -167,7 +148,8 @@ class _CoachPageState extends State<CoachPage> {
                           current is CoachMentoredVideosUpdate,
                       listener: (context, mentoredVideoListenerState) {
                         if (mentoredVideoListenerState is CoachMentoredVideosUpdate) {
-                          checkAnnotationUpdate(mentoredVideoListenerState.mentoredVideos);
+                          _annotationVideosContent = CoachHelperFunctions.checkAnnotationUpdate(
+                              mentoredVideoListenerState.mentoredVideos, _annotationVideosContent);
                         }
                       },
                       builder: (context, mentoredVideosListenerBuilderState) {
@@ -189,8 +171,12 @@ class _CoachPageState extends State<CoachPage> {
                               _sentVideosContent = sentVideosState.sentVideos
                                   .where((sentVideo) => sentVideo.video != null && sentVideo.coachId == _coachUser.id)
                                   .toList();
+
                               _sentVideosContent.forEach((sentVideo) {
-                                checkPendingReviewsForSentVideos(sentVideo);
+                                segmentsWithReview = CoachHelperFunctions.checkPendingReviewsForSentVideos(
+                                    sentVideo: sentVideo,
+                                    annotationVideosContent: _annotationVideosContent,
+                                    segmentsWithReview: segmentsWithReview);
                               });
                               updateReviewPendingOnCoachAppBar(context);
                             }
@@ -199,7 +185,8 @@ class _CoachPageState extends State<CoachPage> {
                                   current is CoachTimelineItemsUpdate,
                               listener: (context, timelineItemsUpdateListener) {
                                 if (timelineItemsUpdateListener is CoachTimelineItemsUpdate) {
-                                  checkTimelineItemsUpdate(timelineItemsUpdateListener.timelineItems);
+                                  _timelineItemsContent = CoachHelperFunctions.checkTimelineItemsUpdate(
+                                      timelineItemsUpdateListener.timelineItems, _timelineItemsContent);
                                 }
                               },
                               builder: (context, timelineState) {
@@ -210,7 +197,9 @@ class _CoachPageState extends State<CoachPage> {
                                   _mentoredVideoTimelineContent.clear();
                                   _coachRecommendationTimelineContent.clear();
                                   _timelinePanelContent.clear();
-                                  _introductionVideo ?? createWelcomeVideoFromCoachAssignment();
+                                  _introductionVideo ??
+                                      CoachHelperFunctions.createWelcomeVideoFromCoachAssignment(
+                                          coachAssignment: widget.coachAssignment, userId: widget.userId);
                                 }
                                 if (timelineState is CoachTimelineItemsSuccess) {
                                   _timelineItemsContent = timelineState.timelineItems;
@@ -223,7 +212,8 @@ class _CoachPageState extends State<CoachPage> {
                                       _coachRecommendations = state.coachRecommendationListDisposeValue;
                                     }
                                     if (state is CoachRecommendationsUpdate) {
-                                      checkRecommendationUpdate(state.coachRecommendationContent);
+                                      _coachRecommendations = CoachHelperFunctions.checkRecommendationUpdate(
+                                          state.coachRecommendationContent, _coachRecommendations);
                                       coachRecommendationsTimelineItems();
                                     }
                                   },
@@ -275,21 +265,6 @@ class _CoachPageState extends State<CoachPage> {
     );
   }
 
-  void checkPendingReviewsForSentVideos(SegmentSubmission sentVideo) {
-    _annotationVideosContent.forEach((annotation) {
-      if (annotation.segmentSubmissionId == sentVideo.id) {
-        if (segmentsWithReview
-            .where((reviewSegment) => reviewSegment.id == sentVideo.segmentId && reviewSegment.coachId == sentVideo.coachId)
-            .toList()
-            .isEmpty) {
-          if (segmentsWithReview.where((reviewedSegment) => reviewedSegment.id == sentVideo.id).toList().isEmpty) {
-            segmentsWithReview.add(sentVideo);
-          }
-        }
-      }
-    });
-  }
-
   void requestCurrentUserData(BuildContext context) {
     BlocProvider.of<AssessmentBloc>(context).getById('emnsmBgZ13UBRqTS26Qd');
     BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionByUserId(_currentAuthUser.id);
@@ -310,7 +285,7 @@ class _CoachPageState extends State<CoachPage> {
         }
         if (state is GetCoachRequestUpdate) {
           _coachRequestUpdateList = state.values;
-          checkCoachRequestUpdate(_coachRequestUpdateList);
+          _coachRequestList = CoachHelperFunctions.checkCoachRequestUpdate(_coachRequestUpdateList, _coachRequestList);
           getCoachRequiredSegments(_allSegmentsForUser);
         }
       },
@@ -369,7 +344,7 @@ class _CoachPageState extends State<CoachPage> {
                       padding: paddingTopForElements,
                       child: carouselToDoSection(context),
                     ),
-                    if (hideAssessmentsTab) const SizedBox.shrink() else assessmentSection(context),
+                    if (!hideAssessmentsTab) const SizedBox.shrink() else assessmentSection(context),
                     SizedBox(
                       height: hideAssessmentsTab ? 220 : 200,
                     )
@@ -713,61 +688,5 @@ class _CoachPageState extends State<CoachPage> {
       }
     }
     return recommendationVideos;
-  }
-
-  void checkAnnotationUpdate(List<Annotation> annotationUpdateListofContent) {
-    annotationUpdateListofContent.forEach((updatedOrNewAnnotation) {
-      List<Annotation> repeatedAnnotation = _annotationVideosContent.where((element) => element.id == updatedOrNewAnnotation.id).toList();
-      if (repeatedAnnotation.isEmpty) {
-        _annotationVideosContent.add(updatedOrNewAnnotation);
-      } else {
-        if (repeatedAnnotation.first != updatedOrNewAnnotation) {
-          _annotationVideosContent[_annotationVideosContent.indexWhere((element) => element.id == updatedOrNewAnnotation.id)] =
-              updatedOrNewAnnotation;
-        }
-      }
-    });
-  }
-
-  void checkCoachRequestUpdate(List<CoachRequest> coachRequestContent) {
-    coachRequestContent.forEach((coachRequestUpdatedItem) {
-      List<CoachRequest> repeatedCoachRequest = _coachRequestList.where((element) => element.id == coachRequestUpdatedItem.id).toList();
-      if (repeatedCoachRequest.isEmpty) {
-        _coachRequestList.add(coachRequestUpdatedItem);
-      } else {
-        if (repeatedCoachRequest.first != coachRequestUpdatedItem) {
-          _coachRequestList[_coachRequestList.indexWhere((element) => element.id == coachRequestUpdatedItem.id)] = coachRequestUpdatedItem;
-        }
-      }
-    });
-  }
-
-  void checkRecommendationUpdate(List<CoachRecommendationDefault> coachRecommendationContent) {
-    if (coachRecommendationContent.isNotEmpty) {
-      coachRecommendationContent.forEach((updatedOrNewRecommedation) {
-        List<CoachRecommendationDefault> repeatedRecommendation = _coachRecommendations
-            .where((element) => element.coachRecommendation.id == updatedOrNewRecommedation.coachRecommendation.id)
-            .toList();
-        if (repeatedRecommendation.isEmpty) {
-          _coachRecommendations.add(updatedOrNewRecommedation);
-        } else {
-          if (repeatedRecommendation.first != updatedOrNewRecommedation) {
-            _coachRecommendations[_coachRecommendations
-                    .indexWhere((element) => element.coachRecommendation.id == updatedOrNewRecommedation.coachRecommendation.id)] =
-                updatedOrNewRecommedation;
-          }
-        }
-      });
-    }
-  }
-
-  void checkTimelineItemsUpdate(List<CoachTimelineItem> timelineItemsContent) {
-    timelineItemsContent.forEach((updatedTimelineItem) {
-      List<CoachTimelineItem> repeatedTimelineItem =
-          _timelineItemsContent.where((element) => element.contentName == updatedTimelineItem.contentName).toList();
-      if (repeatedTimelineItem.isEmpty) {
-        _timelineItemsContent.add(updatedTimelineItem);
-      }
-    });
   }
 }
