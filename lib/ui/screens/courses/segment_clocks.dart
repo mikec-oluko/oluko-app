@@ -28,6 +28,7 @@ import 'package:oluko_app/models/enums/timer_model.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/segment.dart';
 import 'package:oluko_app/models/segment_submission.dart';
+import 'package:oluko_app/models/submodels/alert.dart';
 import 'package:oluko_app/models/timer_entry.dart';
 import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/black_app_bar.dart';
@@ -94,6 +95,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
   Duration timeLeft;
   Timer countdownTimer;
 
+  //Alert timer
+  Duration alertTimeLeft;
+  Timer alertTimer;
+
   //Stopwatch
   Duration stopwatchDuration = Duration();
   Timer stopwatchTimer;
@@ -125,6 +130,7 @@ class _SegmentClocksState extends State<SegmentClocks> {
   bool _wantsToCreateStory = false;
   bool _isVideoUploaded = false;
   bool waitingForSegSubCreation = false;
+  String _roundAlert = null;
   CoachRequest _coachRequest;
   XFile videoRecorded;
   bool _isFromChallenge = false;
@@ -551,25 +557,12 @@ class _SegmentClocksState extends State<SegmentClocks> {
               child: Stack(alignment: Alignment.center, children: [
                 if (usePulseAnimation()) roundTimerWithPulse(keyboardVisibilty) else getRoundsTimer(keyboardVisibilty),
                 _countdownSection()
-              ],),),
-          //getAlert(),
+              ])),
+          _roundAlert != null ? OlukoRoundAlert(text: _roundAlert) : SizedBox(),
           if (isWorkStateFinished()) const SizedBox() else _tasksSection(keyboardVisibilty)
         ],
       ),
     ),);
-  }
-
-  Widget getAlert() {
-    if (widget.segments[widget.segmentIndex].alerts != null) {
-      String roundAlert = widget.segments[widget.segmentIndex].alerts[timerEntries[timerTaskIndex].round];
-      if (roundAlert != null) {
-        return OlukoRoundAlert(text: roundAlert);
-      } else {
-        return SizedBox();
-      }
-    } else {
-      return SizedBox();
-    }
   }
 
   double getWatchPadding() {
@@ -1153,6 +1146,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
   }
 
   void _goToNextStep() {
+    if (alertTimer != null) {
+      alertTimer.cancel();
+    }
+
     if (!SegmentUtils.isAMRAP(widget.segments[widget.segmentIndex]) && timerEntries[timerTaskIndex].round == 0) {
       if (timerTaskIndex == timerEntries.length - 1 || timerEntries[timerTaskIndex + 1].round == 1) {
         _saveSegmentRound(timerEntries[timerTaskIndex]);
@@ -1167,8 +1164,10 @@ class _SegmentClocksState extends State<SegmentClocks> {
       _finishWorkout();
       return;
     }
+
     setState(() {
       timerTaskIndex++;
+      setAlert();
       _playTask();
     });
 
@@ -1257,9 +1256,40 @@ class _SegmentClocksState extends State<SegmentClocks> {
     print('Workout finished');
     BlocProvider.of<CourseEnrollmentBloc>(context).markSegmentAsCompleted(widget.courseEnrollment, widget.segmentIndex, widget.classIndex);
     setState(() {
+      setAlert();
       if (_segmentSubmission != null && widget.workoutType == WorkoutType.segmentWithRecording && !_isVideoUploaded) {
         topBarIcon = uploadingIcon();
       }
+    });
+  }
+
+  setAlert() {
+    List<Alert> alerts = widget.segments[widget.segmentIndex].alerts;
+    if (alerts != null && !alerts.isEmpty) {
+      Alert alert = alerts[timerEntries[timerTaskIndex].round];
+      if (alert != null) {
+        if (alert.time > 0) {
+          alertTimeLeft = Duration(seconds: alert.time);
+          _playAlertTimer(alert.text);
+        } else {
+          _roundAlert = alert.text;
+        }
+      } else {
+        _roundAlert = null;
+      }
+    }
+  }
+
+  void _playAlertTimer(String text) {
+    alertTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+      if (alertTimeLeft.inSeconds == 0) {
+        alertTimer.cancel();
+        _roundAlert = text;
+        return;
+      }
+      setState(() {
+        alertTimeLeft = Duration(seconds: alertTimeLeft.inSeconds - 1);
+      });
     });
   }
 
