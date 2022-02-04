@@ -26,7 +26,7 @@ class ProfileHelperFunctions {
                 classIndex: classIndex,
                 classId: enrolledClass.id,
                 courseIndex: courseIndex,
-                previousSegmentFinish: courseEnrolled.classes[classIndex].segments[segmentIndex - 1].completedAt != null);
+                previousSegmentFinish: segmentIndex == 0 ? true : courseEnrolled.classes[classIndex].segments[segmentIndex - 1].completedAt != null,);
 
             if (challengesForUser.isEmpty) {
               if (newChallenge != null) {
