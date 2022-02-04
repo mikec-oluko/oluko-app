@@ -40,7 +40,8 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
 
   List<Widget> buildMovementItems() {
     List<Widget> movements = widget.content
-        .map((movement) => _imageItem(context, movement.image, movement.name, onPressed: (context) => widget.onPressed(context, movement)))
+        .map(
+            (movement) => _imageItem(context, movement?.image, movement?.name, onPressed: (context) => widget.onPressed(context, movement)))
         .toList();
     return movements;
   }
@@ -68,19 +69,19 @@ class _MovementItemBubblesState extends State<MovementItemBubbles> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            if(OlukoNeumorphism.isNeumorphismDesign)
-            StoriesItem(
-              maxRadius: widget.isSegmentSection ? 30 : 23,
-              imageUrl: imageUrl,
-              bloc: StoryListBloc(),
-              isSegmentSection: widget.isSegmentSection,
-            )
+            if (OlukoNeumorphism.isNeumorphismDesign)
+              StoriesItem(
+                maxRadius: widget.isSegmentSection ? 30 : 23,
+                imageUrl: imageUrl,
+                bloc: StoryListBloc(),
+                isSegmentSection: widget.isSegmentSection,
+              )
             else
-            StoriesItem(maxRadius: 23, imageUrl: imageUrl, bloc: StoryListBloc()),
+              StoriesItem(maxRadius: 23, imageUrl: imageUrl, bloc: StoryListBloc()),
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
               child: Text(
-                name,
+                name ?? '',
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
                 style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.grayColor),
