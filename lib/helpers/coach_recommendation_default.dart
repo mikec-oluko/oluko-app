@@ -5,6 +5,7 @@ import 'package:oluko_app/models/coach_request.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/recommendation.dart';
+import 'package:oluko_app/models/recommendation_media.dart';
 import 'package:oluko_app/models/segment.dart';
 
 class CoachRecommendationDefault extends CoachRecommendationExtra {
@@ -12,27 +13,30 @@ class CoachRecommendationDefault extends CoachRecommendationExtra {
   String contentTitle, contentSubtitle, contentImage, contentDescription;
   num contentTypeIndex;
   Timestamp createdAt;
-  CoachRecommendationDefault(
-      {this.coachRecommendation,
-      this.contentTitle,
-      this.contentSubtitle,
-      this.contentImage,
-      this.contentDescription,
-      this.contentTypeIndex,
-      this.createdAt,
-      Class classContent,
-      Segment segmentContent,
-      CoachRequest coachRequest,
-      Movement movementContent,
-      Annotation mentoredContent,
-      Course courseContent})
-      : super(
-            classContent: classContent,
-            segmentContent: segmentContent,
-            coachRequest: coachRequest,
-            movementContent: movementContent,
-            mentoredContent: mentoredContent,
-            courseContent: courseContent);
+  CoachRecommendationDefault({
+    this.coachRecommendation,
+    this.contentTitle,
+    this.contentSubtitle,
+    this.contentImage,
+    this.contentDescription,
+    this.contentTypeIndex,
+    this.createdAt,
+    Class classContent,
+    Segment segmentContent,
+    CoachRequest coachRequest,
+    Movement movementContent,
+    Annotation mentoredContent,
+    RecommendationMedia recommendationMedia,
+    Course courseContent,
+  }) : super(
+          classContent: classContent,
+          segmentContent: segmentContent,
+          coachRequest: coachRequest,
+          movementContent: movementContent,
+          mentoredContent: mentoredContent,
+          courseContent: courseContent,
+          recommendationMedia: recommendationMedia,
+        );
 }
 
 class CoachRecommendationExtra {
@@ -42,6 +46,7 @@ class CoachRecommendationExtra {
   Movement movementContent;
   Annotation mentoredContent;
   Course courseContent;
+  RecommendationMedia recommendationMedia;
 
   CoachRecommendationExtra(
       {this.classContent,
@@ -49,5 +54,6 @@ class CoachRecommendationExtra {
       this.coachRequest,
       this.movementContent,
       this.mentoredContent,
-      this.courseContent});
+      this.courseContent,
+      this.recommendationMedia});
 }

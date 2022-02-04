@@ -93,11 +93,11 @@ class _CoachSlidingUpPanelState extends State<CoachSlidingUpPanel> {
       borderRadius: radius,
       backdropEnabled: true,
       padding: EdgeInsets.zero,
-      color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
-      minHeight: 50.0,
+      color: OlukoNeumorphismColors.appBackgroundColor,
+      minHeight: OlukoNeumorphism.isNeumorphismDesign ? 75 : 50,
       panel: Container(
         decoration: BoxDecoration(
-          color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+          color: OlukoNeumorphismColors.appBackgroundColor,
           borderRadius: radius,
           gradient: const LinearGradient(
               colors: [OlukoColors.grayColorFadeTop, OlukoColors.grayColorFadeBottom],
@@ -113,7 +113,7 @@ class _CoachSlidingUpPanelState extends State<CoachSlidingUpPanel> {
       ),
       controller: _panelController,
       body: Container(
-        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+        color: OlukoNeumorphismColors.appBackgroundColor,
         child: widget.content,
       ),
     );

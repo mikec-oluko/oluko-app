@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/ui/screens/courses/initial_timer_panel.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/timer_utils.dart';
@@ -43,7 +44,7 @@ class _CountdownOverlayState extends State<CountdownOverlay> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.black.withOpacity(0.8),
+        backgroundColor: OlukoNeumorphismColors.appBackgroundColor.withOpacity(OlukoNeumorphism.isNeumorphismDesign ? 1 : 0.8),
         body: widget.recording && widget.showPanel
             ? SlidingUpPanel(
                 borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),

@@ -15,6 +15,7 @@ import 'package:oluko_app/utils/container_grediant.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 import 'coach_timeline_card_content.dart';
 import 'oluko_circular_progress_indicator.dart';
+import "package:collection/collection.dart";
 
 class CoachTimelinePanel extends StatefulWidget {
   final bool isIntroductionVideoComplete;
@@ -50,7 +51,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
         }
         return Scaffold(
             appBar: AppBar(
-              backgroundColor: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+              backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
               flexibleSpace: Container(
                 decoration: UserInformationBackground.getContainerGradientDecoration(
                     customBorder: false, isNeumorphic: OlukoNeumorphism.isNeumorphismDesign),
@@ -73,9 +74,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
                       .toList()),
             ),
             body: _timelineContentItems == null
-                ? Container(
-                    color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
-                    child: OlukoCircularProgressIndicator())
+                ? Container(color: OlukoNeumorphismColors.appBackgroundColor, child: OlukoCircularProgressIndicator())
                 : _timelineContentItems.isNotEmpty
                     ? TabBarView(
                         controller: _tabController,
@@ -92,7 +91,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
                             .toList(),
                       )
                     : Container(
-                        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+                        color: OlukoNeumorphismColors.appBackgroundColor,
                         child: Center(
                           child: Text(
                             OlukoLocalizations.get(context, 'noContent'),
@@ -142,7 +141,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
                 arguments: {'course': content.courseForNavigation, 'fromCoach': true, 'isCoachRecommendation': false});
           },
           child: Container(
-            color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+            color: OlukoNeumorphismColors.appBackgroundColor,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -160,7 +159,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
         );
       case TimelineInteractionType.classes:
         return Container(
-          color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+          color: OlukoNeumorphismColors.appBackgroundColor,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -177,7 +176,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
         );
       case TimelineInteractionType.segment:
         return Container(
-          color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+          color: OlukoNeumorphismColors.appBackgroundColor,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -199,7 +198,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
             Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': content.movementForNavigation});
           },
           child: Container(
-            color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+            color: OlukoNeumorphismColors.appBackgroundColor,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -215,14 +214,14 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
         );
       case TimelineInteractionType.mentoredVideo:
         return Container(
-          color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+          color: OlukoNeumorphismColors.appBackgroundColor,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               dateForContent,
               CoachTimelineVideoContent(
                   videoThumbnail: content.contentThumbnail,
-                  videoTitle: content.contentName ?? OlukoLocalizations.get(context, 'mentoredVideo'),
+                  videoTitle: content.contentDescription ?? OlukoLocalizations.get(context, 'mentoredVideo'),
                   date: content.createdAt.toDate(),
                   fileType: CoachFileTypeEnum.mentoredVideo),
             ],
@@ -236,9 +235,23 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
               dateForContent,
               CoachTimelineVideoContent(
                   videoThumbnail: content.contentThumbnail,
-                  videoTitle: content.contentName ?? OlukoLocalizations.get(context, 'sentVideo'),
+                  videoTitle: content.contentDescription ?? OlukoLocalizations.get(context, 'sentVideo'),
                   date: content.createdAt.toDate(),
                   fileType: CoachFileTypeEnum.sentVideo),
+            ],
+          ),
+        );
+      case TimelineInteractionType.recommendedVideo:
+        return Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              dateForContent,
+              CoachTimelineVideoContent(
+                  videoThumbnail: content.contentThumbnail,
+                  videoTitle: content.contentName ?? OlukoLocalizations.get(context, 'recommendedVideos'),
+                  date: content.createdAt.toDate(),
+                  fileType: CoachFileTypeEnum.recommendedVideo),
             ],
           ),
         );

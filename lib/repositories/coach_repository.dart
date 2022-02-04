@@ -10,6 +10,7 @@ import 'package:oluko_app/models/coach_timeline_item.dart';
 import 'package:oluko_app/models/course.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/models/recommendation.dart';
+import 'package:oluko_app/models/recommendation_media.dart';
 import 'package:oluko_app/models/segment_submission.dart';
 import 'package:oluko_app/models/submodels/course_timeline_submodel.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -251,6 +252,8 @@ class CoachRepository {
           break;
         case TimelineInteractionType.sentVideo:
           break;
+        case TimelineInteractionType.recommendedVideo:
+          break;
         default:
       }
     }
@@ -330,6 +333,20 @@ class CoachRepository {
         case TimelineInteractionType.mentoredVideo:
           break;
         case TimelineInteractionType.sentVideo:
+          break;
+        case TimelineInteractionType.recommendedVideo:
+          RecommendationMedia mediaContentRecommended = RecommendationMedia.fromJson(ds.data() as Map<String, dynamic>);
+          CoachRecommendationDefault recommendationItem = CoachRecommendationDefault(
+              coachRecommendation: recommendation,
+              contentTitle: mediaContentRecommended.title,
+              contentSubtitle: '',
+              contentDescription: mediaContentRecommended.description,
+              contentImage: mediaContentRecommended.video.thumbUrl,
+              contentTypeIndex: recommendation.entityType,
+              createdAt: recommendation.createdAt,
+              recommendationMedia: mediaContentRecommended);
+          coachRecommendations.add(recommendationItem);
+
           break;
         default:
       }

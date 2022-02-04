@@ -60,7 +60,7 @@ class _State<T extends Base> extends State<FilterSelector> {
         left: 0,
         right: 0,
         child: Container(
-            color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+            color: OlukoNeumorphismColors.appBackgroundColor,
             width: ScreenUtils.width(context),
             child: Row(
               children: [

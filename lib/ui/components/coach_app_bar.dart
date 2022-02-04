@@ -5,6 +5,7 @@ import 'package:oluko_app/blocs/coach/coach_review_pending_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/routes.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
 import 'package:oluko_app/utils/image_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
 
@@ -33,7 +34,6 @@ class _CoachAppBarState extends State<CoachAppBar> {
             '${widget.coachUser.firstName.characters.first.toUpperCase()}${widget.coachUser.lastName.characters.first.toUpperCase()}';
       }
     });
-    // TODO: implement initState
     super.initState();
   }
 
@@ -47,40 +47,96 @@ class _CoachAppBarState extends State<CoachAppBar> {
         if (state is CoachReviewPendingSuccess) {
           numberOfReviewPendingItems = state.reviewsPending;
         }
-        return AppBar(
-          actions: [
-            Row(
+        return OlukoNeumorphism.isNeumorphismDesign ? neumorphicCoachAppBar(context) : defaultAppBar(context);
+      },
+    );
+  }
+
+  PreferredSize neumorphicCoachAppBar(BuildContext context) {
+    return PreferredSize(
+      preferredSize: Size.fromHeight(kToolbarHeight),
+      child: AppBar(
+        automaticallyImplyLeading: false,
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(kToolbarHeight),
+          child: Container(
+            color: OlukoNeumorphismColors.olukoNeumorphicSearchBarSecondColor,
+            child: Row(
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 5),
                   child: showCoachProfle
                       ? goToCoachProfile(context)
                       : Text(
-                          '$numberOfReviewPendingItems REVIEWS PENDING',
-                          style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
+                          '$numberOfReviewPendingItems ${OlukoLocalizations.get(context, 'reviewsPending')}',
+                          style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor, custoFontWeight: FontWeight.w500),
                         ),
                 ),
-                showCoachProfle
-                    ? widget.coachUser != null && widget.coachUser.avatarThumbnail != null
-                        ? coachAvatarImage()
-                        : coachDefaultAvatar()
-                    : SizedBox.shrink(),
               ],
-            )
-          ],
-          elevation: 0.0,
-          backgroundColor: OlukoColors.black,
-          leading: IconButton(
-            icon: const Icon(
-              Icons.arrow_back_ios,
-              color: Colors.white,
             ),
-            onPressed: () {
-              Navigator.popAndPushNamed(context, routeLabels[RouteEnum.root]);
-            },
           ),
-        );
-      },
+        ),
+        leading: Container(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              OlukoNeumorphicCircleButton(
+                  onPressed: () {
+                    Navigator.popAndPushNamed(context, routeLabels[RouteEnum.root]);
+                  },
+                  customIcon: const Icon(
+                    Icons.arrow_back_ios,
+                    color: OlukoColors.grayColor,
+                  )),
+            ],
+          ),
+        ),
+        actions: [
+          showCoachProfle
+              ? widget.coachUser != null && widget.coachUser.avatarThumbnail != null
+                  ? coachAvatarImage()
+                  : coachDefaultAvatar()
+              : SizedBox.shrink(),
+        ],
+        elevation: 0.0,
+        backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
+      ),
+    );
+  }
+
+  AppBar defaultAppBar(BuildContext context) {
+    return AppBar(
+      actions: [
+        Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5),
+              child: showCoachProfle
+                  ? goToCoachProfile(context)
+                  : Text(
+                      '$numberOfReviewPendingItems  ${OlukoLocalizations.get(context, 'reviewsPending').toUpperCase()}',
+                      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.primary, custoFontWeight: FontWeight.w500),
+                    ),
+            ),
+            showCoachProfle
+                ? widget.coachUser != null && widget.coachUser.avatarThumbnail != null
+                    ? coachAvatarImage()
+                    : coachDefaultAvatar()
+                : SizedBox.shrink(),
+          ],
+        )
+      ],
+      elevation: 0.0,
+      backgroundColor: OlukoNeumorphismColors.appBackgroundColor,
+      leading: IconButton(
+        icon: const Icon(
+          Icons.arrow_back_ios,
+          color: Colors.white,
+        ),
+        onPressed: () {
+          Navigator.popAndPushNamed(context, routeLabels[RouteEnum.root]);
+        },
+      ),
     );
   }
 

@@ -73,12 +73,10 @@ class _ProfileTransformationJourneyPageState extends State<ProfileTransformation
         showSearchBar: false,
       ),
       body: _contentGallery == null
-          ? Container(
-              color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
-              child: OlukoCircularProgressIndicator())
+          ? Container(color: OlukoNeumorphismColors.appBackgroundColor, child: OlukoCircularProgressIndicator())
           : Container(
               constraints: BoxConstraints.expand(),
-              color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+              color: OlukoNeumorphismColors.appBackgroundColor,
               child: SafeArea(
                 child: Stack(children: [
                   if (isCurrenUser)
