@@ -251,7 +251,7 @@ class _State extends State<SelfRecording> {
   Future<void> _setupCameras() async {
     final int cameraPos = isCameraFront ? 0 : 1;
     try {
-      if (!await Permissions.requiredPermissionsEnabled(DeviceContentFrom.camera)) {
+      if (!await PermissionsUtils.permissionsEnabled(DeviceContentFrom.camera)) {
         Navigator.pop(context);
         PermissionsUtils.showSettingsMessage(context);
         return;
@@ -332,7 +332,9 @@ class _State extends State<SelfRecording> {
                         'filePath': state.pickedFile.path,
                         'isPublic': widget.isPublic,
                         'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
-                      });
+                      },);
+                    }else if(state is PermissionsRequired){
+                      PermissionsUtils.showSettingsMessage(context);
                     }
                   },
                   child: GestureDetector(
