@@ -204,7 +204,7 @@
     "minutes": "minutos",
     "forNextRound": "para la siguente ronda",
     "activityStats": "Estadísticas de actividad",
-    "recomendedVideos": "Videos Recomendados",
+    "recommendedVideos": "Videos Recomendados",
     "voiceMessages": "Mensajes de voz",
     "addYourSelfie": "Agrega Tu Selfie...",
     "timelineMentoredVideo": "Video de Mentor: ",
@@ -284,5 +284,7 @@
     "cancelMessage": "Esta acción paró la grabación. Deberas reiniciar la sesión desde el principio si quieres grabar el segmento.",
     "restart": "Reiniciar",
     "reps": "Reps",
-    "reviewsPending": "revisión pendiente"
+    "reviewsPending": "revisión pendiente",
+    "workoutBadFeedback": "Aargh! realmente no",
+    "workoutGoodFeedback": "Fue increíble"
 }

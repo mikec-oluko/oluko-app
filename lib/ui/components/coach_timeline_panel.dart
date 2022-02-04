@@ -48,13 +48,6 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
         if (state is CoachTimelineTabsUpdate) {
           _tabController = TabController(length: state.timelineContentItems.length, vsync: this);
           _timelineContentItems = state.timelineContentItems;
-          state.timelineContentItems.forEach((CoachTimelineGroup timelineGroup) {
-            //TODO: ADAPT, LIST DATE, LISTGROUP WITH STYLE FOR CONTENT
-            Map<String, List<CoachTimelineItem>> groupedArray =
-                groupBy(timelineGroup.timelineElements, (CoachTimelineItem obj) => DateFormat.yMMMd().format(obj.createdAt.toDate()));
-          });
-          // state.timelineContentItems[1].timelineElements.map((e) => e.createdAt.toDate()).toList().retainWhere((element) => false);
-          // var groupedArray = groupBy(_timelineContentItems, (CoachTimelineGroup obj) => DateTime.fromMillisecondsSinceEpoch(obj.));
         }
         return Scaffold(
             appBar: AppBar(
@@ -256,7 +249,7 @@ class _CoachTimelinePanelConteState extends State<CoachTimelinePanel> with Ticke
               dateForContent,
               CoachTimelineVideoContent(
                   videoThumbnail: content.contentThumbnail,
-                  videoTitle: content.contentName ?? OlukoLocalizations.get(context, 'recomendedVideos'),
+                  videoTitle: content.contentName ?? OlukoLocalizations.get(context, 'recommendedVideos'),
                   date: content.createdAt.toDate(),
                   fileType: CoachFileTypeEnum.recommendedVideo),
             ],

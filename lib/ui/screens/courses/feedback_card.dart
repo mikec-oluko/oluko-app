@@ -154,8 +154,7 @@ class _State extends State<FeedbackCard> {
                           Padding(
                             padding: const EdgeInsets.only(top: 5),
                             child: Text(
-                              'It was amazing',
-                              // OlukoLocalizations.get(context, 'howWasYourWorkoutSession'),
+                              OlukoLocalizations.get(context, 'workoutGoodFeedback'),
                               style: OlukoFonts.olukoMediumFont(customColor: like ? OlukoColors.primary : OlukoColors.grayColor),
                               textAlign: TextAlign.center,
                             ),
@@ -192,8 +191,7 @@ class _State extends State<FeedbackCard> {
                           Padding(
                             padding: const EdgeInsets.only(top: 5),
                             child: Text(
-                              'Aargh! not really',
-                              // OlukoLocalizations.get(context, 'howWasYourWorkoutSession'),
+                              OlukoLocalizations.get(context, 'workoutBadFeedback'),
                               style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.grayColor),
                               textAlign: TextAlign.center,
                             ),
