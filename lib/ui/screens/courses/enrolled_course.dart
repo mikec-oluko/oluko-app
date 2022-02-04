@@ -236,7 +236,7 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
                                   ListView(children: [
                                     OlukoVideoPreview(
                                       showBackButton: true,
-                                      image: widget.course.image,
+                                      image: widget.course.posterImage?? widget.course.image,
                                       video: widget.course.video,
                                       onBackPressed: () => Navigator.pop(context),
                                       onPlay: () => widget.playPauseVideo(),
@@ -284,7 +284,7 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
                                     Padding(
                                       padding: const EdgeInsets.only(bottom: 3),
                                       child: OverlayVideoPreview(
-                                          image: widget.course.image,
+                                          image:  widget.course.posterImage?? widget.course.image,
                                           video: widget.course.video,
                                           showBackButton: true,
                                           showHeartButton: true,

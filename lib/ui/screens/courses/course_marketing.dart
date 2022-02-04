@@ -61,7 +61,6 @@ class CourseMarketing extends StatefulWidget {
 
   @override
   _CourseMarketingState createState() => _CourseMarketingState();
-
 }
 
 class _CourseMarketingState extends State<CourseMarketing> {
@@ -218,14 +217,12 @@ class _CourseMarketingState extends State<CourseMarketing> {
                       ))),
               SliverToBoxAdapter(
                 child: OlukoVideoPreview(
-                  image: widget.course.image,
+                  image:widget.course.posterImage??widget.course.image,
                   video: widget.course.video,
                   onBackPressed: () => Navigator.pop(context),
                   onPlay: () => widget.isVideoPlaying(),
                   videoVisibilty: _isVideoPlaying,
                 ),
-                   /* OverlayVideoPreview(
-                        image: widget.course.image, video: widget.course.video, onBackPressed: () => Navigator.pop(context)),*/
               ),
               SliverPersistentHeader(
                   pinned: true,
