@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/challenge/challenge_bloc.dart';
 import 'package:oluko_app/blocs/course/course_bloc.dart';
+import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_bloc.dart';
 import 'package:oluko_app/blocs/course_enrollment/course_enrollment_list_stream_bloc.dart';
 import 'package:oluko_app/blocs/friends/favorite_friend_bloc.dart';
 import 'package:oluko_app/blocs/friends/friend_bloc.dart';
@@ -39,6 +40,7 @@ import 'package:oluko_app/ui/components/uploading_modal_loader.dart';
 import 'package:oluko_app/ui/components/uploading_modal_success.dart';
 import 'package:oluko_app/ui/components/user_profile_information.dart';
 import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_back_button.dart';
+import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_primary_button.dart';
 import 'package:oluko_app/ui/screens/profile/profile_constants.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/image_utils.dart';
@@ -303,8 +305,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
               if (!_isCurrentUser) otherUserInteraction(userRequested) else defaultWidgetNoContent,
               assessmentVideosSlider(),
               transformationJourneySlider(),
-              activeCoursesSlider(),
-              activeChallengesSlider(),
+              activeCoursesSlider(_isCurrentUser),
+              activeChallengesSlider(_isCurrentUser),
             ],
           ),
         ],
@@ -312,61 +314,88 @@ class _UserProfilePageState extends State<UserProfilePage> {
     );
   }
 
-  BlocBuilder<CourseEnrollmentListStreamBloc, CourseEnrollmentListStreamState> activeChallengesSlider() {
-    return BlocBuilder<CourseEnrollmentListStreamBloc, CourseEnrollmentListStreamState>(
-      builder: (context, state) {
-        if (state is CourseEnrollmentsByUserStreamSuccess) {
-          _courseEnrollmentList = state.courseEnrollments.where((courseEnroll) => courseEnroll.isUnenrolled != true).toList();
-          listOfChallenges = ProfileHelperFunctions.getChallenges(_courseEnrollmentList);
-        }
-        /*if (state is CourseEnrollmentListSuccess) {
-                      _courseEnrollmentList = state.courseEnrollmentList;
-                    }*/
+  Widget activeChallengesSlider(bool isCurrentUserRequested) {
+    return isCurrentUserRequested
+        ? BlocBuilder<CourseEnrollmentListStreamBloc, CourseEnrollmentListStreamState>(
+            builder: (context, state) {
+              if (state is CourseEnrollmentsByUserStreamSuccess) {
+                _courseEnrollmentList = state.courseEnrollments;
+                listOfChallenges = ProfileHelperFunctions.getChallenges(_courseEnrollmentList);
+              }
+              listOfChallenges = _courseEnrollmentList != null && _courseEnrollmentList.isNotEmpty
+                  ? ProfileHelperFunctions.getChallenges(_courseEnrollmentList)
+                  : [];
+              return listOfChallenges.isNotEmpty ? buildActiveChallengesForUser() : defaultWidgetNoContent;
+            },
+          )
+        : BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(
+            builder: (context, state) {
+              if (state is CourseEnrollmentsByUserSuccess) {
+                _courseEnrollmentList = state.courseEnrollments;
+                listOfChallenges = ProfileHelperFunctions.getChallenges(_courseEnrollmentList);
+              }
 
-        return listOfChallenges.isNotEmpty
-            ? Padding(
-                padding: OlukoNeumorphism.isNeumorphismDesign ? EdgeInsets.symmetric(horizontal: 20, vertical: 0) : EdgeInsets.symmetric(),
-                child: BlocBuilder<ChallengeBloc, ChallengeState>(
-                  builder: (context, state) {
-                    if (state is GetChallengeSuccess) {
-                      _activeChallenges = state.challenges;
-                      listOfChallenges = ProfileHelperFunctions.getActiveChallenges(_activeChallenges, listOfChallenges);
-                    }
-                    return buildChallengeSection(
-                        listOfChallenges: listOfChallenges,
-                        context: context,
-                        content: TransformListOfItemsToWidget.getWidgetListFromContent(
-                            challengeSegments: listOfChallenges,
-                            requestedFromRoute: ActualProfileRoute.userProfile,
-                            requestedUser: widget.userRequested,
-                            useAudio: !_isCurrentUser));
-                  },
-                ),
-              )
-            : defaultWidgetNoContent;
-      },
+              listOfChallenges = _courseEnrollmentList != null && _courseEnrollmentList.isNotEmpty
+                  ? ProfileHelperFunctions.getChallenges(_courseEnrollmentList)
+                  : [];
+              return listOfChallenges.isNotEmpty ? buildActiveChallengesForUser() : defaultWidgetNoContent;
+            },
+          );
+  }
+
+  Padding buildActiveChallengesForUser() {
+    return Padding(
+      padding: OlukoNeumorphism.isNeumorphismDesign ? EdgeInsets.symmetric(horizontal: 20, vertical: 0) : EdgeInsets.symmetric(),
+      child: BlocBuilder<ChallengeBloc, ChallengeState>(
+        builder: (context, state) {
+          if (state is GetChallengeSuccess) {
+            _activeChallenges = state.challenges;
+            listOfChallenges = ProfileHelperFunctions.getActiveChallenges(_activeChallenges, listOfChallenges);
+          }
+          return buildChallengeSection(
+              listOfChallenges: listOfChallenges,
+              context: context,
+              content: TransformListOfItemsToWidget.getWidgetListFromContent(
+                  challengeSegments: listOfChallenges,
+                  requestedFromRoute: ActualProfileRoute.userProfile,
+                  requestedUser: widget.userRequested,
+                  useAudio: !_isCurrentUser));
+        },
+      ),
     );
   }
 
-  BlocBuilder<CourseEnrollmentListStreamBloc, CourseEnrollmentListStreamState> activeCoursesSlider() {
-    return BlocBuilder<CourseEnrollmentListStreamBloc, CourseEnrollmentListStreamState>(
+  Widget activeCoursesSlider(bool isCurrentUserRequested) {
+    return isCurrentUserRequested
+        ? BlocBuilder<CourseEnrollmentListStreamBloc, CourseEnrollmentListStreamState>(
+            builder: (context, courseEnrollmentStreamState) {
+              if (courseEnrollmentStreamState is CourseEnrollmentsByUserStreamSuccess) {
+                _courseEnrollmentList = courseEnrollmentStreamState.courseEnrollments;
+              }
+              return courseSectionBuilder();
+            },
+          )
+        : BlocBuilder<CourseEnrollmentListBloc, CourseEnrollmentListState>(
+            builder: (context, state) {
+              if (state is CourseEnrollmentsByUserSuccess) {
+                _courseEnrollmentList = state.courseEnrollments;
+              }
+              return courseSectionBuilder();
+            },
+          );
+  }
+
+  BlocBuilder<CourseBloc, CourseState> courseSectionBuilder() {
+    return BlocBuilder<CourseBloc, CourseState>(
       builder: (context, state) {
-        if (state is CourseEnrollmentsByUserStreamSuccess) {
-          _courseEnrollmentList = state.courseEnrollments.where((courseEnroll) => courseEnroll.isUnenrolled != true).toList();
+        if (state is UserEnrolledCoursesSuccess) {
+          _coursesToUse = state.courses;
         }
-        return BlocBuilder<CourseBloc, CourseState>(
-          builder: (context, state) {
-            if (state is UserEnrolledCoursesSuccess) {
-              _coursesToUse = state.courses;
-            }
-            return _coursesToUse.isNotEmpty && _courseEnrollmentList != null
-                ? Padding(
-                    padding: OlukoNeumorphism.isNeumorphismDesign ? EdgeInsets.symmetric(horizontal: 20) : EdgeInsets.symmetric(),
-                    child:
-                        buildCourseSection(context: context, contentForCourse: returnCoursesWidget(listOfCourses: _courseEnrollmentList)))
-                : defaultWidgetNoContent;
-          },
-        );
+        return _coursesToUse.isNotEmpty && _courseEnrollmentList != null
+            ? Padding(
+                padding: OlukoNeumorphism.isNeumorphismDesign ? EdgeInsets.symmetric(horizontal: 20) : EdgeInsets.symmetric(),
+                child: buildCourseSection(context: context, contentForCourse: returnCoursesWidget(listOfCourses: _courseEnrollmentList)))
+            : defaultWidgetNoContent;
       },
     );
   }
@@ -426,29 +455,41 @@ class _UserProfilePageState extends State<UserProfilePage> {
           else
             defaultWidgetNoContent,
           Container(
-            child: OlukoOutlinedButton(
-                onPressed: () {
-                  AppMessages().showDialogActionMessage(context, '', 2);
-
-                  switch (connectStatus) {
-                    case UserConnectStatus.connected:
-                      BlocProvider.of<FriendBloc>(context).removeFriend(_currentAuthUser.id, friendData, userRequested.id);
-                      break;
-                    case UserConnectStatus.notConnected:
-                      BlocProvider.of<FriendBloc>(context).sendRequestOfConnect(_currentAuthUser.id, friendData, userRequested.id);
-                      break;
-                    case UserConnectStatus.requestPending:
-                      BlocProvider.of<FriendBloc>(context).removeRequestSent(_currentAuthUser.id, friendData, userRequested.id);
-                      break;
-                    default:
-                  }
-                  BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_currentAuthUser.id);
-                },
-                title: OlukoLocalizations.get(context, _connectButtonTitle)),
+            child: !OlukoNeumorphism.isNeumorphismDesign
+                ? OlukoOutlinedButton(
+                    onPressed: () {
+                      AppMessages().showDialogActionMessage(context, '', 2);
+                      checkUserConnectStatus(userRequested);
+                      BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_currentAuthUser.id);
+                    },
+                    title: OlukoLocalizations.get(context, _connectButtonTitle))
+                : OlukoNeumorphicPrimaryButton(
+                    title: OlukoLocalizations.get(context, _connectButtonTitle),
+                    onPressed: () {
+                      AppMessages().showDialogActionMessage(context, '', 2);
+                      checkUserConnectStatus(userRequested);
+                      BlocProvider.of<FriendBloc>(context).getFriendsByUserId(_currentAuthUser.id);
+                    },
+                  ),
           ),
         ],
       ),
     );
+  }
+
+  void checkUserConnectStatus(UserResponse userRequested) {
+    switch (connectStatus) {
+      case UserConnectStatus.connected:
+        BlocProvider.of<FriendBloc>(context).removeFriend(_currentAuthUser.id, friendData, userRequested.id);
+        break;
+      case UserConnectStatus.notConnected:
+        BlocProvider.of<FriendBloc>(context).sendRequestOfConnect(_currentAuthUser.id, friendData, userRequested.id);
+        break;
+      case UserConnectStatus.requestPending:
+        BlocProvider.of<FriendBloc>(context).removeRequestSent(_currentAuthUser.id, friendData, userRequested.id);
+        break;
+      default:
+    }
   }
 
   Positioned userInformationPanel() {
@@ -546,7 +587,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
   void _requestContentForUser({BuildContext context, UserResponse userRequested}) {
     if (PrivacyOptions().canShowDetails(
         isOwner: _isCurrentUser, currentUser: _currentAuthUser, userRequested: _userProfileToDisplay, connectStatus: connectStatus)) {
-      BlocProvider.of<CourseEnrollmentListStreamBloc>(context).getStream(userRequested.id);
+      _isCurrentUser
+          ? BlocProvider.of<CourseEnrollmentListStreamBloc>(context).getStream(userRequested.id)
+          : BlocProvider.of<CourseEnrollmentListBloc>(context).getCourseEnrollmentsByUser(userRequested.id);
       BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionByUserId(userRequested.id);
       BlocProvider.of<CourseBloc>(context).getUserEnrolled(userRequested.id);
       BlocProvider.of<TransformationJourneyBloc>(context).getContentByUserId(userRequested.id);
