@@ -43,7 +43,7 @@ class _HomeContentState extends State<HomeContent> {
 
   Widget form() {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: OlukoColors.black,
       appBar: OlukoAppBar(
         title: OlukoLocalizations.get(context, 'home'),
         showLogo: true,
@@ -146,11 +146,7 @@ class _HomeContentState extends State<HomeContent> {
                 ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [
-                  Color(0xFF3e3737),
-                  Color(0xFFbfbaba),
-                  Color(0xFF3e3737),
-                ],
+                colors: OlukoNeumorphismColors.homeGradientColorList,
               ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
           },
           blendMode: BlendMode.dstIn,

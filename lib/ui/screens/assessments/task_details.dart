@@ -32,6 +32,7 @@ import 'package:oluko_app/ui/newDesignComponents/oluko_neumorphic_switch.dart';
 import 'package:oluko_app/utils/app_messages.dart';
 import 'package:oluko_app/utils/dialog_utils.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
+import 'package:oluko_app/utils/permissions_utils.dart';
 import 'package:oluko_app/utils/screen_utils.dart';
 import 'package:oluko_app/utils/time_converter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -81,17 +82,23 @@ class _TaskDetailsState extends State<TaskDetails> {
       if (authState is AuthSuccess) {
         return BlocBuilder<AssessmentAssignmentBloc, AssessmentAssignmentState>(
           builder: (context, assessmentAssignmentState) {
-            return BlocBuilder<TaskBloc, TaskState>(builder: (context, taskState) {
-              if (assessmentAssignmentState is AssessmentAssignmentSuccess && taskState is TaskSuccess) {
-                _assessmentAssignment = assessmentAssignmentState.assessmentAssignment;
-                _tasks = taskState.values;
-                _task = _tasks[widget.taskIndex];
-                BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionOfTask(_assessmentAssignment, _task);
-                return OlukoNeumorphism.isNeumorphismDesign ? neumorphicForm() : form();
-              } else {
-                return nil;
-              }
-            });
+            if (assessmentAssignmentState is AssessmentAssignmentSuccess) {
+              return BlocBuilder<TaskBloc, TaskState>(
+                builder: (context, taskState) {
+                  if (taskState is TaskSuccess) {
+                    _assessmentAssignment = assessmentAssignmentState.assessmentAssignment;
+                    _tasks = taskState.values;
+                    _task = _tasks[widget.taskIndex];
+                    BlocProvider.of<TaskSubmissionBloc>(context).getTaskSubmissionOfTask(_assessmentAssignment, _task);
+                    return OlukoNeumorphism.isNeumorphismDesign ? neumorphicForm() : form();
+                  } else {
+                    return nil;
+                  }
+                },
+              );
+            } else {
+              return nil;
+            }
           },
         );
       } else {
@@ -102,61 +109,63 @@ class _TaskDetailsState extends State<TaskDetails> {
 
   Widget neumorphicForm() {
     return Form(
-        key: _formKey,
-        child: Scaffold(
-            appBar: OlukoAppBar(
-                showTitle: true,
-                showBackButton: true,
-                title: _task.name,
-                actions: [SizedBox(width: 30)],
-                onPressed: () {
-                  if (_controller != null) {
-                    _controller.pause();
-                  }
-                  Navigator.pop(context);
-                  if (!Navigator.canPop(context)) {
-                    Navigator.pushNamed(context, routeLabels[RouteEnum.root], arguments: {
-                      'tab': 1,
-                    });
-                  }
-                }),
-            body: BlocListener<TaskSubmissionBloc, TaskSubmissionState>(
-              listener: (context, state) {
-                if (state is GetSuccess && state.taskSubmission != null) {
-                  isAssessmentDone = true;
-                }
-              },
-              child: recordAgainRequested
-                  ? SlidingUpPanel(
-                      controller: _panelController,
-                      borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-                      color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-                      maxHeight: panelSize,
-                      panel: recordAgainDialogContent(),
-                      body: viewContent(),
-                    )
-                  : SlidingUpPanel(
-                      controller: _panelController,
-                      borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-                      color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-                      maxHeight: recordAgainRequested ? panelSize : 100,
-                      panel: recordAgainRequested
-                          ? recordAgainDialogContent()
-                          : Container(
-                              height: 60,
-                              width: MediaQuery.of(context).size.width,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 20),
-                                child: isAssessmentDone || widget.taskCompleted
-                                    ? recordAgainButtons(_taskSubmission)
-                                    : Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                                        Container(height: 60, width: MediaQuery.of(context).size.width / 1.2, child: startRecordingButton())
-                                      ]),
-                              ),
-                            ),
-                      body: viewContent(),
-                    ),
-            )));
+      key: _formKey,
+      child: Scaffold(
+        appBar: OlukoAppBar(
+            showTitle: true,
+            showBackButton: true,
+            title: _task.name,
+            actions: [SizedBox(width: 30)],
+            onPressed: () {
+              if (_controller != null) {
+                _controller.pause();
+              }
+              Navigator.pop(context);
+              if (!Navigator.canPop(context)) {
+                Navigator.pushNamed(context, routeLabels[RouteEnum.root], arguments: {
+                  'tab': 1,
+                });
+              }
+            }),
+        body: BlocListener<TaskSubmissionBloc, TaskSubmissionState>(
+          listener: (context, state) {
+            if (state is GetSuccess && state.taskSubmission != null) {
+              isAssessmentDone = true;
+            }
+          },
+          child: recordAgainRequested
+              ? SlidingUpPanel(
+                  controller: _panelController,
+                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                  color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                  maxHeight: panelSize,
+                  panel: recordAgainDialogContent(),
+                  body: viewContent(),
+                )
+              : SlidingUpPanel(
+                  controller: _panelController,
+                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                  color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                  maxHeight: recordAgainRequested ? panelSize : 100,
+                  panel: recordAgainRequested
+                      ? recordAgainDialogContent()
+                      : Container(
+                          height: 60,
+                          width: MediaQuery.of(context).size.width,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: isAssessmentDone || widget.taskCompleted
+                                ? recordAgainButtons(_taskSubmission)
+                                : Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                                    Container(height: 60, width: MediaQuery.of(context).size.width / 1.2, child: startRecordingButton())
+                                  ]),
+                          ),
+                        ),
+                  body: viewContent(),
+                ),
+        ),
+      ),
+    );
   }
 
   Container viewContent() {
@@ -304,7 +313,7 @@ class _TaskDetailsState extends State<TaskDetails> {
             const SizedBox(height: 20),
             showVideoPlayer(_task.video),
             formSection(state.taskSubmission),
-            OlukoNeumorphism.isNeumorphismDesign ? SizedBox.shrink() : recordAgainButtons(state.taskSubmission)
+            if (OlukoNeumorphism.isNeumorphismDesign) const SizedBox.shrink() else recordAgainButtons(state.taskSubmission)
           ],
         );
       } else {
@@ -318,7 +327,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                 formSection(),
               ],
             ),
-            Positioned(bottom: 25, left: 0, right: 0, child: startRecordingButton()),
+            if (!OlukoNeumorphism.isNeumorphismDesign) Positioned(bottom: 25, left: 0, right: 0, child: startRecordingButton()),
           ],
         );
       }
@@ -369,6 +378,8 @@ class _TaskDetailsState extends State<TaskDetails> {
                   'isPublic': _makePublic ?? false,
                   'isLastTask': _tasks.length - widget.taskIndex == 1 ? true : widget.isLastTask
                 });
+              } else if (state is PermissionsRequired) {
+                PermissionsUtils.showSettingsMessage(context);
               }
             },
             child: GestureDetector(

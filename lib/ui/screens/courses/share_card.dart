@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:global_configuration/global_configuration.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/movement.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -16,7 +17,7 @@ class ShareCard extends StatefulWidget {
 
 class _State extends State<ShareCard> {
   List<Movement> segmentMovements;
-  bool _storyEnabled = true;
+  bool _storyEnabled = GlobalConfiguration().getValue('showStories') == 'true';
   bool _whistleEnabled = true;
 
   @override
