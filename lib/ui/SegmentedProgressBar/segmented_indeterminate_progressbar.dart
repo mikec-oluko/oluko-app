@@ -2,6 +2,7 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
+import 'dart:math' as math;
 
 /// Segmented indeterminate progress bar
 class SegmentedIndeterminateProgressbar extends StatefulWidget {
@@ -46,6 +47,7 @@ class _SegmentedIndeterminateProgressbarState extends State<SegmentedIndetermina
             padding: const EdgeInsets.all(10.0),
             child: CircularStepProgressIndicator(
               roundedCap: (_, isSelected) => true,
+              padding: math.pi / 15,
               totalSteps: max.toInt(),
               width: 100,
               selectedStepSize: 20,
@@ -76,6 +78,7 @@ class _SegmentedIndeterminateProgressbarState extends State<SegmentedIndetermina
       Padding(
         padding: const EdgeInsets.all(10.0),
         child: CircularStepProgressIndicator(
+            padding: math.pi / 15,
             roundedCap: (_, isSelected) => true,
             totalSteps: max.toInt(),
             selectedColor: OlukoColors.primary,

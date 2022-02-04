@@ -1,9 +1,11 @@
+import 'package:oluko_app/models/course_enrollment.dart';
 import 'package:oluko_app/models/submodels/enrollment_segment.dart';
 
 class InfoForSegments {
-  String courseEnrollmentId;
+  CourseEnrollment courseEnrollment;
   String className;
   String classImage;
+  int classIndex, courseIndex;
   List<EnrollmentSegment> segments;
-  InfoForSegments({this.classImage, this.className, this.courseEnrollmentId, this.segments});
+  InfoForSegments({this.courseEnrollment, this.classImage, this.classIndex, this.courseIndex, this.className, this.segments});
 }

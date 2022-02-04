@@ -142,18 +142,21 @@ class TransformListOfItemsToWidget {
     return contentForReturn;
   }
 
-  static List<Widget> getAssessmentCards({List<Task> tasks, List<TaskSubmission> tasksSubmitted, bool introductionVideoDone}) {
+  static List<Widget> getAssessmentCards(
+      {List<Task> tasks, List<TaskSubmission> tasksSubmitted, bool introductionVideoDone, bool verticalList}) {
     final List<Widget> contentForSection = [];
     for (final task in tasks) {
-      contentForSection.add(returnCardForAssessment(task, tasksSubmitted, introductionVideoDone));
+      contentForSection.add(returnCardForAssessment(task, tasksSubmitted, introductionVideoDone, OlukoNeumorphism.isNeumorphismDesign));
     }
     return contentForSection;
   }
 
-  static Widget returnCardForAssessment(Task task, List<TaskSubmission> tasksSubmitted, bool introductionVideoDone) {
+  static Widget returnCardForAssessment(Task task, List<TaskSubmission> tasksSubmitted, bool introductionVideoDone, bool isVerticalList) {
     return Padding(
         padding: const EdgeInsets.all(5.0),
         child: CoachAssessmentCard(
+          isAssessmentTask: true,
+          isForVerticalList: isVerticalList,
           task: task,
           assessmentVideos: tasksSubmitted,
           introductionVideoDone: introductionVideoDone,
@@ -164,12 +167,23 @@ class TransformListOfItemsToWidget {
     final List<InfoForSegments> listOfSegments = [];
     String className;
     String classImage;
+    int classIndex;
+    int courseIndex;
 
     for (final courseEnrollment in courseEnrollments) {
       for (final classToCheck in courseEnrollment.classes) {
         className = classToCheck.name;
         classImage = classToCheck.image;
-        final InfoForSegments infoForSegmentElement = InfoForSegments(classImage: classImage, className: className, segments: []);
+        classIndex = courseEnrollment.classes.indexOf(classToCheck);
+        courseIndex = courseEnrollments.indexOf(courseEnrollment);
+        final InfoForSegments infoForSegmentElement = InfoForSegments(
+          classImage: classImage,
+          courseEnrollment: courseEnrollment,
+          classIndex: classIndex,
+          courseIndex: courseIndex,
+          className: className,
+          segments: [],
+        );
         for (final segment in classToCheck.segments) {
           infoForSegmentElement.segments.add(segment);
         }
@@ -184,14 +198,20 @@ class TransformListOfItemsToWidget {
 
     for (final segment in segments) {
       for (final actualSegment in segment.segments) {
-        coachSegmentContent.add(CoachSegmentContent(
-            segmentId: actualSegment.id,
-            classImage: segment.classImage,
-            className: segment.className,
-            segmentName: actualSegment.name,
-            completedAt: actualSegment.completedAt,
-            segmentReference: actualSegment.reference,
-            isChallenge: actualSegment.isChallenge));
+        coachSegmentContent.add(
+          CoachSegmentContent(
+              segmentId: actualSegment.id,
+              classImage: segment.classImage,
+              className: segment.className,
+              segmentName: actualSegment.name,
+              completedAt: actualSegment.completedAt,
+              segmentReference: actualSegment.reference,
+              isChallenge: actualSegment.isChallenge,
+              indexClass: segment.classIndex,
+              indexCourse: segment.courseIndex,
+              indexSegment: segment.segments.indexOf(actualSegment),
+              courseEnrollment: segment.courseEnrollment),
+        );
       }
     }
     return coachSegmentContent;

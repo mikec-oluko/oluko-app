@@ -32,14 +32,14 @@ class _NoCoachPageState extends State<NoCoachPage> {
       body: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
-        color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+        color: OlukoNeumorphismColors.appBackgroundColor,
         child: Column(
           children: [
             SizedBox(
               height: 50,
             ),
             Container(
-              color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+              color: OlukoNeumorphismColors.appBackgroundColor,
               width: MediaQuery.of(context).size.width,
               height: 250,
               child: Stack(
@@ -55,7 +55,7 @@ class _NoCoachPageState extends State<NoCoachPage> {
               ),
             ),
             Container(
-                color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : Colors.black,
+                color: OlukoNeumorphismColors.appBackgroundColor,
                 width: MediaQuery.of(context).size.width,
                 child: Column(
                   children: [
@@ -115,29 +115,4 @@ class _NoCoachPageState extends State<NoCoachPage> {
                 : ScreenUtils.height(context) / 1.5),
         child: Container(height: 400, child: Stack(children: widgets)));
   }
-
-  // Widget showVideoPlayer(String videoUrl) {
-  //   List<Widget> widgets = [];
-  //   if (_controller == null) {
-  //     widgets.add(const Center(child: CircularProgressIndicator()));
-  //   }
-
-  //   widgets.add(OlukoVideoPlayer(
-  //     videoUrl: videoUrl,
-  //     autoPlay: false,
-  //     whenInitialized: (ChewieController chewieController) => setState(() {
-  //       _controller = chewieController;
-  //     }),
-  //   ));
-
-  //   return ConstrainedBox(
-  //       constraints: BoxConstraints(
-  //           maxHeight: MediaQuery.of(context).orientation == Orientation.portrait
-  //               ? ScreenUtils.height(context) / 4
-  //               : ScreenUtils.height(context) / 1.5,
-  //           minHeight: MediaQuery.of(context).orientation == Orientation.portrait
-  //               ? ScreenUtils.height(context) / 4
-  //               : ScreenUtils.height(context) / 1.5),
-  //       child: SizedBox(height: 400, child: Stack(children: widgets)));
-  // }
 }

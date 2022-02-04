@@ -32,7 +32,7 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
 
   Widget returnList(BuildContext context) {
     return Container(
-      color: OlukoColors.black,
+      color: OlukoNeumorphismColors.appBackgroundColor,
       width: MediaQuery.of(context).size.width,
       height: 100,
       child: ListView(
@@ -50,7 +50,7 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
             },
             leading: const Icon(
               Icons.camera_alt_outlined,
-              color: Colors.white,
+              color: OlukoNeumorphism.isNeumorphismDesign ? OlukoColors.grayColor : OlukoColors.white,
             ),
             title: Text(OlukoLocalizations.get(context, 'camera'), style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.white)),
           ),
@@ -63,10 +63,19 @@ class _ModalUploadOptionsState extends State<ModalUploadOptions> {
                 uploadContentFromGallery(context);
               }
             },
-            leading: const Icon(
-              Icons.image,
-              color: Colors.white,
-            ),
+            leading: OlukoNeumorphism.isNeumorphismDesign
+                ? Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: Image.asset(
+                      'assets/self_recording/gallery.png',
+                      width: 25,
+                      height: 25,
+                    ),
+                  )
+                : const Icon(
+                    Icons.image,
+                    color: Colors.white,
+                  ),
             title: Text(OlukoLocalizations.get(context, 'fromGallery'), style: OlukoFonts.olukoSmallFont(customColor: OlukoColors.white)),
           ),
         ],
