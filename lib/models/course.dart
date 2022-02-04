@@ -65,7 +65,7 @@ class Course extends Base {
         name: json['name']?.toString(),
         statisticsReference: json['statistics_reference'] != null ? json['statistics_reference'] as DocumentReference : null,
         video: json['video']?.toString(),
-        duration: json['duration']?.toString(),
+        duration: json['duration']==null?'0':json['duration'].toString(),
         description: json['description']?.toString(),
         equipment: json['equipment'] == null ? null : json['equipment'] as List<String>,
         intensity: json['intensity'] == null ? null : json['intensity'] as List<String>,
